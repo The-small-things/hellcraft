@@ -8,9 +8,33 @@ Players join with a **plain vanilla client**. The mod adds no blocks and no item
 
 ![map](docs/inferno_map.png)
 
-## Hosting (Docker)
+## Play it in single player
 
-1. Download `hellcraft-<version>.jar` from the latest **build** workflow run (artifact `hellcraft-jar`), or build it yourself with `./gradlew build` (the jar ends up in `build/libs/`).
+Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases).
+
+- **Modrinth App, Prism Launcher, ATLauncher or CurseForge (easiest):** download `Hellcraft-<version>.mrpack` and import it as a modpack. That installs Minecraft 1.21.1, Fabric Loader and Fabric API for you.
+- **Official Minecraft Launcher:** download `hellcraft-<version>-mods.zip` and follow the `INSTALL.txt` inside. In short:
+  1. Install Fabric Loader for 1.21.1 with the [Fabric installer](https://fabricmc.net/use/installer/).
+  2. Put both jars in `.minecraft/mods`.
+  3. Play the `fabric-loader-1.21.1` profile.
+
+Then go to **Singleplayer → Create New World → World tab** and click **World Type** until it says **Inferno**. On the **Game** tab, turn on **Allow Commands** if you want the test commands below.
+
+### Testing solo
+
+| Command | What it does |
+|---|---|
+| `/hellcraft goto <zone>` | Teleport to any zone (tab-completes). For example `limbo`, `greed`, `walls_of_dis`, `malebolge_pitch`, `judecca`. |
+| `/hellcraft gate` | Back to the Gate of Hell |
+| `/hellcraft giveheart @s 5`, `/hellcraft givefragment @s 8` | Blood to test with (right-click to use) |
+| `/hellcraft sethearts @s 1`, then die | Test elimination: you become a ghost and your revenant rises |
+| `/hellcraft revive <yourname>` | Come back from being a ghost |
+
+The Gate of Hell has an altar next to it for trying the rites. To test PvP lifesteal, open the world to LAN and bring a friend.
+
+## Hosting a server (Docker)
+
+1. Download `hellcraft-<version>.jar` from the [Releases page](https://github.com/the-small-things/hellcraft/releases), or build it yourself with `./gradlew build` (the jar ends up in `build/libs/`).
 2. Put the jar in `docker/mods/`.
 3. From the `docker/` folder, run:
 
@@ -25,6 +49,8 @@ The compose file uses [`itzg/minecraft-server`](https://github.com/itzg/docker-m
 Already running itzg? Add these to your existing container:
 - env `TYPE=FABRIC`, `VERSION=1.21.1`, `MODRINTH_PROJECTS=fabric-api` and `LEVEL_TYPE=hellcraft:inferno`
 - the jar, mounted into `/mods`
+
+You need `LEVEL_TYPE=hellcraft:inferno` (`level-type=hellcraft:inferno` in `server.properties`). Without it the world generates as a normal overworld, and only the lifesteal rules apply.
 
 ## The shape of Hell
 
@@ -92,6 +118,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
 | `/hellcraft ghosts` | op | List ghosts |
+| `/hellcraft goto <zone>` / `gate` | op | Teleport to a zone / the Gate (testing) |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |
 
@@ -113,4 +140,5 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - `python3 tools/gen_worldgen.py` regenerates every biome, surface rule, feature and tag. Edit the script, not the JSON.
 - `tools/RenderMap.java` renders the map and cross-section in `docs/` without Minecraft (see its header for the command).
 - `scripts/smoke-test.sh` boots a real server in Docker, generates every circle and checks the log. CI runs it on every push.
+- `scripts/package-singleplayer.sh` builds the `.mrpack` and the mods zip into `dist/`. CI runs it and publishes the results as the test pre-release.
 - All of the funnel's geometry lives in `InfernoGeometry.java`, which is pure Java. Terrain, biomes, features and hazards all read from it.

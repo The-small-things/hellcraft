@@ -23,6 +23,14 @@ jobs:
           name: hellcraft-jar
           path: build/libs/hellcraft-*.jar
           if-no-files-found: error
+      - name: Package single-player downloads (.mrpack + mods zip)
+        run: bash scripts/package-singleplayer.sh
+      - name: Upload single-player downloads
+        uses: actions/upload-artifact@v4
+        with:
+          name: hellcraft-singleplayer
+          path: dist/*
+          if-no-files-found: error
 
   # Boots a real Fabric 1.21.1 server (the same Docker image used for hosting) with the mod,
   # generates chunks in every circle of Hell and fails on any error in the log.
@@ -44,3 +52,40 @@ jobs:
         with:
           name: server-log
           path: smoke-server.log
+
+  # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click.
+  release:
+    needs: [build, smoke-test]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: hellcraft-singleplayer
+          path: dist
+      - name: Move the test tag to this commit
+        id: tag
+        run: |
+          VER=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          echo "tag=v${VER}-test" >> "$GITHUB_OUTPUT"
+          echo "ver=${VER}" >> "$GITHUB_OUTPUT"
+          git tag -f "v${VER}-test"
+          git push -f origin "v${VER}-test"
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Hellcraft ${{ steps.tag.outputs.ver }} (test build)
+          prerelease: true
+          files: dist/*
+          body: |
+            Test build from `${{ github.ref_name }}` @ ${{ github.sha }}.
+
+            **Play in single player**
+            - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.tag.outputs.ver }}.mrpack` and import it (it installs Fabric + Fabric API for you).
+            - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mods.zip` and follow `INSTALL.txt`.
+            - Then **Create New World → World tab → World Type: Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
+
+            **Servers:** use `hellcraft-${{ steps.tag.outputs.ver }}.jar` with the Docker setup in the README.

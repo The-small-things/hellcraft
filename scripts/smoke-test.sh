@@ -33,6 +33,7 @@ docker logs "$NAME" 2>&1 | grep -q 'Done (' || { docker logs "$NAME" 2>&1 | tail
 rcon() { docker exec "$NAME" rcon-cli "$@"; }
 
 rcon "hellcraft where"
+rcon "hellcraft goto judecca" || true  # needs a player; checks the command is registered
 rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
 rcon "locate structure minecraft:stronghold" || true

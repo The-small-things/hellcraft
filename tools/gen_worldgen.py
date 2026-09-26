@@ -606,6 +606,7 @@ def main():
         shutil.rmtree(os.path.join(HC, sub), ignore_errors=True)
     shutil.rmtree(os.path.join(MC, "tags", "worldgen", "biome"), ignore_errors=True)
     shutil.rmtree(os.path.join(MC, "dimension"), ignore_errors=True)
+    shutil.rmtree(os.path.join(MC, "tags", "worldgen", "world_preset"), ignore_errors=True)
 
     for biome_id, d in BIOMES.items():
         write(os.path.join(HC, "worldgen", "biome", biome_id + ".json"), make_biome(biome_id, d))
@@ -623,7 +624,6 @@ def main():
     write(os.path.join(HC, "worldgen", "noise", "jagged.json"), {"firstOctave": -5, "amplitudes": [1.0, 0.8, 0.5]})
     write(os.path.join(HC, "worldgen", "noise_settings", "inferno.json"), NOISE_SETTINGS)
     write(os.path.join(HC, "dimension_type", "inferno.json"), DIMENSION_TYPE)
-    write(os.path.join(MC, "dimension", "overworld.json"), {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR})
     write(os.path.join(HC, "worldgen", "world_preset", "inferno.json"), {"dimensions": {
         "minecraft:overworld": {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR},
         "minecraft:the_nether": {"type": "minecraft:the_nether", "generator": {
@@ -632,6 +632,8 @@ def main():
         "minecraft:the_end": {"type": "minecraft:the_end", "generator": {
             "type": "minecraft:noise", "biome_source": {"type": "minecraft:the_end"}, "settings": "minecraft:end"}},
     }})
+    # "World Type: Inferno" on the Create World screen (single player) / level-type=hellcraft:inferno (servers)
+    write(os.path.join(MC, "tags", "worldgen", "world_preset", "normal.json"), {"replace": False, "values": ["hellcraft:inferno"]})
     for tag, values in TAGS.items():
         write(os.path.join(MC, "tags", "worldgen", "biome", tag + ".json"), {"replace": False, "values": values})
     print("Generated %d biomes, %d configured and %d placed features." % (len(BIOMES), len(CONFIGURED), len(PLACED)))

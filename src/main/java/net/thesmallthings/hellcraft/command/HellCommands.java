@@ -8,9 +8,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
@@ -19,12 +26,16 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.Zone;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
- * Player commands: /hearts, /withdraw, /circle. Admin: /hellcraft ... (permission level 2).
+ * Player commands: /hearts, /withdraw, /circle. Admin: /hellcraft ... (permission level 2; in single player,
+ * turn cheats on). {@code /hellcraft goto <zone>} and {@code /hellcraft gate} help with testing.
  */
 public final class HellCommands {
 	private HellCommands() {
@@ -68,6 +79,11 @@ public final class HellCommands {
 						.then(Commands.argument("name", StringArgumentType.word())
 								.executes(HellCommands::revive)))
 				.then(Commands.literal("ghosts").executes(ctx -> listGhosts(ctx.getSource())))
+				.then(Commands.literal("goto")
+						.then(Commands.argument("zone", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Zone.values()).map(Zone::id), builder))
+								.executes(HellCommands::gotoZone)))
+				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
 				.then(Commands.literal("where").executes(ctx -> where(ctx.getSource())))
 				.then(Commands.literal("reload").executes(ctx -> {
 					HellConfig.load();
@@ -145,6 +161,54 @@ public final class HellCommands {
 		int count = n;
 		source.sendSuccess(() -> Component.literal(count + " ghost(s) walk the earth."), false);
 		return n;
+	}
+
+	/** Test helper: jump to the surface of any zone of Hell. */
+	private static int gotoZone(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		String id = StringArgumentType.getString(ctx, "zone");
+		Zone zone = Arrays.stream(Zone.values()).filter(z -> z.id().equalsIgnoreCase(id)).findFirst().orElse(null);
+		if (zone == null) {
+			ctx.getSource().sendFailure(Component.literal("Unknown zone \"" + id + "\". Try: "
+					+ Arrays.stream(Zone.values()).map(Zone::id).collect(Collectors.joining(", "))));
+			return 0;
+		}
+		// scan inward along a few headings and land in the middle of the first stretch of that zone
+		for (int step = 0; step < 24; step++) {
+			double theta = step * 0.26;
+			double start = -1;
+			for (double r = InfernoGeometry.BORDER_RADIUS - 50; r >= 0; r -= 2) {
+				boolean inside = InfernoGeometry.zoneAt(Math.cos(theta) * r, Math.sin(theta) * r) == zone;
+				if (inside && start < 0) {
+					start = r;
+				} else if (!inside && start >= 0) {
+					double mid = (start + r) / 2.0;
+					return teleportToSurface(ctx.getSource(), (int) Math.round(Math.cos(theta) * mid), (int) Math.round(Math.sin(theta) * mid));
+				}
+			}
+			if (start >= 0) {
+				return teleportToSurface(ctx.getSource(), (int) Math.round(Math.cos(theta) * start / 2), (int) Math.round(Math.sin(theta) * start / 2));
+			}
+		}
+		ctx.getSource().sendFailure(Component.literal("Could not find " + zone.id()));
+		return 0;
+	}
+
+	private static int teleportToSurface(CommandSourceStack source, int x, int z) throws CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		ServerLevel level = source.getServer().overworld();
+		if (!HellWorldgen.isInferno(level)) {
+			source.sendFailure(Component.literal("This world was not created as an Inferno world (World Type: Inferno)."));
+			return 0;
+		}
+		level.getChunk(x >> 4, z >> 4);
+		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+		if (level.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.LAVA)) {
+			player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1200, 0));
+		}
+		player.teleportTo(level, x + 0.5, y, z + 0.5, player.getYRot(), player.getXRot());
+		source.sendSuccess(() -> Component.literal("\u2192 " + InfernoGeometry.regionName(x, z) + " (" + x + ", " + y + ", " + z + ")")
+				.withStyle(ChatFormatting.RED), false);
+		return 1;
 	}
 
 	private static int where(CommandSourceStack source) {

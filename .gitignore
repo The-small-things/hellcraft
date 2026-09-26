@@ -8,3 +8,4 @@ run/
 bin/
 docker/data/
 docker/mods/*.jar
+dist/
