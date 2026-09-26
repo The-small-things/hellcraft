@@ -1,0 +1,8 @@
+{
+  "type": "hellcraft:boulder",
+  "config": {
+    "state": {
+      "Name": "minecraft:crying_obsidian"
+    }
+  }
+}

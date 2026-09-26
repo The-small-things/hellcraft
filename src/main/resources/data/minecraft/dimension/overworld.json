@@ -1,0 +1,10 @@
+{
+  "type": "hellcraft:inferno",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "hellcraft:circles"
+    },
+    "settings": "hellcraft:inferno"
+  }
+}

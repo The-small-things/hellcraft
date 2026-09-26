@@ -1,0 +1,28 @@
+# Hellcraft server. Put hellcraft-<version>.jar in ./mods next to this file, then:
+#   docker compose up -d
+# Players join with a plain vanilla 1.21.1 client - nothing to install.
+services:
+  hellcraft:
+    image: itzg/minecraft-server:java21
+    container_name: hellcraft
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "FABRIC"
+      VERSION: "1.21.1"
+      # Fabric API is downloaded automatically; Hellcraft comes from ./mods
+      MODRINTH_PROJECTS: "fabric-api"
+      # The Inferno world preset (a fresh world is required: delete ./data/world to regenerate)
+      LEVEL_TYPE: "hellcraft:inferno"
+      DIFFICULTY: "hard"
+      MOTD: "§4Lasciate ogne speranza, voi ch'intrate"
+      SPAWN_PROTECTION: "0"
+      VIEW_DISTANCE: "10"
+      MEMORY: "6G"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "change-me"
+    volumes:
+      - ./data:/data
+      - ./mods:/mods:ro
+    restart: unless-stopped
