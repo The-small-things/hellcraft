@@ -21,14 +21,17 @@ cleanup() { docker logs "$NAME" > "$LOG" 2>&1 || true; docker rm -f "$NAME" >/de
 trap cleanup EXIT
 
 echo "Waiting for the server to start..."
+# grep a snapshot of the log: piping `docker logs` into `grep -q` trips pipefail (SIGPIPE) when grep exits early
+started=0
 for i in $(seq 1 180); do
-  if docker logs "$NAME" 2>&1 | grep -q 'Done ('; then break; fi
+  docker logs "$NAME" > "$LOG" 2>&1 || true
+  if grep -q 'Done (' "$LOG"; then started=1; break; fi
   if [ "$(docker inspect -f '{{.State.Running}}' "$NAME")" != "true" ]; then
-    docker logs "$NAME" 2>&1 | tail -150; echo "Server exited during startup"; exit 1
+    tail -150 "$LOG"; echo "Server exited during startup"; exit 1
   fi
   sleep 5
 done
-docker logs "$NAME" 2>&1 | grep -q 'Done (' || { docker logs "$NAME" 2>&1 | tail -150; echo "Server did not start in time"; exit 1; }
+[ "$started" = 1 ] || { tail -150 "$LOG"; echo "Server did not start in time"; exit 1; }
 
 rcon() { docker exec "$NAME" rcon-cli "$@"; }
 
