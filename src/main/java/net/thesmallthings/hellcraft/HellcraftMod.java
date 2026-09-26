@@ -11,8 +11,8 @@ import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
-import net.thesmallthings.hellcraft.hazard.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
+import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
 import org.slf4j.Logger;
@@ -36,6 +36,7 @@ public class HellcraftMod implements ModInitializer {
 		HellWorldgen.register();
 		BloodEvents.register();
 		CircleHazards.register();
+		LuciferManager.register();
 
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);

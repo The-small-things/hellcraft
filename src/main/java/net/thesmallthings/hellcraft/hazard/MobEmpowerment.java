@@ -13,6 +13,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -30,7 +31,8 @@ public final class MobEmpowerment {
 	private static final Deque<Skeleton> CENTAURS = new ArrayDeque<>();
 
 	public static void onLoad(Entity entity, ServerLevel level) {
-		if (!(entity instanceof Monster monster) || entity.getTags().contains(TOUCHED) || !HellWorldgen.isInferno(level)) {
+		if (!(entity instanceof Monster monster) || entity.getTags().contains(TOUCHED) || LuciferManager.isLucifer(entity)
+				|| !HellWorldgen.isInferno(level)) {
 			return;
 		}
 		monster.addTag(TOUCHED);

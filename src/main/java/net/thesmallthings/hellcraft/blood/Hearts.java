@@ -21,6 +21,11 @@ public final class Hearts {
 		return HellState.get(player.server).soul(player.getUUID(), player.getGameProfile().getName());
 	}
 
+	/** Most hearts this soul may hold: the server cap plus anything earned (Lucifer's Bane). */
+	public static int cap(HellState.Soul soul) {
+		return HellConfig.get().maxHearts + soul.maxBonus;
+	}
+
 	public static void apply(ServerPlayer player) {
 		HellState.Soul soul = soul(player);
 		AttributeInstance health = player.getAttribute(Attributes.MAX_HEALTH);
@@ -43,7 +48,7 @@ public final class Hearts {
 		HellState state = HellState.get(player.server);
 		HellState.Soul soul = soul(player);
 		int before = soul.hearts;
-		soul.hearts = Math.max(0, Math.min(HellConfig.get().maxHearts, soul.hearts + delta));
+		soul.hearts = Math.max(0, Math.min(cap(soul), soul.hearts + delta));
 		state.setDirty();
 		apply(player);
 		return soul.hearts - before;
@@ -51,14 +56,14 @@ public final class Hearts {
 
 	public static void set(ServerPlayer player, int hearts) {
 		HellState.Soul soul = soul(player);
-		soul.hearts = Math.max(1, Math.min(HellConfig.get().maxHearts, hearts));
+		soul.hearts = Math.max(1, Math.min(cap(soul), hearts));
 		HellState.get(player.server).setDirty();
 		apply(player);
 	}
 
-	public static Component describe(String name, int hearts) {
+	public static Component describe(String name, HellState.Soul soul) {
 		return Component.literal(name + ": ").withStyle(ChatFormatting.GRAY)
-				.append(Component.literal("❤ " + hearts).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(" / " + HellConfig.get().maxHearts).withStyle(ChatFormatting.DARK_GRAY));
+				.append(Component.literal("❤ " + soul.hearts).withStyle(ChatFormatting.DARK_RED))
+				.append(Component.literal(" / " + cap(soul)).withStyle(ChatFormatting.DARK_GRAY));
 	}
 }

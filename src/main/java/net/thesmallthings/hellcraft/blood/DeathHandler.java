@@ -24,7 +24,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import net.thesmallthings.hellcraft.hazard.LuciferManager;
+import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -104,12 +104,12 @@ public final class DeathHandler {
 		if (killer == null) {
 			return;
 		}
+		if (LuciferManager.isLucifer(entity)) {
+			// the fight hands out its own rewards
+			return;
+		}
 		if (entity instanceof WitherBoss) {
-			boolean lucifer = LuciferManager.isLucifer(entity);
-			BloodItems.give(killer, BloodItems.heart(lucifer ? 3 : 1));
-			if (lucifer) {
-				LuciferManager.onDefeated(level.getServer(), killer);
-			}
+			BloodItems.give(killer, BloodItems.heart(1));
 			return;
 		}
 		if (entity instanceof Warden) {

@@ -60,7 +60,7 @@ public final class BloodEvents {
 	private static boolean consume(ServerPlayer player, ItemStack stack) {
 		HellConfig config = HellConfig.get();
 		if (BloodItems.isHeart(stack)) {
-			if (Hearts.soul(player).hearts >= config.maxHearts) {
+			if (Hearts.soul(player).hearts >= Hearts.cap(Hearts.soul(player))) {
 				player.displayClientMessage(Component.literal("Your veins can hold no more blood.").withStyle(ChatFormatting.RED), true);
 				return false;
 			}

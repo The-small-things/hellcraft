@@ -51,8 +51,16 @@ public class HellConfig {
 
 	// --- Lucifer
 	public boolean lucifer = true;
-	public int luciferCooldownMinutes = 60;
-	public double luciferHealth = 900;
+	/** Minutes before Lucifer can be fought again after he is defeated. */
+	public int luciferCooldownMinutes = 120;
+	/** Minutes before he returns after everyone in the arena died or fled. */
+	public int luciferRetryMinutes = 5;
+	/** Health of his first form (the fallen seraph). */
+	public double luciferAvatarHealth = 500;
+	/** Health of his true, three-faced form. */
+	public double luciferHealth = 600;
+	/** Extra heart capacity each player earns the first time they help defeat him. */
+	public int luciferMaxHeartBonus = 2;
 
 	public static HellConfig get() {
 		return instance;

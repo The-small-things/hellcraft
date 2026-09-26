@@ -46,16 +46,35 @@ rcon "forceload add 1715 1715"
 echo "Generating..."
 sleep 60
 rcon "forceload query" || true
+
+# Lucifer: run the whole fight against a dummy target in the pit
+rcon "summon minecraft:villager 4 -45 0 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b}"
+rcon "hellcraft lucifer summon"
+sleep 18
+for a in slash fangs wings hellfire; do rcon "hellcraft lucifer attack $a"; sleep 3; done
+rcon "hellcraft lucifer skip"   # -> enraged
+sleep 8
+rcon "hellcraft lucifer attack fangs"
+sleep 3
+rcon "hellcraft lucifer skip"   # -> true form
+sleep 10
+rcon "hellcraft lucifer skip"   # -> defeat
+sleep 16
 rcon "hellcraft ghosts"
 rcon "stop" || true
 sleep 15
 
 docker logs "$NAME" > "$LOG" 2>&1 || true
 echo "---- hellcraft log lines ----"
-grep -i 'hellcraft\|inferno\|Gate of Hell' "$LOG" || true
+grep -i 'hellcraft\|inferno\|Gate of Hell\|Lucifer\|Reliquary\|Arena' "$LOG" || true
 
 fail=0
 grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is the overworld an Inferno world?)"; fail=1; }
+for phase in INTRO DUEL ENRAGED TRUE_FORM DEFEAT DONE; do
+  grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
+done
+grep -q 'Reliquary placed' "$LOG" || { echo "No reliquary"; fail=1; }
+grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
 if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON' ; then
   echo "Errors found in server log"; fail=1
 fi

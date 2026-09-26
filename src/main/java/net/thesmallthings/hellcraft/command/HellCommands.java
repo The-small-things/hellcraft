@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -62,7 +63,7 @@ public final class HellCommands {
 										.executes(ctx -> {
 											ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
 											Hearts.set(p, IntegerArgumentType.getInteger(ctx, "hearts"));
-											ctx.getSource().sendSuccess(() -> Hearts.describe(p.getGameProfile().getName(), Hearts.soul(p).hearts), true);
+											ctx.getSource().sendSuccess(() -> Hearts.describe(p.getGameProfile().getName(), Hearts.soul(p)), true);
 											return 1;
 										}))))
 				.then(Commands.literal("giveheart")
@@ -83,6 +84,14 @@ public final class HellCommands {
 						.then(Commands.argument("zone", StringArgumentType.word())
 								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Zone.values()).map(Zone::id), builder))
 								.executes(HellCommands::gotoZone)))
+				.then(Commands.literal("lucifer")
+						.then(Commands.literal("summon").executes(HellCommands::summonLucifer))
+						.then(Commands.literal("skip").executes(ctx -> reply(ctx.getSource(), LuciferManager.skip())))
+						.then(Commands.literal("stop").executes(ctx -> reply(ctx.getSource(), LuciferManager.stop())))
+						.then(Commands.literal("attack")
+								.then(Commands.argument("attack", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "fangs", "wings", "hellfire"}, builder))
+										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
 				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
 				.then(Commands.literal("where").executes(ctx -> where(ctx.getSource())))
 				.then(Commands.literal("reload").executes(ctx -> {
@@ -94,7 +103,7 @@ public final class HellCommands {
 	}
 
 	private static int showHearts(CommandSourceStack source, ServerPlayer player) {
-		source.sendSuccess(() -> Hearts.describe(player.getGameProfile().getName(), Hearts.soul(player).hearts), false);
+		source.sendSuccess(() -> Hearts.describe(player.getGameProfile().getName(), Hearts.soul(player)), false);
 		return Hearts.soul(player).hearts;
 	}
 
@@ -161,6 +170,20 @@ public final class HellCommands {
 		int count = n;
 		source.sendSuccess(() -> Component.literal(count + " ghost(s) walk the earth."), false);
 		return n;
+	}
+
+	/** Brings the caller (if a player) to the edge of the pit and wakes Lucifer. */
+	private static int summonLucifer(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		CommandSourceStack source = ctx.getSource();
+		if (source.getEntity() instanceof ServerPlayer) {
+			teleportToSurface(source, 0, 18);
+		}
+		return reply(source, LuciferManager.start(source.getServer(), source.getEntity() == null));
+	}
+
+	private static int reply(CommandSourceStack source, String message) {
+		source.sendSuccess(() -> Component.literal(message), true);
+		return 1;
 	}
 
 	/** Test helper: jump to the surface of any zone of Hell. */

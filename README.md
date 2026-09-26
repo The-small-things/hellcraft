@@ -72,7 +72,7 @@ The world is a disc 12,000 blocks across, with the world border at radius 6000. 
 | Well of Giants | – | Nimrod, Ephialtes and Antaeus stand chained. | – |
 | **Treachery** | IX | Cocytus, a frozen lake of packed and blue ice. At the very centre is Lucifer's pit. | Freezing cold that gets worse toward the centre. Leather armor protects, as in vanilla. |
 
-At the bottom, a Wither named **Lucifer** wakes when someone reaches the pit (at most once per hour).
+At the bottom of the world waits **Lucifer** (see [below](#lucifer)).
 
 Some other rules of Hell:
 - It is always dusk, so monsters never burn.
@@ -88,7 +88,7 @@ Some other rules of Hell:
   - Dying to anything else costs a heart, and it drops as a **Blood Heart** where you fell, so you can go back for it.
 - **Blood Heart** (a glinting *fermented spider eye*). Right-click to gain a heart. `/withdraw [n]` turns your own hearts into Blood Hearts you can trade.
 - **Blood Fragment** (a named *red dye*). Hostile mobs killed by players drop fragments. The chance rises from 2% in the outer circles to about 12% in Cocytus. Right-click with 8 in one stack to clot them into a Blood Heart.
-- **Boss rewards.** The Wither gives 1 Blood Heart (Lucifer gives 3). The Warden gives 1 and the Ender Dragon gives 2.
+- **Boss rewards.** The Wither gives 1 Blood Heart, the Warden gives 1 and the Ender Dragon gives 2. Lucifer has his own rewards (below).
 
 ### Blood altars
 
@@ -99,6 +99,36 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 | Blood Heart | **Ward:** 30 minutes of immunity to every circle's torment, plus Regeneration and Absorption |
 | Sneak + Blood Heart | **Bind:** you respawn at this altar (the only way to move your spawn, since beds explode) |
 | Name tag with a ghost's name + 4 Blood Hearts in your inventory | **Revive** that ghost here with 3 hearts |
+
+## Lucifer
+
+*"Another soul crawls to the bottom of the world."*
+
+Walk into the pit at the centre of Judecca and the ice closes behind you. This is a scripted, three-phase fight with spoken dialogue, inspired by ULTRAKILL's 3-2:
+
+1. **The Fallen Seraph.** Lucifer is a towering, sword-wielding fallen angel who taunts you and fights like a duelist:
+   - he teleports behind you
+   - he sends lines of judgement fangs across the ice
+   - his wings blast the pit with freezing wind
+   - he calls hellfire down wherever flames mark the ground
+
+   Every attack is telegraphed, so watch for it and dodge.
+2. **The Morning Star.** At half health he snaps. He gets faster, glows, chains his attacks together, and raises the three great traitors he chews on for eternity to fight beside him.
+3. **The Three-Faced Emperor.** Break his seraph form and he reveals his true face.
+
+**Rewards** (every player who fought):
+- 2 Blood Hearts each.
+- **Lucifer's Bane** the first time you win: your personal heart cap rises by 2, permanently.
+- A **reliquary** chest at the bottom of the pit. The first victory on a server holds:
+  - *Wings of the Morning Star* (Elytra)
+  - *Morning Star*, a netherite sword with Sharpness V, Fire Aspect II, Looting III, Unbreaking III and Mending
+  - 2 Totems of Undying, 2 Enchanted Golden Apples and 4 Blood Hearts
+
+  Later victories still leave a totem, a golden apple and Blood Hearts.
+
+He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns and the heart bonus are all in the config.
+
+Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
 
 ## Hell is full
 
@@ -119,6 +149,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
 | `/hellcraft ghosts` | op | List ghosts |
 | `/hellcraft goto <zone>` / `gate` | op | Teleport to a zone / the Gate (testing) |
+| `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
+| `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |
 
@@ -132,7 +164,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - the ghost tether radius
 - ward length
 - toggles for hazards, titles and revenants
-- Lucifer's health and cooldown
+- Lucifer's health (both forms), cooldowns and the heart-cap bonus
 
 ## Development
 

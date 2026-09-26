@@ -28,6 +28,9 @@ public class HellState extends SavedData {
 
 	private final Map<UUID, Soul> souls = new HashMap<>();
 	public boolean landmarksBuilt;
+	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
+	public boolean arenaSealed;
+	public int luciferDefeats;
 	@Nullable
 	public UUID luciferId;
 	public long luciferNextSpawn;
@@ -49,6 +52,9 @@ public class HellState extends SavedData {
 		@Nullable
 		public GlobalSpot reviveAt;
 		public long wardUntil;
+		/** Extra heart capacity earned (Lucifer's Bane). */
+		public int maxBonus;
+		public boolean slewLucifer;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -119,6 +125,8 @@ public class HellState extends SavedData {
 			st.putInt("hearts", s.hearts);
 			st.putBoolean("ghost", s.ghost);
 			st.putLong("ward", s.wardUntil);
+			st.putInt("maxBonus", s.maxBonus);
+			st.putBoolean("slewLucifer", s.slewLucifer);
 			if (s.deathSpot != null) {
 				st.put("death", s.deathSpot.save());
 			}
@@ -132,6 +140,8 @@ public class HellState extends SavedData {
 		}
 		tag.put("souls", list);
 		tag.putBoolean("landmarks", landmarksBuilt);
+		tag.putBoolean("arenaSealed", arenaSealed);
+		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
 			tag.putUUID("lucifer", luciferId);
 		}
@@ -149,12 +159,16 @@ public class HellState extends SavedData {
 			s.hearts = st.getInt("hearts");
 			s.ghost = st.getBoolean("ghost");
 			s.wardUntil = st.getLong("ward");
+			s.maxBonus = st.getInt("maxBonus");
+			s.slewLucifer = st.getBoolean("slewLucifer");
 			s.deathSpot = GlobalSpot.load(st, "death");
 			s.altar = GlobalSpot.load(st, "altar");
 			s.reviveAt = GlobalSpot.load(st, "revive");
 			state.souls.put(st.getUUID("id"), s);
 		}
 		state.landmarksBuilt = tag.getBoolean("landmarks");
+		state.arenaSealed = tag.getBoolean("arenaSealed");
+		state.luciferDefeats = tag.getInt("luciferDefeats");
 		if (tag.hasUUID("lucifer")) {
 			state.luciferId = tag.getUUID("lucifer");
 		}
