@@ -1,43 +1,26 @@
-find \.(EntityTypes|Items|Blocks|ItemTags|DensitySampler|BiomeResolver|TeleportTransition|PermissionLevel|ServerEntityGetter|EntityGetter|ProblemReporter|WorldClock|ClockManager|ServerClockManager|LevelData|ServerLevelData|NameAndId|GameProfile)(\$[A-Za-z]+)?$
-find densityfunction\.
-net.minecraft.world.level.levelgen.densityfunction.DensityFunction
-net.minecraft.world.level.levelgen.densityfunction.DensityFunction$FunctionContext
-net.minecraft.world.level.levelgen.densityfunction.DensityFunction$SimpleFunction
-net.minecraft.world.level.levelgen.densityfunction.DensityFunction$Visitor
-net.minecraft.world.level.levelgen.densityfunction.DensityFunction$ContextProvider
-net.minecraft.world.level.levelgen.densityfunction.DensityFunctions (public static)
-net.minecraft.world.level.biome.BiomeResolver
-net.minecraft.world.entity.EntityType (public static final EntityType<.*(ZOMBIE|HUSK|STRAY|DROWNED|GIANT|WITHER|LIGHTNING|SKELETON)[A-Z_]*;)
-EntityTypes (public static final EntityType<.*(ZOMBIE|HUSK|STRAY|DROWNED|GIANT|WITHER|LIGHTNING|SKELETON)[A-Z_]*;)
-net.minecraft.world.item.Items (DYE|CHAIN|TOTEM|GOLDEN_APPLE|PLAYER_HEAD|NETHER_STAR)
-net.minecraft.world.level.block.Blocks (CHAIN|SOUL_LANTERN|LANTERN)
-net.minecraft.world.level.block.entity.SignText (public)
-net.minecraft.server.permissions.PermissionSet (public)
-net.minecraft.server.permissions.Permissions (public)
-net.minecraft.server.permissions.PermissionLevel
-net.minecraft.server.permissions.LevelBasedPermissionSet (public)
-net.minecraft.world.level.entity.EntityGetter (UUID|getEntity)
-net.minecraft.world.level.ServerEntityGetter (UUID|getEntity)
-net.minecraft.world.level.storage.LevelData$RespawnData (public)
-net.minecraft.world.entity.player.Player (displayClientMessage|playNotifySound|getGameProfile|sendOverlay|getInventory|drop|isCreative|isSpectator|getAbilities|nameAndId|getName|playSound|sendSystem)
-net.minecraft.world.entity.LivingEntity (drop|knockback|swing|playSound|getEntityData|setInvulnerable|isInvulnerable)
-net.minecraft.world.entity.Entity (setInvulnerable|isInvulnerable|getTags|entityTags|getServer|hurtMarked|markHurt|setDeltaMovement|getDeltaMovement|playSound|getName|getDisplayName)
-net.minecraft.network.chat.ClickEvent$RunCommand
-net.minecraft.network.chat.ClickEvent$SuggestCommand
-net.minecraft.network.chat.HoverEvent$ShowText
-net.minecraft.world.inventory.ContainerInput
-net.minecraft.world.entity.item.ItemEntity (ItemEntity\()
-net.minecraft.world.entity.LightningBolt (public)
-com.mojang.authlib.GameProfile
-net.minecraft.util.ProblemReporter (public static|DISCARDING)
-net.minecraft.server.level.ServerLevel (Time|time|Clock|clock|setDayTime|getDayTime|getGameTime)
-net.minecraft.world.level.Level (Time|time|Clock|clock|getDayTime|getGameTime)
-net.minecraft.world.entity.TeleportTransition (public)
-net.minecraft.server.MinecraftServer (clock|Clock|time|Time|getProfile|getGameRules|worldData|getWorldData|registries)
-net.minecraft.core.UUIDUtil (public static final)
-net.minecraft.core.BlockPos (CODEC)
-net.minecraft.server.level.ServerPlayer (getServer|server|displayClientMessage|nameAndId|getGameProfile|getName)
-net.minecraft.world.entity.projectile.EvokerFangs
-net.minecraft.world.damagesource.DamageSources (magic|generic|playerAttack|mobAttack|wither|indirectMagic|outOfBorder|fellOutOfWorld|genericKill)
-net.minecraft.world.entity.player.Inventory (public)
-net.minecraft.world.level.gamerules.GameRule (public)
+SimpleDensityFunction
+DensitySampler
+DensitySampler$Bound
+DensityFunction$CompileContext
+DfRewriteRule
+ConstantFunction
+ConstantFunction$Sampler
+EndIslandFunction
+EndIslandFunction$Sampler
+SamplerContext
+DensityVolume
+find \.(Interval|SwingAnimation|ColorCollection|TeleportTransition|ServerEntityGetter|ClientboundSetEntityMotionPacket|ClientboundSoundPacket)$
+Interval (public)
+ClockManager
+ServerClockManager (public)
+ServerClockManager$ServerClockInstance
+WorldClock
+ColorCollection (public)
+SwingAnimation
+EntityTypes (ZOMBIE|HUSK|STRAY|DROWNED|GIANT|WITHER|LIGHTNING|SKELETON)
+ServerEntityGetter
+ClientboundSetEntityMotionPacket (ClientboundSetEntityMotionPacket\()
+ClientboundSoundPacket (ClientboundSoundPacket\()
+SoundEvents (WITHER_AMBIENT|ENDERMAN_AMBIENT|ELDER_GUARDIAN_CURSE|UI_TOAST_CHALLENGE_COMPLETE|RESPAWN_ANCHOR|WITHER_SPAWN|BEACON|SOUL_ESCAPE|TOTEM|GENERIC_DRINK|LIGHTNING|PLAYER_LEVELUP|ANVIL)
+SoundEvent (public)
+Relative (public static)
