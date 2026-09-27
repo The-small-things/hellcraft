@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
 
@@ -97,8 +98,13 @@ public final class BloodEvents {
 	}
 
 	private static void onJoin(ServerPlayer player) {
+		boolean firstJoin = HellState.get(player.level().getServer()).existing(player.getUUID()) == null;
 		HellState.Soul soul = Hearts.soul(player);
 		Hearts.apply(player);
+		if (firstJoin) {
+			// something to eat on the long walk down
+			BloodItems.give(player, new ItemStack(Items.BREAD, 5));
+		}
 		if (soul.reviveAt != null) {
 			Ghosts.finishRevive(player, soul, soul.reviveAt);
 			return;

@@ -85,6 +85,8 @@ Some other rules of Hell:
 
 ## Blood is fuel
 
+New players start with 5 bread (26.3).
+
 - **Hearts.** You start with 10 hearts and can hold up to 20.
   - Killing a player steals one of their hearts.
   - Dying to anything else costs a heart, and it drops as a **Blood Heart** where you fell, so you can go back for it.
