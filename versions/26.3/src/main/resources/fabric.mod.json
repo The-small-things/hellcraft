@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "hellcraft",
+	"version": "${version}",
+	"name": "Hellcraft",
+	"description": "The overworld becomes Dante's Inferno: nine circles terracing down to frozen Cocytus. Lifesteal where blood is fuel, and hell is full. Server-side only; vanilla clients can join.",
+	"authors": [
+		"the-small-things"
+	],
+	"contact": {
+		"sources": "https://github.com/the-small-things/hellcraft"
+	},
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.thesmallthings.hellcraft.HellcraftMod"
+		]
+	},
+	"mixins": [
+		"hellcraft.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

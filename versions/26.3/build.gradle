@@ -1,0 +1,79 @@
+// Hellcraft for Minecraft 26.3. The version-independent code (the Inferno's geometry, circles and zones,
+// the Ogg reader) and its tests live in the 1.21.1 project at the repository root and are shared from there.
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+version = "${project.mod_version}+26.3"
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	mavenCentral()
+}
+
+def root = rootDir.toPath().resolve('../..').normalize().toFile()
+def commonClasses = [
+		'net/thesmallthings/hellcraft/music/OggLength.java',
+		'net/thesmallthings/hellcraft/world/Circle.java',
+		'net/thesmallthings/hellcraft/world/InfernoGeometry.java',
+		'net/thesmallthings/hellcraft/world/Zone.java',
+]
+
+def syncCommon = tasks.register('syncCommon', Sync) {
+	from(new File(root, 'src/main/java')) {
+		include commonClasses
+	}
+	into layout.buildDirectory.dir('generated/common/java')
+}
+def syncCommonTests = tasks.register('syncCommonTests', Sync) {
+	from new File(root, 'src/test/java')
+	into layout.buildDirectory.dir('generated/common/test')
+}
+
+sourceSets {
+	main.java.srcDir(syncCommon)
+	test.java.srcDir(syncCommonTests)
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	testImplementation platform("org.junit:junit-bom:5.11.4")
+	testImplementation "org.junit.jupiter:junit-jupiter"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+	it.options.compilerArgs += ['-Xmaxerrs', '5000']
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+test {
+	useJUnitPlatform()
+}
+
+jar {
+	from(new File(root, 'LICENSE')) {
+		rename { "${it}_${project.archives_base_name}" }
+	}
+}

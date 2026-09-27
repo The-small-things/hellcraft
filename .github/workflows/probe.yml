@@ -1,0 +1,22 @@
+name: probe-26.3
+
+# Temporary porting aid: prints Minecraft 26.3 class signatures listed in versions/26.3/tools/probe.txt.
+on:
+  push:
+    paths:
+      - versions/26.3/tools/probe.txt
+      - .github/workflows/probe.yml
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Probe
+        run: bash versions/26.3/tools/probe.sh

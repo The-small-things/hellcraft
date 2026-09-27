@@ -1,0 +1,78 @@
+find (Identifier|ResourceLocation)$
+find \.(WitherSkeleton|SkeletonHorse|Giant|Warden|WitherBoss|EnderDragon|EvokerFangs|Skeleton|LightningBolt|ItemEntity|Monster|Enemy|Mob|MobCategory)$
+find \.(GameRules|GameRule|SavedData|SavedDataType|TagValueInput|ValueInput|ClickType|ContainerInput|InteractionResultHolder|EntitySpawnReason|Relative|PermissionSet|Permissions|LevelBasedPermissionSet)$
+find \.(DensityFunction|DensityFunctions|KeyDispatchDataCodec|BiomeSource|Climate|Feature|FeaturePlaceContext|NoneFeatureConfiguration|BlockStateConfiguration|RotationSegment|StandingSignBlock|SignText|SignBlockEntity|WorldBorder|ResolvableProfile|JukeboxSong|RandomizableContainer)$
+net.minecraft.world.level.levelgen.DensityFunction
+net.minecraft.world.level.levelgen.DensityFunction$FunctionContext
+net.minecraft.world.level.levelgen.DensityFunction$SimpleFunction
+net.minecraft.world.level.levelgen.DensityFunction$Visitor
+net.minecraft.world.level.levelgen.DensityFunction$ContextProvider
+net.minecraft.world.level.levelgen.DensityFunction$NoiseHolder
+net.minecraft.world.level.biome.BiomeSource
+net.minecraft.world.level.levelgen.feature.Feature (place|Feature\(|CODEC|setBlock)
+net.minecraft.world.level.levelgen.feature.FeaturePlaceContext
+SavedData
+SavedDataType
+GameRules (public static|set|get)
+net.minecraft.nbt.CompoundTag (public)
+net.minecraft.nbt.ListTag (public)
+net.minecraft.nbt.NbtUtils (public static)
+net.minecraft.server.level.ServerPlayer (teleport|level|getServer|setGameMode|displayClientMessage|sendSystemMessage|sendOverlay|hurt|connection|gameMode|getRespawn|setRespawn|isSpectator|isCreative|restoreFrom|getInventory|openMenu|server|serverLevel|getStats)
+net.minecraft.world.entity.Entity (level\(|getServer|hurt|teleport|getTags|addTag|entityTags|removeTag|discard|getUUID|setPos|moveTo|snapTo|kill|isAlive|getX\(|position\(|blockPosition|setCustomName|setGlowing|setNoGravity|setInvulnerable|setSilent|getBoundingBox|distanceTo|push|hurtMarked|igniteForSeconds|setRemainingFireTicks|canFreeze|setTicksFrozen|getTicksRequiredToFreeze|getTicksFrozen|isInWater|registryAccess|damageSources|getType|spawnAtLocation|lookAt|setYRot|setXRot|getYRot|save|load)
+net.minecraft.world.entity.LivingEntity (getAttribute|setHealth|getHealth|getMaxHealth|addEffect|hasEffect|removeEffect|setItemSlot|getItemBySlot|isDeadOrDying|hurt|heal|setDropChance|getLastHurtByMob|getKillCredit|die|swing|getMainHandItem|setAbsorption|getAbsorption)
+net.minecraft.world.entity.Mob (setPersistenceRequired|setTarget|getTarget|finalizeSpawn|setNoAi|setDropChance|setLeftHanded|getNavigation|setCanPickUpLoot|setGuaranteedDrop)
+net.minecraft.world.entity.EntityType (create|spawn|public .* [A-Z_]+;)
+net.minecraft.world.entity.boss.wither.WitherBoss (public)
+net.minecraft.server.level.ServerLevel (getEntity|setChunkForced|getWorldBorder|getGameRules|sendParticles|getDataStorage|getSharedSpawn|setDefaultSpawn|setRespawnData|getRespawnData|getChunkSource|playSound|addFreshEntity|explode|getSeed|getServer|getEntities|getPlayers|registryAccess|getMinY|getMaxY|getHeight|getMinBuildHeight|isLoaded|getGameTime|getDayTime|dimension|players|lightning|getRandom|random)
+net.minecraft.world.level.Level (getMinY|getMaxY|getMinBuildHeight|getMaxBuildHeight|getHeight|explode|getBlockState|setBlock|getGameTime|random|playSound|getEntitiesOfClass|getEntities|isClientSide|registryAccess|getServer|dimension)
+net.minecraft.world.level.LevelHeightAccessor
+net.minecraft.world.level.border.WorldBorder (public)
+net.minecraft.world.level.block.entity.SignBlockEntity (public)
+net.minecraft.world.level.block.entity.BlockEntity (load|save|setChanged|Components|ValueInput)
+TagValueInput (public)
+net.minecraft.world.inventory.AbstractContainerMenu (clicked|quickMoveStack|stillValid|removed)
+net.minecraft.world.inventory.ChestMenu (public)
+net.minecraft.network.chat.ClickEvent
+net.minecraft.network.chat.HoverEvent
+net.minecraft.network.chat.Style (with)
+net.minecraft.world.item.component.ResolvableProfile (public)
+net.minecraft.world.item.component.CustomData (public)
+net.minecraft.world.item.ItemStack (public [^s].*(set|get|is|copy|enchant|split|shrink|grow|getCount|has|remove|of|EMPTY))
+net.minecraft.core.component.DataComponents (public static)
+net.minecraft.world.effect.MobEffects (public static)
+net.minecraft.world.entity.ai.attributes.Attributes (public static)
+net.minecraft.world.entity.ai.attributes.AttributeInstance (public)
+net.minecraft.world.entity.ai.attributes.AttributeModifier (public)
+net.minecraft.core.particles.DustParticleOptions (public)
+net.minecraft.commands.CommandSourceStack (public)
+net.minecraft.commands.Commands (public static)
+net.minecraft.server.MinecraftServer (getPlayerList|overworld|getLevel|getWorldPath|getGameRules|registryAccess|execute|getTickCount|getServerDirectory|getCommands|isDedicatedServer|getProfileCache|services|getSingleplayerProfile)
+net.minecraft.server.players.PlayerList (public)
+net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket
+net.minecraft.network.protocol.common.ServerboundResourcePackPacket
+net.minecraft.server.network.ServerCommonPacketListenerImpl (handleResourcePack|send|player)
+net.minecraft.network.protocol.game.ClientboundSoundEntityPacket (<init>|ClientboundSoundEntityPacket\()
+net.minecraft.network.protocol.game.ClientboundStopSoundPacket (ClientboundStopSoundPacket\()
+net.minecraft.world.entity.MobCategory (public|getMax)
+net.minecraft.world.InteractionResult (public static)
+net.minecraft.world.level.block.RotationSegment
+net.minecraft.world.level.block.state.properties.RotationSegment
+net.minecraft.world.level.WorldGenLevel
+net.minecraft.world.level.LevelWriter
+net.minecraft.world.level.biome.Climate$Sampler
+net.minecraft.world.level.biome.Climate (public static)
+net.minecraft.core.Registry (public|static)
+net.minecraft.core.registries.BuiltInRegistries (DENSITY|BIOME_SOURCE|FEATURE|SOUND|ITEM|ENTITY|MATERIAL)
+net.minecraft.core.HolderLookup$Provider
+net.minecraft.core.HolderGetter
+net.minecraft.world.level.storage.loot.LootTable (public static)
+net.minecraft.world.RandomizableContainer (static)
+net.minecraft.world.item.enchantment.Enchantments (public static)
+net.minecraft.world.item.JukeboxSong (public)
+net.minecraft.world.entity.projectile.EvokerFangs (public)
+EvokerFangs (EvokerFangs\()
+net.minecraft.server.level.ServerBossEvent (public)
+net.minecraft.world.BossEvent (public)
+net.minecraft.world.level.block.ChestBlock (public)
+net.minecraft.world.level.levelgen.Heightmap$Types
+net.minecraft.world.entity.item.ItemEntity (public)
