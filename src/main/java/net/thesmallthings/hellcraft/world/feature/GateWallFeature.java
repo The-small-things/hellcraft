@@ -2,6 +2,8 @@ package net.thesmallthings.hellcraft.world.feature;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
@@ -85,7 +88,12 @@ public class GateWallFeature extends Feature<NoneFeatureConfiguration> {
 		for (int k = 0; k < InfernoGeometry.GATE_COUNT; k++) {
 			int[] spot = InfernoGeometry.gateSignSpot(k);
 			if (spot[0] >> 4 == x0 >> 4 && spot[1] >> 4 == z0 >> 4) {
-				placeInscription(level, spot[0], spot[1], InfernoGeometry.gateAngle(k));
+				try {
+					placeInscription(level, spot[0], spot[1], InfernoGeometry.gateAngle(k));
+				} catch (RuntimeException e) {
+					// decoration must never break chunk generation
+					HellcraftMod.LOGGER.warn("Could not place the inscription at gate {}", k, e);
+				}
 			}
 		}
 		return placed;
@@ -136,8 +144,12 @@ public class GateWallFeature extends Feature<NoneFeatureConfiguration> {
 					.setMessage(3, Component.literal("ye who enter here"))
 					.setColor(DyeColor.RED)
 					.setHasGlowingText(true);
-			sign.setText(text, true);
-			sign.setWaxed(true);
+			// SignBlockEntity.setText()/setWaxed() notify the world, which doesn't exist yet during worldgen:
+			// load the text as saved data instead
+			CompoundTag tag = new CompoundTag();
+			tag.put("front_text", SignText.DIRECT_CODEC.encodeStart(NbtOps.INSTANCE, text).getOrThrow());
+			tag.putBoolean("is_waxed", true);
+			sign.loadWithComponents(tag, level.registryAccess());
 		}
 		for (int side = -1; side <= 1; side += 2) {
 			double tx = -Math.sin(angle) * side * 2;

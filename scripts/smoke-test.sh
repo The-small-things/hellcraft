@@ -44,7 +44,21 @@ for i in $(seq 1 180); do
 done
 [ "$started" = 1 ] || { tail -150 "$LOG"; echo "Server did not start in time"; exit 1; }
 
-rcon() { docker exec "$NAME" rcon-cli "$@"; }
+# rcon that fails fast (with a thread dump and the log tail) if the server's main thread stops answering
+rcon() {
+  local out
+  if ! out=$(timeout 60 docker exec "$NAME" rcon-cli "$@" 2>&1) || echo "$out" | grep -q "i/o timeout"; then
+    if echo "$out" | grep -q "i/o timeout" || [ -z "$out" ]; then
+      echo "RCON did not answer '$*' - the server thread is stuck. Thread dump:"
+      docker exec "$NAME" sh -c 'kill -3 $(pgrep -f "java" | head -1)' || true
+      sleep 3
+      docker logs "$NAME" 2>&1 | grep -A40 '"Server thread"' | head -80 || true
+      docker logs "$NAME" 2>&1 | grep -v "^\s" | tail -60
+      exit 1
+    fi
+  fi
+  echo "$out"
+}
 
 rcon "hellcraft where"
 rcon "hellcraft givebane nobody" || true  # needs a player; checks the command is registered
