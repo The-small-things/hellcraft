@@ -26,6 +26,7 @@ docker run -d --name "$NAME" \
   -e LEVEL_TYPE=hellcraft:inferno \
   -e ONLINE_MODE=FALSE -e MEMORY=3G -e ENABLE_RCON=true -e RCON_PASSWORD=smoketest \
   -e VIEW_DISTANCE=4 -e SIMULATION_DISTANCE=4 \
+  -e PAUSE_WHEN_EMPTY_SECONDS=0 \
   -v "$MODS_DIR":/mods:ro \
   -v "$CONFIG_DIR":/config:ro \
   -p 25566:25566 \
