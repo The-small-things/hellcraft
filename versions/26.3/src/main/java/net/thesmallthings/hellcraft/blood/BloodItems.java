@@ -12,6 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
+import net.thesmallthings.hellcraft.HellcraftMod;
 
 import java.util.List;
 
@@ -43,7 +44,6 @@ public final class BloodItems {
 				Component.literal("A heart torn from the living.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
 				Component.literal("Right-click to take it as your own.").withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)),
 				Component.literal("Offer it at a blood altar for its rites.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
-		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 		stack.set(DataComponents.RARITY, Rarity.EPIC);
 		return stack;
 	}
@@ -76,6 +76,13 @@ public final class BloodItems {
 		CompoundTag tag = new CompoundTag();
 		tag.putString(KEY, kind);
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+		// drawn by the Hellcraft resource pack; the base item still shows without it
+		String model = switch (kind) {
+			case HEART -> "blood_heart";
+			case FRAGMENT -> "blood_fragment";
+			default -> "lucifers_bane";
+		};
+		stack.set(DataComponents.ITEM_MODEL, HellcraftMod.id(model));
 	}
 
 	private static String kind(ItemStack stack) {
@@ -131,6 +138,35 @@ public final class BloodItems {
 			}
 		}
 		return amount - left;
+	}
+
+	/** Counts Blood Fragments across a player's inventory. */
+	public static int countFragments(Player player) {
+		int total = 0;
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack s = player.getInventory().getItem(i);
+			if (isFragment(s)) {
+				total += s.getCount();
+			}
+		}
+		return total;
+	}
+
+	/** Takes exactly {@code amount} Blood Fragments, or none at all if the player has fewer. */
+	public static boolean takeFragments(Player player, int amount) {
+		if (countFragments(player) < amount) {
+			return false;
+		}
+		int left = amount;
+		for (int i = 0; i < player.getInventory().getContainerSize() && left > 0; i++) {
+			ItemStack s = player.getInventory().getItem(i);
+			if (isFragment(s)) {
+				int take = Math.min(left, s.getCount());
+				s.shrink(take);
+				left -= take;
+			}
+		}
+		return true;
 	}
 
 	/** Gives items to a player, dropping whatever doesn't fit at their feet. */

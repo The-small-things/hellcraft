@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": "minecraft:diamond_axe",
+    "H": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:fermented_spider_eye",
+      "nbt": "{hellcraft:\"heart\"}"
+    }
+  },
+  "pattern": [
+    "H H",
+    " S "
+  ],
+  "result": {
+    "id": "minecraft:diamond_axe",
+    "components": {
+      "minecraft:custom_data": {
+        "hellcraft": "weapon",
+        "weapon": "tithe_axe"
+      },
+      "minecraft:item_model": "hellcraft:tithe_axe",
+      "minecraft:item_name": {
+        "text": "Tithe Axe",
+        "color": "dark_red",
+        "bold": true
+      },
+      "minecraft:lore": [
+        {
+          "text": "Right-click: pay 3 Blood Fragments for a Blood Frenzy",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "(Strength and Speed for 15 s).",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath: Strength III, Speed II, Resistance, hits heal 1\u2764.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.",
+          "color": "red",
+          "italic": false
+        }
+      ],
+      "minecraft:rarity": "epic"
+    }
+  }
+}

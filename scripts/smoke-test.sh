@@ -79,9 +79,21 @@ if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   unzip -l music-pack.zip | grep -q 'assets/hellcraft/sounds.json' || { echo "Pack has no sounds.json"; exit 1; }
   unzip -l music-pack.zip | grep -q 'assets/hellcraft/sounds/music/duel.ogg' || { echo "Pack has no track"; exit 1; }
   unzip -p music-pack.zip assets/hellcraft/sounds.json
+  if [ "$MC_VERSION" != "1.21.1" ]; then
+    for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
+             assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/entity/lucifer_emperor.png \
+             assets/hellcraft/textures/item/tithe_axe.png; do
+      unzip -l music-pack.zip | grep -q "$f" || { echo "Resource pack is missing $f"; exit 1; }
+    done
+  fi
   curl -s -o /dev/null -w '%{http_code}' http://localhost:25566/anything-else | grep -q 404 || { echo "Web server serves more than the pack"; exit 1; }
 fi
 rcon "hellcraft goto judecca" || true  # needs a player; checks the command is registered
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  weapon=$(rcon "hellcraft giveweapon nobody bloodletter" || true)
+  echo "$weapon"
+  echo "$weapon" | grep -qi "unknown or incomplete command" && { echo "/hellcraft giveweapon is not registered"; exit 1; }
+fi
 rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
 rcon "locate structure minecraft:stronghold" || true
@@ -109,6 +121,11 @@ status=$(rcon "hellcraft lucifer status")
 echo "$status"
 echo "$status" | grep -q "phase=DUEL" || { echo "Fight advanced on its own after the chunks were unloaded"; exit 1; }
 echo "$status" | grep -q "avatar=present" || { echo "Lucifer went missing after the chunks were unloaded"; exit 1; }
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_lucifer_model]" || true)
+  echo "Lucifer's model in the duel: $shown"
+  echo "$shown" | grep -q "Test passed" || { echo "Lucifer has no model in the duel"; exit 1; }
+fi
 for a in slash fangs wings hellfire; do rcon "hellcraft lucifer attack $a"; sleep 3; done
 rcon "hellcraft lucifer skip"   # -> enraged
 sleep 8
@@ -116,6 +133,11 @@ rcon "hellcraft lucifer attack fangs"
 sleep 3
 rcon "hellcraft lucifer skip"   # -> true form
 sleep 10
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_lucifer_model]" || true)
+  echo "Lucifer's model in his true form: $shown"
+  echo "$shown" | grep -q "Test passed" || { echo "Lucifer has no model in his true form"; exit 1; }
+fi
 rcon "hellcraft lucifer skip"   # -> defeat
 sleep 16
 leftover=$(rcon "execute if entity @e[tag=hellcraft_lucifer]" || true)
@@ -140,6 +162,9 @@ if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   grep -q 'Music pack ready: 1 track' "$LOG" || { echo "Music pack was not built"; fail=1; }
 fi
 grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
+fi
 if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON' ; then
   echo "Errors found in server log"; fail=1
 fi

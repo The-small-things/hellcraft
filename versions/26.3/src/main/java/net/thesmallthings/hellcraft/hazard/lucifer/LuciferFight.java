@@ -71,6 +71,7 @@ public final class LuciferFight {
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final List<UUID> traitors = new ArrayList<>();
 	private final LuciferMusic music;
+	private final LuciferModel model;
 	/** Returning champions in this round; each one makes Lucifer harder for everyone. */
 	private final List<String> veterans = new ArrayList<>();
 	private boolean traitorsRaised;
@@ -96,6 +97,7 @@ public final class LuciferFight {
 		this.debug = debug;
 		this.floorY = LuciferArena.floorY(level);
 		this.music = new LuciferMusic(level);
+		this.model = new LuciferModel(level);
 		bar.setDarkenScreen(true);
 		bar.setCreateWorldFog(true);
 		bar.setProgress(1.0f);
@@ -201,7 +203,9 @@ public final class LuciferFight {
 			LuciferArena.forceLoad(level, true);
 		}
 		updateBar();
-		music.tick(LuciferDialogue.audience(level, AUDIENCE_RADIUS), tick);
+		List<ServerPlayer> watching = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
+		music.tick(watching, tick);
+		model.tick(watching);
 		switch (phase) {
 			case INTRO -> {
 				Mob avatar = avatar();
@@ -637,6 +641,7 @@ public final class LuciferFight {
 			avatar.setDropChance(slot, 0.0f);
 		}
 		level.addFreshEntity(avatar);
+		model.attach(avatar, "lucifer_morning_star", Math.max(avatar.getBbHeight(), 5.6f));
 		return avatar;
 	}
 
@@ -676,6 +681,7 @@ public final class LuciferFight {
 		wither.makeInvulnerable();
 		wither.setCustomName(Component.literal("Lucifer, Three-Faced Emperor").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		level.addFreshEntity(wither);
+		model.attach(wither, "lucifer_emperor", Math.max(4.0f, wither.getBbHeight() * 1.2f));
 		return wither;
 	}
 
@@ -698,6 +704,7 @@ public final class LuciferFight {
 			}
 		}
 		traitors.clear();
+		model.clear();
 		discardStrays();
 		LuciferArena.unseal(level);
 		LuciferArena.forceLoad(level, false);
@@ -714,7 +721,7 @@ public final class LuciferFight {
 
 	/** True if this entity is one of the fight's own bodies (anything else tagged as Lucifer is a stray). */
 	boolean owns(UUID id) {
-		return id.equals(avatarId) || id.equals(witherId) || traitors.contains(id);
+		return id.equals(avatarId) || id.equals(witherId) || traitors.contains(id) || model.owns(id);
 	}
 
 	String status() {

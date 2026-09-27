@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.Identifier;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
+import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
@@ -37,6 +38,7 @@ public class HellcraftMod implements ModInitializer {
 		HellConfig.load();
 		HellWorldgen.register();
 		BloodEvents.register();
+		HellWeapons.register();
 		CircleHazards.register();
 		LuciferManager.register();
 		LuciferRewards.register();

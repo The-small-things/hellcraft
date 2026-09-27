@@ -68,13 +68,20 @@ public class HellConfig {
 	/** Most returning champions that can stack difficulty. */
 	public int luciferMaxVeteranTiers = 4;
 
-	// --- Boss music (see README: drop duel.ogg / enraged.ogg / true_form.ogg into config/hellcraft/music/)
-	/** Port of the built-in web server that hands the music resource pack to players. */
+	// --- The Hellcraft resource pack (models, textures, boss music; see README "Resource pack")
+	/** Players must accept the pack to join (Lucifer's model and the hell weapons need it). */
+	public boolean resourcePackRequired = true;
+	/** Port of the built-in web server that hands the resource pack to players. */
 	public int musicPackPort = 25566;
-	/** Public address players use to reach this server (e.g. play.example.com). Required on dedicated servers. */
+	/** Public address players use to reach this server (e.g. play.example.com). Required on dedicated servers
+	 * (or set the HELLCRAFT_PACK_HOST environment variable). */
 	public String musicPackHost = "";
 	/** Or: a full URL where you host the pack yourself (overrides host/port and the built-in web server). */
 	public String musicPackUrl = "";
+	/** Show Lucifer as his own model (the invisible boss carries it). Off: the old vanilla look. */
+	public boolean luciferModels = true;
+	/** Degrees added to the model's facing, if it ever looks the wrong way in-game. */
+	public float luciferModelYawOffset = 0.0f;
 	/** Vanilla music discs used for players without the pack (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";

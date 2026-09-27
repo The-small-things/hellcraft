@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": "minecraft:iron_sword",
+    "H": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:fermented_spider_eye",
+      "nbt": "{hellcraft:\"heart\"}"
+    },
+    "F": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:red_dye",
+      "nbt": "{hellcraft:\"fragment\"}"
+    }
+  },
+  "pattern": [
+    "FHF",
+    " S "
+  ],
+  "result": {
+    "id": "minecraft:iron_sword",
+    "components": {
+      "minecraft:custom_data": {
+        "hellcraft": "weapon",
+        "weapon": "bloodletter"
+      },
+      "minecraft:item_model": "hellcraft:bloodletter",
+      "minecraft:item_name": {
+        "text": "Bloodletter",
+        "color": "dark_red",
+        "bold": true
+      },
+      "minecraft:lore": [
+        {
+          "text": "Each hit spends 1 Blood Fragment: +4 damage and bleeding.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath: +10 damage, deep bleeding, each hit heals 1\u2764.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.",
+          "color": "red",
+          "italic": false
+        }
+      ],
+      "minecraft:rarity": "rare"
+    }
+  }
+}

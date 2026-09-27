@@ -112,7 +112,8 @@
                     "italic": false
                   }
                 ],
-                "minecraft:rarity": "uncommon"
+                "minecraft:rarity": "uncommon",
+                "minecraft:item_model": "hellcraft:blood_fragment"
               },
               "type": "minecraft:set_components"
             }

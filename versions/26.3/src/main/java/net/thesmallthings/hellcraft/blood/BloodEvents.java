@@ -7,11 +7,13 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -31,6 +33,12 @@ public final class BloodEvents {
 
 		UseItemCallback.EVENT.register((player, level, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);
+			if (!level.isClientSide() && player instanceof ServerPlayer sp && hand == InteractionHand.MAIN_HAND) {
+				InteractionResult weapon = HellWeapons.use(sp, stack);
+				if (weapon != InteractionResult.PASS) {
+					return weapon;
+				}
+			}
 			if (level.isClientSide() || !(player instanceof ServerPlayer sp) || !BloodItems.isBlood(stack)) {
 				return InteractionResult.PASS;
 			}
@@ -104,6 +112,12 @@ public final class BloodEvents {
 		if (firstJoin) {
 			// something to eat on the long walk down
 			BloodItems.give(player, new ItemStack(Items.BREAD, 5));
+		}
+		// the hell weapons' recipes, in everyone's recipe book
+		MinecraftServer server = player.level().getServer();
+		for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
+			server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(),
+					"recipe give " + player.getGameProfile().name() + " hellcraft:" + weapon.id);
 		}
 		if (soul.reviveAt != null) {
 			Ghosts.finishRevive(player, soul, soul.reviveAt);

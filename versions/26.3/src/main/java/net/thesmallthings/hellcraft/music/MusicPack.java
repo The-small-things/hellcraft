@@ -11,6 +11,7 @@ import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvent;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.EnumMap;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -36,14 +38,16 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Optional boss music. The server operator drops Ogg Vorbis files into {@code config/hellcraft/music/};
- * Hellcraft turns them into a resource pack, serves it from a tiny built-in web server and offers it
- * to every player on join. Players who accept hear the custom tracks during the Lucifer fight; everyone
- * else hears vanilla music discs instead.
+ * The Hellcraft resource pack: the models and textures for Lucifer, the hell weapons and blood (every
+ * {@code assets/hellcraft} file in the mod jar), plus optional boss music the server operator drops into
+ * {@code config/hellcraft/music/}. It is built at startup, served from a tiny built-in web server and
+ * pushed to every player on join; clients cache it, so it downloads once (again only when it changes).
+ * In single player the mod's own assets are already loaded, so it is only pushed for the music.
  */
 public final class MusicPack {
 	private MusicPack() {
@@ -65,13 +69,15 @@ public final class MusicPack {
 		}
 	}
 
-	private static final UUID PACK_ID = UUID.nameUUIDFromBytes("hellcraft:boss-music".getBytes(StandardCharsets.UTF_8));
+	private static final UUID PACK_ID = UUID.nameUUIDFromBytes("hellcraft:pack".getBytes(StandardCharsets.UTF_8));
 	private static final String PATH = "/hellcraft-music.zip";
 	private static final Set<UUID> LOADED = ConcurrentHashMap.newKeySet();
 	private static final Map<Track, Double> LENGTHS = new EnumMap<>(Track.class);
 
 	@Nullable
 	private static volatile byte[] zip;
+	private static boolean hasMusic;
+	private static boolean dedicated;
 	@Nullable
 	private static String sha1;
 	@Nullable
@@ -92,9 +98,9 @@ public final class MusicPack {
 		return FabricLoader.getInstance().getConfigDir().resolve("hellcraft").resolve("music");
 	}
 
-	/** True if this player accepted and loaded the pack. */
+	/** True if this player loaded the pack and it carries custom boss music. */
 	public static boolean hasPack(ServerPlayer player) {
-		return zip != null && LOADED.contains(player.getUUID());
+		return zip != null && hasMusic && LOADED.contains(player.getUUID());
 	}
 
 	public static Holder<SoundEvent> sound(Track track) {
@@ -120,11 +126,25 @@ public final class MusicPack {
 	}
 
 	private static void offer(ServerPlayer player) {
-		if (zip == null || url == null || sha1 == null) {
+		if (zip == null || sha1 == null) {
 			return;
 		}
-		player.connection.send(new ClientboundResourcePackPushPacket(PACK_ID, url, sha1, false,
-				Optional.of(Component.literal("Hellcraft: Lucifer's boss music (optional)").withStyle(ChatFormatting.DARK_RED))));
+		if (!dedicated && !hasMusic) {
+			// single player: the mod's assets are already loaded by the game itself
+			return;
+		}
+		if (url == null) {
+			if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+				player.sendSystemMessage(Component.literal("Hellcraft's resource pack isn't being sent to players: set \"musicPackHost\" in "
+						+ "config/hellcraft.json (or the HELLCRAFT_PACK_HOST environment variable) to this server's address and open port "
+						+ HellConfig.get().musicPackPort + ".").withStyle(ChatFormatting.RED));
+			}
+			return;
+		}
+		boolean required = HellConfig.get().resourcePackRequired && dedicated;
+		player.connection.send(new ClientboundResourcePackPushPacket(PACK_ID, url, sha1, required,
+				Optional.of(Component.literal("Hellcraft: Lucifer, hell weapons, blood" + (hasMusic ? " and boss music" : ""))
+						.withStyle(ChatFormatting.DARK_RED))));
 	}
 
 	// ------------------------------------------------------------------ building
@@ -132,6 +152,8 @@ public final class MusicPack {
 	private static void build(MinecraftServer server) {
 		LENGTHS.clear();
 		zip = null;
+		hasMusic = false;
+		dedicated = server.isDedicatedServer();
 		Path dir = directory();
 		Map<Track, byte[]> audio = new EnumMap<>(Track.class);
 		try {
@@ -144,12 +166,81 @@ public final class MusicPack {
 			}
 		} catch (IOException e) {
 			HellcraftMod.LOGGER.warn("Could not read boss music from {}", dir, e);
-			return;
 		}
 		if (audio.isEmpty()) {
 			HellcraftMod.LOGGER.info("No custom boss music (drop duel.ogg / enraged.ogg / true_form.ogg into {}); using vanilla music discs.", dir);
+		}
+		int assets = 0;
+		try {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			try (ZipOutputStream out = new ZipOutputStream(bytes)) {
+				put(out, "pack.mcmeta", "{\"pack\": {\"min_format\": [97, 0], \"max_format\": [99, 0], \"description\": \"Hellcraft\"}}\n"
+						.getBytes(StandardCharsets.UTF_8));
+				assets = putModAssets(out);
+				if (!audio.isEmpty()) {
+					put(out, "assets/hellcraft/sounds.json", soundsJson(audio).getBytes(StandardCharsets.UTF_8));
+					for (Map.Entry<Track, byte[]> e : audio.entrySet()) {
+						put(out, "assets/hellcraft/sounds/music/" + e.getKey().file + ".ogg", e.getValue());
+					}
+				}
+			}
+			byte[] built = bytes.toByteArray();
+			sha1 = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(built));
+			zip = built;
+			hasMusic = !audio.isEmpty();
+		} catch (Exception e) {
+			HellcraftMod.LOGGER.warn("Could not build the Hellcraft resource pack", e);
 			return;
 		}
+
+		HellConfig config = HellConfig.get();
+		if (!config.musicPackUrl.isBlank()) {
+			url = config.musicPackUrl.trim();
+		} else {
+			String host = config.musicPackHost.trim();
+			if (host.isEmpty()) {
+				String env = System.getenv("HELLCRAFT_PACK_HOST");
+				host = env != null ? env.trim() : "";
+			}
+			if (host.isEmpty() && !dedicated) {
+				host = "127.0.0.1";
+			}
+			startHttp(config.musicPackPort);
+			if (host.isEmpty()) {
+				url = null;
+				HellcraftMod.LOGGER.warn("The Hellcraft resource pack is ready, but players can't be sent it until you set \"musicPackHost\" in "
+						+ "config/hellcraft.json (or HELLCRAFT_PACK_HOST) to this server's public address and open port {}.", config.musicPackPort);
+			} else {
+				url = "http://" + host + ":" + config.musicPackPort + PATH;
+			}
+		}
+		if (hasMusic) {
+			HellcraftMod.LOGGER.info("Music pack ready: {} track(s), {}", audio.size(), LENGTHS);
+		}
+		HellcraftMod.LOGGER.info("Hellcraft pack ready: {} asset files, {} ({})", assets, hasMusic ? "with boss music" : "no boss music",
+				url == null ? "not offered" : url);
+	}
+
+	/** Copies every assets/hellcraft file shipped in the mod jar into the pack. */
+	private static int putModAssets(ZipOutputStream out) throws IOException {
+		Optional<Path> root = FabricLoader.getInstance().getModContainer(HellcraftMod.MOD_ID)
+				.flatMap(mod -> mod.findPath("assets/" + HellcraftMod.MOD_ID));
+		if (root.isEmpty()) {
+			HellcraftMod.LOGGER.warn("The mod's assets were not found; the resource pack will be empty");
+			return 0;
+		}
+		List<Path> files;
+		try (Stream<Path> walk = Files.walk(root.get())) {
+			files = walk.filter(Files::isRegularFile).sorted().toList();
+		}
+		for (Path file : files) {
+			String relative = root.get().relativize(file).toString().replace('\\', '/');
+			put(out, "assets/" + HellcraftMod.MOD_ID + "/" + relative, Files.readAllBytes(file));
+		}
+		return files.size();
+	}
+
+	private static String soundsJson(Map<Track, byte[]> audio) {
 		Track firstPresent = audio.keySet().iterator().next();
 		StringBuilder sounds = new StringBuilder("{\n");
 		Track[] all = Track.values();
@@ -161,40 +252,7 @@ public final class MusicPack {
 			sounds.append("  \"lucifer.").append(track.file).append("\": {\"sounds\": [{\"name\": \"hellcraft:music/")
 					.append(source.file).append("\", \"stream\": true}]}").append(i < all.length - 1 ? ",\n" : "\n");
 		}
-		sounds.append("}\n");
-		try {
-			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-			try (ZipOutputStream out = new ZipOutputStream(bytes)) {
-				put(out, "pack.mcmeta", "{\"pack\": {\"min_format\": [97, 0], \"max_format\": [99, 0], \"description\": \"Hellcraft: Lucifer's boss music\"}}\n"
-						.getBytes(StandardCharsets.UTF_8));
-				put(out, "assets/hellcraft/sounds.json", sounds.toString().getBytes(StandardCharsets.UTF_8));
-				for (Map.Entry<Track, byte[]> e : audio.entrySet()) {
-					put(out, "assets/hellcraft/sounds/music/" + e.getKey().file + ".ogg", e.getValue());
-				}
-			}
-			byte[] built = bytes.toByteArray();
-			sha1 = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(built));
-			zip = built;
-		} catch (Exception e) {
-			HellcraftMod.LOGGER.warn("Could not build the boss music pack", e);
-			return;
-		}
-
-		HellConfig config = HellConfig.get();
-		if (!config.musicPackUrl.isBlank()) {
-			url = config.musicPackUrl.trim();
-		} else {
-			String host = config.musicPackHost.isBlank() && !server.isDedicatedServer() ? "127.0.0.1" : config.musicPackHost.trim();
-			startHttp(config.musicPackPort);
-			if (host.isEmpty()) {
-				url = null;
-				HellcraftMod.LOGGER.warn("Boss music is ready, but players can't be sent it until you set \"musicPackHost\" in config/hellcraft.json "
-						+ "to this server's public address (and open port {}).", config.musicPackPort);
-			} else {
-				url = "http://" + host + ":" + config.musicPackPort + PATH;
-			}
-		}
-		HellcraftMod.LOGGER.info("Music pack ready: {} track(s), {} ({})", audio.size(), LENGTHS, url == null ? "not offered" : url);
+		return sounds.append("}\n").toString();
 	}
 
 	private static void put(ZipOutputStream out, String name, byte[] data) throws IOException {
@@ -220,7 +278,7 @@ public final class MusicPack {
 			return;
 		}
 		pool = Executors.newCachedThreadPool(r -> {
-			Thread t = new Thread(r, "Hellcraft music pack");
+			Thread t = new Thread(r, "Hellcraft pack");
 			t.setDaemon(true);
 			return t;
 		});
@@ -240,7 +298,7 @@ public final class MusicPack {
 				}
 			}
 		});
-		HellcraftMod.LOGGER.info("Serving the boss music pack on port {}", port);
+		HellcraftMod.LOGGER.info("Serving the Hellcraft resource pack on port {}", port);
 	}
 
 	private static void serve(Socket client) {

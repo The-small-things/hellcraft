@@ -1,0 +1,76 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": "minecraft:diamond_hoe",
+    "H": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:fermented_spider_eye",
+      "nbt": "{hellcraft:\"heart\"}"
+    },
+    "F": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:red_dye",
+      "nbt": "{hellcraft:\"fragment\"}"
+    }
+  },
+  "pattern": [
+    "HFH",
+    " S ",
+    " F "
+  ],
+  "result": {
+    "id": "minecraft:diamond_hoe",
+    "components": {
+      "minecraft:custom_data": {
+        "hellcraft": "weapon",
+        "weapon": "reaper_of_minos"
+      },
+      "minecraft:item_model": "hellcraft:reaper_of_minos",
+      "minecraft:item_name": {
+        "text": "Reaper of Minos",
+        "color": "dark_red",
+        "bold": true
+      },
+      "minecraft:lore": [
+        {
+          "text": "Each hit spends 1 Blood Fragment: cleaves everything",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "within 3 blocks for 5 damage.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath: cleaves within 5 blocks for 12, slows and drags them in.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.",
+          "color": "red",
+          "italic": false
+        }
+      ],
+      "minecraft:rarity": "epic",
+      "minecraft:attribute_modifiers": [
+        {
+          "type": "minecraft:attack_damage",
+          "id": "hellcraft:reaper_damage",
+          "amount": 7.0,
+          "operation": "add_value",
+          "slot": "mainhand"
+        },
+        {
+          "type": "minecraft:attack_speed",
+          "id": "hellcraft:reaper_speed",
+          "amount": -3.0,
+          "operation": "add_value",
+          "slot": "mainhand"
+        }
+      ]
+    }
+  }
+}

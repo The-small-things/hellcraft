@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
@@ -97,6 +98,22 @@ public final class HellCommands {
 								.executes(ctx -> giveBane(ctx, 1))
 								.then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
 										.executes(ctx -> giveBane(ctx, IntegerArgumentType.getInteger(ctx, "count"))))))
+				.then(Commands.literal("giveweapon")
+						.then(Commands.argument("player", EntityArgument.player())
+								.then(Commands.argument("weapon", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+												Arrays.stream(HellWeapons.Weapon.values()).map(w -> w.id), builder))
+										.executes(ctx -> {
+											ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+											HellWeapons.Weapon weapon = HellWeapons.Weapon.byId(StringArgumentType.getString(ctx, "weapon"));
+											if (weapon == null) {
+												ctx.getSource().sendFailure(Component.literal("Unknown weapon. Try: bloodletter, reaper_of_minos, tithe_axe"));
+												return 0;
+											}
+											BloodItems.give(p, HellWeapons.create(weapon));
+											ctx.getSource().sendSuccess(() -> Component.literal("Gave " + weapon.id + " to " + p.getGameProfile().name()), true);
+											return 1;
+										}))))
 				.then(Commands.literal("givefragment")
 						.then(Commands.argument("player", EntityArgument.player())
 								.executes(ctx -> give(ctx, false, 1))
