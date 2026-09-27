@@ -8,7 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -60,7 +60,7 @@ public final class MusicPack {
 			this.file = file;
 		}
 
-		public ResourceLocation soundId() {
+		public Identifier soundId() {
 			return HellcraftMod.id("lucifer." + file);
 		}
 	}
@@ -165,7 +165,7 @@ public final class MusicPack {
 		try {
 			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 			try (ZipOutputStream out = new ZipOutputStream(bytes)) {
-				put(out, "pack.mcmeta", "{\"pack\": {\"pack_format\": 34, \"description\": \"Hellcraft: Lucifer's boss music\"}}\n"
+				put(out, "pack.mcmeta", "{\"pack\": {\"min_format\": [97, 0], \"max_format\": [99, 0], \"description\": \"Hellcraft: Lucifer's boss music\"}}\n"
 						.getBytes(StandardCharsets.UTF_8));
 				put(out, "assets/hellcraft/sounds.json", sounds.toString().getBytes(StandardCharsets.UTF_8));
 				for (Map.Entry<Track, byte[]> e : audio.entrySet()) {

@@ -22,6 +22,7 @@ import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -51,7 +52,7 @@ public final class CircleHazards {
 				// "Why dost thou rend me?" -- the trees of the suicides bleed when broken
 				sp.hurt(sp.damageSources().magic(), 3.0f);
 				serverLevel.sendParticles(BloodAltar.BLOOD, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 25, 0.4, 0.4, 0.4, 0.0);
-				sp.displayClientMessage(Component.literal("\"Why dost thou rend me?\"").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				sp.sendOverlayMessage(Component.literal("\"Why dost thou rend me?\"").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 			}
 		});
 	}
@@ -68,7 +69,7 @@ public final class CircleHazards {
 				Ghosts.tether(player, soul);
 				continue;
 			}
-			ServerLevel level = player.serverLevel();
+			ServerLevel level = player.level();
 			if (!HellWorldgen.isInferno(level)) {
 				LAST_CIRCLE.remove(player.getUUID());
 				continue;
@@ -85,8 +86,8 @@ public final class CircleHazards {
 	}
 
 	public static boolean warded(ServerPlayer player) {
-		HellState.Soul soul = HellState.get(player.server).existing(player.getUUID());
-		return soul != null && soul.wardUntil > player.server.overworld().getGameTime();
+		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
+		return soul != null && soul.wardUntil > player.level().getServer().overworld().getGameTime();
 	}
 
 	private static void announce(ServerPlayer player, Zone zone) {
@@ -101,7 +102,7 @@ public final class CircleHazards {
 		}
 		String region = InfernoGeometry.regionName(player.getX(), player.getZ());
 		if (!region.equals(LAST_REGION.put(id, region)) && !region.equals(circle.title())) {
-			player.displayClientMessage(Component.literal(region).withStyle(ChatFormatting.RED), true);
+			player.sendOverlayMessage(Component.literal(region).withStyle(ChatFormatting.RED));
 		}
 	}
 
@@ -111,12 +112,12 @@ public final class CircleHazards {
 		switch (zone.circle()) {
 			case LUST -> {
 				// the infernal hurricane that never rests
-				if (open && level.random.nextFloat() < 0.35f) {
+				if (open && level.getRandom().nextFloat() < 0.35f) {
 					double r = Math.max(1.0, Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ()));
 					Vec3 tangent = new Vec3(-player.getZ() / r, 0, player.getX() / r);
-					double strength = 0.6 + level.random.nextDouble() * 0.8;
-					player.push(tangent.x * strength, 0.25 + level.random.nextDouble() * 0.3, tangent.z * strength);
-					player.hurtMarked = true;
+					double strength = 0.6 + level.getRandom().nextDouble() * 0.8;
+					player.push(tangent.x * strength, 0.25 + level.getRandom().nextDouble() * 0.3, tangent.z * strength);
+					Feedback.syncMotion(player);
 					level.playSound(null, pos, SoundEvents.ELYTRA_FLYING, SoundSource.WEATHER, 0.4f, 1.6f);
 				}
 			}
@@ -125,23 +126,23 @@ public final class CircleHazards {
 				int weight = greedWeight(player);
 				if (weight >= 32) {
 					int amp = Math.min(2, weight / 64);
-					player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, amp, true, false, true));
+					player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, amp, true, false, true));
 				}
 			}
 			case WRATH -> {
 				if (player.isInWater()) {
 					player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
-					player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 1, true, false, true));
+					player.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 60, 1, true, false, true));
 				}
 			}
 			case HERESY -> {
-				if (level.random.nextFloat() < 0.06f) {
+				if (level.getRandom().nextFloat() < 0.06f) {
 					player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 120, 0, true, false, true));
 				}
 			}
 			case VIOLENCE -> {
 				if (zone == Zone.BURNING_SANDS && open && !player.hasEffect(MobEffects.FIRE_RESISTANCE)
-						&& level.random.nextFloat() < 0.3f) {
+						&& level.getRandom().nextFloat() < 0.3f) {
 					// dilated flakes of fire, falling slowly
 					player.igniteForSeconds(3.0f);
 				}

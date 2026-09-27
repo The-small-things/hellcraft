@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.Ghosts;
-import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Hearts;
+import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
@@ -67,14 +67,14 @@ public final class HellCommands {
 				})));
 
 		dispatcher.register(Commands.literal("hellcraft")
-				.requires(src -> src.hasPermission(2))
+				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 				.then(Commands.literal("sethearts")
 						.then(Commands.argument("player", EntityArgument.player())
 								.then(Commands.argument("hearts", IntegerArgumentType.integer(1))
 										.executes(ctx -> {
 											ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
 											Hearts.set(p, IntegerArgumentType.getInteger(ctx, "hearts"));
-											ctx.getSource().sendSuccess(() -> Hearts.describe(p.getGameProfile().getName(), Hearts.soul(p)), true);
+											ctx.getSource().sendSuccess(() -> Hearts.describe(p.getGameProfile().name(), Hearts.soul(p)), true);
 											return 1;
 										}))))
 				.then(Commands.literal("giveheart")
@@ -120,7 +120,7 @@ public final class HellCommands {
 	}
 
 	private static int showHearts(CommandSourceStack source, ServerPlayer player) {
-		source.sendSuccess(() -> Hearts.describe(player.getGameProfile().getName(), Hearts.soul(player)), false);
+		source.sendSuccess(() -> Hearts.describe(player.getGameProfile().name(), Hearts.soul(player)), false);
 		return Hearts.soul(player).hearts;
 	}
 
@@ -138,7 +138,7 @@ public final class HellCommands {
 	}
 
 	private static int circle(ServerPlayer player) {
-		if (!HellWorldgen.isInferno(player.serverLevel())) {
+		if (!HellWorldgen.isInferno(player.level())) {
 			player.sendSystemMessage(Component.literal("You are beyond the circles of the Inferno.").withStyle(ChatFormatting.GRAY));
 			return 0;
 		}
@@ -155,7 +155,7 @@ public final class HellCommands {
 		ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
 		BloodItems.give(p, heart ? BloodItems.heart(count) : BloodItems.fragment(count));
 		ctx.getSource().sendSuccess(() -> Component.literal("Gave " + count + (heart ? " Blood Heart(s)" : " Blood Fragment(s)") + " to "
-				+ p.getGameProfile().getName()), true);
+				+ p.getGameProfile().name()), true);
 		return count;
 	}
 
@@ -169,7 +169,7 @@ public final class HellCommands {
 			return 0;
 		}
 		HellState.GlobalSpot at = target.getValue().deathSpot != null ? target.getValue().deathSpot
-				: new HellState.GlobalSpot(source.getLevel().dimension(), source.getServer().overworld().getSharedSpawnPos());
+				: new HellState.GlobalSpot(source.getLevel().dimension(), source.getServer().overworld().getRespawnData().pos());
 		Ghosts.revive(source.getServer(), target.getKey(), at);
 		source.sendSuccess(() -> Component.literal("Revived " + target.getValue().name + "."), true);
 		return 1;
@@ -201,7 +201,7 @@ public final class HellCommands {
 	private static int giveBane(CommandContext<CommandSourceStack> ctx, int count) throws CommandSyntaxException {
 		ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
 		BloodItems.give(p, BloodItems.bane(count));
-		ctx.getSource().sendSuccess(() -> Component.literal("Gave " + count + " Lucifer's Bane to " + p.getGameProfile().getName()), true);
+		ctx.getSource().sendSuccess(() -> Component.literal("Gave " + count + " Lucifer's Bane to " + p.getGameProfile().name()), true);
 		return count;
 	}
 
@@ -252,7 +252,7 @@ public final class HellCommands {
 		if (level.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.LAVA)) {
 			player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1200, 0));
 		}
-		player.teleportTo(level, x + 0.5, y, z + 0.5, player.getYRot(), player.getXRot());
+		player.teleportTo(level, x + 0.5, y, z + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), true);
 		source.sendSuccess(() -> Component.literal("\u2192 " + InfernoGeometry.regionName(x, z) + " (" + x + ", " + y + ", " + z + ")")
 				.withStyle(ChatFormatting.RED), false);
 		return 1;

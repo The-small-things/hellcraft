@@ -18,7 +18,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +29,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public final class LuciferRewards {
 
 	public static void register() {
 		ServerPlayerEvents.JOIN.register(player -> {
-			HellState.Soul soul = HellState.get(player.server).existing(player.getUUID());
+			HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 			if (soul != null && soul.pendingReward != NONE) {
 				remind(player);
 			}
@@ -89,13 +90,13 @@ public final class LuciferRewards {
 	static void remind(ServerPlayer player) {
 		player.sendSystemMessage(Component.literal("Lucifer's spoils await you. ").withStyle(ChatFormatting.GOLD)
 				.append(Component.literal("[Choose your reward]").withStyle(s -> s.withColor(ChatFormatting.YELLOW).withBold(true).withUnderlined(true)
-						.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lucifer reward"))
-						.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Open the reward chooser"))))));
+						.withClickEvent(new ClickEvent.RunCommand("/lucifer reward"))
+						.withHoverEvent(new HoverEvent.ShowText(Component.literal("Open the reward chooser"))))));
 	}
 
 	/** Opens the chooser for a player with a pending reward. Returns false if there is nothing to claim. */
 	public static boolean open(ServerPlayer player) {
-		HellState.Soul soul = HellState.get(player.server).existing(player.getUUID());
+		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		if (soul == null || soul.pendingReward == NONE) {
 			return false;
 		}
@@ -121,7 +122,7 @@ public final class LuciferRewards {
 	}
 
 	private static void claim(ServerPlayer player, int optionIndex, boolean first) {
-		HellState state = HellState.get(player.server);
+		HellState state = HellState.get(player.level().getServer());
 		HellState.Soul soul = state.existing(player.getUUID());
 		if (soul == null || soul.pendingReward != (first ? FIRST : REPEAT)) {
 			player.closeContainer();
@@ -133,8 +134,8 @@ public final class LuciferRewards {
 		state.setDirty();
 		player.closeContainer();
 		BloodItems.give(player, reward);
-		player.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
-		player.server.getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().getName()
+		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
+		player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name()
 				+ " claimed " + option.label() + " from Lucifer's spoils.").withStyle(ChatFormatting.GOLD), false);
 	}
 
@@ -150,7 +151,7 @@ public final class LuciferRewards {
 		}
 
 		@Override
-		public void clicked(int slotId, int button, ClickType clickType, Player player) {
+		public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
 			if (player instanceof ServerPlayer serverPlayer) {
 				for (int i = 0; i < slots.length; i++) {
 					if (slots[i] == slotId) {

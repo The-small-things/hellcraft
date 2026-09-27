@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +31,7 @@ public final class BloodItems {
 
 	/** Base items. Change these two lines to re-skin the blood items. */
 	public static final Item HEART_BASE = Items.FERMENTED_SPIDER_EYE;
-	public static final Item FRAGMENT_BASE = Items.RED_DYE;
+	public static final Item FRAGMENT_BASE = Items.DYE.red();
 	/** The Morning Star's bane: a nether star. */
 	public static final Item BANE_BASE = Items.NETHER_STAR;
 
@@ -85,7 +86,7 @@ public final class BloodItems {
 		if (data == null) {
 			return "";
 		}
-		return data.copyTag().getString(KEY);
+		return data.copyTag().getStringOr(KEY, "");
 	}
 
 	public static boolean isHeart(ItemStack stack) {
@@ -135,7 +136,9 @@ public final class BloodItems {
 	/** Gives items to a player, dropping whatever doesn't fit at their feet. */
 	public static void give(Player player, ItemStack stack) {
 		if (!player.getInventory().add(stack) && !stack.isEmpty()) {
-			player.drop(stack, false);
+			if (player.level() instanceof ServerLevel level) {
+				player.spawnAtLocation(level, stack);
+			}
 		}
 	}
 }

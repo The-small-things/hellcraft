@@ -8,6 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import net.thesmallthings.hellcraft.HellcraftMod;
@@ -41,7 +42,7 @@ public class InfernoBiomeSource extends BiomeSource {
 	}
 
 	@Override
-	public Holder<Biome> getNoiseBiome(int quartX, int quartY, int quartZ, Climate.Sampler sampler) {
-		return biomes.get(InfernoGeometry.zoneAt((quartX << 2) + 2, (quartZ << 2) + 2));
+	public BiomeResolver createResolver(Climate.Sampler sampler) {
+		return (quartX, quartY, quartZ) -> biomes.get(InfernoGeometry.zoneAt((quartX << 2) + 2, (quartZ << 2) + 2));
 	}
 }

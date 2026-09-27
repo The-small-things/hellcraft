@@ -8,7 +8,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 
-
 /** The pit at 0,0 and the ring of ice that seals it during the fight. */
 final class LuciferArena {
 	private LuciferArena() {
@@ -67,7 +66,7 @@ final class LuciferArena {
 					continue;
 				}
 				level.getChunk(x >> 4, z >> 4);
-				for (int y = level.getMinBuildHeight() + 5; y < 40; y++) {
+				for (int y = level.getMinY() + 5; y < 40; y++) {
 					pos.set(x, y, z);
 					BlockState state = level.getBlockState(pos);
 					if (state.is(Blocks.ICE) || state.is(Blocks.WATER)) {

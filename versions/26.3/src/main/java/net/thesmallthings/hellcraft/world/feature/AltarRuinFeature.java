@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.world.feature;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -9,9 +10,8 @@ import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
@@ -20,18 +20,19 @@ import net.thesmallthings.hellcraft.blood.BloodAltar;
  * A forgotten blood altar: a respawn anchor on crying obsidian (see {@link BloodAltar}) inside a
  * broken ring of pillars, with a chest of offerings.
  */
-public class AltarRuinFeature extends Feature<NoneFeatureConfiguration> {
+public record AltarRuinFeature() implements Feature {
+	public static final AltarRuinFeature INSTANCE = new AltarRuinFeature();
+	public static final MapCodec<AltarRuinFeature> CODEC = MapCodec.unit(INSTANCE);
 	public static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE, HellcraftMod.id("chests/altar_ruin"));
 
-	public AltarRuinFeature() {
-		super(NoneFeatureConfiguration.CODEC);
+	@Override
+	public MapCodec<AltarRuinFeature> codec() {
+		return CODEC;
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-		WorldGenLevel level = context.level();
-		RandomSource random = context.random();
-		BlockPos origin = context.origin();
+	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		BlockPos origin = origin;
 		if (!level.getBlockState(origin.below()).isSolid()) {
 			return false;
 		}

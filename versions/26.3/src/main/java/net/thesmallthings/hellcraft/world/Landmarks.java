@@ -1,16 +1,25 @@
 package net.thesmallthings.hellcraft.world;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.clock.WorldClock;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.Giant;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.LevelData;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 
@@ -39,14 +48,19 @@ public final class Landmarks {
 		WorldBorder border = level.getWorldBorder();
 		border.setCenter(0.0, 0.0);
 		border.setSize(InfernoGeometry.BORDER_RADIUS * 2.0);
-		level.getGameRules().getRule(GameRules.RULE_DOINSOMNIA).set(false, server);
+		level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
+		// eternal dusk (1.21.1 used the dimension's fixed_time): stop the overworld clock at nightfall
+		Holder<WorldClock> clock = server.registryAccess().lookupOrThrow(Registries.WORLD_CLOCK)
+				.getOrThrow(ResourceKey.create(Registries.WORLD_CLOCK, Identifier.withDefaultNamespace("overworld")));
+		server.clockManager().setTotalTicks(clock, 13400L);
+		server.clockManager().setPaused(clock, true);
 
 		// the Gate of Hell itself is a ring wall built by worldgen (GateWallFeature); spawn just outside its +X gate
 		int gateX = InfernoGeometry.gateX();
 		int gateY = surface(level, gateX, 0);
 		BlockPos spawn = new BlockPos(gateX + 24, surface(level, gateX + 24, 0), 0);
 		clear(level, spawn.getX() - 2, spawn.getY(), spawn.getZ() - 2, spawn.getX() + 2, spawn.getY() + 3, spawn.getZ() + 2);
-		level.setDefaultSpawnPos(spawn, 90.0f);
+		level.setRespawnData(LevelData.RespawnData.of(level.dimension(), spawn, 90.0f, 0.0f));
 		buildAltar(level, gateX + 14, surface(level, gateX + 14, 9), 9);
 
 		String[] giants = {"Nimrod", "Ephialtes", "Antaeus"};
@@ -110,20 +124,22 @@ public final class Landmarks {
 	}
 
 	private static void spawnGiant(ServerLevel level, String name, int x, int y, int z) {
-		Giant giant = EntityType.GIANT.create(level);
+		Giant giant = EntityTypes.GIANT.create(level, EntitySpawnReason.EVENT);
 		if (giant == null) {
 			return;
 		}
-		giant.moveTo(x + 0.5, y, z + 0.5, (float) Math.toDegrees(Math.atan2(-x, z)) + 180.0f, 0.0f);
+		giant.snapTo(x + 0.5, y, z + 0.5, (float) Math.toDegrees(Math.atan2(-x, z)) + 180.0f, 0.0f);
 		giant.setCustomName(Component.literal(name));
 		giant.setNoAi(true);
-		giant.setInvulnerable(true);
+		// chained and beyond harm (26.x has no invulnerable flag to set from code)
+		giant.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, MobEffectInstance.INFINITE_DURATION, 4, false, false));
+		giant.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, false, false));
 		giant.setPersistenceRequired();
 		giant.setSilent(true);
 		level.addFreshEntity(giant);
 		for (int dy = 0; dy < 12; dy++) {
-			set(level, x + 2, y + dy, z, Blocks.CHAIN.defaultBlockState());
-			set(level, x - 2, y + dy, z, Blocks.CHAIN.defaultBlockState());
+			set(level, x + 2, y + dy, z, Blocks.IRON_CHAIN.defaultBlockState());
+			set(level, x - 2, y + dy, z, Blocks.IRON_CHAIN.defaultBlockState());
 		}
 	}
 

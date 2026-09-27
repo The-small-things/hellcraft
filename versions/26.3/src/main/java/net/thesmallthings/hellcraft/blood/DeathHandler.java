@@ -7,7 +7,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -69,9 +71,9 @@ public final class DeathHandler {
 			return;
 		}
 		HellConfig config = HellConfig.get();
-		HellState state = HellState.get(player.server);
+		HellState state = HellState.get(player.level().getServer());
 		HellState.Soul soul = Hearts.soul(player);
-		String name = player.getGameProfile().getName();
+		String name = player.getGameProfile().name();
 		soul.hearts = Math.max(0, soul.hearts - 1);
 		state.setDirty();
 
@@ -93,7 +95,7 @@ public final class DeathHandler {
 			soul.ghost = true;
 			soul.deathSpot = new HellState.GlobalSpot(player.level().dimension(), player.blockPosition());
 			state.setDirty();
-			player.server.getPlayerList().broadcastSystemMessage(Component.literal("Hell is full. ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
+			player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal("Hell is full. ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 					.append(Component.literal(name + " now walks the earth.").withStyle(ChatFormatting.RED)), false);
 		}
 	}
@@ -120,8 +122,8 @@ public final class DeathHandler {
 			BloodItems.give(killer, BloodItems.heart(2));
 			return;
 		}
-		if (entity.getTags().contains(REVENANT_TAG)) {
-			entity.spawnAtLocation(BloodItems.fragment(3));
+		if (entity.entityTags().contains(REVENANT_TAG)) {
+			entity.spawnAtLocation(level, BloodItems.fragment(3));
 			return;
 		}
 		if (!(entity instanceof Enemy)) {
@@ -131,7 +133,7 @@ public final class DeathHandler {
 		HellConfig config = HellConfig.get();
 		double chance = config.fragmentChanceBase + config.fragmentChancePerDepth * depth;
 		if (level.getRandom().nextDouble() < chance) {
-			entity.spawnAtLocation(BloodItems.fragment(1));
+			entity.spawnAtLocation(level, BloodItems.fragment(1));
 		}
 	}
 
@@ -151,26 +153,26 @@ public final class DeathHandler {
 
 	/** The dead walk the earth: the eliminated player's corpse rises, wearing their gear and face. */
 	private static void raiseRevenant(ServerPlayer player) {
-		ServerLevel level = player.serverLevel();
-		EntityType<? extends Mob> type = EntityType.ZOMBIE;
+		ServerLevel level = player.level();
+		EntityType<? extends Mob> type = EntityTypes.ZOMBIE;
 		if (HellWorldgen.isInferno(level)) {
 			Zone zone = InfernoGeometry.zoneAt(player.getX(), player.getZ());
 			if (zone == Zone.STYX || zone == Zone.ACHERON || player.isInWater()) {
-				type = EntityType.DROWNED;
+				type = EntityTypes.DROWNED;
 			} else if (zone == Zone.BURNING_SANDS) {
-				type = EntityType.HUSK;
+				type = EntityTypes.HUSK;
 			} else if (zone.circle() == Circle.TREACHERY) {
-				type = EntityType.STRAY;
+				type = EntityTypes.STRAY;
 			}
 		} else if (player.isInWater()) {
-			type = EntityType.DROWNED;
+			type = EntityTypes.DROWNED;
 		}
-		Mob revenant = type.create(level);
+		Mob revenant = type.create(level, EntitySpawnReason.EVENT);
 		if (revenant == null) {
 			return;
 		}
-		String name = player.getGameProfile().getName();
-		revenant.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
+		String name = player.getGameProfile().name();
+		revenant.snapTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), 0.0f);
 		revenant.setCustomName(Component.literal(name).withStyle(ChatFormatting.DARK_RED));
 		revenant.setCustomNameVisible(true);
 		revenant.setPersistenceRequired();
@@ -183,7 +185,7 @@ public final class DeathHandler {
 			player.setItemSlot(slot, ItemStack.EMPTY);
 		}
 		ItemStack head = new ItemStack(Items.PLAYER_HEAD);
-		head.set(DataComponents.PROFILE, new ResolvableProfile(player.getGameProfile()));
+		head.set(DataComponents.PROFILE, ResolvableProfile.createResolved(player.getGameProfile()));
 		revenant.setItemSlot(EquipmentSlot.HEAD, head);
 		revenant.setDropChance(EquipmentSlot.HEAD, 2.0f);
 
@@ -198,9 +200,9 @@ public final class DeathHandler {
 		}
 		level.addFreshEntity(revenant);
 
-		LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
+		LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.EVENT);
 		if (bolt != null) {
-			bolt.moveTo(player.getX(), player.getY(), player.getZ());
+			bolt.snapTo(player.getX(), player.getY(), player.getZ());
 			bolt.setVisualOnly(true);
 			level.addFreshEntity(bolt);
 		}

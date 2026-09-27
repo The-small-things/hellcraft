@@ -1,33 +1,34 @@
 package net.thesmallthings.hellcraft.world.feature;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * The iron-red Walls of Dis: a continuous ring wall between Styx and Heresy with burning towers
  * and four open gates. Built one column at a time from {@link InfernoGeometry#disWallAt}.
  */
-public class DisWallFeature extends Feature<NoneFeatureConfiguration> {
+public record DisWallFeature() implements Feature {
+	public static final DisWallFeature INSTANCE = new DisWallFeature();
+	public static final MapCodec<DisWallFeature> CODEC = MapCodec.unit(INSTANCE);
 	private static final int BASE_Y = 58;
 
-	public DisWallFeature() {
-		super(NoneFeatureConfiguration.CODEC);
+	@Override
+	public MapCodec<DisWallFeature> codec() {
+		return CODEC;
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-		WorldGenLevel level = context.level();
-		RandomSource random = context.random();
-		int x0 = context.origin().getX() & ~15;
-		int z0 = context.origin().getZ() & ~15;
+	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		int x0 = origin.getX() & ~15;
+		int z0 = origin.getZ() & ~15;
 		double r = Math.sqrt((x0 + 8.0) * (x0 + 8.0) + (z0 + 8.0) * (z0 + 8.0));
 		if (!InfernoGeometry.nearDisWall(r, 16)) {
 			return false;

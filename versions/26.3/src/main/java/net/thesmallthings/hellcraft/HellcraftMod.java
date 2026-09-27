@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -28,8 +28,8 @@ public class HellcraftMod implements ModInitializer {
 	public static final String MOD_ID = "hellcraft";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	@Override

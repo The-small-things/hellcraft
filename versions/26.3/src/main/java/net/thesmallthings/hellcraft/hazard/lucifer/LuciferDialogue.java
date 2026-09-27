@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.List;
 
@@ -82,9 +83,9 @@ final class LuciferDialogue {
 		for (ServerPlayer p : audience) {
 			p.sendSystemMessage(text);
 			if (shout) {
-				p.playNotifySound(SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 0.35f, 0.5f);
+				Feedback.sound(p, SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 0.35f, 0.5f);
 			} else {
-				p.playNotifySound(SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.5f);
+				Feedback.sound(p, SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.5f);
 			}
 		}
 	}

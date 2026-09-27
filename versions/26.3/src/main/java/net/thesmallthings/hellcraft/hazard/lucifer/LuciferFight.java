@@ -1,9 +1,11 @@
 package net.thesmallthings.hellcraft.hazard.lucifer;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,25 +16,25 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.thesmallthings.hellcraft.HellcraftMod;
-import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -57,13 +59,13 @@ public final class LuciferFight {
 	private static final double AUDIENCE_RADIUS = 96.0;
 	private static final int INTRO_LENGTH = 280;
 	private static final int FAIL_AFTER_EMPTY_TICKS = 600;
-	private static final ResourceLocation VETERAN_MODIFIER = HellcraftMod.id("veteran");
+	private static final Identifier VETERAN_MODIFIER = HellcraftMod.id("veteran");
 
 	private final ServerLevel level;
 	/** Started by a command with nobody around: never fails for lack of players (used by tests). */
 	private final boolean debug;
 	private final int floorY;
-	private final ServerBossEvent bar = new ServerBossEvent(Component.literal("LUCIFER").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+	private final ServerBossEvent bar = new ServerBossEvent(java.util.UUID.randomUUID(), Component.literal("LUCIFER").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 			BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 	private final Map<UUID, Float> participants = new LinkedHashMap<>();
 	private final List<Scheduled> scheduled = new ArrayList<>();
@@ -166,7 +168,7 @@ public final class LuciferFight {
 		avatarId = avatar.getUUID();
 		applyVeteranScaling(avatar);
 		for (ServerPlayer p : LuciferDialogue.audience(level, AUDIENCE_RADIUS)) {
-			p.playNotifySound(SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.0f, 0.6f);
+			Feedback.sound(p, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.0f, 0.6f);
 		}
 		for (int i = 0; i < 4; i++) {
 			double a = i * Math.PI / 2 + Math.PI / 4;
@@ -248,18 +250,18 @@ public final class LuciferFight {
 		}
 		List<LivingEntity> targets = targets();
 		if (!targets.isEmpty() && avatar.getTarget() == null) {
-			avatar.setTarget(targets.get(level.random.nextInt(targets.size())));
+			avatar.setTarget(targets.get(level.getRandom().nextInt(targets.size())));
 		}
 		if (phase == Phase.DUEL && avatar.getHealth() <= avatar.getMaxHealth() * 0.5f) {
 			beginEnrage();
 			return;
 		}
 		if (--attackCooldown <= 0 && !targets.isEmpty()) {
-			LivingEntity target = targets.get(level.random.nextInt(targets.size()));
+			LivingEntity target = targets.get(level.getRandom().nextInt(targets.size()));
 			LuciferAttacks.Attack[] all = LuciferAttacks.Attack.values();
-			LuciferAttacks.perform(this, all[level.random.nextInt(all.length)], avatar, target);
-			if (phase == Phase.ENRAGED && level.random.nextFloat() < 0.6f) {
-				LuciferAttacks.Attack follow = all[level.random.nextInt(all.length)];
+			LuciferAttacks.perform(this, all[level.getRandom().nextInt(all.length)], avatar, target);
+			if (phase == Phase.ENRAGED && level.getRandom().nextFloat() < 0.6f) {
+				LuciferAttacks.Attack follow = all[level.getRandom().nextInt(all.length)];
 				schedule(30, () -> {
 					Mob a = avatar();
 					if (a != null && target.isAlive() && phase == Phase.ENRAGED) {
@@ -355,8 +357,8 @@ public final class LuciferFight {
 			level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, a.getX(), a.getY() + 2, a.getZ(), 1, 0, 0, 0, 0);
 			level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, a.getX(), a.getY() + 2, a.getZ(), 200, 4, 2, 4, 0.2);
 			a.addEffect(new MobEffectInstance(MobEffects.GLOWING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
-			a.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, false));
-			a.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, false));
+			a.addEffect(new MobEffectInstance(MobEffects.SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, false));
+			a.addEffect(new MobEffectInstance(MobEffects.STRENGTH, MobEffectInstance.INFINITE_DURATION, 0, false, false));
 			a.setNoAi(false);
 			raiseTraitors();
 			updateBarName("LUCIFER \u2014 The Morning Star");
@@ -451,9 +453,9 @@ public final class LuciferFight {
 				say(LuciferDialogue.veteranLine(List.of(soul.name)));
 			}
 		}
-		if (entity.getUUID().equals(avatarId) && dealt >= 7.0f && tick - lastHurtBark > 120 && level.random.nextFloat() < 0.4f) {
+		if (entity.getUUID().equals(avatarId) && dealt >= 7.0f && tick - lastHurtBark > 120 && level.getRandom().nextFloat() < 0.4f) {
 			lastHurtBark = tick;
-			say(LuciferDialogue.pick(level.random, LuciferDialogue.HURT));
+			say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.HURT));
 		}
 	}
 
@@ -472,7 +474,7 @@ public final class LuciferFight {
 			beginDefeat();
 		} else if (entity instanceof ServerPlayer player && LuciferArena.inside(player.getX(), player.getZ())
 				&& (phase == Phase.DUEL || phase == Phase.ENRAGED || phase == Phase.TRUE_FORM)) {
-			sayLater(10, LuciferDialogue.pick(level.random, LuciferDialogue.PLAYER_DEATH));
+			sayLater(10, LuciferDialogue.pick(level.getRandom(), LuciferDialogue.PLAYER_DEATH));
 		}
 	}
 
@@ -593,9 +595,9 @@ public final class LuciferFight {
 	}
 
 	private void strikeLightning(double x, double z) {
-		LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
+		LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.EVENT);
 		if (bolt != null) {
-			bolt.moveTo(x, floorY, z);
+			bolt.snapTo(x, floorY, z);
 			bolt.setVisualOnly(true);
 			level.addFreshEntity(bolt);
 		}
@@ -609,11 +611,11 @@ public final class LuciferFight {
 	}
 
 	private WitherSkeleton spawnAvatar() {
-		WitherSkeleton avatar = EntityType.WITHER_SKELETON.create(level);
+		WitherSkeleton avatar = EntityTypes.WITHER_SKELETON.create(level, EntitySpawnReason.EVENT);
 		if (avatar == null) {
 			throw new IllegalStateException("could not create Lucifer");
 		}
-		avatar.moveTo(0.5, floorY, 0.5, 90.0f, 0.0f);
+		avatar.snapTo(0.5, floorY, 0.5, 90.0f, 0.0f);
 		avatar.addTag(LuciferManager.TAG);
 		avatar.addTag(AVATAR_TAG);
 		avatar.setCustomName(Component.literal("Lucifer").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
@@ -639,12 +641,12 @@ public final class LuciferFight {
 	}
 
 	private WitherSkeleton spawnTraitor(String name, double x, double z) {
-		WitherSkeleton traitor = EntityType.WITHER_SKELETON.create(level);
+		WitherSkeleton traitor = EntityTypes.WITHER_SKELETON.create(level, EntitySpawnReason.EVENT);
 		if (traitor == null) {
 			throw new IllegalStateException("could not create " + name);
 		}
 		double y = LuciferAttacks.floorAt(level, x, floorY + 2, z);
-		traitor.moveTo(x, y, z, 0.0f, 0.0f);
+		traitor.snapTo(x, y, z, 0.0f, 0.0f);
 		traitor.addTag(LuciferManager.TAG);
 		traitor.setCustomName(Component.literal(name).withStyle(ChatFormatting.GRAY));
 		traitor.setCustomNameVisible(true);
@@ -662,11 +664,11 @@ public final class LuciferFight {
 	}
 
 	private WitherBoss spawnTrueForm() {
-		WitherBoss wither = EntityType.WITHER.create(level);
+		WitherBoss wither = EntityTypes.WITHER.create(level, EntitySpawnReason.EVENT);
 		if (wither == null) {
 			throw new IllegalStateException("could not create Lucifer's true form");
 		}
-		wither.moveTo(0.5, floorY + 4, 0.5, 0.0f, 0.0f);
+		wither.snapTo(0.5, floorY + 4, 0.5, 0.0f, 0.0f);
 		wither.addTag(LuciferManager.TAG);
 		wither.setPersistenceRequired();
 		setBase(wither, Attributes.MAX_HEALTH, HellConfig.get().luciferHealth);
@@ -704,7 +706,7 @@ public final class LuciferFight {
 	/** Removes every Lucifer-tagged entity in and around the pit. */
 	private void discardStrays() {
 		double r = LuciferArena.RADIUS + 24;
-		for (Entity e : level.getEntitiesOfClass(Entity.class, new net.minecraft.world.phys.AABB(-r, level.getMinBuildHeight(), -r, r, level.getMaxBuildHeight(), r),
+		for (Entity e : level.getEntitiesOfClass(Entity.class, new net.minecraft.world.phys.AABB(-r, level.getMinY(), -r, r, level.getMaxBuildHeight(), r),
 				e -> LuciferManager.isLucifer(e) && e.isAlive())) {
 			e.discard();
 		}
@@ -750,7 +752,7 @@ public final class LuciferFight {
 			pending++;
 			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
 			if (player != null) {
-				player.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
+				Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
 				LuciferRewards.remind(player);
 				// the fight object is finished by then, so open it from the server's task queue
 				level.getServer().execute(() -> LuciferRewards.open(player));

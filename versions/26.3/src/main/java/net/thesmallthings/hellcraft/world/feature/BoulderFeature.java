@@ -1,23 +1,28 @@
 package net.thesmallthings.hellcraft.world.feature;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
 
 /** A rough half-buried boulder of any block (the "great weights" of Greed, ice in Cocytus, ...). */
-public class BoulderFeature extends Feature<BlockStateConfiguration> {
-	public BoulderFeature() {
-		super(BlockStateConfiguration.CODEC);
+public record BoulderFeature(BlockState state) implements Feature {
+	public static final MapCodec<BoulderFeature> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			BlockState.CODEC.fieldOf("state").forGetter(BoulderFeature::state)
+	).apply(instance, BoulderFeature::new));
+
+	@Override
+	public MapCodec<BoulderFeature> codec() {
+		return CODEC;
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<BlockStateConfiguration> context) {
-		WorldGenLevel level = context.level();
-		RandomSource random = context.random();
-		BlockPos center = context.origin().below(1);
+	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		BlockPos center = origin.below(1);
 		if (!level.getBlockState(center.below()).isSolid()) {
 			return false;
 		}
@@ -30,7 +35,7 @@ public class BoulderFeature extends Feature<BlockStateConfiguration> {
 					float d = (float) Math.sqrt(dx * dx + dy * dy * 1.3f + dz * dz);
 					if (d <= radius + random.nextFloat() * 0.4f) {
 						pos.setWithOffset(center, dx, dy, dz);
-						level.setBlock(pos, context.config().state, 2);
+						level.setBlock(pos, state, 2);
 					}
 				}
 			}

@@ -19,7 +19,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import org.joml.Vector3f;
 
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +37,7 @@ public final class BloodAltar {
 	private BloodAltar() {
 	}
 
-	public static final DustParticleOptions BLOOD = new DustParticleOptions(new Vector3f(0.55f, 0.0f, 0.0f), 1.6f);
+	public static final DustParticleOptions BLOOD = new DustParticleOptions(0x8C0000, 1.6f);
 
 	public static boolean isAltar(BlockGetter level, BlockPos pos) {
 		if (!level.getBlockState(pos).is(Blocks.RESPAWN_ANCHOR)) {

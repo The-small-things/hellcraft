@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
 
@@ -36,7 +37,7 @@ public final class Ghosts {
 		if (soul.deathSpot == null) {
 			return;
 		}
-		if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && !player.hasPermissions(2)) {
+		if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && !player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
 			player.setGameMode(GameType.SPECTATOR);
 		}
 		if (player.getCamera() != player) {
@@ -69,7 +70,7 @@ public final class Ghosts {
 	}
 
 	public static void finishRevive(ServerPlayer player, HellState.Soul soul, HellState.GlobalSpot at) {
-		HellState state = HellState.get(player.server);
+		HellState state = HellState.get(player.level().getServer());
 		soul.ghost = false;
 		soul.reviveAt = null;
 		soul.hearts = HellConfig.get().reviveHearts;
@@ -78,16 +79,16 @@ public final class Ghosts {
 		teleport(player, at);
 		Hearts.apply(player);
 		player.setHealth(player.getMaxHealth());
-		player.server.getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().getName()
+		player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name()
 				+ " has been bought back from the dead with blood.").withStyle(ChatFormatting.GOLD), false);
 	}
 
 	public static void teleport(ServerPlayer player, HellState.GlobalSpot spot) {
-		ServerLevel level = player.server.getLevel(spot.dimension());
+		ServerLevel level = player.level().getServer().getLevel(spot.dimension());
 		if (level == null) {
-			level = player.server.overworld();
+			level = player.level().getServer().overworld();
 		}
 		BlockPos p = spot.pos();
-		player.teleportTo(level, p.getX() + 0.5, p.getY(), p.getZ() + 0.5, player.getYRot(), player.getXRot());
+		player.teleportTo(level, p.getX() + 0.5, p.getY(), p.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), true);
 	}
 }

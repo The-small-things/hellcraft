@@ -1,13 +1,14 @@
 package net.thesmallthings.hellcraft.world.feature;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
@@ -15,16 +16,19 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
  * across the chunk being decorated. The terrain around each river rises above its level, so the
  * pools stay put.
  */
-public class RingFluidFeature extends Feature<NoneFeatureConfiguration> {
-	public RingFluidFeature() {
-		super(NoneFeatureConfiguration.CODEC);
+public record RingFluidFeature() implements Feature {
+	public static final RingFluidFeature INSTANCE = new RingFluidFeature();
+	public static final MapCodec<RingFluidFeature> CODEC = MapCodec.unit(INSTANCE);
+
+	@Override
+	public MapCodec<RingFluidFeature> codec() {
+		return CODEC;
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-		WorldGenLevel level = context.level();
-		int x0 = context.origin().getX() & ~15;
-		int z0 = context.origin().getZ() & ~15;
+	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		int x0 = origin.getX() & ~15;
+		int z0 = origin.getZ() & ~15;
 		double r = Math.sqrt((x0 + 8.0) * (x0 + 8.0) + (z0 + 8.0) * (z0 + 8.0));
 		if (!InfernoGeometry.nearRiver(r, 16)) {
 			return false;

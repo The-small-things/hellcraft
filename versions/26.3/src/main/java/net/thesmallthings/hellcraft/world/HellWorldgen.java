@@ -22,12 +22,12 @@ public final class HellWorldgen {
 	public static void register() {
 		Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, HellcraftMod.id("inferno"), InfernoDensity.MAP_CODEC);
 		Registry.register(BuiltInRegistries.BIOME_SOURCE, HellcraftMod.id("circles"), InfernoBiomeSource.CODEC);
-		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("ring_fluid"), new RingFluidFeature());
-		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("dis_wall"), new DisWallFeature());
-		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("gate_wall"), new GateWallFeature());
-		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("burning_tomb"), new BurningTombFeature());
-		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("altar_ruin"), new AltarRuinFeature());
-		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("boulder"), new BoulderFeature());
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("ring_fluid"), RingFluidFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("dis_wall"), DisWallFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("gate_wall"), GateWallFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("burning_tomb"), BurningTombFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("altar_ruin"), AltarRuinFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("boulder"), BoulderFeature.CODEC);
 	}
 
 	/** True when this level was generated as the Inferno (so gameplay only applies there). */

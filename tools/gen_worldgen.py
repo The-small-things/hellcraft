@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Generates Hellcraft's data-driven worldgen JSON.
 
-Run from the repo root:  python3 tools/gen_worldgen.py
+Run from the repo root:  python3 tools/gen_worldgen.py            (Minecraft 1.21.1, src/main/resources)
+                         python3 tools/gen_worldgen.py --26.3     (Minecraft 26.3, versions/26.3/src/main/resources)
 
 Everything under src/main/resources/data/{hellcraft,minecraft} that describes biomes, surface
 rules, noise settings, placed/configured features and biome tags is produced here. Keeping it in
@@ -11,6 +12,7 @@ refuses to load biomes whose feature orders conflict) and keeps the per-circle d
 import json
 import os
 import shutil
+import sys
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "src", "main", "resources", "data")
 HC = os.path.join(ROOT, "hellcraft")
@@ -641,5 +643,307 @@ def main():
     print("Generated %d biomes, %d configured and %d placed features." % (len(BIOMES), len(CONFIGURED), len(PLACED)))
 
 
+# --------------------------------------------------------------------------------------------
+# Minecraft 26.3. The data formats changed a lot in 26.x (environment attributes, material rules,
+# inline feature configs, new block state and density function syntax), so the definitions above
+# are translated here rather than duplicated.
+
+ROOT26 = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "data")
+
+
+def is_state(o):
+    return isinstance(o, dict) and "Name" in o and set(o) <= {"Name", "Properties"}
+
+
+def state26(o):
+    """Block state: a bare id for the default state, else {id, properties}."""
+    if "Properties" in o:
+        return {"id": o["Name"], "properties": o["Properties"]}
+    return o["Name"]
+
+
+def provider26(o):
+    """Block state provider: a simple provider is written as the state itself, always in map form."""
+    if o.get("type") == "minecraft:simple_state_provider":
+        s = state26(o["state"])
+        return {"id": s} if isinstance(s, str) else s
+    if o.get("type") == "minecraft:weighted_state_provider":
+        return {"type": "minecraft:weighted",
+                "entries": [{"data": provider26({"type": "minecraft:simple_state_provider", "state": e["data"]}), "weight": e["weight"]}
+                            for e in o["entries"]]}
+    raise SystemExit("unknown state provider %s" % o)
+
+
+def states26(o):
+    """Converts every block state in a tree (surface rules, predicates)."""
+    if is_state(o):
+        return state26(o)
+    if isinstance(o, dict):
+        return {k: states26(v) for k, v in o.items()}
+    if isinstance(o, list):
+        return [states26(v) for v in o]
+    return o
+
+
+def density26(o):
+    if not isinstance(o, dict):
+        return o
+    t = o["type"]
+    if t in ("minecraft:add", "minecraft:mul", "minecraft:min", "minecraft:max"):
+        return {"type": t, "left": density26(o["argument1"]), "right": density26(o["argument2"])}
+    if t == "minecraft:cache_2d":
+        # a column-constant function: sample it at one height and cache it
+        return {"type": "minecraft:cache", "input": {"type": "minecraft:slice", "axis": "y", "coordinate": 0,
+                                                      "input": density26(o["argument"])}}
+    if t == "minecraft:y_clamped_gradient":
+        return {"type": "minecraft:gradient", "axis": "y", "from_coordinate": o["from_y"], "from_value": o["from_value"],
+                "to_coordinate": o["to_y"], "to_value": o["to_value"]}
+    if t == "minecraft:interpolated":
+        # the old noise settings used size_horizontal 1 and size_vertical 2: 4x8 block cells
+        return {"type": t, "cell_size_xz": 4, "cell_size_y": 8, "input": density26(o["argument"])}
+    if t == "minecraft:noise":
+        return dict(o)
+    if t == "hellcraft:inferno":
+        if o["mode"] != "surface":
+            return dict(o)
+        # 26.x density functions can't easily take inputs, so the column terms come from Java and the
+        # detail noise is mixed in here, exactly like InfernoGeometry.surfaceHeight:
+        # base + detail_amplitude * n + ridge_amplitude * (1 - |n|)^3
+        n = density26(o["detail"])
+        col = lambda mode: {"type": "hellcraft:inferno", "mode": mode}
+        ridge = {"type": "minecraft:cube", "input": {"type": "minecraft:sub", "left": 1.0, "right": {"type": "minecraft:abs", "input": n}}}
+        return {"type": "minecraft:add", "left": col("base"), "right": {
+            "type": "minecraft:add",
+            "left": {"type": "minecraft:mul", "left": col("detail_amplitude"), "right": n},
+            "right": {"type": "minecraft:mul", "left": col("ridge_amplitude"), "right": ridge}}}
+    raise SystemExit("unknown density function %s" % t)
+
+
+def color(c):
+    return "#%06x" % c
+
+
+def spawn26(e):
+    count = e["minCount"] if e["minCount"] == e["maxCount"] else \
+        {"type": "minecraft:uniform", "min_inclusive": e["minCount"], "max_inclusive": e["maxCount"]}
+    return {"type": e["type"], "count": count, "weight": e["weight"]}
+
+
+FIRE_BURNOUT = set(TAGS["increased_fire_burnout"])
+GOLEM_MELTS = set(TAGS["snow_golem_melts"])
+
+
+def make_biome26(biome_id, d):
+    old = make_biome(biome_id, d)
+    colors = d["colors"]
+    attrs = {
+        "minecraft:visual/fog_color": color(colors["fog_color"]),
+        "minecraft:visual/sky_color": color(colors["sky_color"]),
+        "minecraft:visual/water_fog_color": color(colors["water_fog_color"]),
+        "minecraft:audio/background_music": {"default": {k: v for k, v in music(d["music"]).items() if k != "replace_current_music"}},
+    }
+    sound = d.get("sound", {})
+    ambient = {}
+    if "mood_sound" in sound:
+        ambient["mood"] = sound["mood_sound"]
+    if "ambient_sound" in sound:
+        ambient["loop"] = sound["ambient_sound"]
+    if "additions_sound" in sound:
+        ambient["additions"] = sound["additions_sound"]
+    if ambient:
+        attrs["minecraft:audio/ambient_sounds"] = ambient
+    if "particle" in d:
+        attrs["minecraft:visual/ambient_particles"] = {
+            "argument": [{"particle": {"type": d["particle"][0]}, "probability": d["particle"][1]}], "modifier": "append"}
+    spawns = {cat: [spawn26(e) for e in entries] for cat, entries in old["spawners"].items() if entries}
+    attrs["minecraft:gameplay/natural_mob_spawns"] = {
+        "argument": {"spawn_costs": {}, "spawns_by_category": spawns}, "modifier": "overlay"}
+    attrs["minecraft:gameplay/can_pillager_patrol_spawn"] = False
+    ident = "hellcraft:" + biome_id
+    if ident in FIRE_BURNOUT:
+        attrs["minecraft:gameplay/increased_fire_burnout"] = True
+    if ident in GOLEM_MELTS:
+        attrs["minecraft:gameplay/snow_golem_melts"] = True
+    effects = {"water_color": color(colors["water_color"])}
+    for key in ("grass_color", "foliage_color"):
+        if key in colors:
+            effects[key] = color(colors[key])
+    if "grass_color_modifier" in colors:
+        effects["grass_color_modifier"] = colors["grass_color_modifier"]
+    return {
+        "attributes": attrs,
+        "carvers": old["carvers"]["air"],
+        "downfall": old["downfall"],
+        "effects": effects,
+        "features": old["features"],
+        "has_precipitation": old["has_precipitation"],
+        "temperature": old["temperature"],
+    }
+
+
+AIR26 = {"type": "minecraft:matching_block_tag", "tag": "minecraft:air"}
+
+
+def trapezoid(spread):
+    return {"type": "minecraft:trapezoid", "min": -spread, "max": spread, "plateau": 0}
+
+
+def feature26(name, cfg):
+    t = cfg["type"]
+    c = cfg["config"]
+    if t.startswith("hellcraft:"):
+        out = {"type": t}
+        if "state" in c:
+            out["state"] = state26(c["state"])
+        return out
+    if t == "minecraft:random_patch":
+        # random patches are now a simple feature plus placement (see patch26)
+        return {"type": "minecraft:simple_block", "to_place": provider26(c["feature"]["feature"]["config"]["to_place"])}
+    if t == "minecraft:lake":
+        return {"type": t, "barrier": provider26(c["barrier"]), "fluid": provider26(c["fluid"]),
+                "can_place_feature": {"type": "minecraft:true"},
+                "can_replace_with_air_or_fluid": {"type": "minecraft:not", "predicate": {
+                    "type": "minecraft:matching_block_tag", "tag": "minecraft:features_cannot_replace"}},
+                "can_replace_with_barrier": {"type": "minecraft:not", "predicate": {
+                    "type": "minecraft:matching_block_tag", "tag": "minecraft:lava_pool_stone_cannot_replace"}}}
+    if t == "minecraft:ore":
+        return {"type": t, "discard_chance_on_air_exposure": c["discard_chance_on_air_exposure"], "size": c["size"],
+                "targets": [{"state": state26(x["state"]), "target": x["target"]} for x in c["targets"]]}
+    if t == "minecraft:tree":
+        dirt = provider26(c["dirt_provider"])
+        return {"type": t,
+                "below_trunk_provider": {"type": "minecraft:rule_based", "rules": [{
+                    "if_true": {"type": "minecraft:not", "predicate": {
+                        "type": "minecraft:matching_block_tag", "tag": "minecraft:cannot_replace_below_tree_trunk"}},
+                    "then": dirt}]},
+                "decorators": c["decorators"],
+                "foliage_placer": c["foliage_placer"],
+                "foliage_provider": provider26(c["foliage_provider"]),
+                "ignore_vines": c["ignore_vines"],
+                "minimum_size": c["minimum_size"],
+                "trunk_placer": c["trunk_placer"],
+                "trunk_provider": provider26(c["trunk_provider"])}
+    raise SystemExit("unknown feature type %s (%s)" % (t, name))
+
+
+def placed26(name, pf):
+    placement = states26(pf["placement"])
+    cfg = CONFIGURED.get(pf["feature"].split(":")[1]) if pf["feature"].startswith("hellcraft:") else None
+    if cfg and cfg["type"] == "minecraft:random_patch":
+        c = cfg["config"]
+        predicates = [AIR26] + [states26(p) for p in c["feature"]["placement"][0]["predicate"]["predicates"][1:]]
+        placement += [count(c["tries"]),
+                      {"type": "minecraft:offset", "x": trapezoid(c["xz_spread"]), "y": trapezoid(c["y_spread"]),
+                       "z": trapezoid(c["xz_spread"])},
+                      {"type": "minecraft:block_predicate_filter", "predicate": {"type": "minecraft:all_of", "predicates": predicates}}]
+    return {"feature": pf["feature"], "placement": placement}
+
+
+def noise26(first_octave, amplitudes, base_amplitude):
+    return {"amplitude_modifiers": amplitudes, "base_amplitude": base_amplitude, "base_octave": first_octave,
+            "octave_count": len(amplitudes)}
+
+
+SURFACE_HEIGHT26 = density26(SURFACE_DENSITY)
+
+
+def noise_settings26():
+    old = NOISE_SETTINGS["noise_router"]
+    return {
+        "default_block": state26(NOISE_SETTINGS["default_block"]),
+        "default_fluid": state26(NOISE_SETTINGS["default_fluid"]),
+        "disable_mob_generation": False,
+        "legacy_random_source": False,
+        "material_rule": states26(NOISE_SETTINGS["surface_rule"]),
+        "noise": {"height": 384, "min_y": -64},
+        "noise_router": {
+            # the surface rules' "above preliminary surface" reads this: the funnel's own surface height
+            "chunk_surface_level": SURFACE_HEIGHT26,
+            "continents": 0.0, "depth": 0.0, "erosion": 0.0,
+            "final_density": density26(old["final_density"]),
+            "ridges": 0.0, "temperature": 0.0, "vegetation": 0.0,
+        },
+        "sea_level": NOISE_SETTINGS["sea_level"],
+        "spawn_target": [],
+    }
+
+
+NIGHTMARE_BED = {"can_set_spawn": "never", "can_sleep": "never", "destroy_on_use": True}
+
+DIMENSION_TYPE26 = {
+    "ambient_light": DIMENSION_TYPE["ambient_light"],
+    "attributes": {
+        "minecraft:audio/ambient_sounds": {"mood": CAVE_MOOD["mood_sound"]},
+        "minecraft:audio/background_music": {"default": {"max_delay": 24000, "min_delay": 12000, "sound": "minecraft:music.game"}},
+        # bed_works: false -- beds explode, as in the Nether
+        "minecraft:gameplay/bed_rule": NIGHTMARE_BED,
+        "minecraft:gameplay/straw_bed_rule": NIGHTMARE_BED,
+        "minecraft:gameplay/respawn_anchor_works": False,
+        "minecraft:gameplay/can_start_raid": False,
+        # piglin_safe: true
+        "minecraft:gameplay/piglins_zombify": False,
+        "minecraft:gameplay/nether_portal_spawns_piglin": True,
+        "minecraft:visual/ambient_light_color": "#0a0a0a",
+        "minecraft:visual/cloud_color": "#ccffffff",
+        "minecraft:visual/cloud_height": 192.33,
+        "minecraft:visual/fog_color": "#c0d8ff",
+        "minecraft:visual/sky_color": "#78a7ff",
+    },
+    "coordinate_scale": 1.0,
+    # eternal dusk: Landmarks stops the clock at 13400 when the world is created
+    "default_clock": "minecraft:overworld",
+    "has_ceiling": False,
+    "has_ender_dragon_fight": False,
+    "has_skylight": True,
+    "height": 384,
+    "infiniburn": "#minecraft:infiniburn_overworld",
+    "logical_height": 384,
+    "min_y": -64,
+    "monster_spawn_block_light_limit": 0,
+    "monster_spawn_light_level": DIMENSION_TYPE["monster_spawn_light_level"],
+    "timelines": "#minecraft:in_overworld",
+}
+
+# Biome tags that became environment attributes in 26.x
+TAGS26_DROPPED = {"without_patrol_spawns", "increased_fire_burnout", "snow_golem_melts"}
+
+
+def main26():
+    hc = os.path.join(ROOT26, "hellcraft")
+    mc = os.path.join(ROOT26, "minecraft")
+    for sub in ["worldgen/biome", "worldgen/feature", "worldgen/placed_feature", "worldgen/noise_settings",
+                "worldgen/noise", "worldgen/world_preset", "dimension_type"]:
+        shutil.rmtree(os.path.join(hc, sub), ignore_errors=True)
+    shutil.rmtree(os.path.join(mc, "tags", "worldgen"), ignore_errors=True)
+
+    for biome_id, d in BIOMES.items():
+        write(os.path.join(hc, "worldgen", "biome", biome_id + ".json"), make_biome26(biome_id, d))
+    for name, cfg in CONFIGURED.items():
+        write(os.path.join(hc, "worldgen", "feature", name + ".json"), feature26(name, cfg))
+    for name, pf in PLACED.items():
+        write(os.path.join(hc, "worldgen", "placed_feature", name + ".json"), placed26(name, pf))
+    # base_amplitude is the overall scale (the old format derived it from the octave count)
+    write(os.path.join(hc, "worldgen", "noise", "surface_detail.json"), noise26(-8, [1.0, 1.0, 0.6, 0.3, 0.15], 1.0))
+    write(os.path.join(hc, "worldgen", "noise", "jagged.json"), noise26(-5, [1.0, 0.8, 0.5], 0.95))
+    write(os.path.join(hc, "worldgen", "noise_settings", "inferno.json"), noise_settings26())
+    write(os.path.join(hc, "dimension_type", "inferno.json"), DIMENSION_TYPE26)
+    write(os.path.join(hc, "worldgen", "world_preset", "inferno.json"), {"dimensions": {
+        "minecraft:overworld": {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR},
+        "minecraft:the_end": {"type": "minecraft:the_end", "generator": {
+            "type": "minecraft:noise", "biome_source": {"type": "minecraft:the_end"}, "settings": "minecraft:end"}},
+        "minecraft:the_nether": {"type": "minecraft:the_nether", "generator": {
+            "type": "minecraft:noise", "biome_source": {"type": "minecraft:multi_noise", "preset": "minecraft:nether"},
+            "settings": "minecraft:nether"}},
+    }})
+    write(os.path.join(mc, "tags", "worldgen", "world_preset", "normal.json"), {"replace": False, "values": ["hellcraft:inferno"]})
+    for tag, values in TAGS.items():
+        if tag not in TAGS26_DROPPED:
+            write(os.path.join(mc, "tags", "worldgen", "biome", tag + ".json"), {"replace": False, "values": values})
+    print("Generated %d biomes, %d features and %d placed features for 26.3." % (len(BIOMES), len(CONFIGURED), len(PLACED)))
+
+
 if __name__ == "__main__":
-    main()
+    if "--26.3" in sys.argv:
+        main26()
+    else:
+        main()

@@ -4,8 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundStopSoundPacket;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -87,7 +86,7 @@ final class LuciferMusic {
 			return;
 		}
 		stop(player);
-		player.connection.send(new ClientboundSoundEntityPacket(song.sound(), SoundSource.MUSIC, player, 1.0f, 1.0f, level.random.nextLong()));
+		player.connection.send(new ClientboundSoundEntityPacket(song.sound(), SoundSource.MUSIC, player, 1.0f, 1.0f, level.getRandom().nextLong()));
 		playing.put(player.getUUID(), song);
 		restartAt.put(player.getUUID(), song.lengthTicks() > 0 ? now + song.lengthTicks() + 10 : Integer.MAX_VALUE);
 	}
@@ -95,7 +94,7 @@ final class LuciferMusic {
 	private void stop(ServerPlayer player) {
 		Song song = playing.remove(player.getUUID());
 		if (song != null) {
-			player.connection.send(new ClientboundStopSoundPacket(song.sound().value().getLocation(), SoundSource.MUSIC));
+			player.connection.send(new ClientboundStopSoundPacket(song.sound().value().location(), SoundSource.MUSIC));
 		}
 	}
 
@@ -110,12 +109,11 @@ final class LuciferMusic {
 			case ENRAGED -> config.fallbackMusicEnraged;
 			case TRUE_FORM -> config.fallbackMusicTrueForm;
 		};
-		ResourceLocation location = ResourceLocation.tryParse(id);
+		Identifier location = Identifier.tryParse(id);
 		if (location == null) {
 			return null;
 		}
-		Optional<Holder.Reference<JukeboxSong>> song = level.registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG)
-				.get(ResourceKey.create(Registries.JUKEBOX_SONG, location));
+		Optional<Holder.Reference<JukeboxSong>> song = level.registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG).get(location);
 		return song.map(s -> new Song(s.value().soundEvent(), Math.round(s.value().lengthInSeconds() * 20))).orElse(null);
 	}
 }

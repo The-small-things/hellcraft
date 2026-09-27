@@ -35,7 +35,7 @@ public final class LuciferManager {
 	private static int ticks;
 
 	public static boolean isLucifer(Entity entity) {
-		return entity.getTags().contains(TAG);
+		return entity.entityTags().contains(TAG);
 	}
 
 	public static void register() {

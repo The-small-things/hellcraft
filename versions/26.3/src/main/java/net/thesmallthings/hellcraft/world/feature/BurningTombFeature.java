@@ -1,25 +1,27 @@
 package net.thesmallthings.hellcraft.world.feature;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 /** The open, burning sepulchres of the heretics (Inferno, Canto IX-X). */
-public class BurningTombFeature extends Feature<NoneFeatureConfiguration> {
-	public BurningTombFeature() {
-		super(NoneFeatureConfiguration.CODEC);
+public record BurningTombFeature() implements Feature {
+	public static final BurningTombFeature INSTANCE = new BurningTombFeature();
+	public static final MapCodec<BurningTombFeature> CODEC = MapCodec.unit(INSTANCE);
+
+	@Override
+	public MapCodec<BurningTombFeature> codec() {
+		return CODEC;
 	}
 
 	@Override
-	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-		WorldGenLevel level = context.level();
-		RandomSource random = context.random();
-		BlockPos origin = context.origin();
+	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		BlockPos origin = origin;
 		if (!level.getBlockState(origin.below()).isSolid()) {
 			return false;
 		}

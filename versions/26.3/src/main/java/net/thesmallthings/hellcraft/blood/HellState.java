@@ -1,17 +1,17 @@
 package net.thesmallthings.hellcraft.blood;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +23,9 @@ import java.util.UUID;
 
 /** Everything Hellcraft remembers about the world: hearts, ghosts, altar bindings, Lucifer. */
 public class HellState extends SavedData {
-	private static final String NAME = "hellcraft";
-	private static final SavedData.Factory<HellState> FACTORY = new SavedData.Factory<>(HellState::new, HellState::load, null);
+	/** Stored as plain NBT (the same layout as the 1.21.1 version) through a pass-through codec. */
+	private static final SavedDataType<HellState> TYPE = new SavedDataType<>(HellcraftMod.id("state"), HellState::new,
+			CompoundTag.CODEC.xmap(HellState::load, HellState::save), null);
 
 	private final Map<UUID, Soul> souls = new HashMap<>();
 	public boolean landmarksBuilt;
@@ -36,7 +37,7 @@ public class HellState extends SavedData {
 	public long luciferNextSpawn;
 
 	public static HellState get(MinecraftServer server) {
-		return server.overworld().getDataStorage().computeIfAbsent(FACTORY, NAME);
+		return server.overworld().getDataStorage().computeIfAbsent(TYPE);
 	}
 
 	/** A player's standing in Hell. */
@@ -62,19 +63,20 @@ public class HellState extends SavedData {
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
 		CompoundTag save() {
 			CompoundTag tag = new CompoundTag();
-			tag.putString("dim", dimension.location().toString());
-			tag.put("pos", NbtUtils.writeBlockPos(pos));
+			tag.putString("dim", dimension.identifier().toString());
+			tag.store("pos", BlockPos.CODEC, pos);
 			return tag;
 		}
 
 		@Nullable
 		static GlobalSpot load(CompoundTag parent, String key) {
-			if (!parent.contains(key, Tag.TAG_COMPOUND)) {
+			Optional<CompoundTag> found = parent.getCompound(key);
+			if (found.isEmpty()) {
 				return null;
 			}
-			CompoundTag tag = parent.getCompound(key);
-			ResourceLocation dim = ResourceLocation.tryParse(tag.getString("dim"));
-			Optional<BlockPos> pos = NbtUtils.readBlockPos(tag, "pos");
+			CompoundTag tag = found.get();
+			Identifier dim = Identifier.tryParse(tag.getStringOr("dim", ""));
+			Optional<BlockPos> pos = tag.read("pos", BlockPos.CODEC);
 			if (dim == null || pos.isEmpty()) {
 				return null;
 			}
@@ -116,13 +118,13 @@ public class HellState extends SavedData {
 		return souls;
 	}
 
-	@Override
-	public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+	private CompoundTag save() {
+		CompoundTag tag = new CompoundTag();
 		ListTag list = new ListTag();
 		for (Map.Entry<UUID, Soul> e : souls.entrySet()) {
 			Soul s = e.getValue();
 			CompoundTag st = new CompoundTag();
-			st.putUUID("id", e.getKey());
+			st.store("id", UUIDUtil.CODEC, e.getKey());
 			st.putString("name", s.name);
 			st.putInt("hearts", s.hearts);
 			st.putBoolean("ghost", s.ghost);
@@ -146,37 +148,39 @@ public class HellState extends SavedData {
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
-			tag.putUUID("lucifer", luciferId);
+			tag.store("lucifer", UUIDUtil.CODEC, luciferId);
 		}
 		tag.putLong("luciferNext", luciferNextSpawn);
 		return tag;
 	}
 
-	public static HellState load(CompoundTag tag, HolderLookup.Provider registries) {
+	private static HellState load(CompoundTag tag) {
 		HellState state = new HellState();
-		ListTag list = tag.getList("souls", Tag.TAG_COMPOUND);
+		ListTag list = tag.getListOrEmpty("souls");
 		for (int i = 0; i < list.size(); i++) {
-			CompoundTag st = list.getCompound(i);
+			CompoundTag st = list.getCompoundOrEmpty(i);
+			Optional<UUID> id = st.read("id", UUIDUtil.CODEC);
+			if (id.isEmpty()) {
+				continue;
+			}
 			Soul s = new Soul();
-			s.name = st.getString("name");
-			s.hearts = st.getInt("hearts");
-			s.ghost = st.getBoolean("ghost");
-			s.wardUntil = st.getLong("ward");
-			s.maxBonus = st.getInt("maxBonus");
-			s.slewLucifer = st.getBoolean("slewLucifer");
-			s.pendingReward = st.getInt("pendingReward");
+			s.name = st.getStringOr("name", "");
+			s.hearts = st.getIntOr("hearts", 0);
+			s.ghost = st.getBooleanOr("ghost", false);
+			s.wardUntil = st.getLongOr("ward", 0L);
+			s.maxBonus = st.getIntOr("maxBonus", 0);
+			s.slewLucifer = st.getBooleanOr("slewLucifer", false);
+			s.pendingReward = st.getIntOr("pendingReward", 0);
 			s.deathSpot = GlobalSpot.load(st, "death");
 			s.altar = GlobalSpot.load(st, "altar");
 			s.reviveAt = GlobalSpot.load(st, "revive");
-			state.souls.put(st.getUUID("id"), s);
+			state.souls.put(id.get(), s);
 		}
-		state.landmarksBuilt = tag.getBoolean("landmarks");
-		state.arenaSealed = tag.getBoolean("arenaSealed");
-		state.luciferDefeats = tag.getInt("luciferDefeats");
-		if (tag.hasUUID("lucifer")) {
-			state.luciferId = tag.getUUID("lucifer");
-		}
-		state.luciferNextSpawn = tag.getLong("luciferNext");
+		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
+		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
+		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
+		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);
+		state.luciferNextSpawn = tag.getLongOr("luciferNext", 0L);
 		return state;
 	}
 }

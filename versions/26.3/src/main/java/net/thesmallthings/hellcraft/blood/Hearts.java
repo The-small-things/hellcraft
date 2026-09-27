@@ -2,7 +2,7 @@ package net.thesmallthings.hellcraft.blood;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -15,10 +15,10 @@ public final class Hearts {
 	private Hearts() {
 	}
 
-	public static final ResourceLocation MODIFIER = HellcraftMod.id("hearts");
+	public static final Identifier MODIFIER = HellcraftMod.id("hearts");
 
 	public static HellState.Soul soul(ServerPlayer player) {
-		return HellState.get(player.server).soul(player.getUUID(), player.getGameProfile().getName());
+		return HellState.get(player.level().getServer()).soul(player.getUUID(), player.getGameProfile().name());
 	}
 
 	/** Most hearts this soul may hold: the server cap plus anything earned (Lucifer's Bane). */
@@ -45,7 +45,7 @@ public final class Hearts {
 
 	/** Changes a player's hearts by {@code delta}, clamped to [0, max]. Returns the applied change. */
 	public static int add(ServerPlayer player, int delta) {
-		HellState state = HellState.get(player.server);
+		HellState state = HellState.get(player.level().getServer());
 		HellState.Soul soul = soul(player);
 		int before = soul.hearts;
 		soul.hearts = Math.max(0, Math.min(cap(soul), soul.hearts + delta));
@@ -57,7 +57,7 @@ public final class Hearts {
 	public static void set(ServerPlayer player, int hearts) {
 		HellState.Soul soul = soul(player);
 		soul.hearts = Math.max(1, Math.min(cap(soul), hearts));
-		HellState.get(player.server).setDirty();
+		HellState.get(player.level().getServer()).setDirty();
 		apply(player);
 	}
 

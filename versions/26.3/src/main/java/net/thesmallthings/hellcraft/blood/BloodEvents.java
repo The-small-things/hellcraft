@@ -9,11 +9,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -32,9 +31,9 @@ public final class BloodEvents {
 		UseItemCallback.EVENT.register((player, level, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);
 			if (level.isClientSide() || !(player instanceof ServerPlayer sp) || !BloodItems.isBlood(stack)) {
-				return InteractionResultHolder.pass(stack);
+				return InteractionResult.PASS;
 			}
-			return consume(sp, stack) ? InteractionResultHolder.success(stack) : InteractionResultHolder.fail(stack);
+			return consume(sp, stack) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 		});
 
 		UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
@@ -61,21 +60,21 @@ public final class BloodEvents {
 		HellConfig config = HellConfig.get();
 		if (BloodItems.isHeart(stack)) {
 			if (Hearts.soul(player).hearts >= Hearts.cap(Hearts.soul(player))) {
-				player.displayClientMessage(Component.literal("Your veins can hold no more blood.").withStyle(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Component.literal("Your veins can hold no more blood.").withStyle(ChatFormatting.RED));
 				return false;
 			}
 			stack.shrink(1);
 			Hearts.add(player, 1);
 			player.heal(2.0f);
-			player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 0.6f);
-			player.displayClientMessage(Component.literal("+1 ❤  (" + Hearts.soul(player).hearts + ")").withStyle(ChatFormatting.DARK_RED), true);
+			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 0.6f);
+			player.sendOverlayMessage(Component.literal("+1 ❤  (" + Hearts.soul(player).hearts + ")").withStyle(ChatFormatting.DARK_RED));
 			return true;
 		}
 		if (BloodItems.isBane(stack)) {
 			HellState.Soul soul = Hearts.soul(player);
 			stack.shrink(1);
 			soul.maxBonus += config.luciferMaxHeartBonus;
-			HellState.get(player.server).setDirty();
+			HellState.get(player.level().getServer()).setDirty();
 			Hearts.apply(player);
 			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.0f, 0.6f);
 			player.sendSystemMessage(Component.literal("Lucifer's Bane burns in your veins. They can now hold " + Hearts.cap(soul) + " hearts.")
@@ -85,13 +84,13 @@ public final class BloodEvents {
 		if (BloodItems.isFragment(stack)) {
 			int needed = config.fragmentsPerHeart;
 			if (stack.getCount() < needed) {
-				player.displayClientMessage(Component.literal("Gather " + needed + " Blood Fragments to clot a heart.").withStyle(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Component.literal("Gather " + needed + " Blood Fragments to clot a heart.").withStyle(ChatFormatting.RED));
 				return false;
 			}
 			stack.shrink(needed);
 			BloodItems.give(player, BloodItems.heart(1));
 			player.level().playSound(null, player.blockPosition(), SoundEvents.HONEY_BLOCK_PLACE, SoundSource.PLAYERS, 1.0f, 0.5f);
-			player.displayClientMessage(Component.literal("The blood clots into a heart.").withStyle(ChatFormatting.DARK_RED), true);
+			player.sendOverlayMessage(Component.literal("The blood clots into a heart.").withStyle(ChatFormatting.DARK_RED));
 			return true;
 		}
 		return false;
@@ -106,7 +105,7 @@ public final class BloodEvents {
 		}
 		if (soul.ghost) {
 			Ghosts.makeGhost(player);
-		} else if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR && soul.deathSpot != null && !player.hasPermissions(2)) {
+		} else if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR && soul.deathSpot != null && !player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
 			// was a ghost, got revived by an admin command while offline
 			player.setGameMode(GameType.SURVIVAL);
 		}
@@ -124,13 +123,13 @@ public final class BloodEvents {
 			return;
 		}
 		if (soul.altar != null) {
-			ServerLevel level = player.server.getLevel(soul.altar.dimension());
+			ServerLevel level = player.level().getServer().getLevel(soul.altar.dimension());
 			if (level != null && BloodAltar.isAltar(level, soul.altar.pos())) {
 				Ghosts.teleport(player, new HellState.GlobalSpot(soul.altar.dimension(), soul.altar.pos().above()));
 				return;
 			}
 			soul.altar = null;
-			HellState.get(player.server).setDirty();
+			HellState.get(player.level().getServer()).setDirty();
 			player.sendSystemMessage(Component.literal("Your blood altar has been destroyed.").withStyle(ChatFormatting.RED));
 		}
 	}

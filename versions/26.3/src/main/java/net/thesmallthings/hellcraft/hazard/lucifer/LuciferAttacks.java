@@ -9,9 +9,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,7 @@ final class LuciferAttacks {
 	/** Portal particles gather behind the target... then he is there. */
 	private static void slash(LuciferFight fight, Mob avatar, LivingEntity target) {
 		ServerLevel level = fight.level();
-		fight.say(LuciferDialogue.pick(level.random, LuciferDialogue.SLASH));
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.SLASH));
 		Vec3 facing = target.getLookAngle().multiply(1, 0, 1);
 		if (facing.lengthSqr() < 1.0e-4) {
 			facing = new Vec3(1, 0, 0);
@@ -58,11 +60,11 @@ final class LuciferAttacks {
 			avatar.getLookControl().setLookAt(target);
 			level.playSound(null, spot.x, spotY, spot.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 2.0f, 0.5f);
 			level.sendParticles(ParticleTypes.SWEEP_ATTACK, spot.x, spotY + 2, spot.z, 3, 0.8, 0.5, 0.8, 0.0);
-			avatar.swing(InteractionHand.MAIN_HAND);
+			avatar.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, true);
 			if (target.isAlive() && avatar.distanceTo(target) < 4.5) {
 				target.hurt(level.damageSources().mobAttack(avatar), (fight.enraged() ? 12.0f : 9.0f) * fight.damageMultiplier());
-				target.knockback(1.4, avatar.getX() - target.getX(), avatar.getZ() - target.getZ());
-				target.hurtMarked = true;
+				target.knockback(1.4, avatar.getX() - target.getX(), avatar.getZ() - target.getZ(), level.damageSources().mobAttack(avatar), 0.0f);
+				Feedback.syncMotion(target);
 			}
 		});
 	}
@@ -70,9 +72,9 @@ final class LuciferAttacks {
 	/** Three lines of judgement race across the ice toward the target. */
 	private static void fangs(LuciferFight fight, Mob avatar, LivingEntity target) {
 		ServerLevel level = fight.level();
-		fight.say(LuciferDialogue.pick(level.random, LuciferDialogue.FANGS));
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.FANGS));
 		level.playSound(null, avatar.blockPosition(), SoundEvents.EVOKER_PREPARE_ATTACK, SoundSource.HOSTILE, 2.0f, 0.6f);
-		avatar.swing(InteractionHand.MAIN_HAND);
+		avatar.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, true);
 		double base = Math.atan2(target.getZ() - avatar.getZ(), target.getX() - avatar.getX());
 		int lines = (fight.enraged() ? 5 : 3) + fight.extraLines();
 		for (int line = 0; line < lines; line++) {
@@ -90,7 +92,7 @@ final class LuciferAttacks {
 	/** He spreads the wings whose beating froze Cocytus: everyone near is blasted away and frozen. */
 	private static void wings(LuciferFight fight, Mob avatar) {
 		ServerLevel level = fight.level();
-		fight.say(LuciferDialogue.pick(level.random, LuciferDialogue.WINGS));
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.WINGS));
 		level.playSound(null, avatar.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 3.0f, 0.5f);
 		for (int t = 0; t < 20; t += 2) {
 			int step = t;
@@ -115,7 +117,7 @@ final class LuciferAttacks {
 				Vec3 away = e.position().subtract(avatar.position()).multiply(1, 0, 1);
 				away = away.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : away.normalize();
 				e.push(away.x * 2.2, 0.7, away.z * 2.2);
-				e.hurtMarked = true;
+				Feedback.syncMotion(e);
 				e.setTicksFrozen(Math.min(e.getTicksFrozen() + 200, e.getTicksRequiredToFreeze() + 200));
 				e.hurt(level.damageSources().freeze(), (fight.enraged() ? 6.0f : 4.0f) * fight.damageMultiplier());
 			}
@@ -125,14 +127,14 @@ final class LuciferAttacks {
 	/** Pillars of hellfire fall wherever the flames mark the ice. */
 	private static void hellfire(LuciferFight fight, Mob avatar) {
 		ServerLevel level = fight.level();
-		fight.say(LuciferDialogue.pick(level.random, LuciferDialogue.HELLFIRE));
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.HELLFIRE));
 		level.playSound(null, avatar.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 2.0f, 0.5f);
 		List<Vec3> marks = new ArrayList<>();
 		int perTarget = (fight.enraged() ? 7 : 5) + fight.extraMarks();
 		for (LivingEntity target : fight.targets()) {
 			for (int k = 0; k < perTarget; k++) {
-				double ox = k == 0 ? 0 : (level.random.nextDouble() - 0.5) * 9;
-				double oz = k == 0 ? 0 : (level.random.nextDouble() - 0.5) * 9;
+				double ox = k == 0 ? 0 : (level.getRandom().nextDouble() - 0.5) * 9;
+				double oz = k == 0 ? 0 : (level.getRandom().nextDouble() - 0.5) * 9;
 				double x = target.getX() + ox;
 				double z = target.getZ() + oz;
 				marks.add(new Vec3(x, floorAt(level, x, target.getY(), z), z));
