@@ -69,7 +69,7 @@ CANON = {
         "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "minecraft:patch_berry_common",
         "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river",
     ],
-    TOP: ["minecraft:freeze_top_layer"],
+    TOP: ["hellcraft:gate_wall", "minecraft:freeze_top_layer"],
 }
 CANON[VEG].remove("minecraft:crimson_fungi_surface_placeholder")
 
@@ -231,7 +231,7 @@ BIOMES = {
         colors=dict(fog_color=0x22301E, sky_color=0x1A2418, water_color=0x2A3A4A, water_fog_color=0x05080A,
                     grass_color=0x3A5A2A, foliage_color=0x2A4A1A, grass_color_modifier="dark_forest"),
         sound=CAVE_MOOD, music="music.overworld.forest",
-        features=["minecraft:dark_forest_vegetation", "minecraft:patch_grass_forest", "minecraft:brown_mushroom_normal",
+        features=["hellcraft:gate_wall", "minecraft:dark_forest_vegetation", "minecraft:patch_grass_forest", "minecraft:brown_mushroom_normal",
                   "minecraft:red_mushroom_normal", "minecraft:patch_berry_common", "minecraft:ore_emerald", "minecraft:forest_rock"],
         monster=[spawn("zombie", 100), spawn("skeleton", 100), spawn("spider", 100), spawn("creeper", 80),
                  spawn("enderman", 10, 1, 2), spawn("witch", 5, 1, 1)],
@@ -466,6 +466,7 @@ def random_patch(state, tries, xz, y, on=None):
 CONFIGURED = {
     "ring_fluid": {"type": "hellcraft:ring_fluid", "config": {}},
     "dis_wall": {"type": "hellcraft:dis_wall", "config": {}},
+    "gate_wall": {"type": "hellcraft:gate_wall", "config": {}},
     "burning_tomb": {"type": "hellcraft:burning_tomb", "config": {}},
     "altar_ruin": {"type": "hellcraft:altar_ruin", "config": {}},
     "boulder_blackstone": {"type": "hellcraft:boulder", "config": {"state": block("blackstone")}},
@@ -502,6 +503,7 @@ CONFIGURED = {
 PLACED = {
     "ring_fluid": placed("hellcraft:ring_fluid"),
     "dis_wall": placed("hellcraft:dis_wall"),
+    "gate_wall": placed("hellcraft:gate_wall"),
     "burning_tomb": placed("hellcraft:burning_tomb", rarity(3), IN_SQUARE, heightmap(), BIOME),
     "altar_ruin": placed("hellcraft:altar_ruin", rarity(1200), IN_SQUARE, heightmap(), BIOME),
     "boulder_blackstone": placed("hellcraft:boulder_blackstone", count(1), IN_SQUARE, heightmap(), BIOME),

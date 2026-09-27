@@ -104,6 +104,7 @@ public final class HellCommands {
 						.then(Commands.literal("summon").executes(HellCommands::summonLucifer))
 						.then(Commands.literal("skip").executes(ctx -> reply(ctx.getSource(), LuciferManager.skip())))
 						.then(Commands.literal("stop").executes(ctx -> reply(ctx.getSource(), LuciferManager.stop())))
+						.then(Commands.literal("status").executes(ctx -> reply(ctx.getSource(), LuciferManager.status())))
 						.then(Commands.literal("attack")
 								.then(Commands.argument("attack", StringArgumentType.word())
 										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "fangs", "wings", "hellfire"}, builder))

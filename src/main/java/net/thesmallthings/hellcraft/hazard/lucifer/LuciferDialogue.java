@@ -8,6 +8,8 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 
 import java.util.List;
@@ -71,19 +73,23 @@ final class LuciferDialogue {
 		return lines[random.nextInt(lines.length)];
 	}
 
-	/** Shows a line on the action bar (like a subtitle) and logs it in chat. */
+	/** Lucifer speaks in chat (only there, so nothing overlaps), with a low voice cue so lines aren't missed. */
 	static void say(List<ServerPlayer> audience, String line) {
 		boolean shout = line.equals(line.toUpperCase()) || line.endsWith("!");
 		MutableComponent text = Component.literal("LUCIFER: ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 				.append(Component.literal(line).withStyle(shout ? new ChatFormatting[]{ChatFormatting.RED, ChatFormatting.BOLD}
 						: new ChatFormatting[]{ChatFormatting.GOLD, ChatFormatting.ITALIC}));
 		for (ServerPlayer p : audience) {
-			p.displayClientMessage(text, true);
 			p.sendSystemMessage(text);
+			if (shout) {
+				p.playNotifySound(SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 0.35f, 0.5f);
+			} else {
+				p.playNotifySound(SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.5f);
+			}
 		}
 	}
 
-	/** The big boss name card. */
+	/** The big boss name card. Keep both lines short: titles are drawn huge and clip on small windows. */
 	static void nameCard(List<ServerPlayer> audience, String title, String subtitle, ChatFormatting color) {
 		for (ServerPlayer p : audience) {
 			p.connection.send(new ClientboundSetTitlesAnimationPacket(5, 60, 20));

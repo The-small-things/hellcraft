@@ -82,6 +82,19 @@ final class LuciferArena {
 		HellcraftMod.LOGGER.info("Arena unsealed");
 	}
 
+	/**
+	 * Keeps (or stops keeping) the pit's chunks loaded. While he fights, Lucifer must never unload,
+	 * e.g. when every player has died and respawned at the rim thousands of blocks away.
+	 */
+	static void forceLoad(ServerLevel level, boolean forced) {
+		int c = ((int) WALL_OUTER >> 4) + 1;
+		for (int cx = -c; cx < c; cx++) {
+			for (int cz = -c; cz < c; cz++) {
+				level.setChunkForced(cx, cz, forced);
+			}
+		}
+	}
+
 	/** True for the ice of the seal while a fight is on (it can't be broken). */
 	static boolean isSealBlock(ServerLevel level, BlockPos pos) {
 		return HellState.get(level.getServer()).arenaSealed && wallColumn(pos.getX(), pos.getZ()) && level.getBlockState(pos).is(Blocks.ICE);

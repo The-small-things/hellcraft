@@ -54,11 +54,11 @@ You need `LEVEL_TYPE=hellcraft:inferno` (`level-type=hellcraft:inferno` in `serv
 
 ## The shape of Hell
 
-The world is a disc 12,000 blocks across, with the world border at radius 6000. You spawn at the rim, just outside the **Gate of Hell** (look for the inscription). Walking toward 0,0 always leads down. Each circle sits on a terrace below the last, separated by cliffs. Every cliff has a few *ruined slopes* (ramps) cut into it, so you'll need to find them, or bridge and pillar your way down.
+The world is a disc 12,000 blocks across, with the world border at radius 6000. You spawn at the rim, just outside the **Gate of Hell**: a black wall that rings the whole Vestibule and Acheron. It is crowned with towers of soul fire and pierced by 12 gates, each bearing Dante's inscription. Every gate opens onto a slope down into the Vestibule. Walking toward 0,0 always leads down. Each circle sits on a terrace below the last, separated by cliffs. Every cliff has a few *ruined slopes* (ramps) cut into it, so you'll need to find them, or bridge and pillar your way down.
 
 | Ring | Circle | Land | Its torment |
 |---|---|---|---|
-| Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves. | – |
+| Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves. The Gate of Hell's wall runs along its inner edge. | – |
 | Vestibule & Acheron | – | Grey gravel plain. The river Acheron. Bees stand in for the stinging wasps. | – |
 | **Limbo** | I | Pale meadows of calcite and birch. The only villages in Hell, plus trail ruins. | none: Limbo is only longing |
 | **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | Hurricane gusts hurl you sideways |
@@ -125,7 +125,7 @@ Walk into the pit at the centre of Judecca and the ice closes behind you. This i
 
 With two or more champions, the traitors rise from the start. He calls champions out by name, and their difficulty shows as ✦ on his health bar.
 
-**Rewards: pick ONE.** When he falls, every fighter gets a chest-style menu (reopen it any time with `/lucifer reward`).
+**Rewards: pick ONE.** When he falls, every fighter still **alive in the pit** gets a chest-style menu (reopen it any time with `/lucifer reward`). There are no spoils for those who died before he did.
 - **First victory:** pick one of
   - *Wings of the Morning Star* (Elytra)
   - *Morning Star*, a netherite sword with Sharpness V, Fire Aspect II, Looting III, Unbreaking III and Mending
@@ -152,7 +152,9 @@ Hellcraft builds a small resource pack from the tracks, serves it itself, and of
 
 He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns, champion scaling, the Bane bonus and the fallback music are all in the config.
 
-Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
+His dialogue appears in chat, each line with a low voice cue.
+
+Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
 
 ## Hell is full
 

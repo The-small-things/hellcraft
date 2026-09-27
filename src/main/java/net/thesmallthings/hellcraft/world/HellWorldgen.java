@@ -8,6 +8,7 @@ import net.thesmallthings.hellcraft.world.feature.AltarRuinFeature;
 import net.thesmallthings.hellcraft.world.feature.BoulderFeature;
 import net.thesmallthings.hellcraft.world.feature.BurningTombFeature;
 import net.thesmallthings.hellcraft.world.feature.DisWallFeature;
+import net.thesmallthings.hellcraft.world.feature.GateWallFeature;
 import net.thesmallthings.hellcraft.world.feature.RingFluidFeature;
 
 /**
@@ -23,6 +24,7 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.BIOME_SOURCE, HellcraftMod.id("circles"), InfernoBiomeSource.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("ring_fluid"), new RingFluidFeature());
 		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("dis_wall"), new DisWallFeature());
+		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("gate_wall"), new GateWallFeature());
 		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("burning_tomb"), new BurningTombFeature());
 		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("altar_ruin"), new AltarRuinFeature());
 		Registry.register(BuiltInRegistries.FEATURE, HellcraftMod.id("boulder"), new BoulderFeature());

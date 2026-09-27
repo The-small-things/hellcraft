@@ -96,7 +96,8 @@ public final class CircleHazards {
 			LAST_CIRCLE.put(id, circle);
 			player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 25));
 			player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(circle.title()).withStyle(ChatFormatting.DARK_RED)));
-			player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(circle.quote()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+			player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(circle.tagline()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+			player.sendSystemMessage(Component.literal("\"" + circle.quote() + "\"").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
 		String region = InfernoGeometry.regionName(player.getX(), player.getZ());
 		if (!region.equals(LAST_REGION.put(id, region)) && !region.equals(circle.title())) {

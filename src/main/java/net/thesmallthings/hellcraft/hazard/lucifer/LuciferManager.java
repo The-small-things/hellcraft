@@ -54,15 +54,19 @@ public final class LuciferManager {
 		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
 				!(level instanceof ServerLevel serverLevel) || !HellWorldgen.isInferno(serverLevel) || !LuciferArena.isSealBlock(serverLevel, pos));
 		// leftovers from a fight interrupted by a restart
+		// never more than one Lucifer: anything tagged as him that the current fight doesn't own goes
+		// (ownership is checked a tick later: a freshly spawned body loads before the fight records its UUID)
 		ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-			if (fight == null && isLucifer(entity)) {
+			if (isLucifer(entity)) {
 				strays.add(entity);
 			}
 		});
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			ServerLevel level = server.overworld();
 			if (HellWorldgen.isInferno(level) && HellState.get(server).arenaSealed) {
+				// a fight was interrupted by a shutdown or crash
 				LuciferArena.unseal(level);
+				LuciferArena.forceLoad(level, false);
 			}
 		});
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
@@ -75,7 +79,11 @@ public final class LuciferManager {
 
 	public static void tick(MinecraftServer server) {
 		if (!strays.isEmpty()) {
-			strays.forEach(Entity::discard);
+			for (Entity entity : strays) {
+				if (fight == null || !fight.owns(entity.getUUID())) {
+					entity.discard();
+				}
+			}
 			strays.clear();
 		}
 		if (fight != null) {
@@ -127,9 +135,18 @@ public final class LuciferManager {
 		if (fight == null) {
 			return "No fight in progress.";
 		}
+		ServerLevel level = fight.level();
 		fight.stop();
 		fight = null;
+		// don't let the proximity trigger wake him again the very next second
+		HellState state = HellState.get(level.getServer());
+		state.luciferNextSpawn = level.getGameTime() + HellConfig.get().luciferRetryMinutes * 1200L;
+		state.setDirty();
 		return "The fight is over.";
+	}
+
+	public static String status() {
+		return fight == null ? "No fight in progress." : fight.status();
 	}
 
 	public static String attack(String name) {

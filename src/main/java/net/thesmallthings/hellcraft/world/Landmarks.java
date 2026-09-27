@@ -1,20 +1,13 @@
 package net.thesmallthings.hellcraft.world;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Giant;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -48,9 +41,9 @@ public final class Landmarks {
 		border.setSize(InfernoGeometry.BORDER_RADIUS * 2.0);
 		level.getGameRules().getRule(GameRules.RULE_DOINSOMNIA).set(false, server);
 
+		// the Gate of Hell itself is a ring wall built by worldgen (GateWallFeature); spawn just outside its +X gate
 		int gateX = InfernoGeometry.gateX();
 		int gateY = surface(level, gateX, 0);
-		buildGate(level, gateX, gateY);
 		BlockPos spawn = new BlockPos(gateX + 24, surface(level, gateX + 24, 0), 0);
 		clear(level, spawn.getX() - 2, spawn.getY(), spawn.getZ() - 2, spawn.getX() + 2, spawn.getY() + 3, spawn.getZ() + 2);
 		level.setDefaultSpawnPos(spawn, 90.0f);
@@ -67,6 +60,18 @@ public final class Landmarks {
 
 		state.landmarksBuilt = true;
 		state.setDirty();
+		int wall = 0;
+		for (int x = gateX - 3; x <= gateX + 3; x++) {
+			for (int z = -12; z <= 12; z++) {
+				for (int y = gateY - 32; y <= gateY + 4; y++) {
+					BlockState b = level.getBlockState(new BlockPos(x, y, z));
+					if (b.is(Blocks.POLISHED_BLACKSTONE_BRICKS) || b.is(Blocks.DEEPSLATE_TILES) || b.is(Blocks.CHISELED_POLISHED_BLACKSTONE)) {
+						wall++;
+					}
+				}
+			}
+		}
+		HellcraftMod.LOGGER.info("Gate wall: {} blocks at {} {} 0", wall, gateX, gateY);
 		HellcraftMod.LOGGER.info("The Gate of Hell stands at {} {} 0. Abandon all hope.", gateX, gateY);
 	}
 
@@ -86,58 +91,6 @@ public final class Landmarks {
 					set(level, x, y, z, Blocks.AIR.defaultBlockState());
 				}
 			}
-		}
-	}
-
-	/** An arch facing outward (+X) over the path into Hell, with Dante's inscription. */
-	private static void buildGate(ServerLevel level, int gx, int ground) {
-		BlockState brick = Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
-		BlockState chiseled = Blocks.CHISELED_POLISHED_BLACKSTONE.defaultBlockState();
-		for (int z = -8; z <= 8; z++) {
-			for (int x = gx - 8; x <= gx + 8; x++) {
-				surface(level, x, z);
-			}
-		}
-		clear(level, gx - 6, ground, -7, gx + 6, ground + 14, 7);
-		for (int x = gx - 6; x <= gx + 6; x++) {
-			for (int z = -7; z <= 7; z++) {
-				for (int y = ground - 4; y < ground; y++) {
-					set(level, x, y, z, Math.abs(z) <= 2 ? Blocks.POLISHED_BLACKSTONE.defaultBlockState() : Blocks.BLACKSTONE.defaultBlockState());
-				}
-			}
-		}
-		for (int z = -5; z <= 5; z++) {
-			for (int dx = 0; dx <= 1; dx++) {
-				for (int y = ground; y <= ground + 12; y++) {
-					boolean opening = Math.abs(z) <= 2 && y < ground + 8;
-					if (!opening) {
-						set(level, gx - dx, y, z, (y == ground + 10 || Math.abs(z) == 5) && dx == 0 ? chiseled : brick);
-					}
-				}
-			}
-		}
-		for (int z = -5; z <= 5; z += 10) {
-			set(level, gx, ground + 13, z, Blocks.NETHERRACK.defaultBlockState());
-			set(level, gx, ground + 14, z, Blocks.FIRE.defaultBlockState());
-		}
-		set(level, gx, ground + 7, -2, Blocks.SOUL_LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true));
-		set(level, gx, ground + 7, 2, Blocks.SOUL_LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true));
-
-		BlockPos signPos = new BlockPos(gx + 1, ground + 9, 0);
-		level.setBlock(signPos, Blocks.DARK_OAK_WALL_SIGN.defaultBlockState().setValue(WallSignBlock.FACING, Direction.EAST), 3);
-		BlockEntity be = level.getBlockEntity(signPos);
-		if (be instanceof SignBlockEntity sign) {
-			SignText text = new SignText()
-					.setMessage(0, Component.literal("LASCIATE OGNE"))
-					.setMessage(1, Component.literal("SPERANZA"))
-					.setMessage(2, Component.literal("Abandon all hope"))
-					.setMessage(3, Component.literal("ye who enter here"))
-					.setColor(DyeColor.RED)
-					.setHasGlowingText(true);
-			sign.setText(text, true);
-			sign.setWaxed(true);
-			sign.setChanged();
-			level.sendBlockUpdated(signPos, level.getBlockState(signPos), level.getBlockState(signPos), 3);
 		}
 	}
 

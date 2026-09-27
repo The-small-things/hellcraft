@@ -186,6 +186,7 @@
       "minecraft:patch_berry_common"
     ],
     [
+      "hellcraft:gate_wall",
       "minecraft:freeze_top_layer"
     ]
   ]

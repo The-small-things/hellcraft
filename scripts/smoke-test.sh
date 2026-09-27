@@ -74,7 +74,17 @@ rcon "forceload query" || true
 # Lucifer: run the whole fight against a dummy target in the pit
 rcon "summon minecraft:villager 4 -45 0 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b}"
 rcon "hellcraft lucifer summon"
+second=$(rcon "hellcraft lucifer summon")
+echo "$second"
+echo "$second" | grep -q "already fighting" || { echo "A second Lucifer could be summoned"; exit 1; }
 sleep 18
+# the pit must stay loaded (and Lucifer alive, not 'defeated') even if every chunk is unloaded
+rcon "forceload remove all"
+sleep 8
+status=$(rcon "hellcraft lucifer status")
+echo "$status"
+echo "$status" | grep -q "phase=DUEL" || { echo "Fight advanced on its own after the chunks were unloaded"; exit 1; }
+echo "$status" | grep -q "avatar=present" || { echo "Lucifer went missing after the chunks were unloaded"; exit 1; }
 for a in slash fangs wings hellfire; do rcon "hellcraft lucifer attack $a"; sleep 3; done
 rcon "hellcraft lucifer skip"   # -> enraged
 sleep 8
@@ -84,6 +94,9 @@ rcon "hellcraft lucifer skip"   # -> true form
 sleep 10
 rcon "hellcraft lucifer skip"   # -> defeat
 sleep 16
+leftover=$(rcon "execute if entity @e[tag=hellcraft_lucifer]" || true)
+echo "leftover Lucifer entities: $leftover"
+echo "$leftover" | grep -q "Test failed" || { echo "Lucifer entities left behind after the fight"; exit 1; }
 rcon "hellcraft ghosts"
 rcon "stop" || true
 sleep 15
@@ -94,6 +107,7 @@ grep -i 'hellcraft\|inferno\|Gate of Hell\|Lucifer\|Reliquary\|Arena' "$LOG" || 
 
 fail=0
 grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is the overworld an Inferno world?)"; fail=1; }
+grep -qE 'Gate wall: [1-9][0-9]* blocks' "$LOG" || { echo "The Gate of Hell wall was not generated"; fail=1; }
 for phase in INTRO DUEL ENRAGED TRUE_FORM DEFEAT DONE; do
   grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
 done

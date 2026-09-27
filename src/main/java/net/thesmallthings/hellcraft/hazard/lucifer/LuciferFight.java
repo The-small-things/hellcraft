@@ -79,6 +79,8 @@ public final class LuciferFight {
 	private int attackCooldown;
 	private int emptyTicks;
 	private int lastHurtBark = -1000;
+	/** Ticks the current boss form has been missing from a loaded arena (it is never assumed dead). */
+	private int missingTicks;
 	@Nullable
 	private UUID avatarId;
 	@Nullable
@@ -145,6 +147,8 @@ public final class LuciferFight {
 	// ------------------------------------------------------------------ lifecycle
 
 	void start() {
+		LuciferArena.forceLoad(level, true);
+		discardStrays();
 		LuciferArena.seal(level);
 		for (ServerPlayer p : LuciferDialogue.audience(level, LuciferArena.RADIUS + 4)) {
 			if (!p.isSpectator()) {
@@ -176,7 +180,7 @@ public final class LuciferFight {
 		for (int i = 0; i < intro.size(); i++) {
 			sayLater(30 + i * spacing, intro.get(i));
 		}
-		String subtitle = "The Morning Star, Emperor of the Kingdom Dolorous" + (tier() > 0 ? "  \u2014  Remembered " + stars() : "");
+		String subtitle = "The Morning Star" + (tier() > 0 ? " " + stars() : "");
 		schedule(INTRO_LENGTH - 30, () -> LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS),
 				"LUCIFER", subtitle, ChatFormatting.DARK_RED));
 		updateBarName("LUCIFER \u2014 The Fallen Seraph");
@@ -189,6 +193,10 @@ public final class LuciferFight {
 		runScheduled();
 		if (phase == Phase.DONE) {
 			return;
+		}
+		if (tick % 100 == 0) {
+			// someone may have run /forceload remove; the pit must stay loaded while he fights
+			LuciferArena.forceLoad(level, true);
 		}
 		updateBar();
 		music.tick(LuciferDialogue.audience(level, AUDIENCE_RADIUS), tick);
@@ -214,9 +222,11 @@ public final class LuciferFight {
 			case TRUE_FORM -> {
 				WitherBoss wither = wither();
 				if (wither == null) {
-					beginDefeat();
+					// a missing boss is NOT a dead boss: only his real death (onDeath) ends the fight in victory
+					bossMissing();
 					return;
 				}
+				missingTicks = 0;
 				leash(wither, 26);
 				checkForFailure();
 			}
@@ -228,9 +238,10 @@ public final class LuciferFight {
 	private void fightTick() {
 		Mob avatar = avatar();
 		if (avatar == null) {
-			beginTrueFormTransition();
+			bossMissing();
 			return;
 		}
+		missingTicks = 0;
 		leash(avatar, 24);
 		if (checkForFailure()) {
 			return;
@@ -269,18 +280,37 @@ public final class LuciferFight {
 		boolean anyone = level.players().stream().anyMatch(p -> p.isAlive() && !p.isSpectator() && LuciferArena.inside(p.getX(), p.getZ()));
 		emptyTicks = anyone ? 0 : emptyTicks + 1;
 		if (emptyTicks > FAIL_AFTER_EMPTY_TICKS) {
-			setPhase(Phase.FAILED);
-			say(LuciferDialogue.FAIL);
-			schedule(40, () -> {
-				cleanup();
-				HellState state = HellState.get(level.getServer());
-				state.luciferNextSpawn = level.getGameTime() + HellConfig.get().luciferRetryMinutes * 1200L;
-				state.setDirty();
-				setPhase(Phase.DONE);
-			});
+			fail(LuciferDialogue.FAIL);
 			return true;
 		}
 		return false;
+	}
+
+	/** The fight ends without a victory: no rewards, he returns after the retry cooldown. */
+	private void fail(@Nullable String line) {
+		if (phase == Phase.FAILED || phase == Phase.DONE) {
+			return;
+		}
+		scheduled.clear();
+		setPhase(Phase.FAILED);
+		if (line != null) {
+			say(line);
+		}
+		schedule(40, () -> {
+			cleanup();
+			HellState state = HellState.get(level.getServer());
+			state.luciferNextSpawn = level.getGameTime() + HellConfig.get().luciferRetryMinutes * 1200L;
+			state.setDirty();
+			setPhase(Phase.DONE);
+		});
+	}
+
+	/** The boss entity can't be found even though the pit is loaded (e.g. removed by a command). */
+	private void bossMissing() {
+		if (++missingTicks > 600) {
+			HellcraftMod.LOGGER.warn("Lucifer's body vanished without dying; ending the fight without a victory");
+			fail(null);
+		}
 	}
 
 	// ------------------------------------------------------------------ phase changes
@@ -331,7 +361,7 @@ public final class LuciferFight {
 			raiseTraitors();
 			updateBarName("LUCIFER \u2014 The Morning Star");
 			bar.setColor(BossEvent.BossBarColor.PURPLE);
-			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "THE MORNING STAR", "He is no longer holding back.", ChatFormatting.RED);
+			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "ENOUGH!", "The Morning Star unbound", ChatFormatting.RED);
 			attackCooldown = 30;
 			setPhase(Phase.ENRAGED);
 		});
@@ -368,7 +398,7 @@ public final class LuciferFight {
 			WitherBoss wither = spawnTrueForm();
 			witherId = wither.getUUID();
 			bar.removeAllPlayers();
-			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "LUCIFER", "Three-Faced Emperor of the Kingdom Dolorous", ChatFormatting.DARK_PURPLE);
+			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "LUCIFER", "Three-Faced Emperor", ChatFormatting.DARK_PURPLE);
 			setPhase(Phase.TRUE_FORM);
 		});
 	}
@@ -666,7 +696,29 @@ public final class LuciferFight {
 			}
 		}
 		traitors.clear();
+		discardStrays();
 		LuciferArena.unseal(level);
+		LuciferArena.forceLoad(level, false);
+	}
+
+	/** Removes every Lucifer-tagged entity in and around the pit. */
+	private void discardStrays() {
+		double r = LuciferArena.RADIUS + 24;
+		for (Entity e : level.getEntitiesOfClass(Entity.class, new net.minecraft.world.phys.AABB(-r, level.getMinBuildHeight(), -r, r, level.getMaxBuildHeight(), r),
+				e -> LuciferManager.isLucifer(e) && e.isAlive())) {
+			e.discard();
+		}
+	}
+
+	/** True if this entity is one of the fight's own bodies (anything else tagged as Lucifer is a stray). */
+	boolean owns(UUID id) {
+		return id.equals(avatarId) || id.equals(witherId) || traitors.contains(id);
+	}
+
+	String status() {
+		return "phase=" + phase + " tick=" + tick + " avatar=" + (avatar() != null ? "present" : avatarId == null ? "none" : "missing")
+				+ " trueForm=" + (wither() != null ? "present" : witherId == null ? "none" : "missing")
+				+ " traitors=" + traitors.size() + " participants=" + participants.size() + " champions=" + veterans;
 	}
 
 	private void reward() {
@@ -681,6 +733,16 @@ public final class LuciferFight {
 		for (UUID id : participants.keySet()) {
 			HellState.Soul soul = state.existing(id);
 			if (soul == null) {
+				continue;
+			}
+			ServerPlayer present = level.getServer().getPlayerList().getPlayer(id);
+			boolean standing = present != null && present.isAlive() && !present.isSpectator() && present.level() == level
+					&& present.getX() * present.getX() + present.getZ() * present.getZ() < 40 * 40;
+			if (!standing) {
+				if (present != null) {
+					present.sendSystemMessage(Component.literal("You fell before the Emperor did. There are no spoils for the dead.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				}
 				continue;
 			}
 			victors.add(soul.name);

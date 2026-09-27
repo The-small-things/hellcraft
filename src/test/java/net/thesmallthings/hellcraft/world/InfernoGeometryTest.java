@@ -109,4 +109,49 @@ class InfernoGeometryTest {
 		assertEquals(Zone.DARK_WOOD, InfernoGeometry.zoneAt(gx + 24, 0));
 		assertTrue(gx < InfernoGeometry.BORDER_RADIUS - 200);
 	}
+
+	@Test
+	void theGateOfHellRingsTheVestibuleWithTwelveGates() {
+		for (int k = 0; k < InfernoGeometry.GATE_COUNT; k++) {
+			double a = InfernoGeometry.gateAngle(k);
+			boolean gate = false;
+			for (double r = 5400; r < 5600; r += 0.25) {
+				if (InfernoGeometry.gateWallAt(Math.cos(a) * r, Math.sin(a) * r) == InfernoGeometry.WallPart.GATE) {
+					gate = true;
+				}
+			}
+			assertTrue(gate, "no gate at " + k);
+			// every gate leads onto a ramp down into the Vestibule
+			assertTrue(InfernoGeometry.rampFactor(0, a, 5400) > 0.99, "no ramp below gate " + k);
+			int[] sign = InfernoGeometry.gateSignSpot(k);
+			assertEquals(Zone.DARK_WOOD, InfernoGeometry.zoneAt(sign[0], sign[1]));
+			assertEquals(InfernoGeometry.WallPart.NONE, InfernoGeometry.gateWallAt(sign[0], sign[1]));
+		}
+		// the wall is unbroken between gates: walk the ring and count openings
+		int openings = 0;
+		boolean inGate = false;
+		for (int i = 0; i < 72000; i++) {
+			double a = Math.PI / 12 + i * 2 * Math.PI / 72000; // start between two gates
+			boolean found = false;
+			boolean anyWall = false;
+			for (double r = 5440; r < 5560; r += 0.5) {
+				InfernoGeometry.WallPart part = InfernoGeometry.gateWallAt(Math.cos(a) * r, Math.sin(a) * r);
+				found |= part == InfernoGeometry.WallPart.GATE;
+				anyWall |= part != InfernoGeometry.WallPart.NONE;
+			}
+			assertTrue(anyWall, "gap in the wall at angle " + a);
+			if (found && !inGate) {
+				openings++;
+			}
+			inGate = found;
+		}
+		assertEquals(InfernoGeometry.GATE_COUNT, openings);
+	}
+
+	@Test
+	void spawnIsOutsideTheWall() {
+		int gx = InfernoGeometry.gateX();
+		assertTrue(InfernoGeometry.effectiveRadius(gx + 24, 0) > InfernoGeometry.GATE_WALL_RADIUS + 5);
+		assertEquals(InfernoGeometry.WallPart.NONE, InfernoGeometry.gateWallAt(gx + 24, 0));
+	}
 }

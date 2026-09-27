@@ -51,6 +51,7 @@ public class RenderMap {
 		topDown(new File(out, "inferno_map.png"), 1400, 6300, 0, 0);
 		topDown(new File(out, "malebolge_zoom.png"), 1000, 900, 700, 700);
 		topDown(new File(out, "dis_gate_zoom.png"), 800, 120, 1715, 1715);
+		topDown(new File(out, "gate_of_hell_zoom.png"), 800, 90, 5460, 0);
 		crossSection(new File(out, "cross_section.png"));
 		System.out.println("Wrote previews to " + out.getAbsolutePath());
 	}
@@ -73,6 +74,12 @@ public class RenderMap {
 				InfernoGeometry.WallPart wall = InfernoGeometry.disWallAt(x, z);
 				if (wall == InfernoGeometry.WallPart.WALL || wall == InfernoGeometry.WallPart.TOWER) {
 					c = new Color(0x111111);
+				}
+				InfernoGeometry.WallPart gate = InfernoGeometry.gateWallAt(x, z);
+				if (gate == InfernoGeometry.WallPart.WALL || gate == InfernoGeometry.WallPart.TOWER) {
+					c = new Color(0x0A0A0A);
+				} else if (gate == InfernoGeometry.WallPart.GATE) {
+					c = new Color(0xFF3020);
 				}
 				if (Math.sqrt(x * x + z * z) > InfernoGeometry.BORDER_RADIUS) {
 					c = c.darker().darker();

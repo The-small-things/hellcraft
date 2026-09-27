@@ -61,7 +61,7 @@ public final class InfernoGeometry {
 	}
 
 	static final Band[] BANDS = {
-			new Band(Zone.DARK_WOOD, 6000, 5400, 172, 164, 7, 0, 0.12, 4, 12),
+			new Band(Zone.DARK_WOOD, 6000, 5400, 172, 164, 7, 0, 0.12, InfernoGeometry.GATE_COUNT, 12),
 			new Band(Zone.VESTIBULE, 5400, 5000, 150, 142, 3, 0, 0.05, 5, 12),
 			new Band(Zone.ACHERON, 5000, 4900, 118, 118, 1.5, 0, 0.0, 3, 10),
 			new Band(Zone.LIMBO, 4900, 4300, 134, 126, 5, 0, 0.08, 3, 10),
@@ -263,6 +263,10 @@ public final class InfernoGeometry {
 
 	static double rampAngle(int boundary, int k) {
 		Zone zone = BANDS[boundary].zone;
+		if (zone == Zone.DARK_WOOD) {
+			// every gate in the Gate of Hell leads onto a slope down into the Vestibule
+			return gateAngle(k);
+		}
 		if (zone == Zone.WALLS_OF_DIS || zone == Zone.STYX) {
 			return DIS_GATE_ANGLES[k % DIS_GATE_ANGLES.length];
 		}
@@ -386,14 +390,84 @@ public final class InfernoGeometry {
 
 	// ------------------------------------------------------------------ landmarks
 
-	/** X coordinate (on the +X axis, z = 0) of the inner edge of the Dark Wood: where the Gate of Hell stands. */
-	public static int gateX() {
-		for (int x = 5200; x < 5700; x++) {
-			if (zoneAt(x, 0) == Zone.DARK_WOOD) {
-				return x + 4;
+	// ------------------------------------------------------------------ the gate of hell
+
+	/** The Gate of Hell is a ring wall enclosing the Vestibule and Acheron, pierced by these gates. */
+	public static final int GATE_COUNT = 12;
+	/** Effective radius of the wall: just outside the Dark Wood's cliff and the ramps cut into it. */
+	public static final double GATE_WALL_RADIUS = 5495.0;
+	public static final double GATE_WALL_HALF_THICKNESS = 1.5;
+	public static final int GATE_WALL_HEIGHT = 18;
+	public static final int GATE_TOWER_HEIGHT = 26;
+	public static final int GATE_OPENING_HEIGHT = 10;
+	private static final double GATE_HALF_WIDTH = 4.5;
+	private static final double GATE_TOWER_RADIUS = 2.5;
+	private static final int GATE_TOWER_COUNT = 180;
+
+	public static double gateAngle(int k) {
+		return k * 2.0 * Math.PI / GATE_COUNT;
+	}
+
+	public static boolean nearGateWall(double r, double slack) {
+		return Math.abs(r - GATE_WALL_RADIUS) < GATE_TOWER_RADIUS + 1 + WOBBLE_AMPLITUDE + slack;
+	}
+
+	/** What part of the Gate of Hell (if any) stands on this column. */
+	public static WallPart gateWallAt(double x, double z) {
+		double re = effectiveRadius(x, z);
+		double radial = re - GATE_WALL_RADIUS;
+		if (Math.abs(radial) > GATE_TOWER_RADIUS + 1) {
+			return WallPart.NONE;
+		}
+		double r = Math.sqrt(x * x + z * z);
+		double theta = Math.atan2(z, x);
+		double nearestGate = Double.MAX_VALUE;
+		for (int k = 0; k < GATE_COUNT; k++) {
+			nearestGate = Math.min(nearestGate, angularDistance(theta, gateAngle(k)) * r);
+		}
+		if (nearestGate < GATE_HALF_WIDTH) {
+			return Math.abs(radial) <= GATE_WALL_HALF_THICKNESS ? WallPart.GATE : WallPart.NONE;
+		}
+		double towerStep = 2.0 * Math.PI / GATE_TOWER_COUNT;
+		double towerAngle = Math.round(theta / towerStep) * towerStep;
+		double arc = angularDistance(theta, towerAngle) * r;
+		// flanking towers either side of every gate, and a tower every 2 degrees along the wall
+		boolean flank = Math.abs(nearestGate - (GATE_HALF_WIDTH + GATE_TOWER_RADIUS)) <= GATE_TOWER_RADIUS;
+		if (flank || (nearestGate > 20 && Math.sqrt(arc * arc + radial * radial) <= GATE_TOWER_RADIUS)) {
+			if (Math.abs(radial) <= GATE_TOWER_RADIUS) {
+				return WallPart.TOWER;
 			}
 		}
-		return 5420;
+		if (Math.abs(radial) <= GATE_WALL_HALF_THICKNESS) {
+			return WallPart.WALL;
+		}
+		return WallPart.NONE;
+	}
+
+	/** Column just outside gate {@code k}, where its inscription stands. */
+	public static int[] gateSignSpot(int k) {
+		double a = gateAngle(k);
+		double target = GATE_WALL_RADIUS + GATE_WALL_HALF_THICKNESS + 3.0;
+		double lo = 5300, hi = 5700;
+		for (int i = 0; i < 40; i++) {
+			double mid = (lo + hi) / 2;
+			if (effectiveRadius(Math.cos(a) * mid, Math.sin(a) * mid) < target) {
+				lo = mid;
+			} else {
+				hi = mid;
+			}
+		}
+		return new int[]{(int) Math.floor(Math.cos(a) * lo), (int) Math.floor(Math.sin(a) * lo)};
+	}
+
+	/** X coordinate (on the +X axis, z = 0) where the Gate of Hell's wall crosses: the spawn gate. */
+	public static int gateX() {
+		for (int x = 5300; x < 5800; x++) {
+			if (effectiveRadius(x, 0) >= GATE_WALL_RADIUS) {
+				return x;
+			}
+		}
+		return (int) GATE_WALL_RADIUS;
 	}
 
 	/** Radius at which the chained giants stand. */
