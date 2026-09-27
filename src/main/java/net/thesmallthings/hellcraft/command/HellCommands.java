@@ -24,6 +24,7 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
+import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -55,6 +56,16 @@ public final class HellCommands {
 
 		dispatcher.register(Commands.literal("circle").executes(ctx -> circle(ctx.getSource().getPlayerOrException())));
 
+		dispatcher.register(Commands.literal("lucifer")
+				.then(Commands.literal("reward").executes(ctx -> {
+					ServerPlayer player = ctx.getSource().getPlayerOrException();
+					if (!LuciferRewards.open(player)) {
+						player.sendSystemMessage(Component.literal("You have no spoils of Lucifer to claim.").withStyle(ChatFormatting.GRAY));
+						return 0;
+					}
+					return 1;
+				})));
+
 		dispatcher.register(Commands.literal("hellcraft")
 				.requires(src -> src.hasPermission(2))
 				.then(Commands.literal("sethearts")
@@ -71,6 +82,11 @@ public final class HellCommands {
 								.executes(ctx -> give(ctx, true, 1))
 								.then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
 										.executes(ctx -> give(ctx, true, IntegerArgumentType.getInteger(ctx, "count"))))))
+				.then(Commands.literal("givebane")
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> giveBane(ctx, 1))
+								.then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
+										.executes(ctx -> giveBane(ctx, IntegerArgumentType.getInteger(ctx, "count"))))))
 				.then(Commands.literal("givefragment")
 						.then(Commands.argument("player", EntityArgument.player())
 								.executes(ctx -> give(ctx, false, 1))
@@ -179,6 +195,13 @@ public final class HellCommands {
 			teleportToSurface(source, 0, 18);
 		}
 		return reply(source, LuciferManager.start(source.getServer(), source.getEntity() == null));
+	}
+
+	private static int giveBane(CommandContext<CommandSourceStack> ctx, int count) throws CommandSyntaxException {
+		ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+		BloodItems.give(p, BloodItems.bane(count));
+		ctx.getSource().sendSuccess(() -> Component.literal("Gave " + count + " Lucifer's Bane to " + p.getGameProfile().getName()), true);
+		return count;
 	}
 
 	private static int reply(CommandSourceStack source, String message) {

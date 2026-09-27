@@ -55,6 +55,8 @@ public class HellState extends SavedData {
 		/** Extra heart capacity earned (Lucifer's Bane). */
 		public int maxBonus;
 		public boolean slewLucifer;
+		/** Unclaimed Lucifer reward: 0 none, 1 first-victory choice, 2 repeat-victory choice. */
+		public int pendingReward;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -127,6 +129,7 @@ public class HellState extends SavedData {
 			st.putLong("ward", s.wardUntil);
 			st.putInt("maxBonus", s.maxBonus);
 			st.putBoolean("slewLucifer", s.slewLucifer);
+			st.putInt("pendingReward", s.pendingReward);
 			if (s.deathSpot != null) {
 				st.put("death", s.deathSpot.save());
 			}
@@ -161,6 +164,7 @@ public class HellState extends SavedData {
 			s.wardUntil = st.getLong("ward");
 			s.maxBonus = st.getInt("maxBonus");
 			s.slewLucifer = st.getBoolean("slewLucifer");
+			s.pendingReward = st.getInt("pendingReward");
 			s.deathSpot = GlobalSpot.load(st, "death");
 			s.altar = GlobalSpot.load(st, "altar");
 			s.reviveAt = GlobalSpot.load(st, "revive");

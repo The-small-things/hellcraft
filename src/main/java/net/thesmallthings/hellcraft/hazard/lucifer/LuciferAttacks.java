@@ -60,7 +60,7 @@ final class LuciferAttacks {
 			level.sendParticles(ParticleTypes.SWEEP_ATTACK, spot.x, spotY + 2, spot.z, 3, 0.8, 0.5, 0.8, 0.0);
 			avatar.swing(InteractionHand.MAIN_HAND);
 			if (target.isAlive() && avatar.distanceTo(target) < 4.5) {
-				target.hurt(level.damageSources().mobAttack(avatar), fight.enraged() ? 12.0f : 9.0f);
+				target.hurt(level.damageSources().mobAttack(avatar), (fight.enraged() ? 12.0f : 9.0f) * fight.damageMultiplier());
 				target.knockback(1.4, avatar.getX() - target.getX(), avatar.getZ() - target.getZ());
 				target.hurtMarked = true;
 			}
@@ -74,7 +74,7 @@ final class LuciferAttacks {
 		level.playSound(null, avatar.blockPosition(), SoundEvents.EVOKER_PREPARE_ATTACK, SoundSource.HOSTILE, 2.0f, 0.6f);
 		avatar.swing(InteractionHand.MAIN_HAND);
 		double base = Math.atan2(target.getZ() - avatar.getZ(), target.getX() - avatar.getX());
-		int lines = fight.enraged() ? 5 : 3;
+		int lines = (fight.enraged() ? 5 : 3) + fight.extraLines();
 		for (int line = 0; line < lines; line++) {
 			double angle = base + (line - (lines - 1) / 2.0) * 0.4;
 			for (int i = 1; i <= 18; i++) {
@@ -117,7 +117,7 @@ final class LuciferAttacks {
 				e.push(away.x * 2.2, 0.7, away.z * 2.2);
 				e.hurtMarked = true;
 				e.setTicksFrozen(Math.min(e.getTicksFrozen() + 200, e.getTicksRequiredToFreeze() + 200));
-				e.hurt(level.damageSources().freeze(), fight.enraged() ? 6.0f : 4.0f);
+				e.hurt(level.damageSources().freeze(), (fight.enraged() ? 6.0f : 4.0f) * fight.damageMultiplier());
 			}
 		});
 	}
@@ -128,7 +128,7 @@ final class LuciferAttacks {
 		fight.say(LuciferDialogue.pick(level.random, LuciferDialogue.HELLFIRE));
 		level.playSound(null, avatar.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 2.0f, 0.5f);
 		List<Vec3> marks = new ArrayList<>();
-		int perTarget = fight.enraged() ? 7 : 5;
+		int perTarget = (fight.enraged() ? 7 : 5) + fight.extraMarks();
 		for (LivingEntity target : fight.targets()) {
 			for (int k = 0; k < perTarget; k++) {
 				double ox = k == 0 ? 0 : (level.random.nextDouble() - 0.5) * 9;
@@ -148,7 +148,7 @@ final class LuciferAttacks {
 		}
 		fight.schedule(30, () -> {
 			for (Vec3 m : marks) {
-				level.explode(avatar, m.x, m.y + 0.5, m.z, 1.8f, false, Level.ExplosionInteraction.NONE);
+				level.explode(avatar, m.x, m.y + 0.5, m.z, 1.8f + 0.2f * fight.tier(), false, Level.ExplosionInteraction.NONE);
 				level.sendParticles(ParticleTypes.LAVA, m.x, m.y + 0.5, m.z, 8, 0.3, 0.3, 0.3, 0.0);
 				for (LivingEntity e : victims(fight, m, 2.5)) {
 					e.igniteForSeconds(4.0f);

@@ -44,6 +44,8 @@ jobs:
         with:
           name: hellcraft-jar
           path: mods
+      - name: Install ffmpeg (for a test music track)
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
       - name: Smoke test on a real server
         run: bash scripts/smoke-test.sh mods
       - name: Upload server log

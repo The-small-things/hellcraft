@@ -59,8 +59,26 @@ public class HellConfig {
 	public double luciferAvatarHealth = 500;
 	/** Health of his true, three-faced form. */
 	public double luciferHealth = 600;
-	/** Extra heart capacity each player earns the first time they help defeat him. */
+	/** Extra heart capacity granted by each Lucifer's Bane consumed (they stack). */
 	public int luciferMaxHeartBonus = 2;
+	/** Per returning champion in the fight: extra boss health (0.35 = +35%). */
+	public double luciferVeteranHealthBonus = 0.35;
+	/** Per returning champion in the fight: extra attack damage (0.2 = +20%). */
+	public double luciferVeteranDamageBonus = 0.2;
+	/** Most returning champions that can stack difficulty. */
+	public int luciferMaxVeteranTiers = 4;
+
+	// --- Boss music (see README: drop duel.ogg / enraged.ogg / true_form.ogg into config/hellcraft/music/)
+	/** Port of the built-in web server that hands the music resource pack to players. */
+	public int musicPackPort = 25566;
+	/** Public address players use to reach this server (e.g. play.example.com). Required on dedicated servers. */
+	public String musicPackHost = "";
+	/** Or: a full URL where you host the pack yourself (overrides host/port and the built-in web server). */
+	public String musicPackUrl = "";
+	/** Vanilla music discs used for players without the pack (jukebox song ids). */
+	public String fallbackMusicDuel = "minecraft:creator";
+	public String fallbackMusicEnraged = "minecraft:pigstep";
+	public String fallbackMusicTrueForm = "minecraft:precipice";
 
 	public static HellConfig get() {
 		return instance;

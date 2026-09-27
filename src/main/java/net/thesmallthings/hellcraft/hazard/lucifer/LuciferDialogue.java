@@ -59,6 +59,14 @@ final class LuciferDialogue {
 
 	static final String[] HURT = {"Hah! AGAIN!", "A scratch!", "Thou bleedest me? Good. GOOD!", "Insolent WORM!"};
 
+	/** Lucifer remembers everyone who has beaten him before. */
+	static String veteranLine(List<String> veterans) {
+		if (veterans.size() == 1) {
+			return "Thou again, " + veterans.get(0) + "? Then I shall not hold back.";
+		}
+		return String.join(", ", veterans) + "... so many who dared return. The ice will be GENEROUS.";
+	}
+
 	static String pick(RandomSource random, String[] lines) {
 		return lines[random.nextInt(lines.length)];
 	}

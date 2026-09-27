@@ -27,10 +27,11 @@ import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.thesmallthings.hellcraft.HellcraftMod;
-import net.thesmallthings.hellcraft.blood.BloodItems;
+import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.blood.HellState;
-import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +57,7 @@ public final class LuciferFight {
 	private static final double AUDIENCE_RADIUS = 96.0;
 	private static final int INTRO_LENGTH = 280;
 	private static final int FAIL_AFTER_EMPTY_TICKS = 600;
+	private static final ResourceLocation VETERAN_MODIFIER = HellcraftMod.id("veteran");
 
 	private final ServerLevel level;
 	/** Started by a command with nobody around: never fails for lack of players (used by tests). */
@@ -66,6 +68,10 @@ public final class LuciferFight {
 	private final Map<UUID, Float> participants = new LinkedHashMap<>();
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final List<UUID> traitors = new ArrayList<>();
+	private final LuciferMusic music;
+	/** Returning champions in this round; each one makes Lucifer harder for everyone. */
+	private final List<String> veterans = new ArrayList<>();
+	private boolean traitorsRaised;
 
 	private Phase phase = Phase.INTRO;
 	private int tick;
@@ -85,6 +91,7 @@ public final class LuciferFight {
 		this.level = level;
 		this.debug = debug;
 		this.floorY = LuciferArena.floorY(level);
+		this.music = new LuciferMusic(level);
 		bar.setDarkenScreen(true);
 		bar.setCreateWorldFog(true);
 		bar.setProgress(1.0f);
@@ -104,6 +111,23 @@ public final class LuciferFight {
 
 	String phaseName() {
 		return phase.name();
+	}
+
+	/** Difficulty tier: number of returning champions fighting (capped). */
+	int tier() {
+		return Math.min(veterans.size(), HellConfig.get().luciferMaxVeteranTiers);
+	}
+
+	float damageMultiplier() {
+		return (float) (1.0 + HellConfig.get().luciferVeteranDamageBonus * tier());
+	}
+
+	int extraLines() {
+		return tier();
+	}
+
+	int extraMarks() {
+		return tier();
 	}
 
 	void schedule(int delay, Runnable action) {
@@ -127,8 +151,16 @@ public final class LuciferFight {
 				participants.putIfAbsent(p.getUUID(), 0.0f);
 			}
 		}
+		HellState state = HellState.get(level.getServer());
+		for (UUID id : participants.keySet()) {
+			HellState.Soul soul = state.existing(id);
+			if (soul != null && soul.slewLucifer) {
+				veterans.add(soul.name);
+			}
+		}
 		WitherSkeleton avatar = spawnAvatar();
 		avatarId = avatar.getUUID();
+		applyVeteranScaling(avatar);
 		for (ServerPlayer p : LuciferDialogue.audience(level, AUDIENCE_RADIUS)) {
 			p.playNotifySound(SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.0f, 0.6f);
 		}
@@ -136,11 +168,18 @@ public final class LuciferFight {
 			double a = i * Math.PI / 2 + Math.PI / 4;
 			strikeLightning(Math.cos(a) * 18, Math.sin(a) * 18);
 		}
-		for (int i = 0; i < LuciferDialogue.INTRO.length; i++) {
-			sayLater(30 + i * 55, LuciferDialogue.INTRO[i]);
+		List<String> intro = new ArrayList<>(List.of(LuciferDialogue.INTRO));
+		if (!veterans.isEmpty()) {
+			intro.add(2, LuciferDialogue.veteranLine(veterans));
 		}
+		int spacing = (INTRO_LENGTH - 60) / intro.size();
+		for (int i = 0; i < intro.size(); i++) {
+			sayLater(30 + i * spacing, intro.get(i));
+		}
+		String subtitle = "The Morning Star, Emperor of the Kingdom Dolorous" + (tier() > 0 ? "  \u2014  Remembered " + stars() : "");
 		schedule(INTRO_LENGTH - 30, () -> LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS),
-				"LUCIFER", "The Morning Star, Emperor of the Kingdom Dolorous", ChatFormatting.DARK_RED));
+				"LUCIFER", subtitle, ChatFormatting.DARK_RED));
+		updateBarName("LUCIFER \u2014 The Fallen Seraph");
 		setPhase(Phase.INTRO);
 	}
 
@@ -152,6 +191,7 @@ public final class LuciferFight {
 			return;
 		}
 		updateBar();
+		music.tick(LuciferDialogue.audience(level, AUDIENCE_RADIUS), tick);
 		switch (phase) {
 			case INTRO -> {
 				Mob avatar = avatar();
@@ -216,7 +256,8 @@ public final class LuciferFight {
 					}
 				});
 			}
-			attackCooldown = phase == Phase.ENRAGED ? 50 : 80;
+			double faster = Math.max(0.6, 1.0 - 0.12 * tier());
+			attackCooldown = (int) Math.round((phase == Phase.ENRAGED ? 50 : 80) * faster);
 		}
 	}
 
@@ -247,7 +288,21 @@ public final class LuciferFight {
 	private void setPhase(Phase next) {
 		phase = next;
 		phaseTick = 0;
-		HellcraftMod.LOGGER.info("Lucifer phase: {}", next);
+		HellcraftMod.LOGGER.info("Lucifer phase: {}{}", next, next == Phase.INTRO && tier() > 0 ? " (returning champions: " + veterans + ")" : "");
+		List<ServerPlayer> audience = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
+		switch (next) {
+			case DUEL -> {
+				music.switchTo(MusicPack.Track.DUEL, audience, tick);
+				if (tier() >= 2) {
+					raiseTraitors();
+				}
+			}
+			case ENRAGED -> music.switchTo(MusicPack.Track.ENRAGED, audience, tick);
+			case TRUE_FORM -> music.switchTo(MusicPack.Track.TRUE_FORM, audience, tick);
+			case DEFEAT, FAILED, DONE -> music.stopAll(audience);
+			default -> {
+			}
+		}
 	}
 
 	private void beginEnrage() {
@@ -273,12 +328,8 @@ public final class LuciferFight {
 			a.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, false));
 			a.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, MobEffectInstance.INFINITE_DURATION, 0, false, false));
 			a.setNoAi(false);
-			String[] names = {"Judas", "Brutus", "Cassius"};
-			for (int i = 0; i < names.length; i++) {
-				double ang = i * 2 * Math.PI / 3;
-				traitors.add(spawnTraitor(names[i], Math.cos(ang) * 10, Math.sin(ang) * 10).getUUID());
-			}
-			bar.setName(Component.literal("LUCIFER — The Morning Star").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+			raiseTraitors();
+			updateBarName("LUCIFER \u2014 The Morning Star");
 			bar.setColor(BossEvent.BossBarColor.PURPLE);
 			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "THE MORNING STAR", "He is no longer holding back.", ChatFormatting.RED);
 			attackCooldown = 30;
@@ -353,7 +404,23 @@ public final class LuciferFight {
 		if (!boss || !(source.getEntity() instanceof ServerPlayer player)) {
 			return;
 		}
+		boolean newcomer = !participants.containsKey(player.getUUID());
 		participants.merge(player.getUUID(), dealt, Float::sum);
+		if (newcomer) {
+			HellState.Soul soul = HellState.get(level.getServer()).existing(player.getUUID());
+			if (soul != null && soul.slewLucifer && !veterans.contains(soul.name)) {
+				veterans.add(soul.name);
+				Mob avatar = avatar();
+				if (avatar != null) {
+					applyVeteranScaling(avatar);
+				}
+				WitherBoss wither = wither();
+				if (wither != null) {
+					applyVeteranScaling(wither);
+				}
+				say(LuciferDialogue.veteranLine(List.of(soul.name)));
+			}
+		}
 		if (entity.getUUID().equals(avatarId) && dealt >= 7.0f && tick - lastHurtBark > 120 && level.random.nextFloat() < 0.4f) {
 			lastHurtBark = tick;
 			say(LuciferDialogue.pick(level.random, LuciferDialogue.HURT));
@@ -573,6 +640,7 @@ public final class LuciferFight {
 		wither.addTag(LuciferManager.TAG);
 		wither.setPersistenceRequired();
 		setBase(wither, Attributes.MAX_HEALTH, HellConfig.get().luciferHealth);
+		applyVeteranScaling(wither);
 		wither.makeInvulnerable();
 		wither.setCustomName(Component.literal("Lucifer, Three-Faced Emperor").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		level.addFreshEntity(wither);
@@ -607,34 +675,73 @@ public final class LuciferFight {
 		state.luciferDefeats++;
 		state.luciferNextSpawn = level.getGameTime() + config.luciferCooldownMinutes * 1200L;
 		state.setDirty();
-		LuciferArena.placeReliquary(level, state.luciferDefeats == 1);
 
 		List<String> victors = new ArrayList<>();
+		int pending = 0;
 		for (UUID id : participants.keySet()) {
-			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
 			HellState.Soul soul = state.existing(id);
 			if (soul == null) {
 				continue;
 			}
 			victors.add(soul.name);
-			if (!soul.slewLucifer) {
-				soul.slewLucifer = true;
-				soul.maxBonus += config.luciferMaxHeartBonus;
-				state.setDirty();
-				if (player != null) {
-					player.sendSystemMessage(Component.literal("Lucifer's Bane: your veins can now hold " + Hearts.cap(soul) + " hearts.")
-							.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-				}
-			}
+			LuciferRewards.grant(state, soul);
+			pending++;
+			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
 			if (player != null) {
-				BloodItems.give(player, BloodItems.heart(2));
 				player.playNotifySound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
+				LuciferRewards.remind(player);
+				// the fight object is finished by then, so open it from the server's task queue
+				level.getServer().execute(() -> LuciferRewards.open(player));
 			}
 		}
+		HellcraftMod.LOGGER.info("Lucifer rewards: {} pending", pending);
 		String who = victors.isEmpty() ? "Someone" : String.join(", ", victors);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " cast down Lucifer at the bottom of the world.")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("\"Thence we came forth to rebehold the stars.\"")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 	}
+
+	// ------------------------------------------------------------------ returning champions
+
+	private String stars() {
+		return "\u2726".repeat(Math.max(0, tier()));
+	}
+
+	private void updateBarName(String name) {
+		bar.setName(Component.literal(name + (tier() > 0 ? "  " + stars() : "")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+	}
+
+	/** Each returning champion makes this form tougher (keeps its current health fraction). */
+	private void applyVeteranScaling(LivingEntity boss) {
+		AttributeInstance health = boss.getAttribute(Attributes.MAX_HEALTH);
+		if (health == null) {
+			return;
+		}
+		float fraction = boss.getHealth() / Math.max(1.0f, boss.getMaxHealth());
+		health.removeModifier(VETERAN_MODIFIER);
+		if (tier() > 0) {
+			health.addPermanentModifier(new AttributeModifier(VETERAN_MODIFIER, HellConfig.get().luciferVeteranHealthBonus * tier(),
+					AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+		}
+		boss.setHealth(Math.max(1.0f, boss.getMaxHealth() * fraction));
+		if (phase == Phase.DUEL || phase == Phase.ENRAGED) {
+			updateBarName(phase == Phase.ENRAGED ? "LUCIFER \u2014 The Morning Star" : "LUCIFER \u2014 The Fallen Seraph");
+		}
+	}
+
+	/** Judas, Brutus and Cassius, plus one more traitor of Antenora or Ptolomea per returning champion. */
+	private void raiseTraitors() {
+		if (traitorsRaised) {
+			return;
+		}
+		traitorsRaised = true;
+		String[] all = {"Judas", "Brutus", "Cassius", "Mordred", "Ganelon", "Ugolino", "Alberigo"};
+		int count = Math.min(all.length, 3 + tier());
+		for (int i = 0; i < count; i++) {
+			double ang = i * 2 * Math.PI / count;
+			traitors.add(spawnTraitor(all[i], Math.cos(ang) * 10, Math.sin(ang) * 10).getUUID());
+		}
+	}
+
 }

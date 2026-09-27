@@ -116,17 +116,41 @@ Walk into the pit at the centre of Judecca and the ice closes behind you. This i
 2. **The Morning Star.** At half health he snaps. He gets faster, glows, chains his attacks together, and raises the three great traitors he chews on for eternity to fight beside him.
 3. **The Three-Faced Emperor.** Break his seraph form and he reveals his true face.
 
-**Rewards** (every player who fought):
-- 2 Blood Hearts each.
-- **Lucifer's Bane** the first time you win: your personal heart cap rises by 2, permanently.
-- A **reliquary** chest at the bottom of the pit. The first victory on a server holds:
+**Returning champions make him harder.** For every player in the fight who has beaten him before, he gets tougher for *everyone* in that round:
+- +35% health on both forms
+- +20% damage
+- attacks come faster
+- extra fang lines and hellfire
+- an extra traitor
+
+With two or more champions, the traitors rise from the start. He calls champions out by name, and their difficulty shows as ✦ on his health bar.
+
+**Rewards: pick ONE.** When he falls, every fighter gets a chest-style menu (reopen it any time with `/lucifer reward`).
+- **First victory:** pick one of
   - *Wings of the Morning Star* (Elytra)
   - *Morning Star*, a netherite sword with Sharpness V, Fire Aspect II, Looting III, Unbreaking III and Mending
-  - 2 Totems of Undying, 2 Enchanted Golden Apples and 4 Blood Hearts
+  - 2 Totems of Undying
+  - 2 Enchanted Golden Apples
+  - 4 Blood Hearts
+  - **Lucifer's Bane**
+- **Later victories:** pick a Totem of Undying, an Enchanted Golden Apple, or 2 Blood Hearts.
 
-  Later victories still leave a totem, a golden apple and Blood Hearts.
+**Lucifer's Bane** (a glowing nether star) permanently raises your heart cap by 2 when you right-click it. It's an item, so it can be traded, and each one you consume adds another +2.
 
-He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns and the heart bonus are all in the config.
+### Boss music
+
+The fight has music: a different track for the duel, the enraged phase and the true form. Everyone hears vanilla music discs by default ("Creator", "Pigstep" and "Precipice"). To use **your own tracks**:
+1. Export them as **Ogg Vorbis** (`.ogg`). Audacity can do this: File → Export → Ogg.
+2. Name them `duel.ogg`, `enraged.ogg` and `true_form.ogg`. Any subset works; a missing phase reuses another track.
+3. Put them in `config/hellcraft/music/`:
+   - Docker: `docker/data/config/hellcraft/music/`
+   - single player: `.minecraft/config/hellcraft/music/`
+4. **Server only:** set `"musicPackHost"` in `config/hellcraft.json` to the address players join with (e.g. `play.example.com`). Make sure port **25566** is open; the compose file already maps it. In single player there's nothing to set.
+5. Restart.
+
+Hellcraft builds a small resource pack from the tracks, serves it itself, and offers it to players when they join. It's optional: players who accept hear your music, everyone else hears the discs. If you'd rather host the pack yourself, set `"musicPackUrl"` instead.
+
+He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns, champion scaling, the Bane bonus and the fallback music are all in the config.
 
 Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
 
@@ -149,7 +173,9 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
 | `/hellcraft ghosts` | op | List ghosts |
 | `/hellcraft goto <zone>` / `gate` | op | Teleport to a zone / the Gate (testing) |
+| `/lucifer reward` | all | Open your Lucifer reward chooser (if you have one waiting) |
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
+| `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |

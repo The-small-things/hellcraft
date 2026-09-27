@@ -7,6 +7,8 @@ services:
     container_name: hellcraft
     ports:
       - "25565:25565"
+      # Lucifer's boss music pack (only needed if you add .ogg files, see README "Boss music")
+      - "25566:25566"
     environment:
       EULA: "TRUE"
       TYPE: "FABRIC"

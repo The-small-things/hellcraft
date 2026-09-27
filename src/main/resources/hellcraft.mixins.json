@@ -3,7 +3,7 @@
 	"minVersion": "0.8",
 	"package": "net.thesmallthings.hellcraft.mixin",
 	"compatibilityLevel": "JAVA_21",
-	"mixins": ["MobCategoryMixin"],
+	"mixins": ["MobCategoryMixin", "ResourcePackResponseMixin"],
 	"injectors": {
 		"defaultRequire": 1
 	}

@@ -8,6 +8,15 @@ NAME=hellcraft-smoke
 LOG=smoke-server.log
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 
+# A short generated track so the boss-music pack is built and served
+CONFIG_DIR=$(mktemp -d)
+mkdir -p "$CONFIG_DIR/hellcraft/music"
+echo '{"musicPackHost": "localhost"}' > "$CONFIG_DIR/hellcraft.json"
+if command -v ffmpeg >/dev/null; then
+  ffmpeg -loglevel error -f lavfi -i "sine=frequency=220:duration=3" -c:a libvorbis "$CONFIG_DIR/hellcraft/music/duel.ogg"
+fi
+chmod -R a+rwX "$CONFIG_DIR"
+
 docker run -d --name "$NAME" \
   -e EULA=TRUE -e TYPE=FABRIC -e VERSION=1.21.1 \
   -e MODRINTH_PROJECTS=fabric-api \
@@ -15,6 +24,8 @@ docker run -d --name "$NAME" \
   -e ONLINE_MODE=FALSE -e MEMORY=3G -e ENABLE_RCON=true -e RCON_PASSWORD=smoketest \
   -e VIEW_DISTANCE=4 -e SIMULATION_DISTANCE=4 \
   -v "$MODS_DIR":/mods:ro \
+  -v "$CONFIG_DIR":/config:ro \
+  -p 25566:25566 \
   itzg/minecraft-server:java21
 
 cleanup() { docker logs "$NAME" > "$LOG" 2>&1 || true; docker rm -f "$NAME" >/dev/null 2>&1 || true; }
@@ -36,6 +47,16 @@ done
 rcon() { docker exec "$NAME" rcon-cli "$@"; }
 
 rcon "hellcraft where"
+rcon "hellcraft givebane nobody" || true  # needs a player; checks the command is registered
+
+if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
+  curl -fsS -o music-pack.zip http://localhost:25566/hellcraft-music.zip || { echo "Music pack not served"; exit 1; }
+  unzip -l music-pack.zip
+  unzip -l music-pack.zip | grep -q 'assets/hellcraft/sounds.json' || { echo "Pack has no sounds.json"; exit 1; }
+  unzip -l music-pack.zip | grep -q 'assets/hellcraft/sounds/music/duel.ogg' || { echo "Pack has no track"; exit 1; }
+  unzip -p music-pack.zip assets/hellcraft/sounds.json
+  curl -s -o /dev/null -w '%{http_code}' http://localhost:25566/anything-else | grep -q 404 || { echo "Web server serves more than the pack"; exit 1; }
+fi
 rcon "hellcraft goto judecca" || true  # needs a player; checks the command is registered
 rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
@@ -76,7 +97,10 @@ grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is
 for phase in INTRO DUEL ENRAGED TRUE_FORM DEFEAT DONE; do
   grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
 done
-grep -q 'Reliquary placed' "$LOG" || { echo "No reliquary"; fail=1; }
+grep -q 'Lucifer rewards:' "$LOG" || { echo "No reward hand-out"; fail=1; }
+if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
+  grep -q 'Music pack ready: 1 track' "$LOG" || { echo "Music pack was not built"; fail=1; }
+fi
 grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
 if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON' ; then
   echo "Errors found in server log"; fail=1

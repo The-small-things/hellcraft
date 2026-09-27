@@ -26,10 +26,13 @@ public final class BloodItems {
 	public static final String KEY = "hellcraft";
 	public static final String HEART = "heart";
 	public static final String FRAGMENT = "fragment";
+	public static final String BANE = "bane";
 
 	/** Base items. Change these two lines to re-skin the blood items. */
 	public static final Item HEART_BASE = Items.FERMENTED_SPIDER_EYE;
 	public static final Item FRAGMENT_BASE = Items.RED_DYE;
+	/** The Morning Star's bane: a nether star. */
+	public static final Item BANE_BASE = Items.NETHER_STAR;
 
 	public static ItemStack heart(int count) {
 		ItemStack stack = new ItemStack(HEART_BASE, count);
@@ -51,6 +54,20 @@ public final class BloodItems {
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
 				Component.literal("Right-click 8 together to clot them into a Blood Heart").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
 		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
+		return stack;
+	}
+
+	/** Lucifer's Bane: consumed to permanently raise your heart cap. Tradeable and stackable. */
+	public static ItemStack bane(int count) {
+		ItemStack stack = new ItemStack(BANE_BASE, count);
+		mark(stack, BANE);
+		stack.set(DataComponents.ITEM_NAME, Component.literal("Lucifer's Bane").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+		stack.set(DataComponents.LORE, new ItemLore(List.of(
+				Component.literal("Torn from the Emperor at the bottom of the world.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
+				Component.literal("Right-click: your veins hold more hearts, forever.").withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)),
+				Component.literal("Tradeable. Each one stacks.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
+		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+		stack.set(DataComponents.RARITY, Rarity.EPIC);
 		return stack;
 	}
 
@@ -79,9 +96,14 @@ public final class BloodItems {
 		return FRAGMENT.equals(kind(stack));
 	}
 
+	public static boolean isBane(ItemStack stack) {
+		return BANE.equals(kind(stack));
+	}
+
+	/** Any Hellcraft item that must not be used as its vanilla base (dyeing, planting, beacons...). */
 	public static boolean isBlood(ItemStack stack) {
 		String k = kind(stack);
-		return HEART.equals(k) || FRAGMENT.equals(k);
+		return HEART.equals(k) || FRAGMENT.equals(k) || BANE.equals(k);
 	}
 
 	/** Counts Blood Hearts across a player's inventory. */

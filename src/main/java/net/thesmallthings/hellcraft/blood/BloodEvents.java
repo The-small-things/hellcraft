@@ -71,6 +71,17 @@ public final class BloodEvents {
 			player.displayClientMessage(Component.literal("+1 ❤  (" + Hearts.soul(player).hearts + ")").withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
+		if (BloodItems.isBane(stack)) {
+			HellState.Soul soul = Hearts.soul(player);
+			stack.shrink(1);
+			soul.maxBonus += config.luciferMaxHeartBonus;
+			HellState.get(player.server).setDirty();
+			Hearts.apply(player);
+			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.0f, 0.6f);
+			player.sendSystemMessage(Component.literal("Lucifer's Bane burns in your veins. They can now hold " + Hearts.cap(soul) + " hearts.")
+					.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+			return true;
+		}
 		if (BloodItems.isFragment(stack)) {
 			int needed = config.fragmentsPerHeart;
 			if (stack.getCount() < needed) {
