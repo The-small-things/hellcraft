@@ -3,9 +3,10 @@
 # Lines: "find <regex>" lists matching class names; "<SimpleOrQualifiedName> [grep-regex]" prints members.
 set -uo pipefail
 cd "$(dirname "$0")/.."
-./gradlew --no-daemon -q dependencies --configuration compileClasspath > /dev/null 2>&1 || true
+./gradlew --no-daemon dependencies --configuration compileClasspath 2>&1 | tail -5
+find ~/.gradle/caches/fabric-loom -maxdepth 3 | head -30
 JAR=""
-for j in $(find ~/.gradle/caches -name '*.jar' -size +10M 2>/dev/null | grep -i minecraft); do
+for j in $(find ~/.gradle/caches -name '*.jar' -size +10M 2>/dev/null | grep -i minecraft | grep '26\.3'); do
   if unzip -l "$j" 2>/dev/null | grep -q 'net/minecraft/server/MinecraftServer.class'; then JAR="$j"; break; fi
 done
 echo "Minecraft jar: $JAR"
