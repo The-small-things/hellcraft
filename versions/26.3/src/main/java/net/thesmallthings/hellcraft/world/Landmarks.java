@@ -1,27 +1,38 @@
 package net.thesmallthings.hellcraft.world;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.Giant;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.LevelData;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
+
+import java.util.List;
 
 /**
  * One-time construction of the Inferno's landmarks the first time the server starts on a fresh
@@ -61,7 +72,9 @@ public final class Landmarks {
 		BlockPos spawn = new BlockPos(gateX + 24, surface(level, gateX + 24, 0), 0);
 		clear(level, spawn.getX() - 2, spawn.getY(), spawn.getZ() - 2, spawn.getX() + 2, spawn.getY() + 3, spawn.getZ() + 2);
 		level.setRespawnData(LevelData.RespawnData.of(level.dimension(), spawn, 90.0f, 0.0f));
-		buildAltar(level, gateX + 14, surface(level, gateX + 14, 9), 9);
+		int altarY = surface(level, gateX + 14, 9);
+		buildAltar(level, gateX + 14, altarY, 9);
+		state.starterAltar = new HellState.GlobalSpot(level.dimension(), new BlockPos(gateX + 14, altarY, 9));
 
 		String[] giants = {"Nimrod", "Ephialtes", "Antaeus"};
 		for (int i = 0; i < giants.length; i++) {
@@ -120,6 +133,26 @@ public final class Landmarks {
 		for (int[] c : new int[][]{{-2, -2}, {-2, 2}, {2, -2}, {2, 2}}) {
 			set(level, x + c[0], ground, z + c[1], Blocks.POLISHED_BLACKSTONE_BRICK_WALL.defaultBlockState());
 			set(level, x + c[0], ground + 1, z + c[1], Blocks.SOUL_LANTERN.defaultBlockState());
+		}
+		// on the edge facing the spawn: what the altar is for
+		sign(level, new BlockPos(x, ground, z - 2), 8, List.of(
+				Component.literal("BLOOD ALTAR").withStyle(ChatFormatting.BOLD),
+				Component.literal("Right-click with"),
+				Component.literal("an empty hand to"),
+				Component.literal("revive the dead")));
+	}
+
+	/** A waxed standing sign in glowing red; rotation 0 faces south, 8 north. */
+	private static void sign(ServerLevel level, BlockPos pos, int rotation, List<Component> lines) {
+		BlockState state = Blocks.DARK_OAK_SIGN.defaultBlockState().setValue(StandingSignBlock.ROTATION, rotation);
+		level.setBlock(pos, state, 3);
+		if (level.getBlockEntity(pos) instanceof SignBlockEntity sign) {
+			CompoundTag tag = new CompoundTag();
+			tag.put("front_text", SignText.CODEC.encodeStart(NbtOps.INSTANCE, new SignText(lines, lines, DyeColor.RED, true)).getOrThrow());
+			tag.putBoolean("is_waxed", true);
+			sign.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), tag));
+			sign.setChanged();
+			level.sendBlockUpdated(pos, state, state, 3);
 		}
 	}
 

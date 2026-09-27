@@ -32,6 +32,8 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 
+import java.util.List;
+
 /** Lifesteal: hearts change hands on death, the heartless become ghosts, and mobs bleed. */
 public final class DeathHandler {
 	private DeathHandler() {
@@ -97,6 +99,13 @@ public final class DeathHandler {
 			state.setDirty();
 			player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal("Hell is full. ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 					.append(Component.literal(name + " now walks the earth.").withStyle(ChatFormatting.RED)), false);
+			// the ghost gets the same instructions when they respawn as one
+			List<Component> howTo = Ghosts.howToRevive(player.level().getServer());
+			for (ServerPlayer other : player.level().getServer().getPlayerList().getPlayers()) {
+				if (other != player) {
+					howTo.forEach(other::sendSystemMessage);
+				}
+			}
 		}
 	}
 

@@ -18,6 +18,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
@@ -30,7 +31,9 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,6 +58,13 @@ public final class HellCommands {
 						.executes(ctx -> withdraw(ctx.getSource().getPlayerOrException(), IntegerArgumentType.getInteger(ctx, "amount")))));
 
 		dispatcher.register(Commands.literal("circle").executes(ctx -> circle(ctx.getSource().getPlayerOrException())));
+
+		// for everyone: how reviving works, who is dead, and the revive itself next to an altar
+		dispatcher.register(Commands.literal("revive")
+				.executes(ctx -> reviveHelp(ctx.getSource()))
+				.then(Commands.argument("name", StringArgumentType.word())
+						.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(ghostNames(ctx.getSource()), builder))
+						.executes(ctx -> reviveAtAltar(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "name")))));
 
 		dispatcher.register(Commands.literal("lucifer")
 				.then(Commands.literal("reward").executes(ctx -> {
@@ -173,6 +183,45 @@ public final class HellCommands {
 		Ghosts.revive(source.getServer(), target.getKey(), at);
 		source.sendSuccess(() -> Component.literal("Revived " + target.getValue().name + "."), true);
 		return 1;
+	}
+
+	private static List<String> ghostNames(CommandSourceStack source) {
+		List<String> names = new ArrayList<>();
+		for (HellState.Soul soul : HellState.get(source.getServer()).souls().values()) {
+			if (soul.ghost) {
+				names.add(soul.name);
+			}
+		}
+		return names;
+	}
+
+	private static int reviveHelp(CommandSourceStack source) {
+		Ghosts.howToRevive(source.getServer()).forEach(source::sendSystemMessage);
+		List<String> ghosts = ghostNames(source);
+		source.sendSystemMessage(ghosts.isEmpty()
+				? Component.literal("No one is a ghost right now.").withStyle(ChatFormatting.GRAY)
+				: Component.literal("Ghosts: " + String.join(", ", ghosts)).withStyle(ChatFormatting.RED));
+		return 1;
+	}
+
+	private static int reviveAtAltar(ServerPlayer player, String name) {
+		Map.Entry<UUID, HellState.Soul> target = HellState.get(player.level().getServer()).findByName(name);
+		if (target == null || !target.getValue().ghost) {
+			player.sendSystemMessage(Component.literal(name + " is not a ghost. /revive lists who is.").withStyle(ChatFormatting.RED));
+			return 0;
+		}
+		BlockPos altar = BloodAltar.near(player, 5);
+		if (altar == null) {
+			player.sendSystemMessage(Component.literal("Stand next to a Blood Altar (a respawn anchor on 3x3 crying obsidian) first.")
+					.withStyle(ChatFormatting.RED));
+			HellState.GlobalSpot starter = HellState.get(player.level().getServer()).starterAltar;
+			if (starter != null) {
+				player.sendSystemMessage(Component.literal("There is one beside the Gate of Hell at " + starter.pos().getX() + " "
+						+ starter.pos().getY() + " " + starter.pos().getZ() + ".").withStyle(ChatFormatting.GRAY));
+			}
+			return 0;
+		}
+		return BloodAltar.revive(player, player.level(), altar, target.getKey()) ? 1 : 0;
 	}
 
 	private static int listGhosts(CommandSourceStack source) {

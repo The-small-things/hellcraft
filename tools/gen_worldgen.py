@@ -730,6 +730,9 @@ def spawn26(e):
 
 
 FIRE_BURNOUT = set(TAGS["increased_fire_burnout"])
+# Biomes where monsters spawn much more sparsely (26.3): single mobs plus a spawn "energy budget",
+# the mechanism vanilla uses to keep the Soul Sand Valley thin
+CALM_BIOMES26 = {"dark_wood"}
 GOLEM_MELTS = set(TAGS["snow_golem_melts"])
 
 
@@ -756,8 +759,14 @@ def make_biome26(biome_id, d):
         attrs["minecraft:visual/ambient_particles"] = {
             "argument": [{"particle": {"type": d["particle"][0]}, "probability": d["particle"][1]}], "modifier": "append"}
     spawns = {cat: [spawn26(e) for e in entries] for cat, entries in old["spawners"].items() if entries}
+    costs = {}
+    if biome_id in CALM_BIOMES26:
+        # the first circle players see: monsters come alone and keep their distance from each other
+        for e in spawns.get("monster", []):
+            e["count"] = 1
+            costs[e["type"]] = {"charge": 0.7, "energy_budget": 0.15}
     attrs["minecraft:gameplay/natural_mob_spawns"] = {
-        "argument": {"spawn_costs": {}, "spawns_by_category": spawns}, "modifier": "overlay"}
+        "argument": {"spawn_costs": costs, "spawns_by_category": spawns}, "modifier": "overlay"}
     attrs["minecraft:gameplay/can_pillager_patrol_spawn"] = False
     ident = "hellcraft:" + biome_id
     if ident in FIRE_BURNOUT:

@@ -66,6 +66,12 @@ rcon() {
 
 rcon "hellcraft where"
 rcon "hellcraft givebane nobody" || true  # needs a player; checks the command is registered
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  help=$(rcon "revive")
+  echo "$help"
+  echo "$help" | grep -q "How to revive a ghost" || { echo "/revive does not explain reviving"; exit 1; }
+  echo "$help" | grep -q "Gate of Hell at" || { echo "/revive does not say where the starter altar is"; exit 1; }
+fi
 
 if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   curl -fsS -o music-pack.zip http://localhost:25566/hellcraft-music.zip || { echo "Music pack not served"; exit 1; }

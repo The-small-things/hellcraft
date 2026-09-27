@@ -35,6 +35,9 @@ public class HellState extends SavedData {
 	@Nullable
 	public UUID luciferId;
 	public long luciferNextSpawn;
+	/** The Blood Altar Landmarks builds beside the Gate of Hell (pointed to in the revival instructions). */
+	@Nullable
+	public GlobalSpot starterAltar;
 
 	public static HellState get(MinecraftServer server) {
 		return server.overworld().getDataStorage().computeIfAbsent(TYPE);
@@ -151,6 +154,9 @@ public class HellState extends SavedData {
 			tag.store("lucifer", UUIDUtil.CODEC, luciferId);
 		}
 		tag.putLong("luciferNext", luciferNextSpawn);
+		if (starterAltar != null) {
+			tag.put("starterAltar", starterAltar.save());
+		}
 		return tag;
 	}
 
@@ -181,6 +187,7 @@ public class HellState extends SavedData {
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);
 		state.luciferNextSpawn = tag.getLongOr("luciferNext", 0L);
+		state.starterAltar = GlobalSpot.load(tag, "starterAltar");
 		return state;
 	}
 }

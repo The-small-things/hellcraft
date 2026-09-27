@@ -60,7 +60,7 @@ The world is a disc 12,000 blocks across, with the world border at radius 6000. 
 
 | Ring | Circle | Land | Its torment |
 |---|---|---|---|
-| Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves. The Gate of Hell's wall runs along its inner edge. | – |
+| Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves, and (on 26.3) only a few monsters, so new players can find their feet. The Gate of Hell's wall runs along its inner edge. | – |
 | Vestibule & Acheron | – | Grey gravel plain. The river Acheron. Bees stand in for the stinging wasps. | – |
 | **Limbo** | I | Pale meadows of calcite and birch. The only villages in Hell, plus trail ruins. | none: Limbo is only longing |
 | **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | Hurricane gusts hurl you sideways |
@@ -94,13 +94,17 @@ Some other rules of Hell:
 
 ### Blood altars
 
-An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at the Gate of Hell, and ruined altars with loot chests are scattered through Hell. Offer blood at an altar:
+An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at the Gate of Hell, and ruined altars with loot chests are scattered through Hell. You can build your own, too.
 
-| Offering | Rite |
-|---|---|
-| Blood Heart | **Ward:** 30 minutes of immunity to every circle's torment, plus Regeneration and Absorption |
-| Sneak + Blood Heart | **Bind:** you respawn at this altar (the only way to move your spawn, since beds explode) |
-| Name tag with a ghost's name + 4 Blood Hearts in your inventory | **Revive** that ghost here with 3 hearts |
+**26.3:** right-click an altar with an empty hand to open its menu. It shows every ghost's head (click one to revive them) plus the Ward and Bind rites. The Gate's altar has a sign saying so.
+
+| Rite | How | Cost | Effect |
+|---|---|---|---|
+| **Revive** | Menu: click the ghost's head. Or stand by the altar and type `/revive <name>`. Or use a Name Tag renamed to their name. | 4 Blood Hearts | The ghost rises on top of the altar with 3 hearts |
+| **Ward** | Menu, or use a Blood Heart on the altar | 1 Blood Heart | 30 minutes of immunity to every circle's torment, plus Regeneration and Absorption |
+| **Bind** | Menu, or sneak and use a Blood Heart on the altar | 1 Blood Heart | You respawn at this altar (the only way to move your spawn, since beds explode) |
+
+(On 1.21.1 there is no menu: use the Name Tag and Blood Heart shortcuts.)
 
 ## Lucifer
 
@@ -163,7 +167,12 @@ Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. 
 When you lose your last heart you are not banned. *There is no more room in hell*:
 - You become a **ghost**, a spectator tethered to where you died.
 - Your corpse rises as a **revenant**. It's a zombie (drowned, husk or stray depending on the circle) with your name, wearing your head and the armor and weapon you died with. Kill it to get your gear back.
-- The living can buy you back at a blood altar.
+- The living can buy you back at a blood altar. Everyone gets step-by-step instructions in chat when someone becomes a ghost, and `/revive` repeats them and lists who is dead (26.3).
+
+**How to revive a friend (26.3):**
+1. Get **4 Blood Hearts**. `/withdraw` turns your own hearts into Blood Hearts; kills and 8 clotted Blood Fragments give more.
+2. Go to a **Blood Altar**. There's one beside the Gate of Hell, and `/revive` tells you its coordinates.
+3. **Right-click it with an empty hand** and click your friend's head. They rise on the altar with 3 hearts, even if they are offline (they come back when they next join).
 
 ## Commands
 
@@ -172,6 +181,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hearts [player]` | all | Show hearts |
 | `/withdraw [n]` | all | Bleed hearts into Blood Hearts |
 | `/circle` | all | Where am I in Hell? |
+| `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
+| `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
 | `/hellcraft sethearts <player> <n>` | op | |
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |

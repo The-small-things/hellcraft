@@ -10,6 +10,7 @@ import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -30,6 +31,26 @@ public final class Ghosts {
 		}
 		player.sendSystemMessage(Component.literal("Hell is full. You wander as a ghost until the living pay blood for your return.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		player.sendSystemMessage(Component.literal("Tell your friends:").withStyle(ChatFormatting.GRAY));
+		howToRevive(player.level().getServer()).forEach(player::sendSystemMessage);
+	}
+
+	/** Step-by-step instructions for bringing a ghost back, for chat. */
+	public static List<Component> howToRevive(MinecraftServer server) {
+		int cost = HellConfig.get().reviveCostHearts;
+		HellState.GlobalSpot altar = HellState.get(server).starterAltar;
+		String where = altar != null
+				? " There is one beside the Gate of Hell at " + altar.pos().getX() + " " + altar.pos().getY() + " " + altar.pos().getZ() + "."
+				: " There is one beside the Gate of Hell.";
+		return List.of(
+				Component.literal("☠ How to revive a ghost").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+				Component.literal(" 1. Carry " + cost + " Blood Hearts. /withdraw turns your own hearts into Blood Hearts;"
+						+ " kills and 8 clotted Blood Fragments give more.").withStyle(ChatFormatting.GRAY),
+				Component.literal(" 2. Go to a Blood Altar: a respawn anchor on 3x3 crying obsidian." + where).withStyle(ChatFormatting.GRAY),
+				Component.literal(" 3. Right-click the altar with an empty hand and click the ghost's head"
+						+ " (or stand next to it and type /revive <name>).").withStyle(ChatFormatting.GRAY),
+				Component.literal(" The ghost rises on top of the altar with " + HellConfig.get().reviveHearts + " hearts.")
+						.withStyle(ChatFormatting.GRAY));
 	}
 
 	/** Keeps ghosts near their grave. Called about once a second. */
@@ -42,6 +63,10 @@ public final class Ghosts {
 		}
 		if (player.getCamera() != player) {
 			player.setCamera(player);
+		}
+		if (player.level().getGameTime() / 20 % 10 == 0) {
+			player.sendOverlayMessage(Component.literal("☠ You are a ghost. The living can revive you at a Blood Altar for "
+					+ HellConfig.get().reviveCostHearts + " Blood Hearts (/revive)").withStyle(ChatFormatting.GRAY));
 		}
 		double r = HellConfig.get().ghostTetherRadius;
 		BlockPos p = soul.deathSpot.pos();
