@@ -126,7 +126,23 @@ Three vanilla tools, reforged with blood at a crafting table. They're in everyon
 
 *"Another soul crawls to the bottom of the world."*
 
-Walk into the pit at the centre of Judecca and the ice closes behind you. This is a scripted, three-phase fight with spoken dialogue, inspired by ULTRAKILL's 3-2:
+### The Emperor's Spine (26.3)
+
+*"Nothing will touch thee on this road. I want thee WHOLE when thou arrivest."*
+
+The road to Lucifer is a quiet one. On the **east rim of the Well of Giants** (x 660, y −13, z 0; `/hellcraft spine` takes an op there) a colossal backbone leaves the cliff and runs toward the centre of Hell:
+- For almost 500 blocks it hangs over **Cocytus**, 25 blocks above the frozen lake, with ribs curling down into the dark and soul lanterns along the way.
+- Over **Judecca** it becomes a long **staircase**, one step down every four blocks, all the way to the rim of Lucifer's pit.
+
+**No enemies.** Nothing hostile can exist on or near the spine, or anywhere in Judecca. The freezing of the ninth circle spares you while you walk it. The only company is a heartbeat that quickens the deeper you go, ash drifting in the dark, and **Lucifer's voice from far below**, a new line at every stretch of the descent.
+
+The first time you reach the Well of Giants or Cocytus, chat tells you where the spine starts. Its bones can't be broken.
+
+### The fight
+
+Walk into the pit at the centre of Judecca and the ice closes behind you. This is a scripted, three-phase fight with spoken dialogue, inspired by ULTRAKILL's 3-2.
+
+**The pit can't be broken.** Its floor, the ice seal and the pillars can't be mined (except in creative). On 26.3, whatever explosions or the Emperor blow out of the pit during the fight freezes back within half a second.
 
 1. **The Fallen Seraph.** Lucifer is a towering, sword-wielding fallen angel who taunts you and fights like a duelist:
    - he teleports behind you
@@ -136,7 +152,15 @@ Walk into the pit at the centre of Judecca and the ice closes behind you. This i
 
    Every attack is telegraphed, so watch for it and dodge.
 2. **The Morning Star.** At half health he snaps. He gets faster, glows, chains his attacks together, and raises the three great traitors he chews on for eternity to fight beside him.
-3. **The Three-Faced Emperor.** Break his seraph form and he reveals his true face.
+3. **The Three-Faced Emperor.** Break his seraph form and he reveals his true face. On 26.3 he is Dante's Lucifer: frozen to the chest in the ice at the centre of the pit, so he can't move, but his reach is the whole pit. Each of his three faces turns toward its victim when it strikes. The action bar tells you how to survive each attack the first time you see it:
+   - **Hatred** (red face): rings of fire sweep out across the ice, one after another. *Jump them.*
+   - **Impotence** (pale yellow face): he weeps, frost rings mark where the tears will land, and they fall as ice. *Get out of the rings.*
+   - **Ignorance** (black face): the light goes out, and a turning spiral of jaws sweeps out of the dark.
+   - **The six wings**: a freezing gale drives everyone out toward the wall. *Sneak to brace yourself.*
+   - **The mouths** (below ⅔ health, when "the ice cracks"): he drags someone to his jaws and chews. *Everyone else must hurt him to make him let go.*
+   - Below ⅓ health **all three faces rage together**. Attacks come faster, rings of hatred run under his other attacks, and Judas, Brutus and Cassius crawl out of his mouths to fight for him.
+
+   He still fires wither skulls between attacks.
 
 **Returning champions make him harder.** For every player in the fight who has beaten him before, he gets tougher for *everyone* in that round:
 - +35% health on both forms
@@ -221,12 +245,13 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
 | `/hellcraft ghosts` | op | List ghosts |
-| `/hellcraft goto <zone>` / `gate` | op | Teleport to a zone / the Gate (testing) |
+| `/hellcraft goto <zone>` / `gate` / `spine` | op | Teleport to a zone / the Gate / the start of the Emperor's Spine (testing) |
 | `/lucifer reward` | all | Open your Lucifer reward chooser (if you have one waiting) |
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
+| `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |
 

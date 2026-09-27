@@ -26,6 +26,7 @@ import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
 
 import java.util.HashMap;
@@ -78,7 +79,7 @@ public final class CircleHazards {
 			if (config.circleTitles) {
 				announce(player, zone);
 			}
-			if (!config.circleHazards || player.isSpectator() || player.isCreative() || warded(player)) {
+			if (!config.circleHazards || player.isSpectator() || player.isCreative() || warded(player) || Spine.shelters(player)) {
 				continue;
 			}
 			torment(player, level, zone);

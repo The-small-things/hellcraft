@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,10 @@ final class LuciferModel {
 	/** boss UUID -> display UUID */
 	private final Map<UUID, UUID> displays = new HashMap<>();
 	private final Map<UUID, Float> yaws = new HashMap<>();
+	/** boss UUID -> extra turn (degrees) so that another side of the model faces the target */
+	private final Map<UUID, Float> faceTurns = new HashMap<>();
+	/** boss UUID -> a display that was summoned but not found yet */
+	private final Map<UUID, Pending> pending = new HashMap<>();
 
 	LuciferModel(ServerLevel level) {
 		this.level = level;
@@ -62,20 +67,44 @@ final class LuciferModel {
 						+ "scale:[%.3ff,%.3ff,%.3ff],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}",
 				boss.getX(), boss.getY(), boss.getZ(), TAG, LuciferManager.TAG, marker, model, scale / 2.0f, scale, scale, scale);
 		MinecraftServer server = level.getServer();
+		// run from inside another command (an admin's /hellcraft lucifer start) the summon is queued until
+		// that command finishes, so the display is looked up on the following ticks instead of right here
 		server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command);
-		List<Entity> found = level.getEntitiesOfClass(Entity.class, AABB.ofSize(boss.position(), 4, 4, 4), e -> e.entityTags().contains(marker));
-		if (found.isEmpty()) {
-			HellcraftMod.LOGGER.warn("Could not give Lucifer his {} model; he keeps his vanilla look. Command: {}", model, command);
-			boss.setInvisible(false);
-			return;
-		}
-		HellcraftMod.LOGGER.info("Lucifer model: {}", model);
-		displays.put(boss.getUUID(), found.getFirst().getUUID());
+		pending.put(boss.getUUID(), new Pending(model, marker, command, 0));
 		yaws.put(boss.getUUID(), boss.getYRot());
+	}
+
+	private record Pending(String model, String marker, String command, int ticks) {
+	}
+
+	/** Finds displays whose summon has run since attach(); gives up (and unhides the boss) after 2 s. */
+	private void resolvePending() {
+		pending.entrySet().removeIf(entry -> {
+			Entity boss = level.getEntity(entry.getKey());
+			Pending p = entry.getValue();
+			if (boss == null || !boss.isAlive()) {
+				return true;
+			}
+			List<Entity> found = level.getEntitiesOfClass(Entity.class, boss.getBoundingBox().inflate(8),
+					e -> e.entityTags().contains(p.marker()));
+			if (!found.isEmpty()) {
+				HellcraftMod.LOGGER.info("Lucifer model: {}", p.model());
+				displays.put(entry.getKey(), found.getFirst().getUUID());
+				return true;
+			}
+			if (p.ticks() >= 40) {
+				HellcraftMod.LOGGER.warn("Could not give Lucifer his {} model; he keeps his vanilla look. Command: {}", p.model(), p.command());
+				boss.setInvisible(false);
+				return true;
+			}
+			entry.setValue(new Pending(p.model(), p.marker(), p.command(), p.ticks() + 1));
+			return false;
+		});
 	}
 
 	/** Keeps every model on its boss, turned toward the nearest of the given players. */
 	void tick(List<ServerPlayer> watchers) {
+		resolvePending();
 		displays.entrySet().removeIf(entry -> {
 			Entity display = level.getEntity(entry.getValue());
 			Entity boss = level.getEntity(entry.getKey());
@@ -119,7 +148,8 @@ final class LuciferModel {
 			return current;
 		}
 		// Minecraft yaw: 0 faces +Z (south), 90 faces -X (west)
-		float wanted = (float) Math.toDegrees(Math.atan2(-(target.getX() - boss.getX()), target.getZ() - boss.getZ()));
+		float wanted = (float) Math.toDegrees(Math.atan2(-(target.getX() - boss.getX()), target.getZ() - boss.getZ()))
+				+ faceTurns.getOrDefault(bossId, 0.0f);
 		float delta = wrap(wanted - current);
 		float next = current + Math.max(-MAX_TURN, Math.min(MAX_TURN, delta));
 		yaws.put(bossId, next);
@@ -138,8 +168,21 @@ final class LuciferModel {
 		return d;
 	}
 
+	/**
+	 * Turns a side of the model toward the target instead of its front: the Emperor's pale yellow face is
+	 * on the model's east side (-90), the black one on its west side (+90). The turn is animated by tick().
+	 */
+	void showFace(UUID bossId, float turn) {
+		faceTurns.put(bossId, turn);
+	}
+
 	boolean owns(UUID id) {
-		return displays.containsValue(id);
+		if (displays.containsValue(id)) {
+			return true;
+		}
+		// a display whose summon ran but that tick() has not picked up yet
+		Entity e = level.getEntity(id);
+		return e != null && e.entityTags().contains(TAG);
 	}
 
 	/** Removes every model (the bosses themselves are handled by the fight). */
@@ -152,5 +195,11 @@ final class LuciferModel {
 		}
 		displays.clear();
 		yaws.clear();
+		faceTurns.clear();
+		pending.clear();
+		// displays summoned after their boss was gone, or never picked up
+		for (Entity e : level.getEntitiesOfClass(Entity.class, AABB.ofSize(Vec3.ZERO, 200, 400, 200), d -> d.entityTags().contains(TAG))) {
+			e.discard();
+		}
 	}
 }

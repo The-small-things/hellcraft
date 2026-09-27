@@ -30,6 +30,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
 
 import java.util.ArrayList;
@@ -134,9 +135,11 @@ public final class HellCommands {
 						.then(Commands.literal("status").executes(ctx -> reply(ctx.getSource(), LuciferManager.status())))
 						.then(Commands.literal("attack")
 								.then(Commands.argument("attack", StringArgumentType.word())
-										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "fangs", "wings", "hellfire"}, builder))
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "fangs", "wings", "hellfire",
+												"hatred", "impotence", "ignorance", "wingbeat", "mouths"}, builder))
 										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
 				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
+				.then(Commands.literal("spine").executes(ctx -> teleportToSurface(ctx.getSource(), Spine.START_X + 5, 0)))
 				.then(Commands.literal("where").executes(ctx -> where(ctx.getSource())))
 				.then(Commands.literal("reload").executes(ctx -> {
 					HellConfig.load();

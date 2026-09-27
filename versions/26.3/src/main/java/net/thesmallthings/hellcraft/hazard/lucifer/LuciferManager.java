@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +14,7 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.Spine;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,6 +37,11 @@ public final class LuciferManager {
 	private static final List<Entity> strays = new ArrayList<>();
 	private static int ticks;
 
+	/** True while a fight is on (the Spine's whispers keep quiet). */
+	public static boolean fighting() {
+		return fight != null;
+	}
+
 	public static boolean isLucifer(Entity entity) {
 		return entity.entityTags().contains(TAG);
 	}
@@ -51,8 +59,21 @@ public final class LuciferManager {
 				fight.onDeath(entity);
 			}
 		});
-		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
-				!(level instanceof ServerLevel serverLevel) || !HellWorldgen.isInferno(serverLevel) || !LuciferArena.isSealBlock(serverLevel, pos));
+		// the pit (floor, seal and pillars) and the Emperor's Spine can't be dug out
+		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
+			if (!(level instanceof ServerLevel serverLevel) || !HellWorldgen.isInferno(serverLevel)) {
+				return true;
+			}
+			boolean seal = LuciferArena.isSealBlock(serverLevel, pos);
+			if (!seal && (player.isCreative() || !(LuciferArena.isProtected(pos) || Spine.isProtected(serverLevel, pos)))) {
+				return true;
+			}
+			if (player instanceof ServerPlayer sp) {
+				sp.sendOverlayMessage(Component.literal(seal ? "The ice will not open while he lives." : "Nothing breaks at the bottom of the world.")
+						.withStyle(ChatFormatting.AQUA));
+			}
+			return false;
+		});
 		// leftovers from a fight interrupted by a restart
 		// never more than one Lucifer: anything tagged as him that the current fight doesn't own goes
 		// (ownership is checked a tick later: a freshly spawned body loads before the fight records its UUID)
@@ -153,9 +174,15 @@ public final class LuciferManager {
 		if (fight == null) {
 			return "No fight in progress.";
 		}
+		String upper = name.toUpperCase(Locale.ROOT);
+		for (EmperorAttacks.Attack attack : EmperorAttacks.Attack.values()) {
+			if (attack.name().equals(upper)) {
+				return fight.forceEmperorAttack(attack) ? "The Emperor uses " + attack + "." : "The Emperor isn't here yet, or there is no target.";
+			}
+		}
 		LuciferAttacks.Attack attack;
 		try {
-			attack = LuciferAttacks.Attack.valueOf(name.toUpperCase(Locale.ROOT));
+			attack = LuciferAttacks.Attack.valueOf(upper);
 		} catch (IllegalArgumentException e) {
 			return "Unknown attack: " + name;
 		}

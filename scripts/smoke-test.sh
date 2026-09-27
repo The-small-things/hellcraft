@@ -114,6 +114,20 @@ rcon "forceload add 1715 1715"
 echo "Generating..."
 sleep 60
 rcon "forceload query" || true
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  # the Emperor's Spine: a bone walkway over Cocytus, and nothing hostile may exist near it
+  deck=$(rcon "execute if block 400 -13 0 minecraft:bone_block" || true)
+  echo "Spine deck at x=400: $deck"
+  echo "$deck" | grep -q "Test passed" || { echo "The Emperor's Spine was not built"; exit 1; }
+  stairs=$(rcon "execute if block 100 -26 0 minecraft:bone_block" || true)
+  echo "Spine stairs at x=100: $stairs"
+  echo "$stairs" | grep -q "Test passed" || { echo "The Spine's staircase is not where it should be"; exit 1; }
+  rcon "summon minecraft:zombie 402 -12 0"
+  sleep 2
+  zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=402,y=-12,z=0,distance=..8]" || true)
+  echo "Zombie on the spine: $zombie"
+  echo "$zombie" | grep -q "Test failed" || { echo "A monster survived on the Emperor's Spine"; exit 1; }
+fi
 
 # Lucifer: run the whole fight against a dummy target in the pit
 rcon "summon minecraft:villager 4 -45 0 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b}"
@@ -145,6 +159,25 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_lucifer_model]" || true)
   echo "Lucifer's model in his true form: $shown"
   echo "$shown" | grep -q "Test passed" || { echo "Lucifer has no model in his true form"; exit 1; }
+  status=$(rcon "hellcraft lucifer status")
+  echo "$status"
+  echo "$status" | grep -q "emperorStage=1" || { echo "The Emperor's attacks did not start"; exit 1; }
+  floor=$(echo "$status" | sed -n 's/.*floor=\(-\{0,1\}[0-9]*\).*/\1/p')
+  for a in hatred impotence ignorance mouths wingbeat; do
+    out=$(rcon "hellcraft lucifer attack $a")
+    echo "$out"
+    echo "$out" | grep -q "The Emperor uses" || { echo "The Emperor could not use $a"; exit 1; }
+    sleep 4
+  done
+  frozen=$(rcon "execute if entity @e[type=minecraft:wither,tag=hellcraft_lucifer,x=0.5,y=$floor,z=0.5,distance=..2]" || true)
+  echo "Emperor frozen at the centre: $frozen"
+  echo "$frozen" | grep -q "Test passed" || { echo "The Emperor left the centre of the pit"; exit 1; }
+  # blow a hole in the pit floor: it must freeze back
+  rcon "setblock 2 $((floor - 1)) 0 minecraft:air"
+  sleep 2
+  healed=$(rcon "execute unless block 2 $((floor - 1)) 0 minecraft:air" || true)
+  echo "Pit floor healed: $healed"
+  echo "$healed" | grep -q "Test passed" || { echo "The pit floor did not heal"; exit 1; }
 fi
 rcon "hellcraft lucifer skip"   # -> defeat
 sleep 16
@@ -172,6 +205,8 @@ fi
 grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
 if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
+  grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
+  grep -q 'Lucifer model: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
 fi
 if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON' ; then
   echo "Errors found in server log"; fail=1

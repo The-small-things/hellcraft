@@ -30,6 +30,7 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -88,6 +89,12 @@ public final class LuciferFight {
 	private UUID avatarId;
 	@Nullable
 	private UUID witherId;
+	/** The Emperor's attacks (true form only). */
+	@Nullable
+	private EmperorAttacks emperor;
+	/** The pit as it was when the fight began; whatever the fight blows out of it freezes back. */
+	@Nullable
+	private Map<Long, BlockState> floor;
 
 	private record Scheduled(int at, Runnable action) {
 	}
@@ -105,6 +112,14 @@ public final class LuciferFight {
 
 	ServerLevel level() {
 		return level;
+	}
+
+	int floorY() {
+		return floorY;
+	}
+
+	LuciferModel model() {
+		return model;
 	}
 
 	boolean enraged() {
@@ -154,6 +169,7 @@ public final class LuciferFight {
 		LuciferArena.forceLoad(level, true);
 		discardStrays();
 		LuciferArena.seal(level);
+		floor = LuciferArena.snapshot(level);
 		for (ServerPlayer p : LuciferDialogue.audience(level, LuciferArena.RADIUS + 4)) {
 			if (!p.isSpectator()) {
 				participants.putIfAbsent(p.getUUID(), 0.0f);
@@ -206,6 +222,9 @@ public final class LuciferFight {
 		List<ServerPlayer> watching = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
 		music.tick(watching, tick);
 		model.tick(watching);
+		if (floor != null && tick % 10 == 0) {
+			LuciferArena.heal(level, floor);
+		}
 		switch (phase) {
 			case INTRO -> {
 				Mob avatar = avatar();
@@ -233,8 +252,12 @@ public final class LuciferFight {
 					return;
 				}
 				missingTicks = 0;
-				leash(wither, 26);
-				checkForFailure();
+				if (checkForFailure()) {
+					return;
+				}
+				if (emperor != null) {
+					emperor.tick(wither);
+				}
 			}
 			default -> {
 			}
@@ -403,6 +426,7 @@ public final class LuciferFight {
 			traitors.clear();
 			WitherBoss wither = spawnTrueForm();
 			witherId = wither.getUUID();
+			emperor = new EmperorAttacks(this, witherId);
 			bar.removeAllPlayers();
 			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "LUCIFER", "Three-Faced Emperor", ChatFormatting.DARK_PURPLE);
 			setPhase(Phase.TRUE_FORM);
@@ -436,6 +460,9 @@ public final class LuciferFight {
 	}
 
 	void afterDamage(LivingEntity entity, DamageSource source, float dealt) {
+		if (emperor != null && entity.getUUID().equals(witherId)) {
+			emperor.onHurt(dealt);
+		}
 		boolean boss = entity.getUUID().equals(avatarId) || entity.getUUID().equals(witherId);
 		if (!boss || !(source.getEntity() instanceof ServerPlayer player)) {
 			return;
@@ -518,6 +545,12 @@ public final class LuciferFight {
 		return true;
 	}
 
+	/** Test helper: run one of the Emperor's attacks now. */
+	boolean forceEmperorAttack(EmperorAttacks.Attack attack) {
+		WitherBoss wither = wither();
+		return phase == Phase.TRUE_FORM && wither != null && emperor != null && emperor.perform(attack, wither);
+	}
+
 	void stop() {
 		cleanup();
 		setPhase(Phase.DONE);
@@ -593,7 +626,7 @@ public final class LuciferFight {
 	}
 
 	@Nullable
-	private WitherBoss wither() {
+	WitherBoss wither() {
 		Entity e = witherId == null ? null : level.getEntity(witherId);
 		return e instanceof WitherBoss w && w.isAlive() ? w : null;
 	}
@@ -673,12 +706,15 @@ public final class LuciferFight {
 		if (wither == null) {
 			throw new IllegalStateException("could not create Lucifer's true form");
 		}
-		wither.snapTo(0.5, floorY + 4, 0.5, 0.0f, 0.0f);
+		// frozen to the chest in the ice at the very centre (EmperorAttacks keeps him there); no vanilla
+		// spawn charge-up, whose blast used to crater the pit
+		wither.snapTo(0.5, floorY, 0.5, 0.0f, 0.0f);
 		wither.addTag(LuciferManager.TAG);
 		wither.setPersistenceRequired();
 		setBase(wither, Attributes.MAX_HEALTH, HellConfig.get().luciferHealth);
+		wither.setHealth(wither.getMaxHealth());
 		applyVeteranScaling(wither);
-		wither.makeInvulnerable();
+		level.playSound(null, wither.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 4.0f, 0.5f);
 		wither.setCustomName(Component.literal("Lucifer, Three-Faced Emperor").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		level.addFreshEntity(wither);
 		model.attach(wither, "lucifer_emperor", Math.max(4.0f, wither.getBbHeight() * 1.2f));
@@ -706,6 +742,9 @@ public final class LuciferFight {
 		traitors.clear();
 		model.clear();
 		discardStrays();
+		if (floor != null) {
+			LuciferArena.heal(level, floor);
+		}
 		LuciferArena.unseal(level);
 		LuciferArena.forceLoad(level, false);
 	}
@@ -727,7 +766,7 @@ public final class LuciferFight {
 	String status() {
 		return "phase=" + phase + " tick=" + tick + " avatar=" + (avatar() != null ? "present" : avatarId == null ? "none" : "missing")
 				+ " trueForm=" + (wither() != null ? "present" : witherId == null ? "none" : "missing")
-				+ " traitors=" + traitors.size() + " participants=" + participants.size() + " champions=" + veterans;
+				+ " traitors=" + traitors.size() + " floor=" + floorY + (emperor != null ? " emperorStage=" + emperor.stage() : "") + " participants=" + participants.size() + " champions=" + veterans;
 	}
 
 	private void reward() {
@@ -798,6 +837,16 @@ public final class LuciferFight {
 		boss.setHealth(Math.max(1.0f, boss.getMaxHealth() * fraction));
 		if (phase == Phase.DUEL || phase == Phase.ENRAGED) {
 			updateBarName(phase == Phase.ENRAGED ? "LUCIFER \u2014 The Morning Star" : "LUCIFER \u2014 The Fallen Seraph");
+		}
+	}
+
+	/** The Emperor spits out the three traitors he chews (the last third of the true form). */
+	void releaseTraitors(WitherBoss boss) {
+		String[] names = {"Judas", "Brutus", "Cassius"};
+		for (int i = 0; i < names.length; i++) {
+			double ang = i * 2 * Math.PI / names.length;
+			WitherSkeleton traitor = spawnTraitor(names[i], boss.getX() + Math.cos(ang) * 4, boss.getZ() + Math.sin(ang) * 4);
+			traitors.add(traitor.getUUID());
 		}
 	}
 

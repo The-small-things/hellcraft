@@ -29,6 +29,8 @@ public class HellState extends SavedData {
 
 	private final Map<UUID, Soul> souls = new HashMap<>();
 	public boolean landmarksBuilt;
+	/** The Emperor's Spine has been laid (it is added to worlds made before it existed, too). */
+	public boolean spineBuilt;
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
 	public boolean arenaSealed;
 	public int luciferDefeats;
@@ -148,6 +150,7 @@ public class HellState extends SavedData {
 		}
 		tag.put("souls", list);
 		tag.putBoolean("landmarks", landmarksBuilt);
+		tag.putBoolean("spine", spineBuilt);
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
@@ -183,6 +186,7 @@ public class HellState extends SavedData {
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
+		state.spineBuilt = tag.getBooleanOr("spine", false);
 		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);

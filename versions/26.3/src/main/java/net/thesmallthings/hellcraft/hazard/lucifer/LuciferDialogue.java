@@ -44,7 +44,18 @@ final class LuciferDialogue {
 	static final String[] TRUE_FORM = {
 			"...So be it.",
 			"Behold the face that God cast down!",
+			"Frozen here since the Fall... but my faces still bite.",
 	};
+
+	// the Emperor (true form): one set of lines per face, his wings and his mouths
+	static final String[] HATRED = {"HATE WITH ME!", "Burn in the fire I carry!", "Feel how I HATE Him!"};
+	static final String[] IMPOTENCE = {"Six eyes weep... and still I cannot rise.", "Drown in my tears.", "Weep with me, heart-thief."};
+	static final String[] IGNORANCE = {"See nothing. Know nothing. As I do.", "Into the dark with thee.", "Where is thy God now? I cannot see Him either."};
+	static final String[] WINGBEAT = {"The wind of my wings froze all of Cocytus!", "BE STILL!", "Six wings, and I cannot fly. FEEL THEM!"};
+	static final String[] MOUTHS = {"Judas has room for company!", "Into the mouth, TRAITOR!", "I shall chew thee for eternity."};
+	static final String[] SPIT = {"Bitter. Like all the rest.", "Thou tastest of stolen blood.", "Pah! Next!"};
+	static final String[] EMPEROR_CRACK = {"The ice... CRACKS!", "Thou bleedest the Emperor? Then BLEED WITH ME!"};
+	static final String[] EMPEROR_RAGE = {"JUDAS! BRUTUS! CASSIUS! Out of my mouths, and FIGHT FOR ME!", "All three faces see thee now."};
 
 	static final String[] DEFEAT = {
 			"Impossible... bested by a thing of dirt...",

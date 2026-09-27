@@ -18,6 +18,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
+import net.thesmallthings.hellcraft.world.Spine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +46,19 @@ public class HellcraftMod implements ModInitializer {
 		MusicPack.register();
 
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
+		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
+		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			CircleHazards.tick(server);
 			LuciferManager.tick(server);
+			Spine.tick(server);
 			MobEmpowerment.tick();
 		});
-		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> CircleHazards.forget(handler.getPlayer()));
+		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+			CircleHazards.forget(handler.getPlayer());
+			Spine.forget(handler.getPlayer());
+		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> HellCommands.register(dispatcher));
 
 		LOGGER.info("Hellcraft loaded. Lasciate ogne speranza, voi ch'intrate.");
