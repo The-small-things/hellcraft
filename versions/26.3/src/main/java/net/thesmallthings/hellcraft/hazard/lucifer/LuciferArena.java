@@ -126,7 +126,7 @@ final class LuciferArena {
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		for (int x = -r; x <= r; x++) {
 			for (int z = -r; z <= r; z++) {
-				pos.set(x, 0, z);
+				pos.set(x, PROTECTED_TOP, z);
 				if (!isProtected(pos)) {
 					continue;
 				}
