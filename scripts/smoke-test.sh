@@ -32,7 +32,15 @@ docker run -d --name "$NAME" \
   -p 25566:25566 \
   "$MC_IMAGE"
 
-cleanup() { docker logs "$NAME" > "$LOG" 2>&1 || true; docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+cleanup() {
+  status=$?
+  docker logs "$NAME" > "$LOG" 2>&1 || true
+  if [ "$status" != 0 ]; then
+    echo "---- server log (warnings, errors, Hellcraft) ----"
+    grep -iE 'WARN|ERROR|Exception|hellcraft|lucifer|summon|display' "$LOG" | grep -v 'Marked chunk' | tail -80 || true
+  fi
+  docker rm -f "$NAME" >/dev/null 2>&1 || true
+}
 trap cleanup EXIT
 
 echo "Waiting for the server to start..."

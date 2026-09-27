@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,12 +62,14 @@ final class LuciferModel {
 						+ "scale:[%.3ff,%.3ff,%.3ff],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}",
 				boss.getX(), boss.getY(), boss.getZ(), TAG, LuciferManager.TAG, marker, model, scale / 2.0f, scale, scale, scale);
 		MinecraftServer server = level.getServer();
-		server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), command);
+		server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command);
 		List<Entity> found = level.getEntitiesOfClass(Entity.class, AABB.ofSize(boss.position(), 4, 4, 4), e -> e.entityTags().contains(marker));
 		if (found.isEmpty()) {
+			HellcraftMod.LOGGER.warn("Could not give Lucifer his {} model; he keeps his vanilla look. Command: {}", model, command);
 			boss.setInvisible(false);
 			return;
 		}
+		HellcraftMod.LOGGER.info("Lucifer model: {}", model);
 		displays.put(boss.getUUID(), found.getFirst().getUUID());
 		yaws.put(boss.getUUID(), boss.getYRot());
 	}
