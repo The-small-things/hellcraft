@@ -180,9 +180,17 @@ final class LuciferModel {
 		if (displays.containsValue(id)) {
 			return true;
 		}
-		// a display whose summon ran but that tick() has not picked up yet
+		// a display whose summon ran but that tick() has not picked up yet (anything else is a leftover)
 		Entity e = level.getEntity(id);
-		return e != null && e.entityTags().contains(TAG);
+		if (e == null) {
+			return false;
+		}
+		for (Pending p : pending.values()) {
+			if (e.entityTags().contains(p.marker())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** Removes every model (the bosses themselves are handled by the fight). */

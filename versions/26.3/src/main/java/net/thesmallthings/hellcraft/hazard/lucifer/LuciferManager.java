@@ -64,13 +64,20 @@ public final class LuciferManager {
 			if (!(level instanceof ServerLevel serverLevel) || !HellWorldgen.isInferno(serverLevel)) {
 				return true;
 			}
-			boolean seal = LuciferArena.isSealBlock(serverLevel, pos);
-			if (!seal && (player.isCreative() || !(LuciferArena.isProtected(pos) || Spine.isProtected(serverLevel, pos)))) {
+			String refusal;
+			if (LuciferArena.isSealBlock(serverLevel, pos)) {
+				refusal = "The ice will not open while he lives.";
+			} else if (player.isCreative()) {
+				return true;
+			} else if (LuciferArena.isProtected(serverLevel, pos)) {
+				refusal = "The ice at the bottom of the world does not break.";
+			} else if (Spine.isProtected(serverLevel, pos)) {
+				refusal = "The Emperor's bones do not break.";
+			} else {
 				return true;
 			}
 			if (player instanceof ServerPlayer sp) {
-				sp.sendOverlayMessage(Component.literal(seal ? "The ice will not open while he lives." : "Nothing breaks at the bottom of the world.")
-						.withStyle(ChatFormatting.AQUA));
+				sp.sendOverlayMessage(Component.literal(refusal).withStyle(ChatFormatting.AQUA));
 			}
 			return false;
 		});

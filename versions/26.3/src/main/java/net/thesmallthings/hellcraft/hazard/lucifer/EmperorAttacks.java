@@ -13,10 +13,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -200,7 +198,7 @@ final class EmperorAttacks {
 			double y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(x), (int) Math.floor(z));
 			level.sendParticles(i % 3 == 0 ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME, x, y + 0.15, z, 2, 0.1, 0.15, 0.1, 0.01);
 		}
-		for (LivingEntity e : victims(radius + 1.5)) {
+		for (LivingEntity e : victims(radius + 10)) {
 			double d = Math.sqrt((e.getX() - 0.5) * (e.getX() - 0.5) + (e.getZ() - 0.5) * (e.getZ() - 0.5));
 			if (Math.abs(d - radius) < 0.9 && e.onGround() && burned.add(e.getUUID())) {
 				e.hurt(level.damageSources().mobAttack(boss), 7.0f * fight.damageMultiplier());
@@ -215,7 +213,7 @@ final class EmperorAttacks {
 
 	/** He weeps. Frost rings mark where the tears will land; a moment later they fall as ice. */
 	private void impotence(WitherBoss boss, List<LivingEntity> targets) {
-		fight.model().showFace(bossId, YELLOW_FACE);
+		turnFace(YELLOW_FACE, 60);
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.IMPOTENCE));
 		tip("His tears fall frozen: get out of the frost rings!");
 		level.playSound(null, boss.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.5f, 1.4f);
@@ -247,7 +245,7 @@ final class EmperorAttacks {
 			for (Vec3 m : marks) {
 				level.sendParticles(ParticleTypes.SNOWFLAKE, m.x, m.y + 0.5, m.z, 40, 1.2, 0.4, 1.2, 0.15);
 				level.sendParticles(ParticleTypes.CLOUD, m.x, m.y + 0.3, m.z, 6, 0.8, 0.1, 0.8, 0.02);
-				for (LivingEntity e : victims(REACH + 2)) {
+				for (LivingEntity e : victims(REACH + 10)) {
 					if (e.distanceToSqr(m) <= 2.3 * 2.3) {
 						e.hurt(level.damageSources().freeze(), 6.0f * fight.damageMultiplier());
 						e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1));
@@ -263,7 +261,7 @@ final class EmperorAttacks {
 
 	/** The light goes out, and jaws of ice sweep out of the dark in a turning spiral. */
 	private void ignorance(WitherBoss boss) {
-		fight.model().showFace(bossId, BLACK_FACE);
+		turnFace(BLACK_FACE, 100);
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.IGNORANCE));
 		tip("The dark has teeth: watch the ice for the spiral of jaws.");
 		for (ServerPlayer p : LuciferDialogue.audience(level, REACH + 4)) {
@@ -314,8 +312,8 @@ final class EmperorAttacks {
 		if (windTicks % 20 == 0) {
 			level.playSound(null, boss.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 4.0f, 0.3f);
 		}
-		for (LivingEntity e : victims(REACH + 2)) {
-			if (e.getUUID().equals(grabbed)) {
+		for (LivingEntity e : victims(REACH + 10)) {
+			if (e.getUUID().equals(grabbed) || !LuciferArena.inside(e.getX(), e.getZ())) {
 				continue;
 			}
 			Vec3 away = new Vec3(e.getX() - 0.5, 0, e.getZ() - 0.5);
@@ -408,17 +406,19 @@ final class EmperorAttacks {
 
 	// ------------------------------------------------------------------ helpers
 
+	/** Turns a side face toward the victim, and the red face back to the front once the attack is over. */
+	private void turnFace(float face, int ticks) {
+		fight.model().showFace(bossId, face);
+		fight.schedule(ticks, () -> fight.model().showFace(bossId, RED_FACE));
+	}
+
 	private Vec3 ground(double x, double z) {
 		return new Vec3(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(x), (int) Math.floor(z)), z);
 	}
 
 	/** Everything in the pit that can be hurt, except Lucifer and his servants. */
 	private List<LivingEntity> victims(double radius) {
-		AABB box = new AABB(0.5 - radius, fight.floorY() - 12, 0.5 - radius, 0.5 + radius, fight.floorY() + 30, 0.5 + radius);
-		return level.getEntitiesOfClass(LivingEntity.class, box, e -> e.isAlive()
-				&& !LuciferManager.isLucifer(e)
-				&& !e.isSpectator()
-				&& !(e instanceof Player p && p.isCreative()));
+		return LuciferAttacks.victims(fight, new Vec3(0.5, fight.floorY(), 0.5), radius);
 	}
 
 	/** A hint in the action bar of everyone in the pit (the attacks are new; nobody should die not knowing why). */

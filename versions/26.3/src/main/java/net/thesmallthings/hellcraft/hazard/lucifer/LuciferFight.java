@@ -615,7 +615,7 @@ public final class LuciferFight {
 	private void leash(Mob mob, double radius) {
 		if (mob.getX() * mob.getX() + mob.getZ() * mob.getZ() > radius * radius || mob.getY() < floorY - 10) {
 			level.sendParticles(ParticleTypes.REVERSE_PORTAL, mob.getX(), mob.getY() + 1, mob.getZ(), 40, 0.5, 1, 0.5, 0.1);
-			mob.teleportTo(0.5, floorY + (mob instanceof WitherBoss ? 6 : 0), 0.5);
+			mob.teleportTo(0.5, floorY, 0.5);
 		}
 	}
 

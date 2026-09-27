@@ -112,8 +112,19 @@ final class LuciferArena {
 		return HellState.get(level.getServer()).arenaSealed && wallColumn(pos.getX(), pos.getZ()) && level.getBlockState(pos).is(Blocks.ICE);
 	}
 
-	/** The pit floor, its seal and its pillars can't be broken by hand (creative players excepted). */
-	static boolean isProtected(BlockPos pos) {
+	/**
+	 * The pit's own ice (floor, seal and pillars) can't be broken by hand (creative players excepted).
+	 * Anything players build down there they can still take away again.
+	 */
+	static boolean isProtected(ServerLevel level, BlockPos pos) {
+		if (!inProtectedArea(pos)) {
+			return false;
+		}
+		BlockState state = level.getBlockState(pos);
+		return state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE) || state.is(Blocks.BLUE_ICE);
+	}
+
+	private static boolean inProtectedArea(BlockPos pos) {
 		double x = pos.getX() + 0.5;
 		double z = pos.getZ() + 0.5;
 		return x * x + z * z <= PROTECTED_RADIUS * PROTECTED_RADIUS && pos.getY() <= PROTECTED_TOP;
@@ -127,7 +138,7 @@ final class LuciferArena {
 		for (int x = -r; x <= r; x++) {
 			for (int z = -r; z <= r; z++) {
 				pos.set(x, PROTECTED_TOP, z);
-				if (!isProtected(pos)) {
+				if (!inProtectedArea(pos)) {
 					continue;
 				}
 				for (int y = InfernoGeometry.PIT_FLOOR_Y - 8; y <= PROTECTED_TOP; y++) {

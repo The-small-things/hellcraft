@@ -160,7 +160,7 @@ final class LuciferAttacks {
 	}
 
 	/** Everything that can be hurt near a point, except Lucifer and his servants. */
-	private static List<LivingEntity> victims(LuciferFight fight, Vec3 center, double radius) {
+	static List<LivingEntity> victims(LuciferFight fight, Vec3 center, double radius) {
 		AABB box = new AABB(center, center).inflate(radius);
 		return fight.level().getEntitiesOfClass(LivingEntity.class, box, e -> e.isAlive()
 				&& !LuciferManager.isLucifer(e)

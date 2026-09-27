@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -60,6 +61,10 @@ public final class BloodAltar {
 			return InteractionResult.FAIL;
 		}
 		ItemStack held = player.getItemInHand(hand);
+		if (player.isShiftKeyDown() && held.getItem() instanceof BlockItem) {
+			// sneaking with a block: build against the altar like against any other block
+			return InteractionResult.PASS;
+		}
 		HellState state = HellState.get(level.getServer());
 
 		// shortcut: a Name Tag renamed to a ghost's name
@@ -139,7 +144,8 @@ public final class BloodAltar {
 		if (have < cost) {
 			player.sendSystemMessage(Component.literal("The altar demands " + cost + " Blood Hearts to return " + target.name
 					+ ". You carry " + have + ".").withStyle(ChatFormatting.RED));
-			player.sendSystemMessage(Component.literal("Get Blood Hearts with /withdraw, by clotting 8 Blood Fragments, or from kills.")
+			player.sendSystemMessage(Component.literal("Get Blood Hearts with /withdraw, by clotting "
+					+ HellConfig.get().fragmentsPerHeart + " Blood Fragments, or from kills.")
 					.withStyle(ChatFormatting.GRAY));
 			return false;
 		}

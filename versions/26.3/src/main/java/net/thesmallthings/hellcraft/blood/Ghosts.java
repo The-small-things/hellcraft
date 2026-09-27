@@ -45,7 +45,7 @@ public final class Ghosts {
 		return List.of(
 				Component.literal("☠ How to revive a ghost").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				Component.literal(" 1. Carry " + cost + " Blood Hearts. /withdraw turns your own hearts into Blood Hearts;"
-						+ " kills and 8 clotted Blood Fragments give more.").withStyle(ChatFormatting.GRAY),
+						+ " kills and " + HellConfig.get().fragmentsPerHeart + " clotted Blood Fragments give more.").withStyle(ChatFormatting.GRAY),
 				Component.literal(" 2. Go to a Blood Altar: a respawn anchor on 3x3 crying obsidian." + where).withStyle(ChatFormatting.GRAY),
 				Component.literal(" 3. Right-click the altar with an empty hand and click the ghost's head"
 						+ " (or stand next to it and type /revive <name>).").withStyle(ChatFormatting.GRAY),

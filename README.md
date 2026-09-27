@@ -91,7 +91,7 @@ New players start with 5 bread (26.3).
   - Killing a player steals one of their hearts.
   - Dying to anything else costs a heart, and it drops as a **Blood Heart** where you fell, so you can go back for it.
 - **Blood Heart** (a glinting *fermented spider eye*). Right-click to gain a heart. `/withdraw [n]` turns your own hearts into Blood Hearts you can trade.
-- **Blood Fragment** (a named *red dye*). Hostile mobs killed by players drop fragments. The chance rises from 2% in the outer circles to about 12% in Cocytus. Right-click with 8 in one stack to clot them into a Blood Heart.
+- **Blood Fragment** (a named *red dye*). Hostile mobs killed by players drop fragments. The chance rises from 2% in the outer circles to about 12% in Cocytus. Right-click with 8 in one stack (`fragmentsPerHeart`) to clot them into a Blood Heart.
 - **Boss rewards.** The Wither gives 1 Blood Heart, the Warden gives 1 and the Ender Dragon gives 2. Lucifer has his own rewards (below).
 
 ### Blood altars
@@ -111,14 +111,16 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 ### Hell weapons (26.3)
 
 Three vanilla tools, reforged with blood at a crafting table. They're in everyone's recipe book. Each has **two prices for power**:
-- **Blood Fragments** are spent automatically, one per empowered hit, for a modest boost. With none in your inventory, the weapon hits like its plain base item.
-- **Blood Oath**: sneak and right-click (in the air) to give up **one max heart, forever**, for **60 seconds of full power**. Nobody gets that heart. An oath is refused if it would leave you below 4 hearts, so it can never make you a ghost.
+- **Blood Fragments** are spent automatically, one per empowered hit, for a modest boost. Only fully charged swings spend blood, so spam-clicking doesn't waste any. With none in your inventory, the weapon hits like its plain base item.
+- **Blood Oath**: sneak and right-click (in the air or at a block) to give up **one max heart, forever**, for **60 seconds of full power**. Nobody gets that heart. An oath is refused if it would leave you below 4 hearts, so it can never make you a ghost.
 
 | Weapon | Recipe | Blood Fragments | Blood Oath |
 |---|---|---|---|
 | **Bloodletter** (sword) | iron sword, 1 Blood Heart, 2 Blood Fragments | +4 damage and 3 s of bleeding (Wither) | +10 damage, deep bleeding, each hit heals you 1❤ |
-| **Reaper of Minos** (scythe) | diamond hoe, 2 Blood Hearts, 2 Blood Fragments | cleaves everything within 3 blocks of the target for 5 damage | cleaves within 5 blocks for 12, slows them and drags them toward you |
+| **Reaper of Minos** (scythe) | diamond hoe, 2 Blood Hearts, 2 Blood Fragments | cleaves every monster within 3 blocks of the target for 5 damage | cleaves monsters within 5 blocks for 12, slows them and drags them toward you |
 | **Tithe Axe** | diamond axe, 2 Blood Hearts | right-click: pay 3 fragments for a 15 s **Blood Frenzy** (Strength, Speed; 30 s cooldown) | Strength III, Speed II, Resistance, hits heal 1❤ |
+
+The Reaper's cleave never touches villagers, pets, the mount you're riding, or players you couldn't hit anyway (PvP off, same team).
 
 `/hellcraft giveweapon <player> <bloodletter|reaper_of_minos|tithe_axe>` hands one out for testing.
 
@@ -142,7 +144,7 @@ The first time you reach the Well of Giants or Cocytus, chat tells you where the
 
 Walk into the pit at the centre of Judecca and the ice closes behind you. This is a scripted, three-phase fight with spoken dialogue, inspired by ULTRAKILL's 3-2.
 
-**The pit can't be broken.** Its floor, the ice seal and the pillars can't be mined (except in creative). On 26.3, whatever explosions or the Emperor blow out of the pit during the fight freezes back within half a second.
+**The pit can't be broken.** Its ice (the floor, the seal and the pillars) can't be mined except in creative. Anything you build down there you can still take away. On 26.3, whatever explosions or the Emperor blow out of the pit during the fight freezes back within half a second.
 
 1. **The Fallen Seraph.** Lucifer is a towering, sword-wielding fallen angel who taunts you and fights like a duelist:
    - he teleports behind you
@@ -266,6 +268,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
+- the resource pack: `musicPackHost` / `musicPackPort` (where players download it from), `musicPackUrl` (host it yourself instead), and `resourcePackRequired` (26.3)
+- Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
 ## Development
 

@@ -2,6 +2,7 @@ package net.thesmallthings.hellcraft.blood;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -30,6 +31,13 @@ public final class BloodEvents {
 		ServerLivingEntityEvents.AFTER_DEATH.register(DeathHandler::afterDeath);
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> onRespawn(newPlayer, alive));
 		ServerPlayerEvents.JOIN.register(BloodEvents::onJoin);
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (server.getTickCount() % 100 == 0) {
+				for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+					BloodItems.refresh(player);
+				}
+			}
+		});
 
 		UseItemCallback.EVENT.register((player, level, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);
@@ -53,6 +61,10 @@ public final class BloodEvents {
 				return BloodAltar.use(sp, (ServerLevel) level, hand, hit.getBlockPos());
 			}
 			ItemStack stack = player.getItemInHand(hand);
+			if (hand == InteractionHand.MAIN_HAND && player.isShiftKeyDown() && HellWeapons.of(stack) != null) {
+				// a Blood Oath can be sworn at the ground too (sneaking only, so axes still strip logs)
+				return HellWeapons.use(sp, stack);
+			}
 			if (BloodItems.isBlood(stack)) {
 				// never let blood be used as dye or planted; treat it like using it in the air
 				return consume(sp, stack) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
@@ -109,6 +121,7 @@ public final class BloodEvents {
 		boolean firstJoin = HellState.get(player.level().getServer()).existing(player.getUUID()) == null;
 		HellState.Soul soul = Hearts.soul(player);
 		Hearts.apply(player);
+		BloodItems.refresh(player);
 		if (firstJoin) {
 			// something to eat on the long walk down
 			BloodItems.give(player, new ItemStack(Items.BREAD, 5));

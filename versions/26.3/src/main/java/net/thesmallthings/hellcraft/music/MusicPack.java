@@ -152,6 +152,8 @@ public final class MusicPack {
 	private static void build(MinecraftServer server) {
 		LENGTHS.clear();
 		zip = null;
+		sha1 = null;
+		url = null;
 		hasMusic = false;
 		dedicated = server.isDedicatedServer();
 		Path dir = directory();
@@ -278,7 +280,7 @@ public final class MusicPack {
 			server.bind(new InetSocketAddress(port));
 			socket = server;
 		} catch (IOException e) {
-			HellcraftMod.LOGGER.warn("Could not start the boss music web server on port {}", port, e);
+			HellcraftMod.LOGGER.warn("Could not start the resource pack web server on port {}", port, e);
 			return;
 		}
 		pool = Executors.newCachedThreadPool(r -> {
@@ -297,7 +299,7 @@ public final class MusicPack {
 					}
 				} catch (IOException e) {
 					if (!server.isClosed()) {
-						HellcraftMod.LOGGER.debug("Music pack server accept failed", e);
+						HellcraftMod.LOGGER.debug("Resource pack server accept failed", e);
 					}
 				}
 			}
@@ -332,7 +334,7 @@ public final class MusicPack {
 			}
 			out.flush();
 		} catch (IOException e) {
-			HellcraftMod.LOGGER.debug("Music pack download failed", e);
+			HellcraftMod.LOGGER.debug("Resource pack download failed", e);
 		}
 	}
 

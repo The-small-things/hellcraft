@@ -4,30 +4,23 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.storage.TagValueInput;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.util.Feedback;
+import net.thesmallthings.hellcraft.util.Signs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +111,7 @@ public final class Spine {
 			arch(level, x, deckY(x));
 		}
 		int signY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, START_X + 3, 3);
-		sign(level, new BlockPos(START_X + 3, signY, 3), 12, List.of(
+		Signs.place(level, new BlockPos(START_X + 3, signY, 3), 12, List.of(
 				Component.literal("THE EMPEROR'S").withStyle(ChatFormatting.BOLD),
 				Component.literal("SPINE").withStyle(ChatFormatting.BOLD),
 				Component.literal("No demon walks"),
@@ -206,20 +199,6 @@ public final class Spine {
 			set(level, x, d, 3 * s, bone(Direction.Axis.Y));
 		}
 		set(level, x, d + 9, 0, Blocks.SOUL_LANTERN.defaultBlockState());
-	}
-
-	/** A waxed standing sign in glowing red; rotation 0 faces south, 12 east. */
-	private static void sign(ServerLevel level, BlockPos pos, int rotation, List<Component> lines) {
-		BlockState state = Blocks.DARK_OAK_SIGN.defaultBlockState().setValue(StandingSignBlock.ROTATION, rotation);
-		level.setBlock(pos, state, 3);
-		if (level.getBlockEntity(pos) instanceof SignBlockEntity sign) {
-			CompoundTag tag = new CompoundTag();
-			tag.put("front_text", SignText.CODEC.encodeStart(NbtOps.INSTANCE, new SignText(lines, lines, DyeColor.RED, true)).getOrThrow());
-			tag.putBoolean("is_waxed", true);
-			sign.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), tag));
-			sign.setChanged();
-			level.sendBlockUpdated(pos, state, state, 3);
-		}
 	}
 
 	/** The spine's own blocks can't be broken by hand (creative players excepted). */

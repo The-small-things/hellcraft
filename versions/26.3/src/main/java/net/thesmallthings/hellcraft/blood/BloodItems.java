@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.config.HellConfig;
 
 import java.util.List;
 
@@ -53,7 +55,7 @@ public final class BloodItems {
 		mark(stack, FRAGMENT);
 		stack.set(DataComponents.ITEM_NAME, Component.literal("Blood Fragment").withStyle(ChatFormatting.RED));
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Right-click 8 together to clot them into a Blood Heart").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
+				Component.literal("Right-click " + HellConfig.get().fragmentsPerHeart + " together to clot them into a Blood Heart").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
 		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
 		return stack;
 	}
@@ -112,6 +114,29 @@ public final class BloodItems {
 	public static boolean isBlood(ItemStack stack) {
 		String k = kind(stack);
 		return HEART.equals(k) || FRAGMENT.equals(k) || BANE.equals(k);
+	}
+
+	/**
+	 * Re-stamps every blood item a player carries (inventory and ender chest) in its current form: items
+	 * made by older versions, or from loot generated with other settings, otherwise look different and
+	 * don't stack with new ones.
+	 */
+	public static void refresh(Player player) {
+		refresh(player.getInventory());
+		refresh(player.getEnderChestInventory());
+	}
+
+	private static void refresh(Container container) {
+		for (int i = 0; i < container.getContainerSize(); i++) {
+			ItemStack stack = container.getItem(i);
+			if (!isBlood(stack)) {
+				continue;
+			}
+			ItemStack fresh = isHeart(stack) ? heart(stack.getCount()) : isFragment(stack) ? fragment(stack.getCount()) : bane(stack.getCount());
+			if (!ItemStack.isSameItemSameComponents(stack, fresh)) {
+				container.setItem(i, fresh);
+			}
+		}
 	}
 
 	/** Counts Blood Hearts across a player's inventory. */

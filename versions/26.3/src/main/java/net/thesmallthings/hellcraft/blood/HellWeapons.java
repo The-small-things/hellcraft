@@ -18,6 +18,8 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -233,6 +235,8 @@ public final class HellWeapons {
 		}
 		ServerLevel level = player.level();
 		boolean oath = underOath(player);
+		// blood is only spent on a (nearly) fully charged swing, so spam-clicking doesn't drain fragments
+		boolean charged = base >= 0.9f * (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 		striking = true;
 		try {
 			switch (weapon) {
@@ -241,7 +245,7 @@ public final class HellWeapons {
 						extra(level, player, target, 10.0f);
 						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
 						player.heal(2.0f);
-					} else if (spendFragment(player)) {
+					} else if (charged && spendFragment(player)) {
 						extra(level, player, target, 4.0f);
 						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0));
 					}
@@ -249,7 +253,7 @@ public final class HellWeapons {
 				case REAPER -> {
 					if (oath) {
 						cleave(level, player, target, 5.0, 12.0f, true);
-					} else if (spendFragment(player)) {
+					} else if (charged && spendFragment(player)) {
 						cleave(level, player, target, 3.0, 5.0f, false);
 					}
 				}
@@ -285,8 +289,11 @@ public final class HellWeapons {
 	}
 
 	private static void cleave(ServerLevel level, ServerPlayer player, LivingEntity target, double radius, float damage, boolean drag) {
+		// the scythe only reaps the damned: monsters, and players you could hit anyway (PvP and team rules)
 		List<LivingEntity> hit = level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(radius),
-				e -> e != player && e != target && e.isAlive() && !e.isSpectator() && e.distanceTo(target) <= radius);
+				e -> e != player && e != target && e.isAlive() && !e.isSpectator() && e != player.getVehicle()
+						&& e.distanceTo(target) <= radius
+						&& (e instanceof Enemy || e instanceof Player other && player.canHarmPlayer(other)));
 		for (LivingEntity e : hit) {
 			e.setInvulnerableTime(0);
 			e.hurtServer(level, level.damageSources().playerAttack(player), damage);
