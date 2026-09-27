@@ -706,7 +706,7 @@ public final class LuciferFight {
 	/** Removes every Lucifer-tagged entity in and around the pit. */
 	private void discardStrays() {
 		double r = LuciferArena.RADIUS + 24;
-		for (Entity e : level.getEntitiesOfClass(Entity.class, new net.minecraft.world.phys.AABB(-r, level.getMinY(), -r, r, level.getMaxBuildHeight(), r),
+		for (Entity e : level.getEntitiesOfClass(Entity.class, new net.minecraft.world.phys.AABB(-r, level.getMinY(), -r, r, level.getMaxY() + 1, r),
 				e -> LuciferManager.isLucifer(e) && e.isAlive())) {
 			e.discard();
 		}

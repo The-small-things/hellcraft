@@ -71,7 +71,7 @@ public final class MobEmpowerment {
 			horse.snapTo(skeleton.getX(), skeleton.getY(), skeleton.getZ(), skeleton.getYRot(), 0.0f);
 			horse.setTamed(true);
 			level.addFreshEntity(horse);
-			skeleton.startRiding(horse, true);
+			skeleton.startRiding(horse, true, true);
 		}
 	}
 }

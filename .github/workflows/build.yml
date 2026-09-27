@@ -51,6 +51,14 @@ jobs:
           name: hellcraft-jar-26.3
           path: versions/26.3/build/libs/hellcraft-*.jar
           if-no-files-found: error
+      - name: Package single-player downloads (26.3)
+        run: bash scripts/package-singleplayer.sh versions/26.3
+      - name: Upload single-player downloads (26.3)
+        uses: actions/upload-artifact@v4
+        with:
+          name: hellcraft-singleplayer-26.3
+          path: dist/*
+          if-no-files-found: error
 
   # Boots a real Fabric 1.21.1 server (the same Docker image used for hosting) with the mod,
   # generates chunks in every circle of Hell and fails on any error in the log.
@@ -75,9 +83,34 @@ jobs:
           name: server-log
           path: smoke-server.log
 
+  # The same real-server test on Minecraft 26.3 (Java 25 image).
+  smoke-test-26:
+    needs: build-26
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: hellcraft-jar-26.3
+          path: mods
+      - name: Install ffmpeg (for a test music track)
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+      - name: Smoke test on a real 26.3 server
+        env:
+          MC_VERSION: "26.3"
+          MC_IMAGE: itzg/minecraft-server:java25
+        run: bash scripts/smoke-test.sh mods
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log-26.3
+          path: smoke-server.log
+
   # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click.
   release:
-    needs: [build, smoke-test]
+    needs: [build, smoke-test, build-26, smoke-test-26]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -88,6 +121,10 @@ jobs:
         with:
           name: hellcraft-singleplayer
           path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: hellcraft-singleplayer-26.3
+          path: dist
       - name: Move the test tag to this commit
         id: tag
         run: |
@@ -96,6 +133,16 @@ jobs:
           echo "ver=${VER}" >> "$GITHUB_OUTPUT"
           git tag -f "v${VER}-test"
           git push -f origin "v${VER}-test"
+      - name: Clear the previous test build's files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=${{ steps.tag.outputs.tag }}
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets -q '.assets[].name' | while read -r asset; do
+              gh release delete-asset "$TAG" "$asset" --repo "$GITHUB_REPOSITORY" -y
+            done
+          fi
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
@@ -105,9 +152,11 @@ jobs:
           body: |
             Test build from `${{ github.ref_name }}` @ ${{ github.sha }}.
 
+            There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
+
             **Play in single player**
-            - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.tag.outputs.ver }}.mrpack` and import it (it installs Fabric + Fabric API for you).
-            - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mods.zip` and follow `INSTALL.txt`.
+            - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.tag.outputs.ver }}-mc<version>.mrpack` and import it (it installs Fabric + Fabric API for you).
+            - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mc<version>-mods.zip` and follow `INSTALL.txt`.
             - Then **Create New World → World tab → World Type: Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
 
-            **Servers:** use `hellcraft-${{ steps.tag.outputs.ver }}.jar` with the Docker setup in the README.
+            **Servers:** use `hellcraft-${{ steps.tag.outputs.ver }}-mc<version>.jar` with the Docker setup in the README (set `VERSION` to the same Minecraft version; 26.3 needs the `java25` image).

@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
-# Builds ready-to-play single-player downloads from build/libs/hellcraft-<ver>.jar:
-#   dist/Hellcraft-<ver>.mrpack        one-click import for Modrinth App / Prism / ATLauncher / CurseForge
-#   dist/hellcraft-<ver>-mods.zip      Hellcraft + Fabric API jars + INSTALL.txt for the official launcher
-# Needs network access (Modrinth API), curl, jq and python3. Run after ./gradlew build.
+# Builds ready-to-play single-player downloads for one Minecraft version of Hellcraft:
+#   dist/Hellcraft-<ver>-mc<mc>.mrpack       one-click import for Modrinth App / Prism / ATLauncher / CurseForge
+#   dist/hellcraft-<ver>-mc<mc>-mods.zip     Hellcraft + Fabric API jars + INSTALL.txt for the official launcher
+#   dist/hellcraft-<ver>-mc<mc>.jar          the mod itself (servers)
+# Usage: scripts/package-singleplayer.sh [project-dir]   (default: the 1.21.1 project at the repo root;
+# versions/26.3 for the 26.3 build). Run after ./gradlew build in that project.
+# Needs network access (Modrinth API), curl, jq and python3.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+PROJECT=${1:-.}
 
-prop() { grep "^$1=" gradle.properties | cut -d= -f2-; }
+prop() { grep "^$1=" "$PROJECT/gradle.properties" | cut -d= -f2-; }
 MC=$(prop minecraft_version)
 LOADER=$(prop loader_version)
 FAPI=$(prop fabric_api_version)
 VER=$(prop mod_version)
-JAR="build/libs/hellcraft-${VER}.jar"
-[ -f "$JAR" ] || { echo "Missing $JAR - run ./gradlew build first"; exit 1; }
+JAR=$(ls "$PROJECT"/build/libs/hellcraft-*.jar 2>/dev/null | grep -v -- '-sources' | head -1 || true)
+[ -n "$JAR" ] && [ -f "$JAR" ] || { echo "No jar in $PROJECT/build/libs - run ./gradlew build first"; exit 1; }
+LABEL="${VER}-mc${MC}"
+MOD_JAR="hellcraft-${LABEL}.jar"
 
 DIST=dist
 WORK=$(mktemp -d)
-rm -rf "$DIST" && mkdir -p "$DIST"
+mkdir -p "$DIST"
+rm -f "$DIST"/*"-mc${MC}"*
 
 echo "Looking up Fabric API ${FAPI} on Modrinth..."
 curl -fsSL -G "https://api.modrinth.com/v2/project/fabric-api/version" \
@@ -38,11 +45,11 @@ echo "${FAPI_SHA1}  $WORK/$FAPI_NAME" | sha1sum -c -
 
 # ---- Modrinth modpack
 mkdir -p "$WORK/mrpack/overrides/mods"
-cp "$JAR" "$WORK/mrpack/overrides/mods/"
+cp "$JAR" "$WORK/mrpack/overrides/mods/$MOD_JAR"
 jq -n --arg ver "$VER" --arg mc "$MC" --arg loader "$LOADER" \
   --arg name "$FAPI_NAME" --arg url "$FAPI_URL" --arg sha1 "$FAPI_SHA1" --arg sha512 "$FAPI_SHA512" --argjson size "$FAPI_SIZE" '{
     formatVersion: 1, game: "minecraft", versionId: $ver,
-    name: "Hellcraft \($ver)",
+    name: "Hellcraft \($ver) (Minecraft \($mc))",
     summary: "Dante'"'"'s Inferno lifesteal. Create a new world with World Type: Inferno.",
     files: [{path: "mods/\($name)", hashes: {sha1: $sha1, sha512: $sha512},
              env: {client: "required", server: "required"}, downloads: [$url], fileSize: $size}],
@@ -51,7 +58,8 @@ jq -n --arg ver "$VER" --arg mc "$MC" --arg loader "$LOADER" \
 
 # ---- Official launcher bundle
 mkdir -p "$WORK/zip/mods"
-cp "$JAR" "$WORK/$FAPI_NAME" "$WORK/zip/mods/"
+cp "$JAR" "$WORK/zip/mods/$MOD_JAR"
+cp "$WORK/$FAPI_NAME" "$WORK/zip/mods/"
 cat > "$WORK/zip/INSTALL.txt" <<EOF
 Hellcraft ${VER} - single player (official Minecraft Launcher)
 
@@ -68,7 +76,7 @@ Hellcraft ${VER} - single player (official Minecraft Launcher)
 Everything is explained in the README: https://github.com/the-small-things/hellcraft
 EOF
 
-python3 - "$WORK" "$DIST" "$VER" <<'PY'
+python3 - "$WORK" "$DIST" "$LABEL" <<'PY'
 import os, sys, zipfile
 work, dist, ver = sys.argv[1:4]
 def pack(src, out):
@@ -80,11 +88,11 @@ def pack(src, out):
 pack(os.path.join(work, "mrpack"), os.path.join(dist, f"Hellcraft-{ver}.mrpack"))
 pack(os.path.join(work, "zip"), os.path.join(dist, f"hellcraft-{ver}-mods.zip"))
 PY
-cp "$JAR" "$DIST/"
+cp "$JAR" "$DIST/$MOD_JAR"
 
 # ---- sanity checks
-unzip -l "$DIST/Hellcraft-${VER}.mrpack" | grep -q "overrides/mods/hellcraft-${VER}.jar"
-unzip -p "$DIST/Hellcraft-${VER}.mrpack" modrinth.index.json | jq -e '.files | length == 1' >/dev/null
-unzip -l "$DIST/hellcraft-${VER}-mods.zip" | grep -q "$FAPI_NAME"
+unzip -l "$DIST/Hellcraft-${LABEL}.mrpack" | grep -q "overrides/mods/${MOD_JAR}"
+unzip -p "$DIST/Hellcraft-${LABEL}.mrpack" modrinth.index.json | jq -e '.files | length == 1' >/dev/null
+unzip -l "$DIST/hellcraft-${LABEL}-mods.zip" | grep -q "$FAPI_NAME"
 echo "Fabric API: $FAPI_NAME"
 ls -la "$DIST"

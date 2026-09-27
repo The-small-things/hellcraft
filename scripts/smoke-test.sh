@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Starts itzg/minecraft-server with Hellcraft, generates chunks across every circle and checks the log.
 # Usage: scripts/smoke-test.sh <dir-containing-hellcraft-jar>
+# MC_VERSION / MC_IMAGE pick the Minecraft version and Java image (default 1.21.1 on java21).
 set -euo pipefail
 MODS_DIR=$(cd "${1:-build/libs}" && pwd)
 rm -f "$MODS_DIR"/*-sources.jar
+MC_VERSION=${MC_VERSION:-1.21.1}
+MC_IMAGE=${MC_IMAGE:-itzg/minecraft-server:java21}
 NAME=hellcraft-smoke
 LOG=smoke-server.log
 docker rm -f "$NAME" >/dev/null 2>&1 || true
@@ -18,7 +21,7 @@ fi
 chmod -R a+rwX "$CONFIG_DIR"
 
 docker run -d --name "$NAME" \
-  -e EULA=TRUE -e TYPE=FABRIC -e VERSION=1.21.1 \
+  -e EULA=TRUE -e TYPE=FABRIC -e VERSION="$MC_VERSION" \
   -e MODRINTH_PROJECTS=fabric-api \
   -e LEVEL_TYPE=hellcraft:inferno \
   -e ONLINE_MODE=FALSE -e MEMORY=3G -e ENABLE_RCON=true -e RCON_PASSWORD=smoketest \
@@ -26,7 +29,7 @@ docker run -d --name "$NAME" \
   -v "$MODS_DIR":/mods:ro \
   -v "$CONFIG_DIR":/config:ro \
   -p 25566:25566 \
-  itzg/minecraft-server:java21
+  "$MC_IMAGE"
 
 cleanup() { docker logs "$NAME" > "$LOG" 2>&1 || true; docker rm -f "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT

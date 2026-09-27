@@ -21,7 +21,6 @@ public record BurningTombFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
-		BlockPos origin = origin;
 		if (!level.getBlockState(origin.below()).isSolid()) {
 			return false;
 		}
