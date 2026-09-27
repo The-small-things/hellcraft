@@ -68,7 +68,7 @@ public final class AltarMenu {
 		}
 		ghosts.sort(Comparator.comparing(e -> e.getValue().name.toLowerCase(Locale.ROOT)));
 		if (ghosts.isEmpty()) {
-			container.setItem(13, button(Items.GRAY_STAINED_GLASS_PANE, "No souls await revival", ChatFormatting.GRAY,
+			container.setItem(13, button(Items.SKELETON_SKULL, "No souls await revival", ChatFormatting.GRAY,
 					"Players who lose their last heart become ghosts.",
 					"Their heads appear here: click one and pay",
 					cost + " Blood Hearts to bring them back."));
