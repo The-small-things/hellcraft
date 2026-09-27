@@ -2,7 +2,7 @@
 
 **Lasciate ogne speranza, voi ch'intrate.**
 
-A server-side Fabric mod for Minecraft **1.21.1** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
+A server-side Fabric mod for Minecraft **1.21.1** and **26.3** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
 
 Players join with a **plain vanilla client**. The mod adds no blocks and no items; everything is made from vanilla blocks, mobs, particles and sounds.
 
@@ -10,13 +10,13 @@ Players join with a **plain vanilla client**. The mod adds no blocks and no item
 
 ## Play it in single player
 
-Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases).
+Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). Every file comes twice, once per Minecraft version: pick the ones ending in `-mc1.21.1` or `-mc26.3`.
 
-- **Modrinth App, Prism Launcher, ATLauncher or CurseForge (easiest):** download `Hellcraft-<version>.mrpack` and import it as a modpack. That installs Minecraft 1.21.1, Fabric Loader and Fabric API for you.
-- **Official Minecraft Launcher:** download `hellcraft-<version>-mods.zip` and follow the `INSTALL.txt` inside. In short:
-  1. Install Fabric Loader for 1.21.1 with the [Fabric installer](https://fabricmc.net/use/installer/).
+- **Modrinth App, Prism Launcher, ATLauncher or CurseForge (easiest):** download `Hellcraft-<version>-mc<minecraft>.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you.
+- **Official Minecraft Launcher:** download `hellcraft-<version>-mc<minecraft>-mods.zip` and follow the `INSTALL.txt` inside. In short:
+  1. Install Fabric Loader for that Minecraft version with the [Fabric installer](https://fabricmc.net/use/installer/).
   2. Put both jars in `.minecraft/mods`.
-  3. Play the `fabric-loader-1.21.1` profile.
+  3. Play the `fabric-loader-<minecraft>` profile.
 
 Then go to **Singleplayer → Create New World → World tab** and click **World Type** until it says **Inferno**. On the **Game** tab, turn on **Allow Commands** if you want the test commands below.
 
@@ -34,7 +34,7 @@ The Gate of Hell has an altar next to it for trying the rites. To test PvP lifes
 
 ## Hosting a server (Docker)
 
-1. Download `hellcraft-<version>.jar` from the [Releases page](https://github.com/the-small-things/hellcraft/releases), or build it yourself with `./gradlew build` (the jar ends up in `build/libs/`).
+1. Download `hellcraft-<version>-mc1.21.1.jar` (or `-mc26.3.jar`) from the [Releases page](https://github.com/the-small-things/hellcraft/releases), or build it yourself with `./gradlew build` (the jar ends up in `build/libs/`).
 2. Put the jar in `docker/mods/`.
 3. From the `docker/` folder, run:
 
@@ -44,10 +44,12 @@ The Gate of Hell has an altar next to it for trying the rites. To test PvP lifes
 
 The compose file uses [`itzg/minecraft-server`](https://github.com/itzg/docker-minecraft-server) with `TYPE=FABRIC` and `VERSION=1.21.1`. It downloads Fabric API automatically and creates the world with `LEVEL_TYPE=hellcraft:inferno`.
 
+**Running 26.3 instead:** use the `-mc26.3` jar, set `VERSION: "26.3"` and change the image to `itzg/minecraft-server:java25` (26.x needs Java 25). Both lines are marked in `docker/docker-compose.yml`. Players then join with a vanilla 26.3 client.
+
 > The Inferno only generates in a **new world**. If you already have a world, stop the server and delete (or move) `docker/data/world` first. Lifesteal still works on an old world, but the land won't change.
 
 Already running itzg? Add these to your existing container:
-- env `TYPE=FABRIC`, `VERSION=1.21.1`, `MODRINTH_PROJECTS=fabric-api` and `LEVEL_TYPE=hellcraft:inferno`
+- env `TYPE=FABRIC`, `VERSION=1.21.1` (or `26.3` on the `java25` image), `MODRINTH_PROJECTS=fabric-api` and `LEVEL_TYPE=hellcraft:inferno`
 - the jar, mounted into `/mods`
 
 You need `LEVEL_TYPE=hellcraft:inferno` (`level-type=hellcraft:inferno` in `server.properties`). Without it the world generates as a normal overworld, and only the lifesteal rules apply.
@@ -196,9 +198,10 @@ When you lose your last heart you are not banned. *There is no more room in hell
 
 ## Development
 
-- `./gradlew build` builds the mod and runs the geometry unit tests.
-- `python3 tools/gen_worldgen.py` regenerates every biome, surface rule, feature and tag. Edit the script, not the JSON.
+- `./gradlew build` builds the 1.21.1 mod and runs the geometry unit tests.
+- `versions/26.3` is the Minecraft 26.3 build (Java 25, Loom without remapping): `cd versions/26.3 && ./gradlew build`. It shares `InfernoGeometry`, `Circle`, `Zone`, the Ogg reader and the unit tests with the root project, so the shape of Hell is identical in both.
+- `python3 tools/gen_worldgen.py` regenerates every biome, surface rule, feature and tag for 1.21.1; `python3 tools/gen_worldgen.py --26.3` writes the same world in 26.3's data formats. Edit the script, not the JSON.
 - `tools/RenderMap.java` renders the map and cross-section in `docs/` without Minecraft (see its header for the command).
-- `scripts/smoke-test.sh` boots a real server in Docker, generates every circle and checks the log. CI runs it on every push.
+- `scripts/smoke-test.sh` boots a real server in Docker, generates every circle and checks the log. CI runs it on every push, on both 1.21.1 and 26.3 (`MC_VERSION`/`MC_IMAGE`).
 - `scripts/package-singleplayer.sh` builds the `.mrpack` and the mods zip into `dist/`. CI runs it and publishes the results as the test pre-release.
 - All of the funnel's geometry lives in `InfernoGeometry.java`, which is pure Java. Terrain, biomes, features and hazards all read from it.
