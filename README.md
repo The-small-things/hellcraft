@@ -108,6 +108,20 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 (On 1.21.1 there is no menu: use the Name Tag and Blood Heart shortcuts.)
 
+### Hell weapons (26.3)
+
+Three vanilla tools, reforged with blood at a crafting table. They're in everyone's recipe book. Each has **two prices for power**:
+- **Blood Fragments** are spent automatically, one per empowered hit, for a modest boost. With none in your inventory, the weapon hits like its plain base item.
+- **Blood Oath**: sneak and right-click (in the air) to give up **one max heart, forever**, for **60 seconds of full power**. Nobody gets that heart. An oath is refused if it would leave you below 4 hearts, so it can never make you a ghost.
+
+| Weapon | Recipe | Blood Fragments | Blood Oath |
+|---|---|---|---|
+| **Bloodletter** (sword) | iron sword, 1 Blood Heart, 2 Blood Fragments | +4 damage and 3 s of bleeding (Wither) | +10 damage, deep bleeding, each hit heals you 1❤ |
+| **Reaper of Minos** (scythe) | diamond hoe, 2 Blood Hearts, 2 Blood Fragments | cleaves everything within 3 blocks of the target for 5 damage | cleaves within 5 blocks for 12, slows them and drags them toward you |
+| **Tithe Axe** | diamond axe, 2 Blood Hearts | right-click: pay 3 fragments for a 15 s **Blood Frenzy** (Strength, Speed; 30 s cooldown) | Strength III, Speed II, Resistance, hits heal 1❤ |
+
+`/hellcraft giveweapon <player> <bloodletter|reaper_of_minos|tithe_axe>` hands one out for testing.
+
 ## Lucifer
 
 *"Another soul crawls to the bottom of the world."*
@@ -145,6 +159,14 @@ With two or more champions, the traitors rise from the start. He calls champions
 
 **Lucifer's Bane** (a glowing nether star) permanently raises your heart cap by 2 when you right-click it. It's an item, so it can be traded, and each one you consume adds another +2.
 
+### Lucifer's look (26.3)
+
+On 26.3 Lucifer has his own models: the **Fallen Seraph** (horned, crimson, black-winged, with a broken halo and a bloodied blade) and then the **Three-Faced Emperor** (red, pale and black faces, six bat wings, shards of the ice he's frozen in). Blood Hearts, Fragments and Lucifer's Bane get their own art too. They come from the Hellcraft resource pack (below).
+
+| Fallen Seraph | Three-Faced Emperor |
+|---|---|
+| ![Fallen Seraph](docs/lucifer_morning_star_angle.png) | ![Three-Faced Emperor](docs/lucifer_emperor_angle.png) |
+
 ### Boss music
 
 The fight has music: a different track for the duel, the enraged phase and the true form. Everyone hears vanilla music discs by default ("Creator", "Pigstep" and "Precipice"). To use **your own tracks**:
@@ -153,10 +175,20 @@ The fight has music: a different track for the duel, the enraged phase and the t
 3. Put them in `config/hellcraft/music/`:
    - Docker: `docker/data/config/hellcraft/music/`
    - single player: `.minecraft/config/hellcraft/music/`
-4. **Server only:** set `"musicPackHost"` in `config/hellcraft.json` to the address players join with (e.g. `play.example.com`). Make sure port **25566** is open; the compose file already maps it. In single player there's nothing to set.
-5. Restart.
+4. Restart. The tracks go into the Hellcraft resource pack.
 
-Hellcraft builds a small resource pack from the tracks, serves it itself, and offers it to players when they join. It's optional: players who accept hear your music, everyone else hears the discs. If you'd rather host the pack yourself, set `"musicPackUrl"` instead.
+### The Hellcraft resource pack
+
+**Servers** send players one resource pack when they join. It holds Lucifer's models, the hell weapons, the blood items (26.3) and your boss music. Minecraft caches it, so players download it **once**, and again only when it changes. On 26.3 it's **required**: players who decline can't join, because Lucifer would be invisible to them. Set `"resourcePackRequired": false` in the config to make it optional.
+
+For players to receive it, the server has to know the address they join with:
+- Docker: set `HELLCRAFT_PACK_HOST` in `docker/docker-compose.yml` (e.g. `play.example.com` or your IP).
+- Otherwise: set `"musicPackHost"` in `config/hellcraft.json`.
+- Port **25566** must be open; the compose file already maps it. If you'd rather host the pack yourself, set `"musicPackUrl"`.
+
+Operators get a reminder in chat when they join if the pack can't be sent.
+
+**Single player** needs no setup: the art is built into the mod.
 
 He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns, champion scaling, the Bane bonus and the fallback music are all in the config.
 
@@ -193,6 +225,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/lucifer reward` | all | Open your Lucifer reward chooser (if you have one waiting) |
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
+| `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |

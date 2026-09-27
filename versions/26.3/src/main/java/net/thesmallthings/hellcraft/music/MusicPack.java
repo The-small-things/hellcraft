@@ -202,6 +202,10 @@ public final class MusicPack {
 				String env = System.getenv("HELLCRAFT_PACK_HOST");
 				host = env != null ? env.trim() : "";
 			}
+			if (host.contains("change-me")) {
+				// the placeholder from docker-compose.yml: sending it would make every download fail
+				host = "";
+			}
 			if (host.isEmpty() && !dedicated) {
 				host = "127.0.0.1";
 			}
