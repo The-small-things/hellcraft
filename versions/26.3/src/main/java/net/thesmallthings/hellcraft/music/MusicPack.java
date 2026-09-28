@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.SocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -80,8 +81,12 @@ public final class MusicPack {
 	private static boolean dedicated;
 	@Nullable
 	private static String sha1;
+	/** The pack's full URL when the operator set one (musicPackUrl) or set the host; else it's per player. */
 	@Nullable
 	private static String url;
+	private static boolean serving;
+	/** Remote address -> the hostname that client typed to connect (from the handshake). */
+	private static final Map<SocketAddress, String> JOINED_VIA = new ConcurrentHashMap<>();
 	@Nullable
 	private static ServerSocket socket;
 	@Nullable
@@ -91,7 +96,10 @@ public final class MusicPack {
 		ServerLifecycleEvents.SERVER_STARTED.register(MusicPack::build);
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> stopHttp());
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> offer(handler.getPlayer()));
-		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> LOADED.remove(handler.getPlayer().getUUID()));
+		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+			LOADED.remove(handler.getPlayer().getUUID());
+			JOINED_VIA.remove(handler.getPlayer().connection.getRemoteAddress());
+		});
 	}
 
 	public static Path directory() {
@@ -125,6 +133,48 @@ public final class MusicPack {
 		}
 	}
 
+	/** Called from the handshake: the address this client typed to reach the server. */
+	public static void rememberHost(SocketAddress remote, String hostName) {
+		if (remote == null || hostName == null) {
+			return;
+		}
+		String host = hostName;
+		int nul = host.indexOf('\0');
+		if (nul >= 0) {
+			host = host.substring(0, nul); // modded clients append markers
+		}
+		host = host.trim();
+		while (host.endsWith(".")) {
+			host = host.substring(0, host.length() - 1);
+		}
+		if (host.isEmpty() || host.length() > 255 || !host.matches("[A-Za-z0-9.:\\[\\]_-]+")) {
+			return;
+		}
+		if (JOINED_VIA.size() > 1000) {
+			JOINED_VIA.clear();
+		}
+		JOINED_VIA.put(remote, host);
+	}
+
+	/** Where this player can download the pack, or null if nobody knows. */
+	@Nullable
+	private static String urlFor(ServerPlayer player) {
+		if (url != null) {
+			return url;
+		}
+		if (!serving) {
+			return null;
+		}
+		String host = JOINED_VIA.get(player.connection.getRemoteAddress());
+		if (host == null) {
+			return null;
+		}
+		if (host.contains(":") && !host.startsWith("[")) {
+			host = "[" + host + "]"; // an IPv6 literal
+		}
+		return "http://" + host + ":" + HellConfig.get().musicPackPort + PATH;
+	}
+
 	private static void offer(ServerPlayer player) {
 		if (zip == null || sha1 == null) {
 			return;
@@ -133,6 +183,7 @@ public final class MusicPack {
 			// single player: the mod's assets are already loaded by the game itself
 			return;
 		}
+		String url = urlFor(player);
 		if (url == null) {
 			if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
 				player.sendSystemMessage(Component.literal("Hellcraft's resource pack isn't being sent to players: set \"musicPackHost\" in "
@@ -154,6 +205,7 @@ public final class MusicPack {
 		zip = null;
 		sha1 = null;
 		url = null;
+		serving = false;
 		hasMusic = false;
 		dedicated = server.isDedicatedServer();
 		Path dir = directory();
@@ -211,11 +263,11 @@ public final class MusicPack {
 			if (host.isEmpty() && !dedicated) {
 				host = "127.0.0.1";
 			}
-			startHttp(config.musicPackPort);
+			serving = startHttp(config.musicPackPort);
 			if (host.isEmpty()) {
 				url = null;
-				HellcraftMod.LOGGER.warn("The Hellcraft resource pack is ready, but players can't be sent it until you set \"musicPackHost\" in "
-						+ "config/hellcraft.json (or HELLCRAFT_PACK_HOST) to this server's public address and open port {}.", config.musicPackPort);
+				HellcraftMod.LOGGER.info("Players will download the Hellcraft resource pack from the address they join with, on port {} "
+						+ "(set \"musicPackHost\" to override).", config.musicPackPort);
 			} else {
 				url = "http://" + host + ":" + config.musicPackPort + PATH;
 			}
@@ -224,7 +276,7 @@ public final class MusicPack {
 			HellcraftMod.LOGGER.info("Music pack ready: {} track(s), {}", audio.size(), LENGTHS);
 		}
 		HellcraftMod.LOGGER.info("Hellcraft pack ready: {} asset files, {} ({})", assets, hasMusic ? "with boss music" : "no boss music",
-				url == null ? "not offered" : url);
+				url != null ? url : serving ? "from each player's join address" : "not offered");
 	}
 
 	/** Copies every assets/hellcraft file shipped in the mod jar into the pack. */
@@ -272,7 +324,7 @@ public final class MusicPack {
 	// ------------------------------------------------------------------ web server
 
 	/** A deliberately tiny HTTP server: it only ever answers GET/HEAD for the one pack file. */
-	private static void startHttp(int port) {
+	private static boolean startHttp(int port) {
 		stopHttp();
 		try {
 			ServerSocket server = new ServerSocket();
@@ -281,7 +333,7 @@ public final class MusicPack {
 			socket = server;
 		} catch (IOException e) {
 			HellcraftMod.LOGGER.warn("Could not start the resource pack web server on port {}", port, e);
-			return;
+			return false;
 		}
 		pool = Executors.newCachedThreadPool(r -> {
 			Thread t = new Thread(r, "Hellcraft pack");
@@ -305,6 +357,7 @@ public final class MusicPack {
 			}
 		});
 		HellcraftMod.LOGGER.info("Serving the Hellcraft resource pack on port {}", port);
+		return true;
 	}
 
 	private static void serve(Socket client) {

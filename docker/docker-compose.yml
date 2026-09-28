@@ -14,8 +14,10 @@ services:
       EULA: "TRUE"
       TYPE: "FABRIC"
       VERSION: "1.21.1"
-      # The address players join with: the Hellcraft resource pack (Lucifer, weapons, music) is sent from it on port 25566
-      HELLCRAFT_PACK_HOST: "change-me.example.com"
+      # The Hellcraft resource pack (Lucifer, weapons, music) is sent to each player from the address they
+      # joined with, on port 25566 (keep it forwarded like 25565). Only set this to override that address,
+      # e.g. behind a proxy (1.21.1 still needs it).
+      # HELLCRAFT_PACK_HOST: "play.example.com"
       # Server operators (admins): comma-separated Minecraft usernames
       OPS: "Blender_Uploads"
       # Fabric API is downloaded automatically; Hellcraft comes from ./mods

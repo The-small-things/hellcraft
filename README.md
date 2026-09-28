@@ -254,10 +254,9 @@ The fight has music: a different track for the duel, the enraged phase and the t
 
 **Servers** send players one resource pack when they join. It holds Lucifer's models, the hell weapons, the blood items (26.3) and your boss music. Minecraft caches it, so players download it **once**, and again only when it changes. On 26.3 it's **required**: players who decline can't join, because Lucifer would be invisible to them. Set `"resourcePackRequired": false` in the config to make it optional.
 
-For players to receive it, the server has to know the address they join with:
-- Docker: set `HELLCRAFT_PACK_HOST` in `docker/docker-compose.yml` (e.g. `play.example.com` or your IP).
-- Otherwise: set `"musicPackHost"` in `config/hellcraft.json`.
-- Port **25566** must be open; the compose file already maps it. If you'd rather host the pack yourself, set `"musicPackUrl"`.
+**No setup needed on 26.3.** Each player is sent the pack from the address they joined with (`play.example.com`, your IP, a LAN address...), on port **25566**. That port must be open and forwarded just like 25565; the compose file already maps it.
+- Behind a proxy (Velocity, TCPShield...) or with a different download address: set `"musicPackHost"` in `config/hellcraft.json` or `HELLCRAFT_PACK_HOST`. 1.21.1 still needs one of these.
+- If your host only allows one port, upload the pack somewhere and set `"musicPackUrl"` to it.
 
 Operators get a reminder in chat when they join if the pack can't be sent.
 
