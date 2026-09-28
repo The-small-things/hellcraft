@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
+import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.Spine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ public class HellcraftMod implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
+		ServerLifecycleEvents.SERVER_STARTED.register(Purgatory::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Scoreboards::setUp);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
@@ -64,12 +66,14 @@ public class HellcraftMod implements ModInitializer {
 			Spine.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);
+			Purgatory.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			CircleHazards.forget(handler.getPlayer());
 			Spine.forget(handler.getPlayer());
 			Ambience.forget(handler.getPlayer());
+			Purgatory.forget(handler.getPlayer());
 		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> HellCommands.register(dispatcher));
 

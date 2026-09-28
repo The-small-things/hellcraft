@@ -35,6 +35,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
 
@@ -174,6 +175,13 @@ public final class HellCommands {
 												"hatred", "impotence", "ignorance", "wingbeat", "mouths"}, builder))
 										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
 				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
+				.then(Commands.literal("purgatory").executes(ctx -> {
+					ServerPlayer p = ctx.getSource().getPlayerOrException();
+					BlockPos shore = Purgatory.shore();
+					p.teleportTo(ctx.getSource().getServer().overworld(), shore.getX() + 0.5, shore.getY(), shore.getZ() + 0.5, java.util.Set.of(),
+							p.getYRot(), p.getXRot(), true);
+					return reply(ctx.getSource(), "\u2192 the shore of Purgatory");
+				}))
 				.then(Commands.literal("spine")
 						.executes(ctx -> toSpine(ctx.getSource(), Spine.Way.EAST))
 						.then(Commands.argument("way", StringArgumentType.word())

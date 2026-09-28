@@ -14,7 +14,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.projectile.EvokerFangs;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -195,7 +194,7 @@ final class EmperorAttacks {
 			double a = i * 2 * Math.PI / points;
 			double x = 0.5 + Math.cos(a) * radius;
 			double z = 0.5 + Math.sin(a) * radius;
-			double y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(x), (int) Math.floor(z));
+			double y = LuciferArena.groundY(level, (int) Math.floor(x), (int) Math.floor(z));
 			level.sendParticles(i % 3 == 0 ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME, x, y + 0.15, z, 2, 0.1, 0.15, 0.1, 0.01);
 		}
 		for (LivingEntity e : victims(radius + 10)) {
@@ -413,7 +412,7 @@ final class EmperorAttacks {
 	}
 
 	private Vec3 ground(double x, double z) {
-		return new Vec3(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(x), (int) Math.floor(z)), z);
+		return new Vec3(x, LuciferArena.groundY(level, (int) Math.floor(x), (int) Math.floor(z)), z);
 	}
 
 	/** Everything in the pit that can be hurt, except Lucifer and his servants. */

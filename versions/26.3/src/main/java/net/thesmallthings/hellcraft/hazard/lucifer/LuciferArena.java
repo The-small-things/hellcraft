@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.blood.HellState;
@@ -33,8 +32,23 @@ final class LuciferArena {
 	private static final int PROTECTED_TOP = InfernoGeometry.PIT_FLOOR_Y + 24;
 
 	static int floorY(ServerLevel level) {
-		level.getChunk(0, 0);
-		return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, 0, 0);
+		return groundY(level, 0, 0);
+	}
+
+	/**
+	 * The first free block above the pit's ground at a column. The heightmap can't be used here: the
+	 * Mountain of Purgatory floats over the pit, so the scan starts just above the pit's rim.
+	 */
+	static int groundY(ServerLevel level, int x, int z) {
+		level.getChunk(x >> 4, z >> 4);
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int y = InfernoGeometry.PIT_FLOOR_Y + 32; y > level.getMinY(); y--) {
+			pos.set(x, y, z);
+			if (level.getBlockState(pos).isSolid()) {
+				return y + 1;
+			}
+		}
+		return InfernoGeometry.PIT_FLOOR_Y;
 	}
 
 	static boolean inside(double x, double z) {
@@ -54,8 +68,7 @@ final class LuciferArena {
 				if (!wallColumn(x, z)) {
 					continue;
 				}
-				level.getChunk(x >> 4, z >> 4);
-				int ground = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+				int ground = groundY(level, x, z);
 				for (int y = ground; y < ground + WALL_HEIGHT; y++) {
 					pos.set(x, y, z);
 					BlockState state = level.getBlockState(pos);

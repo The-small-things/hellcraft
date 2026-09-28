@@ -39,6 +39,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Feedback;
+import net.thesmallthings.hellcraft.world.Purgatory;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -449,6 +450,8 @@ public final class LuciferFight {
 		schedule(210, () -> {
 			cleanup();
 			reward();
+			// the way out opens where he was frozen
+			Purgatory.openBurrow(level, floorY);
 			setPhase(Phase.DONE);
 		});
 	}

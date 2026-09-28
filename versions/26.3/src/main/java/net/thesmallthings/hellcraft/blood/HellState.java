@@ -35,6 +35,8 @@ public class HellState extends SavedData {
 	public boolean spinesBuilt;
 	/** The circle guardians' lairs have been built. */
 	public boolean lairsBuilt;
+	/** The Mountain of Purgatory has been raised over the pit. */
+	public boolean purgatoryBuilt;
 	/** Guardian id -> game time it wakes again after being slain. */
 	public final Map<String, Long> guardianNext = new HashMap<>();
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
@@ -69,6 +71,8 @@ public class HellState extends SavedData {
 		public boolean slewLucifer;
 		/** How many times this soul has cast Lucifer down. */
 		public int luciferKills;
+		/** Draughts of Eunoë owed (one per victory over Lucifer). */
+		public int pendingEunoe;
 		/** Unclaimed Lucifer reward: 0 none, 1 first-victory choice, 2 repeat-victory choice. */
 		public int pendingReward;
 	}
@@ -145,6 +149,7 @@ public class HellState extends SavedData {
 			st.putInt("maxBonus", s.maxBonus);
 			st.putBoolean("slewLucifer", s.slewLucifer);
 			st.putInt("luciferKills", s.luciferKills);
+			st.putInt("pendingEunoe", s.pendingEunoe);
 			st.putInt("pendingReward", s.pendingReward);
 			if (s.deathSpot != null) {
 				st.put("death", s.deathSpot.save());
@@ -162,6 +167,7 @@ public class HellState extends SavedData {
 		tag.putBoolean("spine", spineBuilt);
 		tag.putBoolean("spines", spinesBuilt);
 		tag.putBoolean("lairs", lairsBuilt);
+		tag.putBoolean("purgatory", purgatoryBuilt);
 		CompoundTag guardians = new CompoundTag();
 		guardianNext.forEach(guardians::putLong);
 		tag.put("guardianNext", guardians);
@@ -194,6 +200,7 @@ public class HellState extends SavedData {
 			s.maxBonus = st.getIntOr("maxBonus", 0);
 			s.slewLucifer = st.getBooleanOr("slewLucifer", false);
 			s.luciferKills = st.getIntOr("luciferKills", s.slewLucifer ? 1 : 0);
+			s.pendingEunoe = st.getIntOr("pendingEunoe", 0);
 			s.pendingReward = st.getIntOr("pendingReward", 0);
 			s.deathSpot = GlobalSpot.load(st, "death");
 			s.altar = GlobalSpot.load(st, "altar");
@@ -204,6 +211,7 @@ public class HellState extends SavedData {
 		state.spineBuilt = tag.getBooleanOr("spine", false);
 		state.spinesBuilt = tag.getBooleanOr("spines", false);
 		state.lairsBuilt = tag.getBooleanOr("lairs", false);
+		state.purgatoryBuilt = tag.getBooleanOr("purgatory", false);
 		CompoundTag guardians = tag.getCompoundOrEmpty("guardianNext");
 		for (String key : guardians.keySet()) {
 			state.guardianNext.put(key, guardians.getLongOr(key, 0L));

@@ -100,6 +100,10 @@ public final class GuideBook {
 				"The Seraph, the Morning Star, then the Emperor frozen in the ice.",
 				"",
 				"Victors choose a reward: /lucifer reward"));
+		pages.add(page("THE CLIMB OUT",
+				"When Lucifer falls, a burrow opens where he was frozen.",
+				"",
+				"It leads up to Purgatory: seven terraces, the Earthly Paradise, and its two streams, Lethe and Eunoë."));
 		pages.add(page("COMMANDS",
 				"/hearts",
 				"/withdraw [n]",

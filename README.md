@@ -216,6 +216,20 @@ With two or more champions, the traitors rise from the start. He calls champions
   - **Lucifer's Bane**
 - **Later victories:** pick a Totem of Undying, an Enchanted Golden Apple, or 2 Blood Hearts.
 
+### The climb out: Purgatory (26.3)
+
+*"Thence we came forth to rebehold the stars."*
+
+When Lucifer falls, a **burrow** (an end gateway) opens in the ice where he was frozen, for five minutes. Step in and you climb out onto the shore of **Purgatory**, a mountain island floating high above the pit (y 226–290) under the eternal night sky:
+- **Seven terraces** spiral up the mountain, one for each capital sin, with stairways cut into the cliffs. Each has a sign, and at each new terrace an angel's wing erases a P from your brow.
+- The **Earthly Paradise** on the summit has flowers and trees and two streams:
+  - **Lethe** (west) washes away every harmful effect, fire and frost.
+  - **Eunoë** (east) gives +2 hearts (up to your cap) and a full heal, once for every victory over Lucifer.
+- The **Gate of Return** in the middle of the garden takes you back to the Gate of Hell.
+- Fall off the mountain and an angel catches you and sets you down on the shore.
+
+`/hellcraft purgatory` takes an op to the shore.
+
 **Lucifer's Bane** (a glowing nether star) permanently raises your heart cap by 2 when you right-click it. It's an item, so it can be traded, and each one you consume adds another +2.
 
 ### Lucifer's look (26.3)
@@ -294,6 +308,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian (26.3) |
+| `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft where` | op | Debug: geometry at your position |

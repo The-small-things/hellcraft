@@ -236,6 +236,19 @@ sleep 16
 leftover=$(rcon "execute if entity @e[tag=hellcraft_lucifer]" || true)
 echo "leftover Lucifer entities: $leftover"
 echo "$leftover" | grep -q "Test failed" || { echo "Lucifer entities left behind after the fight"; exit 1; }
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  # the climb out: the burrow at the bottom of the pit, and the Gate of Return on Purgatory's summit
+  rcon "forceload add 0 0" > /dev/null
+  burrow=$(rcon "execute if block 0 $floor 0 minecraft:end_gateway" || true)
+  echo "Burrow in the pit: $burrow"
+  echo "$burrow" | grep -q "Test passed" || { echo "No burrow opened where Lucifer fell"; exit 1; }
+  summit=$(rcon "execute if block 0 291 0 minecraft:end_gateway" || true)
+  echo "Gate of Return on the summit: $summit"
+  echo "$summit" | grep -q "Test passed" || { echo "The Mountain of Purgatory has no Gate of Return"; exit 1; }
+  purgatory=$(rcon "hellcraft purgatory" || true)
+  echo "$purgatory"
+  echo "$purgatory" | grep -qi "unknown or incomplete command" && { echo "/hellcraft purgatory is not registered"; exit 1; }
+fi
 rcon "hellcraft ghosts"
 rcon "stop" || true
 sleep 15
@@ -259,6 +272,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
   grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
+  grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
+  grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do
     grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }
