@@ -31,10 +31,12 @@ import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +75,7 @@ public final class LuciferFight {
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final List<UUID> traitors = new ArrayList<>();
 	private final LuciferMusic music;
-	private final LuciferModel model;
+	private final BossModel model;
 	/** Returning champions in this round; each one makes Lucifer harder for everyone. */
 	private final List<String> veterans = new ArrayList<>();
 	private boolean traitorsRaised;
@@ -105,7 +107,7 @@ public final class LuciferFight {
 		this.debug = debug;
 		this.floorY = LuciferArena.floorY(level);
 		this.music = new LuciferMusic(level);
-		this.model = new LuciferModel(level);
+		this.model = new BossModel(level, "hellcraft_lucifer_model", LuciferManager.TAG, Vec3.ZERO);
 		bar.setDarkenScreen(true);
 		bar.setCreateWorldFog(true);
 		bar.setProgress(1.0f);
@@ -119,7 +121,7 @@ public final class LuciferFight {
 		return floorY;
 	}
 
-	LuciferModel model() {
+	BossModel model() {
 		return model;
 	}
 

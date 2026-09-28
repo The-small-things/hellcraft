@@ -80,6 +80,14 @@ public final class GuideBook {
 				"Reforge diamond armour with Blood Hearts and Fragments.",
 				"",
 				"Two pieces: your blows heal you. All four: more, a Blood Rush near death, and Resistance under an oath."));
+		pages.add(page("THE GUARDIANS",
+				"On the road in from the Gate (along x, z = 0) five guardians wait in rings of soul fire:",
+				"Minos (x 4050)",
+				"Cerberus (3575)",
+				"Plutus (3125)",
+				"Minotaur (1600)",
+				"Geryon (1480)",
+				"Each is worth " + c.guardianHearts + " Blood Hearts."));
 		pages.add(page("THE SPINES",
 				"On the rim of the Well of Giants, four great spines reach down to Lucifer's pit: north, east, south and west.",
 				"",

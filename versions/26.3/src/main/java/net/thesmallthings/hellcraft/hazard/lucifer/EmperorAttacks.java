@@ -44,7 +44,7 @@ import java.util.UUID;
 final class EmperorAttacks {
 	enum Attack {HATRED, IMPOTENCE, IGNORANCE, WINGBEAT, MOUTHS}
 
-	/** Model turns (degrees) that bring each face toward the target: see LuciferModel.showFace. */
+	/** Model turns (degrees) that bring each face toward the target: see BossModel.showFace. */
 	private static final float RED_FACE = 0.0f;
 	private static final float YELLOW_FACE = -90.0f;
 	private static final float BLACK_FACE = 90.0f;

@@ -90,6 +90,14 @@ public class HellConfig {
 	public boolean circleAmbience = true;
 	/** Give new players "The Pilgrim's Guide" on their first join. */
 	public boolean guideBook = true;
+	/** The circle guardians (Minos, Cerberus, Plutus, the Minotaur, Geryon) wake when someone enters their lair. */
+	public boolean guardians = true;
+	/** How long a slain guardian sleeps before it can be fought again. */
+	public int guardianRespawnMinutes = 30;
+	/** Scales every guardian's health (each extra player in the lair adds half again). */
+	public double guardianHealthMultiplier = 1.0;
+	/** Blood Hearts a slain guardian drops (plus 3-6 Blood Fragments). */
+	public int guardianHearts = 2;
 	/** Vanilla music discs used for players without the pack (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";

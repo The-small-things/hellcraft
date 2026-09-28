@@ -14,6 +14,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -33,6 +34,7 @@ public final class MobEmpowerment {
 
 	public static void onLoad(Entity entity, ServerLevel level) {
 		if (!(entity instanceof Monster monster) || entity.entityTags().contains(TOUCHED) || LuciferManager.isLucifer(entity)
+				|| GuardianManager.isGuardian(entity)
 				|| !HellWorldgen.isInferno(level)) {
 			return;
 		}

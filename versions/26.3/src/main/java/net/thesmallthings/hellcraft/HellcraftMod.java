@@ -17,6 +17,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.Ambience;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
+import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.MusicPack;
@@ -47,6 +48,7 @@ public class HellcraftMod implements ModInitializer {
 		BloodArmour.register();
 		CircleHazards.register();
 		LuciferManager.register();
+		GuardianManager.register();
 		LuciferRewards.register();
 		MusicPack.register();
 
@@ -58,6 +60,7 @@ public class HellcraftMod implements ModInitializer {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			CircleHazards.tick(server);
 			LuciferManager.tick(server);
+			GuardianManager.tick(server);
 			Spine.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);

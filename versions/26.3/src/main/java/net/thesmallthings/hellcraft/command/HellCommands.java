@@ -28,6 +28,8 @@ import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
+import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -41,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -111,6 +114,16 @@ public final class HellCommands {
 								.executes(ctx -> giveBane(ctx, 1))
 								.then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
 										.executes(ctx -> giveBane(ctx, IntegerArgumentType.getInteger(ctx, "count"))))))
+				.then(Commands.literal("guardian")
+						.then(Commands.argument("name", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Guardian.values()).map(Guardian::id), builder))
+								.then(Commands.literal("summon").executes(ctx -> guardian(ctx, g -> GuardianManager.summon(ctx.getSource().getServer(), g))))
+								.then(Commands.literal("slay").executes(ctx -> guardian(ctx, GuardianManager::slay)))
+								.then(Commands.literal("stop").executes(ctx -> guardian(ctx, GuardianManager::stop)))
+								.then(Commands.literal("status").executes(ctx -> guardian(ctx, GuardianManager::status)))
+								.then(Commands.literal("attack")
+										.then(Commands.argument("attack", StringArgumentType.word())
+												.executes(ctx -> guardian(ctx, g -> GuardianManager.attack(g, StringArgumentType.getString(ctx, "attack"))))))))
 				.then(Commands.literal("givearmour")
 						.then(Commands.argument("player", EntityArgument.player())
 								.executes(ctx -> {
@@ -340,6 +353,16 @@ public final class HellCommands {
 		}
 		ctx.getSource().sendFailure(Component.literal("Could not find " + zone.id()));
 		return 0;
+	}
+
+	private static int guardian(CommandContext<CommandSourceStack> ctx, Function<Guardian, String> action) {
+		Guardian g = Guardian.byId(StringArgumentType.getString(ctx, "name"));
+		if (g == null) {
+			ctx.getSource().sendFailure(Component.literal("Unknown guardian. Try: minos, cerberus, plutus, minotaur, geryon"));
+			return 0;
+		}
+		String result = action.apply(g);
+		return reply(ctx.getSource(), result);
 	}
 
 	private static int toSpine(CommandSourceStack source, Spine.Way way) throws CommandSyntaxException {

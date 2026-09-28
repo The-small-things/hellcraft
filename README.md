@@ -139,6 +139,24 @@ They protect like diamond, look like crimson plate with bone rivets and burning 
 
 `/hellcraft givearmour <player>` hands out a set for testing.
 
+## The circle guardians (26.3)
+
+On the straight road in from the Gate of Hell (the +X axis, z = 0), five of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign. Walk into a lair and its guardian wakes. It gets a title card, a boss bar and its own model from the resource pack, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+
+| Guardian | Lair | Attacks |
+|---|---|---|
+| **Minos**, Judge of the Damned | Lust, x 4050 | *Tail of Judgement*: his tail sweeps the ground in a full circle (jump it). *Sentence*: a ring follows one player, then the hurricane tears up where they stand (keep moving). *Coil*: drags the nearest player into his coils until the others deal him 15 damage. |
+| **Cerberus**, the Great Worm | Gluttony, x 3575 | Hunts like a ravager. *Three Maws*: three bites in a cone in front (get behind him). *Filth*: puddles of mud that slow and sicken. *Howl*: stuns everyone close. |
+| **Plutus**, the Great Enemy | Greed, x 3125 | *Weight of Gold*: gold rain that hits harder the more gold you carry. *Lunge*: a golden line, then he hurls himself along it. *Pape Satàn*: a shriek that scatters and sickens. |
+| **The Minotaur**, Infamy of Crete | Burning Sands, x 1600 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
+| **Geryon**, Image of Fraud | edge of the great cliff, x 1480 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
+
+A slain guardian drops **2 Blood Hearts** and 3–6 Blood Fragments, and sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health. Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
+
+| Minos | Cerberus | Plutus | The Minotaur | Geryon |
+|---|---|---|---|---|
+| ![Minos](docs/guardian_minos.png) | ![Cerberus](docs/guardian_cerberus.png) | ![Plutus](docs/guardian_plutus.png) | ![Minotaur](docs/guardian_minotaur.png) | ![Geryon](docs/guardian_geryon.png) |
+
 ## Lucifer
 
 *"Another soul crawls to the bottom of the world."*
@@ -275,6 +293,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
+| `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft where` | op | Debug: geometry at your position |

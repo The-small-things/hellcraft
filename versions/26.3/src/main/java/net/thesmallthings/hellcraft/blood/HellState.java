@@ -33,6 +33,10 @@ public class HellState extends SavedData {
 	public boolean spineBuilt;
 	/** The other three spines (north, south, west) have been laid too. */
 	public boolean spinesBuilt;
+	/** The circle guardians' lairs have been built. */
+	public boolean lairsBuilt;
+	/** Guardian id -> game time it wakes again after being slain. */
+	public final Map<String, Long> guardianNext = new HashMap<>();
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
 	public boolean arenaSealed;
 	public int luciferDefeats;
@@ -157,6 +161,10 @@ public class HellState extends SavedData {
 		tag.putBoolean("landmarks", landmarksBuilt);
 		tag.putBoolean("spine", spineBuilt);
 		tag.putBoolean("spines", spinesBuilt);
+		tag.putBoolean("lairs", lairsBuilt);
+		CompoundTag guardians = new CompoundTag();
+		guardianNext.forEach(guardians::putLong);
+		tag.put("guardianNext", guardians);
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
@@ -195,6 +203,11 @@ public class HellState extends SavedData {
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
 		state.spineBuilt = tag.getBooleanOr("spine", false);
 		state.spinesBuilt = tag.getBooleanOr("spines", false);
+		state.lairsBuilt = tag.getBooleanOr("lairs", false);
+		CompoundTag guardians = tag.getCompoundOrEmpty("guardianNext");
+		for (String key : guardians.keySet()) {
+			state.guardianNext.put(key, guardians.getLongOr(key, 0L));
+		}
 		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);

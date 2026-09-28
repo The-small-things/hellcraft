@@ -152,6 +152,35 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$guide" | grep -qi "unknown or incomplete command" && { echo "/guide is not registered"; exit 1; }
 fi
 
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
+  declare -A ATTACKS=([minos]="tail sentence coil" [cerberus]="maws filth howl" [plutus]="gold lunge pape" \
+                      [minotaur]="charge stomp" [geryon]="sting falseface")
+  for g in minos cerberus plutus minotaur geryon; do
+    out=$(rcon "hellcraft guardian $g summon")
+    echo "$out"
+    echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
+    sleep 3
+    rcon "execute at @e[tag=hellcraft_guardian_body,limit=1] run summon minecraft:villager ~4 ~ ~ {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
+    shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_guardian_model]" || true)
+    echo "$g's model: $shown"
+    echo "$shown" | grep -q "Test passed" || { echo "Guardian $g has no model"; exit 1; }
+    for a in ${ATTACKS[$g]}; do
+      out=$(rcon "hellcraft guardian $g attack $a")
+      echo "$out"
+      echo "$out" | grep -q " uses $a" || { echo "Guardian $g could not use $a"; exit 1; }
+      sleep 3
+    done
+    rcon "hellcraft guardian $g status"
+    rcon "hellcraft guardian $g slay"
+    sleep 2
+    left=$(rcon "execute if entity @e[tag=hellcraft_guardian_body]" || true)
+    echo "$g left behind: $left"
+    echo "$left" | grep -q "Test failed" || { echo "Guardian $g's body was left behind"; exit 1; }
+    rcon "kill @e[tag=smoke_dummy]"
+  done
+fi
+
 # Lucifer: run the whole fight against a dummy target in the pit
 rcon "summon minecraft:villager 4 -45 0 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b}"
 rcon "hellcraft lucifer summon"
@@ -229,7 +258,11 @@ grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
 if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
-  grep -q 'Lucifer model: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
+  grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
+  for g in minos cerberus plutus minotaur geryon; do
+    grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
+    grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }
+  done
 fi
 if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON' ; then
   echo "Errors found in server log"; fail=1
