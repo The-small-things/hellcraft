@@ -4,14 +4,33 @@
   "key": {
     "S": "minecraft:diamond_hoe",
     "H": {
-      "fabric:type": "fabric:custom_data",
+      "fabric:type": "fabric:components",
       "base": "minecraft:fermented_spider_eye",
-      "nbt": "{hellcraft:\"heart\"}"
+      "components": {
+        "minecraft:custom_data": {
+          "hellcraft": "heart"
+        },
+        "minecraft:item_model": "hellcraft:blood_heart",
+        "minecraft:item_name": {
+          "text": "Blood Heart",
+          "color": "dark_red",
+          "bold": true
+        }
+      }
     },
     "F": {
-      "fabric:type": "fabric:custom_data",
+      "fabric:type": "fabric:components",
       "base": "minecraft:red_dye",
-      "nbt": "{hellcraft:\"fragment\"}"
+      "components": {
+        "minecraft:custom_data": {
+          "hellcraft": "fragment"
+        },
+        "minecraft:item_model": "hellcraft:blood_fragment",
+        "minecraft:item_name": {
+          "text": "Blood Fragment",
+          "color": "red"
+        }
+      }
     }
   },
   "pattern": [

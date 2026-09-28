@@ -309,8 +309,18 @@ GUARDIANS = {
 # The results must match HellWeapons.create() in the 26.3 sources.
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "data", "hellcraft")
-HEART = {"fabric:type": "fabric:custom_data", "base": "minecraft:fermented_spider_eye", "nbt": "{hellcraft:\"heart\"}"}
-FRAGMENT = {"fabric:type": "fabric:custom_data", "base": "minecraft:red_dye", "nbt": "{hellcraft:\"fragment\"}"}
+# fabric:components (not fabric:custom_data) so the recipe book shows the real Blood Heart / Fragment: it
+# displays the base item with these components applied. They must equal what BloodItems.heart()/fragment() set.
+HEART = {"fabric:type": "fabric:components", "base": "minecraft:fermented_spider_eye", "components": {
+    "minecraft:custom_data": {"hellcraft": "heart"},
+    "minecraft:item_model": "hellcraft:blood_heart",
+    "minecraft:item_name": {"text": "Blood Heart", "color": "dark_red", "bold": True},
+}}
+FRAGMENT = {"fabric:type": "fabric:components", "base": "minecraft:red_dye", "components": {
+    "minecraft:custom_data": {"hellcraft": "fragment"},
+    "minecraft:item_model": "hellcraft:blood_fragment",
+    "minecraft:item_name": {"text": "Blood Fragment", "color": "red"},
+}}
 OATH_LINE = "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s."
 WEAPONS = [
     ("bloodletter", "Bloodletter", "minecraft:iron_sword", "rare", ["FHF", " S "],

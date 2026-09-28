@@ -11,6 +11,7 @@ import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
+import net.thesmallthings.hellcraft.blood.RecipeCheck;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -57,6 +58,7 @@ public class HellcraftMod implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Purgatory::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Scoreboards::setUp);
+		ServerLifecycleEvents.SERVER_STARTED.register(RecipeCheck::run);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
