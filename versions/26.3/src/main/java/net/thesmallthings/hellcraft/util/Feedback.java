@@ -24,6 +24,15 @@ public final class Feedback {
 		sound(player, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), source, volume, pitch);
 	}
 
+	/** A sound only this player hears, coming from a point near them. */
+	public static void soundAt(ServerPlayer player, Holder<SoundEvent> sound, SoundSource source, double x, double y, double z, float volume, float pitch) {
+		player.connection.send(new ClientboundSoundPacket(sound, source, x, y, z, volume, pitch, player.getRandom().nextLong()));
+	}
+
+	public static void soundAt(ServerPlayer player, SoundEvent sound, SoundSource source, double x, double y, double z, float volume, float pitch) {
+		soundAt(player, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), source, x, y, z, volume, pitch);
+	}
+
 	/** Players move themselves, so a push has to be sent to their client (the old hurtMarked). */
 	public static void syncMotion(Entity entity) {
 		if (entity instanceof ServerPlayer player) {

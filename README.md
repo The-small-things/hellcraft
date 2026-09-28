@@ -82,10 +82,13 @@ Some other rules of Hell:
 - Monsters get tougher the deeper you go.
 - The monster mob cap is 1.75× vanilla.
 - Titles announce each circle as you enter it.
+- Each circle has its own ambience (26.3): the wasps of the Vestibule, Charon's oar on the Acheron, the sighs of Limbo, the hurricane of Lust, rain in Gluttony, chinking gold in Greed, the bubbling Styx, crackling tombs, boiling blood, far-off screams in Malebolge and creaking ice in Cocytus. Turn it off with `circleAmbience`.
 
 ## Blood is fuel
 
-New players start with 5 bread (26.3).
+New players start with 5 bread and **The Pilgrim's Guide** (26.3), a book by Virgil explaining hearts, blood, reviving, the circles, the weapons, the spines and Lucifer. Its numbers follow your config. `/guide` gives another copy.
+
+**Hearts show next to every name in the player list** (26.3). Once someone has cast Lucifer down, a **Hall of the Damned** sidebar lists every slayer and how many times they won. Toggle these with `tabListHearts` and `sidebarHall`.
 
 - **Hearts.** You start with 10 hearts and can hold up to 20.
   - Killing a player steals one of their hearts.
@@ -128,17 +131,17 @@ The Reaper's cleave never touches villagers, pets, the mount you're riding, or p
 
 *"Another soul crawls to the bottom of the world."*
 
-### The Emperor's Spine (26.3)
+### The Emperor's Spines (26.3)
 
 *"Nothing will touch thee on this road. I want thee WHOLE when thou arrivest."*
 
-The road to Lucifer is a quiet one. On the **east rim of the Well of Giants** (x 660, y −13, z 0; `/hellcraft spine` takes an op there) a colossal backbone leaves the cliff and runs toward the centre of Hell:
+The road to Lucifer is a quiet one. At each point of the compass on the **rim of the Well of Giants**, a colossal backbone leaves the cliff and runs toward the centre of Hell. They start 660 blocks out at y −13: east (660, 0), south (0, 660), west (−660, 0) and north (0, −660). `/hellcraft spine [north|east|south|west]` takes an op there.
 - For almost 500 blocks it hangs over **Cocytus**, 25 blocks above the frozen lake, with ribs curling down into the dark and soul lanterns along the way.
 - Over **Judecca** it becomes a long **staircase**, one step down every four blocks, all the way to the rim of Lucifer's pit.
 
-**No enemies.** Nothing hostile can exist on or near the spine, or anywhere in Judecca. The freezing of the ninth circle spares you while you walk it. The only company is a heartbeat that quickens the deeper you go, ash drifting in the dark, and **Lucifer's voice from far below**, a new line at every stretch of the descent.
+**No enemies.** Nothing hostile can exist on or near a spine, or anywhere in Judecca. The freezing of the ninth circle spares you while you walk it. The only company is a heartbeat that quickens the deeper you go, ash drifting in the dark, and **Lucifer's voice from far below**, a new line at every stretch of the descent.
 
-The first time you reach the Well of Giants or Cocytus, chat tells you where the spine starts. Its bones can't be broken.
+The first time you reach the Well of Giants or Cocytus, chat tells you where the nearest spine starts. Their bones can't be broken. Worlds made with just the east spine get the other three on their next start.
 
 ### The fight
 
@@ -243,11 +246,12 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/circle` | all | Where am I in Hell? |
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
+| `/guide` | all | Get a copy of The Pilgrim's Guide (26.3) |
 | `/hellcraft sethearts <player> <n>` | op | |
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
 | `/hellcraft ghosts` | op | List ghosts |
-| `/hellcraft goto <zone>` / `gate` / `spine` | op | Teleport to a zone / the Gate / the start of the Emperor's Spine (testing) |
+| `/hellcraft goto <zone>` / `gate` / `spine [way]` | op | Teleport to a zone / the Gate / the start of the Emperor's Spine (testing) |
 | `/lucifer reward` | all | Open your Lucifer reward chooser (if you have one waiting) |
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
@@ -269,6 +273,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
 - the resource pack: `musicPackHost` / `musicPackPort` (where players download it from), `musicPackUrl` (host it yourself instead), and `resourcePackRequired` (26.3)
+- the guide book, tab-list hearts, the Hall of the Damned and circle ambience (26.3): `guideBook`, `tabListHearts`, `sidebarHall`, `circleAmbience`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
 ## Development

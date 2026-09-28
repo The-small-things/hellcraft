@@ -115,10 +115,14 @@ echo "Generating..."
 sleep 60
 rcon "forceload query" || true
 if [ "$MC_VERSION" != "1.21.1" ]; then
-  # the Emperor's Spine: a bone walkway over Cocytus, and nothing hostile may exist near it
-  deck=$(rcon "execute if block 400 -13 0 minecraft:bone_block" || true)
-  echo "Spine deck at x=400: $deck"
-  echo "$deck" | grep -q "Test passed" || { echo "The Emperor's Spine was not built"; exit 1; }
+  # the Emperor's Spines: bone walkways over Cocytus at all four points of the compass
+  for p in "400 0" "0 400" "-400 0" "0 -400"; do
+    read -r px pz <<< "$p"
+    rcon "forceload add $px $pz" > /dev/null
+    deck=$(rcon "execute if block $px -13 $pz minecraft:bone_block" || true)
+    echo "Spine deck at $px,$pz: $deck"
+    echo "$deck" | grep -q "Test passed" || { echo "No Emperor's Spine at $px,$pz"; exit 1; }
+  done
   stairs=$(rcon "execute if block 100 -26 0 minecraft:bone_block" || true)
   echo "Spine stairs at x=100: $stairs"
   echo "$stairs" | grep -q "Test passed" || { echo "The Spine's staircase is not where it should be"; exit 1; }
@@ -127,6 +131,17 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=402,y=-12,z=0,distance=..8]" || true)
   echo "Zombie on the spine: $zombie"
   echo "$zombie" | grep -q "Test failed" || { echo "A monster survived on the Emperor's Spine"; exit 1; }
+  rcon "summon minecraft:zombie 0 -12 -402"
+  sleep 2
+  zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=0,y=-12,z=-402,distance=..8]" || true)
+  echo "Zombie on the north spine: $zombie"
+  echo "$zombie" | grep -q "Test failed" || { echo "A monster survived on the north spine"; exit 1; }
+  objectives=$(rcon "scoreboard objectives list")
+  echo "$objectives"
+  echo "$objectives" | grep -q "hellcraft_hearts" || { echo "No hearts in the player list"; exit 1; }
+  guide=$(rcon "guide" || true)
+  echo "$guide"
+  echo "$guide" | grep -qi "unknown or incomplete command" && { echo "/guide is not registered"; exit 1; }
 fi
 
 # Lucifer: run the whole fight against a dummy target in the pit

@@ -82,6 +82,14 @@ public class HellConfig {
 	public boolean luciferModels = true;
 	/** Degrees added to the model's facing, if it ever looks the wrong way in-game. */
 	public float luciferModelYawOffset = 0.0f;
+	/** Everyone's hearts next to their name in the player list. */
+	public boolean tabListHearts = true;
+	/** The "Hall of the Damned" sidebar: everyone who has cast down Lucifer, and how often. */
+	public boolean sidebarHall = true;
+	/** Per-circle ambient sounds and particles around players. */
+	public boolean circleAmbience = true;
+	/** Give new players "The Pilgrim's Guide" on their first join. */
+	public boolean guideBook = true;
 	/** Vanilla music discs used for players without the pack (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";

@@ -9,8 +9,10 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.Identifier;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
+import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.Ambience;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
@@ -47,17 +49,20 @@ public class HellcraftMod implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
+		ServerLifecycleEvents.SERVER_STARTED.register(Scoreboards::setUp);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			CircleHazards.tick(server);
 			LuciferManager.tick(server);
 			Spine.tick(server);
+			Ambience.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			CircleHazards.forget(handler.getPlayer());
 			Spine.forget(handler.getPlayer());
+			Ambience.forget(handler.getPlayer());
 		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> HellCommands.register(dispatcher));
 

@@ -123,8 +123,11 @@ public final class BloodEvents {
 		Hearts.apply(player);
 		BloodItems.refresh(player);
 		if (firstJoin) {
-			// something to eat on the long walk down
+			// something to eat on the long walk down, and something to read
 			BloodItems.give(player, new ItemStack(Items.BREAD, 5));
+			if (HellConfig.get().guideBook) {
+				BloodItems.give(player, GuideBook.create(player.level().getServer()));
+			}
 		}
 		// the hell weapons' recipes, in everyone's recipe book
 		MinecraftServer server = player.level().getServer();

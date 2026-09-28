@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Signs;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,24 +32,71 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * The Emperor's Spine: the quiet road to the bottom of Hell. A backbone of bone as long as Cocytus is
- * wide leaves the Well of Giants' east rim, hangs high over the frozen lake, then becomes a long
- * staircase down to the edge of Lucifer's pit. Nothing hostile can exist on or near it; the only
- * company is a heartbeat that quickens as you descend, and Lucifer's voice from below.
+ * The Emperor's Spines: the quiet roads to the bottom of Hell. Four backbones of bone, one at each
+ * point of the compass, leave the Well of Giants' rim, hang high over the frozen lake, then become
+ * long staircases down to the edge of Lucifer's pit. Nothing hostile can exist on or near them; the
+ * only company is a heartbeat that quickens as you descend, and Lucifer's voice from below.
+ *
+ * <p>Positions are worked out along each spine: {@code u} is the distance from the centre of Hell
+ * along the spine, {@code v} the sideways offset from its middle.
  */
 public final class Spine {
 	private Spine() {
 	}
 
-	/** Where the spine leaves the Well of Giants (it runs along z = 0 toward the centre). */
-	public static final int START_X = 660;
+	/** One spine, running from the centre of Hell out along a compass direction. */
+	public enum Way {
+		EAST("east", 1, 0), SOUTH("south", 0, 1), WEST("west", -1, 0), NORTH("north", 0, -1);
+
+		public final String id;
+		final int ax;
+		final int az;
+
+		Way(String id, int ax, int az) {
+			this.id = id;
+			this.ax = ax;
+			this.az = az;
+		}
+
+		public int x(int u, int v) {
+			return u * ax - v * az;
+		}
+
+		public int z(int u, int v) {
+			return u * az + v * ax;
+		}
+
+		double u(double x, double z) {
+			return x * ax + z * az;
+		}
+
+		double v(double x, double z) {
+			return z * ax - x * az;
+		}
+
+		Direction.Axis along() {
+			return ax != 0 ? Direction.Axis.X : Direction.Axis.Z;
+		}
+
+		Direction.Axis across() {
+			return ax != 0 ? Direction.Axis.Z : Direction.Axis.X;
+		}
+
+		/** Sign rotation facing outward, toward pilgrims arriving from the Well (0 south, 4 west, 8 north, 12 east). */
+		int outwardRotation() {
+			return ax > 0 ? 12 : ax < 0 ? 4 : az > 0 ? 0 : 8;
+		}
+	}
+
+	/** Where a spine leaves the Well of Giants (distance from the centre). */
+	public static final int START = 660;
 	/** Where it reaches the rim of the pit. */
-	public static final int END_X = 34;
+	public static final int END = 34;
 	/** From here inward it is a staircase. */
-	public static final int STAIRS_FROM_X = 150;
+	public static final int STAIRS_FROM = 150;
 	/** The walkway over Cocytus, one block above the Well's floor. */
 	public static final int DECK_Y = -13;
-	/** Monsters never appear this close (blocks) to the spine, nor anywhere in Judecca. */
+	/** Monsters never appear this close (blocks) to a spine, nor anywhere in Judecca. */
 	private static final int SANCTUARY_HALF_WIDTH = 40;
 	private static final double JUDECCA_RADIUS = 150.0;
 
@@ -57,7 +105,7 @@ public final class Spine {
 	private static final Map<UUID, Long> NEXT_BEAT = new HashMap<>();
 	private static final Set<UUID> HINTED = new HashSet<>();
 
-	/** Lucifer's voice, one line per landmark on the way down (x at which it is spoken). */
+	/** Lucifer's voice, one line per landmark on the way down (distance from the centre at which it is spoken). */
 	private static final int[] WHISPER_AT = {652, 560, 470, 380, 290, 200, 146, 60};
 	private static final String[] WHISPERS = {
 			"Ah. Thou hast found my spine. I broke it when He cast me down. Walk it; it leads to me.",
@@ -70,106 +118,162 @@ public final class Spine {
 			"Closer. I have waited since before thy world had a name.",
 	};
 
-	/** The walkway's height at x: level over the lake, then one step down every 4 blocks. */
-	public static int deckY(int x) {
-		return x >= STAIRS_FROM_X ? DECK_Y : DECK_Y - (STAIRS_FROM_X - x + 3) / 4;
+	/** The walkway's height at distance u: level over the lake, then one step down every 4 blocks. */
+	public static int deckY(int u) {
+		return u >= STAIRS_FROM ? DECK_Y : DECK_Y - (STAIRS_FROM - u + 3) / 4;
 	}
 
-	/** True where monsters may not exist: along the spine and in all of Judecca. */
+	@Nullable
+	public static Way byId(String id) {
+		for (Way way : Way.values()) {
+			if (way.id.equals(id) || way.id.substring(0, 1).equals(id)) {
+				return way;
+			}
+		}
+		return null;
+	}
+
+	/** True where monsters may not exist: along the spines and in all of Judecca. */
 	public static boolean sanctuary(double x, double z) {
-		return (x >= 0 && x <= START_X + 30 && Math.abs(z) <= SANCTUARY_HALF_WIDTH) || x * x + z * z < JUDECCA_RADIUS * JUDECCA_RADIUS;
+		if (x * x + z * z < JUDECCA_RADIUS * JUDECCA_RADIUS) {
+			return true;
+		}
+		for (Way way : Way.values()) {
+			double u = way.u(x, z);
+			if (u >= 0 && u <= START + 30 && Math.abs(way.v(x, z)) <= SANCTUARY_HALF_WIDTH) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	/** True while a player walks the spine itself (the circle's freezing torment spares them). */
+	/** The spine a player is walking right now, if any (the circle's freezing torment spares them). */
+	@Nullable
+	public static Way walking(ServerPlayer player) {
+		for (Way way : Way.values()) {
+			double u = way.u(player.getX(), player.getZ());
+			int ui = (int) Math.floor(u);
+			double dy = player.getY() - deckY(ui);
+			if (ui >= END - 2 && ui <= START + 6 && Math.abs(way.v(player.getX(), player.getZ())) <= 4.5 && dy >= -1.0 && dy <= 8.0) {
+				return way;
+			}
+		}
+		return null;
+	}
+
 	public static boolean shelters(ServerPlayer player) {
-		int x = (int) Math.floor(player.getX());
-		double y = player.getY() - deckY(x);
-		return x >= END_X - 2 && x <= START_X + 6 && Math.abs(player.getZ()) <= 4.5 && y >= -1.0 && y <= 8.0;
+		return walking(player) != null;
 	}
 
 	// ---------------------------------------------------------------------------------- building
 
+	/** Lays every spine this world doesn't have yet (worlds from before the other three get them added). */
 	public static void buildOnce(MinecraftServer server) {
 		ServerLevel level = server.overworld();
 		if (!HellWorldgen.isInferno(level)) {
 			return;
 		}
 		HellState state = HellState.get(server);
-		if (state.spineBuilt) {
-			return;
+		boolean changed = false;
+		for (Way way : Way.values()) {
+			boolean built = way == Way.EAST ? state.spineBuilt : state.spinesBuilt;
+			if (built) {
+				continue;
+			}
+			build(level, way);
+			changed = true;
 		}
-		HellcraftMod.LOGGER.info("Laying the Emperor's Spine...");
-		for (int x = END_X; x <= START_X; x++) {
-			segment(level, x);
+		if (changed) {
+			state.spineBuilt = true;
+			state.spinesBuilt = true;
+			state.setDirty();
 		}
-		for (int x = END_X; x <= START_X; x++) {
-			if (x % 4 == 0) {
-				vertebra(level, x, deckY(x), x % 8 == 0, x % 16 == 0);
+	}
+
+	private static void build(ServerLevel level, Way way) {
+		HellcraftMod.LOGGER.info("Laying the Emperor's {} Spine...", way.id);
+		for (int u = END; u <= START; u++) {
+			segment(level, way, u);
+		}
+		for (int u = END; u <= START; u++) {
+			if (u % 4 == 0) {
+				vertebra(level, way, u, deckY(u), u % 8 == 0, u % 16 == 0);
 			}
 		}
-		for (int x : new int[]{START_X - 1, START_X - 5, START_X - 9, END_X + 2, END_X + 6}) {
-			arch(level, x, deckY(x));
+		for (int u : new int[]{START - 1, START - 5, START - 9, END + 2, END + 6}) {
+			arch(level, way, u, deckY(u));
 		}
-		int signY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, START_X + 3, 3);
-		Signs.place(level, new BlockPos(START_X + 3, signY, 3), 12, List.of(
+		int sx = way.x(START + 3, 3);
+		int sz = way.z(START + 3, 3);
+		int signY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
+		Signs.place(level, new BlockPos(sx, signY, sz), way.outwardRotation(), List.of(
 				Component.literal("THE EMPEROR'S").withStyle(ChatFormatting.BOLD),
 				Component.literal("SPINE").withStyle(ChatFormatting.BOLD),
 				Component.literal("No demon walks"),
 				Component.literal("this road.")));
-		state.spineBuilt = true;
-		state.setDirty();
-		HellcraftMod.LOGGER.info("The Emperor's Spine runs from {} {} 0 down to {} {} 0", START_X, DECK_Y, END_X, deckY(END_X));
+		HellcraftMod.LOGGER.info("The Emperor's Spine runs from {} {} {} down to {} {} {}", way.x(START, 0), DECK_Y, way.z(START, 0),
+				way.x(END, 0), deckY(END), way.z(END, 0));
+	}
+
+	/** Where a spine starts, for hints and teleports. */
+	public static BlockPos start(Way way) {
+		return new BlockPos(way.x(START, 0), DECK_Y, way.z(START, 0));
 	}
 
 	private static BlockState bone(Direction.Axis axis) {
 		return Blocks.BONE_BLOCK.defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
 	}
 
-	private static void set(ServerLevel level, int x, int y, int z, BlockState state) {
-		level.setBlock(new BlockPos(x, y, z), state, 3);
+	private static BlockPos at(Way way, int u, int y, int v) {
+		return new BlockPos(way.x(u, v), y, way.z(u, v));
 	}
 
-	private static boolean isAir(ServerLevel level, int x, int y, int z) {
-		BlockState state = level.getBlockState(new BlockPos(x, y, z));
+	private static void set(ServerLevel level, Way way, int u, int y, int v, BlockState state) {
+		level.setBlock(at(way, u, y, v), state, 3);
+	}
+
+	private static boolean isAir(ServerLevel level, Way way, int u, int y, int v) {
+		BlockState state = level.getBlockState(at(way, u, y, v));
 		return state.isAir() || state.canBeReplaced();
 	}
 
-	/** The walkway at x: a 3-wide deck of bone with a cord of flesh beneath, and headroom carved above. */
-	private static void segment(ServerLevel level, int x) {
-		level.getChunk(x >> 4, 0);
-		level.getChunk(x >> 4, -1);
-		int d = deckY(x);
-		for (int z = -2; z <= 2; z++) {
+	/** The walkway at u: a 3-wide deck of bone with a cord of flesh beneath, and headroom carved above. */
+	private static void segment(ServerLevel level, Way way, int u) {
+		for (int v = -8; v <= 8; v += 8) {
+			level.getChunk(way.x(u, v) >> 4, way.z(u, v) >> 4);
+		}
+		int d = deckY(u);
+		for (int v = -2; v <= 2; v++) {
 			for (int y = d + 1; y <= d + 5; y++) {
-				if (!isAir(level, x, y, z) || level.getBlockState(new BlockPos(x, y, z)).is(Blocks.SNOW)) {
-					set(level, x, y, z, Blocks.AIR.defaultBlockState());
+				if (!isAir(level, way, u, y, v) || level.getBlockState(at(way, u, y, v)).is(Blocks.SNOW)) {
+					set(level, way, u, y, v, Blocks.AIR.defaultBlockState());
 				}
 			}
 		}
-		for (int z = -1; z <= 1; z++) {
-			set(level, x, d, z, bone(Direction.Axis.X));
+		for (int v = -1; v <= 1; v++) {
+			set(level, way, u, d, v, bone(way.along()));
 		}
-		set(level, x, d - 1, 0, Blocks.NETHER_WART_BLOCK.defaultBlockState());
+		set(level, way, u, d - 1, 0, Blocks.NETHER_WART_BLOCK.defaultBlockState());
 	}
 
 	/** One vertebra: a wider body under the deck, processes to the sides and below, and (every other one) a pair of ribs. */
-	private static void vertebra(ServerLevel level, int x, int d, boolean ribs, boolean lanterns) {
-		for (int z = -2; z <= 2; z++) {
-			set(level, x, d - 1, z, bone(Direction.Axis.X));
+	private static void vertebra(ServerLevel level, Way way, int u, int d, boolean ribs, boolean lanterns) {
+		for (int v = -2; v <= 2; v++) {
+			set(level, way, u, d - 1, v, bone(way.along()));
 		}
-		for (int z = -1; z <= 1; z++) {
-			set(level, x, d - 2, z, bone(Direction.Axis.X));
+		for (int v = -1; v <= 1; v++) {
+			set(level, way, u, d - 2, v, bone(way.along()));
 		}
 		for (int s : new int[]{-1, 1}) {
-			set(level, x, d, 2 * s, bone(Direction.Axis.Z));
-			set(level, x, d - 1, 3 * s, bone(Direction.Axis.Z));
+			set(level, way, u, d, 2 * s, bone(way.across()));
+			set(level, way, u, d - 1, 3 * s, bone(way.across()));
 			if (lanterns) {
-				set(level, x, d + 1, 2 * s, Blocks.SOUL_LANTERN.defaultBlockState());
+				set(level, way, u, d + 1, 2 * s, Blocks.SOUL_LANTERN.defaultBlockState());
 			}
 		}
 		for (int y = d - 4; y <= d - 3; y++) {
-			if (isAir(level, x, y, 0)) {
-				set(level, x, y, 0, bone(Direction.Axis.Y));
+			if (isAir(level, way, u, y, 0)) {
+				set(level, way, u, y, 0, bone(Direction.Axis.Y));
 			}
 		}
 		if (!ribs) {
@@ -179,45 +283,48 @@ public final class Spine {
 		int[][] rib = {{4, -1}, {5, -2}, {6, -3}, {6, -4}, {6, -5}, {5, -6}, {5, -7}, {4, -8}};
 		for (int s : new int[]{-1, 1}) {
 			for (int[] p : rib) {
-				int z = p[0] * s;
+				int v = p[0] * s;
 				int y = d + p[1];
-				if (!isAir(level, x, y, z)) {
+				if (!isAir(level, way, u, y, v)) {
 					break;
 				}
-				set(level, x, y, z, bone(Direction.Axis.Y));
+				set(level, way, u, y, v, bone(Direction.Axis.Y));
 			}
 		}
 	}
 
 	/** A pair of ribs meeting over the walkway: the gates at either end. */
-	private static void arch(ServerLevel level, int x, int d) {
+	private static void arch(ServerLevel level, Way way, int u, int d) {
 		int[][] half = {{3, 1}, {3, 2}, {3, 3}, {3, 4}, {3, 5}, {3, 6}, {2, 7}, {1, 8}, {0, 8}};
 		for (int s : new int[]{-1, 1}) {
 			for (int[] p : half) {
-				set(level, x, d + p[1], p[0] * s, bone(Direction.Axis.Y));
+				set(level, way, u, d + p[1], p[0] * s, bone(Direction.Axis.Y));
 			}
-			set(level, x, d, 3 * s, bone(Direction.Axis.Y));
+			set(level, way, u, d, 3 * s, bone(Direction.Axis.Y));
 		}
-		set(level, x, d + 9, 0, Blocks.SOUL_LANTERN.defaultBlockState());
+		set(level, way, u, d + 9, 0, Blocks.SOUL_LANTERN.defaultBlockState());
 	}
 
-	/** The spine's own blocks can't be broken by hand (creative players excepted). */
+	/** The spines' own blocks can't be broken by hand (creative players excepted). */
 	public static boolean isProtected(ServerLevel level, BlockPos pos) {
-		int x = pos.getX();
-		if (x < END_X - 2 || x > START_X + 4 || Math.abs(pos.getZ()) > 6) {
-			return false;
+		for (Way way : Way.values()) {
+			int u = (int) Math.floor(way.u(pos.getX() + 0.5, pos.getZ() + 0.5));
+			if (u < END - 2 || u > START + 4 || Math.abs(way.v(pos.getX() + 0.5, pos.getZ() + 0.5)) > 6.5) {
+				continue;
+			}
+			int dy = pos.getY() - deckY(u);
+			if (dy < -9 || dy > 10) {
+				continue;
+			}
+			BlockState state = level.getBlockState(pos);
+			return state.is(Blocks.BONE_BLOCK) || state.is(Blocks.NETHER_WART_BLOCK) || state.is(Blocks.SOUL_LANTERN) || state.is(Blocks.DARK_OAK_SIGN);
 		}
-		int dy = pos.getY() - deckY(x);
-		if (dy < -9 || dy > 10) {
-			return false;
-		}
-		BlockState state = level.getBlockState(pos);
-		return state.is(Blocks.BONE_BLOCK) || state.is(Blocks.NETHER_WART_BLOCK) || state.is(Blocks.SOUL_LANTERN) || state.is(Blocks.DARK_OAK_SIGN);
+		return false;
 	}
 
 	// ---------------------------------------------------------------------------------- the walk
 
-	/** Monsters that appear near the spine or in Judecca are gone a tick later (named ones and Lucifer's own excepted). */
+	/** Monsters that appear near a spine or in Judecca are gone a tick later (named ones and Lucifer's own excepted). */
 	public static void onLoad(Entity entity, ServerLevel level) {
 		if (entity instanceof Enemy && !entity.hasCustomName() && !LuciferManager.isLucifer(entity)
 				&& sanctuary(entity.getX(), entity.getZ()) && HellWorldgen.isInferno(level)) {
@@ -244,10 +351,12 @@ public final class Spine {
 			if (now % 20 == 0) {
 				hint(player);
 			}
-			if (!shelters(player)) {
+			Way way = walking(player);
+			if (way == null) {
 				continue;
 			}
-			double progress = Math.max(0.0, Math.min(1.0, (START_X - player.getX()) / (double) (START_X - END_X)));
+			double u = way.u(player.getX(), player.getZ());
+			double progress = Math.max(0.0, Math.min(1.0, (START - u) / (double) (START - END)));
 			// a heartbeat that quickens as you go down
 			if (now >= NEXT_BEAT.getOrDefault(player.getUUID(), 0L)) {
 				Feedback.sound(player, SoundEvents.WARDEN_HEARTBEAT, SoundSource.AMBIENT, 0.5f + 0.7f * (float) progress, 0.7f);
@@ -256,20 +365,20 @@ public final class Spine {
 			if (now % 10 == 0) {
 				level.sendParticles(ParticleTypes.WHITE_ASH, player.getX(), player.getY() + 2, player.getZ(), 24, 8, 4, 8, 0.0);
 			}
-			whisper(player);
+			whisper(player, u);
 		}
 	}
 
-	private static void whisper(ServerPlayer player) {
+	private static void whisper(ServerPlayer player, double u) {
 		if (LuciferManager.fighting()) {
 			return;
 		}
 		int next = NEXT_WHISPER.getOrDefault(player.getUUID(), 0);
-		if (next >= WHISPERS.length || player.getX() > WHISPER_AT[next]) {
+		if (next >= WHISPERS.length || u > WHISPER_AT[next]) {
 			return;
 		}
 		// skip lines for stretches the player passed without hearing them (e.g. they jumped on halfway)
-		while (next + 1 < WHISPERS.length && player.getX() <= WHISPER_AT[next + 1]) {
+		while (next + 1 < WHISPERS.length && u <= WHISPER_AT[next + 1]) {
 			next++;
 		}
 		NEXT_WHISPER.put(player.getUUID(), next + 1);
@@ -278,14 +387,32 @@ public final class Spine {
 		Feedback.sound(player, SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.4f);
 	}
 
-	/** The first time someone reaches the Well of Giants or the ice, tell them where the quiet road is. */
+	/** The spine start nearest to a position. */
+	public static Way nearest(double x, double z) {
+		Way best = Way.EAST;
+		double bestDist = Double.MAX_VALUE;
+		for (Way way : Way.values()) {
+			BlockPos s = start(way);
+			double d = (s.getX() - x) * (s.getX() - x) + (s.getZ() - z) * (s.getZ() - z);
+			if (d < bestDist) {
+				bestDist = d;
+				best = way;
+			}
+		}
+		return best;
+	}
+
+	/** The first time someone reaches the Well of Giants or the ice, tell them where the nearest quiet road is. */
 	private static void hint(ServerPlayer player) {
 		Zone zone = InfernoGeometry.zoneAt(player.getX(), player.getZ());
 		if ((zone != Zone.WELL_OF_GIANTS && zone != Zone.COCYTUS) || !HINTED.add(player.getUUID())) {
 			return;
 		}
-		player.sendSystemMessage(Component.literal("On the Well's eastern rim (" + START_X + ", " + DECK_Y + ", 0) a great spine reaches down across the ice to the bottom of Hell. "
-				+ "It is the one road where nothing hunts you.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		Way way = nearest(player.getX(), player.getZ());
+		BlockPos s = start(way);
+		player.sendSystemMessage(Component.literal("On the Well's " + way.id + "ern rim (" + s.getX() + ", " + s.getY() + ", " + s.getZ()
+				+ ") a great spine reaches down across the ice to the bottom of Hell. It is a road where nothing hunts you. "
+				+ "There are four, one at each point of the compass.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 
 	public static void forget(ServerPlayer player) {

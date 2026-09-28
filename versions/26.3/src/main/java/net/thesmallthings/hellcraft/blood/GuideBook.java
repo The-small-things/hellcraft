@@ -1,0 +1,117 @@
+package net.thesmallthings.hellcraft.blood;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.Filterable;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.WrittenBookContent;
+import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.world.Spine;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * "The Pilgrim's Guide", by Virgil: everything a new soul needs to know, in a written book. The
+ * numbers come from the config, so the book never goes stale. New players get one on their first
+ * join; {@code /guide} hands out another.
+ */
+public final class GuideBook {
+	private GuideBook() {
+	}
+
+	public static ItemStack create(MinecraftServer server) {
+		HellConfig c = HellConfig.get();
+		HellState.GlobalSpot altar = HellState.get(server).starterAltar;
+		String altarAt = altar != null ? " (" + altar.pos().getX() + ", " + altar.pos().getY() + ", " + altar.pos().getZ() + ")" : "";
+		BlockPos east = Spine.start(Spine.Way.EAST);
+
+		List<Component> pages = new ArrayList<>();
+		pages.add(page("THE PILGRIM'S GUIDE",
+				"",
+				"Abandon all hope, ye who enter here.",
+				"",
+				"This world is Dante's Inferno. Walk inward, circle by circle, to the Emperor frozen at its heart.",
+				"",
+				"  — Virgil"));
+		pages.add(page("BLOOD IS FUEL",
+				"You begin with " + c.startHearts + " hearts and can hold " + c.maxHearts + ".",
+				"",
+				"Kill a player: take a heart. Die to one: lose a heart.",
+				"",
+				"/withdraw bleeds your hearts into Blood Hearts. Right-click one to drink it back."));
+		pages.add(page("BLOOD FRAGMENTS",
+				"Monsters killed by players drop Blood Fragments, more the deeper you go.",
+				"",
+				"Right-click " + c.fragmentsPerHeart + " in one stack to clot them into a Blood Heart.",
+				"",
+				"Hell weapons spend fragments for power."));
+		pages.add(page("HELL IS FULL",
+				"At 0 hearts you become a ghost, bound to where you fell.",
+				"",
+				"Your friends revive you at a Blood Altar for " + c.reviveCostHearts + " Blood Hearts; you rise with "
+						+ c.reviveHearts + " hearts.",
+				"",
+				"Type /revive to learn how."));
+		pages.add(page("BLOOD ALTARS",
+				"A respawn anchor on 3x3 crying obsidian. One stands by the Gate of Hell" + altarAt + ".",
+				"",
+				"Right-click it: revive the dead, buy a Ward against the circles, or bind your respawn to it."));
+		pages.add(page("THE CIRCLES",
+				"Each circle torments the living:",
+				"Lust: the wind",
+				"Gluttony: hunger",
+				"Greed: gold weighs",
+				"Wrath: the Styx saps",
+				"Heresy: darkness",
+				"Violence: fire",
+				"Fraud: unseen foes",
+				"Treachery: the cold"));
+		pages.add(page("HELL WEAPONS",
+				"Craft the Bloodletter, the Reaper of Minos and the Tithe Axe from Blood Hearts and Fragments.",
+				"",
+				"Sneak + right-click to swear a Blood Oath: one max heart, forever, for 60 s of full power."));
+		pages.add(page("THE SPINES",
+				"On the rim of the Well of Giants, four great spines reach down to Lucifer's pit: north, east, south and west.",
+				"",
+				"East: " + east.getX() + ", " + east.getY() + ", " + east.getZ(),
+				"",
+				"Nothing hunts you there."));
+		pages.add(page("LUCIFER",
+				"He waits in the pit at the very centre (0, 0). Enter it and the ice seals you in.",
+				"",
+				"The Seraph, the Morning Star, then the Emperor frozen in the ice.",
+				"",
+				"Victors choose a reward: /lucifer reward"));
+		pages.add(page("COMMANDS",
+				"/hearts",
+				"/withdraw [n]",
+				"/circle",
+				"/revive [name]",
+				"/guide",
+				"",
+				"Go with God. He is not down here."));
+
+		List<Filterable<Component>> filtered = new ArrayList<>();
+		for (Component p : pages) {
+			filtered.add(Filterable.passThrough(p));
+		}
+		ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
+		book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("The Pilgrim's Guide"), "Virgil", 0, filtered, true));
+		return book;
+	}
+
+	/** A page: a dark red title line, then plain lines. */
+	private static Component page(String title, String... lines) {
+		MutableComponent page = Component.literal(title).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD);
+		for (String line : lines) {
+			page.append(Component.literal("\n" + line).withStyle(s -> s.withBold(false).withColor(ChatFormatting.BLACK)));
+		}
+		return page;
+	}
+}

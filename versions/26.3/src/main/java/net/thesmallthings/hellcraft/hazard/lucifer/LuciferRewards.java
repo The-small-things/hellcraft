@@ -78,6 +78,7 @@ public final class LuciferRewards {
 
 	/** Marks a victor's reward as pending (never downgrading an unclaimed first-victory choice). */
 	static void grant(HellState state, HellState.Soul soul) {
+		soul.luciferKills++;
 		if (!soul.slewLucifer) {
 			soul.slewLucifer = true;
 			soul.pendingReward = FIRST;

@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.Ghosts;
+import net.thesmallthings.hellcraft.blood.GuideBook;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
@@ -60,6 +61,13 @@ public final class HellCommands {
 						.executes(ctx -> withdraw(ctx.getSource().getPlayerOrException(), IntegerArgumentType.getInteger(ctx, "amount")))));
 
 		dispatcher.register(Commands.literal("circle").executes(ctx -> circle(ctx.getSource().getPlayerOrException())));
+
+		dispatcher.register(Commands.literal("guide").executes(ctx -> {
+			ServerPlayer player = ctx.getSource().getPlayerOrException();
+			BloodItems.give(player, GuideBook.create(ctx.getSource().getServer()));
+			player.sendSystemMessage(Component.literal("Virgil hands you The Pilgrim's Guide.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			return 1;
+		}));
 
 		// for everyone: how reviving works, who is dead, and the revive itself next to an altar
 		dispatcher.register(Commands.literal("revive")
@@ -139,7 +147,18 @@ public final class HellCommands {
 												"hatred", "impotence", "ignorance", "wingbeat", "mouths"}, builder))
 										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
 				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
-				.then(Commands.literal("spine").executes(ctx -> teleportToSurface(ctx.getSource(), Spine.START_X + 5, 0)))
+				.then(Commands.literal("spine")
+						.executes(ctx -> toSpine(ctx.getSource(), Spine.Way.EAST))
+						.then(Commands.argument("way", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Spine.Way.values()).map(w -> w.id), builder))
+								.executes(ctx -> {
+									Spine.Way way = Spine.byId(StringArgumentType.getString(ctx, "way"));
+									if (way == null) {
+										ctx.getSource().sendFailure(Component.literal("north, east, south or west"));
+										return 0;
+									}
+									return toSpine(ctx.getSource(), way);
+								})))
 				.then(Commands.literal("where").executes(ctx -> where(ctx.getSource())))
 				.then(Commands.literal("reload").executes(ctx -> {
 					HellConfig.load();
@@ -307,6 +326,10 @@ public final class HellCommands {
 		}
 		ctx.getSource().sendFailure(Component.literal("Could not find " + zone.id()));
 		return 0;
+	}
+
+	private static int toSpine(CommandSourceStack source, Spine.Way way) throws CommandSyntaxException {
+		return teleportToSurface(source, way.x(Spine.START + 5, 0), way.z(Spine.START + 5, 0));
 	}
 
 	private static int teleportToSurface(CommandSourceStack source, int x, int z) throws CommandSyntaxException {

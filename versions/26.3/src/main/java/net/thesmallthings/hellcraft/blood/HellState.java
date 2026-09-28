@@ -31,6 +31,8 @@ public class HellState extends SavedData {
 	public boolean landmarksBuilt;
 	/** The Emperor's Spine has been laid (it is added to worlds made before it existed, too). */
 	public boolean spineBuilt;
+	/** The other three spines (north, south, west) have been laid too. */
+	public boolean spinesBuilt;
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
 	public boolean arenaSealed;
 	public int luciferDefeats;
@@ -61,6 +63,8 @@ public class HellState extends SavedData {
 		/** Extra heart capacity earned (Lucifer's Bane). */
 		public int maxBonus;
 		public boolean slewLucifer;
+		/** How many times this soul has cast Lucifer down. */
+		public int luciferKills;
 		/** Unclaimed Lucifer reward: 0 none, 1 first-victory choice, 2 repeat-victory choice. */
 		public int pendingReward;
 	}
@@ -136,6 +140,7 @@ public class HellState extends SavedData {
 			st.putLong("ward", s.wardUntil);
 			st.putInt("maxBonus", s.maxBonus);
 			st.putBoolean("slewLucifer", s.slewLucifer);
+			st.putInt("luciferKills", s.luciferKills);
 			st.putInt("pendingReward", s.pendingReward);
 			if (s.deathSpot != null) {
 				st.put("death", s.deathSpot.save());
@@ -151,6 +156,7 @@ public class HellState extends SavedData {
 		tag.put("souls", list);
 		tag.putBoolean("landmarks", landmarksBuilt);
 		tag.putBoolean("spine", spineBuilt);
+		tag.putBoolean("spines", spinesBuilt);
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
@@ -179,6 +185,7 @@ public class HellState extends SavedData {
 			s.wardUntil = st.getLongOr("ward", 0L);
 			s.maxBonus = st.getIntOr("maxBonus", 0);
 			s.slewLucifer = st.getBooleanOr("slewLucifer", false);
+			s.luciferKills = st.getIntOr("luciferKills", s.slewLucifer ? 1 : 0);
 			s.pendingReward = st.getIntOr("pendingReward", 0);
 			s.deathSpot = GlobalSpot.load(st, "death");
 			s.altar = GlobalSpot.load(st, "altar");
@@ -187,6 +194,7 @@ public class HellState extends SavedData {
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
 		state.spineBuilt = tag.getBooleanOr("spine", false);
+		state.spinesBuilt = tag.getBooleanOr("spines", false);
 		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);

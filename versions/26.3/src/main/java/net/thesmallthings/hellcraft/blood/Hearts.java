@@ -41,6 +41,7 @@ public final class Hearts {
 		if (player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
 		}
+		Scoreboards.update(player.level().getServer(), soul);
 	}
 
 	/** Changes a player's hearts by {@code delta}, clamped to [0, max]. Returns the applied change. */

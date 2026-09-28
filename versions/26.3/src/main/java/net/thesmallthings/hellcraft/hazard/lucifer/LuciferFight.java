@@ -33,6 +33,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Feedback;
@@ -795,6 +796,7 @@ public final class LuciferFight {
 			}
 			victors.add(soul.name);
 			LuciferRewards.grant(state, soul);
+			Scoreboards.update(level.getServer(), soul);
 			pending++;
 			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
 			if (player != null) {
