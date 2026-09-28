@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "hellcraft:blood"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "hellcraft:blood"
+      }
+    ]
+  }
+}

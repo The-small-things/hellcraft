@@ -31,6 +31,7 @@ public final class Ghosts {
 		}
 		player.sendSystemMessage(Component.literal("Hell is full. You wander as a ghost until the living pay blood for your return.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		player.sendSystemMessage(Component.literal(GhostPowers.HELP).withStyle(ChatFormatting.DARK_AQUA));
 		player.sendSystemMessage(Component.literal("Tell your friends:").withStyle(ChatFormatting.GRAY));
 		howToRevive(player.level().getServer()).forEach(player::sendSystemMessage);
 	}
@@ -66,7 +67,7 @@ public final class Ghosts {
 		}
 		if (player.level().getGameTime() / 20 % 10 == 0) {
 			player.sendOverlayMessage(Component.literal("☠ You are a ghost. The living can revive you at a Blood Altar for "
-					+ HellConfig.get().reviveCostHearts + " Blood Hearts (/revive)").withStyle(ChatFormatting.GRAY));
+					+ HellConfig.get().reviveCostHearts + " Blood Hearts (/revive). Your powers: /ghost").withStyle(ChatFormatting.GRAY));
 		}
 		double r = HellConfig.get().ghostTetherRadius;
 		BlockPos p = soul.deathSpot.pos();

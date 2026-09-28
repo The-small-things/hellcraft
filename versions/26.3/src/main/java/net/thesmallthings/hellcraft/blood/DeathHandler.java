@@ -94,6 +94,7 @@ public final class DeathHandler {
 		}
 
 		if (soul.hearts <= 0) {
+			GhostPowers.rememberKiller(player, credit != null ? credit : source.getEntity());
 			soul.ghost = true;
 			soul.deathSpot = new HellState.GlobalSpot(player.level().dimension(), player.blockPosition());
 			state.setDirty();

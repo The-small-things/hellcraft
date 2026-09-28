@@ -194,6 +194,10 @@ public final class HellWeapons {
 		OATHS.put(player.getUUID(), now + OATH_TICKS);
 		player.sendSystemMessage(Component.literal("You swore a Blood Oath on the " + weapon.title + ": −1 ❤ (now "
 				+ Hearts.soul(player).hearts + "). Its full power is yours for 60 s.").withStyle(ChatFormatting.DARK_RED));
+		if (BloodArmour.worn(player) >= 4) {
+			// a full set of blood armour hardens under an oath
+			player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, OATH_TICKS, 0));
+		}
 		if (weapon == Weapon.TITHE_AXE) {
 			player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, OATH_TICKS, 2));
 			player.addEffect(new MobEffectInstance(MobEffects.SPEED, OATH_TICKS, 1));

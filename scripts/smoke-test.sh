@@ -90,7 +90,9 @@ if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   if [ "$MC_VERSION" != "1.21.1" ]; then
     for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
              assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/entity/lucifer_emperor.png \
-             assets/hellcraft/textures/item/tithe_axe.png; do
+             assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/equipment/blood.json \
+             assets/hellcraft/textures/entity/equipment/humanoid/blood.png \
+             assets/hellcraft/textures/entity/equipment/humanoid_leggings/blood.png; do
       unzip -l music-pack.zip | grep -q "$f" || { echo "Resource pack is missing $f"; exit 1; }
     done
   fi
@@ -101,6 +103,12 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   weapon=$(rcon "hellcraft giveweapon nobody bloodletter" || true)
   echo "$weapon"
   echo "$weapon" | grep -qi "unknown or incomplete command" && { echo "/hellcraft giveweapon is not registered"; exit 1; }
+  armour=$(rcon "hellcraft givearmour nobody" || true)
+  echo "$armour"
+  echo "$armour" | grep -qi "unknown or incomplete command" && { echo "/hellcraft givearmour is not registered"; exit 1; }
+  ghost=$(rcon "ghost" || true)
+  echo "$ghost"
+  echo "$ghost" | grep -q "Ghost powers" || { echo "/ghost does not explain the ghost powers"; exit 1; }
 fi
 rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
@@ -138,7 +146,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$zombie" | grep -q "Test failed" || { echo "A monster survived on the north spine"; exit 1; }
   objectives=$(rcon "scoreboard objectives list")
   echo "$objectives"
-  echo "$objectives" | grep -q "hellcraft_hearts" || { echo "No hearts in the player list"; exit 1; }
+  echo "$objectives" | grep -q "\[Hearts\]" || { echo "No hearts in the player list"; exit 1; }
   guide=$(rcon "guide" || true)
   echo "$guide"
   echo "$guide" | grep -qi "unknown or incomplete command" && { echo "/guide is not registered"; exit 1; }

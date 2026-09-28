@@ -161,6 +161,110 @@ art("tithe_axe", STEEL, [
     "KK..............",
 ])
 
+ARMOUR = {"K": "1a0505", "D": "4a0808", "R": "8a1010", "r": "c02020", "B": "e2d8c4", "b": "a8997c", "E": "ff4a3a"}
+
+art("blood_helmet", ARMOUR, [
+    "................",
+    "................",
+    "....KKKKKKKK....",
+    "...KBbRRRRbBK...",
+    "..KBRRrrrrRRBK..",
+    "..KRRrRRRRrRRK..",
+    "..KRRRRRRRRRRK..",
+    "..KRKKKKKKKKRK..",
+    "..KRKE.KK.EKRK..",
+    "..KRK......KRK..",
+    "..KBK......KBK..",
+    "...K........K...",
+    "................",
+    "................",
+    "................",
+    "................",
+])
+
+art("blood_chestplate", ARMOUR, [
+    "................",
+    "..KKKK....KKKK..",
+    ".KBbRKK..KKRbBK.",
+    ".KRRRRKKKKRRRRK.",
+    ".KRrRRRBBRRRrRK.",
+    "..KKRRBRRBRRKK..",
+    "....KRRBBRRK....",
+    "....KRrRRrRK....",
+    "....KRRBBRRK....",
+    "....KRBRRBRK....",
+    "....KRRBBRRK....",
+    "....KRrRRrRK....",
+    "....KDRRRRDK....",
+    "....KKKKKKKK....",
+    "................",
+    "................",
+])
+
+art("blood_leggings", ARMOUR, [
+    "................",
+    "................",
+    "....KKKKKKKK....",
+    "....KBbBBbBK....",
+    "....KRRRRRRK....",
+    "....KRrKKrRK....",
+    "....KRRKKRRK....",
+    "....KRrKKrRK....",
+    "....KRRKKRRK....",
+    "....KBRKKRBK....",
+    "....KRRKKRRK....",
+    "....KRrKKrRK....",
+    "....KDRKKRDK....",
+    "....KKKKKKKK....",
+    "................",
+    "................",
+])
+
+art("blood_boots", ARMOUR, [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "...KKKK..KKKK...",
+    "...KBbK..KbBK...",
+    "...KRRK..KRRK...",
+    "...KRrK..KrRK...",
+    "..KRRRK..KRRRK..",
+    ".KRRrRK..KRrRRK.",
+    ".KDRRRK..KRRRDK.",
+    ".KKKKKK..KKKKKK.",
+    "................",
+    "................",
+])
+
+
+def armour_layer(path, regions, face=None):
+    """A 64x32 humanoid armour layer: crimson plates with dark seams and bone rivets."""
+    base, seam, bone = hexc("6b0d0d"), hexc("2a0404"), hexc("e2d8c4")
+    pixels = [[(0, 0, 0, 0)] * 64 for _ in range(32)]
+    for x0, y0, x1, y1 in regions:
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                if (y - y0) % 6 == 5:
+                    c = seam
+                elif (x - x0) % 8 == 3 and (y - y0) % 6 == 2:
+                    c = bone
+                else:
+                    c = shade(base, 1.0 + (rng.random() - 0.5) * 0.35)
+                pixels[y][x] = c
+    if face:
+        fx0, fy0 = face
+        for x in range(fx0, fx0 + 8):
+            pixels[fy0][x] = bone          # a bone brow band
+        for x in (fx0 + 1, fx0 + 2, fx0 + 5, fx0 + 6):
+            pixels[fy0 + 4][x] = hexc("ff4a3a")  # burning eye slits
+        for x in (fx0 + 3, fx0 + 4):
+            pixels[fy0 + 4][x] = hexc("0a0000")
+    png(os.path.join(OUT, "entity", "equipment", path, "blood.png"), pixels)
+
+
 # ---------------------------------------------------------------------- Lucifer swatch atlases
 # cell index = row * 4 + column; each cell is 8x8 pixels (4x4 model UV units)
 
@@ -247,6 +351,92 @@ atlas("lucifer_emperor", [
     noise_cell(hexc("300808"), 0.1),                                         # 10 hair / shadow
     noise_cell(hexc("b01010"), 0.25),                                        # 11 blood
     None, None, None, None,
+])
+
+# the blood armour as worn (layer 1: helmet, chestplate and boots; layer 2: leggings)
+armour_layer("humanoid", [(0, 0, 32, 16), (16, 16, 40, 32), (40, 16, 56, 32), (0, 16, 16, 32)], face=(8, 8))
+armour_layer("humanoid_leggings", [(16, 16, 40, 32), (0, 16, 16, 32)])
+
+# ---------------------------------------------------------------------- the circle guardians
+
+
+def pattern_cell(base, colours):
+    """Geryon's painted hide: knots and little circles (Inferno XVII)."""
+    cell = noise_cell(base, 0.12)
+    for (cx, cy), col in zip(((1, 1), (5, 2), (2, 5), (6, 6)), colours):
+        for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1)):
+            cell[cy + dy][cx + dx] = col
+        cell[cy][cx] = shade(col, 1.4)
+    return cell
+
+
+def fanged_face(skin, eye):
+    """A beast's face: burning eyes and a row of fangs."""
+    cell = face_cell(skin, eye)
+    for x in range(1, 7):
+        cell[6][x] = hexc("e8e0d0") if x % 2 else hexc("300000")
+    cell[7][2] = cell[7][5] = hexc("e8e0d0")
+    return cell
+
+
+atlas("guardian_minos", [
+    noise_cell(hexc("6b7a5a")),                                  # 0 skin
+    noise_cell(hexc("3e4a34")),                                  # 1 skin in shadow
+    stripes_cell(hexc("2a1238"), hexc("4a2266")),                # 2 judge's robe
+    gradient_cell(hexc("ffe27a"), hexc("a0741c")),               # 3 gold trim and crown
+    stripes_cell(hexc("1f4a1c"), hexc("3f7a34")),                # 4 tail scales
+    noise_cell(hexc("c8c090"), 0.1),                             # 5 tail belly
+    face_cell(hexc("6b7a5a"), hexc("ffe040"), hexc("200000")),   # 6 face: the judge
+    noise_cell(hexc("9a9a9a"), 0.2),                             # 7 beard
+    gradient_cell(hexc("e8dcc0"), hexc("6b5d45")),               # 8 horn
+    None, None, None, None, None, None, None,
+])
+
+atlas("guardian_cerberus", [
+    noise_cell(hexc("1c1410"), 0.25),                            # 0 fur
+    noise_cell(hexc("0c0806"), 0.2),                             # 1 dark fur
+    fanged_face(hexc("1c1410"), hexc("ff2010")),                 # 2 face
+    noise_cell(hexc("8a0a0a"), 0.2),                             # 3 maw
+    noise_cell(hexc("5a5a64"), 0.15),                            # 4 iron collar
+    noise_cell(hexc("2a2020"), 0.1),                             # 5 claws
+    noise_cell(hexc("4a5a1a"), 0.3),                             # 6 filth
+    gradient_cell(hexc("e8e0d0"), hexc("a09880")),               # 7 fangs
+    None, None, None, None, None, None, None, None,
+])
+
+atlas("guardian_plutus", [
+    noise_cell(hexc("5a4a3a"), 0.2),                             # 0 wolf fur
+    noise_cell(hexc("342a20"), 0.2),                             # 1 dark fur
+    fanged_face(hexc("5a4a3a"), hexc("ffd23a")),                 # 2 face
+    gradient_cell(hexc("ffe27a"), hexc("b8861c")),               # 3 gold
+    noise_cell(hexc("8a6a1a"), 0.3),                             # 4 tarnished gold
+    noise_cell(hexc("9a8a70"), 0.15),                            # 5 bloated belly
+    stripes_cell(hexc("4a0814"), hexc("7a1024")),                # 6 velvet
+    None, None, None, None, None, None, None, None, None,
+])
+
+atlas("guardian_minotaur", [
+    noise_cell(hexc("5a3a20"), 0.2),                             # 0 hide
+    noise_cell(hexc("342010"), 0.2),                             # 1 dark hide
+    face_cell(hexc("342010"), hexc("ff3020"), hexc("100800")),   # 2 bull face
+    gradient_cell(hexc("e8dcc0"), hexc("6b5d45")),               # 3 horn
+    noise_cell(hexc("2a1f14"), 0.1),                             # 4 horn tip, hooves
+    stripes_cell(hexc("2a1a10"), hexc("4a3020")),                # 5 leather
+    gradient_cell(hexc("ffe27a"), hexc("a0741c")),               # 6 nose ring
+    noise_cell(hexc("6a3020"), 0.2),                             # 7 chest
+    None, None, None, None, None, None, None, None,
+])
+
+atlas("guardian_geryon", [
+    face_cell(hexc("e0b090"), hexc("3a6aa0"), hexc("8a4a40")),   # 0 the face of a just man
+    noise_cell(hexc("5a3a1a"), 0.2),                             # 1 hair
+    pattern_cell(hexc("2a5a4a"), [hexc("c83a2a"), hexc("e8c040"), hexc("40a0c0"), hexc("e8e0d0")]),  # 2 painted hide
+    noise_cell(hexc("c8b890"), 0.1),                             # 3 belly
+    noise_cell(hexc("6a4a2a"), 0.3),                             # 4 hairy paws
+    noise_cell(hexc("1a1010"), 0.1),                             # 5 claws
+    stripes_cell(hexc("1a0f1a"), hexc("3a2a3a")),                # 6 carapace
+    gradient_cell(hexc("c02020"), hexc("200000")),               # 7 stinger
+    None, None, None, None, None, None, None, None,
 ])
 
 if __name__ == "__main__":

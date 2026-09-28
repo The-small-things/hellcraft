@@ -19,7 +19,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
+import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodItems;
+import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.GuideBook;
 import net.thesmallthings.hellcraft.blood.Hearts;
@@ -61,6 +63,8 @@ public final class HellCommands {
 						.executes(ctx -> withdraw(ctx.getSource().getPlayerOrException(), IntegerArgumentType.getInteger(ctx, "amount")))));
 
 		dispatcher.register(Commands.literal("circle").executes(ctx -> circle(ctx.getSource().getPlayerOrException())));
+
+		GhostPowers.register(dispatcher);
 
 		dispatcher.register(Commands.literal("guide").executes(ctx -> {
 			ServerPlayer player = ctx.getSource().getPlayerOrException();
@@ -107,6 +111,16 @@ public final class HellCommands {
 								.executes(ctx -> giveBane(ctx, 1))
 								.then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
 										.executes(ctx -> giveBane(ctx, IntegerArgumentType.getInteger(ctx, "count"))))))
+				.then(Commands.literal("givearmour")
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> {
+									ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+									for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
+										BloodItems.give(p, BloodArmour.create(piece));
+									}
+									ctx.getSource().sendSuccess(() -> Component.literal("Gave a set of blood armour to " + p.getGameProfile().name()), true);
+									return 1;
+								})))
 				.then(Commands.literal("giveweapon")
 						.then(Commands.argument("player", EntityArgument.player())
 								.then(Commands.argument("weapon", StringArgumentType.word())

@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": "minecraft:diamond_chestplate",
+    "H": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:fermented_spider_eye",
+      "nbt": "{hellcraft:\"heart\"}"
+    },
+    "F": {
+      "fabric:type": "fabric:custom_data",
+      "base": "minecraft:red_dye",
+      "nbt": "{hellcraft:\"fragment\"}"
+    }
+  },
+  "pattern": [
+    "HFH",
+    " A "
+  ],
+  "result": {
+    "id": "minecraft:diamond_chestplate",
+    "components": {
+      "minecraft:custom_data": {
+        "hellcraft": "armour",
+        "armour": "blood_chestplate"
+      },
+      "minecraft:item_model": "hellcraft:blood_chestplate",
+      "minecraft:item_name": {
+        "text": "Blood Cuirass",
+        "color": "dark_red",
+        "bold": true
+      },
+      "minecraft:lore": [
+        {
+          "text": "Blood armour: 2 pieces heal you 5% of the damage you deal,",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "4 pieces 10%, plus a Blood Rush when near death",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "and Resistance under a Blood Oath.",
+          "color": "gray",
+          "italic": false
+        }
+      ],
+      "minecraft:rarity": "epic",
+      "minecraft:equippable": {
+        "slot": "chest",
+        "equip_sound": "minecraft:item.armor.equip_diamond",
+        "asset_id": "hellcraft:blood"
+      }
+    }
+  }
+}

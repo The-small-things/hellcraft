@@ -23,6 +23,10 @@ FLAT_ITEMS = {
     "bloodletter": "minecraft:item/handheld",
     "reaper_of_minos": "minecraft:item/handheld",
     "tithe_axe": "minecraft:item/handheld",
+    "blood_helmet": "minecraft:item/generated",
+    "blood_chestplate": "minecraft:item/generated",
+    "blood_leggings": "minecraft:item/generated",
+    "blood_boots": "minecraft:item/generated",
 }
 
 
@@ -169,6 +173,138 @@ def emperor():
     return model("hellcraft:entity/lucifer_emperor", e)
 
 
+# ------------------------------------------------------------------------------------ the circle guardians
+
+
+def minos():
+    """Minos, judge of the damned (Inferno V): crowned, bearded, robed, his long tail coiled around him."""
+    SKIN, SHADE, ROBE, GOLD, SCALES, BELLY, FACE, BEARD, HORN = range(9)
+    e = []
+    # the tail, coiled three times around his legs
+    for i, (y0, inset) in enumerate(((0, 0.5), (3, 1.25), (6, 2))):
+        a, b = inset, 16 - inset
+        e.append(box((a, y0, a), (b, y0 + 3, a + 2.5), SCALES, down=BELLY))
+        e.append(box((a, y0, b - 2.5), (b, y0 + 3, b), SCALES, down=BELLY))
+        e.append(box((a, y0, a + 2.5), (a + 2.5, y0 + 3, b - 2.5), SCALES, down=BELLY))
+        e.append(box((b - 2.5, y0, a + 2.5), (b, y0 + 3, b - 2.5), SCALES, down=BELLY))
+    # the tail's end rises behind him, ready to lash
+    e.append(box((7, 8, 13), (9.5, 20, 15.5), SCALES, rot=("x", 22.5, (8, 8, 14))))
+    e.append(box((7.25, 19, 16), (9.25, 23, 18), SCALES, rot=("x", 45, (8, 20, 17))))
+    # robe and body
+    e.append(box((3, 9, 4), (13, 18, 12), ROBE))
+    e.append(box((3.5, 17, 4.5), (12.5, 25, 11.5), ROBE, north=ROBE))
+    e.append(box((3.25, 17, 4.25), (12.75, 18.25, 11.75), GOLD))            # belt
+    e.append(box((7, 18, 4.25), (9, 25, 4.5), GOLD))                        # trim down the front
+    arm = box((0.5, 14, 6), (3.5, 24.5, 10), ROBE, down=SKIN)
+    e += [arm, mirror(arm)]
+    # head, beard, horns and crown
+    e.append(box((4.5, 25, 4.5), (11.5, 31, 11.5), SHADE, north=FACE, east=SKIN, west=SKIN))
+    e.append(box((5, 21.5, 4), (11, 25.5, 5.5), BEARD))
+    horn = box((3.25, 28.5, 7), (5, 31.5, 9), HORN, rot=("z", 22.5, (4, 29, 8)))
+    e += [horn, mirror(horn)]
+    e.append(box((4.25, 30.5, 4.25), (11.75, 32, 11.75), GOLD, up=SHADE))
+    return model("hellcraft:entity/guardian_minos", e)
+
+
+def cerberus():
+    """Cerberus (Inferno VI): the great three-headed dog of the rain, collared in iron."""
+    FUR, DARK, FACE, MAW, IRON, CLAW, FILTH, FANG = range(8)
+    e = []
+    e.append(box((3, 9, 0), (13, 19, 22), FUR, down=DARK))                  # body
+    e.append(box((2.5, 15, -1), (13.5, 21, 8), FUR))                        # shoulders
+    for z0 in (1, 17):
+        leg = box((3, 0, z0), (6, 10, z0 + 4), DARK)
+        paw = box((2.75, 0, z0 - 0.5), (6.25, 1.5, z0 + 4), CLAW)
+        e += [leg, mirror(leg), paw, mirror(paw)]
+    e.append(box((7, 15, 21), (9, 17, 30), DARK, rot=("x", -22.5, (8, 16, 22))))    # tail
+    # three heads on three necks, the middle one highest
+    for x0, lift in ((-0.5, 0), (5.25, 2), (11, 0)):
+        e.append(box((x0 + 1, 17 + lift, -4), (x0 + 5.5, 22 + lift, 1), FUR))            # neck
+        e.append(box((x0 + 0.5, 20 + lift, -9), (x0 + 6, 26 + lift, -3), DARK, north=FACE))
+        e.append(box((x0 + 1.5, 20 + lift, -13), (x0 + 5, 23 + lift, -9), FUR, down=MAW, north=FANG))
+        e.append(box((x0 + 1.75, 19 + lift, -12.5), (x0 + 4.75, 20 + lift, -9), MAW))     # open jaw
+        ear = box((x0 + 0.75, 26 + lift, -6), (x0 + 2, 28 + lift, -4.5), DARK)
+        e += [ear, box((x0 + 4.5, 26 + lift, -6), (x0 + 5.75, 28 + lift, -4.5), DARK)]
+        e.append(box((x0 + 0.75, 17.5 + lift, -2.5), (x0 + 5.75, 19 + lift, -1.5), IRON))  # collar
+    e.append(box((5, 8.5, 6), (11, 9, 16), FILTH))                          # dripping filth
+    return model("hellcraft:entity/guardian_cerberus", e)
+
+
+def plutus():
+    """Plutus (Inferno VII): the bloated wolf of greed, hung with gold. "Pape Satan, pape Satan aleppe!"."""
+    FUR, DARK, FACE, GOLD, TARNISH, BELLY, VELVET = range(7)
+    e = []
+    leg = box((3, 0, 6), (7, 8, 11), DARK)
+    e += [leg, mirror(leg)]
+    e.append(box((1, 6, 3), (15, 19, 14), FUR, north=BELLY))                # bloated belly
+    e.append(box((2, 17, 4.5), (14, 24, 13), FUR))                          # hunched shoulders
+    e.append(box((1.5, 12, 2.75), (14.5, 13, 3.25), GOLD))                  # chains of gold
+    e.append(box((2, 15.5, 2.75), (14, 16.5, 3.25), TARNISH))
+    arm = box((-1, 7, 6), (2, 22, 10), FUR, down=DARK)
+    e += [arm, mirror(arm)]
+    e.append(box((-2.5, 2, 4.5), (3, 8, 11), VELVET, up=GOLD))             # sacks of gold in his fists
+    e.append(box((13, 2, 4.5), (18.5, 8, 11), VELVET, up=GOLD))
+    e.append(box((4.5, 23, 3), (11.5, 29, 10), DARK, north=FACE))           # wolf head
+    e.append(box((6, 23, -1), (10, 26, 3), FUR, north=FACE))                # snout
+    ear = box((4.5, 29, 6), (6.5, 32, 8), DARK)
+    e += [ear, mirror(ear)]
+    e.append(box((4.75, 28.75, 3.5), (11.25, 30, 9.5), GOLD))               # a crown of coins
+    return model("hellcraft:entity/guardian_plutus", e)
+
+
+def minotaur():
+    """The Minotaur (Inferno XII), infamy of Crete: bull-headed, huge-shouldered, raging."""
+    HIDE, DARK, FACE, HORN, HOOF, LEATHER, RING, CHEST = range(8)
+    e = []
+    leg = box((4, 0, 6), (7.5, 12, 10), HIDE)
+    hoof = box((3.75, 0, 5.5), (7.75, 2, 10.5), HOOF)
+    e += [leg, mirror(leg), hoof, mirror(hoof)]
+    e.append(box((3.5, 10, 5), (12.5, 15, 11), LEATHER))
+    e.append(box((3, 14, 5), (13, 23, 11), CHEST))
+    e.append(box((1, 20, 4.5), (15, 25, 11.5), HIDE))                       # shoulders
+    arm = box((-1.5, 10, 6), (2, 23, 10), HIDE)
+    fist = box((-1.75, 8, 5.75), (2.25, 11, 10.25), DARK)
+    e += [arm, mirror(arm), fist, mirror(fist)]
+    e.append(box((5, 24, 3.5), (11, 30, 10), DARK, north=FACE))             # bull head
+    e.append(box((6, 24, 1), (10, 27, 3.5), DARK))                          # snout
+    e.append(box((7.25, 23.25, 0.5), (8.75, 24.75, 1), RING))               # nose ring
+    horn = box((1.5, 28, 6), (5.5, 29.5, 7.5), HORN)
+    tip = box((0.5, 28.5, 6.25), (2, 32, 7.25), HOOF, rot=("z", -22.5, (1.25, 29, 6.75)))
+    e += [horn, mirror(horn), tip, mirror(tip)]
+    return model("hellcraft:entity/guardian_minotaur", e)
+
+
+def geryon():
+    """Geryon (Inferno XVII), the image of fraud: the face of a just man, a painted serpent's body,
+    hairy paws, and a forked scorpion's tail."""
+    FACE, HAIR, HIDE, BELLY, PAW, CLAW, SHELL, STING = range(8)
+    e = []
+    e.append(box((5, 13, -14), (11, 19, -8), HAIR, north=FACE))             # the face
+    e.append(box((4.75, 18.5, -14.25), (11.25, 20, -7.75), HAIR))
+    e.append(box((4.5, 11, -9), (11.5, 18, 0), HIDE, down=BELLY))
+    e.append(box((4, 10, 0), (12, 17, 12), HIDE, down=BELLY))
+    e.append(box((5, 11, 12), (11, 16, 22), HIDE, down=BELLY))
+    e.append(box((6, 12, 22), (10, 15, 31), SHELL))
+    # the tail rises from its end and arches forward over the back, sting first
+    e.append(box((6.5, 13, 26), (9.5, 26, 29), SHELL, rot=("x", -22.5, (8, 14, 27.5))))
+    e.append(box((7, 23, 19.5), (9, 26, 24.5), STING, rot=("x", 45, (8, 24.5, 23))))
+    paw = box((2, 6, -6), (5, 12, -2), PAW)
+    claw = box((1.75, 4.5, -7), (5.25, 6, -2), CLAW)
+    e += [paw, mirror(paw), claw, mirror(claw)]
+    hind = box((2.5, 6, 6), (5, 11, 9), PAW)
+    e += [hind, mirror(hind)]
+    return model("hellcraft:entity/guardian_geryon", e)
+
+
+GUARDIANS = {
+    "guardian_minos": minos,
+    "guardian_cerberus": cerberus,
+    "guardian_plutus": plutus,
+    "guardian_minotaur": minotaur,
+    "guardian_geryon": geryon,
+}
+
+
 # ------------------------------------------------------------------------------------ recipes
 # The results must match HellWeapons.create() in the 26.3 sources.
 
@@ -189,6 +325,41 @@ WEAPONS = [
       "(Strength and Speed for 15 s).",
       "Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤."]),
 ]
+
+
+# The results must match BloodArmour.create() in the 26.3 sources.
+ARMOUR_LORE = [
+    "Blood armour: 2 pieces heal you 5% of the damage you deal,",
+    "4 pieces 10%, plus a Blood Rush when near death",
+    "and Resistance under a Blood Oath.",
+]
+ARMOUR = [
+    ("blood_helmet", "Blood Helm", "minecraft:diamond_helmet", "head", ["FHF", " A "]),
+    ("blood_chestplate", "Blood Cuirass", "minecraft:diamond_chestplate", "chest", ["HFH", " A "]),
+    ("blood_leggings", "Blood Greaves", "minecraft:diamond_leggings", "legs", ["HFH", " A "]),
+    ("blood_boots", "Blood Sabatons", "minecraft:diamond_boots", "feet", ["FHF", " A "]),
+]
+
+
+def armour_recipes():
+    for aid, title, base, slot, pattern in ARMOUR:
+        components = {
+            "minecraft:custom_data": {"hellcraft": "armour", "armour": aid},
+            "minecraft:item_model": "hellcraft:" + aid,
+            "minecraft:item_name": {"text": title, "color": "dark_red", "bold": True},
+            "minecraft:lore": [{"text": line, "color": "gray", "italic": False} for line in ARMOUR_LORE],
+            "minecraft:rarity": "epic",
+            "minecraft:equippable": {"slot": slot, "equip_sound": "minecraft:item.armor.equip_diamond", "asset_id": "hellcraft:blood"},
+        }
+        write(os.path.join(DATA, "recipe", aid + ".json"), {
+            "type": "minecraft:crafting_shaped", "category": "equipment",
+            "key": {"A": base, "H": HEART, "F": FRAGMENT}, "pattern": pattern,
+            "result": {"id": base, "components": components}})
+    # how the armour looks when worn (textures/entity/equipment/<layer>/blood.png)
+    write(os.path.join(ASSETS, "equipment", "blood.json"), {"layers": {
+        "humanoid": [{"texture": "hellcraft:blood"}],
+        "humanoid_leggings": [{"texture": "hellcraft:blood"}],
+    }})
 
 
 def recipes():
@@ -218,10 +389,11 @@ def recipes():
 
 def main():
     recipes()
+    armour_recipes()
     for name, parent in FLAT_ITEMS.items():
         item_definition(name)
         write(os.path.join(ASSETS, "models", "item", name + ".json"), {"parent": parent, "textures": {"layer0": "hellcraft:item/" + name}})
-    for name, build in (("lucifer_morning_star", morning_star), ("lucifer_emperor", emperor)):
+    for name, build in [("lucifer_morning_star", morning_star), ("lucifer_emperor", emperor)] + list(GUARDIANS.items()):
         item_definition(name)
         write(os.path.join(ASSETS, "models", "item", name + ".json"), build())
     # every texture a model names must exist
@@ -231,7 +403,7 @@ def main():
             for tex in m.get("textures", {}).values():
                 ns, path = tex.split(":")
                 assert os.path.exists(os.path.join(ASSETS, "textures", path + ".png")), (f, tex)
-    print("Wrote %d item definitions." % (len(FLAT_ITEMS) + 2))
+    print("Wrote %d item definitions." % (len(FLAT_ITEMS) + 2 + len(GUARDIANS)))
 
 
 if __name__ == "__main__":

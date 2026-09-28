@@ -7,7 +7,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.Identifier;
+import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
+import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.command.HellCommands;
@@ -42,6 +44,7 @@ public class HellcraftMod implements ModInitializer {
 		HellWorldgen.register();
 		BloodEvents.register();
 		HellWeapons.register();
+		BloodArmour.register();
 		CircleHazards.register();
 		LuciferManager.register();
 		LuciferRewards.register();
@@ -57,6 +60,7 @@ public class HellcraftMod implements ModInitializer {
 			LuciferManager.tick(server);
 			Spine.tick(server);
 			Ambience.tick(server);
+			GhostPowers.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

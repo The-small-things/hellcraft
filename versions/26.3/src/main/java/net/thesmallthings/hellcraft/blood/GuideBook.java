@@ -57,7 +57,7 @@ public final class GuideBook {
 				"Your friends revive you at a Blood Altar for " + c.reviveCostHearts + " Blood Hearts; you rise with "
 						+ c.reviveHearts + " hearts.",
 				"",
-				"Type /revive to learn how."));
+				"Type /revive to learn how. Ghosts: /ghost"));
 		pages.add(page("BLOOD ALTARS",
 				"A respawn anchor on 3x3 crying obsidian. One stands by the Gate of Hell" + altarAt + ".",
 				"",
@@ -76,6 +76,10 @@ public final class GuideBook {
 				"Craft the Bloodletter, the Reaper of Minos and the Tithe Axe from Blood Hearts and Fragments.",
 				"",
 				"Sneak + right-click to swear a Blood Oath: one max heart, forever, for 60 s of full power."));
+		pages.add(page("BLOOD ARMOUR",
+				"Reforge diamond armour with Blood Hearts and Fragments.",
+				"",
+				"Two pieces: your blows heal you. All four: more, a Blood Rush near death, and Resistance under an oath."));
 		pages.add(page("THE SPINES",
 				"On the rim of the Well of Giants, four great spines reach down to Lucifer's pit: north, east, south and west.",
 				"",

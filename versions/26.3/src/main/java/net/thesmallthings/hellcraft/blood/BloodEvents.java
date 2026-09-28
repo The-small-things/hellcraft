@@ -21,6 +21,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Wires lifesteal into Fabric's events: deaths, respawns, joins and right-clicks. */
 public final class BloodEvents {
 	private BloodEvents() {
@@ -129,11 +132,18 @@ public final class BloodEvents {
 				BloodItems.give(player, GuideBook.create(player.level().getServer()));
 			}
 		}
-		// the hell weapons' recipes, in everyone's recipe book
+		// the hell weapons' and blood armour's recipes, in everyone's recipe book
 		MinecraftServer server = player.level().getServer();
+		List<String> recipes = new ArrayList<>();
 		for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
+			recipes.add(weapon.id);
+		}
+		for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
+			recipes.add(piece.id);
+		}
+		for (String recipe : recipes) {
 			server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(),
-					"recipe give " + player.getGameProfile().name() + " hellcraft:" + weapon.id);
+					"recipe give " + player.getGameProfile().name() + " hellcraft:" + recipe);
 		}
 		if (soul.reviveAt != null) {
 			Ghosts.finishRevive(player, soul, soul.reviveAt);

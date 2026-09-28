@@ -127,6 +127,18 @@ The Reaper's cleave never touches villagers, pets, the mount you're riding, or p
 
 `/hellcraft giveweapon <player> <bloodletter|reaper_of_minos|tithe_axe>` hands one out for testing.
 
+### Blood armour (26.3)
+
+Four pieces of diamond armour reforged with blood at a crafting table. They're in everyone's recipe book:
+- Helm and Sabatons: the diamond piece plus 1 Blood Heart and 2 Blood Fragments.
+- Cuirass and Greaves: the diamond piece plus 2 Blood Hearts and 1 Blood Fragment.
+
+They protect like diamond, look like crimson plate with bone rivets and burning eye slits (from the resource pack), and work as a set:
+- **2 or more pieces:** your melee hits heal you 5% of the damage they deal.
+- **All 4:** 10%, plus a **Blood Rush** (Regeneration II for 5 s) when you drop below 3 hearts of health, once a minute. A Blood Oath also gives you Resistance for its full minute.
+
+`/hellcraft givearmour <player>` hands out a set for testing.
+
 ## Lucifer
 
 *"Another soul crawls to the bottom of the world."*
@@ -237,6 +249,11 @@ When you lose your last heart you are not banned. *There is no more room in hell
 2. Go to a **Blood Altar**. There's one beside the Gate of Hell, and `/revive` tells you its coordinates.
 3. **Right-click it with an empty hand** and click your friend's head. They rise on the altar with 3 hearts, even if they are offline (they come back when they next join).
 
+**Ghost powers (26.3).** Ghosts aren't just spectators:
+- `/ghost mark`: whatever you're looking at (up to 32 blocks) glows for everyone for 10 s. Cooldown 30 s.
+- `/ghost haunt`: whoever or whatever killed you, if within 48 blocks, gets 6 s of Darkness and Slowness and feels your breath on their neck. Cooldown 2 min.
+- `/ghost beacon`: a 24-block pillar of soul fire rises over you for 30 s, and chat tells everyone where you are, so friends can find you. Cooldown 1 min.
+
 ## Commands
 
 | Command | Who | |
@@ -247,6 +264,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
 | `/guide` | all | Get a copy of The Pilgrim's Guide (26.3) |
+| `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
 | `/hellcraft sethearts <player> <n>` | op | |
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
@@ -256,6 +274,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
+| `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft where` | op | Debug: geometry at your position |

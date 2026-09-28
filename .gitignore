@@ -9,3 +9,4 @@ bin/
 docker/data/
 docker/mods/*.jar
 dist/
+__pycache__/
