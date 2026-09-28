@@ -3,6 +3,8 @@
 #   dist/Hellcraft-<ver>-mc<mc>.mrpack       one-click import for Modrinth App / Prism / ATLauncher / CurseForge
 #   dist/hellcraft-<ver>-mc<mc>-mods.zip     Hellcraft + Fabric API jars + INSTALL.txt for the official launcher
 #   dist/hellcraft-<ver>-mc<mc>.jar          the mod itself (servers)
+#   dist/hellcraft-pack-<ver>-mc<mc>.zip     its resource pack (26.3), which servers hand to players who
+#                                            join through a tunnel (playit.gg) that can't reach port 25566
 # Usage: scripts/package-singleplayer.sh [project-dir]   (default: the 1.21.1 project at the repo root;
 # versions/26.3 for the 26.3 build). Run after ./gradlew build in that project.
 # Needs network access (Modrinth API), curl, jq and python3.
@@ -55,6 +57,21 @@ jq -n --arg ver "$VER" --arg mc "$MC" --arg loader "$LOADER" \
              env: {client: "required", server: "required"}, downloads: [$url], fileSize: $size}],
     dependencies: {minecraft: $mc, "fabric-loader": $loader}
   }' > "$WORK/mrpack/modrinth.index.json"
+
+# ---- The resource pack, as the server builds it (without custom music); 26.x only
+[[ "$MC" == 26* ]] && python3 - "$JAR" "$DIST/hellcraft-pack-${LABEL}.zip" <<'PY'
+import sys, zipfile
+jar, out = sys.argv[1], sys.argv[2]
+with zipfile.ZipFile(jar) as src:
+    names = sorted(n for n in src.namelist() if n.startswith("assets/hellcraft/") and not n.endswith("/"))
+    if names:
+        with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as dst:
+            meta = '{"pack": {"min_format": [97, 0], "max_format": [99, 0], "description": "Hellcraft"}}\n'
+            dst.writestr(zipfile.ZipInfo("pack.mcmeta", (1980, 1, 1, 0, 0, 0)), meta)
+            for n in names:
+                dst.writestr(zipfile.ZipInfo(n, (1980, 1, 1, 0, 0, 0)), src.read(n), zipfile.ZIP_DEFLATED)
+        print("Resource pack:", out, len(names), "assets")
+PY
 
 # ---- Official launcher bundle
 mkdir -p "$WORK/zip/mods"

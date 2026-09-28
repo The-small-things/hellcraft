@@ -82,6 +82,12 @@ public class HellConfig {
 	public boolean luciferModels = true;
 	/** Degrees added to the model's facing, if it ever looks the wrong way in-game. */
 	public float luciferModelYawOffset = 0.0f;
+	/**
+	 * Send players the copy of the resource pack published on GitHub with each release: "auto" for players
+	 * who join through a tunnel such as playit.gg (which can't reach port 25566), "always", or "never".
+	 * The GitHub copy has no custom boss music.
+	 */
+	public String packFromGitHub = "auto";
 	/** Everyone's hearts next to their name in the player list. */
 	public boolean tabListHearts = true;
 	/** The "Hall of the Damned" sidebar: everyone who has cast down Lucifer, and how often. */

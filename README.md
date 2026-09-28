@@ -256,7 +256,8 @@ The fight has music: a different track for the duel, the enraged phase and the t
 
 **No setup needed on 26.3.** Each player is sent the pack from the address they joined with (`play.example.com`, your IP, a LAN address...), on port **25566**. That port must be open and forwarded just like 25565; the compose file already maps it.
 - Behind a proxy (Velocity, TCPShield...) or with a different download address: set `"musicPackHost"` in `config/hellcraft.json` or `HELLCRAFT_PACK_HOST`. 1.21.1 still needs one of these.
-- If your host only allows one port, upload the pack somewhere and set `"musicPackUrl"` to it.
+- **Tunnels like playit.gg** only forward the game port. Players who join through a playit.gg address automatically get the copy of the pack that each release publishes on GitHub (`hellcraft-pack-<version>-mc26.3.zip`), so there's nothing to set up. That copy has no custom boss music. `"packFromGitHub"` can be `"auto"`, `"always"` or `"never"`.
+- If your host only allows one port, upload the pack somewhere and set `"musicPackUrl"` to it, or use `"packFromGitHub": "always"`.
 
 Operators get a reminder in chat when they join if the pack can't be sent.
 

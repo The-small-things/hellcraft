@@ -17,11 +17,16 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.ServerSocket;
 import java.net.SocketAddress;
 import java.net.Socket;
@@ -29,9 +34,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.time.Duration;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +49,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -85,6 +94,18 @@ public final class MusicPack {
 	@Nullable
 	private static String url;
 	private static boolean serving;
+	/** The same pack (without custom music) as published on GitHub with each release, and its hash. */
+	@Nullable
+	private static volatile String mirrorUrl;
+	@Nullable
+	private static volatile String mirrorSha1;
+	/** Every asset file the mod ships (the GitHub copy must have them all to be used). */
+	private static final Set<String> LOCAL_ASSETS = ConcurrentHashMap.newKeySet();
+	/** Players who were offered this server's own pack (with its music), not the GitHub copy. */
+	private static final Set<UUID> OFFERED_LOCAL = ConcurrentHashMap.newKeySet();
+	private static final String REPO = "https://github.com/The-small-things/hellcraft/releases/download/";
+	/** Tunnel services that forward only the game port, so port 25566 can't be reached through them. */
+	private static final List<String> TUNNELS = List.of("ply.gg", "playit.gg", "joinmc.link", "playit.cloud");
 	/** Remote address -> the hostname that client typed to connect (from the handshake). */
 	private static final Map<SocketAddress, String> JOINED_VIA = new ConcurrentHashMap<>();
 	@Nullable
@@ -98,6 +119,7 @@ public final class MusicPack {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> offer(handler.getPlayer()));
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			LOADED.remove(handler.getPlayer().getUUID());
+			OFFERED_LOCAL.remove(handler.getPlayer().getUUID());
 			JOINED_VIA.remove(handler.getPlayer().connection.getRemoteAddress());
 		});
 	}
@@ -108,7 +130,7 @@ public final class MusicPack {
 
 	/** True if this player loaded the pack and it carries custom boss music. */
 	public static boolean hasPack(ServerPlayer player) {
-		return zip != null && hasMusic && LOADED.contains(player.getUUID());
+		return zip != null && hasMusic && LOADED.contains(player.getUUID()) && OFFERED_LOCAL.contains(player.getUUID());
 	}
 
 	public static Holder<SoundEvent> sound(Track track) {
@@ -156,23 +178,32 @@ public final class MusicPack {
 		JOINED_VIA.put(remote, host);
 	}
 
-	/** Where this player can download the pack, or null if nobody knows. */
+	/** A download for one player: where, the file's SHA-1, and whether it's this server's own pack. */
+	private record Offer(String url, String sha1, boolean local) {
+	}
+
+	/**
+	 * Where this player can download the pack. In order: the configured URL or host; the GitHub copy
+	 * when the player came in through a tunnel (playit.gg...) that can't reach port 25566, or when
+	 * "packFromGitHub" is "always"; the address this player joined with; the GitHub copy as a last resort.
+	 */
 	@Nullable
-	private static String urlFor(ServerPlayer player) {
+	private static Offer offerFor(ServerPlayer player) {
 		if (url != null) {
-			return url;
+			return new Offer(url, sha1, true);
 		}
-		if (!serving) {
-			return null;
+		String mode = HellConfig.get().packFromGitHub;
+		String host = serving ? JOINED_VIA.get(player.connection.getRemoteAddress()) : null;
+		boolean tunnel = host != null && TUNNELS.stream().anyMatch(t -> host.toLowerCase(Locale.ROOT).endsWith(t));
+		boolean github = !"never".equals(mode) && mirrorUrl != null && mirrorSha1 != null;
+		if (github && ("always".equals(mode) || tunnel || host == null)) {
+			return new Offer(mirrorUrl, mirrorSha1, false);
 		}
-		String host = JOINED_VIA.get(player.connection.getRemoteAddress());
 		if (host == null) {
 			return null;
 		}
-		if (host.contains(":") && !host.startsWith("[")) {
-			host = "[" + host + "]"; // an IPv6 literal
-		}
-		return "http://" + host + ":" + HellConfig.get().musicPackPort + PATH;
+		String h = host.contains(":") && !host.startsWith("[") ? "[" + host + "]" : host; // an IPv6 literal
+		return new Offer("http://" + h + ":" + HellConfig.get().musicPackPort + PATH, sha1, true);
 	}
 
 	private static void offer(ServerPlayer player) {
@@ -183,18 +214,24 @@ public final class MusicPack {
 			// single player: the mod's assets are already loaded by the game itself
 			return;
 		}
-		String url = urlFor(player);
-		if (url == null) {
+		Offer offer = offerFor(player);
+		if (offer == null) {
 			if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
-				player.sendSystemMessage(Component.literal("Hellcraft's resource pack isn't being sent to players: set \"musicPackHost\" in "
-						+ "config/hellcraft.json (or the HELLCRAFT_PACK_HOST environment variable) to this server's address and open port "
+				player.sendSystemMessage(Component.literal("Hellcraft's resource pack can't be sent: the server couldn't reach GitHub for its copy, "
+						+ "and doesn't know this server's address. Set \"musicPackHost\" in config/hellcraft.json and open port "
 						+ HellConfig.get().musicPackPort + ".").withStyle(ChatFormatting.RED));
 			}
 			return;
 		}
+		if (offer.local()) {
+			OFFERED_LOCAL.add(player.getUUID());
+		} else {
+			OFFERED_LOCAL.remove(player.getUUID());
+		}
 		boolean required = HellConfig.get().resourcePackRequired && dedicated;
-		player.connection.send(new ClientboundResourcePackPushPacket(PACK_ID, url, sha1, required,
-				Optional.of(Component.literal("Hellcraft: Lucifer, hell weapons, blood" + (hasMusic ? " and boss music" : ""))
+		boolean music = hasMusic && offer.local();
+		player.connection.send(new ClientboundResourcePackPushPacket(PACK_ID, offer.url(), offer.sha1(), required,
+				Optional.of(Component.literal("Hellcraft: Lucifer, hell weapons, blood" + (music ? " and boss music" : ""))
 						.withStyle(ChatFormatting.DARK_RED))));
 	}
 
@@ -207,6 +244,7 @@ public final class MusicPack {
 		url = null;
 		serving = false;
 		hasMusic = false;
+		LOCAL_ASSETS.clear();
 		dedicated = server.isDedicatedServer();
 		Path dir = directory();
 		Map<Track, byte[]> audio = new EnumMap<>(Track.class);
@@ -277,6 +315,64 @@ public final class MusicPack {
 		}
 		HellcraftMod.LOGGER.info("Hellcraft pack ready: {} asset files, {} ({})", assets, hasMusic ? "with boss music" : "no boss music",
 				url != null ? url : serving ? "from each player's join address" : "not offered");
+		fetchMirror();
+	}
+
+	/**
+	 * Looks up this version's pack on the GitHub releases page (CI publishes it next to the jars) in the
+	 * background, for players whose connection can't reach port 25566 (tunnels like playit.gg). It is
+	 * only used if it holds every asset this jar ships.
+	 */
+	private static void fetchMirror() {
+		mirrorUrl = null;
+		mirrorSha1 = null;
+		if (!dedicated || url != null || "never".equals(HellConfig.get().packFromGitHub)) {
+			return;
+		}
+		String full = FabricLoader.getInstance().getModContainer(HellcraftMod.MOD_ID)
+				.map(m -> m.getMetadata().getVersion().getFriendlyString()).orElse("");
+		int plus = full.indexOf('+');
+		if (plus < 0) {
+			return;
+		}
+		String ver = full.substring(0, plus);
+		String file = "hellcraft-pack-" + ver + "-mc" + full.substring(plus + 1) + ".zip";
+		Set<String> needed = Set.copyOf(LOCAL_ASSETS);
+		Thread fetch = new Thread(() -> {
+			HttpClient http = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofSeconds(10)).build();
+			for (String tag : List.of("v" + ver, "v" + ver + "-test")) {
+				String candidate = REPO + tag + "/" + file;
+				try {
+					HttpResponse<byte[]> response = http.send(HttpRequest.newBuilder(URI.create(candidate)).timeout(Duration.ofSeconds(30))
+							.header("User-Agent", "hellcraft-server").build(), HttpResponse.BodyHandlers.ofByteArray());
+					if (response.statusCode() != 200) {
+						continue;
+					}
+					byte[] body = response.body();
+					Set<String> names = new HashSet<>();
+					try (ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(body))) {
+						ZipEntry entry;
+						while ((entry = in.getNextEntry()) != null) {
+							names.add(entry.getName());
+						}
+					}
+					if (!names.containsAll(needed)) {
+						HellcraftMod.LOGGER.info("The pack at {} is from an older build; skipping it", candidate);
+						continue;
+					}
+					mirrorSha1 = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(body));
+					mirrorUrl = candidate;
+					HellcraftMod.LOGGER.info("Players joining through a tunnel get the Hellcraft pack from GitHub: {}", candidate);
+					return;
+				} catch (Exception e) {
+					HellcraftMod.LOGGER.debug("Could not fetch {}", candidate, e);
+				}
+			}
+			HellcraftMod.LOGGER.warn("Could not find {} on GitHub; players who can't reach port {} won't get the pack",
+					file, HellConfig.get().musicPackPort);
+		}, "Hellcraft pack mirror");
+		fetch.setDaemon(true);
+		fetch.start();
 	}
 
 	/** Copies every assets/hellcraft file shipped in the mod jar into the pack. */
@@ -294,6 +390,7 @@ public final class MusicPack {
 		for (Path file : files) {
 			String relative = root.get().relativize(file).toString().replace('\\', '/');
 			put(out, "assets/" + HellcraftMod.MOD_ID + "/" + relative, Files.readAllBytes(file));
+			LOCAL_ASSETS.add("assets/" + HellcraftMod.MOD_ID + "/" + relative);
 		}
 		return files.size();
 	}
