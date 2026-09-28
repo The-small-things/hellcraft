@@ -3,21 +3,6 @@
   "category": "equipment",
   "key": {
     "S": "minecraft:diamond_hoe",
-    "H": {
-      "fabric:type": "fabric:components",
-      "base": "minecraft:fermented_spider_eye",
-      "components": {
-        "minecraft:custom_data": {
-          "hellcraft": "heart"
-        },
-        "minecraft:item_model": "hellcraft:blood_heart",
-        "minecraft:item_name": {
-          "text": "Blood Heart",
-          "color": "dark_red",
-          "bold": true
-        }
-      }
-    },
     "F": {
       "fabric:type": "fabric:components",
       "base": "minecraft:red_dye",
@@ -34,8 +19,8 @@
     }
   },
   "pattern": [
-    "HFH",
-    " S ",
+    "FFF",
+    "FSF",
     " F "
   ],
   "result": {
@@ -53,22 +38,32 @@
       },
       "minecraft:lore": [
         {
-          "text": "Each hit spends 1 Blood Fragment: cleaves everything",
+          "text": "Charged hits cleave everything within 3 blocks for 4.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "within 3 blocks for 5 damage.",
+          "text": "Blood Art, Harvest: reap everything within 5 blocks",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Oath: cleaves within 5 blocks for 12, slows and drags them in.",
+          "text": "for 12, slowing them and dragging them in.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.",
+          "text": "Blood Oath: every hit is a Harvest.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Right-click at full blood: its Blood Art. Hits and kills fill it.",
+          "color": "red",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath = sneak + right-click: costs 3\u2764 of health, lasts 30 s.",
           "color": "red",
           "italic": false
         }

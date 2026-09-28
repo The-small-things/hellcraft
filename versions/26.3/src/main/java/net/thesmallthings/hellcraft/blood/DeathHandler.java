@@ -140,6 +140,7 @@ public final class DeathHandler {
 		if (killer == null) {
 			return;
 		}
+		HellWeapons.onKill(killer, entity);
 		if (LuciferManager.isLucifer(entity)) {
 			// the fight hands out its own rewards
 			return;
@@ -165,7 +166,7 @@ public final class DeathHandler {
 		}
 		int depth = depthAt(level, entity);
 		HellConfig config = HellConfig.get();
-		double chance = config.fragmentChanceBase + config.fragmentChancePerDepth * depth;
+		double chance = (config.fragmentChanceBase + config.fragmentChancePerDepth * depth) * HellWeapons.fragmentMultiplier(killer);
 		if (level.getRandom().nextDouble() < chance) {
 			entity.spawnAtLocation(level, BloodItems.fragment(1));
 		}

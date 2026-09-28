@@ -172,6 +172,7 @@ public final class BloodItems {
 	private static void refresh(Container container) {
 		for (int i = 0; i < container.getContainerSize(); i++) {
 			ItemStack stack = container.getItem(i);
+			HellWeapons.refresh(stack);
 			if (!isBlood(stack)) {
 				continue;
 			}

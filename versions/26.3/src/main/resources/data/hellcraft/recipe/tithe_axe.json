@@ -3,25 +3,25 @@
   "category": "equipment",
   "key": {
     "S": "minecraft:diamond_axe",
-    "H": {
+    "F": {
       "fabric:type": "fabric:components",
-      "base": "minecraft:fermented_spider_eye",
+      "base": "minecraft:red_dye",
       "components": {
         "minecraft:custom_data": {
-          "hellcraft": "heart"
+          "hellcraft": "fragment"
         },
-        "minecraft:item_model": "hellcraft:blood_heart",
+        "minecraft:item_model": "hellcraft:blood_fragment",
         "minecraft:item_name": {
-          "text": "Blood Heart",
-          "color": "dark_red",
-          "bold": true
+          "text": "Blood Fragment",
+          "color": "red"
         }
       }
     }
   },
   "pattern": [
-    "H H",
-    " S "
+    "FFF",
+    "FSF",
+    " F "
   ],
   "result": {
     "id": "minecraft:diamond_axe",
@@ -38,12 +38,17 @@
       },
       "minecraft:lore": [
         {
-          "text": "Right-click: pay 3 Blood Fragments for a Blood Frenzy",
+          "text": "The tithe: kills with it drop Blood Fragments twice as often.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "(Strength and Speed for 15 s).",
+          "text": "Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "for 15 s.",
           "color": "gray",
           "italic": false
         },
@@ -53,7 +58,12 @@
           "italic": false
         },
         {
-          "text": "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.",
+          "text": "Right-click at full blood: its Blood Art. Hits and kills fill it.",
+          "color": "red",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath = sneak + right-click: costs 3\u2764 of health, lasts 30 s.",
           "color": "red",
           "italic": false
         }

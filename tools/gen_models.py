@@ -323,18 +323,24 @@ FRAGMENT = {"fabric:type": "fabric:components", "base": "minecraft:red_dye", "co
     "minecraft:item_model": "hellcraft:blood_fragment",
     "minecraft:item_name": {"text": "Blood Fragment", "color": "red"},
 }}
-OATH_LINE = "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s."
+# the last two lore lines of every weapon (red)
+WEAPON_FOOTER = ["Right-click at full blood: its Blood Art. Hits and kills fill it.",
+                 "Blood Oath = sneak + right-click: costs 3❤ of health, lasts 30 s."]
 WEAPONS = [
-    ("bloodletter", "Bloodletter", "minecraft:iron_sword", "rare", ["FHF", " S "],
-     ["Each hit spends 1 Blood Fragment: +4 damage and bleeding.",
-      "Blood Oath: +10 damage, deep bleeding, each hit heals 1❤."]),
-    ("reaper_of_minos", "Reaper of Minos", "minecraft:diamond_hoe", "epic", ["HFH", " S ", " F "],
-     ["Each hit spends 1 Blood Fragment: cleaves everything",
-      "within 3 blocks for 5 damage.",
-      "Blood Oath: cleaves within 5 blocks for 12, slows and drags them in."]),
-    ("tithe_axe", "Tithe Axe", "minecraft:diamond_axe", "epic", ["H H", " S "],
-     ["Right-click: pay 3 Blood Fragments for a Blood Frenzy",
-      "(Strength and Speed for 15 s).",
+    ("bloodletter", "Bloodletter", "minecraft:iron_sword", "rare", [" F ", "FSF", " F "],
+     ["Charged hits bleed your foe and heal you.",
+      "Blood Art, Exsanguinate: lunge forward, cutting everything",
+      "in your path (8 damage, deep bleeding, heals you).",
+      "Blood Oath: +10 damage, and every hit heals 1❤."]),
+    ("reaper_of_minos", "Reaper of Minos", "minecraft:diamond_hoe", "epic", ["FFF", "FSF", " F "],
+     ["Charged hits cleave everything within 3 blocks for 4.",
+      "Blood Art, Harvest: reap everything within 5 blocks",
+      "for 12, slowing them and dragging them in.",
+      "Blood Oath: every hit is a Harvest."]),
+    ("tithe_axe", "Tithe Axe", "minecraft:diamond_axe", "epic", ["FFF", "FSF", " F "],
+     ["The tithe: kills with it drop Blood Fragments twice as often.",
+      "Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
+      "for 15 s.",
       "Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤."]),
 ]
 
@@ -346,10 +352,10 @@ ARMOUR_LORE = [
     "and Resistance under a Blood Oath.",
 ]
 ARMOUR = [
-    ("blood_helmet", "Blood Helm", "minecraft:diamond_helmet", "head", ["FHF", " A "]),
-    ("blood_chestplate", "Blood Cuirass", "minecraft:diamond_chestplate", "chest", ["HFH", " A "]),
-    ("blood_leggings", "Blood Greaves", "minecraft:diamond_leggings", "legs", ["HFH", " A "]),
-    ("blood_boots", "Blood Sabatons", "minecraft:diamond_boots", "feet", ["FHF", " A "]),
+    ("blood_helmet", "Blood Helm", "minecraft:diamond_helmet", "head", [" F ", "FAF", " F "]),
+    ("blood_chestplate", "Blood Cuirass", "minecraft:diamond_chestplate", "chest", [" F ", "FAF", " F "]),
+    ("blood_leggings", "Blood Greaves", "minecraft:diamond_leggings", "legs", [" F ", "FAF", " F "]),
+    ("blood_boots", "Blood Sabatons", "minecraft:diamond_boots", "feet", [" F ", "FAF", " F "]),
 ]
 
 
@@ -365,7 +371,7 @@ def armour_recipes():
         }
         write(os.path.join(DATA, "recipe", aid + ".json"), {
             "type": "minecraft:crafting_shaped", "category": "equipment",
-            "key": {"A": base, "H": HEART, "F": FRAGMENT}, "pattern": pattern,
+            "key": {"A": base, "F": FRAGMENT}, "pattern": pattern,
             "result": {"id": base, "components": components}})
     # how the armour looks when worn (textures/entity/equipment/<layer>/blood.png)
     write(os.path.join(ASSETS, "equipment", "blood.json"), {"layers": {
@@ -381,7 +387,7 @@ def recipes():
             "minecraft:item_model": "hellcraft:" + wid,
             "minecraft:item_name": {"text": title, "color": "dark_red", "bold": True},
             "minecraft:lore": [{"text": line, "color": "gray", "italic": False} for line in lore]
-                              + [{"text": OATH_LINE, "color": "red", "italic": False}],
+                              + [{"text": line, "color": "red", "italic": False} for line in WEAPON_FOOTER],
             "minecraft:rarity": rarity,
         }
         if wid == "reaper_of_minos":

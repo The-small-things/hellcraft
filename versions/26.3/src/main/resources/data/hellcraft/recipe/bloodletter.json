@@ -3,21 +3,6 @@
   "category": "equipment",
   "key": {
     "S": "minecraft:iron_sword",
-    "H": {
-      "fabric:type": "fabric:components",
-      "base": "minecraft:fermented_spider_eye",
-      "components": {
-        "minecraft:custom_data": {
-          "hellcraft": "heart"
-        },
-        "minecraft:item_model": "hellcraft:blood_heart",
-        "minecraft:item_name": {
-          "text": "Blood Heart",
-          "color": "dark_red",
-          "bold": true
-        }
-      }
-    },
     "F": {
       "fabric:type": "fabric:components",
       "base": "minecraft:red_dye",
@@ -34,8 +19,9 @@
     }
   },
   "pattern": [
-    "FHF",
-    " S "
+    " F ",
+    "FSF",
+    " F "
   ],
   "result": {
     "id": "minecraft:iron_sword",
@@ -52,17 +38,32 @@
       },
       "minecraft:lore": [
         {
-          "text": "Each hit spends 1 Blood Fragment: +4 damage and bleeding.",
+          "text": "Charged hits bleed your foe and heal you.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Oath: +10 damage, deep bleeding, each hit heals 1\u2764.",
+          "text": "Blood Art, Exsanguinate: lunge forward, cutting everything",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.",
+          "text": "in your path (8 damage, deep bleeding, heals you).",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath: +10 damage, and every hit heals 1\u2764.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Right-click at full blood: its Blood Art. Hits and kills fill it.",
+          "color": "red",
+          "italic": false
+        },
+        {
+          "text": "Blood Oath = sneak + right-click: costs 3\u2764 of health, lasts 30 s.",
           "color": "red",
           "italic": false
         }

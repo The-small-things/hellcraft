@@ -9,7 +9,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import java.util.List;
 
 /**
- * Checks at startup that real Blood Hearts and Fragments still fit Hellcraft's recipes. The recipes
+ * Checks at startup that real Blood Fragments (and Hearts, if any recipe asks for them) still fit Hellcraft's recipes. The recipes
  * (written by tools/gen_models.py) name the items' components exactly, so the recipe book can show
  * them properly; this catches any drift between that JSON and {@link BloodItems}.
  */

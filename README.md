@@ -76,6 +76,12 @@ The world is a disc 12,000 blocks across, with the world border at radius 6000. 
 
 At the bottom of the world waits **Lucifer** (see [below](#lucifer)).
 
+**Supplies (26.3).** The Dark Wood is where pilgrims get ready: villages (plains and taiga, with farms, fletchers and librarians) and wandering traders are found there as well as in Limbo. Sugar cane grows by the water in the Dark Wood, the Acheron, Limbo, Gluttony and the Styx, and the Acheron's banks have sand. Loot worth the detour:
+- **Virgil's Rests** ([below](#virgils-rests-263)): a supply chest at every circle's way in
+- **Ruined Blood Altars** (twice as common as before): arrows, books, a Vigil Candle, sometimes an enchanted book
+- **Heretics' tombs**: one in four hides a chest of forbidden books (enchanted books of level 15-30, paper, lapis, bottles o' enchanting)
+- **Circle guardians**: 2 Blood Hearts, fragments, a Soul Anchor, 2 level-30 enchanted books and more
+
 Some other rules of Hell:
 - It is always dusk, so monsters never burn.
 - Beds explode and respawn anchors don't work.
@@ -118,15 +124,16 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 ### Hell weapons (26.3)
 
-Three vanilla tools, reforged with blood at a crafting table. They're in everyone's recipe book. Each has **two prices for power**:
-- **Blood Fragments** are spent automatically, one per empowered hit, for a modest boost. Only fully charged swings spend blood, so spam-clicking doesn't waste any. With none in your inventory, the weapon hits like its plain base item.
-- **Blood Oath**: sneak and right-click (in the air or at a block) to give up **one max heart, forever**, for **60 seconds of full power**. Nobody gets that heart. An oath is refused if it would leave you below 4 hearts, so it can never make you a ghost.
+Three vanilla tools, reforged with Blood Fragments at a crafting table. They're in everyone's recipe book, and swinging them costs nothing:
+- **Passive**: every fully charged hit does something extra (below).
+- **Blood charge**: charged hits on monsters (and players) add 5%, kills add 20%. The action bar shows the meter, and the weapon glows when it's full. **Right-click at 100%** to unleash its **Blood Art**. You lose the charge when you die.
+- **Blood Oath**: sneak and right-click (in the air or at a block) to pay **3 hearts of health** (not max hearts) for a full charge and **30 seconds of full power**. It needs more than 4 hearts of health, and your blood takes 3 minutes to recover before the next oath.
 
-| Weapon | Recipe | Blood Fragments | Blood Oath |
-|---|---|---|---|
-| **Bloodletter** (sword) | iron sword, 1 Blood Heart, 2 Blood Fragments | +4 damage and 3 s of bleeding (Wither) | +10 damage, deep bleeding, each hit heals you 1❤ |
-| **Reaper of Minos** (scythe) | diamond hoe, 2 Blood Hearts, 2 Blood Fragments | cleaves every monster within 3 blocks of the target for 5 damage | cleaves monsters within 5 blocks for 12, slows them and drags them toward you |
-| **Tithe Axe** | diamond axe, 2 Blood Hearts | right-click: pay 3 fragments for a 15 s **Blood Frenzy** (Strength, Speed; 30 s cooldown) | Strength III, Speed II, Resistance, hits heal 1❤ |
+| Weapon | Recipe | Passive (charged hits) | Blood Art (right-click at full charge) | Blood Oath |
+|---|---|---|---|---|
+| **Bloodletter** (sword) | iron sword + 4 Blood Fragments | 3 s of bleeding (Wither), heals you ½❤ | **Exsanguinate**: lunge 6 blocks, cutting everything in your path for 8 with deep bleeding, healing 1❤ per foe | +10 damage, deep bleeding, each hit heals you 1❤ |
+| **Reaper of Minos** (scythe) | diamond hoe + 6 Blood Fragments | cleaves everything within 3 blocks of the target for 4 | **Harvest**: everything within 5 blocks takes 12, slowed and dragged toward you | every hit is a Harvest around the target |
+| **Tithe Axe** | diamond axe + 6 Blood Fragments | kills drop Blood Fragments twice as often | **Blood Frenzy**: Strength II, Speed II and Haste II for 15 s | Strength III, Speed II, Resistance, hits heal 1❤ |
 
 The Reaper's cleave never touches villagers, pets, the mount you're riding, or players you couldn't hit anyway (PvP off, same team).
 
@@ -134,13 +141,11 @@ The Reaper's cleave never touches villagers, pets, the mount you're riding, or p
 
 ### Blood armour (26.3)
 
-Four pieces of diamond armour reforged with blood at a crafting table. They're in everyone's recipe book:
-- Helm and Sabatons: the diamond piece plus 1 Blood Heart and 2 Blood Fragments.
-- Cuirass and Greaves: the diamond piece plus 2 Blood Hearts and 1 Blood Fragment.
+Four pieces of diamond armour reforged with blood at a crafting table. They're in everyone's recipe book: each is the diamond piece plus 4 Blood Fragments.
 
 They protect like diamond, look like crimson plate with bone rivets and burning eye slits (from the resource pack), and work as a set:
 - **2 or more pieces:** your melee hits heal you 5% of the damage they deal.
-- **All 4:** 10%, plus a **Blood Rush** (Regeneration II for 5 s) when you drop below 3 hearts of health, once a minute. A Blood Oath also gives you Resistance for its full minute.
+- **All 4:** 10%, plus a **Blood Rush** (Regeneration II for 5 s) when you drop below 3 hearts of health, once a minute. A Blood Oath also gives you Resistance while it lasts.
 
 `/hellcraft givearmour <player>` hands out a set for testing.
 

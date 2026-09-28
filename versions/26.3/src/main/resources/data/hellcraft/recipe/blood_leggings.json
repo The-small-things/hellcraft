@@ -3,21 +3,6 @@
   "category": "equipment",
   "key": {
     "A": "minecraft:diamond_leggings",
-    "H": {
-      "fabric:type": "fabric:components",
-      "base": "minecraft:fermented_spider_eye",
-      "components": {
-        "minecraft:custom_data": {
-          "hellcraft": "heart"
-        },
-        "minecraft:item_model": "hellcraft:blood_heart",
-        "minecraft:item_name": {
-          "text": "Blood Heart",
-          "color": "dark_red",
-          "bold": true
-        }
-      }
-    },
     "F": {
       "fabric:type": "fabric:components",
       "base": "minecraft:red_dye",
@@ -34,8 +19,9 @@
     }
   },
   "pattern": [
-    "HFH",
-    " A "
+    " F ",
+    "FAF",
+    " F "
   ],
   "result": {
     "id": "minecraft:diamond_leggings",

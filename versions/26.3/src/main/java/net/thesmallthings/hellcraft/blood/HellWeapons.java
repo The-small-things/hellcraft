@@ -27,6 +27,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.util.Feedback;
@@ -40,12 +41,14 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Hell weapons: vanilla tools reforged with blood (recipes in data/hellcraft/recipe), each with two
- * prices for power:
+ * Hell weapons: vanilla tools reforged with Blood Fragments (recipes in data/hellcraft/recipe). They cost
+ * nothing to swing:
  * <ul>
- *     <li><b>Blood Fragments</b>, spent from the inventory automatically, for a modest boost;</li>
- *     <li>a <b>Blood Oath</b> (sneak + right-click): one of your hearts, forever, for a minute of great
- *     power. Never below {@link #OATH_MIN_HEARTS} hearts, so an oath can't make you a ghost.</li>
+ *     <li>a <b>passive</b> on every fully charged hit (bleeding and healing, a cleave, a richer tithe);</li>
+ *     <li><b>blood charge</b>: hits and kills fill it, and a right-click at 100% unleashes the weapon's
+ *     <b>Blood Art</b>;</li>
+ *     <li>a <b>Blood Oath</b> (sneak + right-click): pay 3 hearts of health now for a full charge and 30 s of
+ *     the weapon's full power. Never below {@link #OATH_MIN_HEALTH} health, and a cooldown of 3 minutes.</li>
  * </ul>
  */
 public final class HellWeapons {
@@ -53,23 +56,30 @@ public final class HellWeapons {
 	}
 
 	public static final String KIND = "weapon";
-	public static final int OATH_MIN_HEARTS = 4;
-	private static final int OATH_TICKS = 60 * 20;
+	public static final float OATH_MIN_HEALTH = 8.0f;
+	private static final float OATH_PRICE = 6.0f;
+	private static final int OATH_TICKS = 30 * 20;
+	private static final int OATH_COOLDOWN = 180 * 20;
+	private static final int FULL = 100;
+	private static final int PER_HIT = 5;
+	private static final int PER_KILL = 20;
 	private static final int FRENZY_TICKS = 15 * 20;
-	private static final int FRENZY_COOLDOWN = 30 * 20;
-	private static final int FRENZY_COST = 3;
 
 	public enum Weapon {
 		BLOODLETTER("bloodletter", "Bloodletter", Items.IRON_SWORD, Rarity.RARE, List.of(
-				"Each hit spends 1 Blood Fragment: +4 damage and bleeding.",
-				"Blood Oath: +10 damage, deep bleeding, each hit heals 1❤.")),
+				"Charged hits bleed your foe and heal you.",
+				"Blood Art, Exsanguinate: lunge forward, cutting everything",
+				"in your path (8 damage, deep bleeding, heals you).",
+				"Blood Oath: +10 damage, and every hit heals 1❤.")),
 		REAPER("reaper_of_minos", "Reaper of Minos", Items.DIAMOND_HOE, Rarity.EPIC, List.of(
-				"Each hit spends 1 Blood Fragment: cleaves everything",
-				"within 3 blocks for 5 damage.",
-				"Blood Oath: cleaves within 5 blocks for 12, slows and drags them in.")),
+				"Charged hits cleave everything within 3 blocks for 4.",
+				"Blood Art, Harvest: reap everything within 5 blocks",
+				"for 12, slowing them and dragging them in.",
+				"Blood Oath: every hit is a Harvest.")),
 		TITHE_AXE("tithe_axe", "Tithe Axe", Items.DIAMOND_AXE, Rarity.EPIC, List.of(
-				"Right-click: pay " + FRENZY_COST + " Blood Fragments for a Blood Frenzy",
-				"(Strength and Speed for 15 s).",
+				"The tithe: kills with it drop Blood Fragments twice as often.",
+				"Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
+				"for 15 s.",
 				"Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤."));
 
 		public final String id;
@@ -99,13 +109,18 @@ public final class HellWeapons {
 
 	/** Players under a Blood Oath: UUID -> game time it ends. */
 	private static final Map<UUID, Long> OATHS = new HashMap<>();
-	private static final Map<UUID, Long> FRENZY_READY = new HashMap<>();
+	private static final Map<UUID, Long> OATH_READY = new HashMap<>();
+	/** Blood charge, 0-100, per player (spilled when they die). */
+	private static final Map<UUID, Integer> CHARGE = new HashMap<>();
 	/** Set while bonus damage is being dealt, so it doesn't trigger itself. */
 	private static boolean striking;
 
 	public static void register() {
 		ServerLivingEntityEvents.AFTER_DAMAGE.register(HellWeapons::afterDamage);
-		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> OATHS.remove(entity.getUUID()));
+		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+			OATHS.remove(entity.getUUID());
+			CHARGE.remove(entity.getUUID());
+		});
 	}
 
 	// ------------------------------------------------------------------ the items
@@ -119,13 +134,7 @@ public final class HellWeapons {
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		stack.set(DataComponents.ITEM_MODEL, HellcraftMod.id(weapon.id));
 		stack.set(DataComponents.ITEM_NAME, Component.literal(weapon.title).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		List<Component> lore = new ArrayList<>();
-		for (String line : weapon.lore) {
-			lore.add(Component.literal(line).withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)));
-		}
-		lore.add(Component.literal("Blood Oath = sneak + right-click: costs 1 max heart, lasts 60 s.")
-				.withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)));
-		stack.set(DataComponents.LORE, new ItemLore(lore));
+		stack.set(DataComponents.LORE, lore(weapon));
 		stack.set(DataComponents.RARITY, weapon.rarity);
 		if (weapon == Weapon.REAPER) {
 			// a scythe, not a garden tool: heavy and slow
@@ -137,6 +146,29 @@ public final class HellWeapons {
 					.build());
 		}
 		return stack;
+	}
+
+	static ItemLore lore(Weapon weapon) {
+		List<Component> lore = new ArrayList<>();
+		for (String line : weapon.lore) {
+			lore.add(Component.literal(line).withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)));
+		}
+		lore.add(Component.literal("Right-click at full blood: its Blood Art. Hits and kills fill it.")
+				.withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)));
+		lore.add(Component.literal("Blood Oath = sneak + right-click: costs 3❤ of health, lasts 30 s.")
+				.withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)));
+		return new ItemLore(lore);
+	}
+
+	/** Brings a weapon made by an older version up to date (its lore), keeping everything else. */
+	static void refresh(ItemStack stack) {
+		Weapon weapon = of(stack);
+		if (weapon != null) {
+			ItemLore lore = lore(weapon);
+			if (!lore.equals(stack.get(DataComponents.LORE))) {
+				stack.set(DataComponents.LORE, lore);
+			}
+		}
 	}
 
 	@Nullable
@@ -152,14 +184,71 @@ public final class HellWeapons {
 		return KIND.equals(tag.getStringOr(BloodItems.KEY, "")) ? Weapon.byId(tag.getStringOr(KIND, "")) : null;
 	}
 
-	// ------------------------------------------------------------------ oaths and frenzies
+	// ------------------------------------------------------------------ blood charge
+
+	public static int charge(ServerPlayer player) {
+		return CHARGE.getOrDefault(player.getUUID(), 0);
+	}
+
+	private static void addCharge(ServerPlayer player, int amount) {
+		int before = charge(player);
+		if (before >= FULL) {
+			return;
+		}
+		int now = Math.min(FULL, before + amount);
+		CHARGE.put(player.getUUID(), now);
+		if (now >= FULL) {
+			ItemStack held = player.getMainHandItem();
+			if (of(held) != null) {
+				held.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+			}
+			player.sendOverlayMessage(Component.literal("Your weapon brims with blood: right-click to unleash its Blood Art!")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.6f, 1.8f);
+		} else {
+			player.sendOverlayMessage(meter(now));
+		}
+	}
+
+	private static Component meter(int charge) {
+		int bars = charge / 10;
+		return Component.literal("Blood ").withStyle(ChatFormatting.DARK_RED)
+				.append(Component.literal("▮".repeat(bars)).withStyle(ChatFormatting.RED))
+				.append(Component.literal("▮".repeat(10 - bars)).withStyle(ChatFormatting.DARK_GRAY))
+				.append(Component.literal(" " + charge + "%").withStyle(ChatFormatting.GRAY));
+	}
+
+	/** Spends a full charge; the glow leaves every blood weapon the player carries. */
+	private static void spend(ServerPlayer player) {
+		CHARGE.put(player.getUUID(), 0);
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack s = player.getInventory().getItem(i);
+			if (of(s) != null && s.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE)) {
+				s.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+			}
+		}
+	}
+
+	/** A monster killed by a player: blood for the weapon in their hand. */
+	public static void onKill(ServerPlayer killer, LivingEntity victim) {
+		if (victim instanceof Enemy && of(killer.getMainHandItem()) != null) {
+			addCharge(killer, PER_KILL);
+		}
+	}
+
+	/** Kills with the Tithe Axe drop Blood Fragments twice as often. */
+	public static double fragmentMultiplier(ServerPlayer killer) {
+		return of(killer.getMainHandItem()) == Weapon.TITHE_AXE ? 2.0 : 1.0;
+	}
+
+	// ------------------------------------------------------------------ oaths and arts
 
 	public static boolean underOath(ServerPlayer player) {
 		Long until = OATHS.get(player.getUUID());
 		return until != null && until > player.level().getGameTime();
 	}
 
-	/** Right-click with a hell weapon in the main hand (air). Returns PASS if the click isn't ours. */
+	/** Right-click with a hell weapon in the main hand. Returns PASS if the click isn't ours. */
 	public static InteractionResult use(ServerPlayer player, ItemStack stack) {
 		Weapon weapon = of(stack);
 		if (weapon == null) {
@@ -169,11 +258,18 @@ public final class HellWeapons {
 			swearOath(player, weapon);
 			return InteractionResult.SUCCESS;
 		}
-		if (weapon == Weapon.TITHE_AXE) {
-			frenzy(player);
-			return InteractionResult.SUCCESS;
+		if (charge(player) < FULL) {
+			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills fill it)").withStyle(ChatFormatting.DARK_GRAY)));
+			// a sword or axe still blocks/strips as usual when there's no art to use
+			return InteractionResult.PASS;
 		}
-		return InteractionResult.PASS;
+		spend(player);
+		switch (weapon) {
+			case BLOODLETTER -> exsanguinate(player);
+			case REAPER -> harvest(player, 5.0, 12.0f);
+			case TITHE_AXE -> frenzy(player);
+		}
+		return InteractionResult.SUCCESS;
 	}
 
 	private static void swearOath(ServerPlayer player, Weapon weapon) {
@@ -184,16 +280,23 @@ public final class HellWeapons {
 			player.sendOverlayMessage(Component.literal("Your Blood Oath still burns (" + left + " s).").withStyle(ChatFormatting.RED));
 			return;
 		}
-		HellState.Soul soul = Hearts.soul(player);
-		if (soul.hearts - 1 < OATH_MIN_HEARTS) {
-			player.sendSystemMessage(Component.literal("You have too little blood left to swear an oath (it needs you to keep "
-					+ OATH_MIN_HEARTS + "❤).").withStyle(ChatFormatting.RED));
+		long ready = OATH_READY.getOrDefault(player.getUUID(), 0L);
+		if (now < ready) {
+			player.sendOverlayMessage(Component.literal("Your blood has not yet recovered from the last oath (" + (ready - now + 19) / 20 + " s).")
+					.withStyle(ChatFormatting.GRAY));
 			return;
 		}
-		Hearts.add(player, -1);
+		if (player.getHealth() <= OATH_MIN_HEALTH) {
+			player.sendOverlayMessage(Component.literal("You have too little blood left to swear an oath (it needs more than 4❤ of health).")
+					.withStyle(ChatFormatting.RED));
+			return;
+		}
+		player.setHealth(player.getHealth() - OATH_PRICE);
 		OATHS.put(player.getUUID(), now + OATH_TICKS);
-		player.sendSystemMessage(Component.literal("You swore a Blood Oath on the " + weapon.title + ": −1 ❤ (now "
-				+ Hearts.soul(player).hearts + "). Its full power is yours for 60 s.").withStyle(ChatFormatting.DARK_RED));
+		OATH_READY.put(player.getUUID(), now + OATH_COOLDOWN);
+		addCharge(player, FULL);
+		player.sendSystemMessage(Component.literal("You swore a Blood Oath on the " + weapon.title + ": its full power is yours for 30 s.")
+				.withStyle(ChatFormatting.DARK_RED));
 		if (BloodArmour.worn(player) >= 4) {
 			// a full set of blood armour hardens under an oath
 			player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, OATH_TICKS, 0));
@@ -207,23 +310,62 @@ public final class HellWeapons {
 		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 0.6f, 1.6f);
 	}
 
+	/** Bloodletter: a lunge that cuts through everything in its path. */
+	private static void exsanguinate(ServerPlayer player) {
+		ServerLevel level = player.level();
+		Vec3 look = player.getLookAngle().multiply(1, 0, 1);
+		if (look.lengthSqr() < 1.0e-4) {
+			look = new Vec3(1, 0, 0);
+		}
+		look = look.normalize();
+		Vec3 from = player.position();
+		Vec3 to = from.add(look.scale(6.0));
+		player.push(look.x * 1.8, 0.2, look.z * 1.8);
+		Feedback.syncMotion(player);
+		int cut = 0;
+		striking = true;
+		try {
+			for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(from, to).inflate(1.5, 1.5, 1.5), e -> canReap(player, e))) {
+				if (distanceToSegment(e.position(), from, to) <= 1.8) {
+					e.setInvulnerableTime(0);
+					e.hurtServer(level, level.damageSources().playerAttack(player), 8.0f);
+					e.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
+					level.sendParticles(BloodAltar.BLOOD, e.getX(), e.getY() + e.getBbHeight() * 0.6, e.getZ(), 16, 0.3, 0.3, 0.3, 0.0);
+					cut++;
+				}
+			}
+		} finally {
+			striking = false;
+		}
+		player.heal(2.0f * cut);
+		for (int i = 0; i <= 6; i++) {
+			Vec3 p = from.add(look.scale(i));
+			level.sendParticles(ParticleTypes.SWEEP_ATTACK, p.x, p.y + 1.0, p.z, 1, 0, 0, 0, 0);
+		}
+		level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.2f, 0.5f);
+		player.sendOverlayMessage(Component.literal("Exsanguinate!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+	}
+
+	private static double distanceToSegment(Vec3 p, Vec3 a, Vec3 b) {
+		Vec3 ab = b.subtract(a);
+		double t = Math.max(0, Math.min(1, p.subtract(a).dot(ab) / Math.max(1.0e-6, ab.lengthSqr())));
+		return p.distanceTo(a.add(ab.scale(t)));
+	}
+
+	/** Reaper: everything around you. */
+	private static void harvest(ServerPlayer player, double radius, float damage) {
+		cleave(player.level(), player, player, radius, damage, true);
+		player.sendOverlayMessage(Component.literal("Harvest!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+	}
+
+	/** Tithe Axe. */
 	private static void frenzy(ServerPlayer player) {
 		ServerLevel level = player.level();
-		long now = level.getGameTime();
-		long ready = FRENZY_READY.getOrDefault(player.getUUID(), 0L);
-		if (now < ready) {
-			player.sendOverlayMessage(Component.literal("The axe is still sated (" + (ready - now + 19) / 20 + " s).").withStyle(ChatFormatting.GRAY));
-			return;
-		}
-		if (!BloodItems.takeFragments(player, FRENZY_COST)) {
-			player.sendOverlayMessage(Component.literal("A Blood Frenzy costs " + FRENZY_COST + " Blood Fragments.").withStyle(ChatFormatting.RED));
-			return;
-		}
-		FRENZY_READY.put(player.getUUID(), now + FRENZY_COOLDOWN);
-		player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, FRENZY_TICKS, 0));
-		player.addEffect(new MobEffectInstance(MobEffects.SPEED, FRENZY_TICKS, 0));
+		player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, FRENZY_TICKS, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.SPEED, FRENZY_TICKS, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.HASTE, FRENZY_TICKS, 1));
 		player.sendOverlayMessage(Component.literal("Blood Frenzy!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		bleed(level, player, 20);
+		bleed(level, player, 30);
 		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.PLAYERS, 0.8f, 1.2f);
 	}
 
@@ -239,8 +381,14 @@ public final class HellWeapons {
 		}
 		ServerLevel level = player.level();
 		boolean oath = underOath(player);
-		// blood is only spent on a (nearly) fully charged swing, so spam-clicking doesn't drain fragments
+		// the passives (and the charge) only come from a (nearly) fully charged swing, so spam-clicking gains nothing
 		boolean charged = base >= 0.9f * (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+		if (!charged && !oath) {
+			return;
+		}
+		if (target instanceof Enemy || target instanceof Player) {
+			addCharge(player, PER_HIT);
+		}
 		striking = true;
 		try {
 			switch (weapon) {
@@ -249,16 +397,17 @@ public final class HellWeapons {
 						extra(level, player, target, 10.0f);
 						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
 						player.heal(2.0f);
-					} else if (charged && spendFragment(player)) {
-						extra(level, player, target, 4.0f);
+					} else {
 						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0));
+						player.heal(1.0f);
+						bleed(level, target, 6);
 					}
 				}
 				case REAPER -> {
 					if (oath) {
 						cleave(level, player, target, 5.0, 12.0f, true);
-					} else if (charged && spendFragment(player)) {
-						cleave(level, player, target, 3.0, 5.0f, false);
+					} else {
+						cleave(level, player, target, 3.0, 4.0f, false);
 					}
 				}
 				case TITHE_AXE -> {
@@ -272,16 +421,6 @@ public final class HellWeapons {
 		}
 	}
 
-	private static boolean spendFragment(ServerPlayer player) {
-		if (BloodItems.takeFragments(player, 1)) {
-			bleed(player.level(), player, 6);
-			return true;
-		}
-		player.sendOverlayMessage(Component.literal("No blood to spend: carry Blood Fragments, or sneak + right-click to swear a Blood Oath.")
-				.withStyle(ChatFormatting.GRAY));
-		return false;
-	}
-
 	/** Extra damage on top of the swing (credited to the player, so kills still count for lifesteal). */
 	private static void extra(ServerLevel level, ServerPlayer player, LivingEntity target, float amount) {
 		if (!target.isAlive()) {
@@ -292,12 +431,16 @@ public final class HellWeapons {
 		level.sendParticles(BloodAltar.BLOOD, target.getX(), target.getY() + target.getBbHeight() * 0.6, target.getZ(), 12, 0.3, 0.3, 0.3, 0.0);
 	}
 
-	private static void cleave(ServerLevel level, ServerPlayer player, LivingEntity target, double radius, float damage, boolean drag) {
-		// the scythe only reaps the damned: monsters, and players you could hit anyway (PvP and team rules)
-		List<LivingEntity> hit = level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(radius),
-				e -> e != player && e != target && e.isAlive() && !e.isSpectator() && e != player.getVehicle()
-						&& e.distanceTo(target) <= radius
-						&& (e instanceof Enemy || e instanceof Player other && player.canHarmPlayer(other)));
+	/** The scythe only reaps the damned: monsters, and players you could hit anyway (PvP and team rules). */
+	private static boolean canReap(ServerPlayer player, LivingEntity e) {
+		return e != player && e.isAlive() && !e.isSpectator() && e != player.getVehicle()
+				&& (e instanceof Enemy || e instanceof Player other && player.canHarmPlayer(other));
+	}
+
+	/** Hits everything within {@code radius} of {@code center} (but not the center itself, unless it's the player). */
+	private static void cleave(ServerLevel level, ServerPlayer player, LivingEntity center, double radius, float damage, boolean drag) {
+		List<LivingEntity> hit = level.getEntitiesOfClass(LivingEntity.class, center.getBoundingBox().inflate(radius),
+				e -> e != center && canReap(player, e) && e.distanceTo(center) <= radius);
 		for (LivingEntity e : hit) {
 			e.setInvulnerableTime(0);
 			e.hurtServer(level, level.damageSources().playerAttack(player), damage);
@@ -311,13 +454,13 @@ public final class HellWeapons {
 				}
 			}
 		}
-		level.sendParticles(ParticleTypes.SWEEP_ATTACK, target.getX(), target.getY() + 1.0, target.getZ(), (int) (radius * 3), radius / 2, 0.2, radius / 2, 0.0);
-		level.sendParticles(BloodAltar.BLOOD, target.getX(), target.getY() + 0.8, target.getZ(), 30, radius / 2, 0.4, radius / 2, 0.0);
-		level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.0f, 0.6f);
+		level.sendParticles(ParticleTypes.SWEEP_ATTACK, center.getX(), center.getY() + 1.0, center.getZ(), (int) (radius * 3), radius / 2, 0.2, radius / 2, 0.0);
+		level.sendParticles(BloodAltar.BLOOD, center.getX(), center.getY() + 0.8, center.getZ(), 30, radius / 2, 0.4, radius / 2, 0.0);
+		level.playSound(null, center.getX(), center.getY(), center.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.0f, 0.6f);
 	}
 
-	/** A burst of blood from the one paying the price. */
-	private static void bleed(ServerLevel level, ServerPlayer player, int count) {
-		level.sendParticles(BloodAltar.BLOOD, player.getX(), player.getY() + 1.0, player.getZ(), count, 0.3, 0.5, 0.3, 0.0);
+	/** A burst of blood. */
+	private static void bleed(ServerLevel level, LivingEntity entity, int count) {
+		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1.0, entity.getZ(), count, 0.3, 0.5, 0.3, 0.0);
 	}
 }

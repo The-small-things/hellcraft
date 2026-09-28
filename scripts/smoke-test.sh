@@ -183,6 +183,9 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "$drop" | grep -q "Dropped" || { echo "Loot table hellcraft:$t does not work"; exit 1; }
   done
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
+  cane=$(rcon "place feature hellcraft:sugar_cane $rx $((ry + 1)) $rz" || true)
+  echo "Sugar cane: $cane"
+  echo "$cane" | grep -qiE "unknown|can't find|invalid" && { echo "The sugar cane feature is missing"; exit 1; }
   list=$(rcon "hellcraft shrine list")
   echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi
@@ -307,7 +310,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
   grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
-  grep -qE "Hellcraft recipes: 8; take Blood Hearts: 7; take Blood Fragments: 6(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
+  grep -qE "Hellcraft recipes: 8; take Blood Hearts: 0; take Blood Fragments: 7(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
   grep -q "Hellcraft config updated from version 0 to 2" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }

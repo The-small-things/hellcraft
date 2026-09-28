@@ -85,11 +85,13 @@ public final class GuideBook {
 				"",
 				"/circle shows the nearest."));
 		pages.add(page("HELL WEAPONS",
-				"Craft the Bloodletter, the Reaper of Minos and the Tithe Axe from Blood Hearts and Fragments.",
+				"Forge the Bloodletter, the Reaper of Minos and the Tithe Axe from Blood Fragments.",
 				"",
-				"Sneak + right-click to swear a Blood Oath: one max heart, forever, for 60 s of full power."));
+				"Hits and kills fill them with blood. Right-click when full: its Blood Art.",
+				"",
+				"Sneak + right-click: a Blood Oath, 3 hearts of health for 30 s of full power."));
 		pages.add(page("BLOOD ARMOUR",
-				"Reforge diamond armour with Blood Hearts and Fragments.",
+				"Reforge diamond armour with 4 Blood Fragments a piece.",
 				"",
 				"Two pieces: your blows heal you. All four: more, a Blood Rush near death, and Resistance under an oath."));
 		pages.add(page("THE GUARDIANS",
@@ -99,7 +101,11 @@ public final class GuideBook {
 				"Plutus (3125)",
 				"Minotaur (1600)",
 				"Geryon (1480)",
-				"Each is worth " + c.guardianHearts + " Blood Hearts."));
+				"Each is worth " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
+		pages.add(page("SUPPLIES",
+				"Villages and traders wait in the Dark Wood and Limbo. Sugar cane grows by the water.",
+				"",
+				"Ruined altars, Virgil's Rests and the heretics' tombs hide arrows, books and enchantments."));
 		pages.add(page("THE SPINES",
 				"On the rim of the Well of Giants, four great spines reach down to Lucifer's pit: north, east, south and west.",
 				"",
