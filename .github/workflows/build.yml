@@ -111,7 +111,7 @@ jobs:
   # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click.
   release:
     needs: [build, smoke-test, build-26, smoke-test-26]
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -160,3 +160,44 @@ jobs:
             - Then **Create New World → World tab → World Type: Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
 
             **Servers:** use `hellcraft-${{ steps.tag.outputs.ver }}-mc<version>.jar` with the Docker setup in the README (set `VERSION` to the same Minecraft version; 26.3 needs the `java25` image).
+
+  # A pushed version tag (v1.0.0, ...) publishes a real, non-pre-release release with the same downloads.
+  stable-release:
+    needs: [build, smoke-test, build-26, smoke-test-26]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !endsWith(github.ref, '-test')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: hellcraft-singleplayer
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: hellcraft-singleplayer-26.3
+          path: dist
+      - id: ver
+        run: echo "ver=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Hellcraft ${{ steps.ver.outputs.ver }}
+          prerelease: false
+          make_latest: true
+          files: dist/*
+          body: |
+            **Hellcraft ${{ steps.ver.outputs.ver }}**: the overworld becomes Dante's Inferno, and blood is fuel.
+
+            - Nine circles of Hell from the Dark Wood to Judecca, with torments, tougher monsters the deeper you go, and lifesteal hearts (Hell is full: run out and you become a ghost until friends revive you at a Blood Altar).
+            - The three-phase Lucifer fight at the bottom of the world.
+            - **26.3 adds:** hell weapons and blood armour, five circle guardians (Minos, Cerberus, Plutus, the Minotaur, Geryon), the four Emperor's Spines, Lucifer's own models and the Emperor frozen in the ice, the climb out to Purgatory, ghost powers, the Pilgrim's Guide, and circle ambience.
+
+            There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
+
+            **Play in single player**
+            - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.ver.outputs.ver }}-mc<version>.mrpack` and import it (it installs Fabric + Fabric API for you).
+            - **Official Minecraft Launcher:** download `hellcraft-${{ steps.ver.outputs.ver }}-mc<version>-mods.zip` and follow `INSTALL.txt`.
+            - Then **Create New World → World tab → World Type: Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
+
+            **Servers:** use `hellcraft-${{ steps.ver.outputs.ver }}-mc<version>.jar` with the Docker setup in the README (set `VERSION` to the same Minecraft version; 26.3 needs the `java25` image).
