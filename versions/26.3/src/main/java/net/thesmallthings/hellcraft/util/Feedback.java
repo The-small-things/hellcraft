@@ -39,4 +39,18 @@ public final class Feedback {
 			player.connection.send(new ClientboundSetEntityMotionPacket(player));
 		}
 	}
+
+	/** Shoves an entity horizontally away from a point (and a little up), and makes sure clients see it. */
+	public static void pushAway(Entity entity, double fromX, double fromZ, double strength) {
+		double dx = entity.getX() - fromX;
+		double dz = entity.getZ() - fromZ;
+		double len = Math.sqrt(dx * dx + dz * dz);
+		if (len < 1.0e-3) {
+			dx = 1;
+			dz = 0;
+			len = 1;
+		}
+		entity.push(dx / len * strength, 0.35, dz / len * strength);
+		syncMotion(entity);
+	}
 }

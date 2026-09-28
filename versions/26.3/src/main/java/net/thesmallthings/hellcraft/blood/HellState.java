@@ -39,6 +39,8 @@ public class HellState extends SavedData {
 	public boolean purgatoryBuilt;
 	/** Guardian id -> game time it wakes again after being slain. */
 	public final Map<String, Long> guardianNext = new HashMap<>();
+	/** Virgil's Rests already built: site id -> the height of its floor. */
+	public final Map<String, Integer> shrines = new HashMap<>();
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
 	public boolean arenaSealed;
 	public int luciferDefeats;
@@ -189,6 +191,9 @@ public class HellState extends SavedData {
 		CompoundTag guardians = new CompoundTag();
 		guardianNext.forEach(guardians::putLong);
 		tag.put("guardianNext", guardians);
+		CompoundTag shrineTag = new CompoundTag();
+		shrines.forEach(shrineTag::putInt);
+		tag.put("shrines", shrineTag);
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
@@ -237,6 +242,10 @@ public class HellState extends SavedData {
 		CompoundTag guardians = tag.getCompoundOrEmpty("guardianNext");
 		for (String key : guardians.keySet()) {
 			state.guardianNext.put(key, guardians.getLongOr(key, 0L));
+		}
+		CompoundTag shrineTag = tag.getCompoundOrEmpty("shrines");
+		for (String key : shrineTag.keySet()) {
+			state.shrines.put(key, shrineTag.getIntOr(key, 0));
 		}
 		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);

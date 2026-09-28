@@ -23,7 +23,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.LevelData;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
-import net.thesmallthings.hellcraft.util.Signs;
 
 import java.util.List;
 
@@ -115,20 +114,8 @@ public final class Landmarks {
 	}
 
 	private static void buildAltar(ServerLevel level, int x, int ground, int z) {
-		clear(level, x - 2, ground, z - 2, x + 2, ground + 4, z + 2);
-		for (int dx = -2; dx <= 2; dx++) {
-			for (int dz = -2; dz <= 2; dz++) {
-				boolean core = Math.abs(dx) <= 1 && Math.abs(dz) <= 1;
-				set(level, x + dx, ground - 1, z + dz, core ? Blocks.CRYING_OBSIDIAN.defaultBlockState() : Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState());
-			}
-		}
-		set(level, x, ground, z, Blocks.RESPAWN_ANCHOR.defaultBlockState());
-		for (int[] c : new int[][]{{-2, -2}, {-2, 2}, {2, -2}, {2, 2}}) {
-			set(level, x + c[0], ground, z + c[1], Blocks.POLISHED_BLACKSTONE_BRICK_WALL.defaultBlockState());
-			set(level, x + c[0], ground + 1, z + c[1], Blocks.SOUL_LANTERN.defaultBlockState());
-		}
 		// on the edge facing the spawn: what the altar is for
-		Signs.place(level, new BlockPos(x, ground, z - 2), 8, List.of(
+		Shrines.buildAltar(level, x, ground, z, List.of(
 				Component.literal("BLOOD ALTAR").withStyle(ChatFormatting.BOLD),
 				Component.literal("Right-click with"),
 				Component.literal("an empty hand to"),

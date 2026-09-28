@@ -75,6 +75,45 @@
         },
         {
           "type": "minecraft:item",
+          "name": "minecraft:arrow",
+          "weight": 8,
+          "modifier": {
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 6,
+              "max": 16
+            },
+            "type": "minecraft:set_count"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 6,
+          "modifier": {
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 3
+            },
+            "type": "minecraft:set_count"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:sugar_cane",
+          "weight": 5,
+          "modifier": {
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 2,
+              "max": 6
+            },
+            "type": "minecraft:set_count"
+          }
+        },
+        {
+          "type": "minecraft:item",
           "name": "minecraft:name_tag",
           "weight": 4
         },
@@ -101,6 +140,7 @@
                 "minecraft:custom_data": {
                   "hellcraft": "fragment"
                 },
+                "minecraft:item_model": "hellcraft:blood_fragment",
                 "minecraft:item_name": {
                   "text": "Blood Fragment",
                   "color": "red"
@@ -112,12 +152,57 @@
                     "italic": false
                   }
                 ],
-                "minecraft:rarity": "uncommon",
-                "minecraft:item_model": "hellcraft:blood_fragment"
+                "minecraft:rarity": "uncommon"
               },
               "type": "minecraft:set_components"
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:poisonous_potato",
+          "weight": 4,
+          "modifier": {
+            "components": {
+              "!minecraft:food": {},
+              "!minecraft:consumable": {},
+              "minecraft:custom_data": {
+                "hellcraft": "vigil"
+              },
+              "minecraft:item_model": "hellcraft:vigil_candle",
+              "minecraft:item_name": {
+                "text": "Vigil Candle",
+                "color": "aqua"
+              },
+              "minecraft:lore": [
+                {
+                  "text": "Right-click to light it where you stand.",
+                  "color": "gray",
+                  "italic": false
+                },
+                {
+                  "text": "Your next death wakes you beside it, once.",
+                  "color": "gray",
+                  "italic": false
+                }
+              ],
+              "minecraft:rarity": "uncommon"
+            },
+            "type": "minecraft:set_components"
+          }
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 4,
+          "modifier": {
+            "levels": {
+              "type": "minecraft:uniform",
+              "min": 5,
+              "max": 20
+            },
+            "type": "minecraft:enchant_with_levels"
+          }
         }
       ]
     }

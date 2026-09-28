@@ -25,6 +25,7 @@ import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
 import net.thesmallthings.hellcraft.world.Purgatory;
+import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,11 +62,13 @@ public class HellcraftMod implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(RecipeCheck::run);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
+		ServerEntityEvents.ENTITY_LOAD.register(Shrines::onLoad);
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			CircleHazards.tick(server);
 			LuciferManager.tick(server);
 			GuardianManager.tick(server);
 			Spine.tick(server);
+			Shrines.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);
 			Purgatory.tick(server);

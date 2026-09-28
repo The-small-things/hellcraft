@@ -70,7 +70,7 @@ The world is a disc 12,000 blocks across, with the world border at radius 6000. 
 | Walls of Dis | – | A ring wall of blackstone brick with burning towers and 4 gates. | – |
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
 | **Violence** | VII | Phlegethon, a river of lava with crimson banks, where skeleton "centaurs" ride skeleton horses. The Wood of the Suicides (leafless trees, webs). The Burning Sands. | Breaking the trees hurts you. Fire rains on the sands. |
-| **Fraud** | VIII | Malebolge: 10 concentric ditches crossed by 12 stone bridges. The ditch floors are pitch (magma and lava deltas) or blight (sculk). Ancient cities lie below. | 25% of monsters are invisible |
+| **Fraud** | VIII | Malebolge: 10 concentric ditches crossed by 12 stone bridges. The ditch floors are pitch (magma and lava deltas) or blight (sculk). Ancient cities lie below. | 25% of monsters are invisible (26.3: 20%, never creepers, and they give themselves away with a swirl of particles) |
 | Well of Giants | – | Nimrod, Ephialtes and Antaeus stand chained. | – |
 | **Treachery** | IX | Cocytus, a frozen lake of packed and blue ice. At the very centre is Lucifer's pit. | Freezing cold that gets worse toward the centre. Leather armor protects, as in vanilla. |
 
@@ -80,7 +80,7 @@ Some other rules of Hell:
 - It is always dusk, so monsters never burn.
 - Beds explode and respawn anchors don't work.
 - Monsters get tougher the deeper you go.
-- The monster mob cap is 1.75× vanilla.
+- The monster mob cap is 1.75× vanilla on 1.21.1 (vanilla on 26.3, where the circles are gentler; see [the torments](#the-torments-of-the-circles)).
 - Titles announce each circle as you enter it.
 - Each circle has its own ambience (26.3): the wasps of the Vestibule, Charon's oar on the Acheron, the sighs of Limbo, the hurricane of Lust, rain in Gluttony, chinking gold in Greed, the bubbling Styx, crackling tombs, boiling blood, far-off screams in Malebolge and creaking ice in Cocytus. Turn it off with `circleAmbience`.
 
@@ -274,6 +274,32 @@ His dialogue appears in chat, each line with a low voice cue.
 
 Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
 
+## Virgil's Rests (26.3)
+
+Where the ramps come down into each circle (Limbo, Lust, Gluttony, Greed, the Styx, Heresy, the Wood of Suicides, the Burning Sands and Malebolge) stands a **Virgil's Rest**, 26 in all:
+- a free **Blood Altar** to bind your respawn to
+- soul campfires, and a **supply chest** with arrows, food, torches, books, paper, sugar cane, Vigil Candles and enchanted books. Deeper Rests hold better loot: diamonds, Fire Resistance, and sometimes a Soul Anchor.
+- a safe ring (20 blocks): no circle torments you there, monsters don't spawn, and any that wander in are thrown back out.
+
+They are built the first time someone comes near. Entering a circle, and `/circle`, tell you where the nearest Rest is.
+
+## The torments of the circles
+
+Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all.
+
+| Circle | Torment | Counter (26.3) |
+|---|---|---|
+| Lust | The wind throws you about under the open sky | Sneak, or get under a roof |
+| Gluttony | The rain brings Hunger | A roof |
+| Greed | Gold you carry slows you | Stash it (ender chest) |
+| Wrath | The Styx's water weakens you | A boat, or the banks |
+| Heresy | The tombs' smoke brings Darkness now and then | A roof |
+| Burning Sands | Fire rains on the open sand (you see it falling first) | A roof, water, Fire Resistance, or leaving the sand |
+| Fraud | Some monsters are invisible | Watch for their swirl of particles (never creepers) |
+| Treachery | The ice freezes you | Leather armour, or a campfire, fire or lava within 4 blocks |
+
+The monsters are tougher the deeper you go (+3% health per circle on 26.3). On 26.3 the Vestibule, Acheron and Limbo also have sparse, solitary spawns like the Dark Wood, and the monster cap is vanilla's.
+
 ## Hell is full
 
 When you lose your last heart you are not banned. *There is no more room in hell*:
@@ -315,6 +341,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian (26.3) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
+| `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft where` | op | Debug: geometry at your position |

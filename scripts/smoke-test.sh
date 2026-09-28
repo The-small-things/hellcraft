@@ -162,6 +162,29 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   guide=$(rcon "guide" || true)
   echo "$guide"
   echo "$guide" | grep -qi "unknown or incomplete command" && { echo "/guide is not registered"; exit 1; }
+
+  # Virgil's Rests: build Limbo's three, then check the altar, the safe ring and every new loot table
+  rests=$(rcon "hellcraft shrine build limbo")
+  echo "$rests"
+  echo "$rests" | grep -q "Built 3 Virgil's Rest" || { echo "Limbo's Virgil's Rests were not built"; exit 1; }
+  read -r _ _ rx ry rz <<< "$(echo "$rests" | grep -oE 'limbo_1 at -?[0-9]+ -?[0-9]+ -?[0-9]+')"
+  rcon "forceload add $rx $rz" > /dev/null
+  altar=$(rcon "execute if block $rx $ry $rz minecraft:respawn_anchor" || true)
+  echo "Rest altar at $rx $ry $rz: $altar"
+  echo "$altar" | grep -q "Test passed" || { echo "No Blood Altar at Virgil's Rest limbo_1"; exit 1; }
+  rcon "summon minecraft:zombie $rx $((ry + 1)) $((rz + 3))"
+  sleep 2
+  zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=$rx,y=$ry,z=$rz,distance=..10]" || true)
+  echo "Zombie at the Rest: $zombie"
+  echo "$zombie" | grep -q "Test failed" || { echo "A monster survived inside Virgil's Rest"; exit 1; }
+  for t in chests/virgils_rest_upper chests/virgils_rest_middle chests/virgils_rest_lower chests/heretic_tomb chests/altar_ruin gameplay/guardian_spoils; do
+    drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:$t" || true)
+    echo "$t: $drop"
+    echo "$drop" | grep -q "Dropped" || { echo "Loot table hellcraft:$t does not work"; exit 1; }
+  done
+  rcon "kill @e[type=minecraft:item]" > /dev/null || true
+  list=$(rcon "hellcraft shrine list")
+  echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi
 
 if [ "$MC_VERSION" != "1.21.1" ]; then
@@ -286,6 +309,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
   grep -qE "Hellcraft recipes: 8; take Blood Hearts: 7; take Blood Fragments: 6(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
   grep -q "Hellcraft config updated from version 0 to 2" "$LOG" || { echo "Config migration was not logged"; fail=1; }
+  [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do

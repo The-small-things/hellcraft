@@ -48,11 +48,13 @@ public final class MobEmpowerment {
 			health.addPermanentModifier(new AttributeModifier(HellcraftMod.id("depth"), bonus, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
 			monster.setHealth(monster.getMaxHealth());
 		}
-		if (circle == Circle.WRATH) {
+		if (circle == Circle.WRATH && monster.getType() == EntityTypes.DROWNED) {
+			// the wrathful, fighting beneath the Styx
 			monster.addEffect(new MobEffectInstance(MobEffects.STRENGTH, MobEffectInstance.INFINITE_DURATION, 0, false, false));
 		}
-		if (circle == Circle.FRAUD && level.getRandom().nextFloat() < 0.25f) {
-			monster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, MobEffectInstance.INFINITE_DURATION, 0, false, false));
+		if (circle == Circle.FRAUD && monster.getType() != EntityTypes.CREEPER && level.getRandom().nextFloat() < 0.2f) {
+			// the frauds hide, but their swirl of particles gives them away
+			monster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, MobEffectInstance.INFINITE_DURATION, 0, false, true));
 		}
 		if (zone == Zone.PHLEGETHON && monster instanceof Skeleton skeleton && !skeleton.isPassenger() && level.getRandom().nextFloat() < 0.4f) {
 			// centaurs patrol the river of blood; mount them next tick, not while the chunk is loading

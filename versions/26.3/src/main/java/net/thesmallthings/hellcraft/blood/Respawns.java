@@ -154,8 +154,7 @@ public final class Respawns {
 		level.sendParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1, player.getZ(), 30, 1.5, 0.8, 1.5, 0.05);
 		level.playSound(null, player.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 0.8f, 1.3f);
 		for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(6.0), e -> e instanceof Enemy && e.isAlive())) {
-			e.knockback(1.6, player.getX() - e.getX(), player.getZ() - e.getZ());
-			Feedback.syncMotion(e);
+			Feedback.pushAway(e, player.getX(), player.getZ(), 1.6);
 		}
 	}
 }

@@ -37,6 +37,9 @@ import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Purgatory;
+import net.thesmallthings.hellcraft.world.ShrineSites;
+import org.jetbrains.annotations.Nullable;
+import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
 
@@ -196,6 +199,18 @@ public final class HellCommands {
 												"hatred", "impotence", "ignorance", "wingbeat", "mouths"}, builder))
 										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
 				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
+				.then(Commands.literal("shrine")
+						.then(Commands.literal("list").executes(ctx -> {
+							List<String> lines = Shrines.list(ctx.getSource().getServer());
+							lines.forEach(l -> ctx.getSource().sendSuccess(() -> Component.literal(l), false));
+							return lines.size();
+						}))
+						.then(Commands.literal("build")
+								.executes(ctx -> buildShrines(ctx.getSource(), null))
+								.then(Commands.argument("circle", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(ShrineSites.all().stream()
+												.map(s -> s.zone().name().toLowerCase(java.util.Locale.ROOT)).distinct(), builder))
+										.executes(ctx -> buildShrines(ctx.getSource(), StringArgumentType.getString(ctx, "circle"))))))
 				.then(Commands.literal("purgatory").executes(ctx -> {
 					ServerPlayer p = ctx.getSource().getPlayerOrException();
 					BlockPos shore = Purgatory.shore();
@@ -242,6 +257,12 @@ public final class HellCommands {
 		return amount;
 	}
 
+	private static int buildShrines(CommandSourceStack source, @Nullable String circle) {
+		List<String> built = Shrines.buildAll(source.getServer(), circle);
+		source.sendSuccess(() -> Component.literal("Built " + built.size() + " Virgil's Rest(s)" + (built.isEmpty() ? "" : ": " + String.join("; ", built))), true);
+		return built.size();
+	}
+
 	private static int circle(ServerPlayer player) {
 		if (!HellWorldgen.isInferno(player.level())) {
 			player.sendSystemMessage(Component.literal("You are beyond the circles of the Inferno.").withStyle(ChatFormatting.GRAY));
@@ -253,6 +274,10 @@ public final class HellCommands {
 		player.sendSystemMessage(Component.literal("\"" + circle.quote() + "\"").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		int dist = (int) Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ());
 		player.sendSystemMessage(Component.literal(dist + " blocks from the bottom of Hell.").withStyle(ChatFormatting.DARK_GRAY));
+		Component rest = Shrines.nearestLine(player);
+		if (rest != null) {
+			player.sendSystemMessage(rest);
+		}
 		return circle.depth();
 	}
 

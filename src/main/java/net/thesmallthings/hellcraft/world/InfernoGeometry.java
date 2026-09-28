@@ -475,6 +475,25 @@ public final class InfernoGeometry {
 
 	// ------------------------------------------------------------------ helpers
 
+	/** Angles (radians) of the ramps cut into a band's inner edge: the ways down into the band below it. */
+	public static double[] rampAngles(Zone zone) {
+		for (int i = 0; i < BANDS.length; i++) {
+			if (BANDS[i].zone == zone) {
+				double[] angles = new double[BANDS[i].ramps];
+				for (int k = 0; k < angles.length; k++) {
+					angles[k] = rampAngle(i, k);
+				}
+				return angles;
+			}
+		}
+		return new double[0];
+	}
+
+	/** Radius of a zone's band where it begins (its outer edge). */
+	public static double outerRadius(Zone zone) {
+		return bandFor(zone).outer;
+	}
+
 	static Band bandFor(Zone zone) {
 		for (Band b : BANDS) {
 			if (b.zone == zone) {

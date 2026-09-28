@@ -12,11 +12,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.Ghosts;
@@ -26,6 +29,7 @@ import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
 
@@ -79,7 +83,7 @@ public final class CircleHazards {
 			if (config.circleTitles) {
 				announce(player, zone);
 			}
-			if (!config.circleHazards || player.isSpectator() || player.isCreative() || warded(player) || Spine.shelters(player)) {
+			if (!config.circleHazards || player.isSpectator() || player.isCreative() || warded(player) || Spine.shelters(player) || Shrines.shelters(player)) {
 				continue;
 			}
 			torment(player, level, zone);
@@ -100,6 +104,10 @@ public final class CircleHazards {
 			player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(circle.title()).withStyle(ChatFormatting.DARK_RED)));
 			player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(circle.tagline()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 			player.sendSystemMessage(Component.literal("\"" + circle.quote() + "\"").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			Component rest = circle.depth() > 0 ? Shrines.nearestLine(player) : null;
+			if (rest != null) {
+				player.sendSystemMessage(rest);
+			}
 		}
 		String region = InfernoGeometry.regionName(player.getX(), player.getZ());
 		if (!region.equals(LAST_REGION.put(id, region)) && !region.equals(circle.title())) {
@@ -107,58 +115,125 @@ public final class CircleHazards {
 		}
 	}
 
+	/**
+	 * Every torment has a counter (cover, water, sneaking, heat...), and the first time one touches a
+	 * player they are told what it is.
+	 */
 	private static void torment(ServerPlayer player, ServerLevel level, Zone zone) {
 		BlockPos pos = player.blockPosition();
 		boolean open = level.canSeeSky(pos.above());
-		switch (zone.circle()) {
+		Circle circle = zone.circle();
+		switch (circle) {
 			case LUST -> {
-				// the infernal hurricane that never rests
-				if (open && level.getRandom().nextFloat() < 0.35f) {
+				// the infernal hurricane that never rests; sneaking braces you against it
+				if (open && !player.isShiftKeyDown() && level.getRandom().nextFloat() < 0.25f) {
 					double r = Math.max(1.0, Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ()));
 					Vec3 tangent = new Vec3(-player.getZ() / r, 0, player.getX() / r);
 					double strength = 0.6 + level.getRandom().nextDouble() * 0.8;
 					player.push(tangent.x * strength, 0.25 + level.getRandom().nextDouble() * 0.3, tangent.z * strength);
 					Feedback.syncMotion(player);
 					level.playSound(null, pos, SoundEvents.ELYTRA_FLYING, SoundSource.WEATHER, 0.4f, 1.6f);
+					hint(player, circle, "The wind can't move you while you sneak, or under a roof.");
 				}
 			}
-			case GLUTTONY -> player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
+			case GLUTTONY -> {
+				// the cold, heavy rain: a roof keeps it off
+				if (open) {
+					player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
+					hint(player, circle, "The rain of Gluttony brings hunger. Shelter under a roof.");
+				}
+			}
 			case GREED -> {
 				int weight = greedWeight(player);
 				if (weight >= 32) {
 					int amp = Math.min(2, weight / 64);
 					player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, amp, true, false, true));
+					hint(player, circle, "Gold weighs you down here. Stash it in an ender chest or leave it behind.");
 				}
 			}
 			case WRATH -> {
 				if (player.isInWater()) {
 					player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
 					player.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 60, 1, true, false, true));
+					hint(player, circle, "The Styx saps whoever wades in it. Take a boat, or keep to the banks.");
 				}
 			}
 			case HERESY -> {
-				if (level.getRandom().nextFloat() < 0.06f) {
+				if (open && level.getRandom().nextFloat() < 0.02f) {
 					player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 120, 0, true, false, true));
+					hint(player, circle, "The tombs' smoke darkens the open sky. Under a roof it can't reach you.");
 				}
 			}
 			case VIOLENCE -> {
-				if (zone == Zone.BURNING_SANDS && open && !player.hasEffect(MobEffects.FIRE_RESISTANCE)
-						&& level.getRandom().nextFloat() < 0.3f) {
-					// dilated flakes of fire, falling slowly
-					player.igniteForSeconds(3.0f);
+				if (zone == Zone.BURNING_SANDS) {
+					burningSands(player, level, pos, open);
 				}
 			}
 			case TREACHERY -> {
-				if (player.canFreeze()) {
+				if (nearHeat(level, pos)) {
+					// a fire keeps the cold of Cocytus away
+					player.setTicksFrozen(Math.max(0, player.getTicksFrozen() - 40));
+				} else if (player.canFreeze()) {
 					double depth = InfernoGeometry.treacheryDepth(player.getX(), player.getZ());
 					int add = 44 + (int) (depth * 60);
 					int cap = player.getTicksRequiredToFreeze() + 40;
 					player.setTicksFrozen(Math.min(cap, player.getTicksFrozen() + add));
+					hint(player, circle, "The ice freezes the living. Leather armour, or a campfire close by, keeps the cold away.");
 				}
 			}
 			default -> {
 			}
 		}
+	}
+
+	/** "Dilated flakes of fire, falling slowly": only on the open sand, never in water or under a roof. */
+	private static void burningSands(ServerPlayer player, ServerLevel level, BlockPos pos, boolean open) {
+		if (!open || player.isInWater() || player.hasEffect(MobEffects.FIRE_RESISTANCE) || !onSand(level, pos)) {
+			return;
+		}
+		// the flakes are seen falling before they land
+		level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 3.5, player.getZ(), 6, 1.2, 0.6, 1.2, 0.0);
+		level.sendParticles(ParticleTypes.FALLING_LAVA, player.getX(), player.getY() + 4.0, player.getZ(), 4, 1.5, 0.3, 1.5, 0.0);
+		if (level.getRandom().nextFloat() < 0.2f) {
+			player.igniteForSeconds(3.0f);
+			hint(player, Circle.VIOLENCE, "Fire rains on the open sand. A roof, water or Fire Resistance protects you.");
+		}
+	}
+
+	/** Standing on (or just above) the sand of the Burning Sands. */
+	private static boolean onSand(ServerLevel level, BlockPos pos) {
+		for (int dy = 1; dy <= 3; dy++) {
+			BlockState below = level.getBlockState(pos.below(dy));
+			if (below.isAir()) {
+				continue;
+			}
+			return below.is(BlockTags.SAND) || below.is(Blocks.SANDSTONE) || below.is(Blocks.RED_SANDSTONE) || below.is(Blocks.NETHERRACK);
+		}
+		return false;
+	}
+
+	/** A campfire, fire, lava or magma within 4 blocks. */
+	private static boolean nearHeat(ServerLevel level, BlockPos pos) {
+		for (BlockPos p : BlockPos.betweenClosed(pos.offset(-4, -2, -4), pos.offset(4, 2, 4))) {
+			BlockState b = level.getBlockState(p);
+			if (b.is(BlockTags.CAMPFIRES) || b.is(BlockTags.FIRE) || b.is(Blocks.LAVA) || b.is(Blocks.MAGMA_BLOCK)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** Tells a player, once per circle, how to escape its torment. */
+	private static void hint(ServerPlayer player, Circle circle, String text) {
+		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
+		int bit = 1 << circle.ordinal();
+		if (soul == null || (soul.hints & bit) != 0) {
+			return;
+		}
+		soul.hints |= bit;
+		HellState.get(player.level().getServer()).setDirty();
+		player.sendSystemMessage(Component.literal("Virgil: ").withStyle(ChatFormatting.GOLD)
+				.append(Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 	}
 
 	/** How much treasure a player is hauling, in "gold ingot equivalents". */

@@ -31,43 +31,44 @@
     },
     "minecraft:gameplay/natural_mob_spawns": {
       "argument": {
-        "spawn_costs": {},
+        "spawn_costs": {
+          "minecraft:skeleton": {
+            "charge": 0.7,
+            "energy_budget": 0.15
+          },
+          "minecraft:stray": {
+            "charge": 0.7,
+            "energy_budget": 0.15
+          },
+          "minecraft:zombie": {
+            "charge": 0.7,
+            "energy_budget": 0.15
+          },
+          "minecraft:enderman": {
+            "charge": 0.7,
+            "energy_budget": 0.15
+          }
+        },
         "spawns_by_category": {
           "monster": [
             {
               "type": "minecraft:skeleton",
-              "count": {
-                "type": "minecraft:uniform",
-                "min_inclusive": 1,
-                "max_inclusive": 4
-              },
+              "count": 1,
               "weight": 80
             },
             {
               "type": "minecraft:stray",
-              "count": {
-                "type": "minecraft:uniform",
-                "min_inclusive": 1,
-                "max_inclusive": 4
-              },
+              "count": 1,
               "weight": 60
             },
             {
               "type": "minecraft:zombie",
-              "count": {
-                "type": "minecraft:uniform",
-                "min_inclusive": 1,
-                "max_inclusive": 4
-              },
+              "count": 1,
               "weight": 30
             },
             {
               "type": "minecraft:enderman",
-              "count": {
-                "type": "minecraft:uniform",
-                "min_inclusive": 1,
-                "max_inclusive": 2
-              },
+              "count": 1,
               "weight": 20
             }
           ],
