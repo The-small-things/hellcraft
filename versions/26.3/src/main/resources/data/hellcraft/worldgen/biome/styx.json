@@ -165,7 +165,8 @@
       "minecraft:trees_swamp",
       "minecraft:brown_mushroom_swamp",
       "minecraft:patch_waterlily",
-      "minecraft:seagrass_swamp"
+      "minecraft:seagrass_swamp",
+      "hellcraft:sugar_cane"
     ],
     [
       "minecraft:freeze_top_layer"

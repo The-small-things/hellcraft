@@ -134,7 +134,8 @@
     ],
     [
       "minecraft:glow_lichen",
-      "minecraft:seagrass_river"
+      "minecraft:seagrass_river",
+      "hellcraft:sugar_cane"
     ],
     [
       "minecraft:freeze_top_layer"

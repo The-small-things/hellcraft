@@ -2,17 +2,25 @@ package net.thesmallthings.hellcraft.world.feature;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.thesmallthings.hellcraft.HellcraftMod;
 
 /** The open, burning sepulchres of the heretics (Inferno, Canto IX-X). */
 public record BurningTombFeature() implements Feature {
 	public static final BurningTombFeature INSTANCE = new BurningTombFeature();
 	public static final MapCodec<BurningTombFeature> CODEC = MapCodec.unit(INSTANCE);
+	public static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE, HellcraftMod.id("chests/heretic_tomb"));
 
 	@Override
 	public MapCodec<BurningTombFeature> codec() {
@@ -63,6 +71,14 @@ public record BurningTombFeature() implements Feature {
 			pos.setWithOffset(origin, dx, 0, dz);
 			if (level.getBlockState(pos).canBeReplaced()) {
 				level.setBlock(pos, Blocks.POLISHED_BLACKSTONE_BRICK_SLAB.defaultBlockState(), 2);
+			}
+		}
+		// one tomb in four keeps its heretic's forbidden books, in a chest at its foot
+		if (random.nextInt(4) == 0) {
+			pos.setWithOffset(origin, alongX ? length : 1, 0, alongX ? 1 : length);
+			if (level.getBlockState(pos).canBeReplaced() && level.getBlockState(pos.below()).isSolid()) {
+				level.setBlock(pos, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, alongX ? Direction.WEST : Direction.NORTH), 2);
+				RandomizableContainer.setBlockEntityLootTable(level, random, pos.immutable(), LOOT);
 			}
 		}
 		return true;

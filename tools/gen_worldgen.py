@@ -69,7 +69,7 @@ CANON = {
         "minecraft:patch_dead_bush_2", "minecraft:patch_dead_bush_badlands", "minecraft:patch_cactus_desert",
         "hellcraft:crimson_roots", "minecraft:brown_mushroom_normal", "minecraft:red_mushroom_normal",
         "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "minecraft:patch_berry_common",
-        "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river",
+        "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river", "hellcraft:sugar_cane",
     ],
     TOP: ["hellcraft:gate_wall", "minecraft:freeze_top_layer"],
 }
@@ -156,7 +156,7 @@ SURFACE = {
     "vestibule": layered(
         patches("coarse_dirt", (noise("minecraft:gravel", 0.1), "gravel"), (noise("minecraft:surface", 0.4), "tuff")),
         "gravel", "tuff"),
-    "acheron": layered(patches("gravel", (noise("minecraft:surface", 0.3), "clay")), "gravel", "tuff"),
+    "acheron": layered(patches("gravel", (noise("minecraft:surface", 0.3), "clay"), (noise("minecraft:gravel", 0.15), "sand")), "gravel", "tuff"),
     "limbo": layered(
         patches("grass_block", (noise("minecraft:calcite", 0.05), "calcite"), (noise("minecraft:surface", 0.5), "tuff")),
         "dirt", "calcite", steep="calcite"),
@@ -234,7 +234,8 @@ BIOMES = {
                     grass_color=0x3A5A2A, foliage_color=0x2A4A1A, grass_color_modifier="dark_forest"),
         sound=CAVE_MOOD, music="music.overworld.forest",
         features=["hellcraft:gate_wall", "minecraft:dark_forest_vegetation", "minecraft:patch_grass_forest", "minecraft:brown_mushroom_normal",
-                  "minecraft:red_mushroom_normal", "minecraft:patch_berry_common", "minecraft:ore_emerald", "minecraft:forest_rock"],
+                  "minecraft:red_mushroom_normal", "minecraft:patch_berry_common", "minecraft:ore_emerald", "minecraft:forest_rock",
+                  "hellcraft:sugar_cane"],
         monster=[spawn("zombie", 100), spawn("skeleton", 100), spawn("spider", 100), spawn("creeper", 80),
                  spawn("enderman", 10, 1, 2), spawn("witch", 5, 1, 1)],
         creature=[spawn("sheep", 12), spawn("pig", 10), spawn("chicken", 10), spawn("cow", 8), spawn("rabbit", 4, 2, 3),
@@ -254,7 +255,7 @@ BIOMES = {
         temp=0.5, rain=True, downfall=0.6,
         colors=dict(fog_color=0x3A4050, sky_color=0x202830, water_color=0x2A3040, water_fog_color=0x0A0C10),
         particle=("minecraft:ash", 0.005), sound=CAVE_MOOD, music="music.overworld.deep_dark",
-        features=["minecraft:seagrass_river"],
+        features=["minecraft:seagrass_river", "hellcraft:sugar_cane"],
         monster=[spawn("drowned", 100, 1, 3), spawn("zombie", 40)],
         water_creature=[spawn("squid", 2, 1, 2)],
     ),
@@ -263,7 +264,8 @@ BIOMES = {
         colors=dict(fog_color=0x8A8A86, sky_color=0x5A5A5A, water_color=0x6A7078, water_fog_color=0x1A1C20,
                     grass_color=0x8A9A7A, foliage_color=0x7A8A6A),
         particle=("minecraft:white_ash", 0.03), sound=CAVE_MOOD, music="music.overworld.meadow",
-        features=["minecraft:forest_rock", "hellcraft:limbo_birch", "minecraft:patch_grass_plain", "minecraft:flower_meadow"],
+        features=["minecraft:forest_rock", "hellcraft:limbo_birch", "minecraft:patch_grass_plain", "minecraft:flower_meadow",
+                  "hellcraft:sugar_cane"],
         monster=[spawn("skeleton", 80), spawn("stray", 60), spawn("zombie", 30), spawn("enderman", 20, 1, 2)],
         creature=[spawn("sheep", 12), spawn("cow", 8), spawn("horse", 5, 2, 4), spawn("rabbit", 6, 2, 3), spawn("chicken", 6)],
     ),
@@ -281,7 +283,7 @@ BIOMES = {
         colors=dict(fog_color=0x3A3020, sky_color=0x2A2418, water_color=0x4A3A20, water_fog_color=0x1A1408,
                     grass_color=0x5A5A2A, foliage_color=0x4A4A20, grass_color_modifier="swamp"),
         particle=("minecraft:mycelium", 0.02), sound=CAVE_MOOD, music="music.overworld.swamp",
-        features=["hellcraft:filth_pool", "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp"],
+        features=["hellcraft:filth_pool", "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "hellcraft:sugar_cane"],
         monster=[spawn("zombie", 100, 4, 6), spawn("slime", 80), spawn("hoglin", 40, 2, 4), spawn("husk", 40),
                  spawn("spider", 60), spawn("creeper", 60)],
         creature=[spawn("pig", 10, 2, 4)],
@@ -301,7 +303,7 @@ BIOMES = {
                     grass_color=0x2A3A20, foliage_color=0x2A3A1A, grass_color_modifier="swamp"),
         particle=("minecraft:ash", 0.01), sound=CAVE_MOOD, music="music.overworld.swamp",
         features=["hellcraft:dis_wall", "minecraft:trees_swamp", "minecraft:patch_waterlily", "minecraft:seagrass_swamp",
-                  "minecraft:brown_mushroom_swamp"],
+                  "minecraft:brown_mushroom_swamp", "hellcraft:sugar_cane"],
         monster=[spawn("drowned", 100, 2, 4), spawn("vindicator", 25, 1, 2), spawn("zombie", 60), spawn("witch", 10, 1, 1),
                  spawn("slime", 40)],
         creature=[spawn("frog", 6, 2, 4)],
@@ -453,10 +455,13 @@ def height_range(lo, hi):
             "height": {"type": "minecraft:uniform", "min_inclusive": {"absolute": lo}, "max_inclusive": {"absolute": hi}}}
 
 
-def random_patch(state, tries, xz, y, on=None):
+def random_patch(state, tries, xz, y, on=None, survive=False):
     predicates = [{"type": "minecraft:matching_blocks", "blocks": "minecraft:air"}]
     if on:
         predicates.append({"type": "minecraft:matching_blocks", "blocks": on, "offset": [0, -1, 0]})
+    if survive:
+        # only where the block could stand (sugar cane: beside water)
+        predicates.append({"type": "minecraft:would_survive", "state": state})
     return {"type": "minecraft:random_patch", "config": {
         "tries": tries, "xz_spread": xz, "y_spread": y,
         "feature": {"feature": {"type": "minecraft:simple_block",
@@ -500,6 +505,7 @@ CONFIGURED = {
     "crimson_roots": random_patch(block("crimson_roots"), 48, 6, 2, on="minecraft:crimson_nylium"),
     "surface_fire": random_patch(block("fire"), 48, 6, 2, on="minecraft:netherrack"),
     "surface_soul_fire": random_patch(block("soul_fire"), 48, 6, 2, on="minecraft:soul_soil"),
+    "sugar_cane": random_patch(block("sugar_cane", age="0"), 24, 5, 1, survive=True),
 }
 
 PLACED = {
@@ -507,7 +513,7 @@ PLACED = {
     "dis_wall": placed("hellcraft:dis_wall"),
     "gate_wall": placed("hellcraft:gate_wall"),
     "burning_tomb": placed("hellcraft:burning_tomb", rarity(3), IN_SQUARE, heightmap(), BIOME),
-    "altar_ruin": placed("hellcraft:altar_ruin", rarity(1200), IN_SQUARE, heightmap(), BIOME),
+    "altar_ruin": placed("hellcraft:altar_ruin", rarity(600), IN_SQUARE, heightmap(), BIOME),
     "boulder_blackstone": placed("hellcraft:boulder_blackstone", count(1), IN_SQUARE, heightmap(), BIOME),
     "boulder_crying_obsidian": placed("hellcraft:boulder_crying_obsidian", rarity(12), IN_SQUARE, heightmap(), BIOME),
     "boulder_packed_ice": placed("hellcraft:boulder_packed_ice", rarity(3), IN_SQUARE, heightmap(), BIOME),
@@ -529,6 +535,7 @@ PLACED = {
     "surface_delta": placed("minecraft:delta", count(6), IN_SQUARE, heightmap(), BIOME),
     "surface_basalt_columns": placed("minecraft:small_basalt_columns", rarity(2), IN_SQUARE, heightmap(), BIOME),
     "surface_sculk": placed("minecraft:sculk_patch_deep_dark", count(3), IN_SQUARE, heightmap(), BIOME),
+    "sugar_cane": placed("hellcraft:sugar_cane", count(8), IN_SQUARE, heightmap(), BIOME),
 }
 
 # --------------------------------------------------------------------------------------------
@@ -585,7 +592,9 @@ TAGS = {
     "has_structure/stronghold": ALL,
     "stronghold_biased_to": ["hellcraft:limbo", "hellcraft:greed", "hellcraft:heresy"],
     "has_structure/mineshaft": [b for b in ALL if b not in ("hellcraft:acheron", "hellcraft:phlegethon")],
-    "has_structure/village_plains": ["hellcraft:limbo"],
+    # the Dark Wood is where pilgrims get ready: villages with farms, fletchers and librarians
+    "has_structure/village_plains": ["hellcraft:limbo", "hellcraft:dark_wood"],
+    "has_structure/village_taiga": ["hellcraft:dark_wood"],
     "has_structure/trail_ruins": ["hellcraft:limbo"],
     "has_structure/ruined_portal_nether": ["hellcraft:heresy", "hellcraft:burning_sands"],
     "has_structure/bastion_remnant": ["hellcraft:greed"],
@@ -596,7 +605,7 @@ TAGS = {
     "allows_surface_slime_spawns": ["hellcraft:gluttony", "hellcraft:styx"],
     "without_patrol_spawns": ALL,
     "without_zombie_sieges": ALL,
-    "without_wandering_trader_spawns": [b for b in ALL if b != "hellcraft:limbo"],
+    "without_wandering_trader_spawns": [b for b in ALL if b not in ("hellcraft:limbo", "hellcraft:dark_wood")],
     "increased_fire_burnout": ["hellcraft:wood_of_suicides", "hellcraft:dark_wood"],
     "snow_golem_melts": ["hellcraft:heresy", "hellcraft:phlegethon", "hellcraft:burning_sands", "hellcraft:walls_of_dis",
                          "hellcraft:malebolge_pitch"],

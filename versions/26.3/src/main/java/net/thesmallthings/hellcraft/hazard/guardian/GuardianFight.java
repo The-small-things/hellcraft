@@ -223,6 +223,9 @@ public abstract class GuardianFight {
 		entity.spawnAtLocation(level, BloodItems.heart(HellConfig.get().guardianHearts));
 		entity.spawnAtLocation(level, BloodItems.fragment(3 + level.getRandom().nextInt(4)));
 		entity.spawnAtLocation(level, BloodItems.anchor(1));
+		// and its treasure: enchanted books and more (data/hellcraft/loot_table/gameplay/guardian_spoils.json)
+		level.getServer().getCommands().performPrefixedCommand(level.getServer().createCommandSourceStack().withLevel(level).withSuppressedOutput(),
+				String.format(java.util.Locale.ROOT, "loot spawn %.2f %.2f %.2f loot hellcraft:gameplay/guardian_spoils", entity.getX(), entity.getY() + 0.5, entity.getZ()));
 		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
 		List<String> names = new ArrayList<>();
 		for (UUID id : participants) {

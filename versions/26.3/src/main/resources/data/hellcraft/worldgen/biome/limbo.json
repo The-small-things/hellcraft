@@ -195,7 +195,8 @@
       "minecraft:forest_rock",
       "hellcraft:limbo_birch",
       "minecraft:patch_grass_plain",
-      "minecraft:flower_meadow"
+      "minecraft:flower_meadow",
+      "hellcraft:sugar_cane"
     ],
     [
       "minecraft:freeze_top_layer"
