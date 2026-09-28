@@ -54,11 +54,12 @@ public final class AltarMenu {
 				"Shields you from the torments of the circles",
 				"for " + config.wardMinutes + " minutes",
 				carried >= 1 ? "▶ Click to offer" : "✖ You carry no Blood Hearts"));
+		int bindCost = config.bindCostHearts;
 		container.setItem(BIND_SLOT, button(Items.RESPAWN_ANCHOR, "Bind your respawn", ChatFormatting.DARK_RED,
-				"Costs 1 Blood Heart",
+				bindCost == 0 ? "Free" : "Costs " + bindCost + " Blood Heart" + (bindCost == 1 ? "" : "s"),
 				"When you die you return to this altar",
 				"(beds explode in Hell)",
-				carried >= 1 ? "▶ Click to offer" : "✖ You carry no Blood Hearts"));
+				carried >= bindCost ? "▶ Click to bind" : "✖ Not enough Blood Hearts"));
 
 		List<Map.Entry<UUID, HellState.Soul>> ghosts = new ArrayList<>();
 		for (Map.Entry<UUID, HellState.Soul> e : HellState.get(level.getServer()).souls().entrySet()) {

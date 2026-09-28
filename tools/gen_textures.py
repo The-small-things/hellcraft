@@ -101,6 +101,47 @@ art("lucifers_bane", {"K": "07030c", "S": "2c1838", "s": "4a2a5c", "R": "a01010"
     ".......KK.......",
 ])
 
+# a votive candle of bone-white wax on an iron dish, burning with soul fire
+art("vigil_candle", {"K": "120c0a", "W": "efe6d2", "w": "c9bea4", "d": "8f846c", "F": "7fe8ff", "f": "2fb4d6",
+                     "c": "e8ffff", "I": "3c3c44", "i": "6a6a74", "R": "8c0000"}, [
+    "................",
+    ".......f........",
+    "......fFf.......",
+    "......FcF.......",
+    "......fFf.......",
+    ".......K........",
+    "......KWK.......",
+    ".....KWWwK......",
+    ".....KWWwK......",
+    ".....KWRwK......",
+    ".....KWWwK......",
+    ".....KWwdK......",
+    "....KKWwdKK.....",
+    "..KiiiiiiiiiK...",
+    "...KIIIIIIIK....",
+    "....KKKKKKK.....",
+])
+
+# a soul caught in an iron anchor, glowing blue
+art("soul_anchor", {"K": "0a0a10", "I": "4a4a58", "i": "8a8a9a", "S": "2fb4d6", "s": "7fe8ff", "c": "e8ffff"}, [
+    "......KKKK......",
+    ".....KiIIiK.....",
+    ".....KI..IK.....",
+    ".....KiIIiK.....",
+    "..KKKKKiIKKKKK..",
+    "..KiiiiiIiiiiK..",
+    "..KKKKKiIKKKKK..",
+    "......KiIK......",
+    "....KKKsSKKK....",
+    "...KsSSccSSsK...",
+    "...KSscssssSK...",
+    ".K..KSsssSSK..K.",
+    "KiK..KSSSSK..KiK",
+    "KiiK..KiIK..KiiK",
+    ".KiiKKiiIIKKiiK.",
+    "..KKKKKKKKKKKK..",
+])
+
 STEEL = {"K": "140a0a", "W": "d6d6de", "w": "9a9aa6", "R": "b01515", "r": "e03030", "G": "6b5a2a", "g": "c9a445",
          "H": "4a2615", "h": "7a4a2a", "B": "e2d8c4", "b": "a8997c"}
 

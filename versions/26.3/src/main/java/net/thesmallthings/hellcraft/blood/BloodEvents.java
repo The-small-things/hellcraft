@@ -35,6 +35,7 @@ public final class BloodEvents {
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> onRespawn(newPlayer, alive));
 		ServerPlayerEvents.JOIN.register(BloodEvents::onJoin);
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			Respawns.tick(server);
 			if (server.getTickCount() % 100 == 0) {
 				for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 					BloodItems.refresh(player);
@@ -105,6 +106,13 @@ public final class BloodEvents {
 					.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 			return true;
 		}
+		if (BloodItems.isVigil(stack)) {
+			return Respawns.lightVigil(player, stack);
+		}
+		if (BloodItems.isAnchor(stack)) {
+			player.sendOverlayMessage(Component.literal("Keep it with you: if you die, it brings you back where you fell.").withStyle(ChatFormatting.AQUA));
+			return false;
+		}
 		if (BloodItems.isFragment(stack)) {
 			int needed = config.fragmentsPerHeart;
 			if (stack.getCount() < needed) {
@@ -131,6 +139,12 @@ public final class BloodEvents {
 			if (HellConfig.get().guideBook) {
 				BloodItems.give(player, GuideBook.create(player.level().getServer()));
 			}
+		}
+		if (soul.kit < 1 && !soul.ghost) {
+			// a way back for the first falls (players from older versions get theirs once, too)
+			BloodItems.give(player, BloodItems.vigil(2));
+			soul.kit = 1;
+			HellState.get(player.level().getServer()).setDirty();
 		}
 		// the hell weapons' and blood armour's recipes, in everyone's recipe book
 		MinecraftServer server = player.level().getServer();
@@ -166,6 +180,9 @@ public final class BloodEvents {
 		player.setHealth(player.getMaxHealth());
 		if (soul.ghost) {
 			Ghosts.makeGhost(player);
+			return;
+		}
+		if (Respawns.respawn(player, soul)) {
 			return;
 		}
 		if (soul.altar != null) {

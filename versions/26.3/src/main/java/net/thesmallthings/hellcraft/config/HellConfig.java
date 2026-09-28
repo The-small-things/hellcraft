@@ -15,14 +15,23 @@ import java.nio.file.Path;
 public class HellConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static HellConfig instance = new HellConfig();
+	/** Bumped when default balance values change; see {@link #migrate()}. */
+	private static final int CURRENT_VERSION = 2;
+
+	/** Which defaults this file was written with (0: before versioning). Don't edit. */
+	public int configVersion;
 
 	// --- Lifesteal
 	/** Hearts a brand-new player starts with. */
 	public int startHearts = 10;
 	/** Most hearts anyone can hold. */
 	public int maxHearts = 20;
-	/** When you die to anything but a player, your lost heart drops where you fell. */
+	/** Dying to monsters, lava, falls or the circles costs a heart too (off: only players take hearts). */
+	public boolean pveDeathsCostHearts = false;
+	/** With pveDeathsCostHearts: the heart lost to a monster or the world drops where you fell. */
 	public boolean naturalDeathDropsHeart = true;
+	/** Blood Hearts it costs to bind your respawn to a Blood Altar. */
+	public int bindCostHearts = 0;
 	/** Blood Hearts consumed at an altar to bring a ghost back. */
 	public int reviveCostHearts = 4;
 	/** Hearts a revived player comes back with. */
@@ -30,13 +39,13 @@ public class HellConfig {
 	/** Blood Fragments that clot into one Blood Heart. */
 	public int fragmentsPerHeart = 8;
 	/** Chance a hostile mob killed by a player drops a fragment in the outermost circles... */
-	public double fragmentChanceBase = 0.02;
+	public double fragmentChanceBase = 0.05;
 	/** ...plus this much per circle of depth (Cocytus is depth 9). */
-	public double fragmentChancePerDepth = 0.011;
+	public double fragmentChancePerDepth = 0.015;
 
 	// --- Hell is full
 	/** Multiplier on the hostile mob cap. */
-	public double monsterCapMultiplier = 1.75;
+	public double monsterCapMultiplier = 1.0;
 	/** Eliminated players rise as named undead wearing their gear. */
 	public boolean revenants = true;
 	/** Ghosts may not wander further than this from where they died. */
@@ -46,8 +55,8 @@ public class HellConfig {
 	public int wardMinutes = 30;
 	public boolean circleHazards = true;
 	public boolean circleTitles = true;
-	/** Extra max health per circle of depth for hostile mobs (0.06 = +6% per circle). */
-	public double mobHealthPerDepth = 0.06;
+	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */
+	public double mobHealthPerDepth = 0.03;
 
 	// --- Lucifer
 	public boolean lucifer = true;
@@ -140,6 +149,8 @@ public class HellConfig {
 	}
 
 	private void sanitize() {
+		migrate();
+		bindCostHearts = Math.max(0, bindCostHearts);
 		maxHearts = Math.max(1, maxHearts);
 		startHearts = Math.max(1, Math.min(startHearts, maxHearts));
 		reviveHearts = Math.max(1, Math.min(reviveHearts, maxHearts));
@@ -147,5 +158,26 @@ public class HellConfig {
 		fragmentsPerHeart = Math.max(1, fragmentsPerHeart);
 		monsterCapMultiplier = Math.max(0.1, monsterCapMultiplier);
 		ghostTetherRadius = Math.max(4, ghostTetherRadius);
+	}
+
+	/**
+	 * Moves settings that still hold an old default onto the current one (values an admin chose
+	 * themselves are kept). Version 2 made the circles gentler and blood easier to find.
+	 */
+	private void migrate() {
+		if (configVersion < 2) {
+			monsterCapMultiplier = moved(monsterCapMultiplier, 1.75, 1.0);
+			mobHealthPerDepth = moved(mobHealthPerDepth, 0.06, 0.03);
+			fragmentChanceBase = moved(fragmentChanceBase, 0.02, 0.05);
+			fragmentChancePerDepth = moved(fragmentChancePerDepth, 0.011, 0.015);
+		}
+		if (configVersion < CURRENT_VERSION) {
+			HellcraftMod.LOGGER.info("Hellcraft config updated from version {} to {}", configVersion, CURRENT_VERSION);
+			configVersion = CURRENT_VERSION;
+		}
+	}
+
+	private static double moved(double value, double oldDefault, double newDefault) {
+		return Math.abs(value - oldDefault) < 1.0e-9 ? newDefault : value;
 	}
 }

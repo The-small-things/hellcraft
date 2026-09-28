@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Blocks;
@@ -135,6 +136,26 @@ public final class HellCommands {
 									ctx.getSource().sendSuccess(() -> Component.literal("Gave a set of blood armour to " + p.getGameProfile().name()), true);
 									return 1;
 								})))
+				.then(Commands.literal("giveitem")
+						.then(Commands.argument("player", EntityArgument.player())
+								.then(Commands.argument("item", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("vigil", "anchor"), builder))
+										.executes(ctx -> {
+											ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+											String item = StringArgumentType.getString(ctx, "item");
+											ItemStack stack = switch (item) {
+												case "vigil" -> BloodItems.vigil(1);
+												case "anchor" -> BloodItems.anchor(1);
+												default -> ItemStack.EMPTY;
+											};
+											if (stack.isEmpty()) {
+												ctx.getSource().sendFailure(Component.literal("Unknown item. Try: vigil, anchor"));
+												return 0;
+											}
+											BloodItems.give(p, stack);
+											ctx.getSource().sendSuccess(() -> Component.literal("Gave a " + item + " to " + p.getGameProfile().name()), true);
+											return 1;
+										}))))
 				.then(Commands.literal("giveweapon")
 						.then(Commands.argument("player", EntityArgument.player())
 								.then(Commands.argument("weapon", StringArgumentType.word())

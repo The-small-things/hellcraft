@@ -32,6 +32,8 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /** Lifesteal: hearts change hands on death, the heartless become ghosts, and mobs bleed. */
@@ -41,16 +43,33 @@ public final class DeathHandler {
 
 	public static final String REVENANT_TAG = "hellcraft_revenant";
 
-	/** Fired before death; returns true to allow it. Used to raise a revenant before the gear drops. */
+	/**
+	 * Fired before death (before the items drop); returns true to allow it. Raises a revenant when this
+	 * death takes the last heart, or else lets a carried Soul Anchor catch the soul.
+	 */
 	public static boolean beforeDeath(LivingEntity entity, DamageSource source) {
-		if (!(entity instanceof ServerPlayer player) || player.isSpectator() || player.isCreative()) {
+		if (!(entity instanceof ServerPlayer player) || player.isSpectator() || player.isCreative() || savedByTotem(player, source)) {
 			return true;
 		}
-		if (!HellConfig.get().revenants || Hearts.soul(player).hearts > 1 || savedByTotem(player, source)) {
-			return true;
+		boolean lastHeart = costsHeart(player) && Hearts.soul(player).hearts <= 1;
+		if (lastHeart) {
+			if (HellConfig.get().revenants) {
+				raiseRevenant(player);
+			}
+		} else {
+			Respawns.takeAnchor(player);
 		}
-		raiseRevenant(player);
 		return true;
+	}
+
+	/** Only players take hearts, unless the server says monsters and the world do too. */
+	public static boolean costsHeart(ServerPlayer player) {
+		return killer(player) != null || HellConfig.get().pveDeathsCostHearts;
+	}
+
+	@Nullable
+	private static ServerPlayer killer(ServerPlayer player) {
+		return player.getKillCredit() instanceof ServerPlayer killer && killer != player && !killer.isSpectator() ? killer : null;
 	}
 
 	private static boolean savedByTotem(ServerPlayer player, DamageSource source) {
@@ -76,11 +95,16 @@ public final class DeathHandler {
 		HellState state = HellState.get(player.level().getServer());
 		HellState.Soul soul = Hearts.soul(player);
 		String name = player.getGameProfile().name();
+		ServerPlayer killer = killer(player);
+		if (killer == null && !config.pveDeathsCostHearts) {
+			player.sendSystemMessage(Component.literal("Hell spits you back out. Only another soul can take your heart.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			return;
+		}
 		soul.hearts = Math.max(0, soul.hearts - 1);
 		state.setDirty();
 
 		LivingEntity credit = player.getKillCredit();
-		if (credit instanceof ServerPlayer killer && killer != player && !killer.isSpectator()) {
+		if (killer != null) {
 			if (Hearts.add(killer, 1) > 0) {
 				killer.sendSystemMessage(Component.literal("You drink " + name + "'s blood. +1 ❤").withStyle(ChatFormatting.DARK_RED));
 			} else {

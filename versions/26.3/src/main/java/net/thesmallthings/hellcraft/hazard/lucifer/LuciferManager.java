@@ -5,11 +5,13 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -40,6 +42,11 @@ public final class LuciferManager {
 	/** True while a fight is on (the Spine's whispers keep quiet). */
 	public static boolean fighting() {
 		return fight != null;
+	}
+
+	/** Down in Lucifer's pit (overworld of an Inferno world), where no candle or anchor holds. */
+	public static boolean inPit(ServerLevel level, BlockPos pos) {
+		return level.dimension() == Level.OVERWORLD && HellWorldgen.isInferno(level) && LuciferArena.inProtectedArea(pos);
 	}
 
 	public static boolean isLucifer(Entity entity) {

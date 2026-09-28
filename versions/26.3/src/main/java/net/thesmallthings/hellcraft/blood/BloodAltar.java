@@ -31,7 +31,7 @@ import java.util.UUID;
  * <ul>
  *     <li><b>Revive</b> a ghost here for Blood Hearts (also: use a Name Tag renamed to their name)</li>
  *     <li>a <b>Ward</b>, immunity to the hazards of the circles for a while (also: use a Blood Heart)</li>
- *     <li><b>bind</b> your respawn to this altar (also: sneak and use a Blood Heart)</li>
+ *     <li><b>bind</b> your respawn to this altar (free by default; also: sneak and use a Blood Heart)</li>
  * </ul>
  * Respawn anchors don't work in the Inferno (beds explode too), so altars are how you choose where
  * you come back.
@@ -116,12 +116,15 @@ public final class BloodAltar {
 		return true;
 	}
 
-	/** Spends a Blood Heart to make this altar the player's respawn point. */
+	/** Makes this altar the player's respawn point (free unless the config sets a price). */
 	public static boolean bind(ServerPlayer player, ServerLevel level, BlockPos pos) {
-		if (BloodItems.takeHearts(player, 1) < 1) {
-			player.sendSystemMessage(Component.literal("The altar wants a Blood Heart to bind your respawn.").withStyle(ChatFormatting.RED));
+		int cost = HellConfig.get().bindCostHearts;
+		if (BloodItems.countHearts(player) < cost) {
+			player.sendSystemMessage(Component.literal("The altar wants " + cost + " Blood Heart" + (cost == 1 ? "" : "s") + " to bind your respawn.")
+					.withStyle(ChatFormatting.RED));
 			return false;
 		}
+		BloodItems.takeHearts(player, cost);
 		HellState.Soul soul = Hearts.soul(player);
 		soul.altar = new HellState.GlobalSpot(level.dimension(), pos.immutable());
 		HellState.get(level.getServer()).setDirty();

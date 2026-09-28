@@ -22,7 +22,7 @@ public final class RecipeCheck {
 		ItemStack fragment = BloodItems.fragment(1);
 		int recipes = 0;
 		int hearts = 0;
-		boolean fragmentFits = false;
+		int fragments = 0;
 		for (RecipeHolder<?> holder : server.getRecipeManager().getRecipes()) {
 			if (!holder.id().identifier().getNamespace().equals(HellcraftMod.MOD_ID)) {
 				continue;
@@ -31,11 +31,11 @@ public final class RecipeCheck {
 			List<Ingredient> ingredients = holder.value().placementInfo().ingredients();
 			if (ingredients.stream().anyMatch(i -> i.test(heart))) {
 				hearts++;
-			} else {
-				HellcraftMod.LOGGER.warn("Recipe {} does not accept a Blood Heart", holder.id().identifier());
 			}
-			fragmentFits |= ingredients.stream().anyMatch(i -> i.test(fragment));
+			if (ingredients.stream().anyMatch(i -> i.test(fragment))) {
+				fragments++;
+			}
 		}
-		HellcraftMod.LOGGER.info("Blood recipes accept Blood Hearts: {}/{}{}", hearts, recipes, fragmentFits ? "" : " (and no recipe accepts a Blood Fragment!)");
+		HellcraftMod.LOGGER.info("Hellcraft recipes: {}; take Blood Hearts: {}; take Blood Fragments: {}", recipes, hearts, fragments);
 	}
 }

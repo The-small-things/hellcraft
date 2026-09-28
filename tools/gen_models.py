@@ -20,6 +20,8 @@ FLAT_ITEMS = {
     "blood_heart": "minecraft:item/generated",
     "blood_fragment": "minecraft:item/generated",
     "lucifers_bane": "minecraft:item/generated",
+    "vigil_candle": "minecraft:item/generated",
+    "soul_anchor": "minecraft:item/generated",
     "bloodletter": "minecraft:item/handheld",
     "reaper_of_minos": "minecraft:item/handheld",
     "tithe_axe": "minecraft:item/handheld",
@@ -397,8 +399,38 @@ def recipes():
             "result": {"id": base, "components": components}})
 
 
+# The results must match BloodItems.vigil() / anchor() in the 26.3 sources. The base is a poisonous potato
+# with its food removed, so the item is inert and no vanilla recipe takes it.
+INERT = {"!minecraft:food": {}, "!minecraft:consumable": {}}
+VIGIL = dict(INERT, **{
+    "minecraft:custom_data": {"hellcraft": "vigil"},
+    "minecraft:item_model": "hellcraft:vigil_candle",
+    "minecraft:item_name": {"text": "Vigil Candle", "color": "aqua"},
+    "minecraft:lore": [{"text": "Right-click to light it where you stand.", "color": "gray", "italic": False},
+                       {"text": "Your next death wakes you beside it, once.", "color": "gray", "italic": False}],
+    "minecraft:rarity": "uncommon",
+})
+ANCHOR = dict(INERT, **{
+    "minecraft:custom_data": {"hellcraft": "anchor"},
+    "minecraft:item_model": "hellcraft:soul_anchor",
+    "minecraft:item_name": {"text": "Soul Anchor", "color": "aqua", "bold": True},
+    "minecraft:lore": [{"text": "Carry it. If you die, you rise again", "color": "gray", "italic": False},
+                       {"text": "where you fell, and it breaks.", "color": "gray", "italic": False}],
+    "minecraft:rarity": "rare",
+    "minecraft:enchantment_glint_override": True,
+})
+
+
+def item_recipes():
+    write(os.path.join(DATA, "recipe", "vigil_candle.json"), {
+        "type": "minecraft:crafting_shapeless", "category": "misc",
+        "ingredients": ["minecraft:torch", "minecraft:bone", "minecraft:string"],
+        "result": {"id": "minecraft:poisonous_potato", "components": VIGIL}})
+
+
 def main():
     recipes()
+    item_recipes()
     armour_recipes()
     for name, parent in FLAT_ITEMS.items():
         item_definition(name)

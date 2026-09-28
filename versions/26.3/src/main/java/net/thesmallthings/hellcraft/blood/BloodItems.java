@@ -31,12 +31,16 @@ public final class BloodItems {
 	public static final String HEART = "heart";
 	public static final String FRAGMENT = "fragment";
 	public static final String BANE = "bane";
+	public static final String VIGIL = "vigil";
+	public static final String ANCHOR = "anchor";
 
 	/** Base items. Change these two lines to re-skin the blood items. */
 	public static final Item HEART_BASE = Items.FERMENTED_SPIDER_EYE;
 	public static final Item FRAGMENT_BASE = Items.DYE.red();
 	/** The Morning Star's bane: a nether star. */
 	public static final Item BANE_BASE = Items.NETHER_STAR;
+	/** Vigil Candles and Soul Anchors: a poisonous potato with its food taken out, so it does nothing by itself. */
+	public static final Item INERT_BASE = Items.POISONOUS_POTATO;
 
 	public static ItemStack heart(int count) {
 		ItemStack stack = new ItemStack(HEART_BASE, count);
@@ -71,6 +75,37 @@ public final class BloodItems {
 				Component.literal("Tradeable. Each one stacks.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
 		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 		stack.set(DataComponents.RARITY, Rarity.EPIC);
+		return stack;
+	}
+
+	/** A one-time respawn point: light it, and the next death wakes you beside it. Recipe: vigil_candle.json. */
+	public static ItemStack vigil(int count) {
+		ItemStack stack = inert(count, VIGIL);
+		stack.set(DataComponents.ITEM_NAME, Component.literal("Vigil Candle").withStyle(ChatFormatting.AQUA));
+		stack.set(DataComponents.LORE, new ItemLore(List.of(
+				Component.literal("Right-click to light it where you stand.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
+				Component.literal("Your next death wakes you beside it, once.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
+		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
+		return stack;
+	}
+
+	/** Carried: if you die, you rise again where you fell, and it breaks. */
+	public static ItemStack anchor(int count) {
+		ItemStack stack = inert(count, ANCHOR);
+		stack.set(DataComponents.ITEM_NAME, Component.literal("Soul Anchor").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+		stack.set(DataComponents.LORE, new ItemLore(List.of(
+				Component.literal("Carry it. If you die, you rise again").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
+				Component.literal("where you fell, and it breaks.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
+		stack.set(DataComponents.RARITY, Rarity.RARE);
+		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+		return stack;
+	}
+
+	private static ItemStack inert(int count, String kind) {
+		ItemStack stack = new ItemStack(INERT_BASE, count);
+		stack.remove(DataComponents.FOOD);
+		stack.remove(DataComponents.CONSUMABLE);
+		mark(stack, kind);
 		return stack;
 	}
 
@@ -110,10 +145,18 @@ public final class BloodItems {
 		return BANE.equals(kind(stack));
 	}
 
-	/** Any Hellcraft item that must not be used as its vanilla base (dyeing, planting, beacons...). */
+	public static boolean isVigil(ItemStack stack) {
+		return VIGIL.equals(kind(stack));
+	}
+
+	public static boolean isAnchor(ItemStack stack) {
+		return ANCHOR.equals(kind(stack));
+	}
+
+	/** Any Hellcraft item that must not be used as its vanilla base (dyeing, planting, beacons, eating...). */
 	public static boolean isBlood(ItemStack stack) {
 		String k = kind(stack);
-		return HEART.equals(k) || FRAGMENT.equals(k) || BANE.equals(k);
+		return HEART.equals(k) || FRAGMENT.equals(k) || BANE.equals(k) || VIGIL.equals(k) || ANCHOR.equals(k);
 	}
 
 	/**
@@ -132,7 +175,14 @@ public final class BloodItems {
 			if (!isBlood(stack)) {
 				continue;
 			}
-			ItemStack fresh = isHeart(stack) ? heart(stack.getCount()) : isFragment(stack) ? fragment(stack.getCount()) : bane(stack.getCount());
+			int n = stack.getCount();
+			ItemStack fresh = switch (kind(stack)) {
+				case HEART -> heart(n);
+				case FRAGMENT -> fragment(n);
+				case VIGIL -> vigil(n);
+				case ANCHOR -> anchor(n);
+				default -> bane(n);
+			};
 			if (!ItemStack.isSameItemSameComponents(stack, fresh)) {
 				container.setItem(i, fresh);
 			}

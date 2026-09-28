@@ -43,6 +43,7 @@ public final class GuideBook {
 				"You begin with " + c.startHearts + " hearts and can hold " + c.maxHearts + ".",
 				"",
 				"Kill a player: take a heart. Die to one: lose a heart.",
+				c.pveDeathsCostHearts ? "Monsters and the circles take hearts too." : "Monsters and the circles can't take your hearts.",
 				"",
 				"/withdraw bleeds your hearts into Blood Hearts. Right-click one to drink it back."));
 		pages.add(page("BLOOD FRAGMENTS",
@@ -61,7 +62,12 @@ public final class GuideBook {
 		pages.add(page("BLOOD ALTARS",
 				"A respawn anchor on 3x3 crying obsidian. One stands by the Gate of Hell" + altarAt + ".",
 				"",
-				"Right-click it: revive the dead, buy a Ward against the circles, or bind your respawn to it."));
+				"Right-click it: revive the dead, buy a Ward against the circles, or bind your respawn to it"
+						+ (c.bindCostHearts == 0 ? " (free)." : " (" + c.bindCostHearts + " Blood Hearts).")));
+		pages.add(page("A WAY BACK",
+				"Vigil Candle (torch + bone + string): right-click to light it. Your next death wakes you beside it.",
+				"",
+				"Soul Anchor (from guardians and deep loot): carry it, and you rise where you fell."));
 		pages.add(page("THE CIRCLES",
 				"Each circle torments the living:",
 				"Lust: the wind",

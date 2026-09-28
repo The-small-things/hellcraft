@@ -86,15 +86,20 @@ Some other rules of Hell:
 
 ## Blood is fuel
 
-New players start with 5 bread and **The Pilgrim's Guide** (26.3), a book by Virgil explaining hearts, blood, reviving, the circles, the weapons, the spines and Lucifer. Its numbers follow your config. `/guide` gives another copy.
+New players start with 5 bread, 2 **Vigil Candles** (26.3) and **The Pilgrim's Guide** (26.3), a book by Virgil explaining hearts, blood, reviving, the circles, the weapons, the spines and Lucifer. Its numbers follow your config. `/guide` gives another copy.
 
 **Hearts show next to every name in the player list** (26.3). Once someone has cast Lucifer down, a **Hall of the Damned** sidebar lists every slayer and how many times they won. Toggle these with `tabListHearts` and `sidebarHall`.
 
 - **Hearts.** You start with 10 hearts and can hold up to 20.
   - Killing a player steals one of their hearts.
-  - Dying to anything else costs a heart, and it drops as a **Blood Heart** where you fell, so you can go back for it.
+  - **26.3: only players take hearts.** Dying to monsters, lava, falls or the circles costs your items and XP like vanilla, never a heart. Set `pveDeathsCostHearts` to bring back the old rule.
+  - 1.21.1 (or with `pveDeathsCostHearts`): dying to anything else costs a heart too, and it drops as a **Blood Heart** where you fell, so you can go back for it.
 - **Blood Heart** (a glinting *fermented spider eye*). Right-click to gain a heart. `/withdraw [n]` turns your own hearts into Blood Hearts you can trade.
-- **Blood Fragment** (a named *red dye*). Hostile mobs killed by players drop fragments. The chance rises from 2% in the outer circles to about 12% in Cocytus. Right-click with 8 in one stack (`fragmentsPerHeart`) to clot them into a Blood Heart.
+- **Blood Fragment** (a named *red dye*). Hostile mobs killed by players drop fragments. The chance rises from 5% in the outer circles to about 19% in Cocytus (26.3; 2% to 12% on 1.21.1). Right-click with 8 in one stack (`fragmentsPerHeart`) to clot them into a Blood Heart.
+- **A way back (26.3).** Two one-time respawn items:
+  - **Vigil Candle** (craft: torch + bone + string). Right-click to light it where you stand. Your next death wakes you beside it, then it's gone. One lit candle at a time.
+  - **Soul Anchor** (every circle guardian drops one; rare in deep loot). Carry it. If you die, you rise again at the last solid ground near where you fell, with a few seconds of protection, and it breaks. Your dropped items are right there.
+  - Neither works in Lucifer's pit. On respawn the anchor goes first, then the candle, then a bound altar.
 - **Boss rewards.** The Wither gives 1 Blood Heart, the Warden gives 1 and the Ender Dragon gives 2. Lucifer has his own rewards (below).
 
 ### Blood altars
@@ -107,7 +112,7 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 |---|---|---|---|
 | **Revive** | Menu: click the ghost's head. Or stand by the altar and type `/revive <name>`. Or use a Name Tag renamed to their name. | 4 Blood Hearts | The ghost rises on top of the altar with 3 hearts |
 | **Ward** | Menu, or use a Blood Heart on the altar | 1 Blood Heart | 30 minutes of immunity to every circle's torment, plus Regeneration and Absorption |
-| **Bind** | Menu, or sneak and use a Blood Heart on the altar | 1 Blood Heart | You respawn at this altar (the only way to move your spawn, since beds explode) |
+| **Bind** | Menu, or sneak and use a Blood Heart on the altar | Free on 26.3 (`bindCostHearts`); 1 Blood Heart on 1.21.1 | You respawn at this altar (beds explode, so this and the respawn items are how you move your spawn) |
 
 (On 1.21.1 there is no menu: use the Name Tag and Blood Heart shortcuts.)
 
@@ -306,6 +311,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
+| `/hellcraft giveitem <player> vigil\|anchor` | op | Give a Vigil Candle or Soul Anchor (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian (26.3) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
@@ -316,10 +322,11 @@ When you lose your last heart you are not banned. *There is no more room in hell
 
 ## Config
 
-`config/hellcraft.json` is created on first start. You can change:
+`config/hellcraft.json` is created on first start. On 26.3 it carries a `configVersion`: when an update changes a default (1.1 made the circles gentler and blood easier to find), settings still on the old default move to the new one, and values you chose yourself are kept. You can change:
 - start, max and revive hearts, and the revive cost
 - fragment drop rates and how many fragments make a heart
-- whether natural deaths drop a heart
+- whether monsters and the world take hearts (`pveDeathsCostHearts`, 26.3) and whether such a heart drops where you fell
+- what binding your respawn costs (`bindCostHearts`, 26.3)
 - the mob cap multiplier and mob health per depth
 - the ghost tether radius
 - ward length

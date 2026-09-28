@@ -137,7 +137,7 @@ final class LuciferArena {
 		return state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE) || state.is(Blocks.BLUE_ICE);
 	}
 
-	private static boolean inProtectedArea(BlockPos pos) {
+	static boolean inProtectedArea(BlockPos pos) {
 		double x = pos.getX() + 0.5;
 		double z = pos.getZ() + 0.5;
 		return x * x + z * z <= PROTECTED_RADIUS * PROTECTED_RADIUS && pos.getY() <= PROTECTED_TOP;

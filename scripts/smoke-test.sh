@@ -14,7 +14,12 @@ docker rm -f "$NAME" >/dev/null 2>&1 || true
 # A short generated track so the boss-music pack is built and served
 CONFIG_DIR=$(mktemp -d)
 mkdir -p "$CONFIG_DIR/hellcraft/music"
-echo '{"musicPackHost": "localhost"}' > "$CONFIG_DIR/hellcraft.json"
+if [ "$MC_VERSION" = "1.21.1" ]; then
+  echo '{"musicPackHost": "localhost"}' > "$CONFIG_DIR/hellcraft.json"
+else
+  # a config written by 1.0.0 (old balance defaults, no configVersion): it must be moved to the new defaults
+  echo '{"musicPackHost": "localhost", "monsterCapMultiplier": 1.75, "mobHealthPerDepth": 0.06, "fragmentChanceBase": 0.02}' > "$CONFIG_DIR/hellcraft.json"
+fi
 if command -v ffmpeg >/dev/null; then
   ffmpeg -loglevel error -f lavfi -i "sine=frequency=220:duration=3" -c:a libvorbis "$CONFIG_DIR/hellcraft/music/duel.ogg"
 fi
@@ -90,7 +95,7 @@ if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   if [ "$MC_VERSION" != "1.21.1" ]; then
     for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
              assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/entity/lucifer_emperor.png \
-             assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/equipment/blood.json \
+             assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/items/vigil_candle.json assets/hellcraft/items/soul_anchor.json assets/hellcraft/equipment/blood.json \
              assets/hellcraft/textures/entity/equipment/humanoid/blood.png \
              assets/hellcraft/textures/entity/equipment/humanoid_leggings/blood.png; do
       unzip -l music-pack.zip | grep -q "$f" || { echo "Resource pack is missing $f"; exit 1; }
@@ -106,6 +111,13 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   armour=$(rcon "hellcraft givearmour nobody" || true)
   echo "$armour"
   echo "$armour" | grep -qi "unknown or incomplete command" && { echo "/hellcraft givearmour is not registered"; exit 1; }
+  item=$(rcon "hellcraft giveitem nobody vigil" || true)
+  echo "$item"
+  echo "$item" | grep -qi "unknown or incomplete command" && { echo "/hellcraft giveitem is not registered"; exit 1; }
+  cfg=$(docker exec "$NAME" cat /data/config/hellcraft.json)
+  for want in '"configVersion": 2' '"monsterCapMultiplier": 1.0' '"mobHealthPerDepth": 0.03' '"fragmentChanceBase": 0.05' '"pveDeathsCostHearts": false' '"bindCostHearts": 0'; do
+    echo "$cfg" | grep -qF "$want" || { echo "$cfg"; echo "Config was not migrated: missing $want"; exit 1; }
+  done
   ghost=$(rcon "ghost" || true)
   echo "$ghost"
   echo "$ghost" | grep -q "Ghost powers" || { echo "/ghost does not explain the ghost powers"; exit 1; }
@@ -272,7 +284,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
   grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
-  grep -qE "Blood recipes accept Blood Hearts: 7/7(\s|\r|$)" "$LOG" || { grep "Blood recipes" "$LOG"; echo "Real Blood Hearts don't fit the recipes"; fail=1; }
+  grep -qE "Hellcraft recipes: 8; take Blood Hearts: 7; take Blood Fragments: 6(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
+  grep -q "Hellcraft config updated from version 0 to 2" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do

@@ -75,6 +75,16 @@ public class HellState extends SavedData {
 		public int pendingEunoe;
 		/** Unclaimed Lucifer reward: 0 none, 1 first-victory choice, 2 repeat-victory choice. */
 		public int pendingReward;
+		/** A lit Vigil Candle: the next death respawns here, once. */
+		@Nullable
+		public GlobalSpot vigil;
+		/** Where a Soul Anchor will bring this soul back (set as they die, spent as they respawn). */
+		@Nullable
+		public GlobalSpot anchorAt;
+		/** Circle hazards whose counter this soul has been told about (a bit per circle). */
+		public int hints;
+		/** Starter kit version this soul has received. */
+		public int kit;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -160,6 +170,14 @@ public class HellState extends SavedData {
 			if (s.reviveAt != null) {
 				st.put("revive", s.reviveAt.save());
 			}
+			if (s.vigil != null) {
+				st.put("vigil", s.vigil.save());
+			}
+			if (s.anchorAt != null) {
+				st.put("anchor", s.anchorAt.save());
+			}
+			st.putInt("hints", s.hints);
+			st.putInt("kit", s.kit);
 			list.add(st);
 		}
 		tag.put("souls", list);
@@ -205,6 +223,10 @@ public class HellState extends SavedData {
 			s.deathSpot = GlobalSpot.load(st, "death");
 			s.altar = GlobalSpot.load(st, "altar");
 			s.reviveAt = GlobalSpot.load(st, "revive");
+			s.vigil = GlobalSpot.load(st, "vigil");
+			s.anchorAt = GlobalSpot.load(st, "anchor");
+			s.hints = st.getIntOr("hints", 0);
+			s.kit = st.getIntOr("kit", 0);
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);

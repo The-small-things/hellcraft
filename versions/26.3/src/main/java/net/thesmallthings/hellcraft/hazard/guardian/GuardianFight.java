@@ -219,9 +219,10 @@ public abstract class GuardianFight {
 			return;
 		}
 		say(deathLine());
-		// the spoils: blood, left where it fell
+		// the spoils: blood and a Soul Anchor, left where it fell
 		entity.spawnAtLocation(level, BloodItems.heart(HellConfig.get().guardianHearts));
 		entity.spawnAtLocation(level, BloodItems.fragment(3 + level.getRandom().nextInt(4)));
+		entity.spawnAtLocation(level, BloodItems.anchor(1));
 		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
 		List<String> names = new ArrayList<>();
 		for (UUID id : participants) {

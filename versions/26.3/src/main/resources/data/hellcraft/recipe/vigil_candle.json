@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:torch",
+    "minecraft:bone",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "minecraft:poisonous_potato",
+    "components": {
+      "!minecraft:food": {},
+      "!minecraft:consumable": {},
+      "minecraft:custom_data": {
+        "hellcraft": "vigil"
+      },
+      "minecraft:item_model": "hellcraft:vigil_candle",
+      "minecraft:item_name": {
+        "text": "Vigil Candle",
+        "color": "aqua"
+      },
+      "minecraft:lore": [
+        {
+          "text": "Right-click to light it where you stand.",
+          "color": "gray",
+          "italic": false
+        },
+        {
+          "text": "Your next death wakes you beside it, once.",
+          "color": "gray",
+          "italic": false
+        }
+      ],
+      "minecraft:rarity": "uncommon"
+    }
+  }
+}
