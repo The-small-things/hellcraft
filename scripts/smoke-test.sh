@@ -205,6 +205,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   hpos=$(echo "$hall" | grep -oE -- '-?[0-9]+, -?[0-9]+, -?[0-9]+' | head -1 | tr -d ',')
   [ -n "$hpos" ] || { echo "The Hall of the Damned was not built"; exit 1; }
   read -r hx hy hz <<< "$hpos"
+  rcon "forceload add $hx $hz" > /dev/null
   sign=$(rcon "execute if block $hx $hy $hz minecraft:dark_oak_sign" || true)
   echo "Hall sign: $sign"
   echo "$sign" | grep -q "Test passed" || { echo "The Hall of the Damned has no signs"; exit 1; }
