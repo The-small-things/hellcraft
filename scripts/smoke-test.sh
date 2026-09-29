@@ -233,6 +233,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   sleep 10
   # Paradiso: the End's outer islands belong to the nine spheres
   rcon "hellcraft paradiso status" || true
+  echo "Generated biome at 1500 0: $(rcon "execute in minecraft:the_end if biome 1500 64 0 hellcraft:paradiso_moon" || true)"
   for sphere in moon venus sun primum_mobile empyrean; do
     out=$(rcon "execute in minecraft:the_end positioned 0 64 0 run locate biome hellcraft:paradiso_$sphere" || true)
     echo "Paradiso $sphere: $out"

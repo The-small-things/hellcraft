@@ -1,6 +1,7 @@
 package net.thesmallthings.hellcraft.world;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -80,12 +81,10 @@ public final class Paradiso {
 		Holder<Biome> at = biome(1300, 0);
 		String resolved = "?";
 		if (end != null) {
-			var gen = end.getChunkSource().getGenerator();
-			var sampler = end.getChunkSource().randomState().sampler();
-			resolved = gen.getBiomeSource().createResolver(sampler).getNoiseBiome(1300 >> 2, 16, 0, sampler).getRegisteredName();
+			resolved = end.getBiome(new BlockPos(1300, 64, 0)).getRegisteredName();
 		}
 		return "Paradiso: " + BIOMES.size() + " spheres known, listed=" + listed + ", " + source + ", at 1300 0: "
-				+ (at == null ? "vanilla" : at.getRegisteredName()) + ", the End's resolver says " + resolved;
+				+ (at == null ? "vanilla" : at.getRegisteredName()) + ", the End says " + resolved;
 	}
 
 	/** The sphere biome for an outer-island column (block coordinates), or null to keep vanilla's. */
