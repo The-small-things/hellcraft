@@ -41,263 +41,276 @@ def art(name, palette, rows):
 
 
 # ------------------------------------------------------------------------------------ item icons
+# Hand-drawn 16x16 icons, lit from the upper left, with dark coloured outlines (vanilla style).
 
-BLOOD = {"K": "1a0505", "D": "5c0707", "R": "9e1010", "r": "c81d1d", "P": "ff6b6b", "V": "4a0a2a"}
-
-art("blood_heart", BLOOD, [
-    "................",
-    ".....KK..KK.....",
-    "....KDDK.KDK....",
-    "....KDDKKDDK....",
-    "...KKrDKKDrKK...",
-    "..KrrrrDDrrrrK..",
-    ".KrrPPrrrrrrrRK.",
-    ".KrPPrrrVrrrrRK.",
-    ".KrrrrrrVrrrRRK.",
-    ".KrrrrrVrrrrRDK.",
-    "..KrrrrVrrrRDK..",
-    "..KRrrrrVrRDDK..",
-    "...KRRrrrRDDK...",
-    "....KRRRRDDK....",
-    ".....KKRDDK.....",
-    ".......KKK......",
+# the Blood Heart: an anatomical heart, the aortic arch and pulmonary trunk above, the vena cava in blue,
+# the coronary groove running down to the apex
+art("blood_heart", {"o": "2a0508", "1": "5a0a14", "2": "7e1220", "3": "a31c2a", "4": "c62e38", "5": "e0504f", "6": "f39a86",
+                    "A": "6a1428", "a": "a8344c", "b": "d0647a", "v": "3e3280", "w": "6a5cb0",
+                    "g": "46060f", "f": "d8b25a", "p": "7a2448", "q": "a04068"}, [
+    "......oooo......",
+    ".ooo.obbbbo.....",
+    "ovwvoabaaabo....",
+    "ovwvoaboqqpaoo..",
+    "ovwvoabqqpppAAo.",
+    "ovvvoabqpppoaAo.",
+    "oo45o5apppoo3Ao.",
+    "o4555a54f433321o",
+    "o4566554433g221o",
+    "o456655433g2211o",
+    "o45655433g22v11o",
+    ".o455433g222v1o.",
+    ".o44433g222211o.",
+    "..o433g22211oo..",
+    "...o33g2211o....",
+    "....ooooooo.....",
 ])
 
-art("blood_fragment", BLOOD, [
+# Blood Fragments: clotted blood crystals, one big faceted shard and two small ones
+art("blood_fragment", {"o": "2a0508", "1": "4e0810", "2": "7a0f1a", "3": "a8182a", "4": "d0303e", "5": "f06a6a", "6": "ffc4bc"}, [
     "................",
-    "......K.........",
-    ".....KrK........",
-    ".....KrK........",
-    "....KrPrK.......",
-    "....KrrRK...K...",
-    "....KrRDK..KrK..",
-    ".....KDK...KrK..",
-    "......K...KrPrK.",
-    "..K.......KrrRK.",
-    ".KrK......KrRDK.",
-    "KrPrK......KDK..",
-    "KrrRK.......K...",
-    "KrRDK...........",
-    ".KDK............",
-    "..K.............",
-])
-
-art("lucifers_bane", {"K": "07030c", "S": "2c1838", "s": "4a2a5c", "R": "a01010", "r": "ff4a3a"}, [
-    ".......KK.......",
-    ".......KK.......",
-    "......KsSK......",
-    "..K...KsSK...K..",
-    "...KK.KsSK.KK...",
-    "...KsKSsSSKsK...",
-    "....KSSRRSSK....",
-    ".KKKsSRrrRSsKKK.",
-    ".KKKsSRrrRSsKKK.",
-    "....KSSRRSSK....",
-    "...KsKSSsSKsK...",
-    "...KK.KSsK.KK...",
-    "..K...KSsK...K..",
-    "......KSsK......",
-    ".......KK.......",
-    ".......KK.......",
-])
-
-# a votive candle of bone-white wax on an iron dish, burning with soul fire
-art("vigil_candle", {"K": "120c0a", "W": "efe6d2", "w": "c9bea4", "d": "8f846c", "F": "7fe8ff", "f": "2fb4d6",
-                     "c": "e8ffff", "I": "3c3c44", "i": "6a6a74", "R": "8c0000"}, [
-    "................",
-    ".......f........",
-    "......fFf.......",
-    "......FcF.......",
-    "......fFf.......",
-    ".......K........",
-    "......KWK.......",
-    ".....KWWwK......",
-    ".....KWWwK......",
-    ".....KWRwK......",
-    ".....KWWwK......",
-    ".....KWwdK......",
-    "....KKWwdKK.....",
-    "..KiiiiiiiiiK...",
-    "...KIIIIIIIK....",
-    "....KKKKKKK.....",
-])
-
-# a soul caught in an iron anchor, glowing blue
-art("soul_anchor", {"K": "0a0a10", "I": "4a4a58", "i": "8a8a9a", "S": "2fb4d6", "s": "7fe8ff", "c": "e8ffff"}, [
-    "......KKKK......",
-    ".....KiIIiK.....",
-    ".....KI..IK.....",
-    ".....KiIIiK.....",
-    "..KKKKKiIKKKKK..",
-    "..KiiiiiIiiiiK..",
-    "..KKKKKiIKKKKK..",
-    "......KiIK......",
-    "....KKKsSKKK....",
-    "...KsSSccSSsK...",
-    "...KSscssssSK...",
-    ".K..KSsssSSK..K.",
-    "KiK..KSSSSK..KiK",
-    "KiiK..KiIK..KiiK",
-    ".KiiKKiiIIKKiiK.",
-    "..KKKKKKKKKKKK..",
-])
-
-# a halo of light
-art("halo", {"K": "6a4a10", "G": "ffd84a", "g": "fff4b0", "W": "ffffff"}, [
-    "................",
-    "................",
-    "................",
-    "................",
-    ".....KKKKKK.....",
-    "...KKGGGGGGKK...",
-    "..KGGggWWggGGK..",
-    ".KGgK......KgGK.",
-    ".KGgK......KgGK.",
-    "..KGGggWWggGGK..",
-    "...KKGGGGGGKK...",
-    ".....KKKKKK.....",
-    "................",
-    "................",
-    "................",
+    ".........oo.....",
+    "........o54o....",
+    ".......o5643o...",
+    ".......o5433o...",
+    "......o54332o...",
+    "......o543321o..",
+    ".oo...o4332211o.",
+    "o54o..o43321o...",
+    "o432o..o321o....",
+    ".o21o..o221o.oo.",
+    "..oo....o1o.o54o",
+    "........oo..o431",
+    "............o21o",
+    ".............oo.",
     "................",
 ])
 
-# the wings of a seraph
-art("seraph_wings", {"K": "5a6070", "W": "ffffff", "w": "dce4f0", "G": "ffe070"}, [
+# Lucifer's Bane: a black star-shard of the Morning Star, a coal of hellfire at its heart
+art("lucifers_bane", {"o": "07030c", "1": "1e1028", "2": "34203f", "3": "553866", "4": "7e5a94",
+                      "R": "8a0a0a", "r": "e02a1a", "y": "ffb040", "w": "fff0c0"}, [
+    ".......o........",
+    "......o4o.......",
+    "......o3o.......",
+    "..o...o32o...o..",
+    "...o.o3322o.o...",
+    "...o4o3RR2o3o...",
+    "....o3RrrR2o....",
+    "oo4332rywr211oo.",
+    ".oo332rrr2211oo.",
+    "....o2RrR21o....",
+    "...o3o21R21o1o..",
+    "...o.o2211o.o...",
+    "..o...o21o...o..",
+    "......o21o......",
+    "......o1o.......",
+    ".......o........",
+])
+
+# the Vigil Candle: bone-white wax, dripping blood, on an iron dish, burning with soul fire
+art("vigil_candle", {"o": "140c0a", "c": "e8ffff", "F": "8ff0ff", "f": "3cc4e4", "b": "1a6a8a", "W": "f6efe0", "w": "d8ccb0",
+                     "d": "a8987a", "k": "2a2420", "I": "3c3c48", "i": "70707e", "j": "a0a0ae", "R": "8c0000"}, [
+    ".......o........",
+    "......obo.......",
+    "......ofo.......",
+    ".....ofFfo......",
+    ".....ofcFo......",
+    "......ofo.......",
+    "......oko.......",
+    ".....oWWwo......",
+    ".....oWwwdo.....",
+    ".....oWRwdo.....",
+    "....oWWwwdo.....",
+    ".....oWwwdo.....",
+    "...ooWwwddoo....",
+    "..ojjiiiiiiIo...",
+    "...oIIIIIIIo....",
+    "....ooooooo.....",
+])
+
+# the Soul Anchor: a soul bound in an iron anchor, glowing blue
+art("soul_anchor", {"o": "0a0a12", "I": "3e3e4c", "i": "6a6a7a", "j": "a4a4b4", "S": "1a7aa0", "s": "3cc4e4", "c": "8ff0ff", "w": "e8ffff"}, [
+    "......oooo......",
+    ".....ojiiIo.....",
+    ".....oio.Io.....",
+    ".....ojiiIo.....",
+    "..oooooiIooooo..",
+    "..ojjjjiIiiiIo..",
+    "..oooooiIooooo..",
+    "......ojIo......",
+    ".....oscsso.....",
+    "....oscwcsSo....",
+    "....osccssSo....",
+    ".o...oSssSo...o.",
+    "oio...oiIo...oIo",
+    "ojio..oiIo..oiIo",
+    ".ojiiiijiIiiiIo.",
+    "..oooooooooooo..",
+])
+
+# the Halo: a ring of light seen from a little above, with a glint either side
+art("halo", {"o": "6a4208", "G": "b8841c", "g": "f0c040", "y": "ffe68a", "w": "fffbe8"}, [
     "................",
-    ".KK..........KK.",
-    "KWwK........KwWK",
-    "KWWwK......KwWWK",
-    "KWWWwK....KwWWWK",
-    ".KWWWwKGGKwWWWK.",
-    ".KWWWWwGGwWWWWK.",
-    "..KWWWWKKWWWWK..",
-    "..KwWWWK.KWWWK..",
-    "...KwWWK..KWWK..",
-    "...KwWK...KwWK..",
-    "....KwK....KwK..",
-    "....KK......KK..",
     "................",
-    "................",
+    "...w............",
+    "..wyw......w....",
+    "...w.oooooo.....",
+    "...ooyyyyyyoo...",
+    "..oyygggggggGo..",
+    ".oygGo....oGgGo.",
+    ".oygo......oGGo.",
+    ".oygGo....oGgGo.",
+    "..oGggggggggGo..",
+    "...ooGGGGGGoo...",
+    ".....oooooo.w...",
+    "...........wyw..",
+    "............w...",
     "................",
 ])
 
-# Beatrice's rose, pink and gold
-art("beatrices_rose", {"K": "3a0a1a", "P": "ff7ab0", "p": "ffc0d8", "G": "ffe070", "S": "3a7a2a", "s": "5aa040"}, [
+# the Seraph Wings: two white wings, their primaries layered, clasped in gold
+_WING = [
+    "........",
+    "........",
+    ".oo.....",
+    "oWWoo...",
+    "oWWWWoo.",
+    "owWWWWWo",
+    "owwWWWWg",
+    ".owwwWWg",
+    ".oswwwWo",
+    "..osswso",
+    "..owoswo",
+    "...owoso",
+    "....o.oo",
+    "........",
+    "........",
+    "........",
+]
+art("seraph_wings", {"o": "5a6078", "W": "ffffff", "w": "dfe6f2", "s": "a8b4cc", "g": "ffd24a"}, [r + r[::-1] for r in _WING])
+
+# Beatrice's Rose: a pink rose, its heart deep crimson, on a thorned stem
+art("beatrices_rose", {"o": "3a0a1a", "P": "ff8ab8", "p": "ffc6dc", "R": "d0406e", "r": "9a1f4a", "d": "c05080",
+                       "S": "3a7a2a", "L": "5aa040", "l": "8ad060"}, [
     "................",
-    "......KKKK......",
-    ".....KPpPPK.....",
-    "....KPpGGpPK....",
-    "....KPGppGPK....",
-    "....KPpGGpPK....",
-    ".....KPPPPK.....",
-    "......KKKK......",
-    ".......SK.......",
-    "....KK.SK.......",
-    "...KsSKSK.......",
-    "....KKSSK.......",
-    ".......SK.......",
-    ".......SK.......",
-    ".......SK.......",
-    "........K.......",
+    ".....oooooo.....",
+    "....oPPpPPPo....",
+    "...oPpppPPPPo...",
+    "...oPpRRpPPdo...",
+    "...oPRprRpPdo...",
+    "...oPpRRpPddo...",
+    "....oPPPPddo....",
+    ".....oodddo.....",
+    "....oLo.So......",
+    "...oLlLoSo......",
+    "....ooLSSo......",
+    ".......So.......",
+    ".......oSo......",
+    "........So......",
+    "........o.......",
 ])
 
-STEEL = {"K": "140a0a", "W": "d6d6de", "w": "9a9aa6", "R": "b01515", "r": "e03030", "G": "6b5a2a", "g": "c9a445",
-         "H": "4a2615", "h": "7a4a2a", "B": "e2d8c4", "b": "a8997c"}
+STEEL = {"o": "1a0e10", "W": "f4f4f8", "w": "c4c6d0", "s": "7c7e8e", "R": "a01818", "r": "e03a3a",
+         "G": "7a5a1c", "g": "d4a93c", "y": "f5d77a", "H": "3a1e10", "h": "7a4424", "i": "8a8c9a",
+         "B": "ece2cc", "b": "bdae8e", "d": "857458"}
 
+# the Bloodletter: a steel blade with a blood-filled fuller, a gold guard and a ruby pommel
 art("bloodletter", STEEL, [
-    "..............KK",
-    ".............KWK",
-    "............KWrK",
-    "...........KWRwK",
-    "..........KWRwK.",
-    ".........KWRwK..",
-    "........KWRwK...",
-    ".......KWRwK....",
-    "..KK..KWRwK.....",
-    "..KgKKWRwK......",
-    "...KggRwK.......",
-    "....KgGK........",
-    "...KhKgGK.......",
-    "..KhK.KgK.......",
-    ".KHK...KK.......",
-    ".KK.............",
+    ".............ooo",
+    "............oWWo",
+    "...........oWrso",
+    "..........oWRso.",
+    ".........oWRso..",
+    "........oWRso...",
+    "..oo...oWRso....",
+    "..ogo.oWRso.....",
+    "...oyoWRso......",
+    "...ogyWso.......",
+    "....oggo........",
+    "...ohogGo.......",
+    "..oho..oGo......",
+    ".oho....oo......",
+    "orro............",
+    ".oo.............",
 ])
 
+# the Reaper of Minos: a bone scythe blade on a dark shaft, bloodied at the tip
 art("reaper_of_minos", STEEL, [
-    ".......KKKKKK...",
-    ".....KKBBBBBBKK.",
-    "....KBBbbbbbBhK.",
-    "...KBbRKKKKKKhK.",
-    "...KBRK.....KhK.",
-    "..KBRK.....KhK..",
-    "..KrK.....KHK...",
-    "..KK.....KhK....",
-    "........KHK.....",
-    ".......KhK......",
-    "......KHK.......",
-    ".....KhK........",
-    "....KHK.........",
-    "...KhK..........",
-    "..KHK...........",
-    "..KK............",
+    ".....ooooooo....",
+    "...ooBBBBBBBoo..",
+    "..oBBbbbbbbbbho.",
+    ".oBbbddooooohHo.",
+    ".oRdoo....ohHo..",
+    "ooRo.....ohHo...",
+    "oro.....ohHo....",
+    ".o.....ohHo.....",
+    "......ohHo......",
+    ".....ohHo.......",
+    "....ohHo........",
+    "...ohHo.........",
+    "..ohHo..........",
+    ".ohHo...........",
+    "oiHo............",
+    "ooo.............",
 ])
 
+# the Tithe Axe: a broad bearded head, blood on the edge
 art("tithe_axe", STEEL, [
-    "......KKKKK.....",
-    ".....KWWWWWKK...",
-    "....KWwwwwWKhK..",
-    "....KWwRRRKhHK..",
-    "....KWRRrKhHK...",
-    ".....KWRKhHKK...",
-    "......KKhHK.....",
-    "......KhHK......",
-    ".....KhHK.......",
-    "....KhHK........",
-    "...KhHK.........",
-    "..KhHK..........",
-    ".KhHK...........",
-    "KhHK............",
-    "KHK.............",
-    "KK..............",
+    "...oooooo...ooo.",
+    "..oWWwwwso.ohHo.",
+    ".oWwwRwwssohHo..",
+    ".oWwRRrwsohHo...",
+    ".oWRRrwsohHo....",
+    ".oWRrwsohHo.....",
+    "..oWRsohHo......",
+    "..oooohHo.......",
+    "....ohHo........",
+    "...ohHo.........",
+    "..ohHo..........",
+    ".ohHo...........",
+    "ohHo............",
+    "oio.............",
+    "oo..............",
+    "................",
 ])
 
-ARMOUR = {"K": "1a0505", "D": "4a0808", "R": "8a1010", "r": "c02020", "B": "e2d8c4", "b": "a8997c", "E": "ff4a3a"}
+ARMOUR = {"o": "1a0505", "1": "4a0808", "2": "7a0e12", "3": "a81a22", "4": "d0343a", "5": "f07068", "B": "e2d8c4", "b": "a8997c"}
 
 art("blood_helmet", ARMOUR, [
     "................",
     "................",
-    "....KKKKKKKK....",
-    "...KBbRRRRbBK...",
-    "..KBRRrrrrRRBK..",
-    "..KRRrRRRRrRRK..",
-    "..KRRRRRRRRRRK..",
-    "..KRKKKKKKKKRK..",
-    "..KRKE.KK.EKRK..",
-    "..KRK......KRK..",
-    "..KBK......KBK..",
-    "...K........K...",
+    "................",
+    "....oooooooo....",
+    "...o54444433o...",
+    "..o5443333322o..",
+    "..o4333333222o..",
+    "..o33oooooo21o..",
+    "..oBbo....obBo..",
+    "..oBbo....obBo..",
+    "...oo......oo...",
+    "................",
     "................",
     "................",
     "................",
     "................",
 ])
 
+# ribs of bone over crimson plate
 art("blood_chestplate", ARMOUR, [
     "................",
-    "..KKKK....KKKK..",
-    ".KBbRKK..KKRbBK.",
-    ".KRRRRKKKKRRRRK.",
-    ".KRrRRRBBRRRrRK.",
-    "..KKRRBRRBRRKK..",
-    "....KRRBBRRK....",
-    "....KRrRRrRK....",
-    "....KRRBBRRK....",
-    "....KRBRRBRK....",
-    "....KRRBBRRK....",
-    "....KRrRRrRK....",
-    "....KDRRRRDK....",
-    "....KKKKKKKK....",
+    "..oooo....oooo..",
+    ".oB54oooooo32Bo.",
+    ".o5443bBBb3322o.",
+    ".o443333333322o.",
+    "..oo43333332oo..",
+    "....oBBb3BBo....",
+    "....o433332o....",
+    "....oBBb3BBo....",
+    "....o433332o....",
+    "....oBbb3bBo....",
+    "....o433332o....",
+    "....o222211o....",
+    "....oooooooo....",
     "................",
     "................",
 ])
@@ -305,18 +318,18 @@ art("blood_chestplate", ARMOUR, [
 art("blood_leggings", ARMOUR, [
     "................",
     "................",
-    "....KKKKKKKK....",
-    "....KBbBBbBK....",
-    "....KRRRRRRK....",
-    "....KRrKKrRK....",
-    "....KRRKKRRK....",
-    "....KRrKKrRK....",
-    "....KRRKKRRK....",
-    "....KBRKKRBK....",
-    "....KRRKKRRK....",
-    "....KRrKKrRK....",
-    "....KDRKKRDK....",
-    "....KKKKKKKK....",
+    "...oooooooooo...",
+    "...oBbBBBBbBo...",
+    "...o54443332o...",
+    "...o443oo322o...",
+    "...o443oo321o...",
+    "...o433oo321o...",
+    "...oBbBooBbBo...",
+    "...o433oo321o...",
+    "...o433oo221o...",
+    "...o332oo221o...",
+    "...o322oo211o...",
+    "...oooooooooo...",
     "................",
     "................",
 ])
@@ -328,41 +341,56 @@ art("blood_boots", ARMOUR, [
     "................",
     "................",
     "................",
-    "...KKKK..KKKK...",
-    "...KBbK..KbBK...",
-    "...KRRK..KRRK...",
-    "...KRrK..KrRK...",
-    "..KRRRK..KRRRK..",
-    ".KRRrRK..KRrRRK.",
-    ".KDRRRK..KRRRDK.",
-    ".KKKKKK..KKKKKK.",
+    "..oooo....oooo..",
+    "..oBbo....obBo..",
+    "..o43o....o32o..",
+    "..o43o....o32o..",
+    ".o543o....o322o.",
+    "o5443o....o3221o",
+    "o4332o....o3211o",
+    "oooooo....oooooo",
     "................",
     "................",
 ])
 
 
 def armour_layer(path, regions, face=None):
-    """A 64x32 humanoid armour layer: crimson plates with dark seams and bone rivets."""
-    base, seam, bone = hexc("6b0d0d"), hexc("2a0404"), hexc("e2d8c4")
+    """A 64x32 humanoid armour layer: overlapping crimson plates, each lit along its top edge and shadowed
+    beneath, with bone rivets; the helmet's face is a skull visor with burning eye slits."""
+    base, seam, bone, bone_d = hexc("7a0e12"), hexc("2a0404"), hexc("e2d8c4"), hexc("8a7c62")
     pixels = [[(0, 0, 0, 0)] * 64 for _ in range(32)]
     for x0, y0, x1, y1 in regions:
+        grain = [[1.0 + (rng.random() - 0.5) * 0.22 for _ in range((x1 - x0) // 2 + 1)] for _ in range((y1 - y0) // 2 + 1)]
         for y in range(y0, y1):
             for x in range(x0, x1):
-                if (y - y0) % 6 == 5:
+                band = (y - y0) % 5
+                f = grain[(y - y0) // 2][(x - x0) // 2] + (rng.random() - 0.5) * 0.08
+                if band == 4:
                     c = seam
-                elif (x - x0) % 8 == 3 and (y - y0) % 6 == 2:
-                    c = bone
+                elif band == 0:
+                    c = shade(base, 1.35 * f)       # the lit lip of the plate
+                elif band == 3:
+                    c = shade(base, 0.72 * f)       # shadow before the next plate
                 else:
-                    c = shade(base, 1.0 + (rng.random() - 0.5) * 0.35)
+                    c = shade(base, f)
+                if band == 1 and (x - x0) % 6 == 2:
+                    c = bone
+                elif band == 2 and (x - x0) % 6 == 2:
+                    c = bone_d
                 pixels[y][x] = c
     if face:
         fx0, fy0 = face
         for x in range(fx0, fx0 + 8):
-            pixels[fy0][x] = bone          # a bone brow band
+            pixels[fy0][x] = bone                                   # the bone brow
+            pixels[fy0 + 1][x] = bone_d
         for x in (fx0 + 1, fx0 + 2, fx0 + 5, fx0 + 6):
-            pixels[fy0 + 4][x] = hexc("ff4a3a")  # burning eye slits
-        for x in (fx0 + 3, fx0 + 4):
-            pixels[fy0 + 4][x] = hexc("0a0000")
+            pixels[fy0 + 3][x] = hexc("1a0000")                     # sockets
+            pixels[fy0 + 4][x] = hexc("ff4a3a") if x in (fx0 + 2, fx0 + 5) else hexc("a01a10")
+        for y in range(fy0 + 2, fy0 + 7):
+            pixels[y][fx0 + 3] = pixels[y][fx0 + 4] = bone if y < fy0 + 6 else bone_d   # the nasal guard
+        for x in range(fx0 + 1, fx0 + 7):
+            if x not in (fx0 + 3, fx0 + 4):
+                pixels[fy0 + 6][x] = bone if x % 2 else bone_d      # teeth along the jaw
     png(os.path.join(OUT, "entity", "equipment", path, "blood.png"), pixels)
 
 
@@ -376,35 +404,72 @@ def shade(c, f):
     return tuple(max(0, min(255, int(v * f))) for v in c[:3]) + (255,)
 
 
+def bevel(cell, light=1.12, dark=0.8):
+    """Each cell covers a whole face of a cuboid: a lit top edge and a shadowed bottom edge give it volume."""
+    for x in range(8):
+        cell[0][x] = shade(cell[0][x], light)
+        cell[7][x] = shade(cell[7][x], dark)
+    for y in range(1, 7):
+        cell[y][7] = shade(cell[y][7], 0.9)
+    return cell
+
+
 def noise_cell(base, spread=0.18):
-    return [[shade(base, 1.0 + (rng.random() - 0.5) * spread) for _ in range(8)] for _ in range(8)]
+    """A material with grain: 2x2 clusters of light and shade over a fine noise, not per-pixel static."""
+    blobs = [[1.0 + (rng.random() - 0.5) * spread for _ in range(4)] for _ in range(4)]
+    cell = [[shade(base, blobs[y // 2][x // 2] + (rng.random() - 0.5) * spread * 0.35) for x in range(8)] for y in range(8)]
+    return bevel(cell)
 
 
 def stripes_cell(dark, light):
-    return [[shade(light if (x + y // 2) % 4 == 0 else dark, 1.0 + (rng.random() - 0.5) * 0.1) for x in range(8)] for y in range(8)]
+    """Layered feathers, scales or fur: offset rows of strands, each lit at its root and dark at its tip."""
+    cell = []
+    for y in range(8):
+        row = []
+        for x in range(8):
+            k = (x + (y // 2) * 2) % 4
+            c = light if k == 0 else dark
+            f = 1.15 if (y % 2 == 0 and k == 0) else (0.85 if y % 2 else 1.0)
+            row.append(shade(c, f * (1.0 + (rng.random() - 0.5) * 0.08)))
+        cell.append(row)
+    return bevel(cell, 1.08, 0.82)
 
 
 def gradient_cell(top, bottom):
+    """Horn, bone, gold and ice: a smooth ramp, dithered where one band meets the next."""
     out = []
     for y in range(8):
-        t = y / 7.0
-        c = tuple(int(top[i] * (1 - t) + bottom[i] * t) for i in range(3)) + (255,)
-        out.append([shade(c, 1.0 + (rng.random() - 0.5) * 0.08) for _ in range(8)])
+        row = []
+        for x in range(8):
+            t = (y + (0.5 if (x + y) % 2 else 0.0)) / 7.5
+            t = max(0.0, min(1.0, t))
+            c = tuple(int(top[i] * (1 - t) + bottom[i] * t) for i in range(3)) + (255,)
+            row.append(shade(c, 1.0 + (rng.random() - 0.5) * 0.05))
+        out.append(row)
+    for x in range(8):
+        out[0][x] = shade(out[0][x], 1.1)
     return out
 
 
 def face_cell(skin, eye, mouth=None, tears=False):
-    cell = noise_cell(skin, 0.1)
+    """A face: a heavy brow, sunken sockets with a burning eye and a glint, a shaded nose and a mouth."""
+    cell = noise_cell(skin, 0.08)
+    brow, socket = shade(skin, 0.55), shade(skin, 0.35)
+    for x in range(1, 7):
+        cell[2][x] = brow if x not in (3, 4) else shade(skin, 0.75)
     for x in (1, 2, 5, 6):
-        cell[3][x] = eye
-    cell[2][1] = cell[2][6] = shade(skin, 0.5)  # brows
-    cell[2][2] = cell[2][5] = shade(skin, 0.5)
+        cell[3][x] = socket
+    cell[3][2] = cell[3][5] = eye                               # the eyes, looking forward
+    cell[3][1] = cell[3][6] = shade(eye, 0.6)
+    cell[4][3] = cell[4][4] = shade(skin, 1.12)                 # the bridge of the nose, lit
+    cell[5][3] = cell[5][4] = shade(skin, 0.7)                  # its shadow
     if mouth:
         for x in range(2, 6):
             cell[6][x] = mouth
+        cell[6][1] = cell[6][6] = shade(skin, 0.7)
     if tears:
-        for y in (4, 5):
-            cell[y][1] = cell[y][6] = hexc("7a0000")
+        for y in (4, 5, 6):
+            cell[y][1] = cell[y][6] = hexc("8a0000") if y < 6 else hexc("5a0000")
     return cell
 
 
