@@ -183,7 +183,7 @@ public final class Heaven {
 				int y = ROSE_Y + ring / 2;
 				BlockState top = ring == 0 ? Blocks.QUARTZ_BLOCK.defaultBlockState()
 						: ring % 2 == 0 ? Blocks.GRASS_BLOCK.defaultBlockState()
-						: (dx + dz) % 5 == 0 ? Blocks.SEA_LANTERN.defaultBlockState() : Blocks.WHITE_CONCRETE.defaultBlockState();
+						: (dx + dz) % 5 == 0 ? Blocks.SEA_LANTERN.defaultBlockState() : Blocks.QUARTZ_BRICKS.defaultBlockState();
 				int x = cx + dx;
 				int z = cz + dz;
 				level.setBlock(new BlockPos(x, y, z), top, 2);
