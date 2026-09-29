@@ -75,8 +75,9 @@ public final class BossModel {
 				boss.getX(), boss.getY(), boss.getZ(), modelTag, ownerTag, marker, model, scale / 2.0f, scale, scale, scale);
 		MinecraftServer server = level.getServer();
 		// run from inside another command (an admin's /hellcraft lucifer summon) the summon is queued until
-		// that command finishes, so the display is looked up on the following ticks instead of right here
-		server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command);
+		// that command finishes, so the display is looked up on the following ticks instead of right here;
+		// run in the boss's own dimension (the source defaults to the overworld)
+		server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withLevel(level), command);
 		pending.put(boss.getUUID(), new Pending(model, marker, command, 0));
 		yaws.put(boss.getUUID(), boss.getYRot());
 	}
