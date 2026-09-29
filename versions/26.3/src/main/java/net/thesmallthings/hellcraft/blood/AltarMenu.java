@@ -40,6 +40,7 @@ public final class AltarMenu {
 	private static final int WARD_SLOT = 3;
 	private static final int TRAVEL_SLOT = 4;
 	private static final int BIND_SLOT = 5;
+	private static final int ASCEND_SLOT = 7;
 	private static final int FIRST_GHOST_SLOT = 9;
 	private static final int MAX_GHOSTS = 9;
 
@@ -69,6 +70,24 @@ public final class AltarMenu {
 				"When you die you return to this altar",
 				"(beds explode in Hell)",
 				carried >= bindCost ? "▶ Click to bind" : "✖ Not enough Blood Hearts"));
+
+		if (config.prestige) {
+			HellState.Soul soul = Hearts.soul(player);
+			int cap = Hearts.cap(soul);
+			if (soul.prestige >= Prestige.MAX) {
+				container.setItem(ASCEND_SLOT, button(Items.NETHER_STAR, "Purified", ChatFormatting.WHITE,
+						"No P remains on your brow.",
+						"The torments of the circles no longer touch you."));
+			} else {
+				Prestige.Terrace next = Prestige.Terrace.values()[soul.prestige];
+				container.setItem(ASCEND_SLOT, button(Items.FEATHER, "Ascend: the terrace of " + next.sin, ChatFormatting.GOLD,
+						"The Seven P's: " + soul.prestige + " burned, " + (Prestige.MAX - soul.prestige) + " remain",
+						"Your hearts fall back to " + Math.min(config.prestigeResetHearts, cap + config.prestigeHeartBonus)
+								+ "; your veins then hold " + (cap + config.prestigeHeartBonus),
+						next.virtue + ": " + next.perk,
+						soul.hearts >= cap ? "▶ Click to climb" : "✖ Your veins must be full (" + soul.hearts + " / " + cap + ")"));
+			}
+		}
 
 		List<Map.Entry<UUID, HellState.Soul>> ghosts = new ArrayList<>();
 		for (Map.Entry<UUID, HellState.Soul> e : HellState.get(level.getServer()).souls().entrySet()) {
@@ -140,6 +159,8 @@ public final class AltarMenu {
 				BloodAltar.ward(sp, level, altar);
 			} else if (slotId == BIND_SLOT) {
 				BloodAltar.bind(sp, level, altar);
+			} else if (slotId == ASCEND_SLOT && HellConfig.get().prestige) {
+				Prestige.ascend(sp, level, altar);
 			} else if (ghostSlots.containsKey(slotId)) {
 				BloodAltar.revive(sp, level, altar, ghostSlots.get(slotId));
 			} else {

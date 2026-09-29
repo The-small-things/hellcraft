@@ -64,6 +64,23 @@ public final class GuideBook {
 				"",
 				"Right-click it: revive the dead, buy a Ward against the circles, or bind your respawn to it"
 						+ (c.bindCostHearts == 0 ? " (free)." : " (" + c.bindCostHearts + " Blood Hearts).")));
+		if (c.prestige) {
+			pages.add(page("THE SEVEN P'S",
+					"An angel carved seven P's on your brow: one for each sin.",
+					"",
+					"When your veins are full, ascend at a Blood Altar. Your hearts fall to " + c.prestigeResetHearts
+							+ ", a P burns away, and you can hold " + c.prestigeHeartBonus + " more hearts for good.",
+					"",
+					"Each terrace leaves a virtue."));
+			pages.add(page("THE VIRTUES",
+					"I Humility: lighter falls",
+					"II Kindness: more fragments",
+					"III Meekness: steadier feet",
+					"IV Zeal: faster steps",
+					"V Liberality: better loot",
+					"VI Temperance: less hunger",
+					"VII Purity: no torments"));
+		}
 		pages.add(page("A WAY BACK",
 				"Vigil Candle (torch + bone + string): right-click to light it. Your next death wakes you beside it.",
 				"",

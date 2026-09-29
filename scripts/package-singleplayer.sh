@@ -63,7 +63,7 @@ jq -n --arg ver "$VER" --arg mc "$MC" --arg loader "$LOADER" \
 import sys, zipfile
 jar, out = sys.argv[1], sys.argv[2]
 with zipfile.ZipFile(jar) as src:
-    names = sorted(n for n in src.namelist() if n.startswith("assets/hellcraft/") and not n.endswith("/"))
+    names = sorted(n for n in src.namelist() if n.startswith(("assets/hellcraft/", "assets/minecraft/")) and not n.endswith("/"))
     if names:
         with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as dst:
             meta = '{"pack": {"min_format": [97, 0], "max_format": [99, 0], "description": "Hellcraft"}}\n'

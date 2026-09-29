@@ -30,10 +30,12 @@ import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodItems;
+import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.util.Feedback;
+import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -232,6 +234,10 @@ public abstract class GuardianFight {
 			ServerPlayer p = level.getServer().getPlayerList().getPlayer(id);
 			if (p != null) {
 				names.add(p.getGameProfile().name());
+				HellState.Soul soul = Hearts.soul(p);
+				soul.guardiansSlain++;
+				HellState.get(level.getServer()).setDirty();
+				Journey.award(p, "journey/guardian_" + kind.id());
 			}
 		}
 		String who = names.isEmpty() ? "Someone" : String.join(", ", names);

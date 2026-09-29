@@ -101,6 +101,14 @@ if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
       unzip -l music-pack.zip | grep -q "$f" || { echo "Resource pack is missing $f"; exit 1; }
     done
   fi
+  if [ "$MC_VERSION" != "1.21.1" ]; then
+    # the Blood Heart HUD, and the small pack that rims the hearts in a rank's colour
+    unzip -l music-pack.zip | grep -q "assets/minecraft/textures/gui/sprites/hud/heart/full.png" || { echo "Resource pack has no Blood Heart HUD"; exit 1; }
+    curl -fsS -o rank-pack.zip http://localhost:25566/hellcraft-rank-3.zip || { echo "Rank pack not served"; exit 1; }
+    unzip -l rank-pack.zip
+    unzip -l rank-pack.zip | grep -q "hud/heart/container.png" || { echo "Rank pack has no heart rim"; exit 1; }
+    unzip -l rank-pack.zip | grep -q "pack.mcmeta" || { echo "Rank pack has no pack.mcmeta"; exit 1; }
+  fi
   curl -s -o /dev/null -w '%{http_code}' http://localhost:25566/anything-else | grep -q 404 || { echo "Web server serves more than the pack"; exit 1; }
 fi
 rcon "hellcraft goto judecca" || true  # needs a player; checks the command is registered
@@ -186,7 +194,12 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   cane=$(rcon "place feature hellcraft:sugar_cane $rx $((ry + 1)) $rz" || true)
   echo "Sugar cane: $cane"
   echo "$cane" | grep -qiE "unknown|can't find|invalid" && { echo "The sugar cane feature is missing"; exit 1; }
-  for cmd in "hellcraft travel nobody gate" "hellcraft shrine visit nobody all"; do
+  # the Seven P's: a throwaway soul climbs all seven terraces, and the eighth is refused
+  prest=$(rcon "hellcraft prestige test" || true)
+  echo "$prest"
+  echo "$prest" | grep -q "7 P's burned" || { echo "The Seven P's do not climb"; exit 1; }
+  echo "$prest" | grep -q "the eighth refused" || { echo "An eighth P was burned"; exit 1; }
+  for cmd in "hellcraft travel nobody gate" "hellcraft shrine visit nobody all" "hellcraft prestige nobody"; do
     out=$(rcon "$cmd" || true)
     echo "$cmd: $out"
     echo "$out" | grep -qi "unknown or incomplete command" && { echo "/$cmd is not registered"; exit 1; }

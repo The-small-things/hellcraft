@@ -119,6 +119,16 @@ public class HellConfig {
 	public boolean travel = true;
 	/** Seconds between one player's trips. */
 	public int travelCooldownSeconds = 120;
+	/** The Seven P's: a soul whose veins are full can ascend at a Blood Altar for more heart capacity and a virtue. */
+	public boolean prestige = true;
+	/** Heart capacity each burned P adds (seven in all). */
+	public int prestigeHeartBonus = 2;
+	/** Hearts a soul is left with after ascending. */
+	public int prestigeResetHearts = 10;
+	/** The Blood Heart HUD: Hellcraft's own hearts in the health bar, rimmed in the colour of each player's rank. */
+	public boolean heartHud = true;
+	/** The Hall of the Damned: a monument of signs and heads beside the spawn, naming the Inferno's best and most damned. */
+	public boolean hallMonument = true;
 	/** Vanilla music discs used for players without the pack (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";
@@ -158,6 +168,8 @@ public class HellConfig {
 		migrate();
 		bindCostHearts = Math.max(0, bindCostHearts);
 		travelCooldownSeconds = Math.max(0, travelCooldownSeconds);
+		prestigeHeartBonus = Math.max(0, prestigeHeartBonus);
+		prestigeResetHearts = Math.max(1, prestigeResetHearts);
 		maxHearts = Math.max(1, maxHearts);
 		startHearts = Math.max(1, Math.min(startHearts, maxHearts));
 		reviveHearts = Math.max(1, Math.min(reviveHearts, maxHearts));

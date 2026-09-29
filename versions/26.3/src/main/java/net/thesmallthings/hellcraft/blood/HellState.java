@@ -57,6 +57,9 @@ public class HellState extends SavedData {
 	/** The Blood Altar Landmarks builds beside the Gate of Hell (pointed to in the revival instructions). */
 	@Nullable
 	public GlobalSpot starterAltar;
+	/** Where the Hall of the Damned stands (its first sign column), once built. */
+	@Nullable
+	public GlobalSpot hall;
 
 	public static HellState get(MinecraftServer server) {
 		return server.overworld().getDataStorage().computeIfAbsent(TYPE);
@@ -98,6 +101,11 @@ public class HellState extends SavedData {
 		public final Set<String> visited = new HashSet<>();
 		/** Has been given Beatrice's Rose at the Celestial Rose. */
 		public boolean rose;
+		/** The Seven P's: how many have been burned from this soul's brow (0-7), each by an ascent at an altar. */
+		public int prestige;
+		/** For the Hall of the Damned. */
+		public int deaths;
+		public int guardiansSlain;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -192,6 +200,9 @@ public class HellState extends SavedData {
 			st.putInt("hints", s.hints);
 			st.putInt("kit", s.kit);
 			st.putBoolean("rose", s.rose);
+			st.putInt("prestige", s.prestige);
+			st.putInt("deaths", s.deaths);
+			st.putInt("guardiansSlain", s.guardiansSlain);
 			CompoundTag visited = new CompoundTag();
 			s.visited.forEach(v -> visited.putBoolean(v, true));
 			st.put("visited", visited);
@@ -218,6 +229,9 @@ public class HellState extends SavedData {
 			tag.store("lucifer", UUIDUtil.CODEC, luciferId);
 		}
 		tag.putLong("luciferNext", luciferNextSpawn);
+		if (hall != null) {
+			tag.put("hall", hall.save());
+		}
 		if (starterAltar != null) {
 			tag.put("starterAltar", starterAltar.save());
 		}
@@ -251,6 +265,9 @@ public class HellState extends SavedData {
 			s.hints = st.getIntOr("hints", 0);
 			s.kit = st.getIntOr("kit", 0);
 			s.rose = st.getBooleanOr("rose", false);
+			s.prestige = st.getIntOr("prestige", 0);
+			s.deaths = st.getIntOr("deaths", 0);
+			s.guardiansSlain = st.getIntOr("guardiansSlain", 0);
 			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
 			state.souls.put(id.get(), s);
 		}
@@ -275,6 +292,7 @@ public class HellState extends SavedData {
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);
 		state.luciferNextSpawn = tag.getLongOr("luciferNext", 0L);
 		state.starterAltar = GlobalSpot.load(tag, "starterAltar");
+		state.hall = GlobalSpot.load(tag, "hall");
 		return state;
 	}
 }

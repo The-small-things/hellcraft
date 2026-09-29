@@ -14,39 +14,41 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodItems;
-import net.thesmallthings.hellcraft.blood.TravelMenu;
-import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.GuideBook;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
+import net.thesmallthings.hellcraft.blood.Prestige;
+import net.thesmallthings.hellcraft.blood.Relics;
+import net.thesmallthings.hellcraft.blood.TravelMenu;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
+import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.world.Circle;
-import net.thesmallthings.hellcraft.world.HellWorldgen;
-import net.thesmallthings.hellcraft.world.InfernoGeometry;
-import net.thesmallthings.hellcraft.world.Purgatory;
-import net.thesmallthings.hellcraft.world.ShrineSites;
-import org.jetbrains.annotations.Nullable;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.Heaven;
+import net.thesmallthings.hellcraft.world.HellWorldgen;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Paradiso;
+import net.thesmallthings.hellcraft.world.Purgatory;
+import net.thesmallthings.hellcraft.world.ShrineSites;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -294,6 +296,21 @@ public final class HellCommands {
 									+ GreatForge.center().toShortString() + " in the Nether."), true);
 							return 1;
 						})))
+				.then(Commands.literal("prestige")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Prestige.selfTest())))
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> reply(ctx.getSource(), Prestige.describe(Hearts.soul(EntityArgument.getPlayer(ctx, "player")))))
+								.then(Commands.literal("set")
+										.then(Commands.argument("burned", IntegerArgumentType.integer(0, Prestige.MAX))
+												.executes(ctx -> {
+													ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+													HellState.Soul soul = Hearts.soul(p);
+													soul.prestige = IntegerArgumentType.getInteger(ctx, "burned");
+													HellState.get(ctx.getSource().getServer()).setDirty();
+													Hearts.apply(p);
+													MusicPack.sendRank(p, soul.prestige);
+													return reply(ctx.getSource(), Prestige.describe(soul));
+												})))))
 				.then(Commands.literal("purgatory").executes(ctx -> {
 					ServerPlayer p = ctx.getSource().getPlayerOrException();
 					BlockPos shore = Purgatory.shore();

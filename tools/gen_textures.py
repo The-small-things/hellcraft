@@ -552,5 +552,84 @@ atlas("guardian_vulcan", [
     None, None, None, None, None, None, None, None,
 ])
 
+# ------------------------------------------------------------------------------------ the Blood Heart HUD
+# 9x9 sprites over the vanilla health bar (assets/minecraft/.../hud/heart). "O" is the container's rim, "i" its
+# hollow; the fill sprites paint the inside and a drop of blood that has run off the point.
+
+HEART = [
+    ".OO...OO.",
+    "OiiO.OiiO",
+    "OiiiOiiiO",
+    "OiiiiiiiO",
+    ".OiiiiiO.",
+    "..OiiiO..",
+    "...OiO...",
+    "....O....",
+    ".........",
+]
+# light from the upper left, dark blood pooling low and right
+FILL_SHADE = [
+    ".........",
+    ".hh...ll.",
+    ".hll.llm.",
+    ".lllmmmd.",
+    "..lmmmd..",
+    "...mdd...",
+    "....d....",
+    ".........",
+    "....q....",   # the drop that has run off the point
+]
+HUD = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "assets", "minecraft",
+                   "textures", "gui", "sprites", "hud", "heart")
+RANKS = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "hellcraft_ranks")
+
+
+def heart_sprite(path, colours, half=False, rim=None, crown=None):
+    """colours: shade letter -> hex for the fill, or None for a container (rim/hollow from `rim`)."""
+    pixels = []
+    for y in range(9):
+        row = []
+        for x in range(9):
+            c = (0, 0, 0, 0)
+            if rim is not None:
+                cell = HEART[y][x]
+                if cell == "O":
+                    c = hexc(rim[0])
+                elif cell == "i":
+                    c = hexc(rim[1])
+                if crown and y == 0 and x == 4:
+                    c = hexc(crown)
+            else:
+                cell = FILL_SHADE[y][x]
+                if cell != "." and not (half and x > 4):
+                    c = hexc(colours[cell])
+            row.append(c)
+        pixels.append(row)
+    png(path, pixels)
+
+
+BLEED = {"h": "ff5a5a", "l": "c8141e", "m": "9a0a14", "d": "5c040c", "q": "7a0610"}
+BLEED_FLASH = {"h": "ffd0d0", "l": "ff7a7a", "m": "e04a4a", "d": "a02a2a", "q": "c04040"}
+DAMNED = {"h": "ff8a2a", "l": "7a0a0a", "m": "4a0406", "d": "240204", "q": "3a0204"}          # hardcore: ember-lit black blood
+DAMNED_FLASH = {"h": "ffd09a", "l": "c04a3a", "m": "8a2a2a", "d": "5a1a1a", "q": "6a2020"}
+for name, shade in (("full", BLEED), ("full_blinking", BLEED_FLASH), ("hardcore_full", DAMNED), ("hardcore_full_blinking", DAMNED_FLASH)):
+    heart_sprite(os.path.join(HUD, name + ".png"), shade)
+    heart_sprite(os.path.join(HUD, name.replace("full", "half") + ".png"), shade, half=True)
+heart_sprite(os.path.join(HUD, "container.png"), None, rim=("1a0306", "2e0a0e"))
+heart_sprite(os.path.join(HUD, "container_blinking.png"), None, rim=("e8c8c8", "2e0a0e"))
+heart_sprite(os.path.join(HUD, "container_hardcore.png"), None, rim=("0c0102", "1e0406"), crown="d8d0c0")
+heart_sprite(os.path.join(HUD, "container_hardcore_blinking.png"), None, rim=("e8c8c8", "1e0406"), crown="ffffff")
+
+# The Seven P's: each rank's small pack re-rims the containers, bronze on the first terrace to white on the last
+# (the colours match Prestige.Terrace); the purified wear a point of light on top.
+RANK_RIMS = ["8c5a2b", "a8743a", "c0913f", "d4af37", "e8c75a", "f4e08a", "ffffff"]
+for rank, rim in enumerate(RANK_RIMS, start=1):
+    crown = "fffbe0" if rank == 7 else None
+    base = os.path.join(RANKS, str(rank), "assets", "minecraft", "textures", "gui", "sprites", "hud", "heart")
+    heart_sprite(os.path.join(base, "container.png"), None, rim=(rim, "2e0a0e"), crown=crown)
+    heart_sprite(os.path.join(base, "container_blinking.png"), None, rim=("ffffff", "2e0a0e"), crown=crown)
+    heart_sprite(os.path.join(base, "container_hardcore.png"), None, rim=(rim, "1e0406"), crown=crown or "d8d0c0")
+    heart_sprite(os.path.join(base, "container_hardcore_blinking.png"), None, rim=("ffffff", "1e0406"), crown=crown or "ffffff")
+
 if __name__ == "__main__":
     print("Wrote textures to", os.path.normpath(OUT))

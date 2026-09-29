@@ -21,9 +21,9 @@ public final class Hearts {
 		return HellState.get(player.level().getServer()).soul(player.getUUID(), player.getGameProfile().name());
 	}
 
-	/** Most hearts this soul may hold: the server cap plus anything earned (Lucifer's Bane). */
+	/** Most hearts this soul may hold: the server cap plus anything earned (Lucifer's Bane, the burned P's). */
 	public static int cap(HellState.Soul soul) {
-		return HellConfig.get().maxHearts + soul.maxBonus;
+		return HellConfig.get().maxHearts + soul.maxBonus + Prestige.capBonus(soul);
 	}
 
 	public static void apply(ServerPlayer player) {
@@ -41,6 +41,7 @@ public final class Hearts {
 		if (player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
 		}
+		Prestige.applyVirtues(player, soul);
 		Scoreboards.update(player.level().getServer(), soul);
 	}
 

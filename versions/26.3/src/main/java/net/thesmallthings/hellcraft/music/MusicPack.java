@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.ClientboundResourcePackPopPacket;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
 import net.minecraft.resources.Identifier;
@@ -14,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvent;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,13 +25,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.ServerSocket;
-import java.net.SocketAddress;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,6 +83,10 @@ public final class MusicPack {
 
 	private static final UUID PACK_ID = UUID.nameUUIDFromBytes("hellcraft:pack".getBytes(StandardCharsets.UTF_8));
 	private static final String PATH = "/hellcraft-music.zip";
+	/** The Seven P's: a second, tiny pack that re-rims the hearts in the colour of the player's rank. */
+	private static final UUID RANK_ID = UUID.nameUUIDFromBytes("hellcraft:rank".getBytes(StandardCharsets.UTF_8));
+	private static final byte[][] RANK_ZIPS = new byte[8][];
+	private static final String[] RANK_SHA1 = new String[8];
 	private static final Set<UUID> LOADED = ConcurrentHashMap.newKeySet();
 	private static final Map<Track, Double> LENGTHS = new EnumMap<>(Track.class);
 
@@ -116,7 +122,13 @@ public final class MusicPack {
 	public static void register() {
 		ServerLifecycleEvents.SERVER_STARTED.register(MusicPack::build);
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> stopHttp());
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> offer(handler.getPlayer()));
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			offer(handler.getPlayer());
+			HellState.Soul soul = HellState.get(server).existing(handler.getPlayer().getUUID());
+			if (soul != null && soul.prestige > 0) {
+				sendRank(handler.getPlayer(), soul.prestige);
+			}
+		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			LOADED.remove(handler.getPlayer().getUUID());
 			OFFERED_LOCAL.remove(handler.getPlayer().getUUID());
@@ -235,6 +247,39 @@ public final class MusicPack {
 						.withStyle(ChatFormatting.DARK_RED))));
 	}
 
+	/**
+	 * Gives this player's hearts the rim of their rank (a second pack laid over the first), or takes it
+	 * away at rank 0. Only from this server's own web server: the GitHub copy has no rank packs.
+	 */
+	public static void sendRank(ServerPlayer player, int rank) {
+		if (!HellConfig.get().heartHud || zip == null || !serving) {
+			return;
+		}
+		if (rank <= 0 || rank >= RANK_ZIPS.length || RANK_ZIPS[rank] == null) {
+			player.connection.send(new ClientboundResourcePackPopPacket(Optional.of(RANK_ID)));
+			return;
+		}
+		String base;
+		if (url != null) {
+			if (!url.endsWith(PATH)) {
+				return; // the operator hosts the pack elsewhere (musicPackUrl)
+			}
+			base = url.substring(0, url.length() - PATH.length());
+		} else {
+			String host = JOINED_VIA.get(player.connection.getRemoteAddress());
+			if (host == null || TUNNELS.stream().anyMatch(t -> host.toLowerCase(Locale.ROOT).endsWith(t))) {
+				return;
+			}
+			String h = host.contains(":") && !host.startsWith("[") ? "[" + host + "]" : host;
+			base = "http://" + h + ":" + HellConfig.get().musicPackPort;
+		}
+		player.connection.send(new ClientboundResourcePackPushPacket(RANK_ID, base + rankPath(rank), RANK_SHA1[rank], false, Optional.empty()));
+	}
+
+	private static String rankPath(int rank) {
+		return "/hellcraft-rank-" + rank + ".zip";
+	}
+
 	// ------------------------------------------------------------------ building
 
 	private static void build(MinecraftServer server) {
@@ -278,6 +323,7 @@ public final class MusicPack {
 			}
 			byte[] built = bytes.toByteArray();
 			sha1 = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(built));
+			buildRanks();
 			zip = built;
 			hasMusic = !audio.isEmpty();
 		} catch (Exception e) {
@@ -375,24 +421,59 @@ public final class MusicPack {
 		fetch.start();
 	}
 
-	/** Copies every assets/hellcraft file shipped in the mod jar into the pack. */
+	/** Copies every assets/hellcraft file shipped in the mod jar into the pack, and its vanilla overrides (the Blood Heart HUD). */
 	private static int putModAssets(ZipOutputStream out) throws IOException {
-		Optional<Path> root = FabricLoader.getInstance().getModContainer(HellcraftMod.MOD_ID)
-				.flatMap(mod -> mod.findPath("assets/" + HellcraftMod.MOD_ID));
-		if (root.isEmpty()) {
-			HellcraftMod.LOGGER.warn("The mod's assets were not found; the resource pack will be empty");
-			return 0;
+		int n = 0;
+		for (String namespace : List.of(HellcraftMod.MOD_ID, "minecraft")) {
+			Optional<Path> root = FabricLoader.getInstance().getModContainer(HellcraftMod.MOD_ID)
+					.flatMap(mod -> mod.findPath("assets/" + namespace));
+			if (root.isEmpty()) {
+				if (namespace.equals(HellcraftMod.MOD_ID)) {
+					HellcraftMod.LOGGER.warn("The mod's assets were not found; the resource pack will be empty");
+				}
+				continue;
+			}
+			if (namespace.equals("minecraft") && !HellConfig.get().heartHud) {
+				continue;
+			}
+			for (Path file : walk(root.get())) {
+				String relative = root.get().relativize(file).toString().replace('\\', '/');
+				put(out, "assets/" + namespace + "/" + relative, Files.readAllBytes(file));
+				LOCAL_ASSETS.add("assets/" + namespace + "/" + relative);
+				n++;
+			}
 		}
-		List<Path> files;
-		try (Stream<Path> walk = Files.walk(root.get())) {
-			files = walk.filter(Files::isRegularFile).sorted().toList();
+		return n;
+	}
+
+	private static List<Path> walk(Path root) throws IOException {
+		try (Stream<Path> walk = Files.walk(root)) {
+			return walk.filter(Files::isRegularFile).sorted().toList();
 		}
-		for (Path file : files) {
-			String relative = root.get().relativize(file).toString().replace('\\', '/');
-			put(out, "assets/" + HellcraftMod.MOD_ID + "/" + relative, Files.readAllBytes(file));
-			LOCAL_ASSETS.add("assets/" + HellcraftMod.MOD_ID + "/" + relative);
+	}
+
+	/** The seven rank packs (hellcraft_ranks/<n> in the jar), each a pack of its own. */
+	private static void buildRanks() throws Exception {
+		for (int rank = 1; rank < RANK_ZIPS.length; rank++) {
+			RANK_ZIPS[rank] = null;
+			RANK_SHA1[rank] = null;
+			int r = rank;
+			Optional<Path> root = FabricLoader.getInstance().getModContainer(HellcraftMod.MOD_ID)
+					.flatMap(mod -> mod.findPath("hellcraft_ranks/" + r));
+			if (root.isEmpty() || !HellConfig.get().heartHud) {
+				continue;
+			}
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			try (ZipOutputStream out = new ZipOutputStream(bytes)) {
+				put(out, "pack.mcmeta", ("{\"pack\": {\"min_format\": [97, 0], \"max_format\": [99, 0], \"description\": \"Hellcraft: "
+						+ r + " P's burned\"}}\n").getBytes(StandardCharsets.UTF_8));
+				for (Path file : walk(root.get())) {
+					put(out, root.get().relativize(file).toString().replace('\\', '/'), Files.readAllBytes(file));
+				}
+			}
+			RANK_ZIPS[rank] = bytes.toByteArray();
+			RANK_SHA1[rank] = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(RANK_ZIPS[rank]));
 		}
-		return files.size();
 	}
 
 	private static String soundsJson(Map<Track, byte[]> audio) {
@@ -469,10 +550,15 @@ public final class MusicPack {
 				}
 			}
 			String[] requestLine = head.toString().split("\r\n", 2)[0].split(" ");
-			byte[] body = zip;
+			String path = requestLine.length >= 2 ? requestLine[1].split("\\?", 2)[0] : "";
+			byte[] body = path.equals(PATH) ? zip : null;
+			for (int rank = 1; rank < RANK_ZIPS.length && body == null; rank++) {
+				if (path.equals(rankPath(rank))) {
+					body = RANK_ZIPS[rank];
+				}
+			}
 			boolean ok = requestLine.length >= 2 && body != null
-					&& (requestLine[0].equals("GET") || requestLine[0].equals("HEAD"))
-					&& requestLine[1].split("\\?", 2)[0].equals(PATH);
+					&& (requestLine[0].equals("GET") || requestLine[0].equals("HEAD"));
 			if (!ok) {
 				out.write("HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n".getBytes(StandardCharsets.US_ASCII));
 				return;

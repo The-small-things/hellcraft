@@ -3,6 +3,7 @@ package net.thesmallthings.hellcraft.hazard;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -12,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -96,7 +97,9 @@ public final class CircleHazards {
 
 	public static boolean warded(ServerPlayer player) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
-		return soul != null && soul.wardUntil > player.level().getServer().overworld().getGameTime();
+		// the purified (all seven P's burned) are beyond the torments for good
+		return soul != null && (soul.wardUntil > player.level().getServer().overworld().getGameTime()
+				|| Prestige.has(soul, Prestige.Terrace.LUST));
 	}
 
 	private static void announce(ServerPlayer player, Zone zone) {

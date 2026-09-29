@@ -27,11 +27,11 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
+import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -96,6 +96,8 @@ public final class DeathHandler {
 		HellState.Soul soul = Hearts.soul(player);
 		String name = player.getGameProfile().name();
 		ServerPlayer killer = killer(player);
+		soul.deaths++;
+		state.setDirty();
 		if (killer == null && !config.pveDeathsCostHearts) {
 			player.sendSystemMessage(Component.literal("Hell spits you back out. Only another soul can take your heart.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			return;
@@ -122,6 +124,7 @@ public final class DeathHandler {
 			soul.ghost = true;
 			soul.deathSpot = new HellState.GlobalSpot(player.level().dimension(), player.blockPosition());
 			state.setDirty();
+			Journey.award(player, "journey/hell_is_full");
 			player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal("Hell is full. ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 					.append(Component.literal(name + " now walks the earth.").withStyle(ChatFormatting.RED)), false);
 			// the ghost gets the same instructions when they respawn as one
@@ -167,6 +170,9 @@ public final class DeathHandler {
 		int depth = depthAt(level, entity);
 		HellConfig config = HellConfig.get();
 		double chance = (config.fragmentChanceBase + config.fragmentChancePerDepth * depth) * HellWeapons.fragmentMultiplier(killer);
+		if (Prestige.has(Hearts.soul(killer), Prestige.Terrace.ENVY)) {
+			chance *= 1.1; // Kindness
+		}
 		if (level.getRandom().nextDouble() < chance) {
 			entity.spawnAtLocation(level, BloodItems.fragment(1));
 		}
