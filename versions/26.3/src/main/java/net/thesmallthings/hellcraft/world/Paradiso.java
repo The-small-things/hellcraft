@@ -15,11 +15,12 @@ import net.minecraft.world.level.biome.Biome;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -40,6 +41,8 @@ public final class Paradiso {
 	/** Looks the spheres' biomes up, before any world (and so the End's biome source) is loaded. */
 	public static void init(MinecraftServer server) {
 		BIOMES.clear();
+		union = null;
+		listed = false;
 		var lookup = server.registryAccess().lookupOrThrow(Registries.BIOME);
 		for (ParadisoGeometry.Sphere s : ParadisoGeometry.Sphere.values()) {
 			if (s == ParadisoGeometry.Sphere.THRESHOLD) {
@@ -50,10 +53,22 @@ public final class Paradiso {
 		HellcraftMod.LOGGER.info("Paradiso: {} spheres ready", BIOMES.size());
 	}
 
-	/** For the End's biome source: every sphere, so their features are known to the chunk generator. */
-	public static List<Holder<Biome>> biomes() {
-		listed = !BIOMES.isEmpty();
-		return new ArrayList<>(BIOMES.values());
+	private static Set<Holder<Biome>> base;
+	private static Set<Holder<Biome>> union;
+
+	/** The End's possible biomes plus the spheres (once they have been looked up; the same set each time). */
+	public static synchronized Set<Holder<Biome>> withSpheres(Set<Holder<Biome>> vanilla) {
+		if (BIOMES.isEmpty()) {
+			return vanilla;
+		}
+		if (union == null || base != vanilla) {
+			Set<Holder<Biome>> all = new LinkedHashSet<>(vanilla);
+			all.addAll(BIOMES.values());
+			base = vanilla;
+			union = Collections.unmodifiableSet(all);
+			listed = true;
+		}
+		return union;
 	}
 
 	/** The sphere biome for an outer-island column (block coordinates), or null to keep vanilla's. */
