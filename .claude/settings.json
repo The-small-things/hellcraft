@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "pixel-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "willibrandon/pixel-plugin"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "pixel-plugin@pixel-plugin": true
+  }
+}
