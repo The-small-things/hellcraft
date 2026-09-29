@@ -104,7 +104,7 @@ public final class GuideBook {
 				"",
 				"/circle shows the nearest."));
 		pages.add(page("HELL WEAPONS",
-				"Forge the Bloodletter, the Reaper of Minos and the Tithe Axe from Blood Fragments.",
+				"Forge the Bloodletter from Blood Fragments; the Reaper of Minos, the Tithe Axe and the Blood Pickaxe take Blood Hearts too.",
 				"",
 				"Hits and kills fill them with blood. Right-click when full: its Blood Art.",
 				"",

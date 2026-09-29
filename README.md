@@ -174,7 +174,7 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 ### Hell weapons (26.3)
 
-Three vanilla tools, reforged with Blood Fragments at a crafting table. They're in everyone's recipe book, and swinging them costs nothing:
+Four vanilla tools, reforged at a crafting table with Blood Fragments (and, for the stronger ones, Blood Hearts). They're in everyone's recipe book, and swinging them costs nothing:
 - **Passive**: every fully charged hit does something extra (below).
 - **Blood charge**: charged hits on monsters (and players) add 5%, kills add 20%. The action bar shows the meter, and the weapon glows when it's full. **Right-click at 100%** to unleash its **Blood Art**. You lose the charge when you die.
 - **Blood Oath**: sneak and right-click (in the air or at a block) to pay **3 hearts of health** (not max hearts) for a full charge and **30 seconds of full power**. It needs more than 4 hearts of health, and your blood takes 3 minutes to recover before the next oath.
@@ -182,12 +182,15 @@ Three vanilla tools, reforged with Blood Fragments at a crafting table. They're 
 | Weapon | Recipe | Passive (charged hits) | Blood Art (right-click at full charge) | Blood Oath |
 |---|---|---|---|---|
 | **Bloodletter** (sword) | iron sword + 4 Blood Fragments | 3 s of bleeding (Wither), heals you ½❤ | **Exsanguinate**: lunge 6 blocks, cutting everything in your path for 8 with deep bleeding, healing 1❤ per foe | +10 damage, deep bleeding, each hit heals you 1❤ |
-| **Reaper of Minos** (scythe) | diamond hoe + 6 Blood Fragments | cleaves everything within 3 blocks of the target for 4 | **Harvest**: everything within 5 blocks takes 12, slowed and dragged toward you | every hit is a Harvest around the target |
-| **Tithe Axe** | diamond axe + 6 Blood Fragments | kills drop Blood Fragments twice as often | **Blood Frenzy**: Strength II, Speed II and Haste II for 15 s | Strength III, Speed II, Resistance, hits heal 1❤ |
+| **Reaper of Minos** (scythe) | diamond hoe + **2 Blood Hearts** + 4 Blood Fragments | cleaves everything within 3 blocks of the target for 4 | **Harvest**: everything within 5 blocks takes 12, slowed and dragged toward you | every hit is a Harvest around the target |
+| **Tithe Axe** | diamond axe + **1 Blood Heart** + 6 Blood Fragments | kills drop Blood Fragments twice as often | **Blood Frenzy**: Strength II, Speed II and Haste II for 15 s | Strength III, Speed II, Resistance, hits heal 1❤ |
+| **Blood Pickaxe** | diamond pickaxe + **1 Blood Heart** + 3 Blood Fragments | breaking an ore breaks the rest of its vein (12 blocks; sneak to mine just one), and ores you mine fill its blood (2% each) | **Excavate**: for 20 s every block you mine takes the 3×3 around it, with Haste II | Excavate, Haste III and Night Vision |
 
 The Reaper's cleave never touches villagers, pets, the mount you're riding, or players you couldn't hit anyway (PvP off, same team).
 
-`/hellcraft giveweapon <player> <bloodletter|reaper_of_minos|tithe_axe>` hands one out for testing.
+Excavate's 3×3 only takes blocks the pickaxe can mine and that are no harder than the one you broke, so it never cuts through obsidian, bedrock or chests. Vein mining and Excavate use the pickaxe like normal mining: Fortune, Silk Touch and durability all apply. Every hell weapon, the pickaxe included, can be made infernal at the Hellforge.
+
+`/hellcraft giveweapon <player> <bloodletter|reaper_of_minos|tithe_axe|blood_pickaxe>` hands one out for testing.
 
 ### Blood armour (26.3)
 

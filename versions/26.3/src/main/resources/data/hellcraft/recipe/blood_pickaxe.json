@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "S": "minecraft:diamond_hoe",
+    "S": "minecraft:diamond_pickaxe",
     "H": {
       "fabric:type": "fabric:components",
       "base": "minecraft:fermented_spider_eye",
@@ -34,41 +34,41 @@
     }
   },
   "pattern": [
-    "HFH",
-    "FSF",
+    "FHF",
+    " S ",
     " F "
   ],
   "result": {
-    "id": "minecraft:diamond_hoe",
+    "id": "minecraft:diamond_pickaxe",
     "components": {
       "minecraft:custom_data": {
         "hellcraft": "weapon",
-        "weapon": "reaper_of_minos"
+        "weapon": "blood_pickaxe"
       },
-      "minecraft:item_model": "hellcraft:reaper_of_minos",
+      "minecraft:item_model": "hellcraft:blood_pickaxe",
       "minecraft:item_name": {
-        "text": "Reaper of Minos",
+        "text": "Blood Pickaxe",
         "color": "dark_red",
         "bold": true
       },
       "minecraft:lore": [
         {
-          "text": "Charged hits cleave everything within 3 blocks for 4.",
+          "text": "Veins bleed out: breaking an ore breaks the rest of its vein",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Art, Harvest: reap everything within 5 blocks",
+          "text": "(sneak to mine just one). Ores you mine fill its blood too.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "for 12, slowing them and dragging them in.",
+          "text": "Blood Art, Excavate: for 20 s it digs 3x3, with Haste II.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Oath: every hit is a Harvest.",
+          "text": "Blood Oath: Excavate, Haste III and Night Vision.",
           "color": "gray",
           "italic": false
         },
@@ -83,23 +83,7 @@
           "italic": false
         }
       ],
-      "minecraft:rarity": "epic",
-      "minecraft:attribute_modifiers": [
-        {
-          "type": "minecraft:attack_damage",
-          "id": "hellcraft:reaper_damage",
-          "amount": 7.0,
-          "operation": "add_value",
-          "slot": "mainhand"
-        },
-        {
-          "type": "minecraft:attack_speed",
-          "id": "hellcraft:reaper_speed",
-          "amount": -3.0,
-          "operation": "add_value",
-          "slot": "mainhand"
-        }
-      ]
+      "minecraft:rarity": "epic"
     }
   }
 }

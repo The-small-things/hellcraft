@@ -1,9 +1,12 @@
 package net.thesmallthings.hellcraft.blood;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -27,17 +30,22 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -64,6 +72,8 @@ public final class HellWeapons {
 	private static final int PER_HIT = 5;
 	private static final int PER_KILL = 20;
 	private static final int FRENZY_TICKS = 15 * 20;
+	private static final int EXCAVATE_TICKS = 20 * 20;
+	private static final int PER_ORE = 2;
 
 	public enum Weapon {
 		BLOODLETTER("bloodletter", "Bloodletter", Items.IRON_SWORD, Rarity.RARE, List.of(
@@ -80,7 +90,12 @@ public final class HellWeapons {
 				"The tithe: kills with it drop Blood Fragments twice as often.",
 				"Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
 				"for 15 s.",
-				"Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤."));
+				"Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤.")),
+		BLOOD_PICKAXE("blood_pickaxe", "Blood Pickaxe", Items.DIAMOND_PICKAXE, Rarity.EPIC, List.of(
+				"Veins bleed out: breaking an ore breaks the rest of its vein",
+				"(sneak to mine just one). Ores you mine fill its blood too.",
+				"Blood Art, Excavate: for 20 s it digs 3x3, with Haste II.",
+				"Blood Oath: Excavate, Haste III and Night Vision."));
 
 		public final String id;
 		final String title;
@@ -114,9 +129,18 @@ public final class HellWeapons {
 	private static final Map<UUID, Integer> CHARGE = new HashMap<>();
 	/** Set while bonus damage is being dealt, so it doesn't trigger itself. */
 	private static boolean striking;
+	/** The Blood Pickaxe's Excavate: UUID -> game time it ends. */
+	private static final Map<UUID, Long> EXCAVATE = new HashMap<>();
+	/** Set while the Blood Pickaxe breaks extra blocks, so they don't set off more. */
+	private static boolean mining;
 
 	public static void register() {
 		ServerLivingEntityEvents.AFTER_DAMAGE.register(HellWeapons::afterDamage);
+		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+			if (player instanceof ServerPlayer sp && level instanceof ServerLevel server) {
+				afterBreak(sp, server, pos, state);
+			}
+		});
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
 			OATHS.remove(entity.getUUID());
 			CHARGE.remove(entity.getUUID());
@@ -286,6 +310,7 @@ public final class HellWeapons {
 			case BLOODLETTER -> exsanguinate(player, infernal(stack) ? 9.0 : 6.0, infernal(stack) ? 11.0f : 8.0f);
 			case REAPER -> harvest(player, infernal(stack) ? 7.0 : 5.0, infernal(stack) ? 15.0f : 12.0f);
 			case TITHE_AXE -> frenzy(player, infernal(stack) ? FRENZY_TICKS * 4 / 3 : FRENZY_TICKS);
+			case BLOOD_PICKAXE -> excavate(player, infernal(stack) ? EXCAVATE_TICKS * 3 / 2 : EXCAVATE_TICKS);
 		}
 		return InteractionResult.SUCCESS;
 	}
@@ -318,6 +343,10 @@ public final class HellWeapons {
 		if (BloodArmour.worn(player) >= 4) {
 			// a full set of blood armour hardens under an oath
 			player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, OATH_TICKS, 0));
+		}
+		if (weapon == Weapon.BLOOD_PICKAXE) {
+			player.addEffect(new MobEffectInstance(MobEffects.HASTE, OATH_TICKS, 2));
+			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, OATH_TICKS + 200, 0));
 		}
 		if (weapon == Weapon.TITHE_AXE) {
 			player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, OATH_TICKS, 2));
@@ -434,9 +463,112 @@ public final class HellWeapons {
 						player.heal(2.0f);
 					}
 				}
+				case BLOOD_PICKAXE -> {
+				}
 			}
 		} finally {
 			striking = false;
+		}
+	}
+
+	// ------------------------------------------------------------------ the Blood Pickaxe
+
+	private static void excavate(ServerPlayer player, int ticks) {
+		EXCAVATE.put(player.getUUID(), player.level().getGameTime() + ticks);
+		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
+		player.sendOverlayMessage(Component.literal("Excavate: your pickaxe bites three by three.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		player.level().playSound(null, player.blockPosition(), SoundEvents.DEEPSLATE_BREAK, SoundSource.PLAYERS, 1.2f, 0.6f);
+		bleed(player.level(), player, 30);
+	}
+
+	private static boolean excavating(ServerPlayer player) {
+		Long until = EXCAVATE.get(player.getUUID());
+		return (until != null && until > player.level().getGameTime()) || underOath(player);
+	}
+
+	public static boolean isOre(BlockState state) {
+		String path = BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+		return path.endsWith("_ore") || path.equals("ancient_debris");
+	}
+
+	/** After a block broken with the Blood Pickaxe: the rest of an ore's vein, and the 3x3 of an Excavate. */
+	private static void afterBreak(ServerPlayer player, ServerLevel level, BlockPos pos, BlockState state) {
+		ItemStack held = player.getMainHandItem();
+		if (mining || of(held) != Weapon.BLOOD_PICKAXE || player.isCreative()) {
+			return;
+		}
+		boolean infernal = infernal(held);
+		boolean ore = isOre(state);
+		mining = true;
+		try {
+			if (ore) {
+				addCharge(player, Math.round(PER_ORE * (infernal ? 1.25f : 1.0f)));
+				if (!player.isShiftKeyDown()) {
+					vein(player, level, pos, state.getBlock(), infernal ? 24 : 12);
+				}
+			}
+			if (excavating(player)) {
+				square(player, level, pos, state);
+			}
+		} finally {
+			mining = false;
+		}
+	}
+
+	/** Breaks up to {@code max} more blocks of the same ore touching this one (as if mined: fortune, durability). */
+	private static void vein(ServerPlayer player, ServerLevel level, BlockPos start, Block block, int max) {
+		ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+		Set<BlockPos> seen = new HashSet<>();
+		queue.add(start);
+		seen.add(start);
+		List<BlockPos> found = new ArrayList<>();
+		while (!queue.isEmpty() && found.size() < max) {
+			BlockPos at = queue.poll();
+			for (int dx = -1; dx <= 1; dx++) {
+				for (int dy = -1; dy <= 1; dy++) {
+					for (int dz = -1; dz <= 1; dz++) {
+						BlockPos next = at.offset(dx, dy, dz);
+						if (seen.add(next) && level.getBlockState(next).is(block) && found.size() < max) {
+							found.add(next);
+							queue.add(next);
+						}
+					}
+				}
+			}
+		}
+		for (BlockPos p : found) {
+			if (of(player.getMainHandItem()) != Weapon.BLOOD_PICKAXE) {
+				return; // it broke
+			}
+			player.gameMode.destroyBlock(p);
+		}
+		if (!found.isEmpty()) {
+			level.sendParticles(BloodAltar.BLOOD, start.getX() + 0.5, start.getY() + 0.5, start.getZ() + 0.5, 10 + found.size() * 2, 0.8, 0.8, 0.8, 0.0);
+		}
+	}
+
+	/** Breaks the eight blocks around this one, square to where the player is looking. */
+	private static void square(ServerPlayer player, ServerLevel level, BlockPos center, BlockState broken) {
+		Vec3 look = player.getLookAngle();
+		double ax = Math.abs(look.x), ay = Math.abs(look.y), az = Math.abs(look.z);
+		float hardness = broken.getDestroySpeed(level, center);
+		for (int a = -1; a <= 1; a++) {
+			for (int b = -1; b <= 1; b++) {
+				if (a == 0 && b == 0) {
+					continue;
+				}
+				BlockPos p = ay >= ax && ay >= az ? center.offset(a, 0, b) : ax >= az ? center.offset(0, a, b) : center.offset(a, b, 0);
+				BlockState st = level.getBlockState(p);
+				float h = st.getDestroySpeed(level, p);
+				// only what the pickaxe could mine as easily: never bedrock, obsidian beside stone, or chests
+				if (st.isAir() || h < 0 || h > hardness + 1.5f || level.getBlockEntity(p) != null || !player.hasCorrectToolForDrops(st)) {
+					continue;
+				}
+				if (of(player.getMainHandItem()) != Weapon.BLOOD_PICKAXE) {
+					return;
+				}
+				player.gameMode.destroyBlock(p);
+			}
 		}
 	}
 
