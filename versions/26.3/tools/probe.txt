@@ -1,7 +1,3 @@
-# why the End ignores the Paradiso spheres: who asks TheEndBiomeSource for biomes, and how
-code TheEndBiomeSource (getNoiseBiome|createResolver|lambda)
-code BiomeSource (findClosest|getNoiseBiome|possibleBiomes)
-BiomeResolver
-RandomState (public|sampler|Sampler)
-code ServerLevel (NoiseBiome|findClosestBiome)
-code ChunkGenerator (createBiomes|findClosest|getBiomeSource)
+# the End's resolvers: the caching one used by worldgen and /locate, and Fabric API's End-biome hook
+code BiomeSource (createCachingResolver|lambda)
+find (?i)fabric.*TheEnd
