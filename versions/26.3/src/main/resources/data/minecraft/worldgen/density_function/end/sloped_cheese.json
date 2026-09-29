@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:add",
+  "left": {
+    "type": "minecraft:add",
+    "left": "minecraft:end/islands",
+    "right": "minecraft:end/base_3d_noise"
+  },
+  "right": 0.04
+}

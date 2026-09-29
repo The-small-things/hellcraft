@@ -160,6 +160,140 @@ def nether():
     return {"biome.minecraft." + b: v[0] for b, v in NETHER_BIOMES.items()}
 
 
+# ============================================================================================ Paradiso
+
+# The End is Dante's heaven. The dragon's island in the middle stays vanilla's the_end (restyled); every outer
+# island takes the sphere of its ring (ParadisoGeometry.java; the mixin TheEndBiomeSourceMixin assigns them).
+# sphere: (title, top block, patch block, under block, sky, fog, particle, [features])
+SPHERES = {
+    "moon": ("The Moon", "calcite", "snow_block", "calcite", "#c8d4e8", "#dfe6f2", ("minecraft:white_ash", 0.01),
+             ["hellcraft:paradiso_star_glowstone"]),
+    "mercury": ("Mercury", "polished_diorite", "diorite", "diorite", "#d8dcef", "#e8e9f2", None,
+                ["hellcraft:paradiso_star_glowstone"]),
+    "venus": ("Venus", "grass_block", "moss_block", "dirt", "#f2c6dc", "#f8dde9", ("minecraft:cherry_leaves", 0.02),
+              ["hellcraft:paradiso_cherry", "hellcraft:paradiso_petals", "hellcraft:paradiso_star_glowstone"]),
+    "sun": ("The Sun", "yellow_terracotta", "honeycomb_block", "sandstone", "#ffe7a3", "#fff1c9", ("minecraft:wax_on", 0.01),
+            ["hellcraft:paradiso_star_shroomlight", "hellcraft:paradiso_star_glowstone"]),
+    "mars": ("Mars", "red_terracotta", "red_sandstone", "red_sandstone", "#f0b49a", "#f6cdb9", ("minecraft:crimson_spore", 0.005),
+             ["hellcraft:paradiso_star_shroomlight"]),
+    "jupiter": ("Jupiter", "quartz_block", "smooth_quartz", "quartz_block", "#e6ecff", "#f3f5ff", None,
+                ["hellcraft:paradiso_star_glowstone"]),
+    "saturn": ("Saturn", "packed_ice", "snow_block", "packed_ice", "#bcd3e6", "#d9e6f0", ("minecraft:snowflake", 0.01),
+               ["hellcraft:paradiso_star_lantern"]),
+    "fixed_stars": ("The Fixed Stars", "end_stone_bricks", "end_stone", "end_stone", "#aab8e8", "#c9d2f2", ("minecraft:end_rod", 0.004),
+                    ["minecraft:chorus_plant", "hellcraft:paradiso_star_lantern", "hellcraft:paradiso_star_glowstone"]),
+    "primum_mobile": ("The Primum Mobile", "prismarine_bricks", "dark_prismarine", "prismarine", "#b8f0ff", "#dcf8ff",
+                      ("minecraft:end_rod", 0.008), ["minecraft:chorus_plant", "hellcraft:paradiso_star_lantern"]),
+    "empyrean": ("The Empyrean", "grass_block", "white_concrete", "quartz_block", "#fff8e8", "#fffdf6", ("minecraft:end_rod", 0.012),
+                 ["hellcraft:paradiso_petals", "hellcraft:paradiso_star_lantern"]),
+}
+# one global order for the ninth feature step of every End biome
+PARADISO_ORDER = ["minecraft:chorus_plant", "hellcraft:paradiso_cherry", "hellcraft:paradiso_petals",
+                  "hellcraft:paradiso_star_shroomlight", "hellcraft:paradiso_star_glowstone", "hellcraft:paradiso_star_lantern"]
+# no end cities on the Moon (too close) or in the Empyrean (the Rose is there)
+CITY_SPHERES = ["mercury", "venus", "sun", "mars", "jupiter", "saturn", "fixed_stars", "primum_mobile"]
+
+
+def patch(state, tries, xz, survive):
+    """A random patch of one block, in 26.3's form (a simple block and its placement)."""
+    return ({"type": "minecraft:simple_block", "to_place": {"id": "minecraft:" + state}},
+            [count(tries),
+             {"type": "minecraft:offset", "x": {"type": "minecraft:trapezoid", "min": -xz, "max": xz, "plateau": 0},
+              "y": {"type": "minecraft:trapezoid", "min": -1, "max": 1, "plateau": 0},
+              "z": {"type": "minecraft:trapezoid", "min": -xz, "max": xz, "plateau": 0}},
+             {"type": "minecraft:block_predicate_filter", "predicate": {"type": "minecraft:all_of", "predicates": [
+                 {"type": "minecraft:matching_block_tag", "tag": "minecraft:air"},
+                 {"type": "minecraft:would_survive", "state": {"id": "minecraft:" + survive}}]}}])
+
+
+SURFACE = {"type": "minecraft:heightmap", "heightmap": "WORLD_SURFACE_WG"}
+
+
+def paradiso():
+    feats = {
+        "paradiso_star_glowstone": {"type": "hellcraft:star_cluster", "state": "minecraft:glowstone"},
+        "paradiso_star_lantern": {"type": "hellcraft:star_cluster", "state": "minecraft:sea_lantern"},
+        "paradiso_star_shroomlight": {"type": "hellcraft:star_cluster", "state": "minecraft:shroomlight"},
+    }
+    petals, petal_placement = patch("pink_petals", 32, 5, "pink_petals")
+    feats["paradiso_petals"] = petals
+    for name, f in feats.items():
+        write(os.path.join(HC, "worldgen", "feature", name + ".json"), f)
+    placed_features = {
+        "paradiso_star_glowstone": placed("hellcraft:paradiso_star_glowstone", rarity(3), IN_SQUARE, BIOME),
+        "paradiso_star_lantern": placed("hellcraft:paradiso_star_lantern", rarity(2), IN_SQUARE, BIOME),
+        "paradiso_star_shroomlight": placed("hellcraft:paradiso_star_shroomlight", rarity(3), IN_SQUARE, BIOME),
+        "paradiso_petals": placed("hellcraft:paradiso_petals", count(2), IN_SQUARE, SURFACE, BIOME, *petal_placement),
+        "paradiso_cherry": placed("minecraft:cherry", count(2), IN_SQUARE, SURFACE,
+                                  {"type": "minecraft:block_predicate_filter", "predicate": {
+                                      "type": "minecraft:would_survive",
+                                      "state": {"id": "minecraft:cherry_sapling", "properties": {"stage": "0"}}}},
+                                  BIOME),
+    }
+    for name, pf in placed_features.items():
+        write(os.path.join(HC, "worldgen", "placed_feature", name + ".json"), pf)
+
+    template = vanilla("biome__end_highlands")
+    names = {}
+    for sphere, (title, top, patch_block, under, sky, fog, particle, added) in SPHERES.items():
+        b = copy.deepcopy(template)
+        steps = [[] for _ in range(10)]
+        steps[0] = ["minecraft:end_island_decorated"]
+        steps[4] = ["minecraft:end_gateway_return"]
+        steps[9] = [f for f in PARADISO_ORDER if f in added]
+        b["features"] = steps
+        attrs = b["attributes"]
+        attrs["minecraft:visual/sky_color"] = sky
+        attrs["minecraft:visual/fog_color"] = fog
+        if particle:
+            attrs["minecraft:visual/ambient_particles"] = {"argument": [{"particle": {"type": particle[0]}, "probability": particle[1]}],
+                                                           "modifier": "append"}
+        monsters = attrs["minecraft:gameplay/natural_mob_spawns"]["argument"]["spawns_by_category"]
+        monsters["monster"] = [] if sphere == "empyrean" else [{"type": "minecraft:enderman", "count": 1, "weight": 5}]
+        b["temperature"] = 0.7
+        b["downfall"] = 0.4
+        write(os.path.join(HC, "worldgen", "biome", "paradiso_" + sphere + ".json"), b)
+        names["biome.hellcraft.paradiso_" + sphere] = "Paradiso: " + title
+
+    # the Threshold: vanilla's central island, in heaven's light
+    end = vanilla("biome__the_end")
+    end["attributes"]["minecraft:visual/sky_color"] = "#b8c6f0"
+    end["attributes"]["minecraft:visual/fog_color"] = "#d8def2"
+    write(os.path.join(MC, "worldgen", "biome", "the_end.json"), end)
+    names["biome.minecraft.the_end"] = "Paradiso: The Threshold"
+    names["entity.minecraft.ender_dragon"] = "The Seraph"
+
+    # the ground of each sphere
+    rules = []
+    for sphere, (title, top, patch_block, under, *_rest) in SPHERES.items():
+        rules.append(cond(biome_is("hellcraft:paradiso_" + sphere), seq(
+            cond("minecraft:on_floor", seq(cond(noise_at_least("minecraft:patch", 0.25), block(patch_block)), block(top))),
+            cond("minecraft:under_floor", block(under)))))
+    rules.append(vanilla("material_rule__end"))
+    write(os.path.join(MC, "worldgen", "material_rule", "end.json"), seq(*rules))
+
+    # larger islands, closer together
+    cheese = vanilla("density_function__end__sloped_cheese")
+    write(os.path.join(MC, "worldgen", "density_function", "end", "sloped_cheese.json"),
+          {"type": "minecraft:add", "left": cheese, "right": 0.04})
+
+    # heaven's sky over the whole End (each sphere tints its own)
+    dim = vanilla("dimension_type__the_end")
+    dim["ambient_light"] = 0.4
+    dim["skybox"] = "overworld"
+    dim["attributes"]["minecraft:visual/sky_color"] = "#c9d6f5"
+    dim["attributes"]["minecraft:visual/fog_color"] = "#e6e9f5"
+    dim["attributes"]["minecraft:visual/sky_light_color"] = "#fff4d6"
+    dim["attributes"]["minecraft:visual/sky_light_factor"] = 1.0
+    dim["attributes"]["minecraft:visual/ambient_light_color"] = "#b0b0c0"
+    write(os.path.join(MC, "dimension_type", "the_end.json"), dim)
+
+    tags = os.path.join(MC, "tags", "worldgen", "biome")
+    write(os.path.join(tags, "is_end.json"), {"replace": False, "values": ["hellcraft:paradiso_" + s for s in SPHERES]})
+    write(os.path.join(tags, "has_structure", "end_city.json"), {"replace": False, "values": ["hellcraft:paradiso_" + s for s in CITY_SPHERES]})
+    return names
+
+
 # ============================================================================================ the names
 
 def lang(names):
@@ -172,8 +306,9 @@ def lang(names):
 def main():
     names = {}
     names.update(nether())
+    names.update(paradiso())
     lang(names)
-    print("Reshaped the Nether: %d biomes." % len(NETHER_BIOMES))
+    print("Reshaped the Nether (%d biomes) and the End (%d spheres)." % (len(NETHER_BIOMES), len(SPHERES)))
 
 
 if __name__ == "__main__":

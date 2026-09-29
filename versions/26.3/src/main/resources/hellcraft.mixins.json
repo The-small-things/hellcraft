@@ -6,7 +6,8 @@
 	"mixins": [
 		"MobCategoryMixin",
 		"ResourcePackResponseMixin",
-		"HandshakeHostMixin"
+		"HandshakeHostMixin",
+		"TheEndBiomeSourceMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

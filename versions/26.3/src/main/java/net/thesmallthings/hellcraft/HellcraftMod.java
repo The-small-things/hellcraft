@@ -26,6 +26,7 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
 import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.Shrines;
+import net.thesmallthings.hellcraft.world.Paradiso;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Villages;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ public class HellcraftMod implements ModInitializer {
 		LuciferRewards.register();
 		MusicPack.register();
 
+		ServerLifecycleEvents.SERVER_STARTING.register(Paradiso::init);
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Purgatory::buildOnce);
@@ -71,6 +73,7 @@ public class HellcraftMod implements ModInitializer {
 			Spine.tick(server);
 			Shrines.tick(server);
 			Villages.tick(server);
+			Paradiso.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);
 			Purgatory.tick(server);

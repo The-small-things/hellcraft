@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "hellcraft:paradiso_moon",
+    "hellcraft:paradiso_mercury",
+    "hellcraft:paradiso_venus",
+    "hellcraft:paradiso_sun",
+    "hellcraft:paradiso_mars",
+    "hellcraft:paradiso_jupiter",
+    "hellcraft:paradiso_saturn",
+    "hellcraft:paradiso_fixed_stars",
+    "hellcraft:paradiso_primum_mobile",
+    "hellcraft:paradiso_empyrean"
+  ]
+}

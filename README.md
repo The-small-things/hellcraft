@@ -279,6 +279,29 @@ His dialogue appears in chat, each line with a low voice cue.
 
 Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
 
+## Beyond the Inferno (26.3)
+
+**The Forge of Dis (the Nether).** The Nether is Hell's workshop, Vulcan's smithy. It has bigger halls, and the wastes and deltas have blackstone, basalt and magma floors. Ruined forges hold anvils, lava cauldrons and chests (iron, gold, netherite scrap, Blood Fragments, sometimes a netherite upgrade template). Heaps of slag lie about, and great chains hang from the vaults. The biomes have new names: the Ash Wastes of Dis, Vulcan's Foundry, the Bleeding Wood, the Cold Forge and the Valley of Slag.
+
+**Paradiso (the End).** The End is Dante's heaven. The dragon, now **the Seraph**, still guards the Threshold in the middle. Every outer island belongs to a heavenly sphere, ring by ring from the centre, each with its own ground, sky and floating stars:
+
+| Sphere | From | Ground |
+|---|---|---|
+| The Moon | 1000 | calcite and snow |
+| Mercury | 1600 | diorite |
+| Venus | 2200 | grass, cherry groves, pink petals |
+| The Sun | 2800 | yellow terracotta, honeycomb, shroomlight stars |
+| Mars | 3400 | red terracotta and sandstone |
+| Jupiter | 4000 | quartz |
+| Saturn | 4600 | packed ice and snow |
+| The Fixed Stars | 5200 | end stone bricks, sea-lantern stars, chorus |
+| The Primum Mobile | 5800 | prismarine |
+| The Empyrean | 6400 | meadows of pink petals and light |
+
+End cities rise in the spheres between Mercury and the Primum Mobile. A title names each heaven as you enter it.
+
+These reshape the vanilla Nether and End by id. New worlds get them, and so do areas of existing worlds that haven't been explored yet. Explored chunks stay as they were.
+
 ## Virgil's Rests (26.3)
 
 Where the ramps come down into each circle (Limbo, Lust, Gluttony, Greed, the Styx, Heresy, the Wood of Suicides, the Burning Sands and Malebolge) stands a **Virgil's Rest**, 26 in all:

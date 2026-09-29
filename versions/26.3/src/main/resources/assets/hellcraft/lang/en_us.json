@@ -23,5 +23,17 @@
   "biome.minecraft.basalt_deltas": "Vulcan's Foundry",
   "biome.minecraft.crimson_forest": "The Bleeding Wood",
   "biome.minecraft.warped_forest": "The Cold Forge",
-  "biome.minecraft.soul_sand_valley": "The Valley of Slag"
+  "biome.minecraft.soul_sand_valley": "The Valley of Slag",
+  "biome.hellcraft.paradiso_moon": "Paradiso: The Moon",
+  "biome.hellcraft.paradiso_mercury": "Paradiso: Mercury",
+  "biome.hellcraft.paradiso_venus": "Paradiso: Venus",
+  "biome.hellcraft.paradiso_sun": "Paradiso: The Sun",
+  "biome.hellcraft.paradiso_mars": "Paradiso: Mars",
+  "biome.hellcraft.paradiso_jupiter": "Paradiso: Jupiter",
+  "biome.hellcraft.paradiso_saturn": "Paradiso: Saturn",
+  "biome.hellcraft.paradiso_fixed_stars": "Paradiso: The Fixed Stars",
+  "biome.hellcraft.paradiso_primum_mobile": "Paradiso: The Primum Mobile",
+  "biome.hellcraft.paradiso_empyrean": "Paradiso: The Empyrean",
+  "biome.minecraft.the_end": "Paradiso: The Threshold",
+  "entity.minecraft.ender_dragon": "The Seraph"
 }

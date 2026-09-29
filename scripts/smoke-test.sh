@@ -205,6 +205,17 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:chests/forge_ruin" || true)
   echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "The forge ruin loot table does not work"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
+  # Paradiso: the End's outer islands belong to the nine spheres
+  for sphere in moon venus sun primum_mobile empyrean; do
+    out=$(rcon "execute in minecraft:the_end run locate biome hellcraft:paradiso_$sphere" || true)
+    echo "Paradiso $sphere: $out"
+    echo "$out" | grep -qi "nearest" || { echo "The sphere hellcraft:paradiso_$sphere is nowhere in the End"; exit 1; }
+  done
+  for p in "0 0" "1500 0" "3000 0" "6600 0"; do
+    read -r ex ez <<< "$p"
+    rcon "execute in minecraft:the_end run forceload add $ex $ez" > /dev/null
+  done
+  sleep 10
   list=$(rcon "hellcraft shrine list")
   echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi
@@ -332,6 +343,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE "Hellcraft recipes: 8; take Blood Hearts: 0; take Blood Fragments: 7(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
   grep -q "Hellcraft config updated from version 0 to 2" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }
+  grep -q "Paradiso: 10 spheres ready" "$LOG" || { echo "The Paradiso biomes were not found"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do
