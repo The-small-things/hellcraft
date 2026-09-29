@@ -36,6 +36,19 @@
         },
         {
           "type": "minecraft:item",
+          "name": "minecraft:apple",
+          "weight": 8,
+          "modifier": {
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 2,
+              "max": 6
+            },
+            "type": "minecraft:set_count"
+          }
+        },
+        {
+          "type": "minecraft:item",
           "name": "minecraft:cooked_beef",
           "weight": 6,
           "modifier": {

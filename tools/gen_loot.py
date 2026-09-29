@@ -93,6 +93,7 @@ def chest(*pools):
 STAPLES = [
     item("arrow", 12, 8, 20),
     item("bread", 10, 2, 6),
+    item("apple", 8, 2, 6),
     item("cooked_beef", 6, 2, 5),
     item("torch", 10, 6, 16),
     item("sugar_cane", 8, 3, 9),
@@ -110,6 +111,7 @@ TABLES = {
             item("crying_obsidian", 10, 1, 4),
             item("glowstone_dust", 10, 2, 8),
             item("bread", 12, 2, 6),
+            item("apple", 8, 2, 5),
             item("iron_ingot", 10, 1, 5),
             item("gold_ingot", 6, 1, 4),
             item("arrow", 8, 6, 16),
