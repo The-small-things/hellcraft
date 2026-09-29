@@ -170,10 +170,44 @@ TABLES = {
 }
 
 
+# Vanilla's oak and dark oak leaves (26.3), with apples six times as likely: Hell has few other foods early on.
+VANILLA = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "data", "minecraft",
+                       "loot_table")
+NOT_SHEARED = {"type": "minecraft:inverted", "term": {"type": "minecraft:any_of",
+                                                      "terms": ["minecraft:tool/can_shear", "minecraft:tool/can_silk_touch"]}}
+
+
+def fortune(*chances):
+    return {"type": "minecraft:table_bonus", "chances": list(chances), "enchantment": "minecraft:fortune"}
+
+
+def leaves(wood):
+    return {"type": "minecraft:block", "pools": [
+        {"entries": [{"type": "minecraft:alternatives", "children": [
+            {"type": "minecraft:item", "condition": NOT_SHEARED["term"], "name": "minecraft:%s_leaves" % wood},
+            {"type": "minecraft:item",
+             "condition": {"type": "minecraft:all_of", "terms": [
+                 {"type": "minecraft:survives_explosion"}, fortune(0.05, 0.0625, 0.083333336, 0.1)]},
+             "name": "minecraft:%s_sapling" % wood}]}], "rolls": 1},
+        {"condition": NOT_SHEARED, "entries": [
+            {"type": "minecraft:item", "condition": fortune(0.02, 0.022222223, 0.025, 0.033333335, 0.1),
+             "modifier": [{"type": "minecraft:set_count", "count": {"type": "minecraft:uniform", "max": 2, "min": 1}},
+                          {"type": "minecraft:explosion_decay"}],
+             "name": "minecraft:stick"}], "rolls": 1},
+        {"condition": NOT_SHEARED, "entries": [
+            {"type": "minecraft:item",
+             "condition": {"type": "minecraft:all_of", "terms": [
+                 {"type": "minecraft:survives_explosion"}, fortune(0.03, 0.035, 0.04, 0.05, 0.12)]},
+             "name": "minecraft:apple"}], "rolls": 1},
+    ], "random_sequence": "minecraft:blocks/%s_leaves" % wood}
+
+
 def main():
     for name, table in TABLES.items():
         write(os.path.join(DATA, name + ".json"), table)
-    print("Wrote %d loot tables." % len(TABLES))
+    for wood in ("oak", "dark_oak"):
+        write(os.path.join(VANILLA, "blocks", wood + "_leaves.json"), leaves(wood))
+    print("Wrote %d loot tables." % (len(TABLES) + 2))
 
 
 if __name__ == "__main__":

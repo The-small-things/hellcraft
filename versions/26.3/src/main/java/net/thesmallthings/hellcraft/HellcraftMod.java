@@ -27,6 +27,7 @@ import net.thesmallthings.hellcraft.world.Landmarks;
 import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
+import net.thesmallthings.hellcraft.world.Villages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,7 @@ public class HellcraftMod implements ModInitializer {
 			GuardianManager.tick(server);
 			Spine.tick(server);
 			Shrines.tick(server);
+			Villages.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);
 			Purgatory.tick(server);

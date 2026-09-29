@@ -919,8 +919,24 @@ DIMENSION_TYPE26 = {
     "min_y": -64,
     "monster_spawn_block_light_limit": 0,
     "monster_spawn_light_level": DIMENSION_TYPE["monster_spawn_light_level"],
-    "timelines": "#minecraft:in_overworld",
+    # the overworld's timelines, but with our own villager routine (see VILLAGER_SCHEDULE26)
+    "timelines": "#hellcraft:in_inferno",
 }
+
+# Villagers take their routine from a timeline on the overworld clock, which Landmarks stops at dusk: under
+# vanilla's schedule they would rest forever and never take a job. In the Inferno they work around the clock
+# (they claim job sites and restock; Villages.java adds regular restocks since the day never turns).
+VILLAGER_SCHEDULE26 = {
+    "clock": "minecraft:overworld",
+    "period_ticks": 24000,
+    "tracks": {
+        "minecraft:gameplay/villager_activity": {"keyframes": [
+            {"ticks": 0, "value": "minecraft:work"}, {"ticks": 12000, "value": "minecraft:work"}]},
+        "minecraft:gameplay/baby_villager_activity": {"keyframes": [
+            {"ticks": 0, "value": "minecraft:play"}, {"ticks": 12000, "value": "minecraft:play"}]},
+    },
+}
+IN_INFERNO26 = {"values": ["hellcraft:villager_schedule", "minecraft:day", "minecraft:moon", "minecraft:early_game"]}
 
 # Biome tags that became environment attributes in 26.x
 TAGS26_DROPPED = {"without_patrol_spawns", "increased_fire_burnout", "snow_golem_melts"}
@@ -945,6 +961,8 @@ def main26():
     write(os.path.join(hc, "worldgen", "noise", "jagged.json"), noise26(-5, [1.0, 0.8, 0.5], 0.95))
     write(os.path.join(hc, "worldgen", "noise_settings", "inferno.json"), noise_settings26())
     write(os.path.join(hc, "dimension_type", "inferno.json"), DIMENSION_TYPE26)
+    write(os.path.join(hc, "timeline", "villager_schedule.json"), VILLAGER_SCHEDULE26)
+    write(os.path.join(hc, "tags", "timeline", "in_inferno.json"), IN_INFERNO26)
     write(os.path.join(hc, "worldgen", "world_preset", "inferno.json"), {"dimensions": {
         "minecraft:overworld": {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR},
         "minecraft:the_end": {"type": "minecraft:the_end", "generator": {

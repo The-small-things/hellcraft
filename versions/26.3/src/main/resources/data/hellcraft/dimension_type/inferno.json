@@ -51,5 +51,5 @@
     "min_inclusive": 0,
     "max_inclusive": 7
   },
-  "timelines": "#minecraft:in_overworld"
+  "timelines": "#hellcraft:in_inferno"
 }

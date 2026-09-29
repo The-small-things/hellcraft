@@ -76,7 +76,7 @@ The world is a disc 12,000 blocks across, with the world border at radius 6000. 
 
 At the bottom of the world waits **Lucifer** (see [below](#lucifer)).
 
-**Supplies (26.3).** The Dark Wood is where pilgrims get ready: villages (plains and taiga, with farms, fletchers and librarians) and wandering traders are found there as well as in Limbo. Sugar cane grows by the water in the Dark Wood, the Acheron, Limbo, Gluttony and the Styx, and the Acheron's banks have sand. Loot worth the detour:
+**Supplies (26.3).** The Dark Wood is where pilgrims get ready: villages (plains and taiga, with farms, fletchers and librarians) and wandering traders are found there as well as in Limbo. Under Hell's endless dusk villagers work around the clock, so they take jobs at job-site blocks as usual, and their trades restock every 10 minutes. Oak and dark oak leaves drop apples six times as often as in vanilla. Sugar cane grows by the water in the Dark Wood, the Acheron, Limbo, Gluttony and the Styx, and the Acheron's banks have sand. Loot worth the detour:
 - **Virgil's Rests** ([below](#virgils-rests-263)): a supply chest at every circle's way in
 - **Ruined Blood Altars** (twice as common as before): arrows, books, a Vigil Candle, sometimes an enchanted book
 - **Heretics' tombs**: one in four hides a chest of forbidden books (enchanted books of level 15-30, paper, lapis, bottles o' enchanting)
