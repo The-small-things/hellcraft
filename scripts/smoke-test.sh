@@ -42,7 +42,7 @@ cleanup() {
   docker logs "$NAME" > "$LOG" 2>&1 || true
   if [ "$status" != 0 ]; then
     echo "---- server log (warnings, errors, Hellcraft) ----"
-    grep -iE 'WARN|ERROR|Exception|hellcraft|lucifer|summon|display' "$LOG" | grep -v 'Marked chunk' | tail -80 || true
+    grep -iE 'WARN|ERROR|Exception|hellcraft|lucifer|summon|display|paradiso|forge|vulcan|seraph' "$LOG" | grep -v 'Marked chunk' | tail -80 || true
   fi
   docker rm -f "$NAME" >/dev/null 2>&1 || true
 }
@@ -205,17 +205,38 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:chests/forge_ruin" || true)
   echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "The forge ruin loot table does not work"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
-  # Paradiso: the End's outer islands belong to the nine spheres
-  for sphere in moon venus sun primum_mobile empyrean; do
-    out=$(rcon "execute in minecraft:the_end run locate biome hellcraft:paradiso_$sphere" || true)
-    echo "Paradiso $sphere: $out"
-    echo "$out" | grep -qi "nearest" || { echo "The sphere hellcraft:paradiso_$sphere is nowhere in the End"; exit 1; }
+  # Heaven: the Rose, the Ascent, the Seraph's angels, the relics and the wings in end city treasure
+  rose=$(rcon "hellcraft paradiso rose")
+  echo "$rose"
+  bell=$(rcon "execute in minecraft:the_end if block 7000 92 0 minecraft:bell" || true)
+  echo "The Rose's bell: $bell"
+  echo "$bell" | grep -q "Test passed" || { echo "The Celestial Rose has no bell"; exit 1; }
+  angels=$(rcon "execute in minecraft:the_end positioned 7000 95 0 run hellcraft paradiso angels" || true)
+  echo "$angels"
+  echo "$angels" | grep -qE "[1-9][0-9]* angels descend" || { echo "No angels came"; exit 1; }
+  rcon "kill @e[tag=hellcraft_angel]" > /dev/null || true
+  gate=$(rcon "execute if block 0 291 8 minecraft:end_gateway" || true)
+  echo "The Ascent: $gate"
+  echo "$gate" | grep -q "Test passed" || { echo "The Ascent is not on Purgatory's summit"; exit 1; }
+  for r in halo seraph_wings beatrices_rose; do
+    out=$(rcon "hellcraft giveitem nobody $r" || true)
+    echo "$out" | grep -qi "unknown item" && { echo "Relic $r is unknown"; exit 1; }
   done
+  drop=$(rcon "execute in minecraft:the_end run loot spawn 7000 95 0 loot minecraft:chests/end_city_treasure" || true)
+  echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "End city treasure does not work"; exit 1; }
+  rcon "kill @e[type=minecraft:item]" > /dev/null || true
   for p in "0 0" "1500 0" "3000 0" "6600 0"; do
     read -r ex ez <<< "$p"
     rcon "execute in minecraft:the_end run forceload add $ex $ez" > /dev/null
   done
   sleep 10
+  # Paradiso: the End's outer islands belong to the nine spheres
+  rcon "hellcraft paradiso status" || true
+  for sphere in moon venus sun primum_mobile empyrean; do
+    out=$(rcon "execute in minecraft:the_end run locate biome hellcraft:paradiso_$sphere" || true)
+    echo "Paradiso $sphere: $out"
+    echo "$out" | grep -qi "nearest" || { echo "The sphere hellcraft:paradiso_$sphere is nowhere in the End"; exit 1; }
+  done
   list=$(rcon "hellcraft shrine list")
   echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi
@@ -346,6 +367,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "Paradiso: 10 spheres ready" "$LOG" || { echo "The Paradiso biomes were not found"; fail=1; }
   grep -q "The Great Forge of Dis at" "$LOG" || { echo "The Great Forge of Dis was not built"; fail=1; }
   grep -q "Guardian slain: vulcan" "$LOG" || { echo "Vulcan was never slain"; fail=1; }
+  grep -q "The Celestial Rose blooms at" "$LOG" || { echo "The Celestial Rose was not built"; fail=1; }
+  grep -q "The Ascent opens on the summit" "$LOG" || { echo "The Ascent was not built"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do

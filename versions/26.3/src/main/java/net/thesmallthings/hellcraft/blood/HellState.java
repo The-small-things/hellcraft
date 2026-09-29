@@ -41,6 +41,9 @@ public class HellState extends SavedData {
 	public boolean purgatoryBuilt;
 	/** The Great Forge of Dis has been carved into the Nether. */
 	public boolean forgeBuilt;
+	/** The Celestial Rose (the Empyrean) and the Ascent (Purgatory's summit) have been built. */
+	public boolean roseBuilt;
+	public boolean ascentBuilt;
 	/** Guardian id -> game time it wakes again after being slain. */
 	public final Map<String, Long> guardianNext = new HashMap<>();
 	/** Virgil's Rests already built: site id -> the height of its floor. */
@@ -93,6 +96,8 @@ public class HellState extends SavedData {
 		public int kit;
 		/** Virgil's Rests this soul has reached (by site id): the places they can travel back to. */
 		public final Set<String> visited = new HashSet<>();
+		/** Has been given Beatrice's Rose at the Celestial Rose. */
+		public boolean rose;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -186,6 +191,7 @@ public class HellState extends SavedData {
 			}
 			st.putInt("hints", s.hints);
 			st.putInt("kit", s.kit);
+			st.putBoolean("rose", s.rose);
 			CompoundTag visited = new CompoundTag();
 			s.visited.forEach(v -> visited.putBoolean(v, true));
 			st.put("visited", visited);
@@ -198,6 +204,8 @@ public class HellState extends SavedData {
 		tag.putBoolean("lairs", lairsBuilt);
 		tag.putBoolean("purgatory", purgatoryBuilt);
 		tag.putBoolean("forge", forgeBuilt);
+		tag.putBoolean("rose", roseBuilt);
+		tag.putBoolean("ascent", ascentBuilt);
 		CompoundTag guardians = new CompoundTag();
 		guardianNext.forEach(guardians::putLong);
 		tag.put("guardianNext", guardians);
@@ -242,6 +250,7 @@ public class HellState extends SavedData {
 			s.anchorAt = GlobalSpot.load(st, "anchor");
 			s.hints = st.getIntOr("hints", 0);
 			s.kit = st.getIntOr("kit", 0);
+			s.rose = st.getBooleanOr("rose", false);
 			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
 			state.souls.put(id.get(), s);
 		}
@@ -251,6 +260,8 @@ public class HellState extends SavedData {
 		state.lairsBuilt = tag.getBooleanOr("lairs", false);
 		state.purgatoryBuilt = tag.getBooleanOr("purgatory", false);
 		state.forgeBuilt = tag.getBooleanOr("forge", false);
+		state.roseBuilt = tag.getBooleanOr("rose", false);
+		state.ascentBuilt = tag.getBooleanOr("ascent", false);
 		CompoundTag guardians = tag.getCompoundOrEmpty("guardianNext");
 		for (String key : guardians.keySet()) {
 			state.guardianNext.put(key, guardians.getLongOr(key, 0L));

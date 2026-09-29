@@ -22,6 +22,9 @@ FLAT_ITEMS = {
     "lucifers_bane": "minecraft:item/generated",
     "vigil_candle": "minecraft:item/generated",
     "soul_anchor": "minecraft:item/generated",
+    "halo": "minecraft:item/generated",
+    "seraph_wings": "minecraft:item/generated",
+    "beatrices_rose": "minecraft:item/generated",
     "bloodletter": "minecraft:item/handheld",
     "reaper_of_minos": "minecraft:item/handheld",
     "tithe_axe": "minecraft:item/handheld",
@@ -447,6 +450,18 @@ ANCHOR = dict(INERT, **{
     "minecraft:rarity": "rare",
     "minecraft:enchantment_glint_override": True,
 })
+
+
+# Paradiso's relics; must match Relics.java
+WINGS = {
+    "minecraft:custom_data": {"hellcraft": "relic", "relic": "seraph_wings"},
+    "minecraft:item_model": "hellcraft:seraph_wings",
+    "minecraft:item_name": {"text": "Seraph Wings", "color": "aqua", "bold": True},
+    "minecraft:lore": [{"text": "Never wear out. While gliding, sneak for a", "color": "gray", "italic": False},
+                       {"text": "rush of the Primum Mobile's wind (every 10 s).", "color": "gray", "italic": False}],
+    "minecraft:rarity": "epic",
+    "minecraft:unbreakable": {},
+}
 
 
 def item_recipes():

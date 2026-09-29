@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.TravelMenu;
+import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.GuideBook;
@@ -41,6 +42,8 @@ import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 import org.jetbrains.annotations.Nullable;
 import net.thesmallthings.hellcraft.world.GreatForge;
+import net.thesmallthings.hellcraft.world.Heaven;
+import net.thesmallthings.hellcraft.world.Paradiso;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
@@ -144,17 +147,18 @@ public final class HellCommands {
 				.then(Commands.literal("giveitem")
 						.then(Commands.argument("player", EntityArgument.player())
 								.then(Commands.argument("item", StringArgumentType.word())
-										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("vigil", "anchor"), builder))
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("vigil", "anchor", "halo", "seraph_wings", "beatrices_rose"), builder))
 										.executes(ctx -> {
 											ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
 											String item = StringArgumentType.getString(ctx, "item");
+											Relics.Relic relic = Relics.Relic.byId(item);
 											ItemStack stack = switch (item) {
 												case "vigil" -> BloodItems.vigil(1);
 												case "anchor" -> BloodItems.anchor(1);
-												default -> ItemStack.EMPTY;
+												default -> relic != null ? Relics.create(relic) : ItemStack.EMPTY;
 											};
 											if (stack.isEmpty()) {
-												ctx.getSource().sendFailure(Component.literal("Unknown item. Try: vigil, anchor"));
+												ctx.getSource().sendFailure(Component.literal("Unknown item. Try: vigil, anchor, halo, seraph_wings, beatrices_rose"));
 												return 0;
 											}
 											BloodItems.give(p, stack);
@@ -250,6 +254,27 @@ public final class HellCommands {
 											ctx.getSource().sendSuccess(() -> Component.literal(result), true);
 											return 1;
 										}))))
+				.then(Commands.literal("paradiso")
+						.then(Commands.literal("status").executes(ctx -> {
+							String status = Paradiso.status(ctx.getSource().getServer());
+							ctx.getSource().sendSuccess(() -> Component.literal(status), false);
+							return 1;
+						}))
+						.then(Commands.literal("angels").executes(ctx -> {
+							int n = Heaven.angels(ctx.getSource().getLevel(), BlockPos.containing(ctx.getSource().getPosition()));
+							ctx.getSource().sendSuccess(() -> Component.literal(n + " angels descend"), true);
+							return n;
+						}))
+						.then(Commands.literal("rose").executes(ctx -> {
+							Heaven.buildRose(ctx.getSource().getServer());
+							ctx.getSource().sendSuccess(() -> Component.literal("The Celestial Rose blooms at " + Heaven.bell().toShortString() + " in the End"), true);
+							return 1;
+						}))
+						.then(Commands.literal("ascent").executes(ctx -> {
+							Heaven.buildAscent(ctx.getSource().getServer());
+							ctx.getSource().sendSuccess(() -> Component.literal("The Ascent is at " + Heaven.ascent().toShortString()), true);
+							return 1;
+						})))
 				.then(Commands.literal("forge")
 						.executes(ctx -> {
 							ServerPlayer p = ctx.getSource().getPlayerOrException();

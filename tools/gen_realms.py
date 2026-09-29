@@ -288,6 +288,17 @@ def paradiso():
     dim["attributes"]["minecraft:visual/ambient_light_color"] = "#b0b0c0"
     write(os.path.join(MC, "dimension_type", "the_end.json"), dim)
 
+    # end city treasure: vanilla's, plus a chance of Seraph Wings
+    import sys
+    sys.path.insert(0, HERE)
+    from gen_models import WINGS
+    treasure = vanilla("loot_table__chests__end_city_treasure")
+    treasure["pools"].append({"rolls": 1, "entries": [
+        {"type": "minecraft:item", "name": "minecraft:elytra", "weight": 1,
+         "modifier": {"components": WINGS, "type": "minecraft:set_components"}},
+        {"type": "minecraft:empty", "weight": 3}]})
+    write(os.path.join(MC, "loot_table", "chests", "end_city_treasure.json"), treasure)
+
     tags = os.path.join(MC, "tags", "worldgen", "biome")
     write(os.path.join(tags, "is_end.json"), {"replace": False, "values": ["hellcraft:paradiso_" + s for s in SPHERES]})
     write(os.path.join(tags, "has_structure", "end_city.json"), {"replace": False, "values": ["hellcraft:paradiso_" + s for s in CITY_SPHERES]})

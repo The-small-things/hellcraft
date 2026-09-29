@@ -121,7 +121,9 @@ public final class GuideBook {
 		pages.add(page("PARADISO",
 				"The End is heaven. Past the Seraph's island, nine spheres ring the void: the Moon to the Primum Mobile.",
 				"",
-				"Beyond them all, at 6400 blocks out, the Empyrean."));
+				"Beyond them all, at 6400 blocks out, the Empyrean and its Celestial Rose.",
+				"",
+				"Beat the Seraph for a Halo. Lucifer's slayers may take the Ascent from Purgatory's summit."));
 		pages.add(page("LUCIFER",
 				"He waits in the pit at the very centre (0, 0). Enter it and the ice seals you in.",
 				"",

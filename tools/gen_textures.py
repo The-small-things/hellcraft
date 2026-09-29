@@ -142,6 +142,66 @@ art("soul_anchor", {"K": "0a0a10", "I": "4a4a58", "i": "8a8a9a", "S": "2fb4d6", 
     "..KKKKKKKKKKKK..",
 ])
 
+# a halo of light
+art("halo", {"K": "6a4a10", "G": "ffd84a", "g": "fff4b0", "W": "ffffff"}, [
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....KKKKKK.....",
+    "...KKGGGGGGKK...",
+    "..KGGggWWggGGK..",
+    ".KGgK......KgGK.",
+    ".KGgK......KgGK.",
+    "..KGGggWWggGGK..",
+    "...KKGGGGGGKK...",
+    ".....KKKKKK.....",
+    "................",
+    "................",
+    "................",
+    "................",
+])
+
+# the wings of a seraph
+art("seraph_wings", {"K": "5a6070", "W": "ffffff", "w": "dce4f0", "G": "ffe070"}, [
+    "................",
+    ".KK..........KK.",
+    "KWwK........KwWK",
+    "KWWwK......KwWWK",
+    "KWWWwK....KwWWWK",
+    ".KWWWwKGGKwWWWK.",
+    ".KWWWWwGGwWWWWK.",
+    "..KWWWWKKWWWWK..",
+    "..KwWWWK.KWWWK..",
+    "...KwWWK..KWWK..",
+    "...KwWK...KwWK..",
+    "....KwK....KwK..",
+    "....KK......KK..",
+    "................",
+    "................",
+    "................",
+])
+
+# Beatrice's rose, pink and gold
+art("beatrices_rose", {"K": "3a0a1a", "P": "ff7ab0", "p": "ffc0d8", "G": "ffe070", "S": "3a7a2a", "s": "5aa040"}, [
+    "................",
+    "......KKKK......",
+    ".....KPpPPK.....",
+    "....KPpGGpPK....",
+    "....KPGppGPK....",
+    "....KPpGGpPK....",
+    ".....KPPPPK.....",
+    "......KKKK......",
+    ".......SK.......",
+    "....KK.SK.......",
+    "...KsSKSK.......",
+    "....KKSSK.......",
+    ".......SK.......",
+    ".......SK.......",
+    ".......SK.......",
+    "........K.......",
+])
+
 STEEL = {"K": "140a0a", "W": "d6d6de", "w": "9a9aa6", "R": "b01515", "r": "e03030", "G": "6b5a2a", "g": "c9a445",
          "H": "4a2615", "h": "7a4a2a", "B": "e2d8c4", "b": "a8997c"}
 

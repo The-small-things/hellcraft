@@ -314,6 +314,11 @@ Near lava in the Nether, the **forge-heat** makes you hungry. Fire Resistance or
 
 End cities rise in the spheres between Mercury and the Primum Mobile. A title names each heaven as you enter it.
 
+- **The trial of the Seraph.** At half its health, and again at a quarter, the dragon calls its **Angelic Guard**: glowing vexes, two for every player. When it falls, everyone on the Threshold receives a **Halo**, a golden helmet that gives Regeneration while you are nearly at full health.
+- **Seraph Wings** hide in end city treasure (1 chest in 4). These elytra never wear out, and sneaking while gliding gives a rush of wind every 10 s.
+- **The Celestial Rose** floats in the Empyrean (x 7000, z 0): tiers of quartz and light with bands of petals. Ring its bell for **Beatrice's Rose** (once each). Right-click the rose to be fully healed and cleansed, once an hour.
+- **The Ascent.** A second gateway on Purgatory's summit lifts anyone who has cast Lucifer down into Paradiso. It leads to the Threshold, or to the Celestial Rose once the Seraph has fallen.
+
 These reshape the vanilla Nether and End by id. New worlds get them, and so do areas of existing worlds that haven't been explored yet. Explored chunks stay as they were.
 
 ## Virgil's Rests (26.3)
@@ -381,11 +386,12 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
-| `/hellcraft giveitem <player> vigil\|anchor` | op | Give a Vigil Candle or Soul Anchor (26.3) |
+| `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |
+| `/hellcraft paradiso status\|angels\|rose\|ascent` | op | Paradiso's state; call the Angelic Guard; build the Celestial Rose or the Ascent now (26.3) |
 | `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
 | `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |
 | `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |

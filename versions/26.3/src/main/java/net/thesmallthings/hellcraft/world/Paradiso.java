@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -69,6 +70,16 @@ public final class Paradiso {
 			listed = true;
 		}
 		return union;
+	}
+
+	/** For /hellcraft paradiso status: what the End's biome source knows. */
+	public static String status(MinecraftServer server) {
+		ServerLevel end = server.getLevel(Level.END);
+		String source = end == null ? "no End" : end.getChunkSource().getGenerator().getBiomeSource().getClass().getSimpleName()
+				+ " lists " + end.getChunkSource().getGenerator().getBiomeSource().possibleBiomes().size() + " biomes";
+		Holder<Biome> at = biome(1300, 0);
+		return "Paradiso: " + BIOMES.size() + " spheres known, listed=" + listed + ", " + source + ", at 1300 0: "
+				+ (at == null ? "vanilla" : at.getRegisteredName());
 	}
 
 	/** The sphere biome for an outer-island column (block coordinates), or null to keep vanilla's. */

@@ -341,6 +341,8 @@ public final class Purgatory {
 				streams(player);
 				if (Math.abs(player.getX()) < 1.2 && Math.abs(player.getZ()) < 1.2 && Math.abs(player.getY() - (SUMMIT_Y + 1)) < 1.5) {
 					home(player);
+				} else if (player.blockPosition().distSqr(Heaven.ascent()) < 2) {
+					Heaven.ascend(player);
 				}
 			}
 		}
