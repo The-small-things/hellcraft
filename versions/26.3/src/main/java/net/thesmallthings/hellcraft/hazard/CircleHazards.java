@@ -18,6 +18,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -77,6 +78,9 @@ public final class CircleHazards {
 			ServerLevel level = player.level();
 			if (!HellWorldgen.isInferno(level)) {
 				LAST_CIRCLE.remove(player.getUUID());
+				if (level.dimension() == Level.NETHER && config.circleHazards && !player.isSpectator() && !player.isCreative() && !warded(player)) {
+					forgeHeat(player, level);
+				}
 				continue;
 			}
 			Zone zone = InfernoGeometry.zoneAt(player.getX(), player.getZ());
@@ -223,10 +227,29 @@ public final class CircleHazards {
 		return false;
 	}
 
+	/** The Forge of Dis: close to lava, the heat drains you (Fire Resistance or water keeps it off). */
+	private static void forgeHeat(ServerPlayer player, ServerLevel level) {
+		if (player.hasEffect(MobEffects.FIRE_RESISTANCE) || player.isInWater()) {
+			return;
+		}
+		BlockPos pos = player.blockPosition();
+		for (BlockPos p : BlockPos.betweenClosed(pos.offset(-3, -2, -3), pos.offset(3, 2, 3))) {
+			if (level.getBlockState(p).is(Blocks.LAVA)) {
+				player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
+				hintBit(player, 20, "The forge-heat of Dis drains you near lava. Fire Resistance, or a dip in water, keeps it off.");
+				return;
+			}
+		}
+	}
+
 	/** Tells a player, once per circle, how to escape its torment. */
 	private static void hint(ServerPlayer player, Circle circle, String text) {
+		hintBit(player, circle.ordinal(), text);
+	}
+
+	private static void hintBit(ServerPlayer player, int index, String text) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
-		int bit = 1 << circle.ordinal();
+		int bit = 1 << index;
 		if (soul == null || (soul.hints & bit) != 0) {
 			return;
 		}

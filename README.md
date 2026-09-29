@@ -283,6 +283,20 @@ Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. 
 
 **The Forge of Dis (the Nether).** The Nether is Hell's workshop, Vulcan's smithy. It has bigger halls, and the wastes and deltas have blackstone, basalt and magma floors. Ruined forges hold anvils, lava cauldrons and chests (iron, gold, netherite scrap, Blood Fragments, sometimes a netherite upgrade template). Heaps of slag lie about, and great chains hang from the vaults. The biomes have new names: the Ash Wastes of Dis, Vulcan's Foundry, the Bleeding Wood, the Cold Forge and the Valley of Slag.
 
+**The Great Forge and Vulcan.** At the Nether's centre (0, 70, 0) a domed hall of blackstone is carved out the first time someone comes near: pillars of basalt, chains from the vault, and the **Hellforge**. **Vulcan**, smith of the gods, wakes when you walk in:
+- **Hammerfall:** a ring of sparks under you, then the hammer and a shockwave. Get out of the ring, then jump the wave.
+- **Molten Rain:** glowing marks, then molten iron pours onto them.
+- **Forge-born:** smiths of Dis (wither skeletons in iron) step out of the fire.
+- **Chains:** he hauls you to his anvil.
+
+He drops the usual guardian spoils and returns after 30 minutes. `/hellcraft forge` takes an op there.
+
+**The Hellforge** is any anvil standing on magma in the Nether. Right-click it (not sneaking) with a hell weapon or a piece of blood armour, carrying a netherite ingot and 8 Blood Fragments (`hellforgeCostFragments`), and it is forged anew as **infernal** gear:
+- **All infernal gear:** netherite and fire-proof.
+- **Weapons:** passives half again as strong, charge fills a quarter faster, and bigger Blood Arts (a 9-block lunge, a 7-block Harvest, a 20 s Frenzy). The Tithe Axe's kills drop fragments three times as often.
+
+Near lava in the Nether, the **forge-heat** makes you hungry. Fire Resistance or water keeps it off.
+
 **Paradiso (the End).** The End is Dante's heaven. The dragon, now **the Seraph**, still guards the Threshold in the middle. Every outer island belongs to a heavenly sphere, ring by ring from the centre, each with its own ground, sky and floating stars:
 
 | Sphere | From | Ground |
@@ -369,8 +383,9 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft giveitem <player> vigil\|anchor` | op | Give a Vigil Candle or Soul Anchor (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
-| `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian (26.3) |
+| `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
+| `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |
 | `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
 | `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |
 | `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |

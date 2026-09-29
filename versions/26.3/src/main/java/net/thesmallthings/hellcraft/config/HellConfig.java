@@ -113,6 +113,8 @@ public class HellConfig {
 	public double guardianHealthMultiplier = 1.0;
 	/** Blood Hearts a slain guardian drops (plus 3-6 Blood Fragments). */
 	public int guardianHearts = 2;
+	/** Blood Fragments (with a netherite ingot) the Hellforge takes to make a piece of blood gear infernal. */
+	public int hellforgeCostFragments = 8;
 	/** Blood Altars can send you to any Virgil's Rest you have reached (and the Gate of Hell). */
 	public boolean travel = true;
 	/** Seconds between one player's trips. */

@@ -134,7 +134,7 @@ public final class HellWeapons {
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		stack.set(DataComponents.ITEM_MODEL, HellcraftMod.id(weapon.id));
 		stack.set(DataComponents.ITEM_NAME, Component.literal(weapon.title).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		stack.set(DataComponents.LORE, lore(weapon));
+		stack.set(DataComponents.LORE, lore(weapon, false));
 		stack.set(DataComponents.RARITY, weapon.rarity);
 		if (weapon == Weapon.REAPER) {
 			// a scythe, not a garden tool: heavy and slow
@@ -148,8 +148,12 @@ public final class HellWeapons {
 		return stack;
 	}
 
-	static ItemLore lore(Weapon weapon) {
+	static ItemLore lore(Weapon weapon, boolean infernal) {
 		List<Component> lore = new ArrayList<>();
+		if (infernal) {
+			lore.add(Component.literal("Infernal: forged anew in the Great Forge of Dis. Everything is stronger.")
+					.withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)));
+		}
 		for (String line : weapon.lore) {
 			lore.add(Component.literal(line).withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)));
 		}
@@ -164,7 +168,7 @@ public final class HellWeapons {
 	static void refresh(ItemStack stack) {
 		Weapon weapon = of(stack);
 		if (weapon != null) {
-			ItemLore lore = lore(weapon);
+			ItemLore lore = lore(weapon, infernal(stack));
 			if (!lore.equals(stack.get(DataComponents.LORE))) {
 				stack.set(DataComponents.LORE, lore);
 			}
@@ -182,6 +186,19 @@ public final class HellWeapons {
 		}
 		CompoundTag tag = data.copyTag();
 		return KIND.equals(tag.getStringOr(BloodItems.KEY, "")) ? Weapon.byId(tag.getStringOr(KIND, "")) : null;
+	}
+
+	public static final String INFERNAL = "infernal";
+
+	/** Infernal gear was reforged at the Hellforge (Hellforge.java): netherite, and everything stronger. */
+	public static boolean infernal(ItemStack stack) {
+		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+		return data != null && data.copyTag().getBooleanOr(INFERNAL, false);
+	}
+
+	/** How much stronger a weapon's powers are: 1, or 1.5 once infernal. */
+	private static float power(ServerPlayer player) {
+		return infernal(player.getMainHandItem()) ? 1.5f : 1.0f;
 	}
 
 	// ------------------------------------------------------------------ blood charge
@@ -232,13 +249,14 @@ public final class HellWeapons {
 	/** A monster killed by a player: blood for the weapon in their hand. */
 	public static void onKill(ServerPlayer killer, LivingEntity victim) {
 		if (victim instanceof Enemy && of(killer.getMainHandItem()) != null) {
-			addCharge(killer, PER_KILL);
+			addCharge(killer, Math.round(PER_KILL * (infernal(killer.getMainHandItem()) ? 1.25f : 1.0f)));
 		}
 	}
 
 	/** Kills with the Tithe Axe drop Blood Fragments twice as often. */
 	public static double fragmentMultiplier(ServerPlayer killer) {
-		return of(killer.getMainHandItem()) == Weapon.TITHE_AXE ? 2.0 : 1.0;
+		ItemStack held = killer.getMainHandItem();
+		return of(held) == Weapon.TITHE_AXE ? (infernal(held) ? 3.0 : 2.0) : 1.0;
 	}
 
 	// ------------------------------------------------------------------ oaths and arts
@@ -265,9 +283,9 @@ public final class HellWeapons {
 		}
 		spend(player);
 		switch (weapon) {
-			case BLOODLETTER -> exsanguinate(player);
-			case REAPER -> harvest(player, 5.0, 12.0f);
-			case TITHE_AXE -> frenzy(player);
+			case BLOODLETTER -> exsanguinate(player, infernal(stack) ? 9.0 : 6.0, infernal(stack) ? 11.0f : 8.0f);
+			case REAPER -> harvest(player, infernal(stack) ? 7.0 : 5.0, infernal(stack) ? 15.0f : 12.0f);
+			case TITHE_AXE -> frenzy(player, infernal(stack) ? FRENZY_TICKS * 4 / 3 : FRENZY_TICKS);
 		}
 		return InteractionResult.SUCCESS;
 	}
@@ -311,7 +329,7 @@ public final class HellWeapons {
 	}
 
 	/** Bloodletter: a lunge that cuts through everything in its path. */
-	private static void exsanguinate(ServerPlayer player) {
+	private static void exsanguinate(ServerPlayer player, double reach, float damage) {
 		ServerLevel level = player.level();
 		Vec3 look = player.getLookAngle().multiply(1, 0, 1);
 		if (look.lengthSqr() < 1.0e-4) {
@@ -319,8 +337,8 @@ public final class HellWeapons {
 		}
 		look = look.normalize();
 		Vec3 from = player.position();
-		Vec3 to = from.add(look.scale(6.0));
-		player.push(look.x * 1.8, 0.2, look.z * 1.8);
+		Vec3 to = from.add(look.scale(reach));
+		player.push(look.x * reach * 0.3, 0.2, look.z * reach * 0.3);
 		Feedback.syncMotion(player);
 		int cut = 0;
 		striking = true;
@@ -328,7 +346,7 @@ public final class HellWeapons {
 			for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(from, to).inflate(1.5, 1.5, 1.5), e -> canReap(player, e))) {
 				if (distanceToSegment(e.position(), from, to) <= 1.8) {
 					e.setInvulnerableTime(0);
-					e.hurtServer(level, level.damageSources().playerAttack(player), 8.0f);
+					e.hurtServer(level, level.damageSources().playerAttack(player), damage);
 					e.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
 					level.sendParticles(BloodAltar.BLOOD, e.getX(), e.getY() + e.getBbHeight() * 0.6, e.getZ(), 16, 0.3, 0.3, 0.3, 0.0);
 					cut++;
@@ -338,7 +356,7 @@ public final class HellWeapons {
 			striking = false;
 		}
 		player.heal(2.0f * cut);
-		for (int i = 0; i <= 6; i++) {
+		for (int i = 0; i <= (int) reach; i++) {
 			Vec3 p = from.add(look.scale(i));
 			level.sendParticles(ParticleTypes.SWEEP_ATTACK, p.x, p.y + 1.0, p.z, 1, 0, 0, 0, 0);
 		}
@@ -359,11 +377,11 @@ public final class HellWeapons {
 	}
 
 	/** Tithe Axe. */
-	private static void frenzy(ServerPlayer player) {
+	private static void frenzy(ServerPlayer player, int ticks) {
 		ServerLevel level = player.level();
-		player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, FRENZY_TICKS, 1));
-		player.addEffect(new MobEffectInstance(MobEffects.SPEED, FRENZY_TICKS, 1));
-		player.addEffect(new MobEffectInstance(MobEffects.HASTE, FRENZY_TICKS, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, ticks, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.SPEED, ticks, 1));
+		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
 		player.sendOverlayMessage(Component.literal("Blood Frenzy!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		bleed(level, player, 30);
 		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.PLAYERS, 0.8f, 1.2f);
@@ -387,8 +405,9 @@ public final class HellWeapons {
 			return;
 		}
 		if (target instanceof Enemy || target instanceof Player) {
-			addCharge(player, PER_HIT);
+			addCharge(player, Math.round(PER_HIT * (infernal(player.getMainHandItem()) ? 1.25f : 1.0f)));
 		}
+		float power = power(player);
 		striking = true;
 		try {
 			switch (weapon) {
@@ -398,8 +417,8 @@ public final class HellWeapons {
 						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
 						player.heal(2.0f);
 					} else {
-						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0));
-						player.heal(1.0f);
+						target.addEffect(new MobEffectInstance(MobEffects.WITHER, Math.round(60 * power), 0));
+						player.heal(1.0f * power);
 						bleed(level, target, 6);
 					}
 				}
@@ -407,7 +426,7 @@ public final class HellWeapons {
 					if (oath) {
 						cleave(level, player, target, 5.0, 12.0f, true);
 					} else {
-						cleave(level, player, target, 3.0, 4.0f, false);
+						cleave(level, player, target, 3.0 * power, 4.0f * power, false);
 					}
 				}
 				case TITHE_AXE -> {

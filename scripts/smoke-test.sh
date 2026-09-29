@@ -223,8 +223,8 @@ fi
 if [ "$MC_VERSION" != "1.21.1" ]; then
   # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
   declare -A ATTACKS=([minos]="tail sentence coil" [cerberus]="maws filth howl" [plutus]="gold lunge pape" \
-                      [minotaur]="charge stomp" [geryon]="sting falseface")
-  for g in minos cerberus plutus minotaur geryon; do
+                      [minotaur]="charge stomp" [geryon]="sting falseface" [vulcan]="hammerfall molten forgeborn chains")
+  for g in minos cerberus plutus minotaur geryon vulcan; do
     out=$(rcon "hellcraft guardian $g summon")
     echo "$out"
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
@@ -344,6 +344,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "Hellcraft config updated from version 0 to 2" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }
   grep -q "Paradiso: 10 spheres ready" "$LOG" || { echo "The Paradiso biomes were not found"; fail=1; }
+  grep -q "The Great Forge of Dis at" "$LOG" || { echo "The Great Forge of Dis was not built"; fail=1; }
+  grep -q "Guardian slain: vulcan" "$LOG" || { echo "Vulcan was never slain"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do

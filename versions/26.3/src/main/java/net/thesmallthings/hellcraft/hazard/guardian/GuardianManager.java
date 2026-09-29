@@ -17,6 +17,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.util.Signs;
+import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public final class GuardianManager {
 		}
 		HellState state = HellState.get(server);
 		for (Guardian g : Guardian.values()) {
-			if (FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
+			if (g.inNether() || FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
 				continue;
 			}
 			for (ServerPlayer p : level.players()) {
@@ -103,9 +104,24 @@ public final class GuardianManager {
 				}
 			}
 		}
+		// Vulcan, at the Great Forge of Dis
+		ServerLevel nether = GreatForge.nether(server);
+		if (nether != null && GreatForge.built(server) && !FIGHTS.containsKey(Guardian.VULCAN)
+				&& nether.getGameTime() >= state.guardianNext.getOrDefault(Guardian.VULCAN.id(), 0L)) {
+			BlockPos c = GreatForge.center();
+			for (ServerPlayer p : nether.players()) {
+				if (!p.isSpectator() && !p.isCreative() && p.distanceToSqr(c.getX() + 0.5, c.getY(), c.getZ() + 0.5) < TRIGGER * TRIGGER) {
+					start(nether, Guardian.VULCAN, false);
+					break;
+				}
+			}
+		}
 	}
 
 	private static BlockPos lair(ServerLevel level, Guardian g) {
+		if (g.inNether()) {
+			return GreatForge.center();
+		}
 		BlockPos column = g.lairColumn();
 		level.getChunk(column.getX() >> 4, column.getZ() >> 4);
 		return new BlockPos(column.getX(), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ()), column.getZ());
@@ -123,8 +139,13 @@ public final class GuardianManager {
 		if (FIGHTS.containsKey(g)) {
 			return g.title + " is already awake.";
 		}
-		ServerLevel level = server.overworld();
-		if (!HellWorldgen.isInferno(level)) {
+		ServerLevel level = g.inNether() ? GreatForge.nether(server) : server.overworld();
+		if (g.inNether()) {
+			if (level == null) {
+				return "This server has no Nether.";
+			}
+			GreatForge.build(server);
+		} else if (!HellWorldgen.isInferno(level)) {
 			return "This world is not an Inferno world.";
 		}
 		start(level, g, true);
@@ -172,6 +193,9 @@ public final class GuardianManager {
 			return;
 		}
 		for (Guardian g : Guardian.values()) {
+			if (g.inNether()) {
+				continue;
+			}
 			BlockPos c = lair(level, g);
 			for (int i = 0; i < 8; i++) {
 				double a = i * Math.PI / 4;

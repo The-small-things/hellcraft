@@ -276,6 +276,27 @@ def minotaur():
     return model("hellcraft:entity/guardian_minotaur", e)
 
 
+def vulcan():
+    """Vulcan (Inferno XIV), the smith of the gods at his forge in Mongibello: soot-black, ember-veined,
+    a leather apron, a beard of sparks, and the hammer that forged Jove's thunderbolts."""
+    SKIN, EMBER, FACE, APRON, BEARD, IRON, HANDLE, HEART = range(8)
+    e = []
+    leg = box((4, 0, 6), (7.5, 11, 10), SKIN)
+    boot = box((3.75, 0, 5.5), (7.75, 3, 10.5), IRON)
+    e += [leg, mirror(leg), boot, mirror(boot)]
+    e.append(box((3, 10, 4.5), (13, 22, 11.5), SKIN, north=HEART))             # the forge-heart glowing in his chest
+    e.append(box((2.5, 6, 3.5), (13.5, 20, 4.5), APRON))                       # leather apron
+    e.append(box((1, 19, 4.5), (15, 24, 11.5), SKIN))                          # shoulders
+    arm = box((-2, 9, 6), (1.5, 23, 10), EMBER)
+    e += [arm, mirror(arm)]
+    e.append(box((5, 24, 4.5), (11, 30, 10.5), SKIN, north=FACE))             # head
+    e.append(box((5.5, 21, 3.5), (10.5, 25, 5), BEARD))                        # beard of sparks
+    # the hammer, in his right hand
+    e.append(box((-1, 4, 7.25), (0.5, 22, 8.75), HANDLE))
+    e.append(box((-3, 20, 5), (2.5, 25, 11), IRON))
+    return model("hellcraft:entity/guardian_vulcan", e)
+
+
 def geryon():
     """Geryon (Inferno XVII), the image of fraud: the face of a just man, a painted serpent's body,
     hairy paws, and a forked scorpion's tail."""
@@ -304,6 +325,7 @@ GUARDIANS = {
     "guardian_plutus": plutus,
     "guardian_minotaur": minotaur,
     "guardian_geryon": geryon,
+    "guardian_vulcan": vulcan,
 }
 
 

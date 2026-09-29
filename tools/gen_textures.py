@@ -480,5 +480,17 @@ atlas("guardian_geryon", [
     None, None, None, None, None, None, None, None,
 ])
 
+atlas("guardian_vulcan", [
+    noise_cell(hexc("1c1512"), 0.15),                            # 0 soot-black skin
+    stripes_cell(hexc("1c1512"), hexc("ff6a1a")),                # 1 ember-veined arms
+    face_cell(hexc("241a16"), hexc("ffb020"), hexc("100804")),   # 2 face, eyes of fire
+    stripes_cell(hexc("3a2412"), hexc("5a3a1e")),                # 3 leather apron
+    gradient_cell(hexc("ffd040"), hexc("c02010")),               # 4 beard of sparks
+    noise_cell(hexc("3a3a40"), 0.2),                             # 5 iron
+    noise_cell(hexc("4a2a14"), 0.2),                             # 6 hammer handle
+    gradient_cell(hexc("fff0a0"), hexc("ff4000")),               # 7 the forge-heart
+    None, None, None, None, None, None, None, None,
+])
+
 if __name__ == "__main__":
     print("Wrote textures to", os.path.normpath(OUT))

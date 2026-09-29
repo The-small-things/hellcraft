@@ -114,6 +114,14 @@ public final class GuideBook {
 				"East: " + east.getX() + ", " + east.getY() + ", " + east.getZ(),
 				"",
 				"Nothing hunts you there."));
+		pages.add(page("THE FORGE OF DIS",
+				"The Nether is Hell's workshop. At its centre (0, 70, 0) stands the Great Forge, where Vulcan works.",
+				"",
+				"Its Hellforge (any anvil on magma, in the Nether) makes blood gear infernal: netherite + " + c.hellforgeCostFragments + " Blood Fragments."));
+		pages.add(page("PARADISO",
+				"The End is heaven. Past the Seraph's island, nine spheres ring the void: the Moon to the Primum Mobile.",
+				"",
+				"Beyond them all, at 6400 blocks out, the Empyrean."));
 		pages.add(page("LUCIFER",
 				"He waits in the pit at the very centre (0, 0). Enter it and the ice seals you in.",
 				"",

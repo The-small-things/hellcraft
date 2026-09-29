@@ -39,6 +39,8 @@ public class HellState extends SavedData {
 	public boolean lairsBuilt;
 	/** The Mountain of Purgatory has been raised over the pit. */
 	public boolean purgatoryBuilt;
+	/** The Great Forge of Dis has been carved into the Nether. */
+	public boolean forgeBuilt;
 	/** Guardian id -> game time it wakes again after being slain. */
 	public final Map<String, Long> guardianNext = new HashMap<>();
 	/** Virgil's Rests already built: site id -> the height of its floor. */
@@ -195,6 +197,7 @@ public class HellState extends SavedData {
 		tag.putBoolean("spines", spinesBuilt);
 		tag.putBoolean("lairs", lairsBuilt);
 		tag.putBoolean("purgatory", purgatoryBuilt);
+		tag.putBoolean("forge", forgeBuilt);
 		CompoundTag guardians = new CompoundTag();
 		guardianNext.forEach(guardians::putLong);
 		tag.put("guardianNext", guardians);
@@ -247,6 +250,7 @@ public class HellState extends SavedData {
 		state.spinesBuilt = tag.getBooleanOr("spines", false);
 		state.lairsBuilt = tag.getBooleanOr("lairs", false);
 		state.purgatoryBuilt = tag.getBooleanOr("purgatory", false);
+		state.forgeBuilt = tag.getBooleanOr("forge", false);
 		CompoundTag guardians = tag.getCompoundOrEmpty("guardianNext");
 		for (String key : guardians.keySet()) {
 			state.guardianNext.put(key, guardians.getLongOr(key, 0L));

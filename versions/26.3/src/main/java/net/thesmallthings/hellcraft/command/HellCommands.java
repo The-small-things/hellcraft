@@ -40,6 +40,7 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 import org.jetbrains.annotations.Nullable;
+import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Zone;
@@ -249,6 +250,25 @@ public final class HellCommands {
 											ctx.getSource().sendSuccess(() -> Component.literal(result), true);
 											return 1;
 										}))))
+				.then(Commands.literal("forge")
+						.executes(ctx -> {
+							ServerPlayer p = ctx.getSource().getPlayerOrException();
+							GreatForge.build(ctx.getSource().getServer());
+							ServerLevel nether = GreatForge.nether(ctx.getSource().getServer());
+							if (nether == null) {
+								ctx.getSource().sendFailure(Component.literal("This server has no Nether."));
+								return 0;
+							}
+							BlockPos c = GreatForge.center();
+							p.teleportTo(nether, c.getX() + 0.5, c.getY(), c.getZ() + 17.5, java.util.Set.of(), 180.0f, 0.0f, true);
+							return 1;
+						})
+						.then(Commands.literal("build").executes(ctx -> {
+							GreatForge.build(ctx.getSource().getServer());
+							ctx.getSource().sendSuccess(() -> Component.literal("The Great Forge of Dis stands at "
+									+ GreatForge.center().toShortString() + " in the Nether."), true);
+							return 1;
+						})))
 				.then(Commands.literal("purgatory").executes(ctx -> {
 					ServerPlayer p = ctx.getSource().getPlayerOrException();
 					BlockPos shore = Purgatory.shore();
