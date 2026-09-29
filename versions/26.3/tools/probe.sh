@@ -19,6 +19,11 @@ while IFS= read -r line; do
   case "$line" in \#*) continue;; esac
   echo "################ $line"
   if [[ "$line" == find\ * ]]; then grep -E "${line#find }" /tmp/classes.txt | head -60; continue; fi
+  if [[ "$line" == data\ * ]]; then
+    # "data <regex>": print the game's data files whose paths match
+    for f in $(unzip -Z1 "$JAR" | grep -E "${line#data }" | head -20); do echo "== $f"; unzip -p "$JAR" "$f" | head -120; echo; done
+    continue
+  fi
   cls=${line%% *}; pat=""; [[ "$line" == *" "* ]] && pat=${line#* }
   if [[ "$cls" != *.* ]]; then
     matches=$(grep -E "(^|\.)${cls}$" /tmp/classes.txt)

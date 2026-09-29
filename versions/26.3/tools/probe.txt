@@ -1,16 +1,4 @@
-# villagers under a stopped clock: how does 26.3 schedule them?
-find (?i)villager.*(schedule|activity)|(?i)\.schedule\.|EnvironmentAttributes$
-EnvironmentAttributes (?i)villager|activity|schedule|work|rest
-Villager (?i)schedule|activity|profession|restock|jobsite|clock|daytime|work
-VillagerGoalPackages (public|static)
-Brain (?i)schedule|activity|updateActivity
-Schedule (public)
-# leaves: adding apples to loot tables
-find (?i)(LootTableEvents|LootItemRandomChanceCondition|LootItemRandomChanceWithEnchantedBonusCondition|\.LootPool|\.LootItem|ExplosionCondition)$
-LootTableEvents (public)
-LootTableEvents$Modify (public)
-LootItemRandomChanceCondition (public)
-LootPool (public static)
-LootPool$Builder (public)
-LootItem (public static)
-Blocks (DARK_OAK_LEAVES|OAK_LEAVES)
+# the clock and the villagers' routine (timelines), and the leaves' loot, as data
+data ^data/minecraft/timeline/
+data ^data/minecraft/tags/timeline/
+data ^data/minecraft/loot_table/blocks/(dark_oak|oak)_leaves\.json$
