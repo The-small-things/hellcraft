@@ -1,12 +1,3 @@
-# Hellcraft 2.0: heart sprites, advancement format, virtue attributes, advancements API, stacked packs, heads
-list ^assets/minecraft/textures/gui/sprites/hud/heart/
-list ^data/minecraft/advancement/(story|nether)/root\.json$
-data ^data/minecraft/advancement/(story/root|story/mine_stone|nether/root|adventure/kill_a_mob)\.json$
-Attributes (FALL|SAFE_FALL|MOVEMENT_SPEED|LUCK|KNOCKBACK_RES)
-PlayerAdvancements (public|award)
-ServerAdvancementManager (public)
-AdvancementHolder
-ClientboundResourcePackPushPacket
-ClientboundResourcePackPopPacket
-ResolvableProfile (public|static)
-FoodData (public)
+# Dante's Journey: the 26.3 shape of location/biome and dimension criteria, and a custom-model icon
+data ^data/minecraft/advancement/(nether/find_fortress|end/enter_end_gateway|adventure/sleep_in_bed|end/root)\.json$
+code DisplayInfo (static|lambda\$static)
