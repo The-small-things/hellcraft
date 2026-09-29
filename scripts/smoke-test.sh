@@ -186,6 +186,11 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   cane=$(rcon "place feature hellcraft:sugar_cane $rx $((ry + 1)) $rz" || true)
   echo "Sugar cane: $cane"
   echo "$cane" | grep -qiE "unknown|can't find|invalid" && { echo "The sugar cane feature is missing"; exit 1; }
+  for cmd in "hellcraft travel nobody gate" "hellcraft shrine visit nobody all"; do
+    out=$(rcon "$cmd" || true)
+    echo "$cmd: $out"
+    echo "$out" | grep -qi "unknown or incomplete command" && { echo "/$cmd is not registered"; exit 1; }
+  done
   list=$(rcon "hellcraft shrine list")
   echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi

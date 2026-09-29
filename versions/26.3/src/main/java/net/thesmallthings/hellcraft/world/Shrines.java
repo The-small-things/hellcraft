@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.entity.Entity;
@@ -88,8 +90,32 @@ public final class Shrines {
 				}
 			} else if (best < 64 * 64) {
 				driveOut(level, site, floor);
+				remember(level, site, floor);
 			}
 		}
+	}
+
+	/** Everyone standing in a Rest's ring can travel back to it from any Blood Altar. */
+	private static void remember(ServerLevel level, ShrineSites.Site site, int floor) {
+		HellState state = HellState.get(level.getServer());
+		for (ServerPlayer p : level.players()) {
+			if (p.isSpectator() || dist2(site, p.getX(), p.getZ()) > SAFE_RADIUS * SAFE_RADIUS || Math.abs(p.getY() - floor) >= 24) {
+				continue;
+			}
+			HellState.Soul soul = state.existing(p.getUUID());
+			if (soul != null && !soul.ghost && soul.visited.add(site.id())) {
+				state.setDirty();
+				p.sendSystemMessage(Component.literal("Virgil's Rest remembered (" + site.title() + "): you can travel back here from any Blood Altar.")
+						.withStyle(ChatFormatting.GOLD));
+				level.playSound(null, p.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.6f, 1.4f);
+			}
+		}
+	}
+
+	/** The floor height of a built Rest, or null if it isn't built yet. */
+	@Nullable
+	public static Integer floor(MinecraftServer server, ShrineSites.Site site) {
+		return HellState.get(server).shrines.get(site.id());
 	}
 
 	/** Monsters that appear inside a built Rest are gone a tick later (named ones, guardians and Lucifer excepted). */

@@ -22,6 +22,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodItems;
+import net.thesmallthings.hellcraft.blood.TravelMenu;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.GuideBook;
@@ -205,12 +206,49 @@ public final class HellCommands {
 							lines.forEach(l -> ctx.getSource().sendSuccess(() -> Component.literal(l), false));
 							return lines.size();
 						}))
+						.then(Commands.literal("visit")
+								.then(Commands.argument("player", EntityArgument.player())
+										.then(Commands.argument("rest", StringArgumentType.word())
+												.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(java.util.stream.Stream.concat(
+														java.util.stream.Stream.of("all"), ShrineSites.all().stream().map(ShrineSites.Site::id)), builder))
+												.executes(ctx -> {
+													ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+													String rest = StringArgumentType.getString(ctx, "rest");
+													HellState.Soul soul = Hearts.soul(p);
+													int before = soul.visited.size();
+													for (ShrineSites.Site site : ShrineSites.all()) {
+														if (rest.equals("all") || site.id().equals(rest)) {
+															soul.visited.add(site.id());
+														}
+													}
+													HellState.get(ctx.getSource().getServer()).setDirty();
+													int added = soul.visited.size() - before;
+													ctx.getSource().sendSuccess(() -> Component.literal(p.getGameProfile().name() + " now remembers "
+															+ added + " more Virgil's Rest(s)"), true);
+													return added;
+												}))))
 						.then(Commands.literal("build")
 								.executes(ctx -> buildShrines(ctx.getSource(), null))
 								.then(Commands.argument("circle", StringArgumentType.word())
 										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(ShrineSites.all().stream()
 												.map(s -> s.zone().name().toLowerCase(java.util.Locale.ROOT)).distinct(), builder))
 										.executes(ctx -> buildShrines(ctx.getSource(), StringArgumentType.getString(ctx, "circle"))))))
+				.then(Commands.literal("travel")
+						.then(Commands.argument("player", EntityArgument.player())
+								.then(Commands.argument("to", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(java.util.stream.Stream.concat(
+												java.util.stream.Stream.of("gate"), ShrineSites.all().stream().map(ShrineSites.Site::id)), builder))
+										.executes(ctx -> {
+											ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+											TravelMenu.Destination to = TravelMenu.find(ctx.getSource().getServer(), Hearts.soul(p), StringArgumentType.getString(ctx, "to"));
+											if (to == null) {
+												ctx.getSource().sendFailure(Component.literal("No such place (or that Rest isn't built yet). Try: gate, limbo_1, ..."));
+												return 0;
+											}
+											String result = TravelMenu.travel(p, to, true);
+											ctx.getSource().sendSuccess(() -> Component.literal(result), true);
+											return 1;
+										}))))
 				.then(Commands.literal("purgatory").executes(ctx -> {
 					ServerPlayer p = ctx.getSource().getPlayerOrException();
 					BlockPos shore = Purgatory.shore();

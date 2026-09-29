@@ -38,6 +38,7 @@ public final class AltarMenu {
 	}
 
 	private static final int WARD_SLOT = 3;
+	private static final int TRAVEL_SLOT = 4;
 	private static final int BIND_SLOT = 5;
 	private static final int FIRST_GHOST_SLOT = 9;
 	private static final int MAX_GHOSTS = 9;
@@ -54,6 +55,14 @@ public final class AltarMenu {
 				"Shields you from the torments of the circles",
 				"for " + config.wardMinutes + " minutes",
 				carried >= 1 ? "▶ Click to offer" : "✖ You carry no Blood Hearts"));
+		if (config.travel) {
+			int known = TravelMenu.destinations(level.getServer(), Hearts.soul(player)).size();
+			long wait = TravelMenu.cooldownLeft(player);
+			container.setItem(TRAVEL_SLOT, button(Items.ENDER_PEARL, "Travel", ChatFormatting.GOLD,
+					"Free: to the Gate of Hell or any",
+					"Virgil's Rest you have reached (" + known + " place" + (known == 1 ? "" : "s") + ")",
+					wait > 0 ? "✖ You can travel again in " + wait + " s" : "▶ Click to choose where"));
+		}
 		int bindCost = config.bindCostHearts;
 		container.setItem(BIND_SLOT, button(Items.RESPAWN_ANCHOR, "Bind your respawn", ChatFormatting.DARK_RED,
 				bindCost == 0 ? "Free" : "Costs " + bindCost + " Blood Heart" + (bindCost == 1 ? "" : "s"),
@@ -120,6 +129,11 @@ public final class AltarMenu {
 			sendAllDataToRemote();
 			if (!(player instanceof ServerPlayer sp) || !BloodAltar.isAltar(level, altar)
 					|| sp.distanceToSqr(altar.getX() + 0.5, altar.getY() + 0.5, altar.getZ() + 0.5) > 64) {
+				return;
+			}
+			if (slotId == TRAVEL_SLOT && HellConfig.get().travel) {
+				// replaces this menu with the list of places
+				TravelMenu.open(sp, level, altar);
 				return;
 			}
 			if (slotId == WARD_SLOT) {

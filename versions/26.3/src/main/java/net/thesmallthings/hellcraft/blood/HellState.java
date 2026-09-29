@@ -16,9 +16,11 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /** Everything Hellcraft remembers about the world: hearts, ghosts, altar bindings, Lucifer. */
@@ -87,6 +89,8 @@ public class HellState extends SavedData {
 		public int hints;
 		/** Starter kit version this soul has received. */
 		public int kit;
+		/** Virgil's Rests this soul has reached (by site id): the places they can travel back to. */
+		public final Set<String> visited = new HashSet<>();
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -180,6 +184,9 @@ public class HellState extends SavedData {
 			}
 			st.putInt("hints", s.hints);
 			st.putInt("kit", s.kit);
+			CompoundTag visited = new CompoundTag();
+			s.visited.forEach(v -> visited.putBoolean(v, true));
+			st.put("visited", visited);
 			list.add(st);
 		}
 		tag.put("souls", list);
@@ -232,6 +239,7 @@ public class HellState extends SavedData {
 			s.anchorAt = GlobalSpot.load(st, "anchor");
 			s.hints = st.getIntOr("hints", 0);
 			s.kit = st.getIntOr("kit", 0);
+			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);

@@ -83,6 +83,8 @@ public final class GuideBook {
 				"",
 				"Nothing torments you there and no monster follows you in. Bind your respawn at its altar.",
 				"",
+				"Any altar's Travel button takes you back to a Rest you've reached.",
+				"",
 				"/circle shows the nearest."));
 		pages.add(page("HELL WEAPONS",
 				"Forge the Bloodletter, the Reaper of Minos and the Tithe Axe from Blood Fragments.",

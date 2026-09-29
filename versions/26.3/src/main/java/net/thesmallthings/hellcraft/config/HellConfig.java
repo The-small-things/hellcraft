@@ -113,6 +113,10 @@ public class HellConfig {
 	public double guardianHealthMultiplier = 1.0;
 	/** Blood Hearts a slain guardian drops (plus 3-6 Blood Fragments). */
 	public int guardianHearts = 2;
+	/** Blood Altars can send you to any Virgil's Rest you have reached (and the Gate of Hell). */
+	public boolean travel = true;
+	/** Seconds between one player's trips. */
+	public int travelCooldownSeconds = 120;
 	/** Vanilla music discs used for players without the pack (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";
@@ -151,6 +155,7 @@ public class HellConfig {
 	private void sanitize() {
 		migrate();
 		bindCostHearts = Math.max(0, bindCostHearts);
+		travelCooldownSeconds = Math.max(0, travelCooldownSeconds);
 		maxHearts = Math.max(1, maxHearts);
 		startHearts = Math.max(1, Math.min(startHearts, maxHearts));
 		reviveHearts = Math.max(1, Math.min(reviveHearts, maxHearts));

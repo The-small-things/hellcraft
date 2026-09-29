@@ -288,6 +288,8 @@ Where the ramps come down into each circle (Limbo, Lust, Gluttony, Greed, the St
 
 They are built the first time someone comes near. Entering a circle, and `/circle`, tell you where the nearest Rest is.
 
+**Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off).
+
 ## The torments of the circles
 
 Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all.
@@ -347,6 +349,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian (26.3) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
+| `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |
+| `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft where` | op | Debug: geometry at your position |
@@ -359,6 +363,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - fragment drop rates and how many fragments make a heart
 - whether monsters and the world take hearts (`pveDeathsCostHearts`, 26.3) and whether such a heart drops where you fell
 - what binding your respawn costs (`bindCostHearts`, 26.3)
+- travel between altars (`travel`, `travelCooldownSeconds`, 26.3)
 - the mob cap multiplier and mob health per depth
 - the ghost tether radius
 - ward length

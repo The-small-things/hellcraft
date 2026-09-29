@@ -101,6 +101,16 @@ public final class ShrineSites {
 		return new int[]{(int) Math.round(Math.cos(a) * r), (int) Math.round(Math.sin(a) * r)};
 	}
 
+	/** The Rest with this id, or null. */
+	public static Site byId(String id) {
+		for (Site s : all()) {
+			if (s.id().equals(id)) {
+				return s;
+			}
+		}
+		return null;
+	}
+
 	/** The Rest nearest to a point, or null if there are none. */
 	public static Site nearest(double x, double z) {
 		Site best = null;
