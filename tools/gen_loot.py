@@ -163,6 +163,19 @@ TABLES = {
             item("soul_torch", 4, 2, 6),
             fragments(4, 1, 2),
         ])),
+    "chests/forge_ruin": chest(
+        pool(3, 6, [
+            item("iron_ingot", 10, 2, 7),
+            item("gold_ingot", 8, 2, 6),
+            item("netherite_scrap", 3, 1, 2),
+            item("coal", 8, 4, 12),
+            item("magma_cream", 5, 1, 4),
+            item("blaze_powder", 5, 1, 4),
+            item("iron_chain", 5, 2, 6),
+            fragments(8, 1, 4),
+            potion(4, "fire_resistance"),
+        ]),
+        pool(1, 1, [item("netherite_upgrade_smithing_template", 1), item("golden_apple", 2), book(2, 15, 30), empty(5)])),
     "gameplay/guardian_spoils": {"type": "minecraft:chest", "pools": [
         pool(2, 2, [book(1, 30, 30)]),
         pool(1, 2, [item("diamond", 3, 1, 3), item("golden_apple", 3), item("experience_bottle", 3, 4, 8), vigils(2, 1, 2)]),

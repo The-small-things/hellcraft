@@ -191,6 +191,20 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "$cmd: $out"
     echo "$out" | grep -qi "unknown or incomplete command" && { echo "/$cmd is not registered"; exit 1; }
   done
+  # the Forge of Dis: generate some of the reshaped Nether, then check its features and loot
+  for p in "0 0" "300 0" "0 300" "-300 -300"; do
+    read -r nx nz <<< "$p"
+    rcon "execute in minecraft:the_nether run forceload add $nx $nz" > /dev/null
+  done
+  sleep 15
+  for f in forge_ruin slag_heap chain_pillar; do
+    out=$(rcon "execute in minecraft:the_nether run place feature hellcraft:$f 0 80 0" || true)
+    echo "Nether $f: $out"
+    echo "$out" | grep -qiE "unknown|can't find|invalid" && { echo "Nether feature hellcraft:$f is missing"; exit 1; }
+  done
+  drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:chests/forge_ruin" || true)
+  echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "The forge ruin loot table does not work"; exit 1; }
+  rcon "kill @e[type=minecraft:item]" > /dev/null || true
   list=$(rcon "hellcraft shrine list")
   echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi

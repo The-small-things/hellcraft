@@ -976,6 +976,9 @@ def main26():
         if tag not in TAGS26_DROPPED:
             write(os.path.join(mc, "tags", "worldgen", "biome", tag + ".json"), {"replace": False, "values": values})
     print("Generated %d biomes, %d features and %d placed features for 26.3." % (len(BIOMES), len(CONFIGURED), len(PLACED)))
+    # the Nether and the End (their features live in the same folders this function just cleared)
+    import gen_realms
+    gen_realms.main()
 
 
 if __name__ == "__main__":

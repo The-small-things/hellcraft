@@ -7,9 +7,13 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.world.feature.AltarRuinFeature;
 import net.thesmallthings.hellcraft.world.feature.BoulderFeature;
 import net.thesmallthings.hellcraft.world.feature.BurningTombFeature;
+import net.thesmallthings.hellcraft.world.feature.ChainPillarFeature;
 import net.thesmallthings.hellcraft.world.feature.DisWallFeature;
+import net.thesmallthings.hellcraft.world.feature.ForgeRuinFeature;
 import net.thesmallthings.hellcraft.world.feature.GateWallFeature;
 import net.thesmallthings.hellcraft.world.feature.RingFluidFeature;
+import net.thesmallthings.hellcraft.world.feature.SlagHeapFeature;
+import net.thesmallthings.hellcraft.world.feature.StarClusterFeature;
 
 /**
  * Registers the handful of worldgen codecs the data pack refers to. None of these registries are
@@ -28,6 +32,10 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("burning_tomb"), BurningTombFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("altar_ruin"), AltarRuinFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("boulder"), BoulderFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("forge_ruin"), ForgeRuinFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("chain_pillar"), ChainPillarFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("slag_heap"), SlagHeapFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("star_cluster"), StarClusterFeature.CODEC);
 	}
 
 	/** True when this level was generated as the Inferno (so gameplay only applies there). */
