@@ -99,6 +99,8 @@ public class HellState extends SavedData {
 		public int kit;
 		/** Virgil's Rests this soul has reached (by site id): the places they can travel back to. */
 		public final Set<String> visited = new HashSet<>();
+		/** Guardian id -> game time this soul last took its spoils (absent: never slain it). */
+		public final Map<String, Long> guardianSpoils = new HashMap<>();
 		/** Has been given Beatrice's Rose at the Celestial Rose. */
 		public boolean rose;
 		/** The Seven P's: how many have been burned from this soul's brow (0-7), each by an ascent at an altar. */
@@ -206,6 +208,9 @@ public class HellState extends SavedData {
 			CompoundTag visited = new CompoundTag();
 			s.visited.forEach(v -> visited.putBoolean(v, true));
 			st.put("visited", visited);
+			CompoundTag spoils = new CompoundTag();
+			s.guardianSpoils.forEach(spoils::putLong);
+			st.put("guardianSpoils", spoils);
 			list.add(st);
 		}
 		tag.put("souls", list);
@@ -269,6 +274,10 @@ public class HellState extends SavedData {
 			s.deaths = st.getIntOr("deaths", 0);
 			s.guardiansSlain = st.getIntOr("guardiansSlain", 0);
 			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
+			CompoundTag spoils = st.getCompoundOrEmpty("guardianSpoils");
+			for (String key : spoils.keySet()) {
+				s.guardianSpoils.put(key, spoils.getLongOr(key, 0L));
+			}
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);

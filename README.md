@@ -211,7 +211,16 @@ On the straight road in from the Gate of Hell (the +X axis, z = 0), five of Dant
 | **The Minotaur**, Infamy of Crete | Burning Sands, x 1600 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
 | **Geryon**, Image of Fraud | edge of the great cliff, x 1480 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
 
-A slain guardian drops **2 Blood Hearts** and 3–6 Blood Fragments, and sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health. Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
+A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
+
+**Spoils are personal and can't be farmed.** Each player in the fight gets their own share, straight into their inventory:
+- **The first time you slay a guardian:** 2 Blood Hearts, 3–6 Blood Fragments and a Soul Anchor.
+- **Slaying it again after 3 hours:** 1 Blood Heart and 3–6 fragments.
+- **In between:** only 1–2 fragments, and you're told when its spoils return for you.
+
+The guardian's treasure roll (the enchanted books) only drops when someone in the fight earned full spoils.
+
+Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
 
 | Minos | Cerberus | Plutus | The Minotaur | Geryon |
 |---|---|---|---|---|

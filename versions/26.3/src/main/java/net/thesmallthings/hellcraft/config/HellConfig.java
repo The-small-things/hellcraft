@@ -111,8 +111,12 @@ public class HellConfig {
 	public int guardianRespawnMinutes = 30;
 	/** Scales every guardian's health (each extra player in the lair adds half again). */
 	public double guardianHealthMultiplier = 1.0;
-	/** Blood Hearts a slain guardian drops (plus 3-6 Blood Fragments). */
+	/** Blood Hearts a guardian gives each player who slays it for the first time (plus 3-6 Blood Fragments and a Soul Anchor). */
 	public int guardianHearts = 2;
+	/** Blood Hearts for slaying a guardian again, once its spoils have returned for you. */
+	public int guardianRepeatHearts = 1;
+	/** Minutes before a guardian you have slain gives you spoils again (in between it only bleeds a few fragments). */
+	public int guardianSpoilsCooldownMinutes = 180;
 	/** Blood Fragments (with a netherite ingot) the Hellforge takes to make a piece of blood gear infernal. */
 	public int hellforgeCostFragments = 8;
 	/** Blood Altars can send you to any Virgil's Rest you have reached (and the Gate of Hell). */
@@ -168,6 +172,8 @@ public class HellConfig {
 		migrate();
 		bindCostHearts = Math.max(0, bindCostHearts);
 		travelCooldownSeconds = Math.max(0, travelCooldownSeconds);
+		guardianRepeatHearts = Math.max(0, guardianRepeatHearts);
+		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);
 		prestigeHeartBonus = Math.max(0, prestigeHeartBonus);
 		prestigeResetHearts = Math.max(1, prestigeResetHearts);
 		maxHearts = Math.max(1, maxHearts);

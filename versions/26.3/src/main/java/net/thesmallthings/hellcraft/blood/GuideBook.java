@@ -120,7 +120,8 @@ public final class GuideBook {
 				"Plutus (3125)",
 				"Minotaur (1600)",
 				"Geryon (1480)",
-				"Each is worth " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
+				"Your first victory over each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and books. Again: "
+						+ c.guardianRepeatHearts + " heart, once every " + (c.guardianSpoilsCooldownMinutes / 60) + " hours."));
 		pages.add(page("SUPPLIES",
 				"Villages and traders wait in the Dark Wood and Limbo. Sugar cane grows by the water.",
 				"",

@@ -221,14 +221,10 @@ public abstract class GuardianFight {
 			return;
 		}
 		say(deathLine());
-		// the spoils: blood and a Soul Anchor, left where it fell
-		entity.spawnAtLocation(level, BloodItems.heart(HellConfig.get().guardianHearts));
-		entity.spawnAtLocation(level, BloodItems.fragment(3 + level.getRandom().nextInt(4)));
-		entity.spawnAtLocation(level, BloodItems.anchor(1));
-		// and its treasure: enchanted books and more (data/hellcraft/loot_table/gameplay/guardian_spoils.json)
-		level.getServer().getCommands().performPrefixedCommand(level.getServer().createCommandSourceStack().withLevel(level).withSuppressedOutput(),
-				String.format(java.util.Locale.ROOT, "loot spawn %.2f %.2f %.2f loot hellcraft:gameplay/guardian_spoils", entity.getX(), entity.getY() + 0.5, entity.getZ()));
 		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
+		// the spoils are personal: each soul takes them once per guardian until they return (so a guardian
+		// that wakes every half hour can't be farmed), and the first victory over each is the richest
+		boolean treasure = false;
 		List<String> names = new ArrayList<>();
 		for (UUID id : participants) {
 			ServerPlayer p = level.getServer().getPlayerList().getPlayer(id);
@@ -236,15 +232,50 @@ public abstract class GuardianFight {
 				names.add(p.getGameProfile().name());
 				HellState.Soul soul = Hearts.soul(p);
 				soul.guardiansSlain++;
+				treasure |= spoils(p, soul, entity);
 				HellState.get(level.getServer()).setDirty();
 				Journey.award(p, "journey/guardian_" + kind.id());
 			}
+		}
+		if (treasure) {
+			// its treasure: enchanted books and more (data/hellcraft/loot_table/gameplay/guardian_spoils.json)
+			level.getServer().getCommands().performPrefixedCommand(level.getServer().createCommandSourceStack().withLevel(level).withSuppressedOutput(),
+					String.format(java.util.Locale.ROOT, "loot spawn %.2f %.2f %.2f loot hellcraft:gameplay/guardian_spoils", entity.getX(), entity.getY() + 0.5, entity.getZ()));
 		}
 		String who = names.isEmpty() ? "Someone" : String.join(", ", names);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " slew " + kind.title + ", " + kind.subtitle + ".")
 				.withStyle(kind.color, ChatFormatting.BOLD), false);
 		HellcraftMod.LOGGER.info("Guardian slain: {}", kind.id());
 		end(true);
+	}
+
+	/**
+	 * One victor's share, straight into their inventory. The first time: the full spoils and a Soul Anchor.
+	 * Again, once the cooldown has passed: fewer hearts. In between: only a few fragments. Returns whether
+	 * this victor earned the treasure roll.
+	 */
+	private boolean spoils(ServerPlayer player, HellState.Soul soul, LivingEntity body) {
+		HellConfig config = HellConfig.get();
+		long now = level.getServer().overworld().getGameTime();
+		Long last = soul.guardianSpoils.get(kind.id());
+		long cooldown = config.guardianSpoilsCooldownMinutes * 60L * 20L;
+		if (last != null && now - last < cooldown) {
+			BloodItems.give(player, BloodItems.fragment(1 + level.getRandom().nextInt(2)));
+			long minutes = Math.max(1, (cooldown - (now - last)) / (60L * 20L));
+			player.sendSystemMessage(Component.literal(kind.title + " has nothing more for you. Its spoils return for you in "
+					+ minutes + " min.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			return false;
+		}
+		boolean first = last == null;
+		soul.guardianSpoils.put(kind.id(), now);
+		BloodItems.give(player, BloodItems.heart(first ? config.guardianHearts : config.guardianRepeatHearts));
+		BloodItems.give(player, BloodItems.fragment(3 + level.getRandom().nextInt(4)));
+		if (first) {
+			BloodItems.give(player, BloodItems.anchor(1));
+		}
+		player.sendSystemMessage(Component.literal(first ? "The spoils of " + kind.title + " are yours."
+				: "You take " + kind.title + "'s spoils again.").withStyle(kind.color));
+		return true;
 	}
 
 	/** Ends the fight; a victory puts the guardian to sleep for a while. */
