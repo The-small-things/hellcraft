@@ -1,14 +1,5 @@
-# the vanilla Nether and End, to reshape them
-data ^data/minecraft/worldgen/world_preset/normal\.json$
-data ^data/minecraft/worldgen/multi_noise_biome_source_parameter_list/
-data ^data/minecraft/dimension_type/(the_nether|the_end)\.json$
-data ^data/minecraft/worldgen/noise_settings/(nether|end)\.json$
-data ^data/minecraft/worldgen/biome/(nether_wastes|basalt_deltas|crimson_forest|soul_sand_valley|warped_forest|the_end|end_highlands|end_midlands|small_end_islands|end_barrens)\.json$
-data ^data/minecraft/worldgen/density_function/end/
-data ^data/minecraft/loot_table/chests/(end_city_treasure|bastion_treasure)\.json$
-TheEndBiomeSource
-MultiNoiseBiomeSource
-BiomeSource (possible|collect|getNoiseBiome|codec)
-EndDragonFight (public)
-EnderDragon (public|DragonPhase|phase)
-NoiseBasedChunkGenerator (public)
+# the Nether's and End's surface rules, density functions and structure tags
+data ^data/minecraft/worldgen/material_rule/
+data ^data/minecraft/worldgen/density_function/nether/
+data ^data/minecraft/tags/worldgen/biome/(has_structure/(end_city|bastion_remnant|nether_fortress|nether_fossil|ruined_portal_nether)|is_nether|is_end)\.json$
+EnderDragonFight (public|boss|Boss|dragonEvent)
