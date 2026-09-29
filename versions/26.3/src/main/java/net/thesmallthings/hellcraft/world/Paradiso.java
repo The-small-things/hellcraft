@@ -78,8 +78,14 @@ public final class Paradiso {
 		String source = end == null ? "no End" : end.getChunkSource().getGenerator().getBiomeSource().getClass().getSimpleName()
 				+ " lists " + end.getChunkSource().getGenerator().getBiomeSource().possibleBiomes().size() + " biomes";
 		Holder<Biome> at = biome(1300, 0);
+		String resolved = "?";
+		if (end != null) {
+			var gen = end.getChunkSource().getGenerator();
+			var sampler = end.getChunkSource().randomState().sampler();
+			resolved = gen.getBiomeSource().createResolver(sampler).getNoiseBiome(1300 >> 2, 16, 0, sampler).getRegisteredName();
+		}
 		return "Paradiso: " + BIOMES.size() + " spheres known, listed=" + listed + ", " + source + ", at 1300 0: "
-				+ (at == null ? "vanilla" : at.getRegisteredName());
+				+ (at == null ? "vanilla" : at.getRegisteredName()) + ", the End's resolver says " + resolved;
 	}
 
 	/** The sphere biome for an outer-island column (block coordinates), or null to keep vanilla's. */
