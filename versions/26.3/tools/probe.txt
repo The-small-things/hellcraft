@@ -1,5 +1,7 @@
-# the Nether's and End's surface rules, density functions and structure tags
-data ^data/minecraft/worldgen/material_rule/
-data ^data/minecraft/worldgen/density_function/nether/
-data ^data/minecraft/tags/worldgen/biome/(has_structure/(end_city|bastion_remnant|nether_fortress|nether_fossil|ruined_portal_nether)|is_nether|is_end)\.json$
-EnderDragonFight (public|boss|Boss|dragonEvent)
+# why the End ignores the Paradiso spheres: who asks TheEndBiomeSource for biomes, and how
+code TheEndBiomeSource (getNoiseBiome|createResolver|lambda)
+code BiomeSource (findClosest|getNoiseBiome|possibleBiomes)
+BiomeResolver
+RandomState (public|sampler|Sampler)
+code ServerLevel (NoiseBiome|findClosestBiome)
+code ChunkGenerator (createBiomes|findClosest|getBiomeSource)

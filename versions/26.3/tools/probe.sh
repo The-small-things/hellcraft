@@ -24,6 +24,17 @@ while IFS= read -r line; do
     for f in $(unzip -Z1 "$JAR" | grep -E "${line#data }" | head -20); do echo "== $f"; unzip -p "$JAR" "$f" | head -4000; echo; done
     continue
   fi
+  if [[ "$line" == code\ * ]]; then
+    # "code <Class> [method-regex]": bytecode of the matching methods (all methods without a regex)
+    rest=${line#code }; cls=${rest%% *}; pat=""; [[ "$rest" == *" "* ]] && pat=${rest#* }
+    for m in $(grep -E "(^|\.)${cls}$" /tmp/classes.txt); do
+      echo "== $m"
+      javap -cp "$JAR:$LIBS" -c -p "$m" 2>&1 | awk -v pat="$pat" '
+        /^  [^ ].*\(.*\).*;$/ || /^  [^ ].*\{\};$/ { show = (pat == "" || $0 ~ pat) }
+        show' | head -600
+    done
+    continue
+  fi
   cls=${line%% *}; pat=""; [[ "$line" == *" "* ]] && pat=${line#* }
   if [[ "$cls" != *.* ]]; then
     matches=$(grep -E "(^|\.)${cls}$" /tmp/classes.txt)
