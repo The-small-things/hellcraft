@@ -42,7 +42,7 @@ cleanup() {
   docker logs "$NAME" > "$LOG" 2>&1 || true
   if [ "$status" != 0 ]; then
     echo "---- server log (warnings, errors, Hellcraft) ----"
-    grep -iE 'WARN|ERROR|Exception|hellcraft|lucifer|summon|display|paradiso|forge|vulcan|seraph' "$LOG" | grep -v 'Marked chunk' | tail -80 || true
+    grep -iE 'WARN|ERROR|Exception|hellcraft|lucifer|summon|display|paradiso|forge|vulcan|seraph|hall|prestige|ascend|advancement' "$LOG" | grep -v 'Marked chunk' | tail -80 || true
   fi
   docker rm -f "$NAME" >/dev/null 2>&1 || true
 }
@@ -199,6 +199,20 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$prest"
   echo "$prest" | grep -q "7 P's burned" || { echo "The Seven P's do not climb"; exit 1; }
   echo "$prest" | grep -q "the eighth refused" || { echo "An eighth P was burned"; exit 1; }
+  # the Hall of the Damned beside the spawn: five pillars, each signed with its top three
+  hall=$(rcon "hellcraft hall build" || true)
+  echo "$hall"
+  hpos=$(echo "$hall" | grep -oE -- '-?[0-9]+, -?[0-9]+, -?[0-9]+' | head -1 | tr -d ',')
+  [ -n "$hpos" ] || { echo "The Hall of the Damned was not built"; exit 1; }
+  read -r hx hy hz <<< "$hpos"
+  sign=$(rcon "execute if block $hx $hy $hz minecraft:dark_oak_sign" || true)
+  echo "Hall sign: $sign"
+  echo "$sign" | grep -q "Test passed" || { echo "The Hall of the Damned has no signs"; exit 1; }
+  board=$(rcon "hellcraft hall" || true)
+  echo "$board"
+  for heading in "MOST HEARTS" "P'S BURNED" "LUCIFER SLAIN" "GUARDIANS SLAIN" "MOST DAMNED"; do
+    echo "$board" | grep -q "$heading" || { echo "The Hall has no $heading board"; exit 1; }
+  done
   for cmd in "hellcraft travel nobody gate" "hellcraft shrine visit nobody all" "hellcraft prestige nobody"; do
     out=$(rcon "$cmd" || true)
     echo "$cmd: $out"
@@ -375,6 +389,9 @@ grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
 if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
+  grep -q "The Hall of the Damned at" "$LOG" || { echo "The Hall of the Damned was never raised"; fail=1; }
+  adv=$(grep -oE 'Hellcraft advancements: [0-9]+' "$LOG" | tail -1 | grep -oE '[0-9]+$' || echo 0)
+  [ "${adv:-0}" -ge 25 ] || { echo "Only ${adv:-0} Dante's Journey advancements loaded"; fail=1; }
   grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
   grep -qE "Hellcraft recipes: 8; take Blood Hearts: 0; take Blood Fragments: 7(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
   grep -q "Hellcraft config updated from version 0 to 2" "$LOG" || { echo "Config migration was not logged"; fail=1; }

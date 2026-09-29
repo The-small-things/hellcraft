@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/fraud",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:guardian_geryon"
+      }
+    },
+    "title": {
+      "text": "The Face of a Just Man"
+    },
+    "description": {
+      "text": "Slay Geryon, the image of fraud"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

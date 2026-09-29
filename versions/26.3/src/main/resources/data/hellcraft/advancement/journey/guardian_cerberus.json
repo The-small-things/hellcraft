@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/gluttony",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:guardian_cerberus"
+      }
+    },
+    "title": {
+      "text": "Three Throats"
+    },
+    "description": {
+      "text": "Slay Cerberus in the circle of the Gluttonous"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

@@ -22,6 +22,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.util.Feedback;
+import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.util.Signs;
 import org.jetbrains.annotations.Nullable;
 
@@ -350,6 +351,7 @@ public final class Purgatory {
 
 	private static void arrive(ServerPlayer player) {
 		teleport(player, shore());
+		Journey.award(player, "journey/purgatory");
 		player.resetFallDistance();
 		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 80, 30));
 		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("PURGATORY").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)));

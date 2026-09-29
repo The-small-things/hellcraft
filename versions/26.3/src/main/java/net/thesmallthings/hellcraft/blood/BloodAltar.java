@@ -20,6 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -156,6 +157,7 @@ public final class BloodAltar {
 		Ghosts.revive(level.getServer(), ghost, new HellState.GlobalSpot(level.dimension(), pos.above()));
 		ritual(level, pos, 60);
 		level.playSound(null, pos, SoundEvents.TOTEM_USE, SoundSource.BLOCKS, 1.0f, 0.7f);
+		Journey.award(player, "journey/harrowing");
 		return true;
 	}
 

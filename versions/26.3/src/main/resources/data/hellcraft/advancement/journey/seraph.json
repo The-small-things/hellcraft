@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/paradiso",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:halo"
+      }
+    },
+    "title": {
+      "text": "The Seraph Falls"
+    },
+    "description": {
+      "text": "Be there when the Seraph of the Primum Mobile is cast down"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

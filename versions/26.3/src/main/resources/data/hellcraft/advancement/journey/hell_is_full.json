@@ -1,0 +1,26 @@
+{
+  "parent": "hellcraft:journey/root",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:skeleton_skull"
+    },
+    "title": {
+      "text": "Hell Is Full"
+    },
+    "description": {
+      "text": "Lose your last heart and walk the earth as a ghost"
+    },
+    "frame": "task",
+    "hidden": true
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

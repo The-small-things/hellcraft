@@ -1,0 +1,66 @@
+{
+  "parent": "hellcraft:journey/heresy",
+  "criteria": {
+    "phlegethon": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:phlegethon"
+            }
+          }
+        }
+      }
+    },
+    "wood_of_suicides": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:wood_of_suicides"
+            }
+          }
+        }
+      }
+    },
+    "burning_sands": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:burning_sands"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:magma_block"
+    },
+    "title": {
+      "text": "The Seventh Circle"
+    },
+    "description": {
+      "text": "Reach the river of boiling blood, the wood, or the burning sands"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "phlegethon",
+      "wood_of_suicides",
+      "burning_sands"
+    ]
+  ]
+}

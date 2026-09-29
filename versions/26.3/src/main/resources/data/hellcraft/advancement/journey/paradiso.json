@@ -1,0 +1,171 @@
+{
+  "parent": "hellcraft:journey/purgatory",
+  "criteria": {
+    "paradiso_moon": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_moon"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_mercury": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_mercury"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_venus": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_venus"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_sun": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_sun"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_mars": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_mars"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_jupiter": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_jupiter"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_saturn": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_saturn"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_fixed_stars": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_fixed_stars"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_primum_mobile": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_primum_mobile"
+            }
+          }
+        }
+      }
+    },
+    "paradiso_empyrean": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_empyrean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:glowstone"
+    },
+    "title": {
+      "text": "Paradiso"
+    },
+    "description": {
+      "text": "Reach the first of the heavenly spheres"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "paradiso_moon",
+      "paradiso_mercury",
+      "paradiso_venus",
+      "paradiso_sun",
+      "paradiso_mars",
+      "paradiso_jupiter",
+      "paradiso_saturn",
+      "paradiso_fixed_stars",
+      "paradiso_primum_mobile",
+      "paradiso_empyrean"
+    ]
+  ]
+}

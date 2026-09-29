@@ -1,0 +1,66 @@
+{
+  "parent": "hellcraft:journey/root",
+  "criteria": {
+    "dark_wood": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:dark_wood"
+            }
+          }
+        }
+      }
+    },
+    "vestibule": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:vestibule"
+            }
+          }
+        }
+      }
+    },
+    "acheron": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:acheron"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:dark_oak_sapling"
+    },
+    "title": {
+      "text": "Midway Upon the Journey"
+    },
+    "description": {
+      "text": "Lose your way in the Dark Wood"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "dark_wood",
+      "vestibule",
+      "acheron"
+    ]
+  ]
+}

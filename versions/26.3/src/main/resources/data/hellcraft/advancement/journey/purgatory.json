@@ -1,0 +1,25 @@
+{
+  "parent": "hellcraft:journey/lucifer",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:light_blue_stained_glass"
+    },
+    "title": {
+      "text": "To Rebehold the Stars"
+    },
+    "description": {
+      "text": "Climb out of Hell onto the shore of Purgatory"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

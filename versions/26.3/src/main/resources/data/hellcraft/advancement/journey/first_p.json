@@ -1,0 +1,25 @@
+{
+  "parent": "hellcraft:journey/purgatory",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:feather"
+    },
+    "title": {
+      "text": "The First Terrace"
+    },
+    "description": {
+      "text": "Ascend at a Blood Altar and have a P burned from your brow"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

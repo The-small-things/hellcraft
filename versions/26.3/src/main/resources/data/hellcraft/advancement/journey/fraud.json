@@ -1,0 +1,81 @@
+{
+  "parent": "hellcraft:journey/violence",
+  "criteria": {
+    "malebolge": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:malebolge"
+            }
+          }
+        }
+      }
+    },
+    "malebolge_blight": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:malebolge_blight"
+            }
+          }
+        }
+      }
+    },
+    "malebolge_pitch": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:malebolge_pitch"
+            }
+          }
+        }
+      }
+    },
+    "well_of_giants": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:well_of_giants"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:black_concrete_powder"
+    },
+    "title": {
+      "text": "The Eighth Circle"
+    },
+    "description": {
+      "text": "Descend into the ten ditches of Malebolge"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "malebolge",
+      "malebolge_blight",
+      "malebolge_pitch",
+      "well_of_giants"
+    ]
+  ]
+}

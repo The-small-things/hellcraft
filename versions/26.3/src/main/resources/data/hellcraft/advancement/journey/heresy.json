@@ -1,0 +1,51 @@
+{
+  "parent": "hellcraft:journey/wrath",
+  "criteria": {
+    "walls_of_dis": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:walls_of_dis"
+            }
+          }
+        }
+      }
+    },
+    "heresy": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:heresy"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:soul_lantern"
+    },
+    "title": {
+      "text": "The Sixth Circle"
+    },
+    "description": {
+      "text": "Pass the Walls of Dis into the tombs of the Heretics"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "walls_of_dis",
+      "heresy"
+    ]
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/limbo",
+  "criteria": {
+    "lust": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:lust"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:pink_petals"
+    },
+    "title": {
+      "text": "The Second Circle"
+    },
+    "description": {
+      "text": "Brave the endless wind of the Lustful"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "lust"
+    ]
+  ]
+}

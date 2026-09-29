@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/paradiso",
+  "criteria": {
+    "paradiso_empyrean": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:paradiso_empyrean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:end_rod"
+    },
+    "title": {
+      "text": "The Love That Moves the Sun"
+    },
+    "description": {
+      "text": "Reach the Empyrean, the furthest heaven"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "paradiso_empyrean"
+    ]
+  ]
+}

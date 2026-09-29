@@ -1,0 +1,25 @@
+{
+  "parent": "hellcraft:journey/first_p",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:nether_star"
+    },
+    "title": {
+      "text": "Pure and Ready to Rise"
+    },
+    "description": {
+      "text": "Burn away all seven P's"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

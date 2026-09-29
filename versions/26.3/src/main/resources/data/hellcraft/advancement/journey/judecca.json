@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/treachery",
+  "criteria": {
+    "judecca": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:judecca"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:packed_ice"
+    },
+    "title": {
+      "text": "Judecca"
+    },
+    "description": {
+      "text": "Stand where the Emperor of the Sorrowful Realm is frozen"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "judecca"
+    ]
+  ]
+}

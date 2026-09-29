@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/gluttony",
+  "criteria": {
+    "greed": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:greed"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:gold_block"
+    },
+    "title": {
+      "text": "The Fourth Circle"
+    },
+    "description": {
+      "text": "Watch the Greedy push their weights"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "greed"
+    ]
+  ]
+}

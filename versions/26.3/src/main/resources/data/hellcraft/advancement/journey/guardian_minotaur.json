@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/violence",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:guardian_minotaur"
+      }
+    },
+    "title": {
+      "text": "The Infamy of Crete"
+    },
+    "description": {
+      "text": "Slay the Minotaur at the edge of the Seventh Circle"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

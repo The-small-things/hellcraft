@@ -39,6 +39,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.GreatForge;
+import net.thesmallthings.hellcraft.world.HallOfTheDamned;
 import net.thesmallthings.hellcraft.world.Heaven;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -295,6 +296,15 @@ public final class HellCommands {
 							ctx.getSource().sendSuccess(() -> Component.literal("The Great Forge of Dis stands at "
 									+ GreatForge.center().toShortString() + " in the Nether."), true);
 							return 1;
+						})))
+				.then(Commands.literal("hall")
+						.executes(ctx -> {
+							HallOfTheDamned.describe(ctx.getSource().getServer()).forEach(line -> ctx.getSource().sendSuccess(() -> line, false));
+							return 1;
+						})
+						.then(Commands.literal("build").executes(ctx -> {
+							BlockPos at = HallOfTheDamned.build(ctx.getSource().getServer());
+							return reply(ctx.getSource(), "The Hall of the Damned stands at " + at.toShortString());
 						})))
 				.then(Commands.literal("prestige")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Prestige.selfTest())))

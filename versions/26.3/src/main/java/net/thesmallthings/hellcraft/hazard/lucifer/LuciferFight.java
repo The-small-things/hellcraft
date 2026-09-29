@@ -39,6 +39,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Feedback;
+import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Purgatory;
 import org.jetbrains.annotations.Nullable;
 
@@ -805,6 +806,7 @@ public final class LuciferFight {
 			pending++;
 			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
 			if (player != null) {
+				Journey.award(player, "journey/lucifer");
 				Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
 				LuciferRewards.remind(player);
 				// the fight object is finished by then, so open it from the server's task queue

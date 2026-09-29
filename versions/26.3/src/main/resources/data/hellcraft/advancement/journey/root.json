@@ -1,0 +1,27 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:crying_obsidian"
+    },
+    "title": {
+      "text": "Dante's Journey"
+    },
+    "description": {
+      "text": "Abandon all hope, ye who enter here."
+    },
+    "frame": "task",
+    "background": "minecraft:block/blackstone",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ]
+}

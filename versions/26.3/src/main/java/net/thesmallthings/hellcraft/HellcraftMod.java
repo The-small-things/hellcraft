@@ -27,6 +27,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.GreatForge;
+import net.thesmallthings.hellcraft.world.HallOfTheDamned;
 import net.thesmallthings.hellcraft.world.Heaven;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
@@ -68,6 +69,7 @@ public class HellcraftMod implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTING.register(Paradiso::init);
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
+		ServerLifecycleEvents.SERVER_STARTED.register(HallOfTheDamned::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Purgatory::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Heaven::buildAscent);
@@ -93,6 +95,7 @@ public class HellcraftMod implements ModInitializer {
 			GhostPowers.tick(server);
 			Purgatory.tick(server);
 			Prestige.tick(server);
+			HallOfTheDamned.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

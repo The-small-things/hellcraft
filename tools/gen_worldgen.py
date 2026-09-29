@@ -979,6 +979,8 @@ def main26():
     # the Nether and the End (their features live in the same folders this function just cleared)
     import gen_realms
     gen_realms.main()
+    import gen_advancements
+    gen_advancements.main()
 
 
 if __name__ == "__main__":

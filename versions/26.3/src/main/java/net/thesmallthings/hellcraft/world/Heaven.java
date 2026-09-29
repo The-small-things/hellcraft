@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Relics;
+import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.util.Signs;
 
 import java.util.HashMap;
@@ -71,6 +72,7 @@ public final class Heaven {
 				soul.rose = true;
 				HellState.get(sp.level().getServer()).setDirty();
 				Relics.give(sp, Relics.Relic.BEATRICES_ROSE);
+				Journey.award(sp, "journey/beatrice");
 			}
 			return InteractionResult.PASS;
 		});
@@ -145,6 +147,7 @@ public final class Heaven {
 		for (ServerPlayer p : level.players()) {
 			if (!p.isSpectator() && p.getX() * p.getX() + p.getZ() * p.getZ() < 250 * 250) {
 				Relics.give(p, Relics.Relic.HALO);
+				Journey.award(p, "journey/seraph");
 				n++;
 			}
 		}

@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/empyrean",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:beatrices_rose"
+      }
+    },
+    "title": {
+      "text": "Beatrice"
+    },
+    "description": {
+      "text": "Ring the bell of the Celestial Rose"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

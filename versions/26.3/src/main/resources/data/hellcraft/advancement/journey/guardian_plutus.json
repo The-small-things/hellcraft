@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/greed",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:guardian_plutus"
+      }
+    },
+    "title": {
+      "text": "Pape Sat\u00e0n, Pape Sat\u00e0n Aleppe"
+    },
+    "description": {
+      "text": "Slay Plutus, the wolf of wealth"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/greed",
+  "criteria": {
+    "styx": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:styx"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:mud"
+    },
+    "title": {
+      "text": "The Fifth Circle"
+    },
+    "description": {
+      "text": "Cross the Styx, where the Wrathful fight"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "styx"
+    ]
+  ]
+}

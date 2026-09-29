@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/forge",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:guardian_vulcan"
+      }
+    },
+    "title": {
+      "text": "Hammer of the Gods"
+    },
+    "description": {
+      "text": "Slay Vulcan in the Great Forge"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

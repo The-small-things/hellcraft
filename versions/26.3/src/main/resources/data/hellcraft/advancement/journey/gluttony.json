@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/lust",
+  "criteria": {
+    "gluttony": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:gluttony"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:rotten_flesh"
+    },
+    "title": {
+      "text": "The Third Circle"
+    },
+    "description": {
+      "text": "Wade the freezing slush of the Gluttonous"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "gluttony"
+    ]
+  ]
+}

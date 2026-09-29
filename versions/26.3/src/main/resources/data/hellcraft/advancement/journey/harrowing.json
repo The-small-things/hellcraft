@@ -1,0 +1,25 @@
+{
+  "parent": "hellcraft:journey/root",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:respawn_anchor"
+    },
+    "title": {
+      "text": "The Harrowing"
+    },
+    "description": {
+      "text": "Pay the blood price to bring a ghost back"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

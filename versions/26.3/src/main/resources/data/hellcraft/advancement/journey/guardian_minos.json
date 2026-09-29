@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/limbo",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:stick",
+      "components": {
+        "minecraft:item_model": "hellcraft:guardian_minos"
+      }
+    },
+    "title": {
+      "text": "Judge of the Damned"
+    },
+    "description": {
+      "text": "Slay Minos, who judges every soul"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/fraud",
+  "criteria": {
+    "cocytus": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:cocytus"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:blue_ice"
+    },
+    "title": {
+      "text": "The Ninth Circle"
+    },
+    "description": {
+      "text": "Set foot on the frozen lake of Cocytus"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "cocytus"
+    ]
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "hellcraft:journey/dark_wood",
+  "criteria": {
+    "limbo": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "hellcraft:limbo"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:gray_candle"
+    },
+    "title": {
+      "text": "The First Circle"
+    },
+    "description": {
+      "text": "Walk among the virtuous pagans of Limbo"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "limbo"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "hellcraft:journey/root",
+  "criteria": {
+    "entered": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "minecraft:the_nether"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:anvil"
+    },
+    "title": {
+      "text": "The Forge of Dis"
+    },
+    "description": {
+      "text": "Enter the Nether, Vulcan's foundry"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "entered"
+    ]
+  ]
+}
