@@ -197,6 +197,7 @@ jobs:
             - Nine circles of Hell from the Dark Wood to Judecca, with torments, tougher monsters the deeper you go, and lifesteal hearts (Hell is full: run out and you become a ghost until friends revive you at a Blood Altar).
             - The three-phase Lucifer fight at the bottom of the world.
             - **26.3 adds:** hell weapons and blood armour, five circle guardians (Minos, Cerberus, Plutus, the Minotaur, Geryon), the four Emperor's Spines, Lucifer's own models and the Emperor frozen in the ice, the climb out to Purgatory, ghost powers, the Pilgrim's Guide, and circle ambience.
+            - **New in 1.1 (26.3):** fairer deaths (only players take your hearts; the Vigil Candle and Soul Anchor bring you back), gentler circles with Virgil's Rests as safe havens and free travel between the circles you've explored, sugar cane, villages whose villagers take jobs, more apples, blood gear that charges by killing, the Nether reforged as the Forge of Dis (Vulcan and the Hellforge), and the End become Paradiso (nine heavenly spheres, the Seraph, relics, and the Ascent from Purgatory).
 
             There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
 
@@ -206,3 +207,4 @@ jobs:
             - Then **Create New World → World tab → World Type: Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
 
             **Servers:** use `hellcraft-${{ steps.ver.outputs.ver }}-mc<version>.jar` with the Docker setup in the README (set `VERSION` to the same Minecraft version; 26.3 needs the `java25` image).
+            On 26.3 each player is sent the Hellcraft resource pack (models and music) from the address they joined with, so `musicPackHost` can stay empty; port **25566** must still be published and forwarded just like 25565.
