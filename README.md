@@ -8,6 +8,12 @@ Players join with a **plain vanilla client**. The mod adds no blocks and no item
 
 ![map](docs/inferno_map.png)
 
+**New in 2.0 (26.3):**
+- **The Seven P's.** Heart prestige: ascend at a Blood Altar for more hearts and a virtue each time.
+- **The Blood Heart HUD.** Bleeding hearts in the health bar, rimmed bronze to white by your rank.
+- **The Hall of the Damned.** A monument at spawn naming the Inferno's best and most damned.
+- **Dante's Journey.** An advancement tab from the Dark Wood to the Empyrean.
+
 ## Play it in single player
 
 Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). Every file comes twice, once per Minecraft version: pick the ones ending in `-mc1.21.1` or `-mc26.3`.
@@ -96,6 +102,19 @@ New players start with 5 bread, 2 **Vigil Candles** (26.3) and **The Pilgrim's G
 
 **Hearts show next to every name in the player list** (26.3). Once someone has cast Lucifer down, a **Hall of the Damned** sidebar lists every slayer and how many times they won. Toggle these with `tabListHearts` and `sidebarHall`.
 
+**The Hall of the Damned monument** (26.3) stands just north of the spawn.
+- Five blackstone pillars: **Most Hearts**, **P's Burned**, **Lucifer Slain**, **Guardians Slain** and **Most Damned** (most deaths).
+- Each pillar is signed with its top three and crowned with the leader's head.
+- It updates every minute. `/hellcraft hall` shows the same standings in chat.
+- Turn it off with `hallMonument`.
+
+**Dante's Journey** (26.3) is Hellcraft's own advancement tab. It follows the poem:
+- the Dark Wood, then each of the nine circles to Judecca;
+- the five guardians, then Lucifer;
+- the climb out to Purgatory, and the Seven P's;
+- the Forge of Dis and Vulcan in the Nether;
+- the Seraph, the Empyrean and Beatrice's Rose in Paradiso.
+
 - **Hearts.** You start with 10 hearts and can hold up to 20.
   - Killing a player steals one of their hearts.
   - **26.3: only players take hearts.** Dying to monsters, lava, falls or the circles costs your items and XP like vanilla, never a heart. Set `pveDeathsCostHearts` to bring back the old rule.
@@ -107,6 +126,37 @@ New players start with 5 bread, 2 **Vigil Candles** (26.3) and **The Pilgrim's G
   - **Soul Anchor** (every circle guardian drops one; rare in deep loot). Carry it. If you die, you rise again at the last solid ground near where you fell, with a few seconds of protection, and it breaks. Your dropped items are right there.
   - Neither works in Lucifer's pit. On respawn the anchor goes first, then the candle, then a bound altar.
 - **Boss rewards.** The Wither gives 1 Blood Heart, the Warden gives 1 and the Ender Dragon gives 2. Lucifer has his own rewards (below).
+
+### The Seven P's (26.3)
+
+At the gate of Purgatory an angel carves seven P's on every brow, one for each deadly sin, and each terrace of the mountain burns one away. In Hellcraft, **a soul whose veins are full can ascend**. Open a Blood Altar's menu and click **Ascend** (the feather).
+- Your hearts fall back to 10 (`prestigeResetHearts`).
+- One P is burned away.
+- You can hold **2 more hearts for good** (`prestigeHeartBonus`).
+- You keep that terrace's **virtue**.
+
+Seven ascents take the cap from 20 to 34 hearts, not counting Lucifer's Bane.
+
+| P | Terrace | Virtue |
+|---|---|---|
+| I | Pride | **Humility**: 30% less fall damage |
+| II | Envy | **Kindness**: monsters drop Blood Fragments 10% more often |
+| III | Wrath | **Meekness**: +25% knockback resistance |
+| IV | Sloth | **Zeal**: +5% walking speed |
+| V | Greed | **Liberality**: +1 luck (better loot) |
+| VI | Gluttony | **Temperance**: hunger gnaws more slowly |
+| VII | Lust | **Purity**: the circles' torments no longer touch you |
+
+**How your rank shows:**
+- A coloured cross (`✝I` to `✝VII`, bronze through gold to white) appears before your name in the player list and above your head.
+- The rims of your hearts take the same colour.
+- Every ascent is announced to the server.
+
+`/hellcraft prestige <player> [set <n>]` shows or sets a rank. Turn the whole system off with `prestige`.
+
+### The Blood Heart HUD (26.3)
+
+The resource pack replaces the health bar with Hellcraft's own hearts: dark, glistening blood with a drop running off the point. In hardcore they turn to ember-lit black blood. Each player also gets a tiny second pack that re-rims their hearts in the colour of their rank. Turn it off with `heartHud`.
 
 ### Blood altars
 
@@ -266,6 +316,7 @@ The fight has music: a different track for the duel, the enraged phase and the t
 
 **No setup needed on 26.3.** Each player is sent the pack from the address they joined with (`play.example.com`, your IP, a LAN address...), on port **25566**. That port must be open and forwarded just like 25565; the compose file already maps it.
 - Behind a proxy (Velocity, TCPShield...) or with a different download address: set `"musicPackHost"` in `config/hellcraft.json` or `HELLCRAFT_PACK_HOST`. 1.21.1 still needs one of these.
+- The rank rims on the hearts (the Seven P's) come from the same port. Players who get the pack's GitHub copy instead (through tunnels like playit.gg) see the Blood Heart HUD without the rims.
 - **Tunnels like playit.gg** only forward the game port. Players who join through a playit.gg address automatically get the copy of the pack that each release publishes on GitHub (`hellcraft-pack-<version>-mc26.3.zip`), so there's nothing to set up. That copy has no custom boss music. `"packFromGitHub"` can be `"auto"`, `"always"` or `"never"`.
 - If your host only allows one port, upload the pack somewhere and set `"musicPackUrl"` to it, or use `"packFromGitHub": "always"`.
 
@@ -397,6 +448,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
+| `/hellcraft prestige <player> [set <n>]` / `prestige test` | op | Show or set a player's burned P's; self-test the Seven P's (26.3) |
+| `/hellcraft hall [build]` | op | The Hall of the Damned standings; (re)build the monument (26.3) |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |
 
@@ -408,6 +461,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - whether monsters and the world take hearts (`pveDeathsCostHearts`, 26.3) and whether such a heart drops where you fell
 - what binding your respawn costs (`bindCostHearts`, 26.3)
 - travel between altars (`travel`, `travelCooldownSeconds`, 26.3)
+- the Seven P's (`prestige`, `prestigeHeartBonus`, `prestigeResetHearts`), the Blood Heart HUD (`heartHud`) and the Hall of the Damned monument (`hallMonument`) (26.3)
 - the mob cap multiplier and mob health per depth
 - the ghost tether radius
 - ward length

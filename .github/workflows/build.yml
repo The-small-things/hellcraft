@@ -198,6 +198,11 @@ jobs:
             - The three-phase Lucifer fight at the bottom of the world.
             - **26.3 adds:** hell weapons and blood armour, five circle guardians (Minos, Cerberus, Plutus, the Minotaur, Geryon), the four Emperor's Spines, Lucifer's own models and the Emperor frozen in the ice, the climb out to Purgatory, ghost powers, the Pilgrim's Guide, and circle ambience.
             - **New in 1.1 (26.3):** fairer deaths (only players take your hearts; the Vigil Candle and Soul Anchor bring you back), gentler circles with Virgil's Rests as safe havens and free travel between the circles you've explored, sugar cane, villages whose villagers take jobs, more apples, blood gear that charges by killing, the Nether reforged as the Forge of Dis (Vulcan and the Hellforge), and the End become Paradiso (nine heavenly spheres, the Seraph, relics, and the Ascent from Purgatory).
+            - **New in 2.0 (26.3):**
+              - **The Seven P's:** heart prestige. When your veins are full, ascend at a Blood Altar: your hearts fall back to 10, a P is burned from your brow, you can hold 2 more hearts for good, and you keep a virtue (lighter falls, more fragments, steadier feet, speed, luck, less hunger, and at the seventh no torments). Ranks show as a coloured cross before your name.
+              - **The Blood Heart HUD:** bleeding hearts in the health bar, rimmed bronze to white by rank.
+              - **The Hall of the Damned:** a monument at spawn naming the Inferno's best and most damned.
+              - **Dante's Journey:** an advancement tab of 29 milestones from the Dark Wood to the Empyrean.
 
             There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
 

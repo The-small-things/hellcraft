@@ -270,9 +270,10 @@ public final class Prestige {
 				burned++;
 			}
 		}
+		int left = soul.hearts;
 		soul.hearts = Hearts.cap(soul);
 		Result eighth = ascend(soul);
 		return String.format(Locale.ROOT, "Prestige test: %d P's burned, cap %d -> %d, hearts after the last ascent %d, the eighth %s",
-				burned, startCap, Hearts.cap(soul), soul.hearts, eighth == Result.PURIFIED ? "refused" : "ALLOWED (" + eighth + ")");
+				burned, startCap, Hearts.cap(soul), left, eighth == Result.PURIFIED ? "refused" : "ALLOWED (" + eighth + ")");
 	}
 }
