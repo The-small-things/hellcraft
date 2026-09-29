@@ -208,6 +208,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # Heaven: the Rose, the Ascent, the Seraph's angels, the relics and the wings in end city treasure
   rose=$(rcon "hellcraft paradiso rose")
   echo "$rose"
+  rcon "execute in minecraft:the_end run forceload add 7000 0" > /dev/null
   bell=$(rcon "execute in minecraft:the_end if block 7000 92 0 minecraft:bell" || true)
   echo "The Rose's bell: $bell"
   echo "$bell" | grep -q "Test passed" || { echo "The Celestial Rose has no bell"; exit 1; }
