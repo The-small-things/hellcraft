@@ -19,6 +19,13 @@ while IFS= read -r line; do
   case "$line" in \#*) continue;; esac
   echo "################ $line"
   if [[ "$line" == find\ * ]]; then grep -E "${line#find }" /tmp/classes.txt | head -60; continue; fi
+  if [[ "$line" == list\ * ]]; then
+    # "list <regex>": paths (no contents) in the game jars, the client's assets included
+    for j in "$JAR" $(find ~/.gradle/caches/fabric-loom/26.3 -maxdepth 1 -name 'minecraft-client*.jar'); do
+      echo "== $j"; unzip -Z1 "$j" | grep -E "${line#list }" | head -200
+    done
+    continue
+  fi
   if [[ "$line" == data\ * ]]; then
     # "data <regex>": print the game's data files whose paths match
     for f in $(unzip -Z1 "$JAR" | grep -E "${line#data }" | head -20); do echo "== $f"; unzip -p "$JAR" "$f" | head -4000; echo; done
