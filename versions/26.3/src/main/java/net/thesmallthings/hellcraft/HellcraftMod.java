@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.Identifier;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
+import net.thesmallthings.hellcraft.blood.Bounty;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.blood.Hellforge;
@@ -98,6 +99,7 @@ public class HellcraftMod implements ModInitializer {
 			Prestige.tick(server);
 			HallOfTheDamned.tick(server);
 			WhiteRoom.tick(server);
+			Bounty.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

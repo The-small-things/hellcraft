@@ -33,6 +33,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -856,10 +857,19 @@ public final class LuciferFight {
 				continue;
 			}
 			victors.add(soul.name);
+			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
+			if (player != null && BossSpoils.claim(player, "lucifer", config.luciferSpoilsCooldownMinutes) == BossSpoils.Claim.TOO_SOON) {
+				// cast down again too soon: the victory counts (the Hall, the Journey), the spoils don't
+				soul.luciferKills++;
+				state.setDirty();
+				Scoreboards.update(level.getServer(), soul);
+				Journey.award(player, "journey/lucifer");
+				BossSpoils.tooSoon(player, "Lucifer", "lucifer", config.luciferSpoilsCooldownMinutes);
+				continue;
+			}
 			LuciferRewards.grant(state, soul);
 			Scoreboards.update(level.getServer(), soul);
 			pending++;
-			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
 			if (player != null) {
 				Journey.award(player, "journey/lucifer");
 				Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);

@@ -83,7 +83,7 @@ public final class AltarMenu {
 				container.setItem(ASCEND_SLOT, button(Items.FEATHER, "Ascend: the terrace of " + next.sin, ChatFormatting.GOLD,
 						"The Seven P's: " + soul.prestige + " burned, " + (Prestige.MAX - soul.prestige) + " remain",
 						"Your hearts fall back to " + Math.min(config.prestigeResetHearts, cap + config.prestigeHeartBonus)
-								+ "; your veins then hold " + (cap + config.prestigeHeartBonus),
+								+ "; your veins then hold " + Math.min(config.heartCeiling, cap + config.prestigeHeartBonus),
 						next.virtue + ": " + next.perk,
 						soul.hearts >= cap ? "▶ Click to climb" : "✖ Your veins must be full (" + soul.hearts + " / " + cap + ")"));
 			}

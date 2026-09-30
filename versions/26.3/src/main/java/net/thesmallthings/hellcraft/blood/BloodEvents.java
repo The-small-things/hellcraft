@@ -97,6 +97,11 @@ public final class BloodEvents {
 		}
 		if (BloodItems.isBane(stack)) {
 			HellState.Soul soul = Hearts.soul(player);
+			if (Hearts.atCeiling(soul)) {
+				player.sendOverlayMessage(Component.literal("Your veins are as wide as any soul's may be (" + Hearts.cap(soul) + " hearts).")
+						.withStyle(ChatFormatting.GOLD));
+				return false;
+			}
 			stack.shrink(1);
 			soul.maxBonus += config.luciferMaxHeartBonus;
 			HellState.get(player.level().getServer()).setDirty();

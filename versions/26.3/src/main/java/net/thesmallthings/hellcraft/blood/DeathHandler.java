@@ -96,6 +96,7 @@ public final class DeathHandler {
 		HellState.Soul soul = Hearts.soul(player);
 		String name = player.getGameProfile().name();
 		ServerPlayer killer = killer(player);
+		Bounty.onDeath(player, killer);
 		soul.deaths++;
 		state.setDirty();
 		if (killer == null && !config.pveDeathsCostHearts) {
@@ -149,15 +150,15 @@ public final class DeathHandler {
 			return;
 		}
 		if (entity instanceof WitherBoss) {
-			BloodItems.give(killer, BloodItems.heart(1));
+			bossBlood(killer, "The Wither", "wither", 1);
 			return;
 		}
 		if (entity instanceof Warden) {
-			BloodItems.give(killer, BloodItems.heart(1));
+			bossBlood(killer, "The Warden", "warden", 1);
 			return;
 		}
 		if (entity instanceof EnderDragon) {
-			BloodItems.give(killer, BloodItems.heart(2));
+			bossBlood(killer, "The Seraph", "ender_dragon", 2);
 			return;
 		}
 		if (entity.entityTags().contains(REVENANT_TAG)) {
@@ -176,6 +177,16 @@ public final class DeathHandler {
 		if (level.getRandom().nextDouble() < chance) {
 			entity.spawnAtLocation(level, BloodItems.fragment(1));
 		}
+	}
+
+	/** A vanilla boss's Blood Hearts, once per cooldown for each killer (so a wither farm is no heart farm). */
+	private static void bossBlood(ServerPlayer killer, String title, String boss, int hearts) {
+		int cooldown = HellConfig.get().bossSpoilsCooldownMinutes;
+		if (BossSpoils.claim(killer, boss, cooldown) == BossSpoils.Claim.TOO_SOON) {
+			BossSpoils.tooSoon(killer, title, boss, cooldown);
+			return;
+		}
+		BloodItems.give(killer, BloodItems.heart(hearts));
 	}
 
 	/** Circle depth of an entity's position: 1-9 in the Inferno, 5 in the Nether, 9 in the End. */

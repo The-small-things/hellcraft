@@ -429,6 +429,32 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - `/ghost haunt`: whoever or whatever killed you, if within 48 blocks, gets 6 s of Darkness and Slowness and feels your breath on their neck. Cooldown 2 min.
 - `/ghost beacon`: a 24-block pillar of soul fire rises over you for 30 s, and chat tells everyone where you are, so friends can find you. Cooldown 1 min.
 
+## Keeping the mighty in check (26.3)
+
+- **Boss spoils can't be farmed.** Every boss pays each player once, then again only after a cooldown. The first victory over each boss always pays in full.
+  - Guardians and Vulcan: 3 hours (`guardianSpoilsCooldownMinutes`).
+  - The Wither, the Warden and the Ender Dragon: 3 hours for their Blood Hearts (`bossSpoilsCooldownMinutes`), so a wither farm is no heart farm.
+  - Lucifer: 6 hours (`luciferSpoilsCooldownMinutes`). A victory in between still counts for the Hall and Dante's Journey, but there are no spoils.
+  - In between, the boss tells you how long until its spoils return for you.
+- **A heart ceiling.** Nothing can raise anyone past 40 hearts (`heartCeiling`), not Lucifer's Bane and not the Seven P's. A Bane is refused rather than wasted, and the P's still give their virtues.
+- **The bounty.** Every 20 minutes (`bountyIntervalMinutes`), the soul online holding the most blood is marked, if they have at least 25 hearts (`bountyMinHearts`).
+  - The server is told roughly where they are (their circle, and coordinates rounded to 50), and they glow for 45 s.
+  - Whoever kills them gets 3 extra Blood Hearts (`bountyRewardHearts`).
+  - Turn it off with `bounty`.
+- **Operator tools:**
+
+| Command | |
+|---|---|
+| `/hellcraft inspect <player>` | Hearts and where their cap comes from (base, Bane, P's, ceiling), P's burned, boss kills, deaths, every boss they're waiting on, and the blood gear they carry (ender chest too) |
+| `/hellcraft setbonus <player> <hearts>` | Set the heart capacity they've earned from Lucifer's Bane |
+| `/hellcraft prestige <player> set <n>` | Set their burned P's |
+| `/hellcraft sethearts <player> <n>` | Set their hearts |
+| `/hellcraft reset <player>` | Start them over: starting hearts, no Bane bonus, no P's (their deeds and spoils cooldowns are kept) |
+| `/hellcraft strip <player>` | Take every hell weapon, blood armour piece, relic, Blood Heart and Bane they hold, ender chest included |
+| `/hellcraft bounty [now\|clear]` | Who carries the bounty; mark the strongest now; lift it |
+| `/hellcraft config <setting> [value]` | Read or change any setting live (tab-completes); it's saved to `config/hellcraft.json` |
+| `/hellcraft whiteroom <player>` | Shut a player in the white room (see Commands) |
+
 ## Commands
 
 | Command | Who | |

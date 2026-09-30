@@ -30,6 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodItems;
+import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -256,18 +257,13 @@ public abstract class GuardianFight {
 	 */
 	private boolean spoils(ServerPlayer player, HellState.Soul soul, LivingEntity body) {
 		HellConfig config = HellConfig.get();
-		long now = level.getServer().overworld().getGameTime();
-		Long last = soul.guardianSpoils.get(kind.id());
-		long cooldown = config.guardianSpoilsCooldownMinutes * 60L * 20L;
-		if (last != null && now - last < cooldown) {
+		BossSpoils.Claim claim = BossSpoils.claim(player, kind.id(), config.guardianSpoilsCooldownMinutes);
+		if (claim == BossSpoils.Claim.TOO_SOON) {
 			BloodItems.give(player, BloodItems.fragment(1 + level.getRandom().nextInt(2)));
-			long minutes = Math.max(1, (cooldown - (now - last)) / (60L * 20L));
-			player.sendSystemMessage(Component.literal(kind.title + " has nothing more for you. Its spoils return for you in "
-					+ minutes + " min.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			BossSpoils.tooSoon(player, kind.title, kind.id(), config.guardianSpoilsCooldownMinutes);
 			return false;
 		}
-		boolean first = last == null;
-		soul.guardianSpoils.put(kind.id(), now);
+		boolean first = claim == BossSpoils.Claim.FIRST;
 		BloodItems.give(player, BloodItems.heart(first ? config.guardianHearts : config.guardianRepeatHearts));
 		BloodItems.give(player, BloodItems.fragment(3 + level.getRandom().nextInt(4)));
 		if (first) {

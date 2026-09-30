@@ -26,6 +26,8 @@ public class HellConfig {
 	public int startHearts = 10;
 	/** Most hearts anyone can hold. */
 	public int maxHearts = 20;
+	/** The absolute ceiling: no Lucifer's Bane or burned P can raise anyone's heart capacity past it. */
+	public int heartCeiling = 40;
 	/** Dying to monsters, lava, falls or the circles costs a heart too (off: only players take hearts). */
 	public boolean pveDeathsCostHearts = false;
 	/** With pveDeathsCostHearts: the heart lost to a monster or the world drops where you fell. */
@@ -117,6 +119,18 @@ public class HellConfig {
 	public int guardianRepeatHearts = 1;
 	/** Minutes before a guardian you have slain gives you spoils again (in between it only bleeds a few fragments). */
 	public int guardianSpoilsCooldownMinutes = 180;
+	/** Minutes before the Wither, the Warden or the Ender Dragon gives the same player Blood Hearts again. */
+	public int bossSpoilsCooldownMinutes = 180;
+	/** Minutes before a victory over Lucifer earns the same player spoils again (the first victory always does). */
+	public int luciferSpoilsCooldownMinutes = 360;
+	/** The bounty: every so often the strongest soul online is marked, and whoever kills them is paid in blood. */
+	public boolean bounty = true;
+	/** Minutes between bounties. */
+	public int bountyIntervalMinutes = 20;
+	/** Only a soul holding at least this many hearts can carry a bounty. */
+	public int bountyMinHearts = 25;
+	/** Blood Hearts paid to whoever kills the marked soul (on top of the heart a kill always takes). */
+	public int bountyRewardHearts = 3;
 	/** Blood Fragments (with a netherite ingot) the Hellforge takes to make a piece of blood gear infernal. */
 	public int hellforgeCostFragments = 8;
 	/** Blood Altars can send you to any Virgil's Rest you have reached (and the Gate of Hell). */
@@ -158,6 +172,12 @@ public class HellConfig {
 		}
 		instance = loaded != null ? loaded : new HellConfig();
 		instance.sanitize();
+		save();
+	}
+
+	/** Writes the current settings back to config/hellcraft.json. */
+	public static void save() {
+		Path path = path();
 		try {
 			Files.createDirectories(path.getParent());
 			try (Writer writer = Files.newBufferedWriter(path)) {
@@ -168,11 +188,75 @@ public class HellConfig {
 		}
 	}
 
+	/** For /hellcraft config: a setting's current value, or null if there is no such setting. */
+	@org.jetbrains.annotations.Nullable
+	public static String getValue(String key) {
+		try {
+			java.lang.reflect.Field f = HellConfig.class.getField(key);
+			if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
+				return null;
+			}
+			return String.valueOf(f.get(instance));
+		} catch (ReflectiveOperationException e) {
+			return null;
+		}
+	}
+
+	/** The names of every setting, for command suggestions. */
+	public static java.util.List<String> keys() {
+		java.util.List<String> keys = new java.util.ArrayList<>();
+		for (java.lang.reflect.Field f : HellConfig.class.getFields()) {
+			if (!java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
+				keys.add(f.getName());
+			}
+		}
+		return keys;
+	}
+
+	/** For /hellcraft config: changes a setting live and saves it. Returns what happened. */
+	public static String setValue(String key, String value) {
+		try {
+			java.lang.reflect.Field f = HellConfig.class.getField(key);
+			if (java.lang.reflect.Modifier.isStatic(f.getModifiers()) || key.equals("configVersion")) {
+				return "No such setting: " + key;
+			}
+			Class<?> type = f.getType();
+			if (type == int.class) {
+				f.setInt(instance, Integer.parseInt(value));
+			} else if (type == double.class) {
+				f.setDouble(instance, Double.parseDouble(value));
+			} else if (type == float.class) {
+				f.setFloat(instance, Float.parseFloat(value));
+			} else if (type == boolean.class) {
+				if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) {
+					return key + " must be true or false.";
+				}
+				f.setBoolean(instance, Boolean.parseBoolean(value));
+			} else if (type == String.class) {
+				f.set(instance, value);
+			} else {
+				return key + " can't be set from a command.";
+			}
+			instance.sanitize();
+			save();
+			return key + " = " + f.get(instance);
+		} catch (NumberFormatException e) {
+			return value + " is not a number.";
+		} catch (ReflectiveOperationException e) {
+			return "No such setting: " + key;
+		}
+	}
+
 	private void sanitize() {
 		migrate();
 		bindCostHearts = Math.max(0, bindCostHearts);
 		travelCooldownSeconds = Math.max(0, travelCooldownSeconds);
 		guardianRepeatHearts = Math.max(0, guardianRepeatHearts);
+		heartCeiling = Math.max(1, heartCeiling);
+		bossSpoilsCooldownMinutes = Math.max(0, bossSpoilsCooldownMinutes);
+		luciferSpoilsCooldownMinutes = Math.max(0, luciferSpoilsCooldownMinutes);
+		bountyIntervalMinutes = Math.max(1, bountyIntervalMinutes);
+		bountyRewardHearts = Math.max(0, bountyRewardHearts);
 		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);
 		prestigeHeartBonus = Math.max(0, prestigeHeartBonus);
 		prestigeResetHearts = Math.max(1, prestigeResetHearts);

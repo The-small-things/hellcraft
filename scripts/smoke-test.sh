@@ -214,6 +214,27 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   for heading in "MOST HEARTS" "P'S BURNED" "LUCIFER SLAIN" "GUARDIANS SLAIN" "MOST DAMNED"; do
     echo "$board" | grep -q "$heading" || { echo "The Hall has no $heading board"; exit 1; }
   done
+  # keeping the mighty in check: boss spoils once per cooldown, live settings, the bounty
+  spoils=$(rcon "hellcraft spoils test" || true)
+  echo "$spoils"
+  echo "$spoils" | grep -q "Spoils test: FIRST TOO_SOON AGAIN" || { echo "Boss spoils can be farmed"; exit 1; }
+  ceiling=$(rcon "hellcraft config heartCeiling" || true)
+  echo "$ceiling"
+  echo "$ceiling" | grep -q "heartCeiling = 40" || { echo "The heart ceiling is not 40"; exit 1; }
+  set=$(rcon "hellcraft config bountyMinHearts 30" || true)
+  echo "$set"
+  echo "$set" | grep -q "bountyMinHearts = 30" || { echo "Settings can't be changed live"; exit 1; }
+  rcon "hellcraft config bountyMinHearts 25" > /dev/null
+  bad=$(rcon "hellcraft config noSuchThing" || true)
+  echo "$bad" | grep -q "No such setting" || { echo "Unknown settings are not refused"; exit 1; }
+  bounty=$(rcon "hellcraft bounty now" || true)
+  echo "$bounty"
+  echo "$bounty" | grep -q "Nobody holds enough blood" || { echo "The bounty marked somebody on an empty server"; exit 1; }
+  for cmd in "hellcraft inspect nobody" "hellcraft setbonus nobody 0" "hellcraft reset nobody" "hellcraft strip nobody"; do
+    out=$(rcon "$cmd" || true)
+    echo "$cmd: $out"
+    echo "$out" | grep -qi "unknown or incomplete command" && { echo "/$cmd is not registered"; exit 1; }
+  done
   # the white room: a spare cell papered with white maps, then taken down again
   white=$(rcon "hellcraft whiteroom test" || true)
   echo "$white"

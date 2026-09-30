@@ -19,9 +19,12 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.thesmallthings.hellcraft.blood.Admin;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodItems;
+import net.thesmallthings.hellcraft.blood.BossSpoils;
+import net.thesmallthings.hellcraft.blood.Bounty;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.GuideBook;
@@ -309,6 +312,49 @@ public final class HellCommands {
 									+ GreatForge.center().toShortString() + " in the Nether."), true);
 							return 1;
 						})))
+				.then(Commands.literal("inspect")
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> {
+									Admin.inspect(EntityArgument.getPlayer(ctx, "player")).forEach(line -> ctx.getSource().sendSuccess(() -> line, false));
+									return 1;
+								})))
+				.then(Commands.literal("setbonus")
+						.then(Commands.argument("player", EntityArgument.player())
+								.then(Commands.argument("hearts", IntegerArgumentType.integer(0))
+										.executes(ctx -> reply(ctx.getSource(), Admin.setBonus(EntityArgument.getPlayer(ctx, "player"),
+												IntegerArgumentType.getInteger(ctx, "hearts")))))))
+				.then(Commands.literal("reset")
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> reply(ctx.getSource(), Admin.reset(EntityArgument.getPlayer(ctx, "player"))))))
+				.then(Commands.literal("strip")
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> reply(ctx.getSource(), Admin.strip(EntityArgument.getPlayer(ctx, "player"))))))
+				.then(Commands.literal("bounty")
+						.executes(ctx -> reply(ctx.getSource(), Bounty.status(ctx.getSource().getServer())))
+						.then(Commands.literal("now").executes(ctx -> {
+							String who = Bounty.markNow(ctx.getSource().getServer());
+							return reply(ctx.getSource(), who == null ? "Nobody holds enough blood to carry a bounty." : "The bounty is on " + who + ".");
+						}))
+						.then(Commands.literal("clear").executes(ctx -> {
+							Bounty.clear();
+							return reply(ctx.getSource(), "The bounty is lifted.");
+						})))
+				.then(Commands.literal("spoils")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), BossSpoils.selfTest()))))
+				.then(Commands.literal("config")
+						.then(Commands.argument("key", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(HellConfig.keys(), builder))
+								.executes(ctx -> {
+									String key = StringArgumentType.getString(ctx, "key");
+									String value = HellConfig.getValue(key);
+									return reply(ctx.getSource(), value == null ? "No such setting: " + key : key + " = " + value);
+								})
+								.then(Commands.argument("value", StringArgumentType.greedyString())
+										.executes(ctx -> {
+											String result = HellConfig.setValue(StringArgumentType.getString(ctx, "key"), StringArgumentType.getString(ctx, "value"));
+											ctx.getSource().getServer().getPlayerList().getPlayers().forEach(Hearts::apply);
+											return reply(ctx.getSource(), result);
+										}))))
 				.then(Commands.literal("whiteroom")
 						.then(Commands.literal("list").executes(ctx -> reply(ctx.getSource(), WhiteRoom.list(ctx.getSource().getServer()))))
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), WhiteRoom.selfTest(ctx.getSource().getServer()))))

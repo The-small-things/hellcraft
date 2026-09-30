@@ -21,9 +21,15 @@ public final class Hearts {
 		return HellState.get(player.level().getServer()).soul(player.getUUID(), player.getGameProfile().name());
 	}
 
-	/** Most hearts this soul may hold: the server cap plus anything earned (Lucifer's Bane, the burned P's). */
+	/** Most hearts this soul may hold: the server cap plus anything earned (Lucifer's Bane, the burned P's), never past the ceiling. */
 	public static int cap(HellState.Soul soul) {
-		return HellConfig.get().maxHearts + soul.maxBonus + Prestige.capBonus(soul);
+		HellConfig config = HellConfig.get();
+		return Math.min(config.heartCeiling, config.maxHearts + soul.maxBonus + Prestige.capBonus(soul));
+	}
+
+	/** True once nothing more can raise this soul's capacity. */
+	public static boolean atCeiling(HellState.Soul soul) {
+		return cap(soul) >= HellConfig.get().heartCeiling;
 	}
 
 	public static void apply(ServerPlayer player) {
