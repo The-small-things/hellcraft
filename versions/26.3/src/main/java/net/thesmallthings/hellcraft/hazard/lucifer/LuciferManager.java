@@ -180,6 +180,16 @@ public final class LuciferManager {
 		return "The fight is over.";
 	}
 
+	/** Opens the way out to Purgatory where he was frozen (an operator's remedy, after a lost victory). */
+	public static String openBurrow(MinecraftServer server) {
+		ServerLevel level = server.overworld();
+		if (!HellWorldgen.isInferno(level)) {
+			return "This is not an Inferno world.";
+		}
+		net.thesmallthings.hellcraft.world.Purgatory.openBurrow(level, LuciferArena.floorY(level));
+		return "The burrow to Purgatory is open for five minutes.";
+	}
+
 	public static String status() {
 		return fight == null ? "No fight in progress." : fight.status();
 	}

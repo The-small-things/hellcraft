@@ -408,6 +408,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "The Ascent opens on the summit" "$LOG" || { echo "The Ascent was not built"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
+  # the true form is killed with real damage: its death must reach the fight (the event, or the fight's own watch)
+  grep -E "Lucifer's true form is (slain|dead)" "$LOG" || { echo "Lucifer's death never reached the fight"; fail=1; }
   for g in minos cerberus plutus minotaur geryon; do
     grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }

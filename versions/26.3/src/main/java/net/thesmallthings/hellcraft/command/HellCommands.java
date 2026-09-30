@@ -203,6 +203,17 @@ public final class HellCommands {
 						.then(Commands.literal("skip").executes(ctx -> reply(ctx.getSource(), LuciferManager.skip())))
 						.then(Commands.literal("stop").executes(ctx -> reply(ctx.getSource(), LuciferManager.stop())))
 						.then(Commands.literal("status").executes(ctx -> reply(ctx.getSource(), LuciferManager.status())))
+						.then(Commands.literal("burrow").executes(ctx -> reply(ctx.getSource(), LuciferManager.openBurrow(ctx.getSource().getServer()))))
+						.then(Commands.literal("grant")
+								.then(Commands.argument("players", EntityArgument.players())
+										.executes(ctx -> {
+											int n = 0;
+											for (ServerPlayer p : EntityArgument.getPlayers(ctx, "players")) {
+												LuciferRewards.grantVictory(p);
+												n++;
+											}
+											return reply(ctx.getSource(), "Granted a victory over Lucifer to " + n + " player" + (n == 1 ? "" : "s") + ".");
+										})))
 						.then(Commands.literal("attack")
 								.then(Commands.argument("attack", StringArgumentType.word())
 										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "fangs", "wings", "hellfire",

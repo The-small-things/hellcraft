@@ -90,6 +90,8 @@ public final class LuciferFight {
 	private int lastHurtBark = -1000;
 	/** Ticks the current boss form has been missing from a loaded arena (it is never assumed dead). */
 	private int missingTicks;
+	/** The true form's last seen health fraction (so a body that vanishes at death's door still counts as slain). */
+	private float lastTrueFormHealth = 1.0f;
 	@Nullable
 	private UUID avatarId;
 	@Nullable
@@ -249,13 +251,38 @@ public final class LuciferFight {
 				}
 			}
 			case DUEL, ENRAGED -> fightTick();
+			case TRUE_FORM_TRANSITION -> {
+				if (phaseTick > 300) {
+					HellcraftMod.LOGGER.warn("Lucifer's true form never appeared; revealing it again");
+					try {
+						revealTrueForm();
+					} catch (RuntimeException e) {
+						HellcraftMod.LOGGER.error("Lucifer's true form could not be revealed", e);
+						fail("The ice groans, but nothing rises. The fight is over, and he will return.");
+					}
+				}
+			}
 			case TRUE_FORM -> {
+				// his death is also watched for here, not only through the death event (so a victory is never lost)
+				Entity body = witherId != null ? level.getEntity(witherId) : null;
+				if (body instanceof WitherBoss dying && dying.isDeadOrDying()) {
+					HellcraftMod.LOGGER.info("Lucifer's true form is dead (seen by the fight)");
+					beginDefeat();
+					return;
+				}
 				WitherBoss wither = wither();
 				if (wither == null) {
-					// a missing boss is NOT a dead boss: only his real death (onDeath) ends the fight in victory
+					if (lastTrueFormHealth <= 0.1f) {
+						// gone at death's door: that was the killing blow
+						HellcraftMod.LOGGER.info("Lucifer's true form is gone at {}% health: a victory", Math.round(lastTrueFormHealth * 100));
+						beginDefeat();
+						return;
+					}
+					// a missing boss is not a dead boss
 					bossMissing();
 					return;
 				}
+				lastTrueFormHealth = wither.getHealth() / Math.max(1.0f, wither.getMaxHealth());
 				missingTicks = 0;
 				if (checkForFailure()) {
 					return;
@@ -343,7 +370,7 @@ public final class LuciferFight {
 	private void bossMissing() {
 		if (++missingTicks > 600) {
 			HellcraftMod.LOGGER.warn("Lucifer's body vanished without dying; ending the fight without a victory");
-			fail(null);
+			fail("Lucifer's body is gone from the pit. The fight is over, and he will return.");
 		}
 	}
 
@@ -414,7 +441,15 @@ public final class LuciferFight {
 		for (int i = 0; i < LuciferDialogue.TRUE_FORM.length; i++) {
 			sayLater(i * 45, LuciferDialogue.TRUE_FORM[i]);
 		}
-		schedule(95, () -> {
+		schedule(95, this::revealTrueForm);
+	}
+
+	/** The Morning Star shatters and the Emperor, frozen in the ice, is revealed. */
+	private void revealTrueForm() {
+		if (phase != Phase.TRUE_FORM_TRANSITION) {
+			return;
+		}
+		{
 			Mob a = avatar();
 			if (a != null) {
 				level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, a.getX(), a.getY() + 2, a.getZ(), 2, 1, 1, 1, 0);
@@ -433,9 +468,10 @@ public final class LuciferFight {
 			witherId = wither.getUUID();
 			emperor = new EmperorAttacks(this, witherId);
 			bar.removeAllPlayers();
+			lastTrueFormHealth = 1.0f;
 			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "LUCIFER", "Three-Faced Emperor", ChatFormatting.DARK_PURPLE);
 			setPhase(Phase.TRUE_FORM);
-		});
+		}
 	}
 
 	private void beginDefeat() {
@@ -449,10 +485,10 @@ public final class LuciferFight {
 			sayLater(20 + i * 60, LuciferDialogue.DEFEAT[i]);
 		}
 		schedule(210, () -> {
-			cleanup();
-			reward();
-			// the way out opens where he was frozen
-			Purgatory.openBurrow(level, floorY);
+			// each on its own: whatever goes wrong with one, the victors still get their spoils and their way out
+			step("rewards", this::reward);
+			step("the burrow", () -> Purgatory.openBurrow(level, floorY));
+			step("the cleanup", this::cleanup);
 			setPhase(Phase.DONE);
 		});
 	}
@@ -507,8 +543,17 @@ public final class LuciferFight {
 		return false;
 	}
 
+	private void step(String what, Runnable action) {
+		try {
+			action.run();
+		} catch (RuntimeException e) {
+			HellcraftMod.LOGGER.error("Lucifer's defeat: {} failed", what, e);
+		}
+	}
+
 	void onDeath(LivingEntity entity) {
 		if (entity.getUUID().equals(witherId)) {
+			HellcraftMod.LOGGER.info("Lucifer's true form is slain");
 			beginDefeat();
 		} else if (entity instanceof ServerPlayer player && LuciferArena.inside(player.getX(), player.getZ())
 				&& (phase == Phase.DUEL || phase == Phase.ENRAGED || phase == Phase.TRUE_FORM)) {
@@ -530,11 +575,11 @@ public final class LuciferFight {
 			case DUEL -> beginEnrage();
 			case ENRAGED -> beginTrueFormTransition();
 			case TRUE_FORM -> {
+				// killed the way players kill him, so the test covers the real death
 				WitherBoss wither = wither();
 				if (wither != null) {
-					wither.discard();
+					wither.hurtServer(level, level.damageSources().genericKill(), Float.MAX_VALUE);
 				}
-				beginDefeat();
 			}
 			default -> {
 			}

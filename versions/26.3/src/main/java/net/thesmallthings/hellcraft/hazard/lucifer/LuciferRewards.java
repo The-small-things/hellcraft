@@ -29,7 +29,9 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.util.Feedback;
+import net.thesmallthings.hellcraft.util.Journey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,20 @@ public final class LuciferRewards {
 			soul.pendingReward = REPEAT;
 		}
 		state.setDirty();
+	}
+
+	/**
+	 * An operator's remedy (/hellcraft lucifer grant): gives a player a victory over Lucifer as the fight
+	 * would have, for when a fight was lost to a bug.
+	 */
+	public static void grantVictory(ServerPlayer player) {
+		HellState state = HellState.get(player.level().getServer());
+		HellState.Soul soul = state.soul(player.getUUID(), player.getGameProfile().name());
+		grant(state, soul);
+		Scoreboards.update(player.level().getServer(), soul);
+		Journey.award(player, "journey/lucifer");
+		remind(player);
+		open(player);
 	}
 
 	static void remind(ServerPlayer player) {
