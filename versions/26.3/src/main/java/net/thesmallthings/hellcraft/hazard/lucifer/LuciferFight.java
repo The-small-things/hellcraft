@@ -92,6 +92,8 @@ public final class LuciferFight {
 	private int missingTicks;
 	/** The true form's last seen health fraction (so a body that vanishes at death's door still counts as slain). */
 	private float lastTrueFormHealth = 1.0f;
+	/** The same for the Morning Star: if his first body dies for real, the Emperor still rises. */
+	private float lastAvatarHealth = 1.0f;
 	@Nullable
 	private UUID avatarId;
 	@Nullable
@@ -299,9 +301,17 @@ public final class LuciferFight {
 	private void fightTick() {
 		Mob avatar = avatar();
 		if (avatar == null) {
+			Entity body = avatarId != null ? level.getEntity(avatarId) : null;
+			if ((body instanceof LivingEntity dying && dying.isDeadOrDying()) || lastAvatarHealth <= 0.1f) {
+				// the Morning Star died outright instead of shattering: the Emperor rises all the same
+				HellcraftMod.LOGGER.info("The Morning Star died outright; revealing the true form");
+				beginTrueFormTransition();
+				return;
+			}
 			bossMissing();
 			return;
 		}
+		lastAvatarHealth = avatar.getHealth() / Math.max(1.0f, avatar.getMaxHealth());
 		missingTicks = 0;
 		leash(avatar, 24);
 		if (checkForFailure()) {

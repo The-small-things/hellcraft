@@ -447,6 +447,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft goto <zone>` / `gate` / `spine [way]` | op | Teleport to a zone / the Gate / the start of the Emperor's Spine (testing) |
 | `/lucifer reward` | all | Open your Lucifer reward chooser (if you have one waiting) |
 | `/hellcraft lucifer summon\|skip\|stop` | op | Start, advance or end the Lucifer fight (testing) |
+| `/hellcraft lucifer grant <players>` / `lucifer burrow` | op | Make good a victory lost to a bug: give players Lucifer's rewards (and the Hall and Journey credit), and open the burrow to Purgatory for five minutes (26.3) |
 | `/hellcraft givebane <player> [n]` | op | Give Lucifer's Bane |
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
