@@ -1,9 +1,8 @@
-# the white room: blank map data, map ids, item frame save keys
-MapItemSavedData (public|static|colors|locked)
-MapId
-MapColor (public static final net.minecraft.world.level.material.MapColor (SNOW|QUARTZ|WOOL)|getPackedId|Brightness)
-ServerLevel (MapId|MapData|getFreeMapId|setMapData)
-code ItemFrame (addAdditionalSaveData|readAdditionalSaveData)
-code HangingEntity (addAdditionalSaveData|readAdditionalSaveData)
-GlowItemFrame (public)
-MapItem (public static)
+# villager breeding under a stopped clock: which clocks tick, and where love-making lives
+find (Clock|clock\.)
+WorldClock
+code ServerClockManager
+code ClockManager
+code VillagerGoalPackages (getIdlePackage|getMeetPackage|getWorkPackage)
+code Villager (updateActivity|customServerAiStep|refreshBrain|registerBrainGoals|canBreed|wantsMoreFood)
+code VillagerMakeLove (checkExtraStartConditions|start|tick|canStillUse)
