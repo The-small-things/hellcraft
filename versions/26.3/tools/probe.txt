@@ -1,3 +1,9 @@
-# Dante's Journey: the 26.3 shape of location/biome and dimension criteria, and a custom-model icon
-data ^data/minecraft/advancement/(nether/find_fortress|end/enter_end_gateway|adventure/sleep_in_bed|end/root)\.json$
-code DisplayInfo (static|lambda\$static)
+# the white room: blank map data, map ids, item frame save keys
+MapItemSavedData (public|static|colors|locked)
+MapId
+MapColor (public static final net.minecraft.world.level.material.MapColor (SNOW|QUARTZ|WOOL)|getPackedId|Brightness)
+ServerLevel (MapId|MapData|getFreeMapId|setMapData)
+code ItemFrame (addAdditionalSaveData|readAdditionalSaveData)
+code HangingEntity (addAdditionalSaveData|readAdditionalSaveData)
+GlowItemFrame (public)
+MapItem (public static)
