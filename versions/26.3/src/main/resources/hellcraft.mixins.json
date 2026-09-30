@@ -8,7 +8,8 @@
 		"ResourcePackResponseMixin",
 		"HandshakeHostMixin",
 		"TheEndBiomeSourceMixin",
-		"BiomeSourceMixin"
+		"BiomeSourceMixin",
+		"ItemFrameAccess"
 	],
 	"injectors": {
 		"defaultRequire": 1

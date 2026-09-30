@@ -214,7 +214,11 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   for heading in "MOST HEARTS" "P'S BURNED" "LUCIFER SLAIN" "GUARDIANS SLAIN" "MOST DAMNED"; do
     echo "$board" | grep -q "$heading" || { echo "The Hall has no $heading board"; exit 1; }
   done
-  for cmd in "hellcraft travel nobody gate" "hellcraft shrine visit nobody all" "hellcraft prestige nobody"; do
+  # the white room: a spare cell papered with white maps, then taken down again
+  white=$(rcon "hellcraft whiteroom test" || true)
+  echo "$white"
+  echo "$white" | grep -q "1806/1806 frames, lit=true, white map=true, frames left after release=0" || { echo "The white room is not right"; exit 1; }
+  for cmd in "hellcraft travel nobody gate" "hellcraft shrine visit nobody all" "hellcraft prestige nobody" "hellcraft whiteroom nobody" "hellcraft whiteroom release nobody"; do
     out=$(rcon "$cmd" || true)
     echo "$cmd: $out"
     echo "$out" | grep -qi "unknown or incomplete command" && { echo "/$cmd is not registered"; exit 1; }

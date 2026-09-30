@@ -48,6 +48,7 @@ import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
+import net.thesmallthings.hellcraft.world.WhiteRoom;
 import net.thesmallthings.hellcraft.world.Zone;
 import org.jetbrains.annotations.Nullable;
 
@@ -297,6 +298,14 @@ public final class HellCommands {
 									+ GreatForge.center().toShortString() + " in the Nether."), true);
 							return 1;
 						})))
+				.then(Commands.literal("whiteroom")
+						.then(Commands.literal("list").executes(ctx -> reply(ctx.getSource(), WhiteRoom.list(ctx.getSource().getServer()))))
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), WhiteRoom.selfTest(ctx.getSource().getServer()))))
+						.then(Commands.literal("release")
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> reply(ctx.getSource(), WhiteRoom.release(EntityArgument.getPlayer(ctx, "player"))))))
+						.then(Commands.argument("player", EntityArgument.player())
+								.executes(ctx -> reply(ctx.getSource(), WhiteRoom.trap(EntityArgument.getPlayer(ctx, "player"))))))
 				.then(Commands.literal("hall")
 						.executes(ctx -> {
 							HallOfTheDamned.describe(ctx.getSource().getServer()).forEach(line -> ctx.getSource().sendSuccess(() -> line, false));

@@ -36,6 +36,7 @@ import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Villages;
+import net.thesmallthings.hellcraft.world.WhiteRoom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +97,7 @@ public class HellcraftMod implements ModInitializer {
 			Purgatory.tick(server);
 			Prestige.tick(server);
 			HallOfTheDamned.tick(server);
+			WhiteRoom.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

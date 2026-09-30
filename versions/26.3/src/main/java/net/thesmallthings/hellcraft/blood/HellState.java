@@ -57,6 +57,14 @@ public class HellState extends SavedData {
 	/** The Blood Altar Landmarks builds beside the Gate of Hell (pointed to in the revival instructions). */
 	@Nullable
 	public GlobalSpot starterAltar;
+	/** The white room: the blank white map its walls are papered with (-1 until first made). */
+	public int whiteMap = -1;
+	/** Players an operator has shut in the white room: UUID -> their cell, and where and how to put them back. */
+	public final Map<UUID, Captive> captives = new HashMap<>();
+
+	public record Captive(int cell, GlobalSpot from, String mode) {
+	}
+
 	/** Where the Hall of the Damned stands (its first sign column), once built. */
 	@Nullable
 	public GlobalSpot hall;
@@ -234,6 +242,17 @@ public class HellState extends SavedData {
 			tag.store("lucifer", UUIDUtil.CODEC, luciferId);
 		}
 		tag.putLong("luciferNext", luciferNextSpawn);
+		tag.putInt("whiteMap", whiteMap);
+		ListTag captiveList = new ListTag();
+		captives.forEach((id, c) -> {
+			CompoundTag ct = new CompoundTag();
+			ct.store("id", UUIDUtil.CODEC, id);
+			ct.putInt("cell", c.cell());
+			ct.put("from", c.from().save());
+			ct.putString("mode", c.mode());
+			captiveList.add(ct);
+		});
+		tag.put("captives", captiveList);
 		if (hall != null) {
 			tag.put("hall", hall.save());
 		}
@@ -302,6 +321,16 @@ public class HellState extends SavedData {
 		state.luciferNextSpawn = tag.getLongOr("luciferNext", 0L);
 		state.starterAltar = GlobalSpot.load(tag, "starterAltar");
 		state.hall = GlobalSpot.load(tag, "hall");
+		state.whiteMap = tag.getIntOr("whiteMap", -1);
+		ListTag captiveList = tag.getListOrEmpty("captives");
+		for (int i = 0; i < captiveList.size(); i++) {
+			CompoundTag ct = captiveList.getCompoundOrEmpty(i);
+			Optional<UUID> id = ct.read("id", UUIDUtil.CODEC);
+			GlobalSpot from = GlobalSpot.load(ct, "from");
+			if (id.isPresent() && from != null) {
+				state.captives.put(id.get(), new Captive(ct.getIntOr("cell", 0), from, ct.getStringOr("mode", "survival")));
+			}
+		}
 		return state;
 	}
 }
