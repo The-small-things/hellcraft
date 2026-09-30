@@ -39,6 +39,11 @@ public final class Hearts {
 			return;
 		}
 		health.removeModifier(MODIFIER);
+		if (soul.hearts > cap(soul)) {
+			// over the ceiling (or a cap an operator lowered): trimmed back
+			soul.hearts = cap(soul);
+			HellState.get(player.level().getServer()).setDirty();
+		}
 		int hearts = Math.max(1, soul.hearts);
 		double delta = hearts * 2.0 - health.getBaseValue();
 		if (delta != 0) {
