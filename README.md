@@ -461,6 +461,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
 | `/hellcraft prestige <player> [set <n>]` / `prestige test` | op | Show or set a player's burned P's; self-test the Seven P's (26.3) |
+| `/hellcraft whiteroom <player>` / `whiteroom release <player>` / `whiteroom list` | op | Shut a player in the white room: a 21×11×21 cell high above the edge of the world, every surface papered with white maps in invisible glow frames and lit from behind, so it has no depth. They're kept in adventure mode and pulled back if they get out, even after a restart; release puts them back where they were, in their old game mode, and takes the room down (26.3) |
 | `/hellcraft hall [build]` | op | The Hall of the Damned standings; (re)build the monument (26.3) |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |
