@@ -203,6 +203,13 @@ jobs:
               - **The Blood Heart HUD:** bleeding hearts in the health bar, rimmed bronze to white by rank.
               - **The Hall of the Damned:** a monument at spawn naming the Inferno's best and most damned.
               - **Dante's Journey:** an advancement tab of 29 milestones from the Dark Wood to the Empyrean.
+            - **New in 2.0.1 (26.3):**
+              - **Redrawn textures:** every item icon hand-redrawn (the Blood Heart is now an anatomical heart), plus richer guardian and Lucifer textures and new worn blood armour with a skull visor.
+              - **The Blood Pickaxe:** vein-mines ores, and its Blood Art Excavate digs 3x3.
+              - **Stronger weapons cost Blood Hearts:** the Reaper of Minos takes 2, the Tithe Axe and Blood Pickaxe 1 (plus fragments).
+              - **Guardians can't be farmed:** spoils are personal. Your first victory over each guardian pays in full, after that 1 heart once every 3 hours, and only a few fragments in between.
+              - **A calmer Lust:** gentler gusts every 5-9 s, only while you're on the ground, and breezes are rare.
+              - **`/hellcraft whiteroom`:** operators can shut a player in a depthless white room and let them out again.
 
             There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
 
