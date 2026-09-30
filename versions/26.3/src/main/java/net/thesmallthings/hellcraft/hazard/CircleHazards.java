@@ -49,6 +49,8 @@ public final class CircleHazards {
 
 	private static final Map<UUID, Circle> LAST_CIRCLE = new HashMap<>();
 	private static final Map<UUID, String> LAST_REGION = new HashMap<>();
+	/** Lust: game time of each player's next gust. */
+	private static final Map<UUID, Long> NEXT_GUST = new HashMap<>();
 	private static int ticks;
 
 	public static void register() {
@@ -132,14 +134,23 @@ public final class CircleHazards {
 		Circle circle = zone.circle();
 		switch (circle) {
 			case LUST -> {
-				// the infernal hurricane that never rests; sneaking braces you against it
-				if (open && !player.isShiftKeyDown() && level.getRandom().nextFloat() < 0.25f) {
+				// the infernal hurricane that never rests: a gust every 5-9 s shoves you sideways along the circle. It only
+				// catches you on your feet (never mid-air, so it can't stack with a breeze's wind charge or a fall), barely
+				// lifts you, and sneaking or a roof braces you against it
+				long now = level.getGameTime();
+				if (now < NEXT_GUST.getOrDefault(player.getUUID(), 0L)) {
+					break;
+				}
+				NEXT_GUST.put(player.getUUID(), now + 100 + level.getRandom().nextInt(80));
+				if (open && !player.isShiftKeyDown() && player.onGround() && player.hurtTime == 0 && !player.isFallFlying()) {
 					double r = Math.max(1.0, Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ()));
 					Vec3 tangent = new Vec3(-player.getZ() / r, 0, player.getX() / r);
-					double strength = 0.6 + level.getRandom().nextDouble() * 0.8;
-					player.push(tangent.x * strength, 0.25 + level.getRandom().nextDouble() * 0.3, tangent.z * strength);
+					double strength = 0.35 + level.getRandom().nextDouble() * 0.25;
+					player.push(tangent.x * strength, 0.12, tangent.z * strength);
 					Feedback.syncMotion(player);
 					level.playSound(null, pos, SoundEvents.ELYTRA_FLYING, SoundSource.WEATHER, 0.4f, 1.6f);
+					level.sendParticles(ParticleTypes.CLOUD, player.getX() - tangent.x, player.getY() + 1.0, player.getZ() - tangent.z,
+							6, 0.3, 0.4, 0.3, 0.05);
 					hint(player, circle, "The wind can't move you while you sneak, or under a roof.");
 				}
 			}
@@ -286,5 +297,6 @@ public final class CircleHazards {
 	public static void forget(ServerPlayer player) {
 		LAST_CIRCLE.remove(player.getUUID());
 		LAST_REGION.remove(player.getUUID());
+		NEXT_GUST.remove(player.getUUID());
 	}
 }

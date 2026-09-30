@@ -69,7 +69,7 @@ The world is a disc 12,000 blocks across, with the world border at radius 6000. 
 | Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves, and (on 26.3) only a few monsters, so new players can find their feet. The Gate of Hell's wall runs along its inner edge. | – |
 | Vestibule & Acheron | – | Grey gravel plain. The river Acheron. Bees stand in for the stinging wasps. | – |
 | **Limbo** | I | Pale meadows of calcite and birch. The only villages in Hell, plus trail ruins. | none: Limbo is only longing |
-| **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | Hurricane gusts hurl you sideways |
+| **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | Hurricane gusts push you sideways every few seconds |
 | **Gluttony** | III | Mud, mangrove roots, filthy pools. Hoglins and slimes. | Constant Hunger |
 | **Greed** | IV | Blackstone, gilded blackstone and raw gold. Boulders, piglins, buried bastions. | Carrying gold, diamonds, emeralds or netherite slows you |
 | **Wrath** | V | The marsh of Styx. Drowned, and vindicators with Strength. | Weakness and Mining Fatigue while in its water |
@@ -401,7 +401,7 @@ Each circle torments the living (26.3: each has a counter, and the first time it
 
 | Circle | Torment | Counter (26.3) |
 |---|---|---|
-| Lust | The wind throws you about under the open sky | Sneak, or get under a roof |
+| Lust | A gust shoves you sideways every 5–9 s under the open sky (only while you stand on the ground, and barely off it) | Sneak, or get under a roof |
 | Gluttony | The rain brings Hunger | A roof |
 | Greed | Gold you carry slows you | Stash it (ender chest) |
 | Wrath | The Styx's water weakens you | A boat, or the banks |

@@ -31,17 +31,18 @@
     },
     "minecraft:gameplay/natural_mob_spawns": {
       "argument": {
-        "spawn_costs": {},
+        "spawn_costs": {
+          "minecraft:breeze": {
+            "charge": 1.0,
+            "energy_budget": 0.12
+          }
+        },
         "spawns_by_category": {
           "monster": [
             {
               "type": "minecraft:breeze",
-              "count": {
-                "type": "minecraft:uniform",
-                "min_inclusive": 1,
-                "max_inclusive": 2
-              },
-              "weight": 40
+              "count": 1,
+              "weight": 6
             },
             {
               "type": "minecraft:enderman",

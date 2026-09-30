@@ -774,6 +774,14 @@ def make_biome26(biome_id, d):
         for e in spawns.get("monster", []):
             e["count"] = 1
             costs[e["type"]] = {"charge": 0.7, "energy_budget": 0.15}
+    if biome_id == "lust":
+        # breezes are a rare sight in the hurricane, alone and far apart: their wind charges on top of the gusts
+        # threw players about far too much
+        for e in spawns.get("monster", []):
+            if e["type"] == "minecraft:breeze":
+                e["weight"] = 6
+                e["count"] = 1
+                costs["minecraft:breeze"] = {"charge": 1.0, "energy_budget": 0.12}
     attrs["minecraft:gameplay/natural_mob_spawns"] = {
         "argument": {"spawn_costs": costs, "spawns_by_category": spawns}, "modifier": "overlay"}
     attrs["minecraft:gameplay/can_pillager_patrol_spawn"] = False
