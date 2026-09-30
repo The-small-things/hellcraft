@@ -931,17 +931,22 @@ DIMENSION_TYPE26 = {
     "timelines": "#hellcraft:in_inferno",
 }
 
-# Villagers take their routine from a timeline on the overworld clock, which Landmarks stops at dusk: under
-# vanilla's schedule they would rest forever and never take a job. In the Inferno they work around the clock
-# (they claim job sites and restock; Villages.java adds regular restocks since the day never turns).
+# Villagers take their routine from a timeline, and Landmarks stops the overworld clock at dusk: under vanilla's
+# schedule they would rest forever and never take a job. So the Inferno's villagers keep their own clock
+# (hellcraft:villager_day, which nothing pauses) with a short ten-minute day: work, then meet at the bell, then
+# idle. Idle matters: it is the only time vanilla villagers make love, so without it they never breed.
+# Villages.java adds regular restocks.
+VILLAGER_CLOCK26 = {}
 VILLAGER_SCHEDULE26 = {
-    "clock": "minecraft:overworld",
-    "period_ticks": 24000,
+    "clock": "hellcraft:villager_day",
+    "period_ticks": 12000,
     "tracks": {
         "minecraft:gameplay/villager_activity": {"keyframes": [
-            {"ticks": 0, "value": "minecraft:work"}, {"ticks": 12000, "value": "minecraft:work"}]},
+            {"ticks": 0, "value": "minecraft:work"}, {"ticks": 7000, "value": "minecraft:meet"},
+            {"ticks": 8400, "value": "minecraft:idle"}]},
         "minecraft:gameplay/baby_villager_activity": {"keyframes": [
-            {"ticks": 0, "value": "minecraft:play"}, {"ticks": 12000, "value": "minecraft:play"}]},
+            {"ticks": 0, "value": "minecraft:play"}, {"ticks": 6000, "value": "minecraft:idle"},
+            {"ticks": 8400, "value": "minecraft:play"}]},
     },
 }
 IN_INFERNO26 = {"values": ["hellcraft:villager_schedule", "minecraft:day", "minecraft:moon", "minecraft:early_game"]}
@@ -970,6 +975,7 @@ def main26():
     write(os.path.join(hc, "worldgen", "noise_settings", "inferno.json"), noise_settings26())
     write(os.path.join(hc, "dimension_type", "inferno.json"), DIMENSION_TYPE26)
     write(os.path.join(hc, "timeline", "villager_schedule.json"), VILLAGER_SCHEDULE26)
+    write(os.path.join(hc, "world_clock", "villager_day.json"), VILLAGER_CLOCK26)
     write(os.path.join(hc, "tags", "timeline", "in_inferno.json"), IN_INFERNO26)
     write(os.path.join(hc, "worldgen", "world_preset", "inferno.json"), {"dimensions": {
         "minecraft:overworld": {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR},

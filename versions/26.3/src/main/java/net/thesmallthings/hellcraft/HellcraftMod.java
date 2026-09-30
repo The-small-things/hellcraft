@@ -79,6 +79,7 @@ public class HellcraftMod implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(Scoreboards::setUp);
 		ServerLifecycleEvents.SERVER_STARTED.register(Journey::check);
 		ServerLifecycleEvents.SERVER_STARTED.register(RecipeCheck::run);
+		ServerLifecycleEvents.SERVER_STARTED.register(Villages::setUp);
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Shrines::onLoad);

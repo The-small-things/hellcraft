@@ -1,6 +1,6 @@
 {
-  "clock": "minecraft:overworld",
-  "period_ticks": 24000,
+  "clock": "hellcraft:villager_day",
+  "period_ticks": 12000,
   "tracks": {
     "minecraft:gameplay/villager_activity": {
       "keyframes": [
@@ -9,8 +9,12 @@
           "value": "minecraft:work"
         },
         {
-          "ticks": 12000,
-          "value": "minecraft:work"
+          "ticks": 7000,
+          "value": "minecraft:meet"
+        },
+        {
+          "ticks": 8400,
+          "value": "minecraft:idle"
         }
       ]
     },
@@ -21,7 +25,11 @@
           "value": "minecraft:play"
         },
         {
-          "ticks": 12000,
+          "ticks": 6000,
+          "value": "minecraft:idle"
+        },
+        {
+          "ticks": 8400,
           "value": "minecraft:play"
         }
       ]
