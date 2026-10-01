@@ -56,7 +56,7 @@ public final class GuardianManager {
 		});
 		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, base, taken, blocked) -> {
 			for (GuardianFight f : new ArrayList<>(FIGHTS.values())) {
-				f.afterDamage(entity, source, taken);
+				f.afterDamage(entity, source, taken, blocked);
 			}
 		});
 		// no towers or walls in a lair while its guardian is awake
@@ -78,7 +78,7 @@ public final class GuardianManager {
 		});
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
 			for (GuardianFight f : new ArrayList<>(FIGHTS.values())) {
-				f.onDeath(entity);
+				f.onDeath(entity, source);
 			}
 		});
 		// a guardian body or model left over from a restart belongs to no fight: it goes (a tick later,

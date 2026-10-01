@@ -42,6 +42,7 @@ import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
@@ -80,8 +81,8 @@ public final class LuciferFight {
 	private final ServerBossEvent bar = new ServerBossEvent(java.util.UUID.randomUUID(), Component.literal("LUCIFER").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 			BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 	private final Map<UUID, Float> participants = new LinkedHashMap<>();
-	/** player -> health lost in the pit during the fight (in whole healths), for their grade (Judgement) */
-	private final Map<UUID, Float> lost = new HashMap<>();
+	/** Each fighter's style: its average over the fight decides their spoils (Judgement). */
+	private final Map<UUID, StyleMeter> styles = new HashMap<>();
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final List<UUID> traitors = new ArrayList<>();
 	private final LuciferMusic music;
@@ -239,6 +240,7 @@ public final class LuciferFight {
 		List<ServerPlayer> watching = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
 		music.tick(watching, tick);
 		model.tick(watching);
+		tickStyles();
 		if (floor != null && tick % 10 == 0) {
 			LuciferArena.heal(level, floor);
 		}
@@ -499,6 +501,7 @@ public final class LuciferFight {
 		setPhase(Phase.DEFEAT);
 		scheduled.clear();
 		bar.removeAllPlayers();
+		styles.values().forEach(StyleMeter::finish);
 		for (int i = 0; i < LuciferDialogue.DEFEAT.length; i++) {
 			sayLater(20 + i * 60, LuciferDialogue.DEFEAT[i]);
 		}
@@ -520,10 +523,44 @@ public final class LuciferFight {
 		return true;
 	}
 
-	void afterDamage(LivingEntity entity, DamageSource source, float dealt) {
-		if (entity instanceof ServerPlayer hurt && !(source.getEntity() instanceof Player) && LuciferArena.inside(hurt.getX(), hurt.getZ())
-				&& phase != Phase.INTRO && phase != Phase.DEFEAT && phase != Phase.FAILED && phase != Phase.DONE) {
-			lost.merge(hurt.getUUID(), dealt / Math.max(1.0f, hurt.getMaxHealth()), Float::sum);
+	private boolean fighting() {
+		return phase == Phase.DUEL || phase == Phase.ENRAGE_TRANSITION || phase == Phase.ENRAGED
+				|| phase == Phase.TRUE_FORM_TRANSITION || phase == Phase.TRUE_FORM;
+	}
+
+	/** Everyone fighting in the pit has a style meter; each keeps count while the fight is on. */
+	private void tickStyles() {
+		if (!fighting()) {
+			return;
+		}
+		for (ServerPlayer p : level.players()) {
+			if (!p.isSpectator() && !p.isCreative() && p.isAlive() && LuciferArena.inside(p.getX(), p.getZ()) && !styles.containsKey(p.getUUID())) {
+				styles.put(p.getUUID(), new StyleMeter(p));
+				p.sendSystemMessage(Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
+						+ "the better your style, the better your spoils.").withStyle(ChatFormatting.AQUA));
+			}
+		}
+		Entity boss = avatar();
+		if (boss == null && witherId != null) {
+			boss = level.getEntity(witherId);
+		}
+		for (Map.Entry<UUID, StyleMeter> e : styles.entrySet()) {
+			ServerPlayer p = level.getServer().getPlayerList().getPlayer(e.getKey());
+			if (p != null) {
+				e.getValue().tick(p, boss);
+			}
+		}
+	}
+
+	void afterDamage(LivingEntity entity, DamageSource source, float dealt, boolean blocked) {
+		// a fighter hurt in the pit by anything but another player loses style; a shield block earns it
+		StyleMeter hurt = styles.get(entity.getUUID());
+		if (hurt != null && !(source.getEntity() instanceof Player) && LuciferArena.inside(entity.getX(), entity.getZ())) {
+			if (blocked && source.getEntity() != null && BossRules.fromBoss(source.getEntity())) {
+				hurt.onParry();
+			} else if (dealt > 0) {
+				hurt.onHurt(dealt / Math.max(1.0f, entity.getMaxHealth()));
+			}
 			return;
 		}
 		if (emperor != null && entity.getUUID().equals(witherId)) {
@@ -535,6 +572,9 @@ public final class LuciferFight {
 		}
 		boolean newcomer = !participants.containsKey(player.getUUID());
 		participants.merge(player.getUUID(), dealt, Float::sum);
+		if (styles.containsKey(player.getUUID())) {
+			styles.get(player.getUUID()).onHit(player, source, dealt);
+		}
 		if (newcomer) {
 			HellState.Soul soul = HellState.get(level.getServer()).existing(player.getUUID());
 			if (soul != null && soul.slewLucifer && !veterans.contains(soul.name)) {
@@ -574,7 +614,15 @@ public final class LuciferFight {
 		}
 	}
 
-	void onDeath(LivingEntity entity) {
+	void onDeath(LivingEntity entity, DamageSource source) {
+		StyleMeter fallen = styles.get(entity.getUUID());
+		if (fallen != null) {
+			fallen.onDeath();
+		} else if (LuciferManager.isLucifer(entity) && !entity.getUUID().equals(witherId) && !entity.getUUID().equals(avatarId)
+				&& source.getEntity() != null && styles.containsKey(source.getEntity().getUUID())) {
+			// one of his traitors, killed by a fighter
+			styles.get(source.getEntity().getUUID()).onCleanup();
+		}
 		if (entity.getUUID().equals(witherId)) {
 			HellcraftMod.LOGGER.info("Lucifer's true form is slain");
 			beginDefeat();
@@ -801,6 +849,7 @@ public final class LuciferFight {
 	private void cleanup() {
 		scheduled.clear();
 		bar.removeAllPlayers();
+		styles.values().forEach(StyleMeter::finish);
 		Mob avatar = avatar();
 		if (avatar != null) {
 			avatar.discard();
@@ -871,40 +920,39 @@ public final class LuciferFight {
 			}
 			victors.add(soul.name);
 			ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
-			// graded like the guardians: every victory pays by grade, the first A and S a Blood Heart each
-			Judgement.Tally tally = new Judgement.Tally();
-			tally.lost = lost.getOrDefault(id, 0.0f);
-			tally.dealt = participants.getOrDefault(id, 0.0f);
-			double bossHealth = config.luciferAvatarHealth + config.luciferHealth;
-			Judgement.Grade grade = Judgement.grade(tally, bossHealth, participants.size());
+			// ranked by style like the guardians: every victory pays by rank, the first S and SSS a Blood Heart each
+			StyleMeter style = styles.get(id);
+			Judgement.Grade grade = style != null ? style.grade() : Judgement.Grade.D;
+			String summary = style != null ? style.summary() : "you never fought in the pit.";
+			String advice = style != null ? style.advice() : "";
 			List<String> got = new ArrayList<>();
 			int marks = Judgement.marks(soul, "lucifer", grade);
 			if (player != null && marks > 0) {
 				BloodItems.give(player, BloodItems.heart(marks));
-				got.add(Judgement.hearts(marks, grade == Judgement.Grade.S ? "your first S" : "your first A"));
+				got.add(Judgement.hearts(marks, Judgement.marksReason(grade, marks)));
 			}
 			if (player != null && BossSpoils.claim(player, "lucifer", config.luciferSpoilsCooldownMinutes) == BossSpoils.Claim.TOO_SOON) {
-				// cast down again before his full spoils return: the victory counts (the Hall, the Journey),
-				// and pays by grade
+				// cast down again before his full reward returns: the victory counts (the Hall, the Journey),
+				// and pays by rank
 				soul.luciferKills++;
 				state.setDirty();
 				Scoreboards.update(level.getServer(), soul);
 				Journey.award(player, "journey/lucifer");
-				int fragments = 2 * Judgement.fragments(grade);
+				int fragments = 2 * grade.fragments;
 				BloodItems.give(player, BloodItems.fragment(fragments));
 				got.add(0, fragments + " Blood Fragments");
-				if (grade.atLeast(Judgement.Grade.A)) {
+				if (grade.atLeast(Judgement.Grade.S)) {
 					Judgement.treasure(player);
 					got.add(1, "a treasure roll");
 				}
-				Judgement.report(player, "Lucifer", grade, tally, bossHealth, participants.size(), got,
-						"Lucifer's full spoils return for you in " + Math.max(1, BossSpoils.minutesLeft(player, "lucifer",
+				Judgement.report(player, "Lucifer", grade, summary, got, advice,
+						"Lucifer's full reward returns for you in " + Math.max(1, BossSpoils.minutesLeft(player, "lucifer",
 								config.luciferSpoilsCooldownMinutes)) + " min.");
 				continue;
 			}
 			if (player != null) {
 				got.add(0, "Lucifer's reward (choose one in the window that opens)");
-				Judgement.report(player, "Lucifer", grade, tally, bossHealth, participants.size(), got, "");
+				Judgement.report(player, "Lucifer", grade, summary, got, advice, "");
 			}
 			LuciferRewards.grant(state, soul);
 			Scoreboards.update(level.getServer(), soul);

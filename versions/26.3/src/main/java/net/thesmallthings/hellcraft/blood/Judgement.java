@@ -4,100 +4,92 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
- * Boss spoils reward skill, not play time. Every fighter is graded at the end of a boss fight on how much
- * of their health the fight took from them (boss hits grow with your hearts, see BossRules, so this is the
- * same test at 10 hearts as at 40):
- * <ul>
- *     <li><b>S</b>: lost less than a quarter of your health, over the whole fight.</li>
- *     <li><b>A</b>: less than three quarters. <b>B</b>: less than one and a half times. <b>C</b>: more.</li>
- *     <li><b>D</b>: you died.</li>
- * </ul>
- * Anyone who dealt less than half a fair share of the damage can't grade above C. Every victory pays
- * fragments by grade, A and S add a treasure roll, and the first A and the first S against each boss
- * are worth a Blood Heart each.
+ * Boss spoils reward style, not play time. Every fighter's style is ranked through the fight (StyleMeter)
+ * and their spoils follow their average rank: every victory pays fragments by rank, S and better add a
+ * treasure roll, and the first S and the first SSS against each boss are worth a Blood Heart each.
  */
 public final class Judgement {
 	private Judgement() {
 	}
 
+	/** Style ranks, lowest first, with the style needed to reach each. */
 	public enum Grade {
-		D(ChatFormatting.DARK_GRAY, 1.0f),
-		C(ChatFormatting.GRAY, 1.5f),
-		B(ChatFormatting.GREEN, 0.75f),
-		A(ChatFormatting.AQUA, 0.25f),
-		S(ChatFormatting.GOLD, 0.0f);
+		D("DAMNED", 0, ChatFormatting.DARK_GRAY, BossEvent.BossBarColor.WHITE, 1),
+		C("CRUEL", 30, ChatFormatting.GRAY, BossEvent.BossBarColor.WHITE, 2),
+		B("BRUTAL", 70, ChatFormatting.GREEN, BossEvent.BossBarColor.GREEN, 3),
+		A("ANARCHIC", 120, ChatFormatting.AQUA, BossEvent.BossBarColor.BLUE, 4),
+		S("SAVAGE", 180, ChatFormatting.LIGHT_PURPLE, BossEvent.BossBarColor.PURPLE, 6),
+		SS("SINFUL", 250, ChatFormatting.YELLOW, BossEvent.BossBarColor.YELLOW, 8),
+		SSS("SATANIC", 330, ChatFormatting.RED, BossEvent.BossBarColor.RED, 10);
 
+		public final String title;
+		/** Style points needed for this rank. */
+		public final float threshold;
 		public final ChatFormatting color;
-		/** The share of your health you must lose less than to reach the grade above this one. */
-		final float nextBelow;
+		public final BossEvent.BossBarColor barColor;
+		/** Blood Fragments a victory pays at this rank. */
+		public final int fragments;
 
-		Grade(ChatFormatting color, float nextBelow) {
+		Grade(String title, float threshold, ChatFormatting color, BossEvent.BossBarColor barColor, int fragments) {
+			this.title = title;
+			this.threshold = threshold;
 			this.color = color;
-			this.nextBelow = nextBelow;
+			this.barColor = barColor;
+			this.fragments = fragments;
 		}
 
 		public boolean atLeast(Grade other) {
 			return ordinal() >= other.ordinal();
 		}
-	}
 
-	/** One fighter's record in one boss fight. */
-	public static final class Tally {
-		/** Damage taken during the fight, in whole healths (1.0 = their full health). */
-		public float lost;
-		/** Damage dealt to the boss. */
-		public float dealt;
-		public boolean died;
-	}
-
-	public static Grade grade(Tally tally, double bossHealth, int fighters) {
-		if (tally.died) {
-			return Grade.D;
+		public static Grade of(float style) {
+			Grade grade = D;
+			for (Grade g : values()) {
+				if (style >= g.threshold) {
+					grade = g;
+				}
+			}
+			return grade;
 		}
-		Grade grade = tally.lost < 0.25f ? Grade.S : tally.lost < 0.75f ? Grade.A : tally.lost < 1.5f ? Grade.B : Grade.C;
-		if (grade.atLeast(Grade.B) && slacked(tally, bossHealth, fighters)) {
-			grade = Grade.C;
+
+		/** The rank above, or this one at the top. */
+		public Grade next() {
+			return this == SSS ? SSS : values()[ordinal() + 1];
 		}
-		return grade;
-	}
 
-	private static boolean slacked(Tally tally, double bossHealth, int fighters) {
-		return tally.dealt < bossHealth / (2.0 * Math.max(1, fighters));
-	}
-
-	/** Blood Fragments a victory pays at this grade. */
-	public static int fragments(Grade grade) {
-		return switch (grade) {
-			case S -> 8;
-			case A -> 6;
-			case B -> 4;
-			case C -> 2;
-			case D -> 1;
-		};
+		/** "an S", "a B" */
+		public String withArticle() {
+			return (this == A || this == S || this == SS || this == SSS ? "an " : "a ") + name();
+		}
 	}
 
 	/**
-	 * Records the grade as this soul's best against the boss. Returns the Blood Hearts it earns: one for the
-	 * first A (or better) against this boss, one for the first S.
+	 * Records the rank as this soul's best against the boss. Returns the Blood Hearts it earns: one for the
+	 * first S (or better) against this boss, one for the first SSS.
 	 */
 	public static int marks(HellState.Soul soul, String boss, Grade grade) {
 		int best = soul.bossBest.getOrDefault(boss, -1);
 		int hearts = 0;
-		if (grade.atLeast(Grade.A) && best < Grade.A.ordinal()) {
+		if (grade.atLeast(Grade.S) && best < Grade.S.ordinal()) {
 			hearts++;
 		}
-		if (grade == Grade.S && best < Grade.S.ordinal()) {
+		if (grade == Grade.SSS && best < Grade.SSS.ordinal()) {
 			hearts++;
 		}
 		if (grade.ordinal() > best) {
 			soul.bossBest.put(boss, grade.ordinal());
 		}
 		return hearts;
+	}
+
+	/** Why the marks were earned, for the spoils line. */
+	public static String marksReason(Grade grade, int marks) {
+		return marks >= 2 ? "your first S and first SSS" : grade == Grade.SSS ? "your first SSS" : "your first S";
 	}
 
 	/** The boss's treasure (enchanted books and more), straight into the player's inventory. */
@@ -107,26 +99,15 @@ public final class Judgement {
 				"loot give " + player.getStringUUID() + " loot hellcraft:gameplay/guardian_spoils");
 	}
 
-	/** Tells a fighter their grade, why, what it paid, and how to do better. */
-	public static void report(ServerPlayer player, String boss, Grade grade, Tally tally, double bossHealth, int fighters,
-							  List<String> spoils, String note) {
-		int lostPercent = Math.round(tally.lost * 100);
-		player.sendSystemMessage(Component.literal("Grade " + grade.name() + " against " + boss).withStyle(grade.color, ChatFormatting.BOLD)
-				.append(Component.literal(": you lost " + lostPercent + "% of your health.").withStyle(ChatFormatting.WHITE)));
+	/** Tells a fighter their style rank, what it paid, and how to do better. */
+	public static void report(ServerPlayer player, String boss, Grade grade, String summary, List<String> spoils, String advice, String note) {
+		player.sendSystemMessage(Component.literal("Style " + grade.name() + " (" + grade.title + ") against " + boss)
+				.withStyle(grade.color, ChatFormatting.BOLD)
+				.append(Component.literal(": " + summary).withStyle(ChatFormatting.WHITE)));
 		player.sendSystemMessage(Component.literal("Spoils: " + String.join(", ", spoils) + ".").withStyle(ChatFormatting.GOLD));
-		String advice;
-		if (grade == Grade.D) {
-			advice = "You died, so your grade is D. Stay alive to the end for a better one.";
-		} else if (grade == Grade.C && tally.lost < 1.5f && slacked(tally, bossHealth, fighters)) {
-			advice = "You dealt too little damage to grade above C. Fight, don't just dodge.";
-		} else if (grade == Grade.S) {
-			advice = "A flawless fight.";
-		} else {
-			Grade next = Grade.values()[grade.ordinal() + 1];
-			advice = String.format(Locale.ROOT, "For %s: lose less than %d%% of your health. Dodge the telegraphed attacks.",
-					next == Grade.S ? "an S" : next == Grade.A ? "an A" : "a " + next.name(), Math.round(grade.nextBelow * 100));
+		if (!advice.isEmpty()) {
+			player.sendSystemMessage(Component.literal(advice).withStyle(ChatFormatting.GRAY));
 		}
-		player.sendSystemMessage(Component.literal(advice).withStyle(ChatFormatting.GRAY));
 		if (!note.isEmpty()) {
 			player.sendSystemMessage(Component.literal(note).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
@@ -135,26 +116,5 @@ public final class Judgement {
 	/** "1 Blood Heart" / "3 Blood Hearts" */
 	public static String hearts(int n, String why) {
 		return n + (n == 1 ? " Blood Heart" : " Blood Hearts") + (why.isEmpty() ? "" : " (" + why + ")");
-	}
-
-	/** Headless self-test for the smoke test: grades and marks. */
-	public static String selfTest() {
-		Tally clean = new Tally();
-		clean.lost = 0.1f;
-		clean.dealt = 300;
-		Tally hurt = new Tally();
-		hurt.lost = 1.0f;
-		hurt.dealt = 300;
-		Tally idle = new Tally();
-		idle.lost = 0.0f;
-		idle.dealt = 10;
-		Tally dead = new Tally();
-		dead.died = true;
-		dead.dealt = 300;
-		HellState.Soul soul = new HellState.Soul();
-		int first = marks(soul, "minos", Grade.S);
-		int again = marks(soul, "minos", Grade.S);
-		return "Judgement test: " + grade(clean, 300, 1) + grade(hurt, 300, 1) + grade(idle, 300, 2) + grade(dead, 300, 1)
-				+ " marks " + first + "+" + again;
 	}
 }

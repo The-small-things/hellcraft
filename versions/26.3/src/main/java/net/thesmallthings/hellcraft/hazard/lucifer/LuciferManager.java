@@ -57,13 +57,13 @@ public final class LuciferManager {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> fight == null || fight.allowDamage(entity));
 		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, base, taken, blocked) -> {
 			if (fight != null) {
-				fight.afterDamage(entity, source, taken);
+				fight.afterDamage(entity, source, taken, blocked);
 			}
 		});
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> fight == null || fight.allowDeath(entity));
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
 			if (fight != null) {
-				fight.onDeath(entity);
+				fight.onDeath(entity, source);
 			}
 		});
 		// the pit (floor, seal and pillars) and the Emperor's Spine can't be dug out

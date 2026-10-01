@@ -223,23 +223,30 @@ A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes bac
 - **You can only hurt a guardian from inside its lair.** Damage from outside the brazier ring does nothing.
 - **No building in a lair while its guardian is awake,** and anyone standing more than 6 blocks above the guardian for 3 seconds is dragged down beside it.
 
-**Spoils are personal, and they reward skill, not play time.** At the end of every boss fight (the guardians, Vulcan and Lucifer) each player gets a grade for how much of their health the fight took from them, and is told why and what the next grade needs:
+**Spoils are personal, and they pay for style, not play time.** In every boss fight (the guardians, Vulcan and Lucifer) each player has a **STYLE** meter in their own boss bar, ranked like ULTRAKILL's:
 
-| Grade | Health lost over the whole fight | Blood Fragments |
-|---|---|---|
-| **S** | under 25% | 8 |
-| **A** | under 75% | 6 |
-| **B** | under 150% | 4 |
-| **C** | more | 2 |
-| **D** | you died | 1 |
+| Rank | Name | Style needed | Blood Fragments for the win |
+|---|---|---|---|
+| **D** | Damned | 0 | 1 |
+| **C** | Cruel | 30 | 2 |
+| **B** | Brutal | 70 | 3 |
+| **A** | Anarchic | 120 | 4 |
+| **S** | Savage | 180 | 6 |
+| **SS** | Sinful | 250 | 8 |
+| **SSS** | Satanic | 330 | 10 |
 
-Anyone who dealt less than half a fair share of the damage can't grade above C. Because boss hits grow with your hearts, a grade is the same test at 10 hearts as at 40.
+- **Hitting the boss fills the meter**, more for a full-strength blow than for spam-clicking.
+- **Freshness:** a weapon used again and again goes stale (FRESH, USED, STALE, DULL) and scores less, while the others freshen up. Swap between sword, axe, mace, spear, trident and bow.
+- **Extra style** for a critical hit, a mace smash, hitting while airborne, blocking a boss's blow with a shield, killing the boss's summons, and every 10 s close to the boss without getting hit.
+- **It drains** whenever you hold back (faster the higher you are), and **getting hit takes a big bite**. Dying resets it, and your rank for that fight can't go above B.
 
-- **Every victory** pays fragments by grade, straight into your inventory. **A or S** also gives you a treasure roll (enchanted books and more).
-- **Your first victory over a guardian:** 2 Blood Hearts, 3 extra fragments, a Soul Anchor and a treasure roll, at any grade.
-- **Your first A and your first S against each boss:** a Blood Heart each, once.
-- **Again after 3 hours:** 1 Blood Heart, but only for a victory graded A or better (a lower grade doesn't use up the wait).
-- **Lucifer:** his full reward comes back every 6 hours as before. A win in between pays twice the fragments, plus a treasure roll for an A or S.
+When the boss dies, your **rank is the average of your style over the fight**. Chat tells you your rank, what it paid, and what to do better.
+
+- **Every victory** pays Blood Fragments by rank, straight into your inventory. **S or better** adds a treasure roll (enchanted books and more).
+- **Your first victory over a guardian:** 2 Blood Hearts, 3 extra fragments, a Soul Anchor and a treasure roll, at any rank.
+- **Your first S and your first SSS against each boss:** a Blood Heart each, once.
+- **Again after 3 hours:** 1 Blood Heart, but only for a victory ranked S or better (a lower rank doesn't use up the wait).
+- **Lucifer:** his full reward comes back every 6 hours. A win in between pays twice the fragments, plus a treasure roll for S or better.
 
 Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (1.0 = full scaling, 0 = off), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
 
@@ -449,10 +456,10 @@ When you lose your last heart you are not banned. *There is no more room in hell
 
 ## Keeping the mighty in check (26.3)
 
-- **Boss Blood Hearts can't be farmed.** Every boss's hearts come back for each player only after a cooldown, and the guardians' and Lucifer's fights are graded, so repeat wins pay by skill (see [the circle guardians](#the-circle-guardians-263)).
-  - Guardians and Vulcan: 3 hours, and only for a win graded A or better (`guardianSpoilsCooldownMinutes`).
+- **Boss Blood Hearts can't be farmed.** Every boss's hearts come back for each player only after a cooldown, and the guardians' and Lucifer's fights rank your style, so repeat wins pay by skill (see [the circle guardians](#the-circle-guardians-263)).
+  - Guardians and Vulcan: 3 hours, and only for a win ranked S or better (`guardianSpoilsCooldownMinutes`).
   - The Wither, the Warden and the Ender Dragon: 3 hours for their Blood Hearts (`bossSpoilsCooldownMinutes`), so a wither farm is no heart farm.
-  - Lucifer: 6 hours for his full reward (`luciferSpoilsCooldownMinutes`). A win in between pays fragments by grade.
+  - Lucifer: 6 hours for his full reward (`luciferSpoilsCooldownMinutes`). A win in between pays fragments by style rank.
   - Each win tells you how long until that boss's hearts return for you.
 - **A heart ceiling.** Nothing can raise anyone past 40 hearts (`heartCeiling`), not Lucifer's Bane and not the Seven P's. A Bane is refused rather than wasted, and the P's still give their virtues.
 - **The bounty.** Every 20 minutes (`bountyIntervalMinutes`), the soul online holding the most blood is marked, if they have at least 25 hearts (`bountyMinHearts`).

@@ -121,11 +121,11 @@ public final class GuideBook {
 				"Minotaur (1600)",
 				"Geryon (1480)",
 				"Your first victory over each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and books."));
-		pages.add(page("BOSS GRADES",
-				"Bosses grade you on health lost: S under 25%, A under 75%, B under 150%, C more, D if you die.",
-				"Wins pay fragments by grade; A or S adds books.",
-				"First A and first S on each boss: a Blood Heart each.",
-				"A or better: " + c.guardianRepeatHearts + " heart again every " + (c.guardianSpoilsCooldownMinutes / 60) + " hours."));
+		pages.add(page("STYLE",
+				"Bosses rank your STYLE: D C B A S SS SSS.",
+				"Hits fill the bar. Swap weapons: one used again and again goes stale. Crits, smashes, parries score extra.",
+				"Getting hit or holding back drains it.",
+				"Spoils follow your average rank. First S and first SSS on a boss: a Blood Heart each."));
 		pages.add(page("SUPPLIES",
 				"Villages and traders wait in the Dark Wood and Limbo. Sugar cane grows by the water.",
 				"",
