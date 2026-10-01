@@ -15,7 +15,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,14 +37,17 @@ import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
+import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,6 +63,10 @@ public abstract class GuardianFight {
 	private static final double LEASH = 26.0;
 	private static final double AUDIENCE = 48.0;
 	private static final int GIVE_UP_TICKS = 600;
+	/** Arrows from further away than this make the guardian pull the archer in. */
+	private static final double ARCHER_RANGE = 8.0;
+	/** Standing this many blocks above the guardian counts as a perch. */
+	private static final double PERCH_HEIGHT = 6.0;
 
 	protected final ServerLevel level;
 	protected final Guardian kind;
@@ -75,6 +84,11 @@ public abstract class GuardianFight {
 	private int emptyTicks;
 	private int missingTicks;
 	private boolean done;
+	private int nextPull;
+	/** player -> ticks spent perched high above the guardian */
+	private final Map<UUID, Integer> perched = new HashMap<>();
+	/** player -> tick before which they aren't told again that they're out of reach */
+	private final Map<UUID, Integer> warned = new HashMap<>();
 
 	private record Scheduled(int at, Runnable action) {
 	}
@@ -111,6 +125,11 @@ public abstract class GuardianFight {
 	protected void everyTick(Mob body) {
 	}
 
+	/** A guardian that flies (Geryon) is fair game for arrows: full projectile damage, no pull, no perch rule. */
+	protected boolean flies() {
+		return false;
+	}
+
 	/** Called whenever the body is hurt. */
 	protected void onHurt(float amount) {
 	}
@@ -124,6 +143,9 @@ public abstract class GuardianFight {
 		body.snapTo(lair.getX() + 0.5, lair.getY(), lair.getZ() + 0.5, 90.0f, 0.0f);
 		body.addTag(TAG);
 		body.addTag(TAG + "_body");
+		if (!flies()) {
+			body.addTag(BossRules.BODY_TAG);
+		}
 		body.setCustomName(Component.literal(kind.title).withStyle(kind.color, ChatFormatting.BOLD));
 		body.setCustomNameVisible(true);
 		body.setPersistenceRequired();
@@ -170,6 +192,9 @@ public abstract class GuardianFight {
 		model.tick(watchers);
 		updateBar(body, watchers);
 		leash(body);
+		if (tick % 10 == 0) {
+			watchPerches(body);
+		}
 		everyTick(body);
 		boolean anyone = false;
 		for (ServerPlayer p : level.players()) {
@@ -211,9 +236,84 @@ public abstract class GuardianFight {
 		}
 	}
 
-	void afterDamage(LivingEntity entity, float dealt) {
-		if (entity.getUUID().equals(bodyId)) {
-			onHurt(dealt);
+	/** Only souls inside the lair can hurt a guardian: no shooting it from beyond the braziers. */
+	boolean allowDamage(LivingEntity entity, DamageSource source) {
+		if (!entity.getUUID().equals(bodyId) || !(source.getEntity() instanceof ServerPlayer player) || inArena(player)) {
+			return true;
+		}
+		if (tick >= warned.getOrDefault(player.getUUID(), 0)) {
+			warned.put(player.getUUID(), tick + 60);
+			player.sendOverlayMessage(Component.literal(kind.title + " can only be hurt from inside the lair.").withStyle(ChatFormatting.AQUA));
+		}
+		return false;
+	}
+
+	void afterDamage(LivingEntity entity, DamageSource source, float dealt) {
+		if (!entity.getUUID().equals(bodyId)) {
+			return;
+		}
+		onHurt(dealt);
+		if (!flies() && HellConfig.get().bossPullsArchers && source.is(DamageTypeTags.IS_PROJECTILE) && source.getEntity() instanceof ServerPlayer archer
+				&& archer.distanceTo(entity) > ARCHER_RANGE && tick >= nextPull) {
+			nextPull = tick + 160;
+			pullIn(archer);
+		}
+	}
+
+	/** An archer keeping their distance is dragged in, a second after a warning. */
+	private void pullIn(ServerPlayer archer) {
+		archer.sendOverlayMessage(Component.literal(kind.title + " is pulling you in! Arrows from afar won't save you.")
+				.withStyle(kind.color, ChatFormatting.BOLD));
+		Feedback.sound(archer, SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 1.0f, 0.6f);
+		for (int t = 0; t < 20; t += 4) {
+			schedule(t, () -> level.sendParticles(ParticleTypes.REVERSE_PORTAL, archer.getX(), archer.getY() + 1, archer.getZ(), 20, 0.4, 0.8, 0.4, 0.05));
+		}
+		schedule(20, () -> {
+			Mob body = body();
+			if (body == null || !archer.isAlive() || !inArena(archer)) {
+				return;
+			}
+			Vec3 to = body.position().subtract(archer.position());
+			double flat = Math.sqrt(to.x * to.x + to.z * to.z);
+			if (flat < 4.0) {
+				return;
+			}
+			double speed = Math.min(3.0, 0.4 + flat * 0.11);
+			archer.setDeltaMovement(to.x / flat * speed, 0.45, to.z / flat * speed);
+			Feedback.syncMotion(archer);
+			Feedback.sound(archer, SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.HOSTILE, 1.5f, 0.5f);
+		});
+	}
+
+	/** Anyone standing high above the guardian (a tower, a tree) for three seconds is dragged down beside it. */
+	private void watchPerches(Mob body) {
+		if (flies() || !HellConfig.get().bossPullsArchers) {
+			return;
+		}
+		for (LivingEntity e : targets()) {
+			if (!(e instanceof ServerPlayer p)) {
+				continue;
+			}
+			if (p.getY() < body.getY() + PERCH_HEIGHT) {
+				perched.remove(p.getUUID());
+				continue;
+			}
+			int ticks = perched.merge(p.getUUID(), 10, Integer::sum);
+			if (ticks == 10) {
+				p.sendOverlayMessage(Component.literal("You're too high up: come down, or " + kind.title + " will drag you down.")
+						.withStyle(kind.color, ChatFormatting.BOLD));
+			} else if (ticks >= 60) {
+				perched.remove(p.getUUID());
+				Vec3 side = p.position().subtract(body.position()).multiply(1, 0, 1);
+				side = side.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : side.normalize();
+				double x = body.getX() + side.x * 4.0;
+				double z = body.getZ() + side.z * 4.0;
+				level.sendParticles(ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1, p.getZ(), 40, 0.5, 1, 0.5, 0.1);
+				p.teleportTo(x, groundY(x, z), z);
+				p.resetFallDistance();
+				Feedback.sound(p, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 0.5f);
+				p.sendOverlayMessage(Component.literal(kind.title + " dragged you down. Fight on the ground!").withStyle(kind.color, ChatFormatting.BOLD));
+			}
 		}
 	}
 
@@ -323,9 +423,21 @@ public abstract class GuardianFight {
 	}
 
 	protected boolean inArena(Entity e) {
-		double dx = e.getX() - (lair.getX() + 0.5);
-		double dz = e.getZ() - (lair.getZ() + 0.5);
-		return dx * dx + dz * dz < ARENA * ARENA && Math.abs(e.getY() - lair.getY()) < 24;
+		return inArena(e.getX(), e.getY(), e.getZ());
+	}
+
+	boolean inArena(BlockPos pos) {
+		return inArena(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+	}
+
+	private boolean inArena(double x, double y, double z) {
+		double dx = x - (lair.getX() + 0.5);
+		double dz = z - (lair.getZ() + 0.5);
+		return dx * dx + dz * dz < ARENA * ARENA && Math.abs(y - lair.getY()) < 24;
+	}
+
+	ServerLevel level() {
+		return level;
 	}
 
 	protected List<ServerPlayer> audience() {

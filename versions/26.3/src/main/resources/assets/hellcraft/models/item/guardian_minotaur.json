@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/guardian_minotaur",
-    "particle": "hellcraft:entity/guardian_minotaur"
+    "skin": "hellcraft:item/boss/guardian_minotaur",
+    "particle": "hellcraft:item/boss/guardian_minotaur"
   },
   "elements": [
     {

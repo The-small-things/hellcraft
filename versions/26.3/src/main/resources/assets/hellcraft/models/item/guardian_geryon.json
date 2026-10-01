@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/guardian_geryon",
-    "particle": "hellcraft:entity/guardian_geryon"
+    "skin": "hellcraft:item/boss/guardian_geryon",
+    "particle": "hellcraft:item/boss/guardian_geryon"
   },
   "elements": [
     {

@@ -38,6 +38,7 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
+import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.music.MusicPack;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
@@ -718,6 +719,7 @@ public final class LuciferFight {
 		avatar.snapTo(0.5, floorY, 0.5, 90.0f, 0.0f);
 		avatar.addTag(LuciferManager.TAG);
 		avatar.addTag(AVATAR_TAG);
+		avatar.addTag(BossRules.BODY_TAG);
 		avatar.setCustomName(Component.literal("Lucifer").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		avatar.setCustomNameVisible(true);
 		avatar.setPersistenceRequired();

@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/lucifer_morning_star",
-    "particle": "hellcraft:entity/lucifer_morning_star"
+    "skin": "hellcraft:item/boss/lucifer_morning_star",
+    "particle": "hellcraft:item/boss/lucifer_morning_star"
   },
   "elements": [
     {

@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.ArrayList;
@@ -119,7 +120,7 @@ final class LuciferAttacks {
 				e.push(away.x * 2.2, 0.7, away.z * 2.2);
 				Feedback.syncMotion(e);
 				e.setTicksFrozen(Math.min(e.getTicksFrozen() + 200, e.getTicksRequiredToFreeze() + 200));
-				e.hurt(level.damageSources().freeze(), (fight.enraged() ? 6.0f : 4.0f) * fight.damageMultiplier());
+				e.hurt(level.damageSources().freeze(), (fight.enraged() ? 6.0f : 4.0f) * fight.damageMultiplier() * BossRules.heartScale(e));
 			}
 		});
 	}

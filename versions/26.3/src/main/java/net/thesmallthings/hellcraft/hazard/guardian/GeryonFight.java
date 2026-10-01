@@ -51,6 +51,11 @@ final class GeryonFight extends GuardianFight {
 	}
 
 	@Override
+	protected boolean flies() {
+		return true;
+	}
+
+	@Override
 	public List<String> attacks() {
 		return List.of("sting", "falseface");
 	}

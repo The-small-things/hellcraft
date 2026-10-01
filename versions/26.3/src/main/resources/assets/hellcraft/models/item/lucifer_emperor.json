@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/lucifer_emperor",
-    "particle": "hellcraft:entity/lucifer_emperor"
+    "skin": "hellcraft:item/boss/lucifer_emperor",
+    "particle": "hellcraft:item/boss/lucifer_emperor"
   },
   "elements": [
     {

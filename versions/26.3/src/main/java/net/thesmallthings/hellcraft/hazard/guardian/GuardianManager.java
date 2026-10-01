@@ -3,13 +3,16 @@ package net.thesmallthings.hellcraft.hazard.guardian;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -43,10 +46,35 @@ public final class GuardianManager {
 	}
 
 	public static void register() {
-		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, base, taken, blocked) -> {
+		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			for (GuardianFight f : FIGHTS.values()) {
-				f.afterDamage(entity, taken);
+				if (!f.allowDamage(entity, source)) {
+					return false;
+				}
 			}
+			return true;
+		});
+		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, base, taken, blocked) -> {
+			for (GuardianFight f : new ArrayList<>(FIGHTS.values())) {
+				f.afterDamage(entity, source, taken);
+			}
+		});
+		// no towers or walls in a lair while its guardian is awake
+		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
+			if (world.isClientSide() || !HellConfig.get().bossNoBuilding || player.isCreative()
+					|| !(player.getItemInHand(hand).getItem() instanceof BlockItem)) {
+				return InteractionResult.PASS;
+			}
+			for (GuardianFight f : FIGHTS.values()) {
+				if (f.level() == world && !f.done() && (f.inArena(player) || f.inArena(hit.getBlockPos()))) {
+					if (player instanceof ServerPlayer sp) {
+						sp.sendOverlayMessage(Component.literal("You can't build in a guardian's lair while it's awake.").withStyle(ChatFormatting.AQUA));
+						sp.containerMenu.sendAllDataToRemote();
+					}
+					return InteractionResult.FAIL;
+				}
+			}
+			return InteractionResult.PASS;
 		});
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
 			for (GuardianFight f : new ArrayList<>(FIGHTS.values())) {

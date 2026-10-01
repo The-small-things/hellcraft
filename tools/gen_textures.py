@@ -503,7 +503,7 @@ def atlas(name, cells):
         for y in range(8):
             for x in range(8):
                 pixels[cy + y][cx + x] = cell[y][x]
-    png(os.path.join(OUT, "entity", name + ".png"), pixels)
+    png(os.path.join(OUT, "item", "boss", name + ".png"), pixels)
 
 
 SKIN = hexc("7a0c10")

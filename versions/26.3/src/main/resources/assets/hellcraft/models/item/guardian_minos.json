@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/guardian_minos",
-    "particle": "hellcraft:entity/guardian_minos"
+    "skin": "hellcraft:item/boss/guardian_minos",
+    "particle": "hellcraft:item/boss/guardian_minos"
   },
   "elements": [
     {

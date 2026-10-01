@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/guardian_cerberus",
-    "particle": "hellcraft:entity/guardian_cerberus"
+    "skin": "hellcraft:item/boss/guardian_cerberus",
+    "particle": "hellcraft:item/boss/guardian_cerberus"
   },
   "elements": [
     {

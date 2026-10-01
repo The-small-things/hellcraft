@@ -123,6 +123,17 @@ public class HellConfig {
 	public int bossSpoilsCooldownMinutes = 180;
 	/** Minutes before a victory over Lucifer earns the same player spoils again (the first victory always does). */
 	public int luciferSpoilsCooldownMinutes = 360;
+	/**
+	 * How much harder the bosses (guardians and Lucifer) hit players with more hearts: 1.0 means a hit takes the
+	 * same share of your health at 40 hearts as at 10 (4x the damage), 0.5 half that, 0 turns it off.
+	 */
+	public double bossHeartScaling = 1.0;
+	/** The share of their damage arrows and other projectiles do to a boss (1.0 = full damage). */
+	public double bossProjectileDamage = 0.4;
+	/** A guardian pulls in a player who shoots it from afar, or who stands high above it. */
+	public boolean bossPullsArchers = true;
+	/** No placing blocks in a guardian's lair while it is awake (no towers or walls). */
+	public boolean bossNoBuilding = true;
 	/** The bounty: every so often the strongest soul online is marked, and whoever kills them is paid in blood. */
 	public boolean bounty = true;
 	/** Minutes between bounties. */
@@ -257,6 +268,8 @@ public class HellConfig {
 		luciferSpoilsCooldownMinutes = Math.max(0, luciferSpoilsCooldownMinutes);
 		bountyIntervalMinutes = Math.max(1, bountyIntervalMinutes);
 		bountyRewardHearts = Math.max(0, bountyRewardHearts);
+		bossHeartScaling = Math.max(0.0, bossHeartScaling);
+		bossProjectileDamage = Math.max(0.0, Math.min(1.0, bossProjectileDamage));
 		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);
 		prestigeHeartBonus = Math.max(0, prestigeHeartBonus);
 		prestigeResetHearts = Math.max(1, prestigeResetHearts);

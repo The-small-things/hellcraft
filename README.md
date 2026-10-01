@@ -216,6 +216,13 @@ On the straight road in from the Gate of Hell (the +X axis, z = 0), five of Dant
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
+**No cheesing (these rules also apply to Lucifer where it says so):**
+- **Hearts don't make you a tank.** Boss hits grow with your heart capacity, so a hit takes the same share of your health at 40 hearts as at 10. Dodge the telegraphed attacks instead of soaking them. (Lucifer too.)
+- **Arrows do 40% damage** to a guardian, and to Lucifer's Morning Star form. Geryon flies, and Lucifer's true form is the Wither, so arrows do full damage to both.
+- **Shoot from afar and you get pulled in.** Hit a guardian with an arrow from more than 8 blocks away and, a second after a warning, it drags you toward it (at most once every 8 seconds).
+- **You can only hurt a guardian from inside its lair.** Damage from outside the brazier ring does nothing.
+- **No building in a lair while its guardian is awake,** and anyone standing more than 6 blocks above the guardian for 3 seconds is dragged down beside it.
+
 **Spoils are personal and can't be farmed.** Each player in the fight gets their own share, straight into their inventory:
 - **The first time you slay a guardian:** 2 Blood Hearts, 3–6 Blood Fragments and a Soul Anchor.
 - **Slaying it again after 3 hours:** 1 Blood Heart and 3–6 fragments.
@@ -223,7 +230,7 @@ A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes bac
 
 The guardian's treasure roll (the enchanted books) only drops when someone in the fight earned full spoils.
 
-Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
+Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (1.0 = full scaling, 0 = off), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
 
 | Minos | Cerberus | Plutus | The Minotaur | Geryon |
 |---|---|---|---|---|

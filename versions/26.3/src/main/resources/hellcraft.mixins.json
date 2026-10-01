@@ -9,7 +9,8 @@
 		"HandshakeHostMixin",
 		"TheEndBiomeSourceMixin",
 		"BiomeSourceMixin",
-		"ItemFrameAccess"
+		"ItemFrameAccess",
+		"LivingEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

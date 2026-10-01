@@ -1,7 +1,7 @@
 {
   "textures": {
-    "skin": "hellcraft:entity/guardian_plutus",
-    "particle": "hellcraft:entity/guardian_plutus"
+    "skin": "hellcraft:item/boss/guardian_plutus",
+    "particle": "hellcraft:item/boss/guardian_plutus"
   },
   "elements": [
     {

@@ -94,12 +94,32 @@ if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   unzip -p music-pack.zip assets/hellcraft/sounds.json
   if [ "$MC_VERSION" != "1.21.1" ]; then
     for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
-             assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/entity/lucifer_emperor.png \
+             assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/item/boss/lucifer_emperor.png \
              assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/items/vigil_candle.json assets/hellcraft/items/soul_anchor.json assets/hellcraft/equipment/blood.json \
              assets/hellcraft/textures/entity/equipment/humanoid/blood.png \
              assets/hellcraft/textures/entity/equipment/humanoid_leggings/blood.png; do
       unzip -l music-pack.zip | grep -q "$f" || { echo "Resource pack is missing $f"; exit 1; }
     done
+    # item models (the boss models included) can only use textures stitched into the item or block atlas,
+    # anything else draws as the black and magenta missing texture
+    python3 - music-pack.zip <<'PY' || exit 1
+import json, sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+names = set(z.namelist())
+bad = []
+for n in sorted(names):
+    if n.startswith("assets/hellcraft/models/") and n.endswith(".json"):
+        for key, tex in json.loads(z.read(n)).get("textures", {}).items():
+            if tex.startswith("#"):
+                continue
+            ns, path = tex.split(":", 1) if ":" in tex else ("minecraft", tex)
+            if not path.startswith(("item/", "block/")):
+                bad.append(f"{n}: {key} = {tex} is outside the item and block atlases")
+            elif ns == "hellcraft" and f"assets/hellcraft/textures/{path}.png" not in names:
+                bad.append(f"{n}: {key} = {tex} is not in the pack")
+print("\n".join(bad) if bad else "Every model texture is in the pack and an atlas")
+sys.exit(1 if bad else 0)
+PY
   fi
   if [ "$MC_VERSION" != "1.21.1" ]; then
     # the Blood Heart HUD, and the small pack that rims the hearts in a rank's colour

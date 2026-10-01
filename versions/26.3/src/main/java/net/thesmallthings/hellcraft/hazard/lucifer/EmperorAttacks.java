@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -246,7 +247,7 @@ final class EmperorAttacks {
 				level.sendParticles(ParticleTypes.CLOUD, m.x, m.y + 0.3, m.z, 6, 0.8, 0.1, 0.8, 0.02);
 				for (LivingEntity e : victims(REACH + 10)) {
 					if (e.distanceToSqr(m) <= 2.3 * 2.3) {
-						e.hurt(level.damageSources().freeze(), 6.0f * fight.damageMultiplier());
+						e.hurt(level.damageSources().freeze(), 6.0f * fight.damageMultiplier() * BossRules.heartScale(e));
 						e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1));
 						e.setTicksFrozen(Math.min(e.getTicksRequiredToFreeze() + 100, e.getTicksFrozen() + 140));
 					}
@@ -326,7 +327,7 @@ final class EmperorAttacks {
 				level.sendParticles(ParticleTypes.SNOWFLAKE, e.getX() - away.x * 2, e.getY() + 1, e.getZ() - away.z * 2, 6, 0.4, 0.6, 0.4, 0.2);
 			}
 			if (windTicks == 0 && !braced) {
-				e.hurt(level.damageSources().freeze(), 4.0f * fight.damageMultiplier());
+				e.hurt(level.damageSources().freeze(), 4.0f * fight.damageMultiplier() * BossRules.heartScale(e));
 			}
 		}
 		if (windTicks % 4 == 0) {

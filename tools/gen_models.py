@@ -138,7 +138,7 @@ def morning_star():
         e += [piece, mirror(piece)]
     # embers in the chest
     e.append(box((7, 17, 5.25), (9, 19, 5.5), EMBER))
-    return model("hellcraft:entity/lucifer_morning_star", e)
+    return model("hellcraft:item/boss/lucifer_morning_star", e)
 
 
 RED_FACE, YELLOW_FACE, BLACK_FACE, BODY, MEMBRANE, WING_BONE, ICE, DEEP_ICE, E_HORN, CROWN, HAIR, E_BLOOD = range(12)
@@ -176,7 +176,7 @@ def emperor():
         membrane = box(mfrom, mto, MEMBRANE, rot=rot)
         bone = box(bfrom, bto, WING_BONE, rot=rot)
         e += [membrane, mirror(membrane), bone, mirror(bone)]
-    return model("hellcraft:entity/lucifer_emperor", e)
+    return model("hellcraft:item/boss/lucifer_emperor", e)
 
 
 # ------------------------------------------------------------------------------------ the circle guardians
@@ -209,7 +209,7 @@ def minos():
     horn = box((3.25, 28.5, 7), (5, 31.5, 9), HORN, rot=("z", 22.5, (4, 29, 8)))
     e += [horn, mirror(horn)]
     e.append(box((4.25, 30.5, 4.25), (11.75, 32, 11.75), GOLD, up=SHADE))
-    return model("hellcraft:entity/guardian_minos", e)
+    return model("hellcraft:item/boss/guardian_minos", e)
 
 
 def cerberus():
@@ -233,7 +233,7 @@ def cerberus():
         e += [ear, box((x0 + 4.5, 26 + lift, -6), (x0 + 5.75, 28 + lift, -4.5), DARK)]
         e.append(box((x0 + 0.75, 17.5 + lift, -2.5), (x0 + 5.75, 19 + lift, -1.5), IRON))  # collar
     e.append(box((5, 8.5, 6), (11, 9, 16), FILTH))                          # dripping filth
-    return model("hellcraft:entity/guardian_cerberus", e)
+    return model("hellcraft:item/boss/guardian_cerberus", e)
 
 
 def plutus():
@@ -255,7 +255,7 @@ def plutus():
     ear = box((4.5, 29, 6), (6.5, 32, 8), DARK)
     e += [ear, mirror(ear)]
     e.append(box((4.75, 28.75, 3.5), (11.25, 30, 9.5), GOLD))               # a crown of coins
-    return model("hellcraft:entity/guardian_plutus", e)
+    return model("hellcraft:item/boss/guardian_plutus", e)
 
 
 def minotaur():
@@ -277,7 +277,7 @@ def minotaur():
     horn = box((1.5, 28, 6), (5.5, 29.5, 7.5), HORN)
     tip = box((0.5, 28.5, 6.25), (2, 32, 7.25), HOOF, rot=("z", -22.5, (1.25, 29, 6.75)))
     e += [horn, mirror(horn), tip, mirror(tip)]
-    return model("hellcraft:entity/guardian_minotaur", e)
+    return model("hellcraft:item/boss/guardian_minotaur", e)
 
 
 def vulcan():
@@ -298,7 +298,7 @@ def vulcan():
     # the hammer, in his right hand
     e.append(box((-1, 4, 7.25), (0.5, 22, 8.75), HANDLE))
     e.append(box((-3, 20, 5), (2.5, 25, 11), IRON))
-    return model("hellcraft:entity/guardian_vulcan", e)
+    return model("hellcraft:item/boss/guardian_vulcan", e)
 
 
 def geryon():
@@ -320,7 +320,7 @@ def geryon():
     e += [paw, mirror(paw), claw, mirror(claw)]
     hind = box((2.5, 6, 6), (5, 11, 9), PAW)
     e += [hind, mirror(hind)]
-    return model("hellcraft:entity/guardian_geryon", e)
+    return model("hellcraft:item/boss/guardian_geryon", e)
 
 
 GUARDIANS = {
