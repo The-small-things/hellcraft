@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.Spine;
 
 import java.util.ArrayList;
@@ -140,12 +141,12 @@ public final class GuideBook {
 				"The Nether's Great Forge is at 0, 70, 0. Vulcan, a boss, waits there.",
 				"",
 				"Hellforge: any anvil on a magma block in the Nether. It upgrades blood gear for a netherite ingot + " + c.hellforgeCostFragments + " Blood Fragments."));
-		pages.add(page("PARADISO",
-				"The End is Heaven: nine rings of islands around the Seraph's island.",
+		pages.add(page("PARADISO (THE END)",
+				"The Ender Dragon is the Seraph: beat it for a Halo.",
 				"",
-				"Farthest out (6400 blocks): the Empyrean and the Celestial Rose.",
+				"Then pearl into a gateway portal to the outer islands: nine rings, each with End cities (Seraph Wings) and chorus.",
 				"",
-				"Beat the Seraph, the End's boss, for a Halo. After you beat Lucifer, the top of Purgatory has a path up to Heaven."));
+				"There you get a Rose Compass to the Celestial Rose (x " + ParadisoGeometry.ROSE_X + ")."));
 		pages.add(page("LUCIFER",
 				"The final boss, in the pit at the centre (0, 0). Once you go in, the way out is sealed until the fight ends.",
 				"",

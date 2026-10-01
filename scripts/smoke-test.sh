@@ -299,6 +299,13 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   done
   drop=$(rcon "execute in minecraft:the_end run loot spawn 7000 95 0 loot minecraft:chests/end_city_treasure" || true)
   echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "End city treasure does not work"; exit 1; }
+  # the End's gateways drop players about 1000 blocks out, in the first ring: End cities must be there too
+  city=$(rcon "execute in minecraft:the_end positioned 1100 64 0 run locate structure minecraft:end_city" || true)
+  echo "$city"
+  cxz=$(echo "$city" | grep -oE '\[-?[0-9]+, ~, -?[0-9]+\]' | tr -d '[]~ ' | tr ',' ' ' | head -1)
+  [ -n "$cxz" ] || { echo "No End city could be located near the gateway exits"; exit 1; }
+  read -r cx cz <<< "$cxz"
+  [ $(( cx * cx + cz * cz )) -lt $(( 1600 * 1600 )) ] || { echo "The nearest End city ($cx, $cz) is not in the first ring"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
   for p in "0 0" "1500 0" "3000 0" "6600 0"; do
     read -r ex ez <<< "$p"

@@ -151,8 +151,13 @@ public final class Heaven {
 				n++;
 			}
 		}
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("The Seraph is defeated!")
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("The Seraph (the Ender Dragon) is defeated!")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
+		Component next = Component.literal("Everyone on its island got a Halo. Next: throw an ender pearl into the small gateway portal "
+				+ "at the island's edge to reach the outer islands (End cities, Seraph Wings, and the Celestial Rose).").withStyle(ChatFormatting.WHITE);
+		for (ServerPlayer p : level.players()) {
+			p.sendSystemMessage(next);
+		}
 		HellcraftMod.LOGGER.info("The Seraph falls; halos for {}", n);
 	}
 

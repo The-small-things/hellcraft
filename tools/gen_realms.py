@@ -167,31 +167,31 @@ def nether():
 # sphere: (title, top block, patch block, under block, sky, fog, particle, [features])
 SPHERES = {
     "moon": ("The Moon", "calcite", "snow_block", "calcite", "#c8d4e8", "#dfe6f2", ("minecraft:white_ash", 0.01),
-             ["hellcraft:paradiso_star_glowstone"]),
+             ["minecraft:chorus_plant", "hellcraft:paradiso_star_glowstone"]),
     "mercury": ("Mercury", "polished_diorite", "diorite", "diorite", "#d8dcef", "#e8e9f2", None,
-                ["hellcraft:paradiso_star_glowstone"]),
+                ["minecraft:chorus_plant", "hellcraft:paradiso_star_glowstone"]),
     "venus": ("Venus", "grass_block", "moss_block", "dirt", "#f2c6dc", "#f8dde9", ("minecraft:cherry_leaves", 0.02),
-              ["hellcraft:paradiso_cherry", "hellcraft:paradiso_petals", "hellcraft:paradiso_star_glowstone"]),
+              ["minecraft:chorus_plant", "hellcraft:paradiso_cherry", "hellcraft:paradiso_petals", "hellcraft:paradiso_star_glowstone"]),
     "sun": ("The Sun", "yellow_terracotta", "honeycomb_block", "sandstone", "#ffe7a3", "#fff1c9", ("minecraft:wax_on", 0.01),
-            ["hellcraft:paradiso_star_shroomlight", "hellcraft:paradiso_star_glowstone"]),
+            ["minecraft:chorus_plant", "hellcraft:paradiso_star_shroomlight", "hellcraft:paradiso_star_glowstone"]),
     "mars": ("Mars", "red_terracotta", "red_sandstone", "red_sandstone", "#f0b49a", "#f6cdb9", ("minecraft:crimson_spore", 0.005),
-             ["hellcraft:paradiso_star_shroomlight"]),
+             ["minecraft:chorus_plant", "hellcraft:paradiso_star_shroomlight"]),
     "jupiter": ("Jupiter", "quartz_block", "smooth_quartz", "quartz_block", "#e6ecff", "#f3f5ff", None,
-                ["hellcraft:paradiso_star_glowstone"]),
+                ["minecraft:chorus_plant", "hellcraft:paradiso_star_glowstone"]),
     "saturn": ("Saturn", "packed_ice", "snow_block", "packed_ice", "#bcd3e6", "#d9e6f0", ("minecraft:snowflake", 0.01),
-               ["hellcraft:paradiso_star_lantern"]),
+               ["minecraft:chorus_plant", "hellcraft:paradiso_star_lantern"]),
     "fixed_stars": ("The Fixed Stars", "end_stone_bricks", "end_stone", "end_stone", "#aab8e8", "#c9d2f2", ("minecraft:end_rod", 0.004),
                     ["minecraft:chorus_plant", "hellcraft:paradiso_star_lantern", "hellcraft:paradiso_star_glowstone"]),
     "primum_mobile": ("The Primum Mobile", "prismarine_bricks", "dark_prismarine", "prismarine", "#b8f0ff", "#dcf8ff",
                       ("minecraft:end_rod", 0.008), ["minecraft:chorus_plant", "hellcraft:paradiso_star_lantern"]),
     "empyrean": ("The Empyrean", "grass_block", "white_concrete", "quartz_block", "#fff8e8", "#fffdf6", ("minecraft:end_rod", 0.012),
-                 ["hellcraft:paradiso_petals", "hellcraft:paradiso_star_lantern"]),
+                 ["minecraft:chorus_plant", "hellcraft:paradiso_petals", "hellcraft:paradiso_star_lantern"]),
 }
 # one global order for the ninth feature step of every End biome
 PARADISO_ORDER = ["minecraft:chorus_plant", "hellcraft:paradiso_cherry", "hellcraft:paradiso_petals",
                   "hellcraft:paradiso_star_shroomlight", "hellcraft:paradiso_star_glowstone", "hellcraft:paradiso_star_lantern"]
-# no end cities on the Moon (too close) or in the Empyrean (the Rose is there)
-CITY_SPHERES = ["mercury", "venus", "sun", "mars", "jupiter", "saturn", "fixed_stars", "primum_mobile"]
+# end cities in every ring the End's gateways lead to, as in vanilla (only the Empyrean, where the Rose is, has none)
+CITY_SPHERES = ["moon", "mercury", "venus", "sun", "mars", "jupiter", "saturn", "fixed_stars", "primum_mobile"]
 
 
 def patch(state, tries, xz, survive):

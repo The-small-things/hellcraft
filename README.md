@@ -400,7 +400,9 @@ Near lava in the Nether, the **forge-heat** makes you hungry. Fire Resistance or
 | The Primum Mobile | 5800 | prismarine |
 | The Empyrean | 6400 | meadows of pink petals and light |
 
-End cities rise in the spheres between Mercury and the Primum Mobile. A title names each heaven as you enter it.
+**After the dragon:** chat tells everyone what to do next. Throw an ender pearl into the small gateway portal at the edge of the dragon's island to reach the outer islands, about 1000 blocks out. Every ring, from the Moon to the Primum Mobile, has End cities and chorus plants as vanilla's outer islands do. A title names each ring as you enter it ("Ring 1 of 9") and says how far the Celestial Rose is. The first time you reach the outer islands you get a **Rose Compass** (a lodestone compass that points to the Celestial Rose) and a short explanation in chat.
+
+(Older worlds: islands that were already generated keep what they had; End cities and chorus appear in newly explored chunks.)
 
 - **The trial of the Seraph.** At half its health, and again at a quarter, the dragon calls its **Angelic Guard**: glowing vexes, two for every player. When it falls, everyone on the Threshold receives a **Halo**, a golden helmet that gives Regeneration while you are nearly at full health.
 - **Seraph Wings** hide in end city treasure (1 chest in 4). These elytra never wear out, and sneaking while gliding gives a rush of wind every 10 s.

@@ -113,6 +113,8 @@ public class HellState extends SavedData {
 		public final Map<String, Integer> bossBest = new HashMap<>();
 		/** Has been given Beatrice's Rose at the Celestial Rose. */
 		public boolean rose;
+		/** Has been given the Rose Compass on first reaching Paradiso's outer islands. */
+		public boolean roseCompass;
 		/** The Seven P's: how many have been burned from this soul's brow (0-7), each by an ascent at an altar. */
 		public int prestige;
 		/** For the Hall of the Damned. */
@@ -212,6 +214,7 @@ public class HellState extends SavedData {
 			st.putInt("hints", s.hints);
 			st.putInt("kit", s.kit);
 			st.putBoolean("rose", s.rose);
+			st.putBoolean("roseCompass", s.roseCompass);
 			st.putInt("prestige", s.prestige);
 			st.putInt("deaths", s.deaths);
 			st.putInt("guardiansSlain", s.guardiansSlain);
@@ -294,6 +297,7 @@ public class HellState extends SavedData {
 			s.hints = st.getIntOr("hints", 0);
 			s.kit = st.getIntOr("kit", 0);
 			s.rose = st.getBooleanOr("rose", false);
+			s.roseCompass = st.getBooleanOr("roseCompass", false);
 			s.prestige = st.getIntOr("prestige", 0);
 			s.deaths = st.getIntOr("deaths", 0);
 			s.guardiansSlain = st.getIntOr("guardiansSlain", 0);
