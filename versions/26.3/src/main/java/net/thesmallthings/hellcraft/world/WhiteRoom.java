@@ -192,7 +192,7 @@ public final class WhiteRoom {
 			}
 		}
 		player.setGameMode(mode);
-		player.sendSystemMessage(Component.literal("The white fades. You are let out.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		player.sendSystemMessage(Component.literal("You've been let out of the white room.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		return player.getGameProfile().name() + " is let out of the white room.";
 	}
 

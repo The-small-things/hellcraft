@@ -29,7 +29,7 @@ public final class Ghosts {
 		if (soul.deathSpot != null) {
 			teleport(player, soul.deathSpot);
 		}
-		player.sendSystemMessage(Component.literal("Hell is full. You wander as a ghost until the living pay blood for your return.")
+		player.sendSystemMessage(Component.literal("You lost your last heart and are now a ghost. A friend can revive you.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 		player.sendSystemMessage(Component.literal(GhostPowers.HELP).withStyle(ChatFormatting.DARK_AQUA));
 		player.sendSystemMessage(Component.literal("Tell your friends:").withStyle(ChatFormatting.GRAY));
@@ -46,11 +46,11 @@ public final class Ghosts {
 		return List.of(
 				Component.literal("☠ How to revive a ghost").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				Component.literal(" 1. Carry " + cost + " Blood Hearts. /withdraw turns your own hearts into Blood Hearts;"
-						+ " kills and " + HellConfig.get().fragmentsPerHeart + " clotted Blood Fragments give more.").withStyle(ChatFormatting.GRAY),
+						+ " you can also make one from " + HellConfig.get().fragmentsPerHeart + " Blood Fragments.").withStyle(ChatFormatting.GRAY),
 				Component.literal(" 2. Go to a Blood Altar: a respawn anchor on 3x3 crying obsidian." + where).withStyle(ChatFormatting.GRAY),
 				Component.literal(" 3. Right-click the altar with an empty hand and click the ghost's head"
 						+ " (or stand next to it and type /revive <name>).").withStyle(ChatFormatting.GRAY),
-				Component.literal(" The ghost rises on top of the altar with " + HellConfig.get().reviveHearts + " hearts.")
+				Component.literal(" The ghost comes back on top of the altar with " + HellConfig.get().reviveHearts + " hearts.")
 						.withStyle(ChatFormatting.GRAY));
 	}
 
@@ -88,7 +88,7 @@ public final class Ghosts {
 		if (player == null) {
 			soul.reviveAt = at;
 			state.setDirty();
-			server.getPlayerList().broadcastSystemMessage(Component.literal(soul.name + " has been bought back from the dead. They will rise when next they wake.")
+			server.getPlayerList().broadcastSystemMessage(Component.literal(soul.name + " was revived, and will come back when they next log in.")
 					.withStyle(ChatFormatting.GOLD), false);
 			return;
 		}
@@ -106,7 +106,7 @@ public final class Ghosts {
 		Hearts.apply(player);
 		player.setHealth(player.getMaxHealth());
 		player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name()
-				+ " has been bought back from the dead with blood.").withStyle(ChatFormatting.GOLD), false);
+				+ " was revived.").withStyle(ChatFormatting.GOLD), false);
 	}
 
 	public static void teleport(ServerPlayer player, HellState.GlobalSpot spot) {

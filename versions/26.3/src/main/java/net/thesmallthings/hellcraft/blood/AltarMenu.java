@@ -53,39 +53,39 @@ public final class AltarMenu {
 
 		container.setItem(WARD_SLOT, button(Items.SHIELD, "Blood Ward", ChatFormatting.DARK_RED,
 				"Costs 1 Blood Heart",
-				"Shields you from the torments of the circles",
+				"Protects you from circle hazards",
 				"for " + config.wardMinutes + " minutes",
-				carried >= 1 ? "▶ Click to offer" : "✖ You carry no Blood Hearts"));
+				carried >= 1 ? "▶ Click to buy" : "✖ You have no Blood Hearts"));
 		if (config.travel) {
 			int known = TravelMenu.destinations(level.getServer(), Hearts.soul(player)).size();
 			long wait = TravelMenu.cooldownLeft(player);
 			container.setItem(TRAVEL_SLOT, button(Items.ENDER_PEARL, "Travel", ChatFormatting.GOLD,
-					"Free: to the Gate of Hell or any",
-					"Virgil's Rest you have reached (" + known + " place" + (known == 1 ? "" : "s") + ")",
+					"Free: teleport to the Gate of Hell or a",
+					"Virgil's Rest you have found (" + known + " place" + (known == 1 ? "" : "s") + ")",
 					wait > 0 ? "✖ You can travel again in " + wait + " s" : "▶ Click to choose where"));
 		}
 		int bindCost = config.bindCostHearts;
-		container.setItem(BIND_SLOT, button(Items.RESPAWN_ANCHOR, "Bind your respawn", ChatFormatting.DARK_RED,
+		container.setItem(BIND_SLOT, button(Items.RESPAWN_ANCHOR, "Set your respawn here", ChatFormatting.DARK_RED,
 				bindCost == 0 ? "Free" : "Costs " + bindCost + " Blood Heart" + (bindCost == 1 ? "" : "s"),
-				"When you die you return to this altar",
-				"(beds explode in Hell)",
-				carried >= bindCost ? "▶ Click to bind" : "✖ Not enough Blood Hearts"));
+				"When you die, you respawn at this altar",
+				"(beds explode in Hell, like the Nether)",
+				carried >= bindCost ? "▶ Click to set" : "✖ Not enough Blood Hearts"));
 
 		if (config.prestige) {
 			HellState.Soul soul = Hearts.soul(player);
 			int cap = Hearts.cap(soul);
 			if (soul.prestige >= Prestige.MAX) {
-				container.setItem(ASCEND_SLOT, button(Items.NETHER_STAR, "Purified", ChatFormatting.WHITE,
-						"No P remains on your brow.",
-						"The torments of the circles no longer touch you."));
+				container.setItem(ASCEND_SLOT, button(Items.NETHER_STAR, "Max prestige", ChatFormatting.WHITE,
+						"You have all 7 prestige ranks.",
+						"Circle hazards can't touch you."));
 			} else {
 				Prestige.Terrace next = Prestige.Terrace.values()[soul.prestige];
-				container.setItem(ASCEND_SLOT, button(Items.FEATHER, "Ascend: the terrace of " + next.sin, ChatFormatting.GOLD,
-						"The Seven P's: " + soul.prestige + " burned, " + (Prestige.MAX - soul.prestige) + " remain",
-						"Your hearts fall back to " + Math.min(config.prestigeResetHearts, cap + config.prestigeHeartBonus)
-								+ "; your veins then hold " + Math.min(config.heartCeiling, cap + config.prestigeHeartBonus),
-						next.virtue + ": " + next.perk,
-						soul.hearts >= cap ? "▶ Click to climb" : "✖ Your veins must be full (" + soul.hearts + " / " + cap + ")"));
+				container.setItem(ASCEND_SLOT, button(Items.FEATHER, "Ascend (prestige " + (soul.prestige + 1) + " of " + Prestige.MAX + ")", ChatFormatting.GOLD,
+						"Prestige rank: " + soul.prestige + " of " + Prestige.MAX,
+						"Your hearts drop to " + Math.min(config.prestigeResetHearts, cap + config.prestigeHeartBonus)
+								+ ", your max goes up to " + Math.min(config.heartCeiling, cap + config.prestigeHeartBonus),
+						"Bonus: " + next.perk,
+						soul.hearts >= cap ? "▶ Click to ascend" : "✖ You need max hearts (" + soul.hearts + " / " + cap + ")"));
 			}
 		}
 
@@ -97,7 +97,7 @@ public final class AltarMenu {
 		}
 		ghosts.sort(Comparator.comparing(e -> e.getValue().name.toLowerCase(Locale.ROOT)));
 		if (ghosts.isEmpty()) {
-			container.setItem(13, button(Items.SKELETON_SKULL, "No souls await revival", ChatFormatting.GRAY,
+			container.setItem(13, button(Items.SKELETON_SKULL, "No ghosts to revive", ChatFormatting.GRAY,
 					"Players who lose their last heart become ghosts.",
 					"Their heads appear here: click one and pay",
 					cost + " Blood Hearts to bring them back."));
@@ -106,8 +106,8 @@ public final class AltarMenu {
 			Map.Entry<UUID, HellState.Soul> ghost = ghosts.get(i);
 			ItemStack head = button(Items.PLAYER_HEAD, "Revive " + ghost.getValue().name, ChatFormatting.GOLD,
 					"Costs " + cost + " Blood Hearts (you carry " + carried + ")",
-					"They rise on top of this altar with " + config.reviveHearts + " hearts",
-					carried >= cost ? "▶ Click to pay the blood price" : "✖ Not enough blood");
+					"They come back on top of this altar with " + config.reviveHearts + " hearts",
+					carried >= cost ? "▶ Click to revive" : "✖ Not enough Blood Hearts");
 			head.set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(ghost.getKey()));
 			container.setItem(FIRST_GHOST_SLOT + i, head);
 			ghostSlots.put(FIRST_GHOST_SLOT + i, ghost.getKey());

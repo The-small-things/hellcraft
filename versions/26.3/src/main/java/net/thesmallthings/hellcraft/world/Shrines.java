@@ -195,7 +195,7 @@ public final class Shrines {
 				Component.literal("VIRGIL'S REST").withStyle(ChatFormatting.BOLD),
 				Component.literal(shortName(site.zone())),
 				Component.literal("Right-click altar:"),
-				Component.literal("bind here, free")));
+				Component.literal("set respawn, free")));
 		for (int[] c : new int[][]{{-4, -4}, {-4, 4}, {4, -4}, {4, 4}}) {
 			set(level, x + c[0], y, z + c[1], Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
 		}
@@ -265,7 +265,7 @@ public final class Shrines {
 		}
 		int d = (int) Math.sqrt(dist2(site, player.getX(), player.getZ()));
 		return Component.literal("Nearest Virgil's Rest (" + site.title() + "): " + site.x() + ", " + site.z() + ", " + d + " blocks away. "
-				+ "Monsters can't follow you there, and binding your respawn is free.").withStyle(ChatFormatting.GOLD);
+				+ "It's safe from monsters, and setting your respawn there is free.").withStyle(ChatFormatting.GOLD);
 	}
 
 	/** Builds every Rest (or those of one circle) that isn't built yet; returns what was built. */

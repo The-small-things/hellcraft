@@ -51,14 +51,14 @@ public final class Relics {
 
 	public enum Relic {
 		HALO("halo", "Halo", Items.GOLDEN_HELMET, ChatFormatting.GOLD, List.of(
-				"The Seraph's gift. While you are nearly whole,",
-				"it keeps you so (Regeneration).")),
+				"From the Seraph. While your health is nearly full,",
+				"it gives you Regeneration.")),
 		SERAPH_WINGS("seraph_wings", "Seraph Wings", Items.ELYTRA, ChatFormatting.AQUA, List.of(
-				"Never wear out. While gliding, sneak for a",
-				"rush of the Primum Mobile's wind (every 10 s).")),
+				"Elytra that never break. While gliding, sneak",
+				"for a speed boost (every 10 s).")),
 		BEATRICES_ROSE("beatrices_rose", "Beatrice's Rose", Items.POISONOUS_POTATO, ChatFormatting.LIGHT_PURPLE, List.of(
-				"Right-click: be made whole, and every affliction",
-				"lifted from you. Once an hour."));
+				"Right-click: full health and food, and all",
+				"effects removed. Once an hour."));
 
 		public final String id;
 		final String title;
@@ -145,7 +145,7 @@ public final class Relics {
 		long now = player.level().getGameTime();
 		long ready = ROSE_READY.getOrDefault(player.getUUID(), 0L);
 		if (now < ready) {
-			player.sendOverlayMessage(Component.literal("The rose is still closed (" + (ready - now) / 1200 + " min).").withStyle(ChatFormatting.LIGHT_PURPLE));
+			player.sendOverlayMessage(Component.literal("The rose is on cooldown (" + (ready - now) / 1200 + " min).").withStyle(ChatFormatting.LIGHT_PURPLE));
 			return;
 		}
 		ROSE_READY.put(player.getUUID(), now + 72000L);
@@ -156,7 +156,7 @@ public final class Relics {
 		player.getFoodData().eat(20, 1.0f);
 		player.level().sendParticles(ParticleTypes.CHERRY_LEAVES, player.getX(), player.getY() + 1.5, player.getZ(), 40, 0.6, 0.6, 0.6, 0.02);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.5f, 1.2f);
-		player.sendSystemMessage(Component.literal("\"Look at me well: I am, I am indeed Beatrice.\" You are made whole.")
+		player.sendSystemMessage(Component.literal("Beatrice's Rose: full health and food, and all effects removed.")
 				.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC));
 	}
 

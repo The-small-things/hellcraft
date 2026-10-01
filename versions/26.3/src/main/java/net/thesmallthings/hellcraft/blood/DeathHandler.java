@@ -100,7 +100,7 @@ public final class DeathHandler {
 		soul.deaths++;
 		state.setDirty();
 		if (killer == null && !config.pveDeathsCostHearts) {
-			player.sendSystemMessage(Component.literal("Hell spits you back out. Only another soul can take your heart.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			player.sendSystemMessage(Component.literal("You died, but kept your hearts: only players can take them.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			return;
 		}
 		soul.hearts = Math.max(0, soul.hearts - 1);
@@ -109,10 +109,10 @@ public final class DeathHandler {
 		LivingEntity credit = player.getKillCredit();
 		if (killer != null) {
 			if (Hearts.add(killer, 1) > 0) {
-				killer.sendSystemMessage(Component.literal("You drink " + name + "'s blood. +1 ❤").withStyle(ChatFormatting.DARK_RED));
+				killer.sendSystemMessage(Component.literal("You took a heart from " + name + ". +1 ❤").withStyle(ChatFormatting.DARK_RED));
 			} else {
 				BloodItems.give(killer, BloodItems.heart(1));
-				killer.sendSystemMessage(Component.literal("Your veins are full; " + name + "'s heart is yours to keep.").withStyle(ChatFormatting.DARK_RED));
+				killer.sendSystemMessage(Component.literal("You're at max hearts, so " + name + "'s heart was given to you as a Blood Heart item.").withStyle(ChatFormatting.DARK_RED));
 			}
 		} else if (config.naturalDeathDropsHeart) {
 			ItemEntity drop = new ItemEntity(player.level(), player.getX(), player.getY() + 0.5, player.getZ(), BloodItems.heart(1));
@@ -127,7 +127,7 @@ public final class DeathHandler {
 			state.setDirty();
 			Journey.award(player, "journey/hell_is_full");
 			player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal("Hell is full. ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
-					.append(Component.literal(name + " now walks the earth.").withStyle(ChatFormatting.RED)), false);
+					.append(Component.literal(name + " lost their last heart and is now a ghost.").withStyle(ChatFormatting.RED)), false);
 			// the ghost gets the same instructions when they respawn as one
 			List<Component> howTo = Ghosts.howToRevive(player.level().getServer());
 			for (ServerPlayer other : player.level().getServer().getPlayerList().getPlayers()) {

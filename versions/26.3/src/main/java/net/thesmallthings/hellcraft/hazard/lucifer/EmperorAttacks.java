@@ -171,7 +171,7 @@ final class EmperorAttacks {
 		if (announce) {
 			fight.model().showFace(bossId, RED_FACE);
 			fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.HATRED));
-			tip("Rings of hatred! Jump over them.");
+			tip("Rings across the ice! Jump over them.");
 		}
 		level.playSound(null, boss.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 3.0f, 0.4f);
 		for (int t = 0; t < 20; t += 2) {
@@ -263,7 +263,7 @@ final class EmperorAttacks {
 	private void ignorance(WitherBoss boss) {
 		turnFace(BLACK_FACE, 100);
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.IGNORANCE));
-		tip("The dark has teeth: watch the ice for the spiral of jaws.");
+		tip("Jaws burst from the ice: watch for the spiral and keep moving.");
 		for (ServerPlayer p : LuciferDialogue.audience(level, REACH + 4)) {
 			if (!p.isSpectator() && !p.isCreative()) {
 				p.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 160, 0));
@@ -294,7 +294,7 @@ final class EmperorAttacks {
 	private void wingbeat(WitherBoss boss, List<LivingEntity> targets) {
 		fight.model().showFace(bossId, RED_FACE);
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.WINGBEAT));
-		tip("The wind of Cocytus! SNEAK to brace yourself.");
+		tip("Freezing wind! SNEAK so it can't push you.");
 		for (int t = 0; t < 15; t += 5) {
 			fight.schedule(t, () -> level.playSound(null, boss.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 4.0f, 0.4f));
 		}

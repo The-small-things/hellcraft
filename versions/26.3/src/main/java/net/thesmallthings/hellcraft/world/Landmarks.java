@@ -119,7 +119,7 @@ public final class Landmarks {
 				Component.literal("BLOOD ALTAR").withStyle(ChatFormatting.BOLD),
 				Component.literal("Right-click with"),
 				Component.literal("an empty hand to"),
-				Component.literal("revive the dead")));
+				Component.literal("revive ghosts")));
 	}
 
 	private static void spawnGiant(ServerLevel level, String name, int x, int y, int z) {

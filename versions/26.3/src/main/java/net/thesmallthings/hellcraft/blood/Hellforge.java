@@ -67,7 +67,7 @@ public final class Hellforge {
 
 	private static void forge(ServerPlayer player, ServerLevel level, BlockPos at, ItemStack held) {
 		if (HellWeapons.infernal(held)) {
-			player.sendOverlayMessage(Component.literal("It is already infernal: the forge can do no more.").withStyle(ChatFormatting.GOLD));
+			player.sendOverlayMessage(Component.literal("Already infernal: it can't be upgraded further.").withStyle(ChatFormatting.GOLD));
 			return;
 		}
 		Item base = NETHERITE.get(held.getItem());
@@ -77,7 +77,7 @@ public final class Hellforge {
 		int fragments = HellConfig.get().hellforgeCostFragments;
 		int ingots = player.getInventory().countItem(Items.NETHERITE_INGOT);
 		if (ingots < 1 || BloodItems.countFragments(player) < fragments) {
-			player.sendSystemMessage(Component.literal("The Hellforge wants a netherite ingot and " + fragments + " Blood Fragments (you carry "
+			player.sendSystemMessage(Component.literal("The Hellforge needs a netherite ingot and " + fragments + " Blood Fragments (you have "
 					+ ingots + " and " + BloodItems.countFragments(player) + ").").withStyle(ChatFormatting.RED));
 			return;
 		}
@@ -96,7 +96,7 @@ public final class Hellforge {
 			forged.set(DataComponents.LORE, HellWeapons.lore(weapon, true));
 		} else {
 			List<Component> lore = new ArrayList<>();
-			lore.add(Component.literal("Infernal: forged anew in the Great Forge of Dis, as netherite.")
+			lore.add(Component.literal("Infernal (upgraded at a Hellforge): now netherite.")
 					.withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)));
 			lore.addAll(forged.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
 			forged.set(DataComponents.LORE, new ItemLore(lore));
@@ -107,8 +107,8 @@ public final class Hellforge {
 		level.playSound(null, at, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1.0f, 0.8f);
 		level.sendParticles(ParticleTypes.LAVA, at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5, 20, 0.3, 0.3, 0.3, 0);
 		level.sendParticles(ParticleTypes.FLAME, at.getX() + 0.5, at.getY() + 1.2, at.getZ() + 0.5, 40, 0.4, 0.4, 0.4, 0.05);
-		player.sendSystemMessage(Component.literal("The Hellforge roars. Your ").withStyle(ChatFormatting.GOLD)
-				.append(name).append(Component.literal(" is forged anew, infernal.").withStyle(ChatFormatting.GOLD)));
+		player.sendSystemMessage(Component.literal("The Hellforge upgraded your ").withStyle(ChatFormatting.GOLD)
+				.append(name).append(Component.literal(" to infernal.").withStyle(ChatFormatting.GOLD)));
 	}
 
 	private static void takeOne(ServerPlayer player, Item item) {

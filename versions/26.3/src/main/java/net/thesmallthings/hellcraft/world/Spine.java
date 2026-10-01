@@ -410,9 +410,9 @@ public final class Spine {
 		}
 		Way way = nearest(player.getX(), player.getZ());
 		BlockPos s = start(way);
-		player.sendSystemMessage(Component.literal("On the Well's " + way.id + "ern rim (" + s.getX() + ", " + s.getY() + ", " + s.getZ()
-				+ ") a great spine reaches down across the ice to the bottom of Hell. It is a road where nothing hunts you. "
-				+ "There are four, one at each point of the compass.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		player.sendSystemMessage(Component.literal("The nearest spine starts on the " + way.id + " edge of the Well (" + s.getX() + ", " + s.getY() + ", " + s.getZ()
+				+ "). It's a safe path down to Lucifer's pit: no monsters spawn on it. "
+				+ "There are four: north, east, south and west.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 
 	public static void forget(ServerPlayer player) {

@@ -106,7 +106,7 @@ public final class LuciferRewards {
 	}
 
 	static void remind(ServerPlayer player) {
-		player.sendSystemMessage(Component.literal("Lucifer's spoils await you. ").withStyle(ChatFormatting.GOLD)
+		player.sendSystemMessage(Component.literal("Your reward for beating Lucifer is waiting. ").withStyle(ChatFormatting.GOLD)
 				.append(Component.literal("[Choose your reward]").withStyle(s -> s.withColor(ChatFormatting.YELLOW).withBold(true).withUnderlined(true)
 						.withClickEvent(new ClickEvent.RunCommand("/lucifer reward"))
 						.withHoverEvent(new HoverEvent.ShowText(Component.literal("Open the reward chooser"))))));
@@ -134,7 +134,7 @@ public final class LuciferRewards {
 			display.set(DataComponents.LORE, new ItemLore(lore));
 			container.setItem(slots[i], display);
 		}
-		Component title = Component.literal(first ? "Choose ONE reward" : "Choose ONE (returning champion)");
+		Component title = Component.literal(first ? "Choose ONE reward" : "Choose ONE (you've beaten him before)");
 		player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new RewardMenu(id, inventory, container, slots, first), title));
 		return true;
 	}
@@ -154,7 +154,7 @@ public final class LuciferRewards {
 		BloodItems.give(player, reward);
 		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
 		player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name()
-				+ " claimed " + option.label() + " from Lucifer's spoils.").withStyle(ChatFormatting.GOLD), false);
+				+ " claimed " + option.label() + " as their reward for beating Lucifer.").withStyle(ChatFormatting.GOLD), false);
 	}
 
 	/** A read-only chest menu: clicking an option claims it; nothing can be taken or moved. */

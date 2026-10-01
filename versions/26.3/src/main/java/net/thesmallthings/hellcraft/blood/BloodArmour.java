@@ -50,14 +50,14 @@ public final class BloodArmour {
 	private static final int RUSH_COOLDOWN = 60 * 20;
 	private static final List<String> LORE = List.of(
 			"Blood armour: 2 pieces heal you 5% of the damage you deal,",
-			"4 pieces 10%, plus a Blood Rush when near death",
-			"and Resistance under a Blood Oath.");
+			"4 pieces 10%, plus Regeneration when nearly dead",
+			"and Resistance during a Blood Oath.");
 
 	public enum Piece {
-		HELMET("blood_helmet", "Blood Helm", Items.DIAMOND_HELMET, EquipmentSlot.HEAD),
-		CHESTPLATE("blood_chestplate", "Blood Cuirass", Items.DIAMOND_CHESTPLATE, EquipmentSlot.CHEST),
-		LEGGINGS("blood_leggings", "Blood Greaves", Items.DIAMOND_LEGGINGS, EquipmentSlot.LEGS),
-		BOOTS("blood_boots", "Blood Sabatons", Items.DIAMOND_BOOTS, EquipmentSlot.FEET);
+		HELMET("blood_helmet", "Blood Helmet", Items.DIAMOND_HELMET, EquipmentSlot.HEAD),
+		CHESTPLATE("blood_chestplate", "Blood Chestplate", Items.DIAMOND_CHESTPLATE, EquipmentSlot.CHEST),
+		LEGGINGS("blood_leggings", "Blood Leggings", Items.DIAMOND_LEGGINGS, EquipmentSlot.LEGS),
+		BOOTS("blood_boots", "Blood Boots", Items.DIAMOND_BOOTS, EquipmentSlot.FEET);
 
 		public final String id;
 		final String title;
@@ -146,7 +146,7 @@ public final class BloodArmour {
 				wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 1));
 				wearer.level().sendParticles(BloodAltar.BLOOD, wearer.getX(), wearer.getY() + 1, wearer.getZ(), 40, 0.4, 0.8, 0.4, 0.0);
 				wearer.level().sendParticles(ParticleTypes.HEART, wearer.getX(), wearer.getY() + 2, wearer.getZ(), 4, 0.4, 0.2, 0.4, 0.0);
-				wearer.sendOverlayMessage(Component.literal("Blood Rush!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+				wearer.sendOverlayMessage(Component.literal("Blood Rush: Regeneration II!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 			}
 		}
 	}

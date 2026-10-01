@@ -105,9 +105,9 @@ public final class TravelMenu {
 			slots.put(i, d);
 		}
 		player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new Menu(id, inventory, container, level, altar.immutable(), slots),
-				Component.literal("Travel: the Rests you have reached")));
+				Component.literal("Travel: places you have found")));
 		if (places.size() <= 1) {
-			player.sendSystemMessage(Component.literal("Reach a Virgil's Rest (where the ramps come down into each circle) and you can travel back to it from any Blood Altar.")
+			player.sendSystemMessage(Component.literal("Find a Virgil's Rest (the safe camp where the ramp comes down into each circle) to unlock teleporting there from any Blood Altar.")
 					.withStyle(ChatFormatting.GRAY));
 		}
 	}
@@ -124,7 +124,7 @@ public final class TravelMenu {
 		}
 		long wait = cooldownLeft(player);
 		if (!ignoreCooldown && wait > 0) {
-			return "Virgil needs rest too: you can travel again in " + wait + " s.";
+			return "Travel is on cooldown: you can travel again in " + wait + " s.";
 		}
 		ServerLevel from = player.level();
 		from.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
@@ -136,7 +136,7 @@ public final class TravelMenu {
 		at.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
 		at.playSound(null, player.blockPosition(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 0.8f, 1.2f);
 		READY.put(player.getUUID(), player.level().getServer().overworld().getGameTime() + HellConfig.get().travelCooldownSeconds * 20L);
-		player.sendSystemMessage(Component.literal("Virgil leads you to " + to.title() + ".").withStyle(ChatFormatting.GOLD));
+		player.sendSystemMessage(Component.literal("Teleported to " + to.title() + ".").withStyle(ChatFormatting.GOLD));
 		return "Sent " + player.getGameProfile().name() + " to " + to.title() + ".";
 	}
 
@@ -164,7 +164,7 @@ public final class TravelMenu {
 			}
 			sp.closeContainer();
 			String result = travel(sp, to, false);
-			if (result.startsWith("Ghosts") || result.startsWith("Virgil needs")) {
+			if (result.startsWith("Ghosts") || result.startsWith("Travel is on cooldown")) {
 				sp.sendSystemMessage(Component.literal(result).withStyle(ChatFormatting.RED));
 			}
 		}

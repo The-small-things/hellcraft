@@ -32,7 +32,7 @@
       },
       "minecraft:item_model": "hellcraft:blood_helmet",
       "minecraft:item_name": {
-        "text": "Blood Helm",
+        "text": "Blood Helmet",
         "color": "dark_red",
         "bold": true
       },
@@ -43,12 +43,12 @@
           "italic": false
         },
         {
-          "text": "4 pieces 10%, plus a Blood Rush when near death",
+          "text": "4 pieces 10%, plus Regeneration when nearly dead",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "and Resistance under a Blood Oath.",
+          "text": "and Resistance during a Blood Oath.",
           "color": "gray",
           "italic": false
         }

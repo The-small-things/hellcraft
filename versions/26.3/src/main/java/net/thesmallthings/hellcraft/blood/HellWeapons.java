@@ -77,23 +77,23 @@ public final class HellWeapons {
 
 	public enum Weapon {
 		BLOODLETTER("bloodletter", "Bloodletter", Items.IRON_SWORD, Rarity.RARE, List.of(
-				"Charged hits bleed your foe and heal you.",
-				"Blood Art, Exsanguinate: lunge forward, cutting everything",
+				"Full-strength hits make the target bleed and heal you.",
+				"Blood Art, Exsanguinate: dash forward, hitting everything",
 				"in your path (8 damage, deep bleeding, heals you).",
 				"Blood Oath: +10 damage, and every hit heals 1❤.")),
 		REAPER("reaper_of_minos", "Reaper of Minos", Items.DIAMOND_HOE, Rarity.EPIC, List.of(
-				"Charged hits cleave everything within 3 blocks for 4.",
-				"Blood Art, Harvest: reap everything within 5 blocks",
-				"for 12, slowing them and dragging them in.",
+				"Full-strength hits also hit everything within 3 blocks (4 damage).",
+				"Blood Art, Harvest: hit everything within 5 blocks",
+				"for 12, slowing them and pulling them in.",
 				"Blood Oath: every hit is a Harvest.")),
 		TITHE_AXE("tithe_axe", "Tithe Axe", Items.DIAMOND_AXE, Rarity.EPIC, List.of(
-				"The tithe: kills with it drop Blood Fragments twice as often.",
+				"Kills with it drop Blood Fragments twice as often.",
 				"Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
 				"for 15 s.",
 				"Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤.")),
 		BLOOD_PICKAXE("blood_pickaxe", "Blood Pickaxe", Items.DIAMOND_PICKAXE, Rarity.EPIC, List.of(
-				"Veins bleed out: breaking an ore breaks the rest of its vein",
-				"(sneak to mine just one). Ores you mine fill its blood too.",
+				"Breaking an ore mines the whole vein",
+				"(sneak to mine just one). Mining ores charges it too.",
 				"Blood Art, Excavate: for 20 s it digs 3x3, with Haste II.",
 				"Blood Oath: Excavate, Haste III and Night Vision."));
 
@@ -175,15 +175,15 @@ public final class HellWeapons {
 	static ItemLore lore(Weapon weapon, boolean infernal) {
 		List<Component> lore = new ArrayList<>();
 		if (infernal) {
-			lore.add(Component.literal("Infernal: forged anew in the Great Forge of Dis. Everything is stronger.")
+			lore.add(Component.literal("Infernal (upgraded at a Hellforge): everything is stronger.")
 					.withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)));
 		}
 		for (String line : weapon.lore) {
 			lore.add(Component.literal(line).withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)));
 		}
-		lore.add(Component.literal("Right-click at full blood: its Blood Art. Hits and kills fill it.")
+		lore.add(Component.literal("Hits and kills charge it. Fully charged: right-click for its Blood Art.")
 				.withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)));
-		lore.add(Component.literal("Blood Oath = sneak + right-click: costs 3❤ of health, lasts 30 s.")
+		lore.add(Component.literal("Sneak + right-click: Blood Oath (pay 3❤ of health for 30 s of full power).")
 				.withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)));
 		return new ItemLore(lore);
 	}
@@ -243,7 +243,7 @@ public final class HellWeapons {
 			if (of(held) != null) {
 				held.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 			}
-			player.sendOverlayMessage(Component.literal("Your weapon brims with blood: right-click to unleash its Blood Art!")
+			player.sendOverlayMessage(Component.literal("Fully charged: right-click to use its Blood Art!")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.6f, 1.8f);
 		} else {
@@ -301,7 +301,7 @@ public final class HellWeapons {
 			return InteractionResult.SUCCESS;
 		}
 		if (charge(player) < FULL) {
-			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills fill it)").withStyle(ChatFormatting.DARK_GRAY)));
+			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
 			// a sword or axe still blocks/strips as usual when there's no art to use
 			return InteractionResult.PASS;
 		}
@@ -320,17 +320,17 @@ public final class HellWeapons {
 		long now = level.getGameTime();
 		if (underOath(player)) {
 			long left = (OATHS.get(player.getUUID()) - now) / 20;
-			player.sendOverlayMessage(Component.literal("Your Blood Oath still burns (" + left + " s).").withStyle(ChatFormatting.RED));
+			player.sendOverlayMessage(Component.literal("Your Blood Oath is still active (" + left + " s).").withStyle(ChatFormatting.RED));
 			return;
 		}
 		long ready = OATH_READY.getOrDefault(player.getUUID(), 0L);
 		if (now < ready) {
-			player.sendOverlayMessage(Component.literal("Your blood has not yet recovered from the last oath (" + (ready - now + 19) / 20 + " s).")
+			player.sendOverlayMessage(Component.literal("Blood Oath is on cooldown (" + (ready - now + 19) / 20 + " s).")
 					.withStyle(ChatFormatting.GRAY));
 			return;
 		}
 		if (player.getHealth() <= OATH_MIN_HEALTH) {
-			player.sendOverlayMessage(Component.literal("You have too little blood left to swear an oath (it needs more than 4❤ of health).")
+			player.sendOverlayMessage(Component.literal("Not enough health for a Blood Oath (you need more than 4❤).")
 					.withStyle(ChatFormatting.RED));
 			return;
 		}
@@ -338,7 +338,7 @@ public final class HellWeapons {
 		OATHS.put(player.getUUID(), now + OATH_TICKS);
 		OATH_READY.put(player.getUUID(), now + OATH_COOLDOWN);
 		addCharge(player, FULL);
-		player.sendSystemMessage(Component.literal("You swore a Blood Oath on the " + weapon.title + ": its full power is yours for 30 s.")
+		player.sendSystemMessage(Component.literal("Blood Oath: your " + weapon.title + " has full power for 30 s.")
 				.withStyle(ChatFormatting.DARK_RED));
 		if (BloodArmour.worn(player) >= 4) {
 			// a full set of blood armour hardens under an oath
@@ -476,7 +476,7 @@ public final class HellWeapons {
 	private static void excavate(ServerPlayer player, int ticks) {
 		EXCAVATE.put(player.getUUID(), player.level().getGameTime() + ticks);
 		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
-		player.sendOverlayMessage(Component.literal("Excavate: your pickaxe bites three by three.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		player.sendOverlayMessage(Component.literal("Excavate: your pickaxe mines 3x3.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		player.level().playSound(null, player.blockPosition(), SoundEvents.DEEPSLATE_BREAK, SoundSource.PLAYERS, 1.2f, 0.6f);
 		bleed(player.level(), player, 30);
 	}

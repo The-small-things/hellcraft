@@ -135,7 +135,7 @@ final class MinosFight extends GuardianFight {
 		int circle = 2 + level.getRandom().nextInt(8);
 		say("Circle " + circle + "! Down with thee!");
 		if (target instanceof ServerPlayer p) {
-			p.sendOverlayMessage(Component.literal("Minos sentences you: MOVE!").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+			p.sendOverlayMessage(Component.literal("Minos targeted you: MOVE!").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		}
 		for (int t = 0; t < 60; t += 3) {
 			schedule(t, () -> ringParticles(JUDGEMENT, target.position(), 2.5, 14));

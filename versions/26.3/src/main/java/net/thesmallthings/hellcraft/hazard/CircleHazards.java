@@ -158,7 +158,7 @@ public final class CircleHazards {
 				// the cold, heavy rain: a roof keeps it off
 				if (open) {
 					player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
-					hint(player, circle, "The rain of Gluttony brings hunger. Shelter under a roof.");
+					hint(player, circle, "Gluttony's rain makes you hungry. Stand under a roof.");
 				}
 			}
 			case GREED -> {
@@ -166,20 +166,20 @@ public final class CircleHazards {
 				if (weight >= 32) {
 					int amp = Math.min(2, weight / 64);
 					player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, amp, true, false, true));
-					hint(player, circle, "Gold weighs you down here. Stash it in an ender chest or leave it behind.");
+					hint(player, circle, "Carrying gold slows you down here. Put it in an ender chest or leave it behind.");
 				}
 			}
 			case WRATH -> {
 				if (player.isInWater()) {
 					player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
 					player.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 60, 1, true, false, true));
-					hint(player, circle, "The Styx saps whoever wades in it. Take a boat, or keep to the banks.");
+					hint(player, circle, "The river Styx hurts you while you're in it. Use a boat or stay on land.");
 				}
 			}
 			case HERESY -> {
 				if (open && level.getRandom().nextFloat() < 0.02f) {
 					player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 120, 0, true, false, true));
-					hint(player, circle, "The tombs' smoke darkens the open sky. Under a roof it can't reach you.");
+					hint(player, circle, "Smoke from the tombs darkens your view under open sky. Stand under a roof.");
 				}
 			}
 			case VIOLENCE -> {
@@ -196,7 +196,7 @@ public final class CircleHazards {
 					int add = 44 + (int) (depth * 60);
 					int cap = player.getTicksRequiredToFreeze() + 40;
 					player.setTicksFrozen(Math.min(cap, player.getTicksFrozen() + add));
-					hint(player, circle, "The ice freezes the living. Leather armour, or a campfire close by, keeps the cold away.");
+					hint(player, circle, "The ice freezes you. Wear leather armour or stay near a campfire.");
 				}
 			}
 			default -> {
@@ -214,7 +214,7 @@ public final class CircleHazards {
 		level.sendParticles(ParticleTypes.FALLING_LAVA, player.getX(), player.getY() + 4.0, player.getZ(), 4, 1.5, 0.3, 1.5, 0.0);
 		if (level.getRandom().nextFloat() < 0.2f) {
 			player.igniteForSeconds(3.0f);
-			hint(player, Circle.VIOLENCE, "Fire rains on the open sand. A roof, water or Fire Resistance protects you.");
+			hint(player, Circle.VIOLENCE, "Fire falls on the open sand. A roof, water or Fire Resistance protects you.");
 		}
 	}
 
@@ -250,7 +250,7 @@ public final class CircleHazards {
 		for (BlockPos p : BlockPos.betweenClosed(pos.offset(-3, -2, -3), pos.offset(3, 2, 3))) {
 			if (level.getBlockState(p).is(Blocks.LAVA)) {
 				player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
-				hintBit(player, 20, "The forge-heat of Dis drains you near lava. Fire Resistance, or a dip in water, keeps it off.");
+				hintBit(player, 20, "The heat near lava hurts you here. Fire Resistance or standing in water protects you.");
 				return;
 			}
 		}

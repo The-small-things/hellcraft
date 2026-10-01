@@ -350,27 +350,27 @@ FRAGMENT = {"fabric:type": "fabric:components", "base": "minecraft:red_dye", "co
     "minecraft:item_name": {"text": "Blood Fragment", "color": "red"},
 }}
 # the last two lore lines of every weapon (red)
-WEAPON_FOOTER = ["Right-click at full blood: its Blood Art. Hits and kills fill it.",
-                 "Blood Oath = sneak + right-click: costs 3❤ of health, lasts 30 s."]
+WEAPON_FOOTER = ["Hits and kills charge it. Fully charged: right-click for its Blood Art.",
+                 "Sneak + right-click: Blood Oath (pay 3❤ of health for 30 s of full power)."]
 WEAPONS = [
     ("bloodletter", "Bloodletter", "minecraft:iron_sword", "rare", [" F ", "FSF", " F "],
-     ["Charged hits bleed your foe and heal you.",
-      "Blood Art, Exsanguinate: lunge forward, cutting everything",
+     ["Full-strength hits make the target bleed and heal you.",
+      "Blood Art, Exsanguinate: dash forward, hitting everything",
       "in your path (8 damage, deep bleeding, heals you).",
       "Blood Oath: +10 damage, and every hit heals 1❤."]),
     ("reaper_of_minos", "Reaper of Minos", "minecraft:diamond_hoe", "epic", ["HFH", "FSF", " F "],
-     ["Charged hits cleave everything within 3 blocks for 4.",
-      "Blood Art, Harvest: reap everything within 5 blocks",
-      "for 12, slowing them and dragging them in.",
+     ["Full-strength hits also hit everything within 3 blocks (4 damage).",
+      "Blood Art, Harvest: hit everything within 5 blocks",
+      "for 12, slowing them and pulling them in.",
       "Blood Oath: every hit is a Harvest."]),
     ("tithe_axe", "Tithe Axe", "minecraft:diamond_axe", "epic", ["FHF", "FSF", "F F"],
-     ["The tithe: kills with it drop Blood Fragments twice as often.",
+     ["Kills with it drop Blood Fragments twice as often.",
       "Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
       "for 15 s.",
       "Blood Oath: Strength III, Speed II, Resistance, hits heal 1❤."]),
     ("blood_pickaxe", "Blood Pickaxe", "minecraft:diamond_pickaxe", "epic", ["FHF", " S ", " F "],
-     ["Veins bleed out: breaking an ore breaks the rest of its vein",
-      "(sneak to mine just one). Ores you mine fill its blood too.",
+     ["Breaking an ore mines the whole vein",
+      "(sneak to mine just one). Mining ores charges it too.",
       "Blood Art, Excavate: for 20 s it digs 3x3, with Haste II.",
       "Blood Oath: Excavate, Haste III and Night Vision."]),
 ]
@@ -379,14 +379,14 @@ WEAPONS = [
 # The results must match BloodArmour.create() in the 26.3 sources.
 ARMOUR_LORE = [
     "Blood armour: 2 pieces heal you 5% of the damage you deal,",
-    "4 pieces 10%, plus a Blood Rush when near death",
-    "and Resistance under a Blood Oath.",
+    "4 pieces 10%, plus Regeneration when nearly dead",
+    "and Resistance during a Blood Oath.",
 ]
 ARMOUR = [
-    ("blood_helmet", "Blood Helm", "minecraft:diamond_helmet", "head", [" F ", "FAF", " F "]),
-    ("blood_chestplate", "Blood Cuirass", "minecraft:diamond_chestplate", "chest", [" F ", "FAF", " F "]),
-    ("blood_leggings", "Blood Greaves", "minecraft:diamond_leggings", "legs", [" F ", "FAF", " F "]),
-    ("blood_boots", "Blood Sabatons", "minecraft:diamond_boots", "feet", [" F ", "FAF", " F "]),
+    ("blood_helmet", "Blood Helmet", "minecraft:diamond_helmet", "head", [" F ", "FAF", " F "]),
+    ("blood_chestplate", "Blood Chestplate", "minecraft:diamond_chestplate", "chest", [" F ", "FAF", " F "]),
+    ("blood_leggings", "Blood Leggings", "minecraft:diamond_leggings", "legs", [" F ", "FAF", " F "]),
+    ("blood_boots", "Blood Boots", "minecraft:diamond_boots", "feet", [" F ", "FAF", " F "]),
 ]
 
 

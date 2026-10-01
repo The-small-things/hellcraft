@@ -85,7 +85,7 @@ public final class BloodEvents {
 		HellConfig config = HellConfig.get();
 		if (BloodItems.isHeart(stack)) {
 			if (Hearts.soul(player).hearts >= Hearts.cap(Hearts.soul(player))) {
-				player.sendOverlayMessage(Component.literal("Your veins can hold no more blood.").withStyle(ChatFormatting.RED));
+				player.sendOverlayMessage(Component.literal("You're already at max hearts.").withStyle(ChatFormatting.RED));
 				return false;
 			}
 			stack.shrink(1);
@@ -98,7 +98,7 @@ public final class BloodEvents {
 		if (BloodItems.isBane(stack)) {
 			HellState.Soul soul = Hearts.soul(player);
 			if (Hearts.atCeiling(soul)) {
-				player.sendOverlayMessage(Component.literal("Your veins are as wide as any soul's may be (" + Hearts.cap(soul) + " hearts).")
+				player.sendOverlayMessage(Component.literal("Your max hearts is already as high as it can go (" + Hearts.cap(soul) + " hearts).")
 						.withStyle(ChatFormatting.GOLD));
 				return false;
 			}
@@ -107,7 +107,7 @@ public final class BloodEvents {
 			HellState.get(player.level().getServer()).setDirty();
 			Hearts.apply(player);
 			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.0f, 0.6f);
-			player.sendSystemMessage(Component.literal("Lucifer's Bane burns in your veins. They can now hold " + Hearts.cap(soul) + " hearts.")
+			player.sendSystemMessage(Component.literal("Lucifer's Bane: your max hearts is now " + Hearts.cap(soul) + ".")
 					.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 			return true;
 		}
@@ -115,19 +115,19 @@ public final class BloodEvents {
 			return Respawns.lightVigil(player, stack);
 		}
 		if (BloodItems.isAnchor(stack)) {
-			player.sendOverlayMessage(Component.literal("Keep it with you: if you die, it brings you back where you fell.").withStyle(ChatFormatting.AQUA));
+			player.sendOverlayMessage(Component.literal("Keep it in your inventory: if you die, you come back where you died.").withStyle(ChatFormatting.AQUA));
 			return false;
 		}
 		if (BloodItems.isFragment(stack)) {
 			int needed = config.fragmentsPerHeart;
 			if (stack.getCount() < needed) {
-				player.sendOverlayMessage(Component.literal("Gather " + needed + " Blood Fragments to clot a heart.").withStyle(ChatFormatting.RED));
+				player.sendOverlayMessage(Component.literal("You need " + needed + " Blood Fragments in one stack to make a Blood Heart.").withStyle(ChatFormatting.RED));
 				return false;
 			}
 			stack.shrink(needed);
 			BloodItems.give(player, BloodItems.heart(1));
 			player.level().playSound(null, player.blockPosition(), SoundEvents.HONEY_BLOCK_PLACE, SoundSource.PLAYERS, 1.0f, 0.5f);
-			player.sendOverlayMessage(Component.literal("The blood clots into a heart.").withStyle(ChatFormatting.DARK_RED));
+			player.sendOverlayMessage(Component.literal("Made a Blood Heart.").withStyle(ChatFormatting.DARK_RED));
 			return true;
 		}
 		return false;
@@ -198,7 +198,7 @@ public final class BloodEvents {
 			}
 			soul.altar = null;
 			HellState.get(player.level().getServer()).setDirty();
-			player.sendSystemMessage(Component.literal("Your blood altar has been destroyed.").withStyle(ChatFormatting.RED));
+			player.sendSystemMessage(Component.literal("Your Blood Altar was destroyed, so your respawn point is gone.").withStyle(ChatFormatting.RED));
 		}
 	}
 }

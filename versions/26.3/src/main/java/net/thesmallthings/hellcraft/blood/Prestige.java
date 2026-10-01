@@ -43,13 +43,13 @@ public final class Prestige {
 
 	/** The terraces in the order the pilgrim climbs them: the sin purged and the virtue it leaves. */
 	public enum Terrace {
-		PRIDE("Pride", "Humility", "you fall more lightly (-30% fall damage)", 0x8C5A2B),
-		ENVY("Envy", "Kindness", "monsters bleed Blood Fragments more often (+10%)", 0xA8743A),
-		WRATH("Wrath", "Meekness", "blows barely move you (+25% knockback resistance)", 0xC0913F),
-		SLOTH("Sloth", "Zeal", "you walk faster (+5% speed)", 0xD4AF37),
-		GREED("Greed", "Liberality", "fortune favours you (+1 luck: better loot)", 0xE8C75A),
-		GLUTTONY("Gluttony", "Temperance", "hunger gnaws more slowly", 0xF4E08A),
-		LUST("Lust", "Purity", "the torments of the circles no longer touch you", 0xFFFFFF);
+		PRIDE("Pride", "Humility", "-30% fall damage", 0x8C5A2B),
+		ENVY("Envy", "Kindness", "+10% Blood Fragment drops", 0xA8743A),
+		WRATH("Wrath", "Meekness", "+25% knockback resistance", 0xC0913F),
+		SLOTH("Sloth", "Zeal", "+5% walking speed", 0xD4AF37),
+		GREED("Greed", "Liberality", "+1 luck (better loot)", 0xE8C75A),
+		GLUTTONY("Gluttony", "Temperance", "hunger drains more slowly", 0xF4E08A),
+		LUST("Lust", "Purity", "immune to the circles' hazards", 0xFFFFFF);
 
 		public final String sin;
 		public final String virtue;
@@ -105,10 +105,10 @@ public final class Prestige {
 		HellState.Soul soul = Hearts.soul(player);
 		Result result = ascend(soul);
 		switch (result) {
-			case DISABLED -> player.sendSystemMessage(Component.literal("The terraces are closed on this server.").withStyle(ChatFormatting.GRAY));
-			case PURIFIED -> player.sendSystemMessage(Component.literal("No P remains on your brow. You are pure, and ready to rise to the stars.")
+			case DISABLED -> player.sendSystemMessage(Component.literal("Prestige is turned off on this server.").withStyle(ChatFormatting.GRAY));
+			case PURIFIED -> player.sendSystemMessage(Component.literal("You already have max prestige (7 of 7).")
 					.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC));
-			case NOT_FULL -> player.sendSystemMessage(Component.literal("Only a soul whose veins are full may climb the next terrace ("
+			case NOT_FULL -> player.sendSystemMessage(Component.literal("You need max hearts to prestige ("
 					+ soul.hearts + " / " + Hearts.cap(soul) + " hearts).").withStyle(ChatFormatting.RED));
 			case ASCENDED -> {
 				HellState.get(level.getServer()).setDirty();
@@ -121,12 +121,11 @@ public final class Prestige {
 
 	private static void celebrate(ServerPlayer player, ServerLevel level, BlockPos altar, HellState.Soul soul) {
 		Terrace terrace = Terrace.values()[soul.prestige - 1];
-		int left = MAX - soul.prestige;
 		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 80, 30));
-		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("A P is burned from your brow")
+		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("Prestige " + soul.prestige + " of " + MAX)
 				.withStyle(s -> s.withColor(terrace.colour))));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(
-				(left == 0 ? "None remain" : left + " remain") + " · " + terrace.virtue).withStyle(ChatFormatting.GRAY)));
+				"Bonus: " + terrace.perk).withStyle(ChatFormatting.GRAY)));
 		level.playSound(null, altar, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.2f, 1.3f);
 		level.playSound(null, altar, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 2.0f, 0.8f);
 		for (int i = 0; i < 48; i++) {
@@ -137,12 +136,12 @@ public final class Prestige {
 					1, 0, 0, 0, 0);
 		}
 		level.sendParticles(ParticleTypes.WAX_OFF, player.getX(), player.getY() + 1.9, player.getZ(), 30, 0.3, 0.2, 0.3, 0.1);
-		player.sendSystemMessage(Component.literal("The terrace of " + terrace.sin + " is behind you. " + terrace.virtue + ": " + terrace.perk + ".")
+		player.sendSystemMessage(Component.literal("Prestige " + soul.prestige + " of " + MAX + ". Your new bonus: " + terrace.perk + ".")
 				.withStyle(s -> s.withColor(terrace.colour)));
-		player.sendSystemMessage(Component.literal("Your veins can now hold " + Hearts.cap(soul) + " hearts. Fill them again to climb on.")
+		player.sendSystemMessage(Component.literal("Your max hearts is now " + Hearts.cap(soul) + ". Reach it again to prestige again.")
 				.withStyle(ChatFormatting.GRAY));
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name() + " has climbed the terrace of "
-				+ terrace.sin + " (" + numeral(soul.prestige) + ")").withStyle(s -> s.withColor(terrace.colour)), false);
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name() + " reached prestige "
+				+ soul.prestige + " (" + numeral(soul.prestige) + ")").withStyle(s -> s.withColor(terrace.colour)), false);
 		HellcraftMod.LOGGER.info("{} ascended: P {} ({})", player.getGameProfile().name(), soul.prestige, terrace.virtue);
 		Journey.award(player, "journey/first_p");
 		if (soul.prestige >= MAX) {

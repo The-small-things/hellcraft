@@ -73,13 +73,13 @@ public final class LuciferManager {
 			}
 			String refusal;
 			if (LuciferArena.isSealBlock(serverLevel, pos)) {
-				refusal = "The ice will not open while he lives.";
+				refusal = "The exit stays sealed until Lucifer is defeated.";
 			} else if (player.isCreative()) {
 				return true;
 			} else if (LuciferArena.isProtected(serverLevel, pos)) {
-				refusal = "The ice at the bottom of the world does not break.";
+				refusal = "Lucifer's pit can't be broken.";
 			} else if (Spine.isProtected(serverLevel, pos)) {
-				refusal = "The Emperor's bones do not break.";
+				refusal = "The spines can't be broken.";
 			} else {
 				return true;
 			}

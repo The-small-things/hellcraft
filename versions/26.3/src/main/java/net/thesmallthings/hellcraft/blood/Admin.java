@@ -82,15 +82,15 @@ public final class Admin {
 		soul.hearts = HellConfig.get().startHearts;
 		HellState.get(player.level().getServer()).setDirty();
 		Hearts.apply(player);
-		player.sendSystemMessage(Component.literal("Your blood has been poured out. You begin again.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
-		return player.getGameProfile().name() + " is reset to " + soul.hearts + " hearts (cap " + Hearts.cap(soul) + ", no P's burned).";
+		player.sendSystemMessage(Component.literal("An operator reset your hearts and prestige.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		return player.getGameProfile().name() + " is reset to " + soul.hearts + " hearts (max " + Hearts.cap(soul) + ", prestige 0).";
 	}
 
 	/** Removes every hell weapon, blood armour piece, relic, Blood Heart and Bane a player holds, ender chest included. */
 	public static String strip(ServerPlayer player) {
 		int removed = strip(player.getInventory()) + strip(player.getEnderChestInventory());
 		player.containerMenu.broadcastChanges();
-		player.sendSystemMessage(Component.literal("Your blood gear crumbles to ash.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		player.sendSystemMessage(Component.literal("An operator removed your Hellcraft gear.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 		return "Took " + removed + " blood item" + (removed == 1 ? "" : "s") + " from " + player.getGameProfile().name() + ".";
 	}
 

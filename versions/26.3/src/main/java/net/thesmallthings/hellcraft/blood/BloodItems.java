@@ -47,9 +47,9 @@ public final class BloodItems {
 		mark(stack, HEART);
 		stack.set(DataComponents.ITEM_NAME, Component.literal("Blood Heart").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("A heart torn from the living.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
-				Component.literal("Right-click to take it as your own.").withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)),
-				Component.literal("Offer it at a blood altar for its rites.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
+				Component.literal("A heart you can carry, trade or spend.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
+				Component.literal("Right-click to gain a heart.").withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)),
+				Component.literal("Blood Altars spend them to revive, ward and more.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
 		stack.set(DataComponents.RARITY, Rarity.EPIC);
 		return stack;
 	}
@@ -59,7 +59,7 @@ public final class BloodItems {
 		mark(stack, FRAGMENT);
 		stack.set(DataComponents.ITEM_NAME, Component.literal("Blood Fragment").withStyle(ChatFormatting.RED));
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Right-click " + HellConfig.get().fragmentsPerHeart + " together to clot them into a Blood Heart").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
+				Component.literal("Right-click with " + HellConfig.get().fragmentsPerHeart + " in a stack to make a Blood Heart").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
 		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
 		return stack;
 	}
@@ -70,9 +70,9 @@ public final class BloodItems {
 		mark(stack, BANE);
 		stack.set(DataComponents.ITEM_NAME, Component.literal("Lucifer's Bane").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Torn from the Emperor at the bottom of the world.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
-				Component.literal("Right-click: your veins hold more hearts, forever.").withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)),
-				Component.literal("Tradeable. Each one stacks.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
+				Component.literal("Lucifer's reward.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
+				Component.literal("Right-click: your max hearts go up by 1, for good.").withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)),
+				Component.literal("Can be traded. Use as many as you like.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
 		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 		stack.set(DataComponents.RARITY, Rarity.EPIC);
 		return stack;
@@ -84,7 +84,7 @@ public final class BloodItems {
 		stack.set(DataComponents.ITEM_NAME, Component.literal("Vigil Candle").withStyle(ChatFormatting.AQUA));
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
 				Component.literal("Right-click to light it where you stand.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
-				Component.literal("Your next death wakes you beside it, once.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
+				Component.literal("Next time you die, you respawn there (once).").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
 		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
 		return stack;
 	}
@@ -94,8 +94,8 @@ public final class BloodItems {
 		ItemStack stack = inert(count, ANCHOR);
 		stack.set(DataComponents.ITEM_NAME, Component.literal("Soul Anchor").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
 		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Carry it. If you die, you rise again").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
-				Component.literal("where you fell, and it breaks.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
+				Component.literal("Keep it in your inventory. If you die, you").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
+				Component.literal("come back where you died, and it breaks.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
 		stack.set(DataComponents.RARITY, Rarity.RARE);
 		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 		return stack;

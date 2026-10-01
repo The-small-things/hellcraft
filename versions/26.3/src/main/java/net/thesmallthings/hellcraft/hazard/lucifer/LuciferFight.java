@@ -270,7 +270,7 @@ public final class LuciferFight {
 						revealTrueForm();
 					} catch (RuntimeException e) {
 						HellcraftMod.LOGGER.error("Lucifer's true form could not be revealed", e);
-						fail("The ice groans, but nothing rises. The fight is over, and he will return.");
+						fail("Lucifer's last form didn't appear, so the fight is over. He'll be back later.");
 					}
 				}
 			}
@@ -390,7 +390,7 @@ public final class LuciferFight {
 	private void bossMissing() {
 		if (++missingTicks > 600) {
 			HellcraftMod.LOGGER.warn("Lucifer's body vanished without dying; ending the fight without a victory");
-			fail("Lucifer's body is gone from the pit. The fight is over, and he will return.");
+			fail("Lucifer's body disappeared, so the fight is over. He'll be back later.");
 		}
 	}
 
@@ -913,7 +913,7 @@ public final class LuciferFight {
 					&& present.getX() * present.getX() + present.getZ() * present.getZ() < 40 * 40;
 			if (!standing) {
 				if (present != null) {
-					present.sendSystemMessage(Component.literal("You fell before the Emperor did. There are no spoils for the dead.")
+					present.sendSystemMessage(Component.literal("You died before Lucifer did, so you get no reward.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 				}
 				continue;
@@ -967,7 +967,7 @@ public final class LuciferFight {
 		}
 		HellcraftMod.LOGGER.info("Lucifer rewards: {} pending", pending);
 		String who = victors.isEmpty() ? "Someone" : String.join(", ", victors);
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " cast down Lucifer at the bottom of the world.")
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " defeated Lucifer!")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("\"Thence we came forth to rebehold the stars.\"")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);

@@ -36,126 +36,126 @@ public final class GuideBook {
 				"",
 				"Abandon all hope, ye who enter here.",
 				"",
-				"This world is Dante's Inferno. Walk inward, circle by circle, to the Emperor frozen at its heart.",
+				"This world is Dante's Inferno: nine rings, called circles, around a pit. Lucifer waits at the centre (0, 0).",
 				"",
 				"  — Virgil"));
-		pages.add(page("BLOOD IS FUEL",
+		pages.add(page("HEARTS",
 				"You begin with " + c.startHearts + " hearts and can hold " + c.maxHearts + ".",
 				"",
 				"Kill a player: take a heart. Die to one: lose a heart.",
 				c.pveDeathsCostHearts ? "Monsters and the circles take hearts too." : "Monsters and the circles can't take your hearts.",
 				"",
-				"/withdraw bleeds your hearts into Blood Hearts. Right-click one to drink it back."));
+				"/withdraw turns your hearts into Blood Heart items. Right-click one to get the heart back."));
 		pages.add(page("BLOOD FRAGMENTS",
 				"Monsters killed by players drop Blood Fragments, more the deeper you go.",
 				"",
-				"Right-click " + c.fragmentsPerHeart + " in one stack to clot them into a Blood Heart.",
+				"Hold " + c.fragmentsPerHeart + " in one stack and right-click to turn them into a Blood Heart.",
 				"",
-				"Hell weapons spend fragments for power."));
-		pages.add(page("HELL IS FULL",
-				"At 0 hearts you become a ghost, bound to where you fell.",
+				"They also craft hell weapons and blood armour."));
+		pages.add(page("OUT OF HEARTS",
+				"At 0 hearts you become a ghost and can't leave the place you died.",
 				"",
-				"Your friends revive you at a Blood Altar for " + c.reviveCostHearts + " Blood Hearts; you rise with "
+				"A friend can revive you at a Blood Altar for " + c.reviveCostHearts + " Blood Hearts. You come back with "
 						+ c.reviveHearts + " hearts.",
 				"",
-				"Type /revive to learn how. Ghosts: /ghost"));
+				"/revive explains how. Ghosts can use /ghost."));
 		pages.add(page("BLOOD ALTARS",
-				"A respawn anchor on 3x3 crying obsidian. One stands by the Gate of Hell" + altarAt + ".",
+				"Build one: a respawn anchor on a 3x3 of crying obsidian. There is one by the Gate of Hell" + altarAt + ".",
 				"",
-				"Right-click it: revive the dead, buy a Ward against the circles, or bind your respawn to it"
+				"Right-click it to revive a ghost, buy a Ward (protection from circle hazards), or set your respawn there"
 						+ (c.bindCostHearts == 0 ? " (free)." : " (" + c.bindCostHearts + " Blood Hearts).")));
 		if (c.prestige) {
-			pages.add(page("THE SEVEN P'S",
-					"An angel carved seven P's on your brow: one for each sin.",
+			pages.add(page("PRESTIGE",
+					"There are 7 prestige ranks, called the Seven P's.",
 					"",
-					"When your veins are full, ascend at a Blood Altar. Your hearts fall to " + c.prestigeResetHearts
-							+ ", a P burns away, and you can hold " + c.prestigeHeartBonus + " more hearts for good.",
+					"At max hearts, press Ascend at a Blood Altar. Your hearts drop to " + c.prestigeResetHearts
+							+ ", but your max goes up by " + c.prestigeHeartBonus + " for good.",
 					"",
-					"Each terrace leaves a virtue."));
-			pages.add(page("THE VIRTUES",
-					"I Humility: lighter falls",
-					"II Kindness: more fragments",
-					"III Meekness: steadier feet",
-					"IV Zeal: faster steps",
-					"V Liberality: better loot",
-					"VI Temperance: less hunger",
-					"VII Purity: no torments"));
+					"Each rank also gives a bonus that lasts."));
+			pages.add(page("PRESTIGE BONUSES",
+					"1: less fall damage",
+					"2: more Blood Fragments",
+					"3: less knockback",
+					"4: faster walking",
+					"5: better loot (luck)",
+					"6: slower hunger",
+					"7: immune to circle hazards"));
 		}
-		pages.add(page("A WAY BACK",
-				"Vigil Candle (torch + bone + string): right-click to light it. Your next death wakes you beside it.",
+		pages.add(page("COMING BACK",
+				"Vigil Candle (craft: torch, bone, string): right-click to light it where you stand. Next time you die, you respawn there.",
 				"",
-				"Soul Anchor (from guardians and deep loot): carry it, and you rise where you fell."));
+				"Soul Anchor (from bosses and loot): keep it in your inventory. Next time you die, you come back where you died."));
 		pages.add(page("THE CIRCLES",
-				"Each torments the living, and each has a way out:",
+				"Each has a hazard. To avoid it:",
 				"Lust: wind (sneak)",
 				"Gluttony: hunger (a roof)",
-				"Greed: gold weighs (stash it)",
-				"Wrath: the Styx (a boat)",
+				"Greed: gold slows you (store it)",
+				"Wrath: the river Styx (use a boat)",
 				"Heresy: darkness (a roof)",
-				"Sands: fire (roof, water)",
-				"Fraud: hidden foes (look for their swirl)",
-				"Treachery: cold (leather, a campfire)"));
+				"Sands: falling fire (roof, water)",
+				"Fraud: invisible foes (watch for swirls)",
+				"Treachery: cold (leather, campfire)"));
 		pages.add(page("VIRGIL'S RESTS",
-				"Where the ramps come down into each circle stands a Rest: soul fire, a supply chest and a Blood Altar.",
+				"A safe camp in each circle, where the ramp comes down: soul fire, a supply chest and a Blood Altar.",
 				"",
-				"Nothing torments you there and no monster follows you in. Bind your respawn at its altar.",
+				"No hazards or monsters there. Set your respawn at its altar.",
 				"",
-				"Any altar's Travel button takes you back to a Rest you've reached.",
+				"Travel (at any altar) teleports you to a Rest you've found.",
 				"",
-				"/circle shows the nearest."));
+				"/circle shows the nearest one."));
 		pages.add(page("HELL WEAPONS",
-				"Forge the Bloodletter from Blood Fragments; the Reaper of Minos, the Tithe Axe and the Blood Pickaxe take Blood Hearts too.",
+				"Craft the Bloodletter with Blood Fragments. The Reaper of Minos, Tithe Axe and Blood Pickaxe also cost Blood Hearts.",
 				"",
-				"Hits and kills fill them with blood. Right-click when full: its Blood Art.",
+				"Hits and kills charge them. When full, right-click for a special attack.",
 				"",
-				"Sneak + right-click: a Blood Oath, 3 hearts of health for 30 s of full power."));
+				"Sneak + right-click (Blood Oath): pay 3 hearts of health for 30 s of full power."));
 		pages.add(page("BLOOD ARMOUR",
-				"Reforge diamond armour with 4 Blood Fragments a piece.",
+				"Craft diamond armour with 4 Blood Fragments per piece.",
 				"",
-				"Two pieces: your blows heal you. All four: more, a Blood Rush near death, and Resistance under an oath."));
+				"2 pieces: your hits heal you. 4 pieces: more healing, Regeneration when nearly dead, and Resistance during a Blood Oath."));
 		pages.add(page("THE GUARDIANS",
-				"On the road in from the Gate (along x, z = 0) five guardians wait in rings of soul fire:",
+				"Five bosses wait on the road from the Gate to the centre (z = 0), each in a ring of soul fire:",
 				"Minos (x 4050)",
 				"Cerberus (3575)",
 				"Plutus (3125)",
 				"Minotaur (1600)",
 				"Geryon (1480)",
-				"Your first victory over each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and books."));
+				"First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
 		pages.add(page("STYLE",
 				"Bosses rank your STYLE: D C B A S SS SSS.",
 				"Hits fill the bar. Swap weapons: one used again and again goes stale. Crits, smashes, parries score extra.",
 				"Getting hit or holding back drains it.",
 				"Spoils follow your average rank. First S and first SSS on a boss: a Blood Heart each."));
 		pages.add(page("SUPPLIES",
-				"Villages and traders wait in the Dark Wood and Limbo. Sugar cane grows by the water.",
+				"Villages and traders: in the Dark Wood and Limbo. Sugar cane grows by water.",
 				"",
-				"Ruined altars, Virgil's Rests and the heretics' tombs hide arrows, books and enchantments."));
+				"Loot chests: ruined altars, Virgil's Rests and the tombs in Heresy."));
 		pages.add(page("THE SPINES",
-				"On the rim of the Well of Giants, four great spines reach down to Lucifer's pit: north, east, south and west.",
+				"Four giant spines lead from the edge of the Well of Giants down to Lucifer's pit (north, east, south, west).",
 				"",
 				"East: " + east.getX() + ", " + east.getY() + ", " + east.getZ(),
 				"",
-				"Nothing hunts you there."));
+				"No monsters spawn on them."));
 		pages.add(page("THE FORGE OF DIS",
-				"The Nether is Hell's workshop. At its centre (0, 70, 0) stands the Great Forge, where Vulcan works.",
+				"The Nether's Great Forge is at 0, 70, 0. Vulcan, a boss, waits there.",
 				"",
-				"Its Hellforge (any anvil on magma, in the Nether) makes blood gear infernal: netherite + " + c.hellforgeCostFragments + " Blood Fragments."));
+				"Hellforge: any anvil on a magma block in the Nether. It upgrades blood gear for a netherite ingot + " + c.hellforgeCostFragments + " Blood Fragments."));
 		pages.add(page("PARADISO",
-				"The End is heaven. Past the Seraph's island, nine spheres ring the void: the Moon to the Primum Mobile.",
+				"The End is Heaven: nine rings of islands around the Seraph's island.",
 				"",
-				"Beyond them all, at 6400 blocks out, the Empyrean and its Celestial Rose.",
+				"Farthest out (6400 blocks): the Empyrean and the Celestial Rose.",
 				"",
-				"Beat the Seraph for a Halo. Lucifer's slayers may take the Ascent from Purgatory's summit."));
+				"Beat the Seraph, the End's boss, for a Halo. After you beat Lucifer, the top of Purgatory has a path up to Heaven."));
 		pages.add(page("LUCIFER",
-				"He waits in the pit at the very centre (0, 0). Enter it and the ice seals you in.",
+				"The final boss, in the pit at the centre (0, 0). Once you go in, the way out is sealed until the fight ends.",
 				"",
-				"The Seraph, the Morning Star, then the Emperor frozen in the ice.",
+				"He fights in three phases: the Morning Star, the Morning Star enraged, then the Emperor (a Wither).",
 				"",
-				"Victors choose a reward: /lucifer reward"));
+				"Win and you choose a reward (/lucifer reward)."));
 		pages.add(page("THE CLIMB OUT",
-				"When Lucifer falls, a burrow opens where he was frozen.",
+				"When Lucifer dies, a tunnel opens in the middle of the pit.",
 				"",
-				"It leads up to Purgatory: seven terraces, the Earthly Paradise, and its two streams, Lethe and Eunoë."));
+				"It leads up to Purgatory: a mountain of seven ledges with a garden on top."));
 		pages.add(page("COMMANDS",
 				"/hearts",
 				"/withdraw [n]",

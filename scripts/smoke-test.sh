@@ -250,7 +250,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$bad" | grep -q "No such setting" || { echo "Unknown settings are not refused"; exit 1; }
   bounty=$(rcon "hellcraft bounty now" || true)
   echo "$bounty"
-  echo "$bounty" | grep -q "Nobody holds enough blood" || { echo "The bounty marked somebody on an empty server"; exit 1; }
+  echo "$bounty" | grep -q "Nobody online has enough hearts" || { echo "The bounty marked somebody on an empty server"; exit 1; }
   for cmd in "hellcraft inspect nobody" "hellcraft setbonus nobody 0" "hellcraft reset nobody" "hellcraft strip nobody"; do
     out=$(rcon "$cmd" || true)
     echo "$cmd: $out"

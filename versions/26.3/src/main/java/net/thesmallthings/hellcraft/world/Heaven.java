@@ -151,7 +151,7 @@ public final class Heaven {
 				n++;
 			}
 		}
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("The Seraph falls, and the heavens open.")
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("The Seraph is defeated!")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
 		HellcraftMod.LOGGER.info("The Seraph falls; halos for {}", n);
 	}
@@ -247,8 +247,8 @@ public final class Heaven {
 		Signs.place(level, gate.offset(0, 0, -2), 8, List.of(
 				Component.literal("THE ASCENT").withStyle(ChatFormatting.BOLD),
 				Component.literal("to Paradiso, for"),
-				Component.literal("those who have cast"),
-				Component.literal("Lucifer down")));
+				Component.literal("those who have"),
+				Component.literal("beaten Lucifer")));
 		state.ascentBuilt = true;
 		state.setDirty();
 		HellcraftMod.LOGGER.info("The Ascent opens on the summit at {}", gate.toShortString());
@@ -258,7 +258,7 @@ public final class Heaven {
 	public static void ascend(ServerPlayer player) {
 		HellState.Soul soul = Hearts.soul(player);
 		if (!soul.slewLucifer) {
-			player.sendOverlayMessage(Component.literal("Only those who have cast Lucifer down may rise.").withStyle(ChatFormatting.GOLD));
+			player.sendOverlayMessage(Component.literal("Only players who have beaten Lucifer can go up.").withStyle(ChatFormatting.GOLD));
 			player.push(0, 0.4, -0.8);
 			net.thesmallthings.hellcraft.util.Feedback.syncMotion(player);
 			return;
@@ -287,7 +287,7 @@ public final class Heaven {
 		}
 		Ghosts.teleport(player, new HellState.GlobalSpot(Level.END, to));
 		end.playSound(null, to, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.4f);
-		player.sendSystemMessage(Component.literal("\"Pure and disposed to mount unto the stars.\" You rise into Paradiso.")
+		player.sendSystemMessage(Component.literal("You rise into Paradiso (the End).")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
 	}
 }

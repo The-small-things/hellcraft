@@ -88,7 +88,7 @@ final class GeryonFight extends GuardianFight {
 	private int sting(LivingEntity target) {
 		say("Be still. It will only sting once.");
 		if (target instanceof ServerPlayer p) {
-			p.sendOverlayMessage(Component.literal("Geryon's tail is poised over you: MOVE!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+			p.sendOverlayMessage(Component.literal("Geryon is about to sting you: MOVE!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 		}
 		Vec3[] mark = {target.position()};
 		for (int t = 0; t < 30; t += 2) {
@@ -125,7 +125,7 @@ final class GeryonFight extends GuardianFight {
 
 	private int falseFace(Mob body) {
 		say("Which face is mine? Which is thine?");
-		tip("Frauds! Geryon hides among them.");
+		tip("Fakes! Geryon is hiding among copies of himself.");
 		level.playSound(null, body.blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.HOSTILE, 2.0f, 0.8f);
 		level.sendParticles(ParticleTypes.LARGE_SMOKE, body.getX(), body.getY() + 1, body.getZ(), 60, 1.5, 1, 1.5, 0.05);
 		for (int i = 0; i < 3; i++) {

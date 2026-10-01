@@ -90,7 +90,7 @@ public final class HellCommands {
 		dispatcher.register(Commands.literal("guide").executes(ctx -> {
 			ServerPlayer player = ctx.getSource().getPlayerOrException();
 			BloodItems.give(player, GuideBook.create(ctx.getSource().getServer()));
-			player.sendSystemMessage(Component.literal("Virgil hands you The Pilgrim's Guide.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			player.sendSystemMessage(Component.literal("You got The Pilgrim's Guide (the Hellcraft guide book).").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			return 1;
 		}));
 
@@ -105,7 +105,7 @@ public final class HellCommands {
 				.then(Commands.literal("reward").executes(ctx -> {
 					ServerPlayer player = ctx.getSource().getPlayerOrException();
 					if (!LuciferRewards.open(player)) {
-						player.sendSystemMessage(Component.literal("You have no spoils of Lucifer to claim.").withStyle(ChatFormatting.GRAY));
+						player.sendSystemMessage(Component.literal("You have no Lucifer reward to claim.").withStyle(ChatFormatting.GRAY));
 						return 0;
 					}
 					return 1;
@@ -334,11 +334,11 @@ public final class HellCommands {
 						.executes(ctx -> reply(ctx.getSource(), Bounty.status(ctx.getSource().getServer())))
 						.then(Commands.literal("now").executes(ctx -> {
 							String who = Bounty.markNow(ctx.getSource().getServer());
-							return reply(ctx.getSource(), who == null ? "Nobody holds enough blood to carry a bounty." : "The bounty is on " + who + ".");
+							return reply(ctx.getSource(), who == null ? "Nobody online has enough hearts for a bounty." : "The bounty is on " + who + ".");
 						}))
 						.then(Commands.literal("clear").executes(ctx -> {
 							Bounty.clear();
-							return reply(ctx.getSource(), "The bounty is lifted.");
+							return reply(ctx.getSource(), "The bounty is cleared.");
 						})))
 				.then(Commands.literal("spoils")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), BossSpoils.selfTest() + "; " + StyleMeter.selfTest()))))
@@ -424,12 +424,12 @@ public final class HellCommands {
 	private static int withdraw(ServerPlayer player, int amount) {
 		HellState.Soul soul = Hearts.soul(player);
 		if (soul.hearts - amount < 1) {
-			player.sendSystemMessage(Component.literal("You cannot bleed yourself dry. You have " + soul.hearts + " ❤.").withStyle(ChatFormatting.RED));
+			player.sendSystemMessage(Component.literal("You can't withdraw your last heart. You have " + soul.hearts + " ❤.").withStyle(ChatFormatting.RED));
 			return 0;
 		}
 		Hearts.add(player, -amount);
 		BloodItems.give(player, BloodItems.heart(amount));
-		player.sendSystemMessage(Component.literal("You draw " + amount + " heart" + (amount == 1 ? "" : "s") + " of blood from your veins.")
+		player.sendSystemMessage(Component.literal("Withdrew " + amount + " heart" + (amount == 1 ? "" : "s") + " as Blood Heart items.")
 				.withStyle(ChatFormatting.DARK_RED));
 		return amount;
 	}
@@ -442,7 +442,7 @@ public final class HellCommands {
 
 	private static int circle(ServerPlayer player) {
 		if (!HellWorldgen.isInferno(player.level())) {
-			player.sendSystemMessage(Component.literal("You are beyond the circles of the Inferno.").withStyle(ChatFormatting.GRAY));
+			player.sendSystemMessage(Component.literal("You're not in any of the nine circles.").withStyle(ChatFormatting.GRAY));
 			return 0;
 		}
 		Circle circle = InfernoGeometry.circleAt(player.getX(), player.getZ());
@@ -450,7 +450,7 @@ public final class HellCommands {
 		player.sendSystemMessage(Component.literal(InfernoGeometry.regionName(player.getX(), player.getZ())).withStyle(ChatFormatting.RED));
 		player.sendSystemMessage(Component.literal("\"" + circle.quote() + "\"").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		int dist = (int) Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ());
-		player.sendSystemMessage(Component.literal(dist + " blocks from the bottom of Hell.").withStyle(ChatFormatting.DARK_GRAY));
+		player.sendSystemMessage(Component.literal(dist + " blocks from the centre (Lucifer's pit).").withStyle(ChatFormatting.DARK_GRAY));
 		Component rest = Shrines.nearestLine(player);
 		if (rest != null) {
 			player.sendSystemMessage(rest);
@@ -531,7 +531,7 @@ public final class HellCommands {
 			}
 		}
 		int count = n;
-		source.sendSuccess(() -> Component.literal(count + " ghost(s) walk the earth."), false);
+		source.sendSuccess(() -> Component.literal(count + " ghost(s) right now."), false);
 		return n;
 	}
 

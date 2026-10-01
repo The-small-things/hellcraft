@@ -38,12 +38,12 @@
       },
       "minecraft:lore": [
         {
-          "text": "Charged hits bleed your foe and heal you.",
+          "text": "Full-strength hits make the target bleed and heal you.",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Art, Exsanguinate: lunge forward, cutting everything",
+          "text": "Blood Art, Exsanguinate: dash forward, hitting everything",
           "color": "gray",
           "italic": false
         },
@@ -58,12 +58,12 @@
           "italic": false
         },
         {
-          "text": "Right-click at full blood: its Blood Art. Hits and kills fill it.",
+          "text": "Hits and kills charge it. Fully charged: right-click for its Blood Art.",
           "color": "red",
           "italic": false
         },
         {
-          "text": "Blood Oath = sneak + right-click: costs 3\u2764 of health, lasts 30 s.",
+          "text": "Sneak + right-click: Blood Oath (pay 3\u2764 of health for 30 s of full power).",
           "color": "red",
           "italic": false
         }

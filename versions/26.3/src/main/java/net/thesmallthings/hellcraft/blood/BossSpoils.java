@@ -65,7 +65,7 @@ public final class BossSpoils {
 	public static void tooSoon(ServerPlayer player, String title, String boss, int cooldownMinutes) {
 		long now = player.level().getServer().overworld().getGameTime();
 		long minutes = Math.max(1, minutesLeft(Hearts.soul(player), boss, cooldownMinutes, now));
-		player.sendSystemMessage(Component.literal(title + " has nothing more for you. Its spoils return for you in " + minutes + " min.")
+		player.sendSystemMessage(Component.literal(title + "'s spoils are on cooldown for you: " + minutes + " min left.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 

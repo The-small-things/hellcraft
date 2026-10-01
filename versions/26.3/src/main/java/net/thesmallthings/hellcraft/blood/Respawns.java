@@ -68,11 +68,11 @@ public final class Respawns {
 	public static boolean lightVigil(ServerPlayer player, ItemStack stack) {
 		ServerLevel level = player.level();
 		if (LuciferManager.inPit(level, player.blockPosition())) {
-			player.sendOverlayMessage(Component.literal("No flame lives in the Emperor's pit.").withStyle(ChatFormatting.AQUA));
+			player.sendOverlayMessage(Component.literal("Vigil Candles don't work in Lucifer's pit.").withStyle(ChatFormatting.AQUA));
 			return false;
 		}
 		if (!player.onGround()) {
-			player.sendOverlayMessage(Component.literal("Stand on solid ground to light your vigil.").withStyle(ChatFormatting.GRAY));
+			player.sendOverlayMessage(Component.literal("Stand on solid ground to light it.").withStyle(ChatFormatting.GRAY));
 			return false;
 		}
 		HellState.Soul soul = Hearts.soul(player);
@@ -83,8 +83,8 @@ public final class Respawns {
 		BlockPos p = player.blockPosition();
 		level.playSound(null, p, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0f, 0.7f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, p.getX() + 0.5, p.getY() + 0.6, p.getZ() + 0.5, 20, 0.2, 0.3, 0.2, 0.01);
-		player.sendSystemMessage(Component.literal((replaced ? "Your old candle gutters out. " : "")
-				+ "A Vigil Candle burns here (" + p.getX() + ", " + p.getY() + ", " + p.getZ() + "): your next death wakes you beside it.")
+		player.sendSystemMessage(Component.literal((replaced ? "Your old candle went out. " : "")
+				+ "Vigil Candle lit at " + p.getX() + ", " + p.getY() + ", " + p.getZ() + ": next time you die, you respawn here.")
 				.withStyle(ChatFormatting.AQUA));
 		return true;
 	}
@@ -131,7 +131,7 @@ public final class Respawns {
 			player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 100, 3));
 			player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0));
 			blast(player);
-			player.sendSystemMessage(Component.literal("Your Soul Anchor drags you back to where you fell, and shatters.")
+			player.sendSystemMessage(Component.literal("Your Soul Anchor brought you back where you died, and broke.")
 					.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
 			return true;
 		}
@@ -141,7 +141,7 @@ public final class Respawns {
 			state.setDirty();
 			Ghosts.teleport(player, at);
 			player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 60, 1));
-			player.sendSystemMessage(Component.literal("You wake beside your Vigil Candle. It has burned out.").withStyle(ChatFormatting.AQUA));
+			player.sendSystemMessage(Component.literal("You respawned at your Vigil Candle. It's used up.").withStyle(ChatFormatting.AQUA));
 			return true;
 		}
 		return false;

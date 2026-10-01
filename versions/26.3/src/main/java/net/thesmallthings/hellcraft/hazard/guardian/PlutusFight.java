@@ -189,7 +189,7 @@ final class PlutusFight extends GuardianFight {
 				e.hurt(level.damageSources().mobAttack(body), 4.0f);
 				fling(e, body.position(), 1.6, 0.4);
 				if (e instanceof ServerPlayer p) {
-					p.sendOverlayMessage(Component.literal("The gibbering fills your head...").withStyle(ChatFormatting.GOLD));
+					p.sendOverlayMessage(Component.literal("His babbling makes you dizzy...").withStyle(ChatFormatting.GOLD));
 				}
 			}
 		});

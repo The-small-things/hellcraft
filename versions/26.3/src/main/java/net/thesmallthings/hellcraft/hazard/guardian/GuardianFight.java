@@ -219,7 +219,7 @@ public abstract class GuardianFight {
 		}
 		emptyTicks = anyone || debug ? 0 : emptyTicks + 1;
 		if (emptyTicks > GIVE_UP_TICKS) {
-			say(kind.title + " sinks back into the dark, waiting.");
+			say(kind.title + " went back to sleep (everyone left the lair).");
 			end(false);
 			return;
 		}
@@ -289,7 +289,7 @@ public abstract class GuardianFight {
 
 	/** An archer keeping their distance is dragged in, a second after a warning. */
 	private void pullIn(ServerPlayer archer) {
-		archer.sendOverlayMessage(Component.literal(kind.title + " is pulling you in! Arrows from afar won't save you.")
+		archer.sendOverlayMessage(Component.literal(kind.title + " is pulling you in for shooting from too far away!")
 				.withStyle(kind.color, ChatFormatting.BOLD));
 		Feedback.sound(archer, SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 1.0f, 0.6f);
 		for (int t = 0; t < 20; t += 4) {

@@ -240,8 +240,8 @@ public final class Purgatory {
 		}
 		Signs.place(level, new BlockPos(-4, y + 1, -4), 8, List.of(
 				Component.literal("LETHE").withStyle(ChatFormatting.BOLD),
-				Component.literal("Step in to forget"),
-				Component.literal("every affliction"),
+				Component.literal("Step in to remove"),
+				Component.literal("all your effects"),
 				Component.literal("")));
 		Signs.place(level, new BlockPos(4, y + 1, -4), 8, List.of(
 				Component.literal("EUNOË").withStyle(ChatFormatting.BOLD),
@@ -287,8 +287,8 @@ public final class Purgatory {
 		level.setBlock(at, Blocks.END_GATEWAY.defaultBlockState(), 3);
 		burrow = at;
 		burrowUntil = level.getGameTime() + BURROW_TICKS;
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("Where Lucifer was frozen, a narrow burrow opens in the ice. "
-				+ "Step into it to climb out of Hell (for five minutes).").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("A tunnel opened in the middle of Lucifer's pit. "
+				+ "Step into it within 5 minutes to climb out to Purgatory.").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		HellcraftMod.LOGGER.info("The burrow opens at {}", at.toShortString());
 	}
 
@@ -331,7 +331,7 @@ public final class Purgatory {
 			if (player.getY() < SHORE_Y - 8 && player.getY() > BOTTOM_Y - 70 && player.getDeltaMovement().y < -0.6 && !player.isFallFlying()) {
 				teleport(player, shore());
 				player.resetFallDistance();
-				player.sendSystemMessage(Component.literal("A white wing sweeps beneath you, and sets you down on the shore.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				player.sendSystemMessage(Component.literal("An angel caught you and set you down on the shore.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 				continue;
 			}
 			if (player.getY() < SHORE_Y) {
@@ -358,8 +358,8 @@ public final class Purgatory {
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("Thence we came forth to rebehold the stars.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.4f);
-		player.sendSystemMessage(Component.literal("You climb out onto the shore of the Mountain of Purgatory. Seven terraces rise to the "
-				+ "Earthly Paradise, where Lethe and Eunoë run, and the Gate of Return.").withStyle(ChatFormatting.AQUA));
+		player.sendSystemMessage(Component.literal("You climbed out to Purgatory. Climb its seven ledges to the garden at the top, with "
+				+ "its two streams (Lethe and Eunoë) and the Gate of Return home.").withStyle(ChatFormatting.AQUA));
 		TERRACE_REACHED.put(player.getUUID(), 0);
 	}
 
@@ -375,7 +375,7 @@ public final class Purgatory {
 		}
 		TERRACE_REACHED.put(player.getUUID(), k);
 		player.sendOverlayMessage(Component.literal("Terrace of " + SINS[k - 1].charAt(0) + SINS[k - 1].substring(1).toLowerCase(java.util.Locale.ROOT)
-				+ ": an angel's wing brushes your brow, and a P is gone (" + k + "/7)").withStyle(ChatFormatting.AQUA));
+				+ " reached (" + k + "/7)").withStyle(ChatFormatting.AQUA));
 		Feedback.sound(player, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.MASTER, 1.0f, 1.2f);
 	}
 
@@ -403,14 +403,14 @@ public final class Purgatory {
 			player.setTicksFrozen(0);
 			player.clearFire();
 			level.sendParticles(ParticleTypes.SPLASH, player.getX(), player.getY() + 1, player.getZ(), 30, 0.5, 0.5, 0.5, 0.1);
-			player.sendOverlayMessage(Component.literal("Lethe washes over you, and you forget your afflictions.").withStyle(ChatFormatting.AQUA));
+			player.sendOverlayMessage(Component.literal("Lethe: all your effects are removed.").withStyle(ChatFormatting.AQUA));
 			return;
 		}
 		// Eunoë: strength restored, once for every victory over Lucifer
 		HellState state = HellState.get(level.getServer());
 		HellState.Soul soul = Hearts.soul(player);
 		if (soul.pendingEunoe <= 0) {
-			player.sendOverlayMessage(Component.literal("Eunoë is only sweet to those who have cast Lucifer down.").withStyle(ChatFormatting.GRAY));
+			player.sendOverlayMessage(Component.literal("Eunoë only works for players who have beaten Lucifer.").withStyle(ChatFormatting.GRAY));
 			return;
 		}
 		soul.pendingEunoe--;
@@ -419,7 +419,7 @@ public final class Purgatory {
 		player.heal(player.getMaxHealth());
 		level.sendParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.5, player.getZ(), 8, 0.5, 0.3, 0.5, 0);
 		Feedback.sound(player, SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1.0f, 0.8f);
-		player.sendSystemMessage(Component.literal("You drink from Eunoë: +" + gained + " ❤, made new, and ready to rise to the stars.")
+		player.sendSystemMessage(Component.literal("Eunoë: +" + gained + " ❤.")
 				.withStyle(ChatFormatting.GOLD));
 	}
 
@@ -429,7 +429,7 @@ public final class Purgatory {
 		level.getChunk(x >> 4, 0);
 		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, 0);
 		teleport(player, new BlockPos(x, y, 0));
-		player.sendSystemMessage(Component.literal("You step through the Gate of Return, and stand once more before the Gate of Hell.")
+		player.sendSystemMessage(Component.literal("You're back at the Gate of Hell.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 

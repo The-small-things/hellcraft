@@ -41,8 +41,8 @@ public final class GhostPowers {
 	private static final int BEACON_COOLDOWN = 60 * 20;
 	private static final int BEACON_TICKS = 30 * 20;
 
-	public static final String HELP = "Ghost powers: /ghost mark (make what you look at glow), /ghost haunt (chill your killer), "
-			+ "/ghost beacon (a pillar of soul fire so the living can find you).";
+	public static final String HELP = "Ghost powers: /ghost mark (make what you look at glow), /ghost haunt (slow your killer), "
+			+ "/ghost beacon (a pillar of fire so friends can find you).";
 
 	/** Ghost UUID -> the entity that killed them. */
 	private static final Map<UUID, UUID> KILLERS = new HashMap<>();
@@ -71,7 +71,7 @@ public final class GhostPowers {
 	private static boolean isGhost(ServerPlayer player) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		if (soul == null || !soul.ghost) {
-			player.sendSystemMessage(Component.literal("Only the dead have these powers.").withStyle(ChatFormatting.GRAY));
+			player.sendSystemMessage(Component.literal("Only ghosts can use these.").withStyle(ChatFormatting.GRAY));
 			return false;
 		}
 		return true;
@@ -83,7 +83,7 @@ public final class GhostPowers {
 		long now = player.level().getGameTime();
 		long at = READY.getOrDefault(key, 0L);
 		if (now < at) {
-			player.sendOverlayMessage(Component.literal("Your shade is spent. " + power + " again in " + (at - now + 19) / 20 + " s.")
+			player.sendOverlayMessage(Component.literal("On cooldown: " + power + " again in " + (at - now + 19) / 20 + " s.")
 					.withStyle(ChatFormatting.GRAY));
 			return false;
 		}
@@ -106,7 +106,7 @@ public final class GhostPowers {
 		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200, 0, false, false));
 		ServerLevel level = ghost.level();
 		level.sendParticles(ParticleTypes.SOUL, target.getX(), target.getY() + target.getBbHeight(), target.getZ(), 20, 0.3, 0.3, 0.3, 0.02);
-		Component msg = Component.literal("☠ " + ghost.getGameProfile().name() + "'s shade marks ").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+		Component msg = Component.literal("☠ " + ghost.getGameProfile().name() + " (a ghost) marked ").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
 				.append(target.getDisplayName().copy().withStyle(ChatFormatting.WHITE));
 		for (ServerPlayer p : level.players()) {
 			if (p.distanceToSqr(ghost) < 96 * 96) {
@@ -123,7 +123,7 @@ public final class GhostPowers {
 		UUID killerId = KILLERS.get(ghost.getUUID());
 		Entity found = killerId == null ? null : ghost.level().getEntity(killerId);
 		if (!(found instanceof LivingEntity killer) || !killer.isAlive() || killer.distanceToSqr(ghost) > 48 * 48) {
-			ghost.sendOverlayMessage(Component.literal("Your killer is nowhere near.").withStyle(ChatFormatting.GRAY));
+			ghost.sendOverlayMessage(Component.literal("Your killer isn't close enough.").withStyle(ChatFormatting.GRAY));
 			return 0;
 		}
 		if (!ready(ghost, "haunt", HAUNT_COOLDOWN)) {
@@ -133,7 +133,7 @@ public final class GhostPowers {
 		killer.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 120, 1));
 		ghost.level().sendParticles(ParticleTypes.SCULK_SOUL, killer.getX(), killer.getY() + 1, killer.getZ(), 30, 0.5, 0.8, 0.5, 0.02);
 		if (killer instanceof ServerPlayer p) {
-			p.sendSystemMessage(Component.literal("You feel " + ghost.getGameProfile().name() + "'s cold breath on your neck.")
+			p.sendSystemMessage(Component.literal("You feel " + ghost.getGameProfile().name() + "'s ghost haunting you.")
 					.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
 			Feedback.sound(p, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 0.6f, 1.6f);
 		}
@@ -146,7 +146,7 @@ public final class GhostPowers {
 			return 0;
 		}
 		BEACONS.put(ghost.getUUID(), ghost.level().getGameTime() + BEACON_TICKS);
-		Component msg = Component.literal("☠ A pillar of soul fire rises where " + ghost.getGameProfile().name() + "'s shade waits ("
+		Component msg = Component.literal("☠ " + ghost.getGameProfile().name() + "'s ghost lit a beacon at ("
 				+ ghost.getBlockX() + ", " + ghost.getBlockY() + ", " + ghost.getBlockZ() + ").").withStyle(ChatFormatting.AQUA);
 		ghost.level().getServer().getPlayerList().broadcastSystemMessage(msg, false);
 		return 1;

@@ -84,7 +84,7 @@ final class CerberusFight extends GuardianFight {
 
 	private int maws(Mob body, LivingEntity target) {
 		say("GRRR...");
-		tip("Three maws! Get behind him.");
+		tip("Three heads bite in front of him: get behind him!");
 		body.getLookControl().setLookAt(target);
 		level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 1.5f, 1.4f);
 		for (int bite = 0; bite < 3; bite++) {
@@ -139,7 +139,7 @@ final class CerberusFight extends GuardianFight {
 
 	private int howl(Mob body) {
 		say("AROOOOOOO!");
-		tip("He draws breath with three throats... get away!");
+		tip("He's about to roar: get away from him!");
 		for (int t = 0; t < 20; t += 4) {
 			schedule(t, () -> ringParticles(ParticleTypes.SONIC_BOOM, body.position(), 10, 12));
 		}

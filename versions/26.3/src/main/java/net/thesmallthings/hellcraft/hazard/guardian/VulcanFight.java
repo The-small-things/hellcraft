@@ -164,7 +164,7 @@ final class VulcanFight extends GuardianFight {
 
 	private int forgeborn(Mob body) {
 		say("Up, my smiths! There is work at the anvil!");
-		tip("Smiths of Dis step out of the fire.");
+		tip("Vulcan summoned smiths: kill them!");
 		for (int i = 0; i < 2; i++) {
 			Mob smith = EntityTypes.WITHER_SKELETON.create(level, EntitySpawnReason.EVENT);
 			if (smith == null) {
@@ -188,7 +188,7 @@ final class VulcanFight extends GuardianFight {
 	private int chains(Mob body, LivingEntity target) {
 		say("Come here, to the anvil.");
 		if (target instanceof ServerPlayer p) {
-			p.sendOverlayMessage(Component.literal("Vulcan's chains drag you in: break away!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+			p.sendOverlayMessage(Component.literal("Vulcan's chains are pulling you in: run away!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 		}
 		level.playSound(null, target.blockPosition(), SoundEvents.ANVIL_PLACE, SoundSource.HOSTILE, 1.5f, 1.6f);
 		Vec3 to = body.position().subtract(target.position());

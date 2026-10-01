@@ -53,17 +53,17 @@
       },
       "minecraft:lore": [
         {
-          "text": "Charged hits cleave everything within 3 blocks for 4.",
+          "text": "Full-strength hits also hit everything within 3 blocks (4 damage).",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "Blood Art, Harvest: reap everything within 5 blocks",
+          "text": "Blood Art, Harvest: hit everything within 5 blocks",
           "color": "gray",
           "italic": false
         },
         {
-          "text": "for 12, slowing them and dragging them in.",
+          "text": "for 12, slowing them and pulling them in.",
           "color": "gray",
           "italic": false
         },
@@ -73,12 +73,12 @@
           "italic": false
         },
         {
-          "text": "Right-click at full blood: its Blood Art. Hits and kills fill it.",
+          "text": "Hits and kills charge it. Fully charged: right-click for its Blood Art.",
           "color": "red",
           "italic": false
         },
         {
-          "text": "Blood Oath = sneak + right-click: costs 3\u2764 of health, lasts 30 s.",
+          "text": "Sneak + right-click: Blood Oath (pay 3\u2764 of health for 30 s of full power).",
           "color": "red",
           "italic": false
         }

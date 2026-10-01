@@ -76,9 +76,9 @@ public final class Bounty {
 		best.addEffect(new MobEffectInstance(MobEffects.GLOWING, 45 * 20, 0, false, false, true));
 		server.getPlayerList().broadcastSystemMessage(Component.literal("☠ A bounty on " + targetName + " (" + bestHearts + " ❤): ")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
-				.append(Component.literal("last seen " + where(best) + ". Whoever kills them drinks " + config.bountyRewardHearts
-						+ " Blood Hearts more.").withStyle(ChatFormatting.RED)), false);
-		best.sendSystemMessage(Component.literal("You carry too much blood: the damned have been told where you are.")
+				.append(Component.literal("last seen " + where(best) + ". Kill them to get " + config.bountyRewardHearts
+						+ " Blood Hearts.").withStyle(ChatFormatting.RED)), false);
+		best.sendSystemMessage(Component.literal("You have the most hearts, so everyone has been told where you are.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 		Feedback.sound(best, SoundEvents.WITHER_AMBIENT, SoundSource.MASTER, 0.8f, 0.6f);
 		HellcraftMod.LOGGER.info("Bounty on {} ({} hearts)", targetName, bestHearts);
@@ -133,7 +133,7 @@ public final class Bounty {
 		String name = targetName;
 		clear();
 		if (killer == null || killer == dead) {
-			dead.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal("The bounty on " + name + " lapses: Hell took them first.")
+			dead.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal("The bounty on " + name + " is over: they died, but not to a player.")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			return;
 		}
