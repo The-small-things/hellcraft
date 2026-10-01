@@ -21,14 +21,27 @@ public final class BossSpoils {
 
 	/** Claims a boss's spoils for this player (recording it unless it is too soon). */
 	public static Claim claim(ServerPlayer player, String boss, int cooldownMinutes) {
-		HellState.Soul soul = Hearts.soul(player);
-		long now = player.level().getServer().overworld().getGameTime();
-		Claim claim = check(soul, boss, cooldownMinutes, now);
+		Claim claim = peek(player, boss, cooldownMinutes);
 		if (claim != Claim.TOO_SOON) {
-			soul.guardianSpoils.put(boss, now);
-			HellState.get(player.level().getServer()).setDirty();
+			record(player, boss);
 		}
 		return claim;
+	}
+
+	/** Whether this boss would pay this player now, without taking the spoils. */
+	public static Claim peek(ServerPlayer player, String boss, int cooldownMinutes) {
+		return check(Hearts.soul(player), boss, cooldownMinutes, player.level().getServer().overworld().getGameTime());
+	}
+
+	/** Takes the spoils: the cooldown starts now. */
+	public static void record(ServerPlayer player, String boss) {
+		Hearts.soul(player).guardianSpoils.put(boss, player.level().getServer().overworld().getGameTime());
+		HellState.get(player.level().getServer()).setDirty();
+	}
+
+	/** Minutes until this boss pays this player again (0 if it would now). */
+	public static long minutesLeft(ServerPlayer player, String boss, int cooldownMinutes) {
+		return minutesLeft(Hearts.soul(player), boss, cooldownMinutes, player.level().getServer().overworld().getGameTime());
 	}
 
 	static Claim check(HellState.Soul soul, String boss, int cooldownMinutes, long now) {

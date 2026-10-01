@@ -109,6 +109,8 @@ public class HellState extends SavedData {
 		public final Set<String> visited = new HashSet<>();
 		/** Guardian id -> game time this soul last took its spoils (absent: never slain it). */
 		public final Map<String, Long> guardianSpoils = new HashMap<>();
+		/** Boss id -> the best grade (Judgement.Grade ordinal) this soul has earned against it. */
+		public final Map<String, Integer> bossBest = new HashMap<>();
 		/** Has been given Beatrice's Rose at the Celestial Rose. */
 		public boolean rose;
 		/** The Seven P's: how many have been burned from this soul's brow (0-7), each by an ascent at an altar. */
@@ -219,6 +221,9 @@ public class HellState extends SavedData {
 			CompoundTag spoils = new CompoundTag();
 			s.guardianSpoils.forEach(spoils::putLong);
 			st.put("guardianSpoils", spoils);
+			CompoundTag best = new CompoundTag();
+			s.bossBest.forEach(best::putInt);
+			st.put("bossBest", best);
 			list.add(st);
 		}
 		tag.put("souls", list);
@@ -296,6 +301,10 @@ public class HellState extends SavedData {
 			CompoundTag spoils = st.getCompoundOrEmpty("guardianSpoils");
 			for (String key : spoils.keySet()) {
 				s.guardianSpoils.put(key, spoils.getLongOr(key, 0L));
+			}
+			CompoundTag best = st.getCompoundOrEmpty("bossBest");
+			for (String key : best.keySet()) {
+				s.bossBest.put(key, best.getIntOr(key, 0));
 			}
 			state.souls.put(id.get(), s);
 		}

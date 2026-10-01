@@ -120,8 +120,12 @@ public final class GuideBook {
 				"Plutus (3125)",
 				"Minotaur (1600)",
 				"Geryon (1480)",
-				"Your first victory over each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and books. Again: "
-						+ c.guardianRepeatHearts + " heart, once every " + (c.guardianSpoilsCooldownMinutes / 60) + " hours."));
+				"Your first victory over each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and books."));
+		pages.add(page("BOSS GRADES",
+				"Bosses grade you on health lost: S under 25%, A under 75%, B under 150%, C more, D if you die.",
+				"Wins pay fragments by grade; A or S adds books.",
+				"First A and first S on each boss: a Blood Heart each.",
+				"A or better: " + c.guardianRepeatHearts + " heart again every " + (c.guardianSpoilsCooldownMinutes / 60) + " hours."));
 		pages.add(page("SUPPLIES",
 				"Villages and traders wait in the Dark Wood and Limbo. Sugar cane grows by the water.",
 				"",

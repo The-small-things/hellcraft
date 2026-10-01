@@ -35,6 +35,7 @@ import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.blood.Judgement;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
@@ -77,6 +78,8 @@ public abstract class GuardianFight {
 	protected final BossModel model;
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final Set<UUID> participants = new LinkedHashSet<>();
+	/** How each fighter is doing: their grade at the end decides their spoils (Judgement). */
+	private final Map<UUID, Judgement.Tally> tallies = new HashMap<>();
 	@Nullable
 	protected UUID bodyId;
 	protected int tick;
@@ -199,7 +202,10 @@ public abstract class GuardianFight {
 		boolean anyone = false;
 		for (ServerPlayer p : level.players()) {
 			if (inArena(p) && p.isAlive() && !p.isSpectator() && !p.isCreative()) {
-				participants.add(p.getUUID());
+				if (participants.add(p.getUUID())) {
+					p.sendSystemMessage(Component.literal("You're graded on how much health you lose in this fight. Dodge well for better spoils.")
+							.withStyle(ChatFormatting.AQUA));
+				}
 				anyone = true;
 			}
 		}
@@ -248,11 +254,24 @@ public abstract class GuardianFight {
 		return false;
 	}
 
+	private Judgement.Tally tally(ServerPlayer player) {
+		return tallies.computeIfAbsent(player.getUUID(), id -> new Judgement.Tally());
+	}
+
 	void afterDamage(LivingEntity entity, DamageSource source, float dealt) {
+		// a fighter hurt in the lair by anything but another player: it counts against their grade
+		if (entity instanceof ServerPlayer fighter && participants.contains(fighter.getUUID()) && inArena(fighter)
+				&& !(source.getEntity() instanceof Player)) {
+			tally(fighter).lost += dealt / Math.max(1.0f, fighter.getMaxHealth());
+			return;
+		}
 		if (!entity.getUUID().equals(bodyId)) {
 			return;
 		}
 		onHurt(dealt);
+		if (source.getEntity() instanceof ServerPlayer attacker) {
+			tally(attacker).dealt += dealt;
+		}
 		if (!flies() && HellConfig.get().bossPullsArchers && source.is(DamageTypeTags.IS_PROJECTILE) && source.getEntity() instanceof ServerPlayer archer
 				&& archer.distanceTo(entity) > ARCHER_RANGE && tick >= nextPull) {
 			nextPull = tick + 160;
@@ -318,30 +337,31 @@ public abstract class GuardianFight {
 	}
 
 	void onDeath(LivingEntity entity) {
+		if (!done && entity instanceof ServerPlayer fighter && participants.contains(fighter.getUUID())) {
+			tally(fighter).died = true;
+			return;
+		}
 		if (done || !entity.getUUID().equals(bodyId)) {
 			return;
 		}
 		say(deathLine());
 		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
-		// the spoils are personal: each soul takes them once per guardian until they return (so a guardian
-		// that wakes every half hour can't be farmed), and the first victory over each is the richest
-		boolean treasure = false;
+		// the spoils are personal, and graded: see spoils() and Judgement
 		List<String> names = new ArrayList<>();
+		List<ServerPlayer> fighters = new ArrayList<>();
 		for (UUID id : participants) {
 			ServerPlayer p = level.getServer().getPlayerList().getPlayer(id);
 			if (p != null) {
-				names.add(p.getGameProfile().name());
-				HellState.Soul soul = Hearts.soul(p);
-				soul.guardiansSlain++;
-				treasure |= spoils(p, soul, entity);
-				HellState.get(level.getServer()).setDirty();
-				Journey.award(p, "journey/guardian_" + kind.id());
+				fighters.add(p);
 			}
 		}
-		if (treasure) {
-			// its treasure: enchanted books and more (data/hellcraft/loot_table/gameplay/guardian_spoils.json)
-			level.getServer().getCommands().performPrefixedCommand(level.getServer().createCommandSourceStack().withLevel(level).withSuppressedOutput(),
-					String.format(java.util.Locale.ROOT, "loot spawn %.2f %.2f %.2f loot hellcraft:gameplay/guardian_spoils", entity.getX(), entity.getY() + 0.5, entity.getZ()));
+		for (ServerPlayer p : fighters) {
+			names.add(p.getGameProfile().name());
+			HellState.Soul soul = Hearts.soul(p);
+			soul.guardiansSlain++;
+			spoils(p, soul, entity, fighters.size());
+			HellState.get(level.getServer()).setDirty();
+			Journey.award(p, "journey/guardian_" + kind.id());
 		}
 		String who = names.isEmpty() ? "Someone" : String.join(", ", names);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " slew " + kind.title + ", " + kind.subtitle + ".")
@@ -351,27 +371,48 @@ public abstract class GuardianFight {
 	}
 
 	/**
-	 * One victor's share, straight into their inventory. The first time: the full spoils and a Soul Anchor.
-	 * Again, once the cooldown has passed: fewer hearts. In between: only a few fragments. Returns whether
-	 * this victor earned the treasure roll.
+	 * One victor's share, straight into their inventory, by their grade (Judgement). Every victory pays
+	 * fragments by grade, and A or S a treasure roll. Blood Hearts reward firsts and skill, never repetition:
+	 * the first victory (with a Soul Anchor), the first A and the first S against this guardian, and, once
+	 * every few hours, a heart for a victory graded A or better.
 	 */
-	private boolean spoils(ServerPlayer player, HellState.Soul soul, LivingEntity body) {
+	private void spoils(ServerPlayer player, HellState.Soul soul, LivingEntity body, int fighters) {
 		HellConfig config = HellConfig.get();
-		BossSpoils.Claim claim = BossSpoils.claim(player, kind.id(), config.guardianSpoilsCooldownMinutes);
-		if (claim == BossSpoils.Claim.TOO_SOON) {
-			BloodItems.give(player, BloodItems.fragment(1 + level.getRandom().nextInt(2)));
-			BossSpoils.tooSoon(player, kind.title, kind.id(), config.guardianSpoilsCooldownMinutes);
-			return false;
-		}
-		boolean first = claim == BossSpoils.Claim.FIRST;
-		BloodItems.give(player, BloodItems.heart(first ? config.guardianHearts : config.guardianRepeatHearts));
-		BloodItems.give(player, BloodItems.fragment(3 + level.getRandom().nextInt(4)));
-		if (first) {
+		Judgement.Tally tally = tally(player);
+		Judgement.Grade grade = Judgement.grade(tally, body.getMaxHealth(), fighters);
+		BossSpoils.Claim claim = BossSpoils.peek(player, kind.id(), config.guardianSpoilsCooldownMinutes);
+		List<String> got = new ArrayList<>();
+		int fragments = Judgement.fragments(grade);
+		String note = "";
+		if (claim == BossSpoils.Claim.FIRST) {
+			BossSpoils.record(player, kind.id());
+			fragments += 3;
+			BloodItems.give(player, BloodItems.heart(config.guardianHearts));
 			BloodItems.give(player, BloodItems.anchor(1));
+			got.add(Judgement.hearts(config.guardianHearts, "your first victory"));
+			got.add("a Soul Anchor");
+		} else if (claim == BossSpoils.Claim.AGAIN && grade.atLeast(Judgement.Grade.A)) {
+			BossSpoils.record(player, kind.id());
+			BloodItems.give(player, BloodItems.heart(config.guardianRepeatHearts));
+			got.add(Judgement.hearts(config.guardianRepeatHearts, "an A or better"));
+		} else if (claim == BossSpoils.Claim.AGAIN) {
+			note = kind.title + "'s Blood Heart is ready for you: win with an A or better to take it.";
+		} else {
+			note = kind.title + "'s Blood Heart returns for you in " + Math.max(1, BossSpoils.minutesLeft(player, kind.id(),
+					config.guardianSpoilsCooldownMinutes)) + " min (for a victory graded A or better).";
 		}
-		player.sendSystemMessage(Component.literal(first ? "The spoils of " + kind.title + " are yours."
-				: "You take " + kind.title + "'s spoils again.").withStyle(kind.color));
-		return true;
+		int marks = Judgement.marks(soul, kind.id(), grade);
+		if (marks > 0) {
+			BloodItems.give(player, BloodItems.heart(marks));
+			got.add(Judgement.hearts(marks, grade == Judgement.Grade.S ? "your first S" : "your first A"));
+		}
+		BloodItems.give(player, BloodItems.fragment(fragments));
+		got.add(0, fragments + " Blood Fragments");
+		if (grade.atLeast(Judgement.Grade.A) || claim == BossSpoils.Claim.FIRST) {
+			Judgement.treasure(player);
+			got.add(1, "a treasure roll");
+		}
+		Judgement.report(player, kind.title, grade, tally, body.getMaxHealth(), fighters, got, note);
 	}
 
 	/** Ends the fight; a victory puts the guardian to sleep for a while. */

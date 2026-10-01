@@ -31,6 +31,7 @@ import net.thesmallthings.hellcraft.blood.GuideBook;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
+import net.thesmallthings.hellcraft.blood.Judgement;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.TravelMenu;
@@ -340,7 +341,7 @@ public final class HellCommands {
 							return reply(ctx.getSource(), "The bounty is lifted.");
 						})))
 				.then(Commands.literal("spoils")
-						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), BossSpoils.selfTest()))))
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), BossSpoils.selfTest() + "; " + Judgement.selfTest()))))
 				.then(Commands.literal("config")
 						.then(Commands.argument("key", StringArgumentType.word())
 								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(HellConfig.keys(), builder))
