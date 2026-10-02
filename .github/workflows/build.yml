@@ -217,6 +217,13 @@ jobs:
               - **The bounty:** every 20 minutes the strongest soul (25+ hearts) is marked. They glow, the server is told roughly where they are, and whoever kills them gets 3 Blood Hearts.
               - **Admin toolkit:** `/hellcraft inspect`, `setbonus`, `reset`, `strip`, `bounty` and `config <key> [value]`.
               - **Villagers breed again:** they keep their own 10-minute day (work, meet at the bell, then idle time when they breed) under Hell's endless dusk.
+            - **New in 2.0.3 (26.3):**
+              - **Boss textures fixed:** the guardians and Lucifer no longer show as black and magenta squares.
+              - **Animated bosses:** they rise out of the ground and roar, breathe, walk with a bob, rear back before each attack and lunge into it, flash red when hit, and topple over when they die.
+              - **No more cheese:** boss hits grow with your hearts (40 hearts doesn't make you a tank), arrows do 40% to guardians and the Morning Star, shooting a guardian from far away gets you pulled in, guardians can only be hurt from inside their lair, and there's no building or perching in a lair during a fight.
+              - **STYLE ranks, like ULTRAKILL:** every boss fight ranks your style from D to SSS in your own boss bar (hit hard, swap weapons, don't get hit). Every win pays Blood Fragments by rank, S or better adds treasure, and your first S and first SSS on each boss are worth a Blood Heart each.
+              - **Plain language:** messages, menus, item descriptions, the guide book and advancements now say what happened and what to do. Blood armour is now the Blood Helmet, Chestplate, Leggings and Boots.
+              - **The End after the dragon:** End cities and chorus plants in every ring from the first one, clear directions when the dragon dies, ring titles that say where you are, and a Rose Compass that points to the Celestial Rose.
 
             There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
 
