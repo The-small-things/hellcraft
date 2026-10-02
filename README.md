@@ -216,6 +216,8 @@ On the straight road in from the Gate of Hell (the +X axis, z = 0), five of Dant
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
+**Animated models (Lucifer too).** Each boss's model rises out of the ground and roars when it wakes, breathes while it stands, bobs and leans as it walks, rears back before every attack and lunges into it, squashes down into its stomps, shudders and flashes red when hit, and topples over and sinks when it dies. The server drives it all through the model's display entity, so players need nothing but the Hellcraft resource pack.
+
 **No cheesing (these rules also apply to Lucifer where it says so):**
 - **Hearts don't make you a tank.** Boss hits grow with your heart capacity, so a hit takes the same share of your health at 40 hearts as at 10. Dodge the telegraphed attacks instead of soaking them. (Lucifer too.)
 - **Arrows do 40% damage** to a guardian, and to Lucifer's Morning Star form. Geryon flies, and Lucifer's true form is the Wither, so arrows do full damage to both.

@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.util.Feedback;
 
@@ -30,6 +31,8 @@ final class LuciferAttacks {
 	enum Attack {SLASH, FANGS, WINGS, HELLFIRE}
 
 	static void perform(LuciferFight fight, Attack attack, Mob avatar, LivingEntity target) {
+		fight.model().pose(avatar, BossModel.Pose.WINDUP);
+		fight.schedule(14, () -> fight.model().pose(avatar, BossModel.Pose.STRIKE));
 		switch (attack) {
 			case SLASH -> slash(fight, avatar, target);
 			case FANGS -> fangs(fight, avatar, target);

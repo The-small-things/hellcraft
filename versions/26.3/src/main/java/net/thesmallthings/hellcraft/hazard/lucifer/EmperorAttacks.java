@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -112,6 +113,10 @@ final class EmperorAttacks {
 		List<LivingEntity> targets = fight.targets();
 		if (targets.isEmpty()) {
 			return false;
+		}
+		fight.model().pose(boss, attack == Attack.WINGBEAT ? BossModel.Pose.ROAR : BossModel.Pose.WINDUP);
+		if (attack != Attack.WINGBEAT) {
+			fight.schedule(14, () -> fight.model().pose(boss, BossModel.Pose.STRIKE));
 		}
 		LivingEntity target = targets.get(level.getRandom().nextInt(targets.size()));
 		double pace = (stage == 3 ? 0.7 : stage == 2 ? 0.85 : 1.0) * Math.max(0.6, 1.0 - 0.12 * fight.tier());

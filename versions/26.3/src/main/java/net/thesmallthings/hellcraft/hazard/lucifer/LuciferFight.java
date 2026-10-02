@@ -443,6 +443,7 @@ public final class LuciferFight {
 			updateBarName("LUCIFER \u2014 The Morning Star");
 			bar.setColor(BossEvent.BossBarColor.PURPLE);
 			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "ENOUGH!", "The Morning Star unbound", ChatFormatting.RED);
+			model.pose(avatar(), BossModel.Pose.ROAR);
 			attackCooldown = 30;
 			setPhase(Phase.ENRAGED);
 		});
@@ -490,6 +491,7 @@ public final class LuciferFight {
 			bar.removeAllPlayers();
 			lastTrueFormHealth = 1.0f;
 			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "LUCIFER", "Three-Faced Emperor", ChatFormatting.DARK_PURPLE);
+			model.pose(wither, BossModel.Pose.ROAR);
 			setPhase(Phase.TRUE_FORM);
 		}
 	}
@@ -567,6 +569,9 @@ public final class LuciferFight {
 			emperor.onHurt(dealt);
 		}
 		boolean boss = entity.getUUID().equals(avatarId) || entity.getUUID().equals(witherId);
+		if (boss && dealt > 0) {
+			model.hurt(entity);
+		}
 		if (!boss || !(source.getEntity() instanceof ServerPlayer player)) {
 			return;
 		}

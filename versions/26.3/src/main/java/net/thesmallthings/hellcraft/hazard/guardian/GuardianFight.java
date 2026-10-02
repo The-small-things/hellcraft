@@ -163,6 +163,7 @@ public abstract class GuardianFight {
 		level.addFreshEntity(body);
 		bodyId = body.getUUID();
 		model.attach(body, kind.model(), Math.max(kind.modelHeight, body.getBbHeight()));
+		model.pose(body, BossModel.Pose.ROAR);
 		level.playSound(null, lair, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 2.0f, 1.2f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, body.getX(), body.getY() + 1, body.getZ(), 120, 1.5, 2, 1.5, 0.05);
 		for (ServerPlayer p : audience()) {
@@ -225,6 +226,7 @@ public abstract class GuardianFight {
 		}
 		List<LivingEntity> targets = targets();
 		if (--cooldown <= 0 && !targets.isEmpty()) {
+			windUp(body);
 			cooldown = Math.max(20, nextAttack(body, targets));
 		}
 	}
@@ -235,11 +237,18 @@ public abstract class GuardianFight {
 		if (body == null || targets.isEmpty() || !attacks().contains(attack)) {
 			return false;
 		}
+		windUp(body);
 		int next = perform(attack, body, targets.get(0));
 		if (next > 0) {
 			cooldown = next;
 		}
 		return next >= 0;
+	}
+
+	/** Every attack: the model rears back, then lunges as the blow comes (most telegraphs last about a second). */
+	private void windUp(Mob body) {
+		model.pose(body, BossModel.Pose.WINDUP);
+		schedule(14, () -> model.pose(body(), BossModel.Pose.STRIKE));
 	}
 
 	/** Kills the guardian outright (test helper). */
@@ -277,6 +286,7 @@ public abstract class GuardianFight {
 			return;
 		}
 		onHurt(dealt);
+		model.hurt(entity);
 		if (source.getEntity() instanceof ServerPlayer attacker && styles.containsKey(attacker.getUUID())) {
 			styles.get(attacker.getUUID()).onHit(attacker, source, dealt);
 		}
@@ -597,6 +607,7 @@ public abstract class GuardianFight {
 	 * {@code maxRadius}. Anyone standing on the ground as it passes is hit; jumping clears it.
 	 */
 	protected void shockwave(Mob body, Vec3 center, int maxRadius, float damage, ParticleOptions particle) {
+		model.pose(body, BossModel.Pose.SLAM);
 		Set<UUID> hit = new java.util.HashSet<>();
 		for (int r = 2; r <= maxRadius; r++) {
 			int radius = r;

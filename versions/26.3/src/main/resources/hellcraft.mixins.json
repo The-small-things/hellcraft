@@ -10,7 +10,8 @@
 		"TheEndBiomeSourceMixin",
 		"BiomeSourceMixin",
 		"ItemFrameAccess",
-		"LivingEntityMixin"
+		"LivingEntityMixin",
+		"DisplayAccess"
 	],
 	"injectors": {
 		"defaultRequire": 1

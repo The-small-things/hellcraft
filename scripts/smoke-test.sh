@@ -239,6 +239,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$spoils"
   echo "$spoils" | grep -q "Spoils test: FIRST TOO_SOON AGAIN" || { echo "Boss spoils can be farmed"; exit 1; }
   echo "$spoils" | grep -q "Style test: D B S SSS" || { echo "Style ranks are wrong"; exit 1; }
+  echo "$spoils" | grep -q "Boss animation test: feet=true lunge=true topple=true" || { echo "Boss models don't animate right"; exit 1; }
   ceiling=$(rcon "hellcraft config heartCeiling" || true)
   echo "$ceiling"
   echo "$ceiling" | grep -q "heartCeiling = 40" || { echo "The heart ceiling is not 40"; exit 1; }
