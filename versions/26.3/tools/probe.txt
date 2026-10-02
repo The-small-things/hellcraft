@@ -1,8 +1,5 @@
-# villager breeding under a stopped clock: which clocks tick, and where love-making lives
-find (Clock|clock\.)
-WorldClock
-code ServerClockManager
-code ClockManager
-code VillagerGoalPackages (getIdlePackage|getMeetPackage|getWorkPackage)
-code Villager (updateActivity|customServerAiStep|refreshBrain|registerBrainGoals|canBreed|wantsMoreFood)
-code VillagerMakeLove (checkExtraStartConditions|start|tick|canStillUse)
+# boss animation: display entity transformation, interpolation and glow
+Display (Transformation|nterpolation|Glow|setBrightness|setViewRange|setShadow|createTransformation|setPosRotInterpolationDuration|setWidth|setHeight)
+find (Display|Transformation)$
+Transformation (public|<init>)
+Display$ItemDisplay (public|private|protected)
