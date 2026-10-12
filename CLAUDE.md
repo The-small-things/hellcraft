@@ -61,13 +61,16 @@ plain-language pass over all text, and End cities and guidance in Paradiso. None
 the style numbers, the heart scaling (`bossHeartScaling`) and the animation directions (forward = +Z in the
 display transformation) are educated guesses waiting on feedback.
 
-## Next: a big revamp
-The owner wants a major revamp. Before building, collect from them:
-1. The vision: how the mod should feel, what friends love (keep), what they hate or ignore, the top 3 goals.
-2. Whether to drop 1.21.1 for good (recommended: everything new is 26.3-only).
-3. Whether the server can start a fresh world (big worldgen changes are much easier).
-4. A playtest loop: every phase ships as a test build; they send `logs/latest.log`, screenshots and one line
-   per bug (did / expected / happened). No stable release without a play session.
+## Next: the 3.0 revamp
+The plan is `docs/REVAMP.md` (draft, waiting on the owner's markup; its section 15 lists the open questions).
+Decided so far (2026-10-12):
+- Fresh world, so the map is rebuilt from scratch.
+- **A client mod is now required.** The "vanilla client, no blocks, no items" rule is gone: real blocks, items,
+  mobs, models, cutscenes and HUD. Bosses use Minecraft's own keyframe animation system (no GeckoLib).
+- Medium world: radius about 3,500.
+- Keep lifesteal and ghosts, blood weapons and armour, style ranks and spoils, and the P's, Hall and Journey.
+- 1.21.1 is dropped for now: leave its code alone, take it out of CI, and make `versions/26.3` self-contained.
 
-Then write a revamp plan for them to mark up and build it in phases. Planned tooling: in-game screenshots from a
-headless client in CI (Fabric's client game tests) so Claude can see textures, models and animations.
+Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
+21). Maven Central sometimes answers 429; re-run the build. Docker works, but Modrinth is blocked, so a local
+smoke test must take Fabric API from maven.fabricmc.net. Mesa and Xvfb are installed, for a headless client.
