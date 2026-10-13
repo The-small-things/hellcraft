@@ -90,6 +90,10 @@ jobs:
     needs: [build-26, smoke-test-26, client-test-26]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
+    # one test release at a time: two pushes in a row must not race over the same tag
+    concurrency:
+      group: test-release
+      cancel-in-progress: false
     permissions:
       contents: write
     steps:
@@ -98,27 +102,25 @@ jobs:
         with:
           name: hellcraft-singleplayer-26.3
           path: dist
-      - name: Move the test tag to this commit
+      - name: Name the test build
         id: tag
         run: |
           VER=$(grep '^mod_version=' versions/26.3/gradle.properties | cut -d= -f2)
           echo "tag=v${VER}-test" >> "$GITHUB_OUTPUT"
           echo "ver=${VER}" >> "$GITHUB_OUTPUT"
-          git tag -f "v${VER}-test"
-          git push -f origin "v${VER}-test"
-      - name: Clear the previous test build's files
+      # The workflow token may not move a tag across a change to this workflow file, but it may delete a tag and
+      # create one: so the previous test release and its tag go, and the next step makes them again at this commit.
+      - name: Remove the previous test build
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG=${{ steps.tag.outputs.tag }}
-          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets -q '.assets[].name' | while read -r asset; do
-              gh release delete-asset "$TAG" "$asset" --repo "$GITHUB_REPOSITORY" -y
-            done
-          fi
+          gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --cleanup-tag -y || true
+          git push origin ":refs/tags/$TAG" || true
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           name: Hellcraft ${{ steps.tag.outputs.ver }} (test build)
           prerelease: true
           files: dist/*
