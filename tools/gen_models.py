@@ -337,18 +337,9 @@ GUARDIANS = {
 # The results must match HellWeapons.create() in the 26.3 sources.
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "data", "hellcraft")
-# fabric:components (not fabric:custom_data) so the recipe book shows the real Blood Heart / Fragment: it
-# displays the base item with these components applied. They must equal what BloodItems.heart()/fragment() set.
-HEART = {"fabric:type": "fabric:components", "base": "minecraft:fermented_spider_eye", "components": {
-    "minecraft:custom_data": {"hellcraft": "heart"},
-    "minecraft:item_model": "hellcraft:blood_heart",
-    "minecraft:item_name": {"text": "Blood Heart", "color": "dark_red", "bold": True},
-}}
-FRAGMENT = {"fabric:type": "fabric:components", "base": "minecraft:red_dye", "components": {
-    "minecraft:custom_data": {"hellcraft": "fragment"},
-    "minecraft:item_model": "hellcraft:blood_fragment",
-    "minecraft:item_name": {"text": "Blood Fragment", "color": "red"},
-}}
+# Hellcraft's own items (HellItems.java)
+HEART = "hellcraft:blood_heart"
+FRAGMENT = "hellcraft:blood_fragment"
 # the last two lore lines of every weapon (red)
 WEAPON_FOOTER = ["Hits and kills charge it. Fully charged: right-click for its Blood Art.",
                  "Sneak + right-click: Blood Oath (pay 3❤ of health for 30 s of full power)."]
@@ -436,28 +427,6 @@ def recipes():
             "result": {"id": base, "components": components}})
 
 
-# The results must match BloodItems.vigil() / anchor() in the 26.3 sources. The base is a poisonous potato
-# with its food removed, so the item is inert and no vanilla recipe takes it.
-INERT = {"!minecraft:food": {}, "!minecraft:consumable": {}}
-VIGIL = dict(INERT, **{
-    "minecraft:custom_data": {"hellcraft": "vigil"},
-    "minecraft:item_model": "hellcraft:vigil_candle",
-    "minecraft:item_name": {"text": "Vigil Candle", "color": "aqua"},
-    "minecraft:lore": [{"text": "Right-click to light it where you stand.", "color": "gray", "italic": False},
-                       {"text": "Your next death wakes you beside it, once.", "color": "gray", "italic": False}],
-    "minecraft:rarity": "uncommon",
-})
-ANCHOR = dict(INERT, **{
-    "minecraft:custom_data": {"hellcraft": "anchor"},
-    "minecraft:item_model": "hellcraft:soul_anchor",
-    "minecraft:item_name": {"text": "Soul Anchor", "color": "aqua", "bold": True},
-    "minecraft:lore": [{"text": "Carry it. If you die, you rise again", "color": "gray", "italic": False},
-                       {"text": "where you fell, and it breaks.", "color": "gray", "italic": False}],
-    "minecraft:rarity": "rare",
-    "minecraft:enchantment_glint_override": True,
-})
-
-
 # Paradiso's relics; must match Relics.java
 WINGS = {
     "minecraft:custom_data": {"hellcraft": "relic", "relic": "seraph_wings"},
@@ -474,7 +443,7 @@ def item_recipes():
     write(os.path.join(DATA, "recipe", "vigil_candle.json"), {
         "type": "minecraft:crafting_shapeless", "category": "misc",
         "ingredients": ["minecraft:torch", "minecraft:bone", "minecraft:string"],
-        "result": {"id": "minecraft:poisonous_potato", "components": VIGIL}})
+        "result": {"id": "hellcraft:vigil_candle"}})
 
 
 def main():

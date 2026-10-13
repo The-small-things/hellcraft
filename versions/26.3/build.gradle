@@ -16,6 +16,29 @@ repositories {
 
 def root = rootDir.toPath().resolve('../..').normalize().toFile()
 
+// Client-only code lives in src/client (HellcraftClient); everything else in src/main runs on both sides.
+loom {
+	splitEnvironmentSourceSets()
+	mods {
+		hellcraft {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+// Client game tests (src/gametest): a real client, headless under Xvfb, that joins worlds and servers and saves
+// screenshots to build/run/clientGameTest/screenshots. Run with ./gradlew runClientGameTest (see tools/dev/clienttest.sh).
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "hellcraft-gametest"
+		enableGameTests = false
+		enableClientGameTests = true
+		eula = true
+	}
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"

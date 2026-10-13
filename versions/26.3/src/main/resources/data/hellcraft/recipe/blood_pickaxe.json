@@ -3,35 +3,8 @@
   "category": "equipment",
   "key": {
     "S": "minecraft:diamond_pickaxe",
-    "H": {
-      "fabric:type": "fabric:components",
-      "base": "minecraft:fermented_spider_eye",
-      "components": {
-        "minecraft:custom_data": {
-          "hellcraft": "heart"
-        },
-        "minecraft:item_model": "hellcraft:blood_heart",
-        "minecraft:item_name": {
-          "text": "Blood Heart",
-          "color": "dark_red",
-          "bold": true
-        }
-      }
-    },
-    "F": {
-      "fabric:type": "fabric:components",
-      "base": "minecraft:red_dye",
-      "components": {
-        "minecraft:custom_data": {
-          "hellcraft": "fragment"
-        },
-        "minecraft:item_model": "hellcraft:blood_fragment",
-        "minecraft:item_name": {
-          "text": "Blood Fragment",
-          "color": "red"
-        }
-      }
-    }
+    "H": "hellcraft:blood_heart",
+    "F": "hellcraft:blood_fragment"
   },
   "pattern": [
     "FHF",

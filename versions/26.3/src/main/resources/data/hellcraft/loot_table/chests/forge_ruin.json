@@ -101,39 +101,16 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:red_dye",
+          "name": "hellcraft:blood_fragment",
           "weight": 8,
-          "modifier": [
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 4
-              },
-              "type": "minecraft:set_count"
+          "modifier": {
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 1,
+              "max": 4
             },
-            {
-              "components": {
-                "minecraft:custom_data": {
-                  "hellcraft": "fragment"
-                },
-                "minecraft:item_model": "hellcraft:blood_fragment",
-                "minecraft:item_name": {
-                  "text": "Blood Fragment",
-                  "color": "red"
-                },
-                "minecraft:lore": [
-                  {
-                    "text": "Right-click 8 together to clot them into a Blood Heart",
-                    "color": "gray",
-                    "italic": false
-                  }
-                ],
-                "minecraft:rarity": "uncommon"
-              },
-              "type": "minecraft:set_components"
-            }
-          ]
+            "type": "minecraft:set_count"
+          }
         },
         {
           "type": "minecraft:item",

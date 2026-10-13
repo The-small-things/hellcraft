@@ -3,20 +3,7 @@
   "category": "equipment",
   "key": {
     "S": "minecraft:iron_sword",
-    "F": {
-      "fabric:type": "fabric:components",
-      "base": "minecraft:red_dye",
-      "components": {
-        "minecraft:custom_data": {
-          "hellcraft": "fragment"
-        },
-        "minecraft:item_model": "hellcraft:blood_fragment",
-        "minecraft:item_name": {
-          "text": "Blood Fragment",
-          "color": "red"
-        }
-      }
-    }
+    "F": "hellcraft:blood_fragment"
   },
   "pattern": [
     " F ",

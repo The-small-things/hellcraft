@@ -6,11 +6,13 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.blood.Bounty;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
+import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.blood.Hellforge;
 import net.thesmallthings.hellcraft.blood.Prestige;
@@ -27,6 +29,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.net.JoinCheck;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HallOfTheDamned;
@@ -43,12 +46,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Hellcraft: the overworld becomes Dante's Inferno, and blood is fuel.
- * Server-side only; vanilla clients can join.
+ * Hellcraft: the overworld becomes Dante's Inferno, and blood is fuel. Players need the mod too (see JoinCheck);
+ * its client side is HellcraftClient.
  */
 public class HellcraftMod implements ModInitializer {
 	public static final String MOD_ID = "hellcraft";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	/** This build's version, for example "3.0.0+26.3". Players must have exactly the server's. */
+	public static final String VERSION = FabricLoader.getInstance().getModContainer(MOD_ID)
+			.map(mod -> mod.getMetadata().getVersion().getFriendlyString()).orElse("unknown");
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
@@ -57,6 +63,8 @@ public class HellcraftMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		HellConfig.load();
+		JoinCheck.register();
+		HellItems.register();
 		HellWorldgen.register();
 		BloodEvents.register();
 		HellWeapons.register();

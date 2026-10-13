@@ -3,7 +3,7 @@
 	"id": "hellcraft",
 	"version": "${version}",
 	"name": "Hellcraft",
-	"description": "The overworld becomes Dante's Inferno: nine circles terracing down to frozen Cocytus. Lifesteal where blood is fuel, and hell is full. Server-side only; vanilla clients can join.",
+	"description": "The overworld becomes Dante's Inferno: nine circles terracing down to frozen Cocytus. Lifesteal where blood is fuel, and hell is full. Install it on the server and on every player's game.",
 	"authors": [
 		"the-small-things"
 	],
@@ -15,6 +15,9 @@
 	"entrypoints": {
 		"main": [
 			"net.thesmallthings.hellcraft.HellcraftMod"
+		],
+		"client": [
+			"net.thesmallthings.hellcraft.client.HellcraftClient"
 		]
 	},
 	"mixins": [

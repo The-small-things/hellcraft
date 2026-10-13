@@ -2,15 +2,11 @@ package net.thesmallthings.hellcraft.blood;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.thesmallthings.hellcraft.HellcraftMod;
@@ -19,14 +15,15 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import java.util.List;
 
 /**
- * Blood Hearts and Blood Fragments. Vanilla clients can't see new items, so these are vanilla items
- * marked with {@code custom_data {hellcraft: "heart" | "fragment"}} plus a name and lore. Only
- * items carrying that marker count, so ordinary red dye or spider eyes are never blood.
+ * Blood Hearts, Blood Fragments, Lucifer's Bane, Vigil Candles and Soul Anchors: Hellcraft's own items
+ * ({@link HellItems}). Before 3.0 they were vanilla items marked with {@code custom_data {hellcraft: "heart" | ...}};
+ * {@link #refresh} turns any of those still around into the real thing.
  */
 public final class BloodItems {
 	private BloodItems() {
 	}
 
+	/** The custom_data key that marked the old vanilla-based items (and still marks weapons, armour and relics). */
 	public static final String KEY = "hellcraft";
 	public static final String HEART = "heart";
 	public static final String FRAGMENT = "fragment";
@@ -34,96 +31,40 @@ public final class BloodItems {
 	public static final String VIGIL = "vigil";
 	public static final String ANCHOR = "anchor";
 
-	/** Base items. Change these two lines to re-skin the blood items. */
-	public static final Item HEART_BASE = Items.FERMENTED_SPIDER_EYE;
-	public static final Item FRAGMENT_BASE = Items.DYE.red();
-	/** The Morning Star's bane: a nether star. */
-	public static final Item BANE_BASE = Items.NETHER_STAR;
-	/** Vigil Candles and Soul Anchors: a poisonous potato with its food taken out, so it does nothing by itself. */
-	public static final Item INERT_BASE = Items.POISONOUS_POTATO;
-
 	public static ItemStack heart(int count) {
-		ItemStack stack = new ItemStack(HEART_BASE, count);
-		mark(stack, HEART);
-		stack.set(DataComponents.ITEM_NAME, Component.literal("Blood Heart").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("A heart you can carry, trade or spend.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
-				Component.literal("Right-click to gain a heart.").withStyle(s -> s.withColor(ChatFormatting.RED).withItalic(false)),
-				Component.literal("Blood Altars spend them to revive, ward and more.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
-		stack.set(DataComponents.RARITY, Rarity.EPIC);
-		return stack;
+		return new ItemStack(HellItems.BLOOD_HEART, count);
 	}
 
 	public static ItemStack fragment(int count) {
-		ItemStack stack = new ItemStack(FRAGMENT_BASE, count);
-		mark(stack, FRAGMENT);
-		stack.set(DataComponents.ITEM_NAME, Component.literal("Blood Fragment").withStyle(ChatFormatting.RED));
-		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Right-click with " + HellConfig.get().fragmentsPerHeart + " in a stack to make a Blood Heart").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
-		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
+		ItemStack stack = new ItemStack(HellItems.BLOOD_FRAGMENT, count);
+		stack.set(DataComponents.LORE, fragmentLore());
 		return stack;
+	}
+
+	/** A fragment's lore names how many make a heart, which can be changed while the server runs. */
+	static ItemLore fragmentLore() {
+		return new ItemLore(List.of(Component.literal("Right-click with " + HellConfig.get().fragmentsPerHeart + " in a stack to make a Blood Heart")
+				.withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false))));
 	}
 
 	/** Lucifer's Bane: consumed to permanently raise your heart cap. Tradeable and stackable. */
 	public static ItemStack bane(int count) {
-		ItemStack stack = new ItemStack(BANE_BASE, count);
-		mark(stack, BANE);
-		stack.set(DataComponents.ITEM_NAME, Component.literal("Lucifer's Bane").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Lucifer's reward.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
-				Component.literal("Right-click: your max hearts go up by 1, for good.").withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)),
-				Component.literal("Can be traded. Use as many as you like.").withStyle(s -> s.withColor(ChatFormatting.DARK_GRAY).withItalic(false)))));
-		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-		stack.set(DataComponents.RARITY, Rarity.EPIC);
-		return stack;
+		return new ItemStack(HellItems.LUCIFERS_BANE, count);
 	}
 
 	/** A one-time respawn point: light it, and the next death wakes you beside it. Recipe: vigil_candle.json. */
 	public static ItemStack vigil(int count) {
-		ItemStack stack = inert(count, VIGIL);
-		stack.set(DataComponents.ITEM_NAME, Component.literal("Vigil Candle").withStyle(ChatFormatting.AQUA));
-		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Right-click to light it where you stand.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
-				Component.literal("Next time you die, you respawn there (once).").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
-		stack.set(DataComponents.RARITY, Rarity.UNCOMMON);
-		return stack;
+		return new ItemStack(HellItems.VIGIL_CANDLE, count);
 	}
 
 	/** Carried: if you die, you rise again where you fell, and it breaks. */
 	public static ItemStack anchor(int count) {
-		ItemStack stack = inert(count, ANCHOR);
-		stack.set(DataComponents.ITEM_NAME, Component.literal("Soul Anchor").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
-		stack.set(DataComponents.LORE, new ItemLore(List.of(
-				Component.literal("Keep it in your inventory. If you die, you").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)),
-				Component.literal("come back where you died, and it breaks.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)))));
-		stack.set(DataComponents.RARITY, Rarity.RARE);
-		stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-		return stack;
+		return new ItemStack(HellItems.SOUL_ANCHOR, count);
 	}
 
-	private static ItemStack inert(int count, String kind) {
-		ItemStack stack = new ItemStack(INERT_BASE, count);
-		stack.remove(DataComponents.FOOD);
-		stack.remove(DataComponents.CONSUMABLE);
-		mark(stack, kind);
-		return stack;
-	}
-
-	private static void mark(ItemStack stack, String kind) {
-		CompoundTag tag = new CompoundTag();
-		tag.putString(KEY, kind);
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-		// drawn by the Hellcraft resource pack; the base item still shows without it
-		String model = switch (kind) {
-			case HEART -> "blood_heart";
-			case FRAGMENT -> "blood_fragment";
-			default -> "lucifers_bane";
-		};
-		stack.set(DataComponents.ITEM_MODEL, HellcraftMod.id(model));
-	}
-
-	private static String kind(ItemStack stack) {
-		if (stack.isEmpty()) {
+	/** What an old (before 3.0) vanilla-based blood item was marked as, or "" for anything else. */
+	private static String legacyKind(ItemStack stack) {
+		if (stack.isEmpty() || stack.getItem().builtInRegistryHolder().key().identifier().getNamespace().equals(HellcraftMod.MOD_ID)) {
 			return "";
 		}
 		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
@@ -134,35 +75,33 @@ public final class BloodItems {
 	}
 
 	public static boolean isHeart(ItemStack stack) {
-		return HEART.equals(kind(stack));
+		return stack.is(HellItems.BLOOD_HEART);
 	}
 
 	public static boolean isFragment(ItemStack stack) {
-		return FRAGMENT.equals(kind(stack));
+		return stack.is(HellItems.BLOOD_FRAGMENT);
 	}
 
 	public static boolean isBane(ItemStack stack) {
-		return BANE.equals(kind(stack));
+		return stack.is(HellItems.LUCIFERS_BANE);
 	}
 
 	public static boolean isVigil(ItemStack stack) {
-		return VIGIL.equals(kind(stack));
+		return stack.is(HellItems.VIGIL_CANDLE);
 	}
 
 	public static boolean isAnchor(ItemStack stack) {
-		return ANCHOR.equals(kind(stack));
+		return stack.is(HellItems.SOUL_ANCHOR);
 	}
 
-	/** Any Hellcraft item that must not be used as its vanilla base (dyeing, planting, beacons, eating...). */
+	/** Any of these five Hellcraft items. */
 	public static boolean isBlood(ItemStack stack) {
-		String k = kind(stack);
-		return HEART.equals(k) || FRAGMENT.equals(k) || BANE.equals(k) || VIGIL.equals(k) || ANCHOR.equals(k);
+		return isHeart(stack) || isFragment(stack) || isBane(stack) || isVigil(stack) || isAnchor(stack);
 	}
 
 	/**
-	 * Re-stamps every blood item a player carries (inventory and ender chest) in its current form: items
-	 * made by older versions, or from loot generated with other settings, otherwise look different and
-	 * don't stack with new ones.
+	 * Re-stamps every blood item a player carries (inventory and ender chest) in its current form: items from
+	 * before 3.0 become the real items, and a fragment's lore follows the fragmentsPerHeart setting.
 	 */
 	public static void refresh(Player player) {
 		refresh(player.getInventory());
@@ -173,18 +112,16 @@ public final class BloodItems {
 		for (int i = 0; i < container.getContainerSize(); i++) {
 			ItemStack stack = container.getItem(i);
 			HellWeapons.refresh(stack);
-			if (!isBlood(stack)) {
-				continue;
-			}
 			int n = stack.getCount();
-			ItemStack fresh = switch (kind(stack)) {
+			ItemStack fresh = switch (legacyKind(stack)) {
 				case HEART -> heart(n);
 				case FRAGMENT -> fragment(n);
+				case BANE -> bane(n);
 				case VIGIL -> vigil(n);
 				case ANCHOR -> anchor(n);
-				default -> bane(n);
+				default -> isFragment(stack) ? fragment(n) : null;
 			};
-			if (!ItemStack.isSameItemSameComponents(stack, fresh)) {
+			if (fresh != null && !ItemStack.isSameItemSameComponents(stack, fresh)) {
 				container.setItem(i, fresh);
 			}
 		}

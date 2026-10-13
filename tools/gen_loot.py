@@ -9,24 +9,14 @@ Run from the repo root:  python3 tools/gen_loot.py
 - chests/heretic_tomb: the "forbidden books" in some of Heresy's burning tombs
 - gameplay/guardian_spoils: what a slain circle guardian leaves besides its blood
 
-Custom items (Blood Fragments, Vigil Candles, Soul Anchors) carry the same components as BloodItems.java;
-the game re-stamps them anyway once they are in a player's inventory.
+Blood Fragments, Vigil Candles and Soul Anchors are Hellcraft's own items (HellItems.java).
 """
 import json
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
-from gen_models import ANCHOR, FRAGMENT, VIGIL  # noqa: E402
-
 DATA = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "data", "hellcraft",
                     "loot_table")
-
-FRAGMENT_ITEM = dict(FRAGMENT["components"], **{
-    "minecraft:lore": [{"text": "Right-click 8 together to clot them into a Blood Heart", "color": "gray", "italic": False}],
-    "minecraft:rarity": "uncommon",
-})
-
 
 def write(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -40,7 +30,7 @@ def uniform(lo, hi):
 
 
 def item(name, weight, lo=1, hi=1, *modifiers):
-    entry = {"type": "minecraft:item", "name": "minecraft:" + name, "weight": weight}
+    entry = {"type": "minecraft:item", "name": name if ":" in name else "minecraft:" + name, "weight": weight}
     mods = []
     if (lo, hi) != (1, 1):
         mods.append({"count": uniform(lo, hi), "type": "minecraft:set_count"})
@@ -57,15 +47,15 @@ def custom(base, components, weight, lo=1, hi=1):
 
 
 def fragments(weight, lo, hi):
-    return custom("red_dye", FRAGMENT_ITEM, weight, lo, hi)
+    return item("hellcraft:blood_fragment", weight, lo, hi)
 
 
 def vigils(weight, lo=1, hi=1):
-    return custom("poisonous_potato", VIGIL, weight, lo, hi)
+    return item("hellcraft:vigil_candle", weight, lo, hi)
 
 
 def anchor(weight):
-    return custom("poisonous_potato", ANCHOR, weight)
+    return item("hellcraft:soul_anchor", weight)
 
 
 def book(weight, lo, hi):
