@@ -1,23 +1,17 @@
-# Hellcraft server. Put hellcraft-<version>.jar in ./mods next to this file, then:
+# Hellcraft server (Minecraft 26.3). Put hellcraft-<version>-mc26.3.jar in ./mods next to this file, then:
 #   docker compose up -d
-# Players join with a plain vanilla client of the same Minecraft version - nothing to install.
+# Every player needs Hellcraft too, the same version as the server: the Hellcraft modpack (.mrpack) from the
+# Releases page, opened in the Modrinth App or Prism Launcher. Players without it are told what to install.
 services:
   hellcraft:
-    # Minecraft 26.3: use itzg/minecraft-server:java25 and VERSION "26.3" (and the -mc26.3 jar)
-    image: itzg/minecraft-server:java21
+    image: itzg/minecraft-server:java25
     container_name: hellcraft
     ports:
       - "25565:25565"
-      # Lucifer's boss music pack (only needed if you add .ogg files, see README "Boss music")
-      - "25566:25566"
     environment:
       EULA: "TRUE"
       TYPE: "FABRIC"
-      VERSION: "1.21.1"
-      # The Hellcraft resource pack (Lucifer, weapons, music) is sent to each player from the address they
-      # joined with, on port 25566 (keep it forwarded like 25565). Only set this to override that address,
-      # e.g. behind a proxy (1.21.1 still needs it).
-      # HELLCRAFT_PACK_HOST: "play.example.com"
+      VERSION: "26.3"
       # Server operators (admins): comma-separated Minecraft usernames
       OPS: "Blender_Uploads"
       # Fabric API is downloaded automatically; Hellcraft comes from ./mods

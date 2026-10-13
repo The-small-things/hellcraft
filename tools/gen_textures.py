@@ -639,8 +639,9 @@ atlas("guardian_vulcan", [
 ])
 
 # ------------------------------------------------------------------------------------ the Blood Heart HUD
-# 9x9 sprites over the vanilla health bar (assets/minecraft/.../hud/heart). "O" is the container's rim, "i" its
-# hollow; the fill sprites paint the inside and a drop of blood that has run off the point.
+# 9x9 sprites the client draws over the vanilla health bar (BloodHud swaps minecraft:hud/heart/<name> for
+# hellcraft:hud/heart/<name>). "O" is the container's rim, "i" its hollow; the fill sprites paint the inside and a
+# drop of blood that has run off the point.
 
 HEART = [
     ".OO...OO.",
@@ -665,9 +666,8 @@ FILL_SHADE = [
     ".........",
     "....q....",   # the drop that has run off the point
 ]
-HUD = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "assets", "minecraft",
+HUD = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "assets", "hellcraft",
                    "textures", "gui", "sprites", "hud", "heart")
-RANKS = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "hellcraft_ranks")
 
 
 def heart_sprite(path, colours, half=False, rim=None, crown=None):
@@ -706,12 +706,12 @@ heart_sprite(os.path.join(HUD, "container_blinking.png"), None, rim=("e8c8c8", "
 heart_sprite(os.path.join(HUD, "container_hardcore.png"), None, rim=("0c0102", "1e0406"), crown="d8d0c0")
 heart_sprite(os.path.join(HUD, "container_hardcore_blinking.png"), None, rim=("e8c8c8", "1e0406"), crown="ffffff")
 
-# The Seven P's: each rank's small pack re-rims the containers, bronze on the first terrace to white on the last
-# (the colours match Prestige.Terrace); the purified wear a point of light on top.
+# The Seven P's: each rank re-rims the containers (hud/heart/rank_<n>), bronze on the first terrace to white on the
+# last (the colours match Prestige.Terrace); the purified wear a point of light on top.
 RANK_RIMS = ["8c5a2b", "a8743a", "c0913f", "d4af37", "e8c75a", "f4e08a", "ffffff"]
 for rank, rim in enumerate(RANK_RIMS, start=1):
     crown = "fffbe0" if rank == 7 else None
-    base = os.path.join(RANKS, str(rank), "assets", "minecraft", "textures", "gui", "sprites", "hud", "heart")
+    base = os.path.join(HUD, "rank_%d" % rank)
     heart_sprite(os.path.join(base, "container.png"), None, rim=(rim, "2e0a0e"), crown=crown)
     heart_sprite(os.path.join(base, "container_blinking.png"), None, rim=("ffffff", "2e0a0e"), crown=crown)
     heart_sprite(os.path.join(base, "container_hardcore.png"), None, rim=(rim, "1e0406"), crown=crown or "d8d0c0")

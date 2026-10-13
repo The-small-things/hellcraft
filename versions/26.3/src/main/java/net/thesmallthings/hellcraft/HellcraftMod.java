@@ -28,7 +28,8 @@ import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
-import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.music.BossMusic;
+import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.JoinCheck;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.GreatForge;
@@ -77,7 +78,7 @@ public class HellcraftMod implements ModInitializer {
 		GuardianManager.register();
 		BossModel.register();
 		LuciferRewards.register();
-		MusicPack.register();
+		HudSync.register();
 
 		ServerLifecycleEvents.SERVER_STARTING.register(Paradiso::init);
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
@@ -90,6 +91,7 @@ public class HellcraftMod implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(Journey::check);
 		ServerLifecycleEvents.SERVER_STARTED.register(RecipeCheck::run);
 		ServerLifecycleEvents.SERVER_STARTED.register(Villages::setUp);
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> BossMusic.log());
 		ServerEntityEvents.ENTITY_LOAD.register(MobEmpowerment::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Spine::onLoad);
 		ServerEntityEvents.ENTITY_LOAD.register(Shrines::onLoad);

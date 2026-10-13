@@ -41,7 +41,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
-import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HallOfTheDamned;
@@ -355,6 +355,7 @@ public final class HellCommands {
 										.executes(ctx -> {
 											String result = HellConfig.setValue(StringArgumentType.getString(ctx, "key"), StringArgumentType.getString(ctx, "value"));
 											ctx.getSource().getServer().getPlayerList().getPlayers().forEach(Hearts::apply);
+											HudSync.sendAll(ctx.getSource().getServer());
 											return reply(ctx.getSource(), result);
 										}))))
 				.then(Commands.literal("whiteroom")
@@ -386,7 +387,7 @@ public final class HellCommands {
 													soul.prestige = IntegerArgumentType.getInteger(ctx, "burned");
 													HellState.get(ctx.getSource().getServer()).setDirty();
 													Hearts.apply(p);
-													MusicPack.sendRank(p, soul.prestige);
+													HudSync.send(p);
 													return reply(ctx.getSource(), Prestige.describe(soul));
 												})))))
 				.then(Commands.literal("purgatory").executes(ctx -> {

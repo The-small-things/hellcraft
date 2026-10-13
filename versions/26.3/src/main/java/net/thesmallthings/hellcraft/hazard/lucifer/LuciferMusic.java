@@ -11,7 +11,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.JukeboxSong;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.music.BossMusic;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * The fight's soundtrack. Each listener hears the operator's custom track if they loaded the music
- * pack, otherwise a vanilla music disc. Tracks follow the listener (entity-bound sound) and loop.
+ * The fight's soundtrack: Hellcraft's own track for the phase if the mod ships one (BossMusic), otherwise a
+ * vanilla music disc. Tracks follow the listener (entity-bound sound) and loop.
  */
 final class LuciferMusic {
 	private record Song(Holder<SoundEvent> sound, int lengthTicks) {
@@ -30,7 +30,7 @@ final class LuciferMusic {
 
 	private final ServerLevel level;
 	@Nullable
-	private MusicPack.Track track;
+	private BossMusic.Track track;
 	/** Per listener: the song they're hearing and the tick it should restart. */
 	private final Map<UUID, Song> playing = new HashMap<>();
 	private final Map<UUID, Integer> restartAt = new HashMap<>();
@@ -39,7 +39,7 @@ final class LuciferMusic {
 		this.level = level;
 	}
 
-	void switchTo(MusicPack.Track next, List<ServerPlayer> audience, int now) {
+	void switchTo(BossMusic.Track next, List<ServerPlayer> audience, int now) {
 		stopAll(audience);
 		track = next;
 		for (ServerPlayer p : audience) {
@@ -99,9 +99,9 @@ final class LuciferMusic {
 	}
 
 	@Nullable
-	private Song songFor(ServerPlayer player, MusicPack.Track track) {
-		if (MusicPack.hasPack(player)) {
-			return new Song(MusicPack.sound(track), (int) Math.round(MusicPack.length(track) * 20));
+	private Song songFor(ServerPlayer player, BossMusic.Track track) {
+		if (BossMusic.shipped(track)) {
+			return new Song(BossMusic.sound(track), (int) Math.round(BossMusic.length(track) * 20));
 		}
 		HellConfig config = HellConfig.get();
 		String id = switch (track) {

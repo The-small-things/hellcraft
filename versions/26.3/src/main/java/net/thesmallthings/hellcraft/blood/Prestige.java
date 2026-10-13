@@ -22,7 +22,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodData;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.util.Journey;
 
 import java.util.HashMap;
@@ -147,7 +147,7 @@ public final class Prestige {
 		if (soul.prestige >= MAX) {
 			Journey.award(player, "journey/purified");
 		}
-		MusicPack.sendRank(player, soul.prestige);
+		HudSync.send(player);
 	}
 
 	// ---- the virtues --------------------------------------------------------------------------

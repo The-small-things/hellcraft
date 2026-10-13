@@ -43,7 +43,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
-import net.thesmallthings.hellcraft.music.MusicPack;
+import net.thesmallthings.hellcraft.music.BossMusic;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Purgatory;
@@ -403,13 +403,13 @@ public final class LuciferFight {
 		List<ServerPlayer> audience = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
 		switch (next) {
 			case DUEL -> {
-				music.switchTo(MusicPack.Track.DUEL, audience, tick);
+				music.switchTo(BossMusic.Track.DUEL, audience, tick);
 				if (tier() >= 2) {
 					raiseTraitors();
 				}
 			}
-			case ENRAGED -> music.switchTo(MusicPack.Track.ENRAGED, audience, tick);
-			case TRUE_FORM -> music.switchTo(MusicPack.Track.TRUE_FORM, audience, tick);
+			case ENRAGED -> music.switchTo(BossMusic.Track.ENRAGED, audience, tick);
+			case TRUE_FORM -> music.switchTo(BossMusic.Track.TRUE_FORM, audience, tick);
 			case DEFEAT, FAILED, DONE -> music.stopAll(audience);
 			default -> {
 			}

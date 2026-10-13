@@ -11,19 +11,56 @@ NAME=hellcraft-smoke
 LOG=smoke-server.log
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 
-# A short generated track so the boss-music pack is built and served
 CONFIG_DIR=$(mktemp -d)
 mkdir -p "$CONFIG_DIR/hellcraft/music"
+PORTS=()
 if [ "$MC_VERSION" = "1.21.1" ]; then
+  # the frozen 1.21.1 build still serves a resource pack with boss music: a short generated track
   echo '{"musicPackHost": "localhost"}' > "$CONFIG_DIR/hellcraft.json"
+  if command -v ffmpeg >/dev/null; then
+    ffmpeg -loglevel error -f lavfi -i "sine=frequency=220:duration=3" -c:a libvorbis "$CONFIG_DIR/hellcraft/music/duel.ogg"
+  fi
+  PORTS=(-p 25566:25566)
 else
-  # a config written by 1.0.0 (old balance defaults, no configVersion): it must be moved to the new defaults
+  # a config written by 1.0.0 (old balance defaults, no configVersion, an old pack setting): it must be moved
+  # to the new defaults
   echo '{"musicPackHost": "localhost", "monsterCapMultiplier": 1.75, "mobHealthPerDepth": 0.06, "fragmentChanceBase": 0.02}' > "$CONFIG_DIR/hellcraft.json"
 fi
-if command -v ffmpeg >/dev/null; then
-  ffmpeg -loglevel error -f lavfi -i "sine=frequency=220:duration=3" -c:a libvorbis "$CONFIG_DIR/hellcraft/music/duel.ogg"
-fi
 chmod -R a+rwX "$CONFIG_DIR"
+
+if [ "$MC_VERSION" != "1.21.1" ]; then
+  # the art ships in the mod (the client loads it from the jar)
+  JAR=$(ls "$MODS_DIR"/hellcraft-*.jar | head -1)
+  for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
+           assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/item/boss/lucifer_emperor.png \
+           assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/items/vigil_candle.json assets/hellcraft/items/soul_anchor.json \
+           assets/hellcraft/equipment/blood.json assets/hellcraft/textures/entity/equipment/humanoid/blood.png \
+           assets/hellcraft/textures/entity/equipment/humanoid_leggings/blood.png \
+           assets/hellcraft/textures/gui/sprites/hud/heart/full.png assets/hellcraft/textures/gui/sprites/hud/heart/rank_3/container.png \
+           hellcraft.client.mixins.json; do
+    unzip -l "$JAR" | grep -q "$f" || { echo "The mod jar is missing $f"; exit 1; }
+  done
+  # item models (the boss models included) can only use textures stitched into the item or block atlas,
+  # anything else draws as the black and magenta missing texture
+  python3 - "$JAR" <<'PY' || exit 1
+import json, sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+names = set(z.namelist())
+bad = []
+for n in sorted(names):
+    if n.startswith("assets/hellcraft/models/") and n.endswith(".json"):
+        for key, tex in json.loads(z.read(n)).get("textures", {}).items():
+            if tex.startswith("#"):
+                continue
+            ns, path = tex.split(":", 1) if ":" in tex else ("minecraft", tex)
+            if not path.startswith(("item/", "block/")):
+                bad.append(f"{n}: {key} = {tex} is outside the item and block atlases")
+            elif ns == "hellcraft" and f"assets/hellcraft/textures/{path}.png" not in names:
+                bad.append(f"{n}: {key} = {tex} is not in the jar")
+print("\n".join(bad) if bad else "Every model texture is in the jar and an atlas")
+sys.exit(1 if bad else 0)
+PY
+fi
 
 docker run -d --name "$NAME" \
   -e EULA=TRUE -e TYPE=FABRIC -e VERSION="$MC_VERSION" \
@@ -34,7 +71,7 @@ docker run -d --name "$NAME" \
   -e PAUSE_WHEN_EMPTY_SECONDS=0 \
   -v "$MODS_DIR":/mods:ro \
   -v "$CONFIG_DIR":/config:ro \
-  -p 25566:25566 \
+  "${PORTS[@]}" \
   "$MC_IMAGE"
 
 cleanup() {
@@ -86,49 +123,11 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$help" | grep -q "Gate of Hell at" || { echo "/revive does not say where the starter altar is"; exit 1; }
 fi
 
-if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
+if [ "$MC_VERSION" = "1.21.1" ] && [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   curl -fsS -o music-pack.zip http://localhost:25566/hellcraft-music.zip || { echo "Music pack not served"; exit 1; }
   unzip -l music-pack.zip
   unzip -l music-pack.zip | grep -q 'assets/hellcraft/sounds.json' || { echo "Pack has no sounds.json"; exit 1; }
   unzip -l music-pack.zip | grep -q 'assets/hellcraft/sounds/music/duel.ogg' || { echo "Pack has no track"; exit 1; }
-  unzip -p music-pack.zip assets/hellcraft/sounds.json
-  if [ "$MC_VERSION" != "1.21.1" ]; then
-    for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
-             assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/item/boss/lucifer_emperor.png \
-             assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/items/vigil_candle.json assets/hellcraft/items/soul_anchor.json assets/hellcraft/equipment/blood.json \
-             assets/hellcraft/textures/entity/equipment/humanoid/blood.png \
-             assets/hellcraft/textures/entity/equipment/humanoid_leggings/blood.png; do
-      unzip -l music-pack.zip | grep -q "$f" || { echo "Resource pack is missing $f"; exit 1; }
-    done
-    # item models (the boss models included) can only use textures stitched into the item or block atlas,
-    # anything else draws as the black and magenta missing texture
-    python3 - music-pack.zip <<'PY' || exit 1
-import json, sys, zipfile
-z = zipfile.ZipFile(sys.argv[1])
-names = set(z.namelist())
-bad = []
-for n in sorted(names):
-    if n.startswith("assets/hellcraft/models/") and n.endswith(".json"):
-        for key, tex in json.loads(z.read(n)).get("textures", {}).items():
-            if tex.startswith("#"):
-                continue
-            ns, path = tex.split(":", 1) if ":" in tex else ("minecraft", tex)
-            if not path.startswith(("item/", "block/")):
-                bad.append(f"{n}: {key} = {tex} is outside the item and block atlases")
-            elif ns == "hellcraft" and f"assets/hellcraft/textures/{path}.png" not in names:
-                bad.append(f"{n}: {key} = {tex} is not in the pack")
-print("\n".join(bad) if bad else "Every model texture is in the pack and an atlas")
-sys.exit(1 if bad else 0)
-PY
-  fi
-  if [ "$MC_VERSION" != "1.21.1" ]; then
-    # the Blood Heart HUD, and the small pack that rims the hearts in a rank's colour
-    unzip -l music-pack.zip | grep -q "assets/minecraft/textures/gui/sprites/hud/heart/full.png" || { echo "Resource pack has no Blood Heart HUD"; exit 1; }
-    curl -fsS -o rank-pack.zip http://localhost:25566/hellcraft-rank-3.zip || { echo "Rank pack not served"; exit 1; }
-    unzip -l rank-pack.zip
-    unzip -l rank-pack.zip | grep -q "hud/heart/container.png" || { echo "Rank pack has no heart rim"; exit 1; }
-    unzip -l rank-pack.zip | grep -q "pack.mcmeta" || { echo "Rank pack has no pack.mcmeta"; exit 1; }
-  fi
   curl -s -o /dev/null -w '%{http_code}' http://localhost:25566/anything-else | grep -q 404 || { echo "Web server serves more than the pack"; exit 1; }
 fi
 rcon "hellcraft goto judecca" || true  # needs a player; checks the command is registered
@@ -437,12 +436,12 @@ for phase in INTRO DUEL ENRAGED TRUE_FORM DEFEAT DONE; do
   grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
 done
 grep -q 'Lucifer rewards:' "$LOG" || { echo "No reward hand-out"; fail=1; }
-if [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
+if [ "$MC_VERSION" = "1.21.1" ] && [ -f "$CONFIG_DIR/hellcraft/music/duel.ogg" ]; then
   grep -q 'Music pack ready: 1 track' "$LOG" || { echo "Music pack was not built"; fail=1; }
 fi
 grep -q 'Arena unsealed' "$LOG" || { echo "Arena never unsealed"; fail=1; }
 if [ "$MC_VERSION" != "1.21.1" ]; then
-  grep -qE 'Hellcraft pack ready: [1-9][0-9]* asset files' "$LOG" || { echo "The Hellcraft resource pack was not built"; fail=1; }
+  grep -q 'Boss music: ' "$LOG" || { echo "Boss music was not set up"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
   grep -q "The Hall of the Damned at" "$LOG" || { echo "The Hall of the Damned was never raised"; fail=1; }
   grep -q "Villager clock running" "$LOG" || { echo "The villagers' own clock is missing, so they would never idle or breed"; fail=1; }

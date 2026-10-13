@@ -79,26 +79,11 @@ public class HellConfig {
 	/** Most returning champions that can stack difficulty. */
 	public int luciferMaxVeteranTiers = 4;
 
-	// --- The Hellcraft resource pack (models, textures, boss music; see README "Resource pack")
-	/** Players must accept the pack to join (Lucifer's model and the hell weapons need it). */
-	public boolean resourcePackRequired = true;
-	/** Port of the built-in web server that hands the resource pack to players. */
-	public int musicPackPort = 25566;
-	/** Public address players use to reach this server (e.g. play.example.com). Required on dedicated servers
-	 * (or set the HELLCRAFT_PACK_HOST environment variable). */
-	public String musicPackHost = "";
-	/** Or: a full URL where you host the pack yourself (overrides host/port and the built-in web server). */
-	public String musicPackUrl = "";
+	// --- Looks
 	/** Show Lucifer as his own model (the invisible boss carries it). Off: the old vanilla look. */
 	public boolean luciferModels = true;
 	/** Degrees added to the model's facing, if it ever looks the wrong way in-game. */
 	public float luciferModelYawOffset = 0.0f;
-	/**
-	 * Send players the copy of the resource pack published on GitHub with each release: "auto" for players
-	 * who join through a tunnel such as playit.gg (which can't reach port 25566), "always", or "never".
-	 * The GitHub copy has no custom boss music.
-	 */
-	public String packFromGitHub = "auto";
 	/** Everyone's hearts next to their name in the player list. */
 	public boolean tabListHearts = true;
 	/** The "Hall of the Damned" sidebar: everyone who has cast down Lucifer, and how often. */
@@ -158,7 +143,7 @@ public class HellConfig {
 	public boolean heartHud = true;
 	/** The Hall of the Damned: a monument of signs and heads beside the spawn, naming the Inferno's best and most damned. */
 	public boolean hallMonument = true;
-	/** Vanilla music discs used for players without the pack (jukebox song ids). */
+	/** Vanilla music discs Lucifer's fight plays when the mod ships no track for a phase (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";
 	public String fallbackMusicTrueForm = "minecraft:precipice";

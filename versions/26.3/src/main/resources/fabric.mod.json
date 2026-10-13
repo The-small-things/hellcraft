@@ -21,7 +21,11 @@
 		]
 	},
 	"mixins": [
-		"hellcraft.mixins.json"
+		"hellcraft.mixins.json",
+		{
+			"config": "hellcraft.client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",

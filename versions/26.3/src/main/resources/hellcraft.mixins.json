@@ -5,8 +5,6 @@
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"MobCategoryMixin",
-		"ResourcePackResponseMixin",
-		"HandshakeHostMixin",
 		"TheEndBiomeSourceMixin",
 		"BiomeSourceMixin",
 		"ItemFrameAccess",
