@@ -61,9 +61,33 @@ jobs:
           name: server-log-26.3
           path: smoke-server.log
 
+  # A real Minecraft client, headless (Xvfb, software Vulkan): joins a dedicated server and a single-player world,
+  # and screenshots the HUD, the blood items and the animated test rig (see versions/26.3/src/gametest).
+  client-test-26:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install a virtual display and software graphics
+        run: sudo apt-get update && sudo apt-get install -y xvfb mesa-vulkan-drivers libvulkan1
+      - name: Client game tests
+        run: bash tools/dev/clienttest.sh
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-screenshots-26.3
+          path: versions/26.3/build/run/clientGameTest/screenshots
+          if-no-files-found: warn
+
   # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click.
   release:
-    needs: [build-26, smoke-test-26]
+    needs: [build-26, smoke-test-26, client-test-26]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
     permissions:
@@ -111,7 +135,7 @@ jobs:
   # A green push whose commit message contains [release] publishes a real (not pre-release) release,
   # tagged v<mod_version>, with the same downloads.
   stable-release:
-    needs: [build-26, smoke-test-26]
+    needs: [build-26, smoke-test-26, client-test-26]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && contains(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
     permissions:

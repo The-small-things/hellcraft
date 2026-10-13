@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.hazard.Ambience;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
@@ -66,6 +67,7 @@ public class HellcraftMod implements ModInitializer {
 		HellConfig.load();
 		JoinCheck.register();
 		HellItems.register();
+		HellEntities.register();
 		HellWorldgen.register();
 		BloodEvents.register();
 		HellWeapons.register();
