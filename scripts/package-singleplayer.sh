@@ -5,12 +5,12 @@
 #   dist/hellcraft-<ver>-mc<mc>.jar          the mod itself (servers)
 #   dist/hellcraft-pack-<ver>-mc<mc>.zip     its resource pack (26.3), which servers hand to players who
 #                                            join through a tunnel (playit.gg) that can't reach port 25566
-# Usage: scripts/package-singleplayer.sh [project-dir]   (default: the 1.21.1 project at the repo root;
-# versions/26.3 for the 26.3 build). Run after ./gradlew build in that project.
+# Usage: scripts/package-singleplayer.sh [project-dir]   (default: versions/26.3; the frozen 1.21.1 project is .;
+# run it after ./gradlew build in that project).
 # Needs network access (Modrinth API), curl, jq and python3.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-PROJECT=${1:-.}
+PROJECT=${1:-versions/26.3}
 
 prop() { grep "^$1=" "$PROJECT/gradle.properties" | cut -d= -f2-; }
 MC=$(prop minecraft_version)

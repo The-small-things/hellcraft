@@ -1,5 +1,4 @@
-// Hellcraft for Minecraft 26.3. The version-independent code (the Inferno's geometry, circles and zones,
-// the Ogg reader) and its tests live in the 1.21.1 project at the repository root and are shared from there.
+// Hellcraft for Minecraft 26.3.
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 }
@@ -16,28 +15,6 @@ repositories {
 }
 
 def root = rootDir.toPath().resolve('../..').normalize().toFile()
-def commonClasses = [
-		'net/thesmallthings/hellcraft/music/OggLength.java',
-		'net/thesmallthings/hellcraft/world/Circle.java',
-		'net/thesmallthings/hellcraft/world/InfernoGeometry.java',
-		'net/thesmallthings/hellcraft/world/Zone.java',
-]
-
-def syncCommon = tasks.register('syncCommon', Sync) {
-	from(new File(root, 'src/main/java')) {
-		include commonClasses
-	}
-	into layout.buildDirectory.dir('generated/common/java')
-}
-def syncCommonTests = tasks.register('syncCommonTests', Sync) {
-	from new File(root, 'src/test/java')
-	into layout.buildDirectory.dir('generated/common/test')
-}
-
-sourceSets {
-	main.java.srcDir(syncCommon)
-	test.java.srcDir(syncCommonTests)
-}
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

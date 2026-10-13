@@ -6,18 +6,19 @@ Paradiso. The owner plays it on a server with friends. README.md describes every
 
 ## Working rules
 - **All work goes in `versions/26.3`** (Minecraft 26.3, Java 25, Loom 1.18, Fabric API 0.161, unobfuscated Mojang
-  names). The repo root is the old 1.21.1 version: leave it alone except the version bump.
+  names). The repo root is the old 1.21.1 version, frozen since 3.0: don't touch it, and CI no longer builds it.
+  `versions/26.3` is self-contained (its own copies of `InfernoGeometry`, `Zone`, `Circle`, `OggLength` and the tests).
 - Develop on branch `claude/minecraft-dantes-inferno-mod-ukodio`; commit and push there. No pull requests unless
   asked.
 - Write player-facing text in plain language: say what happened and what to do. Characters (Lucifer, the
   guardians, the Spine's whispers) may speak in Dante's voice, but every mechanic also gets a plain tip.
 - Releases: a commit whose message contains `[release]` publishes a stable GitHub release tagged
-  `v<mod_version>`. Bump `mod_version` in **both** `gradle.properties` files and add a "New in x.y.z" block to the
+  `v<mod_version>`. Bump `mod_version` in `versions/26.3/gradle.properties` and add a "New in x.y.z" block to the
   stable-release body in `.github/workflows/build.yml`. Every other push to the branch refreshes the
   `v<version>-test` pre-release. Publish stable only when the owner asks.
 
 ## Building and testing
-- CI (`.github/workflows/build.yml`) builds both versions, then boots a real server for each with
+- CI (`.github/workflows/build.yml`) builds 26.3, then boots a real server with
   `scripts/smoke-test.sh` (Docker `itzg/minecraft-server`), drives it over RCON and fails on errors in the log.
   Most features have a self-test command or a log line that the smoke test checks; add one for new features.
 - **Local builds need network access** to `maven.fabricmc.net`, `meta.fabricmc.net`, `piston-meta.mojang.com`,
@@ -26,8 +27,6 @@ Paradiso. The owner plays it on a server with friends. README.md describes every
   and wait for CI: `bash tools/dev/waitci.sh <sha>` (or `waitstable.sh` for a `[release]` commit) prints the
   first failing job and its id; fetch that job's log with the GitHub MCP `get_job_logs` tool, and
   `python3 tools/dev/joblog.py <saved log> <out>` strips the timestamps.
-- The 1.21.1 smoke test sometimes crashes in worldgen (`hellcraft:filth_pool`, "Requested chunk unavailable"). A
-  re-run of the failed jobs passes; it is a known flake, not a regression.
 - API questions about 26.3: edit `versions/26.3/tools/probe.txt` and push; the `probe-26.3` workflow prints the
   answers (javap signatures, bytecode, data files, jar listings). Line formats are documented in `tools/probe.sh`.
 - Java imports: `python3 tools/dev/sortimports.py <files>`, then restore the blank line after `package` (see the
@@ -73,7 +72,7 @@ Decided first (2026-10-12):
   mobs, models, cutscenes and HUD. Bosses use Minecraft's own keyframe animation system (no GeckoLib).
 - Medium world: radius about 3,500.
 - Keep lifesteal and ghosts, blood weapons and armour, style ranks and spoils, and the P's, Hall and Journey.
-- 1.21.1 is dropped for now: leave its code alone, take it out of CI, and make `versions/26.3` self-contained.
+- 1.21.1 is dropped for now (done: out of CI, `versions/26.3` self-contained, version 3.0.0).
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run the build. Docker works, but Modrinth is blocked, so a local

@@ -6,33 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Build and test
-        run: ./gradlew build --stacktrace
-      - name: Upload mod jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: hellcraft-jar
-          path: build/libs/hellcraft-*.jar
-          if-no-files-found: error
-      - name: Package single-player downloads (.mrpack + mods zip)
-        run: bash scripts/package-singleplayer.sh
-      - name: Upload single-player downloads
-        uses: actions/upload-artifact@v4
-        with:
-          name: hellcraft-singleplayer
-          path: dist/*
-          if-no-files-found: error
-
-  # The Minecraft 26.3 port (versions/26.3), built with Java 25.
+  # Hellcraft for Minecraft 26.3 (versions/26.3), built with Java 25. The 1.21.1 project at the repository
+  # root is frozen and no longer built.
   build-26:
     runs-on: ubuntu-latest
     steps:
@@ -60,30 +35,8 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
-  # Boots a real Fabric 1.21.1 server (the same Docker image used for hosting) with the mod,
+  # Boots a real Fabric 26.3 server (the same Docker image used for hosting, Java 25) with the mod,
   # generates chunks in every circle of Hell and fails on any error in the log.
-  smoke-test:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: hellcraft-jar
-          path: mods
-      - name: Install ffmpeg (for a test music track)
-        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
-      - name: Smoke test on a real server
-        run: bash scripts/smoke-test.sh mods
-      - name: Upload server log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-log
-          path: smoke-server.log
-
-  # The same real-server test on Minecraft 26.3 (Java 25 image).
   smoke-test-26:
     needs: build-26
     runs-on: ubuntu-latest
@@ -110,7 +63,7 @@ jobs:
 
   # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click.
   release:
-    needs: [build, smoke-test, build-26, smoke-test-26]
+    needs: [build-26, smoke-test-26]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
     permissions:
@@ -119,16 +72,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: hellcraft-singleplayer
-          path: dist
-      - uses: actions/download-artifact@v4
-        with:
           name: hellcraft-singleplayer-26.3
           path: dist
       - name: Move the test tag to this commit
         id: tag
         run: |
-          VER=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          VER=$(grep '^mod_version=' versions/26.3/gradle.properties | cut -d= -f2)
           echo "tag=v${VER}-test" >> "$GITHUB_OUTPUT"
           echo "ver=${VER}" >> "$GITHUB_OUTPUT"
           git tag -f "v${VER}-test"
@@ -152,8 +101,6 @@ jobs:
           body: |
             Test build from `${{ github.ref_name }}` @ ${{ github.sha }}.
 
-            There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
-
             **Play in single player**
             - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.tag.outputs.ver }}-mc<version>.mrpack` and import it (it installs Fabric + Fabric API for you).
             - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mc<version>-mods.zip` and follow `INSTALL.txt`.
@@ -164,16 +111,12 @@ jobs:
   # A green push whose commit message contains [release] publishes a real (not pre-release) release,
   # tagged v<mod_version>, with the same downloads.
   stable-release:
-    needs: [build, smoke-test, build-26, smoke-test-26]
+    needs: [build-26, smoke-test-26]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && contains(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: hellcraft-singleplayer
-          path: dist
       - uses: actions/download-artifact@v4
         with:
           name: hellcraft-singleplayer-26.3
@@ -182,7 +125,7 @@ jobs:
         with:
           path: src
       - id: ver
-        run: echo "ver=$(grep '^mod_version=' src/gradle.properties | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+        run: echo "ver=$(grep '^mod_version=' src/versions/26.3/gradle.properties | cut -d= -f2)" >> "$GITHUB_OUTPUT"
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.ver.outputs.ver }}
@@ -224,8 +167,6 @@ jobs:
               - **STYLE ranks, like ULTRAKILL:** every boss fight ranks your style from D to SSS in your own boss bar (hit hard, swap weapons, don't get hit). Every win pays Blood Fragments by rank, S or better adds treasure, and your first S and first SSS on each boss are worth a Blood Heart each.
               - **Plain language:** messages, menus, item descriptions, the guide book and advancements now say what happened and what to do. Blood armour is now the Blood Helmet, Chestplate, Leggings and Boots.
               - **The End after the dragon:** End cities and chorus plants in every ring from the first one, clear directions when the dragon dies, ring titles that say where you are, and a Rose Compass that points to the Celestial Rose.
-
-            There is one set of files per Minecraft version: pick **mc1.21.1** or **mc26.3** to match your game.
 
             **Play in single player**
             - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.ver.outputs.ver }}-mc<version>.mrpack` and import it (it installs Fabric + Fabric API for you).

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Starts itzg/minecraft-server with Hellcraft, generates chunks across every circle and checks the log.
 # Usage: scripts/smoke-test.sh <dir-containing-hellcraft-jar>
-# MC_VERSION / MC_IMAGE pick the Minecraft version and Java image (default 1.21.1 on java21).
+# MC_VERSION / MC_IMAGE pick the Minecraft version and Java image (default 26.3 on java25; 1.21.1 is frozen).
 set -euo pipefail
 MODS_DIR=$(cd "${1:-build/libs}" && pwd)
 rm -f "$MODS_DIR"/*-sources.jar
-MC_VERSION=${MC_VERSION:-1.21.1}
-MC_IMAGE=${MC_IMAGE:-itzg/minecraft-server:java21}
+MC_VERSION=${MC_VERSION:-26.3}
+MC_IMAGE=${MC_IMAGE:-itzg/minecraft-server:java25}
 NAME=hellcraft-smoke
 LOG=smoke-server.log
 docker rm -f "$NAME" >/dev/null 2>&1 || true
