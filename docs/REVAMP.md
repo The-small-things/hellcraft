@@ -1,10 +1,9 @@
 # Hellcraft 3.0: the revamp plan
 
-**Status:** draft for the owner to mark up (2026-10-12). Nothing in it is built yet.
-
-**How to mark it up:** reply with an ID and your note, for example "Q2: yes", "L-IV: make it Aztec instead",
-"B5: cut Phlegyas". You can also edit this file. Anything you don't mention, I'll take as approved. Section 15
-lists the questions I need answered before Phase 1.
+**Status:** approved by the owner on 2026-10-13, with section 6 redone after their answer to Q7. Nothing in it is
+built yet. The owner marks it up in a commentable copy, the "Hellcraft 3.0 Revamp Plan" doc
+(https://claude.ai/code/artifact/4b8ddced-e5ed-48a4-9b7f-3bafdffe313d); keep this file in step with it.
+Section 15 records the answers.
 
 ---
 
@@ -38,6 +37,7 @@ These come from reading the 2.0.3 code:
 | The Nether is vanilla | Vanilla terrain with some blocks swapped, a few small ruins, and one hall at 0, 0. |
 | The End is confusing | The vanilla End with recoloured outer islands in rings out to 6,400 blocks, and the Celestial Rose 7,000 blocks out over the void. You fly thousands of blocks with nothing to aim at. |
 | Too much lore | Much of the guidance comes through Virgil's and Lucifer's old-fashioned speech. 2.0.3 added plain tips, but the lore is still in the way. |
+| The torments punish instead of play | Most circles just debuff you: Hunger in Gluttony, Weakness in the Styx, Darkness in Heresy, Slowness in Greed. They make the game less fun and add nothing to do. |
 
 ## 3. Design pillars
 
@@ -47,8 +47,10 @@ Every feature is checked against these.
   is optional: a Codex to read, and voices you can ignore.
 - **P2. Fair for new players.** A safe start, a clear difficulty curve, danger that is always telegraphed, and
   PvP that doesn't reward picking on the weak.
-- **P3. Every layer is its own place.** A strong theme, one rule, one set-piece and one boss. Dante is the
-  source, not a checklist (the ULTRAKILL approach).
+- **P3. Every layer is its own place.** A strong theme of its own, one rule, one set-piece and one boss. Where
+  Dante's punishment would be miserable to play (blown about, starved, weakened, blinded), it becomes something you
+  play with instead: ride the wind, outrun the mud, time the fire. Debuffs are a last resort. ULTRAKILL is the
+  model for this approach, not for the look: no layer copies its settings.
 - **P4. You always know where to go.** Down is the goal. The HUD and the map always show the way down and the
   nearest Rest.
 - **P5. Bosses are events.** An intro, a name card, readable attacks, real animation, lore and music.
@@ -79,8 +81,8 @@ Every feature is checked against these.
   - A **Pilgrim's Journal** screen (your current goal, the Codex and how-tos), replacing the written book.
 - **T6. Screen effects.** Frost at the screen edges in Cocytus, heat shimmer in Violence, and darkness pulses in
   Heresy.
-- **T7. No more resource-pack server.** Art ships inside the mod, and port 25566 is no longer needed. For custom
-  boss music, see Q6.
+- **T7. No more resource-pack server.** Art ships inside the mod, and port 25566 is no longer needed. Custom boss
+  music ships in the mod too (Q6).
 - **T8. Tooling.**
   - `versions/26.3` becomes self-contained: the four classes it borrows from the 1.21.1 tree are copied in.
   - The 1.21.1 jobs come out of CI. The 1.21.1 code itself stays.
@@ -127,26 +129,27 @@ from the centre. All radii are first guesses to tune in playtests.
 - **N6. Fast travel** between Rests you've visited (as today).
 - **N7. The walkability test** (T8).
 
-## 6. The layers (first draft of the themes)
+## 6. The layers (second draft)
 
-Each layer has a look, one rule (a torment with a counter), a set-piece, new enemies and a boss. The IDs (L-0,
-L-I…) are for your markup.
+Redone after Q7 ("I don't want a copy of ULTRAKILL; it handled the layers that have unfavourable gameplay
+mechanics well"): the themes are my own, drawn from Dante's text, and each layer's rule turns its punishment into
+something you play with (P3). The IDs (L-0, L-I…) are for markup.
 
-| ID | Layer | Look | Rule (and counter) | Set-piece and boss |
+| ID | Layer | Look | Rule (what you do about it) | Set-piece and boss |
 |---|---|---|---|---|
 | L-0 | **Dark Wood** | Forest and mountains, villages, wandering traders. Virgil stands at spawn. | None. A safe place to build. | **The Gate of Hell**: a huge gate with the inscription, also in plain words. |
 | L-S | **The Shore** | A grey plain, wasps, the river Acheron. | None. | **Charon's ferry**: ride the ferry across the river. A short layer. |
-| L-I | **Limbo** | A sunlit green valley under a false sky, the only daylight in Hell. | None. A sanctuary with few monsters (see Q3). | **The Noble Castle** (seven walls, from Dante): the hub, with trading, an altar and the Hall of the Damned. No boss. |
-| L-II | **Lust** | A ruined city of towers in an endless night storm. | Gusts throw you in the open; wind lines show where they come from. *Shelter in buildings, or sneak.* | **Minos's tribunal** at the city's heart. He coils his tail to pass sentence. |
-| L-III | **Gluttony** | Endless feast halls collapsed into mud, under a rain of filth. | The rain makes you hungry. *Get under a roof.* | **Cerberus**, three heads with three separate attacks (bite, howl, filth breath). The showcase for jointed animation. |
-| L-IV | **Greed** | Egyptian: golden dunes, pyramids, obelisks, sarcophagi. Lanes of rolling boulders (Dante's hoarders roll weights). | Carried gold slows you. *Stash it.* | **Plutus** in the Great Pyramid: a bloated golden god-king ("Pape Satàn aleppe"). |
-| L-V | **Wrath** | A black, storm-tossed sea-marsh with sunken ruins and a watchtower with twin beacons (from Dante). | The water weakens you. *Use a boat.* | **Phlegyas**, the ferryman giant. His ferry carries you to the Walls of Dis. |
-| L-Dis | **Walls of Dis** | A city wall held by fallen angels. | None. | **The Furies and Medusa.** The Furies fly; when Medusa appears, look away or turn to stone (the screen greys while you look at her). |
-| L-VI | **Heresy** | A gothic burning necropolis, a city of open fiery tombs and a cathedral. | Smoke from the tombs brings darkness. *Get under a roof.* | **Farinata** rises from his tomb. The tombs around him ignite in patterns. |
-| L-VII | **Violence** | Three rings: the boiling river of blood with centaur archers; the Wood of the Suicides with harpies and bleeding trees; the Burning Sands. | Fire rains on the sands. *Roof, water or Fire Resistance.* | **The Minotaur** at the entrance (as in Dante). |
-| L-VIII | **Fraud** | Malebolge: ten trenches crossed by stone bridges, some of them broken. | Deception: mimic chests, a fake Rest, monsters that are invisible but give themselves away. *Watch for the tells.* | **Malacoda**, a demon who offers to guide you and leads you into an ambush (he lies to Dante the same way). **Geryon** above the great cliff; once beaten, he can fly you down. |
+| L-I | **Limbo: the Grey Meadow** | A quiet land drained of colour: grey grass, pale trees, mist. Inside the castle's seven walls is the only green in Hell. | None. A sanctuary with few monsters (Q3). | **The Noble Castle**: the hub. The poets and philosophers of old walk there as friendly ghosts who trade, give tips and hand out Codex pages. No boss. |
+| L-II | **Lust: the Storm Canyons** | Violet canyons of wind-carved spires. Overhead, the souls whirl in vast flocks like starlings (Dante's own image). | **The wind is a road.** Visible wind streams carry you across the canyons. Ride them, and let go before the edge. | **Minos** judges at the canyon gate, as in Dante. He coils his tail to pass sentence. |
+| L-III | **Gluttony: the Mire** | A rain-lashed bog of black mud, rotting giant trees, bloated fungus and sunken feast tables. | **The mud swallows you if you stand still.** Keep moving, or stand on roots, stone and planks. | **Cerberus**, three heads with three separate attacks (bite, howl, filth breath). The showcase for jointed animation. |
+| L-IV | **Greed: the Counting House** | A mountain range of hoards: hills of gold coin, vault doors in the cliffs, giant scales, and coins as big as houses rolling down the slopes (Dante's misers roll great weights). Built like the banks and mints of Dante's Florence. | **Gold draws the hoarders.** The more you carry, the more of them come for you. Stash it and they lose interest. | **Plutus** in the Mint, a bloated golden banker-god ("Pape Satàn aleppe"). |
+| L-V | **Wrath: the Fen of Styx** | A dark marsh of reed mazes and fog. Across it, the iron city of Dis glows red on the horizon (as in Dante), so you always know which way is in. A watchtower with twin beacons. | **The sullen lurk under the water.** Bubbles show where; step in and hands drag you down. Plank roads and boats are safe. Light the tower's beacon and the ferry comes. | **Phlegyas**, the ferryman giant. His ferry carries you to the Walls of Dis. |
+| L-Dis | **Walls of Dis** | A city wall of red-hot iron held by fallen angels. | None. | **The Furies and Medusa.** The Furies fly; when Medusa appears, look away or turn to stone (the screen greys while you look at her). |
+| L-VI | **Heresy: the Iron City** | Inside Dis: streets of red-hot iron towers, and open tombs that glow like ovens. | **The tombs blast fire in turn.** Watch the rhythm and cross between blasts. | **Farinata** rises from his tomb. The tombs around him fire in patterns. |
+| L-VII | **Violence** | Three rings: the river of boiling blood, the Wood of the Suicides, the Burning Sands. | One per ring. **River:** cross at the fords while the centaur patrols look away. **Wood:** breaking branches makes the trees scream and calls the harpies, so sneak. **Sands:** fire falls in waves after a warning, so run between the rocks. | **The Minotaur** at the entrance (as in Dante). |
+| L-VIII | **Fraud: Malebolge** | Ten trenches crossed by stone bridges, some broken. Some trenches have their own trick: the boiling pitch with its gang of demons, the thieves' pit, the flames that hide talking souls. | **Nothing is what it seems.** Mimic chests, a fake Rest, thieves that steal an item (kill them to get it back), and invisible monsters that give themselves away. | **Malacoda**, a demon who offers to guide you and leads you into an ambush (he lies to Dante the same way). **Geryon** above the great cliff; once beaten, he can fly you down. |
 | L-G | **Well of Giants** | Chained giants at the cliff of the ice. | None. | **Antaeus** lowers you to the ice in his hand, a ride down (from Dante). |
-| L-IX | **Treachery** | Cocytus: a frozen lake in four rings, with souls frozen in the ice. The Emperor's Spines lead in, and the "windmill" turns in the fog (section 8). | The cold. *Leather armour, or a fire nearby.* | **Lucifer** (section 8). |
+| L-IX | **Treachery: Cocytus** | A frozen lake in four rings, with souls frozen in the ice. The Emperor's Spines lead in, and the "windmill" turns in the fog (section 8). | **The cold builds while you're away from fire.** Light the braziers on the ice: they stay lit for everyone, so the way across stays marked and warm. | **Lucifer** (section 8). |
 
 Every layer also gets one or two new monsters, its own loot structures, and a Rest on each road.
 
@@ -165,8 +168,8 @@ Every layer also gets one or two new monsters, its own loot structures, and a Re
   for sniping). Boss damage scaling with your hearts stays, to review after a playtest.
 - **B5. The roster:**
   - Remade: Minos, Cerberus, Plutus, the Minotaur, Geryon, Vulcan and Lucifer.
-  - New: Phlegyas, the Furies and Medusa, Farinata, Malacoda (a short event, not a full boss) and a Paradiso boss
-    (Q5).
+  - New: Phlegyas, the Furies and Medusa, Farinata, Malacoda (a short event, not a full boss) and the Seraph in
+    Paradiso (Q5).
   - That's a lot. Cut any you don't want.
 
 ## 8. Lucifer
@@ -223,7 +226,7 @@ A fresh world means the Nether is generated from scratch, not just re-skinned.
   up, and you can see the next sphere above you. The **Celestial Rose** in the Empyrean is at the top.
 - Each sphere holds a short trial. The relics (Seraph Wings, the Halo, Beatrice's Rose) are the rewards.
 - **No strongholds or eyes of ender:** the only way into Paradiso is from Purgatory's summit.
-- The final boss: see Q5.
+- The final boss is **the Seraph**, a six-winged angel (Q5).
 
 ## 11. Fair for new players
 
@@ -277,24 +280,18 @@ Phases 3, 4 and 5 are the biggest.
   send.
 - The stable 3.0.0 comes only after a session over the full journey.
 
-## 15. Questions for you
+## 15. Answers (2026-10-13)
 
-- **Q1. Order.** Is the phase order right? What are your top three? (For example, you might want Lucifer before
-  the Nether and the End.)
-- **Q2. Do bosses block the way down?** I recommend no: beating a boss pays spoils and opens a shortcut (a lift
-  down that cliff), but the roads and ramps are always open.
-- **Q3. PvP-free start.** No PvP in the Dark Wood and Limbo, plus the 2-hour newcomer grace (F1, F2)? I recommend
-  yes.
-- **Q4. Art.** By default I make the models and animations as Blockbench files from code and check them in
-  screenshots. You can open and edit any of them in Blockbench, and I'll convert yours. Do you want to make some
-  of the art yourself?
-- **Q5. Paradiso's final boss:** (a) the Seraph as a six-winged angel boss (recommended); (b) the vanilla dragon,
-  restyled; or (c) no boss, only the sphere trials.
-- **Q6. Custom boss music.** Keep loading tracks from the server's config folder (which needs a small pack
-  server), or ship the tracks in the mod (you send me the files)?
-- **Q7. The layer themes.** Which do you like or dislike in section 6? Is there anything from ULTRAKILL's feel you
-  want specifically (speed, parrying, secrets)?
-- **Q8. Branch.** CLAUDE.md says to work on `claude/minecraft-dantes-inferno-mod-ukodio`, but this session was
-  started on `claude/intelligent-bohr-jv9n5v`. Which should be the revamp's home branch?
-- **Q9. The modpack.** Every friend installs the Hellcraft modpack (a `.mrpack` for the Modrinth App or Prism).
-  Is that OK? I'd keep the pack to Hellcraft and Fabric API to start, with no performance mods.
+The owner changed Q4 and Q7; every other question stands as recommended.
+
+| ID | Question | Answer |
+|---|---|---|
+| Q1 | Is the phase order right? | Yes, as in section 13. |
+| Q2 | Do bosses block the way down? | No. Beating a boss pays spoils and opens a shortcut (a lift down that cliff); roads and ramps are always open. |
+| Q3 | No PvP in the Dark Wood and Limbo, plus the 2-hour newcomer grace? | Yes. |
+| Q4 | Who makes the art? | Claude, as Blockbench files checked in screenshots. The owner won't make art (and offered a Blender MCP; not needed, since Minecraft models are made of boxes, which Blockbench files describe directly). |
+| Q5 | Paradiso's final boss? | The Seraph as a six-winged angel boss. |
+| Q6 | Custom boss music? | Ship the tracks in the mod; the owner sends the files. |
+| Q7 | The layer themes? | "I don't want a copy of ULTRAKILL; I said ULTRAKILL because it handled the layers that have unfavourable gameplay mechanics quite well." Section 6 is redone, and P3 says it. |
+| Q8 | Which branch? | `claude/minecraft-dantes-inferno-mod-ukodio` (CLAUDE.md), once the owner confirms it in chat. |
+| Q9 | Every friend installs the Hellcraft modpack? | Yes, with only Hellcraft and Fabric API to start. |

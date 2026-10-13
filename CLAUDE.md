@@ -62,8 +62,12 @@ the style numbers, the heart scaling (`bossHeartScaling`) and the animation dire
 display transformation) are educated guesses waiting on feedback.
 
 ## Next: the 3.0 revamp
-The plan is `docs/REVAMP.md` (draft, waiting on the owner's markup; its section 15 lists the open questions).
-Decided so far (2026-10-12):
+The plan is `docs/REVAMP.md`, approved on 2026-10-13. The owner marks it up in a commentable Claude Docs copy
+(https://claude.ai/code/artifact/4b8ddced-e5ed-48a4-9b7f-3bafdffe313d); keep the two in step. Its section 15
+holds the answers: bosses never block the way down, no PvP in the Dark Wood and Limbo, the Seraph is Paradiso's
+boss, music ships in the mod, and Claude makes all the art. Layer themes must be Hellcraft's own, not ULTRAKILL's:
+ULTRAKILL is only the model for turning Dante's punishments into things to play with instead of debuffs.
+Decided first (2026-10-12):
 - Fresh world, so the map is rebuilt from scratch.
 - **A client mod is now required.** The "vanilla client, no blocks, no items" rule is gone: real blocks, items,
   mobs, models, cutscenes and HUD. Bosses use Minecraft's own keyframe animation system (no GeckoLib).
