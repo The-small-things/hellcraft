@@ -2,9 +2,9 @@
 
 **Lasciate ogne speranza, voi ch'intrate.**
 
-A server-side Fabric mod for Minecraft **1.21.1** and **26.3** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
+A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
 
-Players join with a **plain vanilla client**. The mod adds no blocks and no items; everything is made from vanilla blocks, mobs, particles and sounds.
+**Hellcraft 3.0 is being rebuilt** (new map, animated bosses, a real reveal for Lucifer, a new Nether and End): see [the revamp plan](docs/REVAMP.md). Test builds change from week to week. Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below); the old 1.21.1 version is frozen and no longer updated.
 
 ![map](docs/inferno_map.png)
 
@@ -14,17 +14,19 @@ Players join with a **plain vanilla client**. The mod adds no blocks and no item
 - **The Hall of the Damned.** A monument at spawn naming the Inferno's best and most damned.
 - **Dante's Journey.** An advancement tab from the Dark Wood to the Empyrean.
 
-## Play it in single player
+## Install it
 
-Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). Every file comes twice, once per Minecraft version: pick the ones ending in `-mc1.21.1` or `-mc26.3`.
+Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases).
 
-- **Modrinth App, Prism Launcher, ATLauncher or CurseForge (easiest):** download `Hellcraft-<version>-mc<minecraft>.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you.
-- **Official Minecraft Launcher:** download `hellcraft-<version>-mc<minecraft>-mods.zip` and follow the `INSTALL.txt` inside. In short:
-  1. Install Fabric Loader for that Minecraft version with the [Fabric installer](https://fabricmc.net/use/installer/).
+- **Modrinth App or Prism Launcher (easiest):** download `Hellcraft-<version>-mc26.3.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you. Use this to play single player **and** to join a Hellcraft server.
+- **Official Minecraft Launcher:** download `hellcraft-<version>-mc26.3-mods.zip` and follow the `INSTALL.txt` inside. In short:
+  1. Install Fabric Loader for Minecraft 26.3 with the [Fabric installer](https://fabricmc.net/use/installer/).
   2. Put both jars in `.minecraft/mods`.
-  3. Play the `fabric-loader-<minecraft>` profile.
+  3. Play the `fabric-loader-26.3` profile.
 
-Then go to **Singleplayer → Create New World → World tab** and click **World Type** until it says **Inferno**. On the **Game** tab, turn on **Allow Commands** if you want the test commands below.
+**Joining a server:** your Hellcraft must be the same version as the server's. If it isn't, or you don't have it, the server tells you which version to install.
+
+**Single player:** go to **Singleplayer → Create New World → World tab** and click **World Type** until it says **Inferno**. On the **Game** tab, turn on **Allow Commands** if you want the test commands below.
 
 ### Testing solo
 
@@ -40,7 +42,7 @@ The Gate of Hell has an altar next to it for trying the rites. To test PvP lifes
 
 ## Hosting a server (Docker)
 
-1. Download `hellcraft-<version>-mc1.21.1.jar` (or `-mc26.3.jar`) from the [Releases page](https://github.com/the-small-things/hellcraft/releases), or build it yourself with `./gradlew build` (the jar ends up in `build/libs/`).
+1. Download `hellcraft-<version>-mc26.3.jar` from the [Releases page](https://github.com/the-small-things/hellcraft/releases), or build it yourself with `cd versions/26.3 && ./gradlew build` (the jar ends up in `versions/26.3/build/libs/`).
 2. Put the jar in `docker/mods/`.
 3. From the `docker/` folder, run:
 
@@ -48,14 +50,14 @@ The Gate of Hell has an altar next to it for trying the rites. To test PvP lifes
    docker compose up -d
    ```
 
-The compose file uses [`itzg/minecraft-server`](https://github.com/itzg/docker-minecraft-server) with `TYPE=FABRIC` and `VERSION=1.21.1`. It downloads Fabric API automatically and creates the world with `LEVEL_TYPE=hellcraft:inferno`.
+The compose file uses [`itzg/minecraft-server:java25`](https://github.com/itzg/docker-minecraft-server) with `TYPE=FABRIC` and `VERSION=26.3`. It downloads Fabric API automatically and creates the world with `LEVEL_TYPE=hellcraft:inferno`. Only the game port (25565) needs to be open.
 
-**Running 26.3 instead:** use the `-mc26.3` jar, set `VERSION: "26.3"` and change the image to `itzg/minecraft-server:java25` (26.x needs Java 25). Both lines are marked in `docker/docker-compose.yml`. Players then join with a vanilla 26.3 client.
+**Every player needs the same Hellcraft version as the server** (the modpack above). Update the server and tell your players to update when you install a new version.
 
 > The Inferno only generates in a **new world**. If you already have a world, stop the server and delete (or move) `docker/data/world` first. Lifesteal still works on an old world, but the land won't change.
 
 Already running itzg? Add these to your existing container:
-- env `TYPE=FABRIC`, `VERSION=1.21.1` (or `26.3` on the `java25` image), `MODRINTH_PROJECTS=fabric-api` and `LEVEL_TYPE=hellcraft:inferno`
+- env `TYPE=FABRIC`, `VERSION=26.3` (on the `java25` image), `MODRINTH_PROJECTS=fabric-api` and `LEVEL_TYPE=hellcraft:inferno`
 - the jar, mounted into `/mods`
 
 You need `LEVEL_TYPE=hellcraft:inferno` (`level-type=hellcraft:inferno` in `server.properties`). Without it the world generates as a normal overworld, and only the lifesteal rules apply.
@@ -119,8 +121,8 @@ New players start with 5 bread, 2 **Vigil Candles** (26.3) and **The Pilgrim's G
   - Killing a player steals one of their hearts.
   - **26.3: only players take hearts.** Dying to monsters, lava, falls or the circles costs your items and XP like vanilla, never a heart. Set `pveDeathsCostHearts` to bring back the old rule.
   - 1.21.1 (or with `pveDeathsCostHearts`): dying to anything else costs a heart too, and it drops as a **Blood Heart** where you fell, so you can go back for it.
-- **Blood Heart** (a glinting *fermented spider eye*). Right-click to gain a heart. `/withdraw [n]` turns your own hearts into Blood Hearts you can trade.
-- **Blood Fragment** (a named *red dye*). Hostile mobs killed by players drop fragments. The chance rises from 5% in the outer circles to about 19% in Cocytus (26.3; 2% to 12% on 1.21.1). Right-click with 8 in one stack (`fragmentsPerHeart`) to clot them into a Blood Heart.
+- **Blood Heart**. Right-click to gain a heart. `/withdraw [n]` turns your own hearts into Blood Hearts you can trade.
+- **Blood Fragment**. Hostile mobs killed by players drop fragments. The chance rises from 5% in the outer circles to about 19% in Cocytus (26.3; 2% to 12% on 1.21.1). Right-click with 8 in one stack (`fragmentsPerHeart`) to clot them into a Blood Heart.
 - **A way back (26.3).** Two one-time respawn items:
   - **Vigil Candle** (craft: torch + bone + string). Right-click to light it where you stand. Your next death wakes you beside it, then it's gone. One lit candle at a time.
   - **Soul Anchor** (every circle guardian drops one; rare in deep loot). Carry it. If you die, you rise again at the last solid ground near where you fell, with a few seconds of protection, and it breaks. Your dropped items are right there.
@@ -216,7 +218,7 @@ On the straight road in from the Gate of Hell (the +X axis, z = 0), five of Dant
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
-**Animated models (Lucifer too).** Each boss's model rises out of the ground and roars when it wakes, breathes while it stands, bobs and leans as it walks, rears back before every attack and lunges into it, squashes down into its stomps, shudders and flashes red when hit, and topples over and sinks when it dies. The server drives it all through the model's display entity, so players need nothing but the Hellcraft resource pack.
+**Animated models (Lucifer too).** Each boss's model rises out of the ground and roars when it wakes, breathes while it stands, bobs and leans as it walks, rears back before every attack and lunges into it, squashes down into its stomps, shudders and flashes red when hit, and topples over and sinks when it dies. The server drives it all through the model's display entity. (3.0 replaces these with fully jointed, keyframe-animated models.)
 
 **No cheesing (these rules also apply to Lucifer where it says so):**
 - **Hearts don't make you a tank.** Boss hits grow with your heart capacity, so a hit takes the same share of your health at 40 hearts as at 10. Dodge the telegraphed attacks instead of soaking them. (Lucifer too.)
@@ -329,11 +331,11 @@ When Lucifer falls, a **burrow** (an end gateway) opens in the ice where he was 
 
 `/hellcraft purgatory` takes an op to the shore.
 
-**Lucifer's Bane** (a glowing nether star) permanently raises your heart cap by 2 when you right-click it. It's an item, so it can be traded, and each one you consume adds another +2.
+**Lucifer's Bane** permanently raises your heart cap by 2 when you right-click it. It's an item, so it can be traded, and each one you consume adds another +2.
 
 ### Lucifer's look (26.3)
 
-On 26.3 Lucifer has his own models: the **Fallen Seraph** (horned, crimson, black-winged, with a broken halo and a bloodied blade) and then the **Three-Faced Emperor** (red, pale and black faces, six bat wings, shards of the ice he's frozen in). Blood Hearts, Fragments and Lucifer's Bane get their own art too. They come from the Hellcraft resource pack (below).
+On 26.3 Lucifer has his own models: the **Fallen Seraph** (horned, crimson, black-winged, with a broken halo and a bloodied blade) and then the **Three-Faced Emperor** (red, pale and black faces, six bat wings, shards of the ice he's frozen in). Blood Hearts, Fragments and Lucifer's Bane get their own art too, all of it inside the mod.
 
 | Fallen Seraph | Three-Faced Emperor |
 |---|---|
@@ -341,27 +343,7 @@ On 26.3 Lucifer has his own models: the **Fallen Seraph** (horned, crimson, blac
 
 ### Boss music
 
-The fight has music: a different track for the duel, the enraged phase and the true form. Everyone hears vanilla music discs by default ("Creator", "Pigstep" and "Precipice"). To use **your own tracks**:
-1. Export them as **Ogg Vorbis** (`.ogg`). Audacity can do this: File → Export → Ogg.
-2. Name them `duel.ogg`, `enraged.ogg` and `true_form.ogg`. Any subset works; a missing phase reuses another track.
-3. Put them in `config/hellcraft/music/`:
-   - Docker: `docker/data/config/hellcraft/music/`
-   - single player: `.minecraft/config/hellcraft/music/`
-4. Restart. The tracks go into the Hellcraft resource pack.
-
-### The Hellcraft resource pack
-
-**Servers** send players one resource pack when they join. It holds Lucifer's models, the hell weapons, the blood items (26.3) and your boss music. Minecraft caches it, so players download it **once**, and again only when it changes. On 26.3 it's **required**: players who decline can't join, because Lucifer would be invisible to them. Set `"resourcePackRequired": false` in the config to make it optional.
-
-**No setup needed on 26.3.** Each player is sent the pack from the address they joined with (`play.example.com`, your IP, a LAN address...), on port **25566**. That port must be open and forwarded just like 25565; the compose file already maps it.
-- Behind a proxy (Velocity, TCPShield...) or with a different download address: set `"musicPackHost"` in `config/hellcraft.json` or `HELLCRAFT_PACK_HOST`. 1.21.1 still needs one of these.
-- The rank rims on the hearts (the Seven P's) come from the same port. Players who get the pack's GitHub copy instead (through tunnels like playit.gg) see the Blood Heart HUD without the rims.
-- **Tunnels like playit.gg** only forward the game port. Players who join through a playit.gg address automatically get the copy of the pack that each release publishes on GitHub (`hellcraft-pack-<version>-mc26.3.zip`), so there's nothing to set up. That copy has no custom boss music. `"packFromGitHub"` can be `"auto"`, `"always"` or `"never"`.
-- If your host only allows one port, upload the pack somewhere and set `"musicPackUrl"` to it, or use `"packFromGitHub": "always"`.
-
-Operators get a reminder in chat when they join if the pack can't be sent.
-
-**Single player** needs no setup: the art is built into the mod.
+The fight has music: a different track for the duel, the enraged phase and the true form. Until Hellcraft ships its own tracks, everyone hears vanilla music discs ("Creator", "Pigstep" and "Precipice"; change them with the `fallbackMusic…` settings). Hellcraft's own tracks will ship inside the mod, so every player hears them with nothing to set up.
 
 He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns, champion scaling, the Bane bonus and the fallback music are all in the config.
 
@@ -536,16 +518,15 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
-- the resource pack: `musicPackHost` / `musicPackPort` (where players download it from), `musicPackUrl` (host it yourself instead), and `resourcePackRequired` (26.3)
 - the guide book, tab-list hearts, the Hall of the Damned and circle ambience (26.3): `guideBook`, `tabListHearts`, `sidebarHall`, `circleAmbience`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
 ## Development
 
-- `./gradlew build` builds the 1.21.1 mod and runs the geometry unit tests.
-- `versions/26.3` is the Minecraft 26.3 build (Java 25, Loom without remapping): `cd versions/26.3 && ./gradlew build`. It shares `InfernoGeometry`, `Circle`, `Zone`, the Ogg reader and the unit tests with the root project, so the shape of Hell is identical in both.
-- `python3 tools/gen_worldgen.py` regenerates every biome, surface rule, feature and tag for 1.21.1; `python3 tools/gen_worldgen.py --26.3` writes the same world in 26.3's data formats. Edit the script, not the JSON.
+- `versions/26.3` is the mod (Java 25, Loom without remapping): `cd versions/26.3 && ./gradlew build` builds it and runs the unit tests. Client-only code is in `src/client`. The repository root holds the frozen 1.21.1 version.
+- `tools/dev/clienttest.sh` runs the client game tests (`versions/26.3/src/gametest`): a real Minecraft client, headless, joins worlds and servers and takes screenshots (`versions/26.3/build/run/clientGameTest/screenshots`). Needs Xvfb and Mesa; CI runs it on every push.
+- `python3 tools/gen_worldgen.py --26.3` regenerates every biome, surface rule, feature and tag. Edit the script, not the JSON.
 - `tools/RenderMap.java` renders the map and cross-section in `docs/` without Minecraft (see its header for the command).
-- `scripts/smoke-test.sh` boots a real server in Docker, generates every circle and checks the log. CI runs it on every push, on both 1.21.1 and 26.3 (`MC_VERSION`/`MC_IMAGE`).
+- `scripts/smoke-test.sh` boots a real server in Docker, generates every circle and checks the log. CI runs it on every push.
 - `scripts/package-singleplayer.sh` builds the `.mrpack` and the mods zip into `dist/`. CI runs it and publishes the results as the test pre-release.
 - All of the funnel's geometry lives in `InfernoGeometry.java`, which is pure Java. Terrain, biomes, features and hazards all read from it.

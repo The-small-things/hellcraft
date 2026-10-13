@@ -123,14 +123,14 @@ jobs:
           prerelease: true
           files: dist/*
           body: |
-            Test build from `${{ github.ref_name }}` @ ${{ github.sha }}.
+            Test build from `${{ github.ref_name }}` @ ${{ github.sha }}. Hellcraft 3.0 is being rebuilt (see `docs/REVAMP.md`), so test builds can change a lot.
 
-            **Play in single player**
-            - **Modrinth App / Prism Launcher / CurseForge:** download `Hellcraft-${{ steps.tag.outputs.ver }}-mc<version>.mrpack` and import it (it installs Fabric + Fabric API for you).
-            - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mc<version>-mods.zip` and follow `INSTALL.txt`.
-            - Then **Create New World → World tab → World Type: Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
+            **Every player installs Hellcraft**, the same version as the server:
+            - **Modrinth App / Prism Launcher:** download `Hellcraft-${{ steps.tag.outputs.ver }}-mc26.3.mrpack` and import it (it installs Minecraft 26.3, Fabric and Fabric API for you). Use it for single player and to join a Hellcraft server.
+            - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mc26.3-mods.zip` and follow `INSTALL.txt`.
+            - **Single player:** Create New World, World tab, World Type: **Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
 
-            **Servers:** use `hellcraft-${{ steps.tag.outputs.ver }}-mc<version>.jar` with the Docker setup in the README (set `VERSION` to the same Minecraft version; 26.3 needs the `java25` image).
+            **Servers:** use `hellcraft-${{ steps.tag.outputs.ver }}-mc26.3.jar` with the Docker setup in the README (`itzg/minecraft-server:java25`, `VERSION` 26.3). Only port 25565 is needed. Players without the matching Hellcraft are told what to install.
 
   # A green push whose commit message contains [release] publishes a real (not pre-release) release,
   # tagged v<mod_version>, with the same downloads.

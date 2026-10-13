@@ -3,7 +3,9 @@ plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 }
 
-version = "${project.mod_version}+26.3"
+// CI builds add the commit (3.0.0+26.3.abc1234), so the join check tells test builds apart
+def commit = System.getenv('GITHUB_SHA')
+version = "${project.mod_version}+26.3" + (commit ? ".${commit.take(7)}" : "")
 group = project.maven_group
 
 base {
