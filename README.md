@@ -470,6 +470,11 @@ When you lose your last heart you are not banned. *There is no more room in hell
   - Lucifer: 6 hours for his full reward (`luciferSpoilsCooldownMinutes`). A win in between pays fragments by style rank.
   - Each win tells you how long until that boss's hearts return for you.
 - **A heart ceiling.** Nothing can raise anyone past 40 hearts (`heartCeiling`), not Lucifer's Bane and not the Seven P's. A Bane is refused rather than wasted, and the P's still give their virtues.
+- **Fair play (3.0).**
+  - **Sanctuary:** no fighting other players in the Dark Wood, on the Shore or in Limbo (`sanctuaryNoPvp`).
+  - **Newcomer grace:** for a new soul's first 2 hours of play (`newcomerGraceMinutes`), other players can't take its hearts. "(new)" shows after its name, in the tab list and over its head. Attacking a player ends it early.
+  - **Cain's Mark:** killing a soul with less than half your hearts takes no heart from it, and marks you: you glow for 10 minutes (`cainMarkMinutes`), and whoever kills you meanwhile gets 2 Blood Hearts (`cainBountyHearts`).
+  - `/hellcraft fairness test` checks the rules.
 - **The bounty.** Every 20 minutes (`bountyIntervalMinutes`), the soul online holding the most blood is marked, if they have at least 25 hearts (`bountyMinHearts`).
   - The server is told roughly where they are (their circle, and coordinates rounded to 50), and they glow for 45 s.
   - Whoever kills them gets 3 extra Blood Hearts (`bountyRewardHearts`).

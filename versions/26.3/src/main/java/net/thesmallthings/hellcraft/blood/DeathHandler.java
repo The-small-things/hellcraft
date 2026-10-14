@@ -62,9 +62,12 @@ public final class DeathHandler {
 		return true;
 	}
 
-	/** Only players take hearts, unless the server says monsters and the world do too. */
+	/**
+	 * Only players take hearts, unless the server says monsters and the world do too; and never from a newcomer, or
+	 * for a killer with more than twice the dead soul's hearts (Fairness).
+	 */
 	public static boolean costsHeart(ServerPlayer player) {
-		return killer(player) != null || HellConfig.get().pveDeathsCostHearts;
+		return Fairness.heartAtStake(player, killer(player));
 	}
 
 	@Nullable
@@ -99,8 +102,17 @@ public final class DeathHandler {
 		Bounty.onDeath(player, killer);
 		soul.deaths++;
 		state.setDirty();
-		if (killer == null && !config.pveDeathsCostHearts) {
-			player.sendSystemMessage(Component.literal("You died, but kept your hearts: only players can take them.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		boolean atStake = Fairness.heartAtStake(player, killer);
+		if (killer != null) {
+			// pays for a soul bearing Cain's Mark; explains a newcomer's protection; marks a bully
+			Fairness.onKill(player, killer);
+		}
+		if (!atStake) {
+			if (killer == null && soul.graceTicks > 0 && config.pveDeathsCostHearts) {
+				player.sendSystemMessage(Component.literal("You're new here, so you kept your hearts.").withStyle(ChatFormatting.GOLD));
+			} else if (killer == null) {
+				player.sendSystemMessage(Component.literal("You died, but kept your hearts: only players can take them.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			}
 			return;
 		}
 		soul.hearts = Math.max(0, soul.hearts - 1);

@@ -105,6 +105,10 @@ public class HellState extends SavedData {
 		public int hints;
 		/** Starter kit version this soul has received. */
 		public int kit;
+		/** Newcomer protection left, in ticks of play (Fairness). */
+		public int graceTicks;
+		/** Game time until which this soul bears Cain's Mark (Fairness), or 0. */
+		public long cainUntil;
 		/** Virgil's Rests this soul has reached (by site id): the places they can travel back to. */
 		public final Set<String> visited = new HashSet<>();
 		/** Codex entries this soul has opened (the bosses it has met). */
@@ -217,6 +221,8 @@ public class HellState extends SavedData {
 			}
 			st.putInt("hints", s.hints);
 			st.putInt("kit", s.kit);
+			st.putInt("grace", s.graceTicks);
+			st.putLong("cain", s.cainUntil);
 			st.putBoolean("rose", s.rose);
 			st.putBoolean("roseCompass", s.roseCompass);
 			st.putInt("prestige", s.prestige);
@@ -306,6 +312,8 @@ public class HellState extends SavedData {
 			s.anchorAt = GlobalSpot.load(st, "anchor");
 			s.hints = st.getIntOr("hints", 0);
 			s.kit = st.getIntOr("kit", 0);
+			s.graceTicks = st.getIntOr("grace", 0);
+			s.cainUntil = st.getLongOr("cain", 0L);
 			s.rose = st.getBooleanOr("rose", false);
 			s.roseCompass = st.getBooleanOr("roseCompass", false);
 			s.prestige = st.getIntOr("prestige", 0);

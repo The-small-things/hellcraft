@@ -327,6 +327,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
 fi
 
 if [ "$MC_VERSION" != "1.21.1" ]; then
+  # fair play: no PvP in the Dark Wood, the Shore and Limbo; killing a soul with under half your hearts takes nothing
+  fair=$(rcon "hellcraft fairness test")
+  echo "$fair"
+  echo "$fair" | grep -q "dark_wood=true limbo=true lust=false; 10 vs 25 bullying=true, 15 vs 25 bullying=false" || { echo "The fairness rules are wrong"; exit 1; }
   # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
   danger=$(rcon "hellcraft danger test")
   echo "$danger"

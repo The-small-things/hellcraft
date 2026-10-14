@@ -117,6 +117,14 @@ public class HellConfig {
 	public boolean bossPullsArchers = true;
 	/** No placing blocks in a guardian's lair while it is awake (no towers or walls). */
 	public boolean bossNoBuilding = true;
+	/** No fighting other players in the Dark Wood, on the Shore or in Limbo. */
+	public boolean sanctuaryNoPvp = true;
+	/** A new soul's first minutes of play during which other players can't take its hearts (0 = none). */
+	public int newcomerGraceMinutes = 120;
+	/** How long Cain's Mark lasts: the mark of whoever kills a soul with less than half their hearts. */
+	public int cainMarkMinutes = 10;
+	/** Blood Hearts paid to whoever kills a soul bearing Cain's Mark. */
+	public int cainBountyHearts = 2;
 	/** The bounty: every so often the strongest soul online is marked, and whoever kills them is paid in blood. */
 	public boolean bounty = true;
 	/** Minutes between bounties. */
@@ -251,6 +259,9 @@ public class HellConfig {
 		luciferSpoilsCooldownMinutes = Math.max(0, luciferSpoilsCooldownMinutes);
 		bountyIntervalMinutes = Math.max(1, bountyIntervalMinutes);
 		bountyRewardHearts = Math.max(0, bountyRewardHearts);
+		newcomerGraceMinutes = Math.max(0, newcomerGraceMinutes);
+		cainMarkMinutes = Math.max(1, cainMarkMinutes);
+		cainBountyHearts = Math.max(0, cainBountyHearts);
 		bossHeartScaling = Math.max(0.0, bossHeartScaling);
 		bossProjectileDamage = Math.max(0.0, Math.min(1.0, bossProjectileDamage));
 		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);

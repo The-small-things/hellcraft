@@ -25,6 +25,7 @@ import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.Bounty;
+import net.thesmallthings.hellcraft.blood.Fairness;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
@@ -341,6 +342,8 @@ public final class HellCommands {
 							Bounty.clear();
 							return reply(ctx.getSource(), "The bounty is cleared.");
 						})))
+				.then(Commands.literal("fairness")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Fairness.selfTest()))))
 				.then(Commands.literal("danger")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Danger.selfTest(ctx.getSource().getLevel())))))
 				.then(Commands.literal("spoils")

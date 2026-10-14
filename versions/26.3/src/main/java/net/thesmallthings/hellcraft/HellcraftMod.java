@@ -11,6 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.blood.Bounty;
+import net.thesmallthings.hellcraft.blood.Fairness;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
@@ -73,6 +74,7 @@ public class HellcraftMod implements ModInitializer {
 		HellEntities.register();
 		HellWorldgen.register();
 		BloodEvents.register();
+		Fairness.register();
 		HellWeapons.register();
 		Hellforge.register();
 		Relics.register();
@@ -122,6 +124,7 @@ public class HellcraftMod implements ModInitializer {
 			HallOfTheDamned.tick(server);
 			WhiteRoom.tick(server);
 			Bounty.tick(server);
+			Fairness.tick(server);
 			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

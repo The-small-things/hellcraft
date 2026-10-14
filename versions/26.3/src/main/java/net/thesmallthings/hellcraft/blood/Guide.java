@@ -56,6 +56,14 @@ public final class Guide {
 						+ c.reviveHearts + " hearts.",
 				"",
 				"/revive explains how. Ghosts can use /ghost."));
+		pages.add(page("FAIR PLAY",
+				c.sanctuaryNoPvp ? "No fighting other players in the Dark Wood, on the Shore or in Limbo." : "Players can fight anywhere.",
+				"",
+				c.newcomerGraceMinutes > 0 ? "New souls: for your first " + c.newcomerGraceMinutes + " minutes of play, players can't take your hearts. "
+						+ "\"(new)\" shows after your name. Attack a player and it ends." : "",
+				"",
+				"Killing someone with less than half your hearts takes nothing, and gives you Cain's Mark: you glow for "
+						+ c.cainMarkMinutes + " minutes, and whoever kills you gets " + c.cainBountyHearts + " Blood Hearts."));
 		pages.add(page("BLOOD ALTARS",
 				"Build one: a respawn anchor on a 3x3 of crying obsidian. There is one by the Gate of Hell" + altarAt + ".",
 				"",

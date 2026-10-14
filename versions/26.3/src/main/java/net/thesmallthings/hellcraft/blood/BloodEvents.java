@@ -141,6 +141,7 @@ public final class BloodEvents {
 		if (firstJoin) {
 			// something to eat on the long walk down, and where to read up
 			BloodItems.give(player, new ItemStack(Items.BREAD, 5));
+			Fairness.welcome(player, soul);
 			player.sendSystemMessage(Component.literal("Welcome to Hell. Press ").withStyle(ChatFormatting.GOLD)
 					.append(Component.keybind("key.hellcraft.journal").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
 					.append(Component.literal(" for the Pilgrim's Journal: where you are, where to go next, and how everything works. ")
