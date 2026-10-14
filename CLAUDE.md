@@ -48,6 +48,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - `tools/gen_textures.py`: all item, boss, armour and HUD textures (pixel art as code). Item-model textures
   must sit under `textures/item/` or `textures/block/`, or they render as the missing texture; the smoke test
   checks this.
+- Bosses with real bodies (3.0): `tools/art/<boss>.py` builds the model, its texture and its animations in code
+  (with `tools/art/bbmodel.py`) and writes `versions/26.3/art/<boss>.bbmodel`, which Blockbench opens (look at it,
+  play the animations). `tools/gen_bosses.py` turns every .bbmodel into `client/render/gen/<Boss>Mesh` and
+  `<Boss>Animations` (Minecraft keyframes), `entity/boss/gen/<Boss>Anim` (each animation's length and named events,
+  which the server times blows by) and `textures/entity/<boss>.png` (+ `_glow`). Run both after any change; the
+  client test `BossTest` screenshots every animation (`minos_*`).
 
 ## Code map (`versions/26.3/src/main/java/net/thesmallthings/hellcraft/`; client-only code in `src/client`)
 - `blood/`: hearts and lifesteal (`Hearts`, `DeathHandler`, `HellState` = all saved data), Blood Altars and their

@@ -18,6 +18,9 @@ import net.thesmallthings.hellcraft.client.nav.MapTexture;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
 import net.thesmallthings.hellcraft.client.render.TestRigModel;
 import net.thesmallthings.hellcraft.client.render.TestRigRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.MinosModel;
+import net.thesmallthings.hellcraft.client.render.boss.MinosRenderer;
+import net.thesmallthings.hellcraft.client.render.gen.MinosMesh;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.net.HudPayload;
 import net.thesmallthings.hellcraft.net.JournalPayload;
@@ -58,5 +61,7 @@ public class HellcraftClient implements ClientModInitializer {
 
 		ModelLayerRegistry.registerModelLayer(TestRigModel.LAYER, TestRigModel::createLayer);
 		EntityRendererRegistry.register(HellEntities.TEST_RIG, TestRigRenderer::new);
+		ModelLayerRegistry.registerModelLayer(MinosModel.LAYER, MinosMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.MINOS, MinosRenderer::new);
 	}
 }

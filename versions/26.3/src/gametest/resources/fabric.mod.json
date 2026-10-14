@@ -11,7 +11,8 @@
 			"net.thesmallthings.hellcraft.gametest.JoinTest",
 			"net.thesmallthings.hellcraft.gametest.HudTest",
 			"net.thesmallthings.hellcraft.gametest.RigTest",
-			"net.thesmallthings.hellcraft.gametest.MapTest"
+			"net.thesmallthings.hellcraft.gametest.MapTest",
+			"net.thesmallthings.hellcraft.gametest.BossTest"
 		]
 	},
 	"depends": {
