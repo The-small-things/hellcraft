@@ -8,23 +8,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -46,8 +40,6 @@ public final class CircleHazards {
 
 	private static final Map<UUID, Circle> LAST_CIRCLE = new HashMap<>();
 	private static final Map<UUID, String> LAST_REGION = new HashMap<>();
-	/** Lust: game time of each player's next gust. */
-	private static final Map<UUID, Long> NEXT_GUST = new HashMap<>();
 	private static int ticks;
 
 	public static void register() {
@@ -128,49 +120,7 @@ public final class CircleHazards {
 		boolean open = level.canSeeSky(pos.above());
 		Circle circle = zone.circle();
 		switch (circle) {
-			case LUST -> {
-				// the infernal hurricane that never rests: a gust every 5-9 s shoves you sideways along the circle. It only
-				// catches you on your feet (never mid-air, so it can't stack with a breeze's wind charge or a fall), barely
-				// lifts you, and sneaking or a roof braces you against it
-				long now = level.getGameTime();
-				if (now < NEXT_GUST.getOrDefault(player.getUUID(), 0L)) {
-					break;
-				}
-				NEXT_GUST.put(player.getUUID(), now + 100 + level.getRandom().nextInt(80));
-				if (open && !player.isShiftKeyDown() && player.onGround() && player.hurtTime == 0 && !player.isFallFlying()) {
-					double r = Math.max(1.0, Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ()));
-					Vec3 tangent = new Vec3(-player.getZ() / r, 0, player.getX() / r);
-					double strength = 0.35 + level.getRandom().nextDouble() * 0.25;
-					player.push(tangent.x * strength, 0.12, tangent.z * strength);
-					Feedback.syncMotion(player);
-					level.playSound(null, pos, SoundEvents.ELYTRA_FLYING, SoundSource.WEATHER, 0.4f, 1.6f);
-					level.sendParticles(ParticleTypes.CLOUD, player.getX() - tangent.x, player.getY() + 1.0, player.getZ() - tangent.z,
-							6, 0.3, 0.4, 0.3, 0.05);
-					hint(player, circle, "The wind can't move you while you sneak, or under a roof.");
-				}
-			}
-			case GLUTTONY -> {
-				// the cold, heavy rain: a roof keeps it off
-				if (open) {
-					player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
-					hint(player, circle, "Gluttony's rain makes you hungry. Stand under a roof.");
-				}
-			}
-			case GREED -> {
-				int weight = greedWeight(player);
-				if (weight >= 32) {
-					int amp = Math.min(2, weight / 64);
-					player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, amp, true, false, true));
-					hint(player, circle, "Carrying gold slows you down here. Put it in an ender chest or leave it behind.");
-				}
-			}
-			case WRATH -> {
-				if (player.isInWater()) {
-					player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, true));
-					player.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 60, 1, true, false, true));
-					hint(player, circle, "The river Styx hurts you while you're in it. Use a boat or stay on land.");
-				}
-			}
+			// Lust, Gluttony, Greed and Wrath have rules to play with instead (LayerRules, Hoarders)
 			case HERESY -> {
 				if (open && level.getRandom().nextFloat() < 0.02f) {
 					player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 120, 0, true, false, true));
@@ -272,30 +222,8 @@ public final class CircleHazards {
 				.append(Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 	}
 
-	/** How much treasure a player is hauling, in "gold ingot equivalents". */
-	private static int greedWeight(ServerPlayer player) {
-		int weight = 0;
-		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-			ItemStack s = player.getInventory().getItem(i);
-			int c = s.getCount();
-			if (s.is(Items.GOLD_INGOT) || s.is(Items.RAW_GOLD) || s.is(Items.DIAMOND) || s.is(Items.EMERALD) || s.is(Items.GILDED_BLACKSTONE)) {
-				weight += c;
-			} else if (s.is(Items.GOLD_BLOCK) || s.is(Items.RAW_GOLD_BLOCK) || s.is(Items.DIAMOND_BLOCK) || s.is(Items.EMERALD_BLOCK)) {
-				weight += c * 9;
-			} else if (s.is(Items.NETHERITE_INGOT)) {
-				weight += c * 4;
-			} else if (s.is(Items.NETHERITE_BLOCK)) {
-				weight += c * 36;
-			} else if (s.is(Items.GOLD_NUGGET)) {
-				weight += c / 9;
-			}
-		}
-		return weight;
-	}
-
 	public static void forget(ServerPlayer player) {
 		LAST_CIRCLE.remove(player.getUUID());
 		LAST_REGION.remove(player.getUUID());
-		NEXT_GUST.remove(player.getUUID());
 	}
 }

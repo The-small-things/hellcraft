@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.danger.DangerMarks;
+import net.thesmallthings.hellcraft.client.layer.LayerFx;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.CompassHud;
 import net.thesmallthings.hellcraft.client.nav.JournalScreen;
@@ -23,7 +24,10 @@ import net.thesmallthings.hellcraft.client.render.TestRigModel;
 import net.thesmallthings.hellcraft.client.render.TestRigRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.MinosModel;
 import net.thesmallthings.hellcraft.client.render.boss.MinosRenderer;
+import net.thesmallthings.hellcraft.client.render.gen.HoarderMesh;
 import net.thesmallthings.hellcraft.client.render.gen.MinosMesh;
+import net.thesmallthings.hellcraft.client.render.monster.HoarderModel;
+import net.thesmallthings.hellcraft.client.render.monster.HoarderRenderer;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.net.CutscenePayload;
 import net.thesmallthings.hellcraft.net.DangerPayload;
@@ -66,16 +70,21 @@ public class HellcraftClient implements ClientModInitializer {
 			NavKeys.tick(client);
 			DangerMarks.tick(client);
 			CutscenePlayer.tick(client);
+			LayerFx.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
 		HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, LayerCard.ID, new LayerCard());
 
 		// the danger language's marks on the ground
 		LevelRenderEvents.COLLECT_SUBMITS.register(DangerMarks::render);
+		// Lust's wind streams
+		LevelRenderEvents.COLLECT_SUBMITS.register(LayerFx::render);
 
 		ModelLayerRegistry.registerModelLayer(TestRigModel.LAYER, TestRigModel::createLayer);
 		EntityRendererRegistry.register(HellEntities.TEST_RIG, TestRigRenderer::new);
 		ModelLayerRegistry.registerModelLayer(MinosModel.LAYER, MinosMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MINOS, MinosRenderer::new);
+		ModelLayerRegistry.registerModelLayer(HoarderModel.LAYER, HoarderMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.HOARDER, HoarderRenderer::new);
 	}
 }

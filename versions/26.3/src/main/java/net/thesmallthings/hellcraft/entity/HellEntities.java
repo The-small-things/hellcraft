@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
+import net.thesmallthings.hellcraft.entity.monster.Hoarder;
 
 /** Hellcraft's own mobs. Each has a renderer and a model in the client sources (client/render). */
 public final class HellEntities {
@@ -24,9 +25,14 @@ public final class HellEntities {
 	public static final EntityType<MinosEntity> MINOS = register("minos",
 			EntityType.Builder.of(MinosEntity::new, MobCategory.MONSTER).sized(3.0f, 6.4f).eyeHeight(5.6f).fireImmune().clientTrackingRange(16));
 
+	/** Greed's hoarders, drawn to whoever carries gold (Hoarders). */
+	public static final EntityType<Hoarder> HOARDER = register("hoarder",
+			EntityType.Builder.of(Hoarder::new, MobCategory.MONSTER).sized(0.8f, 1.7f).clientTrackingRange(8));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
+		FabricDefaultAttributeRegistry.register(HOARDER, Hoarder.attributes());
 	}
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {

@@ -73,10 +73,10 @@ The world is a disc 7,000 blocks across, with the world border at radius 3,500 (
 | Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves, and (on 26.3) only a few monsters, so new players can find their feet. The Gate of Hell's wall runs along its inner edge. | – |
 | Vestibule & Acheron | – | Grey gravel plain. The river Acheron. Bees stand in for the stinging wasps. | – |
 | **Limbo** | I | Pale meadows of calcite and birch. The only villages in Hell, plus trail ruins. | none: Limbo is only longing |
-| **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | Hurricane gusts push you sideways every few seconds |
-| **Gluttony** | III | Mud, mangrove roots, filthy pools. Hoglins and slimes. | Constant Hunger |
-| **Greed** | IV | Blackstone, gilded blackstone and raw gold. Boulders, piglins, buried bastions. | Carrying gold, diamonds, emeralds or netherite slows you |
-| **Wrath** | V | The marsh of Styx. Drowned, and vindicators with Strength. | Weakness and Mining Fatigue while in its water |
+| **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | The wind is a road: white streams carry you down the circle |
+| **Gluttony** | III | Mud, mangrove roots, filthy pools. Hoglins and slimes. | The mud swallows whoever stands still |
+| **Greed** | IV | Blackstone, gilded blackstone and raw gold. Boulders, piglins, buried bastions. | Gold draws the hoarders |
+| **Wrath** | V | The marsh of Styx. Drowned, and vindicators with Strength. | The sullen lurk under the water |
 | Walls of Dis | – | A ring wall of blackstone brick with burning towers and 4 gates. | – |
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
 | **Violence** | VII | Phlegethon, a river of lava with crimson banks, where skeleton "centaurs" ride skeleton horses. The Wood of the Suicides (leafless trees, webs). The Burning Sands. | Breaking the trees hurts you. Fire rains on the sands. |
@@ -430,14 +430,14 @@ They are built the first time someone comes near. The compass and the Map of Hel
 
 ## The torments of the circles
 
-Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all.
+Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all. Since 3.0 the upper circles' punishments are things to play with rather than debuffs: each is a rule you can use or get round.
 
 | Circle | Torment | Counter (26.3) |
 |---|---|---|
-| Lust | A gust shoves you sideways every 5–9 s under the open sky (only while you stand on the ground, and barely off it) | Sneak, or get under a roof |
-| Gluttony | The rain brings Hunger | A roof |
-| Greed | Gold you carry slows you | Stash it (ender chest) |
-| Wrath | The Styx's water weakens you | A boat, or the banks |
+| Lust | **The wind is a road** (3.0). Twelve streams of white wind spiral in across the circle, each from a level pad on the outer side, up over the spires, down onto a pad beside the next way down. Step into one and it carries you; you take no fall damage while it does | Ride it, or sneak to let go (you glide down with Slow Falling) |
+| Gluttony | **The mud swallows you if you stand still** (3.0). Stand still on mud, dirt or soul soil and you sink: slowed after 2 s, held after 4 s, choking after 6 s (`mudSeconds`) | Keep moving, or stand on mangrove roots, stone or planks |
+| Greed | **Gold draws the hoarders** (3.0). Carry 8 or more gold ingots' worth (gold, diamonds, emeralds, netherite; a block counts 9) and hunched hoarders come for it: one, plus one for every 24 more, up to six (`hoarderGold`, `hoarderGoldPerExtra`, `hoardersMax`). They hunt only the laden, and each blow steals some of your treasure | Stash it (an ender chest) and they lose interest; kill a hoarder and it drops all it stole |
+| Wrath | **The sullen lurk under the water** (3.0). Where bubbles rise in the Styx, hands drag a swimmer down for two seconds (drowning damage; `sullenGripTicks`) | Keep to the roads, take a boat, or swim clear of the bubbles |
 | Heresy | The tombs' smoke brings Darkness now and then | A roof |
 | Burning Sands | Fire rains on the open sand (you see it falling first) | A roof, water, Fire Resistance, or leaving the sand |
 | Fraud | Some monsters are invisible | Watch for their swirl of particles (never creepers) |

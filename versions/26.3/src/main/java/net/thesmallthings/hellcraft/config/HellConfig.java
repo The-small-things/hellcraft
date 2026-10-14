@@ -57,6 +57,15 @@ public class HellConfig {
 	public int wardMinutes = 30;
 	public boolean circleHazards = true;
 	public boolean circleTitles = true;
+	/** Gluttony: seconds of standing still on soft ground before the mud takes hold (it holds at twice this, chokes at three times). */
+	public int mudSeconds = 2;
+	/** Greed: carry this much treasure (in gold ingots; a block is 9) and a hoarder comes for it. */
+	public int hoarderGold = 8;
+	/** Greed: each this much more draws one more hoarder, up to hoardersMax. */
+	public int hoarderGoldPerExtra = 24;
+	public int hoardersMax = 6;
+	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
+	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */
 	public double mobHealthPerDepth = 0.03;
 
@@ -262,6 +271,11 @@ public class HellConfig {
 		newcomerGraceMinutes = Math.max(0, newcomerGraceMinutes);
 		cainMarkMinutes = Math.max(1, cainMarkMinutes);
 		cainBountyHearts = Math.max(0, cainBountyHearts);
+		mudSeconds = Math.max(1, mudSeconds);
+		hoarderGold = Math.max(1, hoarderGold);
+		hoarderGoldPerExtra = Math.max(1, hoarderGoldPerExtra);
+		hoardersMax = Math.max(0, hoardersMax);
+		sullenGripTicks = Math.max(0, sullenGripTicks);
 		bossHeartScaling = Math.max(0.0, bossHeartScaling);
 		bossProjectileDamage = Math.max(0.0, Math.min(1.0, bossProjectileDamage));
 		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);

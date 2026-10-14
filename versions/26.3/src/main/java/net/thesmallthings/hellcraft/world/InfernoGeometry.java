@@ -268,8 +268,9 @@ public final class InfernoGeometry {
 			// keep Lucifer's pit clean
 			out[0] *= 0.3;
 		}
-		// the roads and the guardians' arenas are level ground
-		double flat = (1.0 - roadLevelling(Math.atan2(z, x), r)) * (1.0 - arenaLevelling(x, z));
+		// the roads, the guardians' arenas, Lust's wind pads and the Noble Castle are level ground
+		double flat = (1.0 - roadLevelling(Math.atan2(z, x), r)) * (1.0 - arenaLevelling(x, z)) * (1.0 - WindStreams.padLevelling(x, z))
+				* (1.0 - NobleCastle.levelling(x, z));
 		out[0] *= flat;
 		out[1] *= flat;
 		out[2] *= flat;

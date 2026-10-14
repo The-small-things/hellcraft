@@ -28,6 +28,8 @@ import net.thesmallthings.hellcraft.hazard.Ambience;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.hazard.Hoarders;
+import net.thesmallthings.hellcraft.hazard.LayerRules;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
@@ -107,6 +109,8 @@ public class HellcraftMod implements ModInitializer {
 		ServerEntityEvents.ENTITY_LOAD.register(Shrines::onLoad);
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			CircleHazards.tick(server);
+			LayerRules.tick(server);
+			Hoarders.tick(server);
 			LuciferManager.tick(server);
 			GuardianManager.tick(server);
 			BossModel.tickFalling(server);
