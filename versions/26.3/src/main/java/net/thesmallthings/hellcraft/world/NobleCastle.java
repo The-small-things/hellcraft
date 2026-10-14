@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.world;
 
+
 /**
  * Limbo's Noble Castle (L-I), the hub of Upper Hell: "a noble castle, seven times encircled by high walls, defended
  * round about by a fair rivulet" (Inferno IV). It stands on the east road, which runs through its seven gates; inside
@@ -17,18 +18,18 @@ public final class NobleCastle {
 	public static final int Z = 0;
 	public static final int WALLS = 7;
 	/** Wall k (0 innermost) stands at radius INNER + SPACING * k. */
-	private static final int INNER = 12;
+	private static final int INNER = 20;
 	private static final int SPACING = 4;
 	/** The fair rivulet runs round the outside, between these radii. */
-	public static final double STREAM_INNER = 40.5;
-	public static final double STREAM_OUTER = 42.5;
+	public static final double STREAM_INNER = 48.5;
+	public static final double STREAM_OUTER = 50.5;
 	/** The green: the castle's own biome reaches this far. */
-	public static final double GREEN = 44;
+	public static final double GREEN = 53;
 	/** The ground is level this far out, fading to the meadow's own over LEVEL_FADE. */
-	private static final double LEVEL = 50;
+	private static final double LEVEL = 58;
 	private static final double LEVEL_FADE = 16;
 	/** The luminous mound at the heart. */
-	public static final double MOUND = 6;
+	public static final double MOUND = 7;
 	/** Gates (and paths) run along the four axes, this many blocks either side. */
 	public static final double GATE_HALF_WIDTH = 2.5;
 	public static final int GATE_HEIGHT = 4;

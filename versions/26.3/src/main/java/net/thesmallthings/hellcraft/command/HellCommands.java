@@ -54,6 +54,7 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Paradiso;
 import net.thesmallthings.hellcraft.world.Purgatory;
+import net.thesmallthings.hellcraft.world.Shades;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
@@ -346,6 +347,8 @@ public final class HellCommands {
 						})))
 				.then(Commands.literal("fairness")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Fairness.selfTest()))))
+				.then(Commands.literal("castle")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Shades.castleTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("layers")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LayerRules.selfTest() + "; " + Hoarders.selfTest()))))
 				.then(Commands.literal("danger")

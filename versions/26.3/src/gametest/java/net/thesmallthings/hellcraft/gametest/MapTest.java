@@ -5,13 +5,19 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerConnection;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerContext;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
+import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.LayerCard;
@@ -19,12 +25,18 @@ import net.thesmallthings.hellcraft.client.nav.MapOfHellScreen;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.entity.npc.Shade;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.world.Circle;
+import net.thesmallthings.hellcraft.world.Fen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
+import net.thesmallthings.hellcraft.world.NobleCastle;
+import net.thesmallthings.hellcraft.world.Shades;
 import net.thesmallthings.hellcraft.world.Sullen;
 import net.thesmallthings.hellcraft.world.WindStreams;
+import net.thesmallthings.hellcraft.world.Zone;
+import net.thesmallthings.hellcraft.world.feature.WatchtowerFeature;
 
 import java.util.Locale;
 import java.util.Properties;
@@ -82,6 +94,8 @@ public class MapTest implements FabricClientGameTest {
 				}
 			});
 			findingTheWay(context, server, connection);
+			nobleCastle(context, server, connection);
+			setPieces(context, server, connection);
 			layerRules(context, server, connection);
 			minosFight(context, server, connection);
 		}
@@ -141,6 +155,102 @@ public class MapTest implements FabricClientGameTest {
 	}
 
 	/**
+	 * Limbo's Noble Castle (screenshots castle_*): from the air, then its court with the shades round the mound, and a
+	 * shade's trades (talking to Homer must hand over Cerberus's Codex page).
+	 */
+	private static void nobleCastle(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		int cx = NobleCastle.X;
+		int cz = NobleCastle.Z;
+		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d %d %d", cx - 56, cz - 56, cx + 56, cz + 56));
+		// the ground in the inner court, clear of the walls and the mound
+		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, cx + 3, cz - 12));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", cx + 78, ground + 42, cz + 62, cx, ground, cz));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(30);
+		context.takeScreenshot("castle_aerial");
+		int shades = server.computeOnServer(s -> Shades.ensure(s.overworld(), false));
+		if (shades != Shades.ALL.size()) {
+			throw new AssertionError("only " + shades + " of the " + Shades.ALL.size() + " shades are in the Noble Castle");
+		}
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", cx + 4.5, ground + 3, cz - 17.5, cx, ground + 2, cz));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitFor(client -> client.level.getEntitiesOfClass(Shade.class, client.player.getBoundingBox().inflate(40)).size() >= Shades.ALL.size() - 1, 200);
+		context.waitTicks(40);
+		context.takeScreenshot("castle_court");
+		// talk to Homer: a tip, Cerberus's Codex page, and his wares
+		server.runCommand("gamemode creative Player0");
+		server.computeOnServer(s -> {
+			Shade homer = s.overworld().getEntitiesOfClass(Shade.class, new AABB(cx - 40, -64, cz - 40, cx + 40, 320, cz + 40), sh -> sh.who() == 0).getFirst();
+			ServerPlayer player = s.getPlayerList().getPlayerByName("Player0");
+			player.teleportTo(homer.getX() + 2, homer.getY(), homer.getZ());
+			player.lookAt(EntityAnchorArgument.Anchor.EYES, homer.getEyePosition());
+			return homer.mobInteract(player, InteractionHand.MAIN_HAND);
+		});
+		context.waitForScreen(MerchantScreen.class);
+		context.waitTicks(10);
+		context.takeScreenshot("castle_trade");
+		context.setScreen(() -> null);
+		context.waitFor(client -> ClientNav.codex().stream().anyMatch(e -> e.id().equals("cerberus")), 100);
+		server.runCommand("gamemode spectator Player0");
+		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d %d %d", cx - 56, cz - 56, cx + 56, cz + 56));
+		context.runOnClient(client -> {
+			if (client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+	}
+
+	/**
+	 * The upper circles' set-pieces, placed at chosen spots and photographed (screenshots piece_*): the Mire's rotting
+	 * trees, bloated fungus and a sunken feast table; Greed's coin hills, a vault and the giant scales.
+	 */
+	private static void setPieces(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		piece(context, server, connection, "piece_mire", 2104, 130, new String[][]{
+				{"rotting_tree", "0", "-14"}, {"rotting_tree", "-14", "6"}, {"rotting_tree", "12", "10"},
+				{"bloated_fungus", "-6", "-4"}, {"bloated_fungus", "8", "-6"}, {"feast_table", "-2", "8"}});
+		piece(context, server, connection, "piece_counting_house", 1800, 150, new String[][]{
+				{"coin_hill", "-10", "-8"}, {"coin_hill", "10", "-12"}, {"vault", "0", "4"}, {"giant_scales", "-14", "12"}});
+		context.runOnClient(client -> {
+			if (client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+	}
+
+	/** Places features round (x, z) (each {name, dx, dz}) and photographs them from the south-east, up high. */
+	private static void piece(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection, String shot,
+							  int x, int z, String[][] features) {
+		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d %d %d", x - 40, z - 40, x + 40, z + 40));
+		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z));
+		for (String[] f : features) {
+			int fx = x + Integer.parseInt(f[1]);
+			int fz = z + Integer.parseInt(f[2]);
+			int fy = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, fx, fz));
+			server.runCommand(String.format(Locale.ROOT, "place feature hellcraft:%s %d %d %d", f[0], fx, fy, fz));
+		}
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", x + 26, ground + 16, z + 30, x, ground + 3, z));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(30);
+		context.takeScreenshot(shot);
+		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d %d %d", x - 40, z - 40, x + 40, z + 40));
+	}
+
+	/**
 	 * The upper circles' rules (screenshots layer_*): a wind pad in Lust and the stream rising from it, a ride on the
 	 * stream (it must carry the player along), the Styx bubbling over a sullen, and Greed's hoarders drawn by a purse
 	 * of gold (they must come).
@@ -165,6 +275,17 @@ public class MapTest implements FabricClientGameTest {
 		connection.waitForChunksRender();
 		context.waitTicks(40);
 		context.takeScreenshot("layer_wind_pad");
+		// the souls whirling in flocks over Lust: look at where one will be in a few seconds
+		long now = context.computeOnClient(client -> client.level.getGameTime());
+		long at = now + 100;
+		double[] flock = SoulFlocks.centre(0, at, InfernoGeometry.outerRadius(Zone.LUST), InfernoGeometry.outerRadius(Zone.GLUTTONY));
+		double fr = Math.hypot(flock[0], flock[2]);
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f %.1f facing %.1f %.1f %.1f", flock[0] * (fr + 75) / fr, flock[1] - 25,
+				flock[2] * (fr + 75) / fr, flock[0], flock[1], flock[2]));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitFor(client -> client.level.getGameTime() >= at, 200);
+		context.takeScreenshot("layer_lust_flock");
 		// step into the stream: it carries you
 		int from = 8;
 		server.runCommand("gamemode creative Player0");
@@ -192,13 +313,40 @@ public class MapTest implements FabricClientGameTest {
 		if (spot == null) {
 			throw new AssertionError("no sullen on a line across the Styx");
 		}
+		// one in open water, with no tree over it
+		for (int x = spot[0] + 1; x < 1640; x++) {
+			int[] s = Sullen.spot(x, 60);
+			if (s != null && server.computeOnServer(sv -> {
+				sv.overworld().getChunk(s[0] >> 4, s[1] >> 4);
+				return sv.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING, s[0], s[1]) <= InfernoGeometry.fluidLevel(s[0], s[1]);
+			})) {
+				spot = s;
+				break;
+			}
+		}
 		int surface = InfernoGeometry.fluidLevel(spot[0], spot[1]);
 		server.runCommand("effect give Player0 minecraft:night_vision 30 0 true");
+		server.runCommand(String.format(Locale.ROOT, "fill %d %d %d %d %d %d air replace #minecraft:leaves", spot[0] - 6, surface, spot[1] - 10,
+				spot[0] + 6, surface + 12, spot[1] + 3));
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f 0 50", spot[0] + 0.5, surface + 5, spot[1] - 4.5));
 		context.waitTicks(10);
 		connection.waitForChunksRender();
 		context.waitTicks(30);
 		context.takeScreenshot("layer_styx_bubbles");
+		// a watchtower on the Fen's shore by the east road, and Dis glowing red through the fog beyond it
+		int[] tower = Fen.tower(0);
+		int towerBase = WatchtowerFeature.base(tower);
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", tower[0] + 16, towerBase + 8, tower[1] + 14,
+				tower[0], towerBase + 10, tower[1]));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(30);
+		context.takeScreenshot("layer_fen_watchtower");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 90 -4", tower[0] - 20, surface + 3, tower[1] + 30));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("layer_fen_dis");
 		// Greed: a purse of gold draws hoarders
 		int gx = 1800;
 		int gz = 60;

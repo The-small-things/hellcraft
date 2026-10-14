@@ -72,11 +72,11 @@ The world is a disc 7,000 blocks across, with the world border at radius 3,500 (
 |---|---|---|---|
 | Dark Wood | – | Dark oak forest rising into mountains at the border. Animals, wolves, and (on 26.3) only a few monsters, so new players can find their feet. The Gate of Hell's wall runs along its inner edge. | – |
 | Vestibule & Acheron | – | Grey gravel plain. The river Acheron. Bees stand in for the stinging wasps. | – |
-| **Limbo** | I | Pale meadows of calcite and birch. The only villages in Hell, plus trail ruins. | none: Limbo is only longing |
-| **Lust** | II | Jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. | The wind is a road: white streams carry you down the circle |
-| **Gluttony** | III | Mud, mangrove roots, filthy pools. Hoglins and slimes. | The mud swallows whoever stands still |
-| **Greed** | IV | Blackstone, gilded blackstone and raw gold. Boulders, piglins, buried bastions. | Gold draws the hoarders |
-| **Wrath** | V | The marsh of Styx. Drowned, and vindicators with Strength. | The sullen lurk under the water |
+| **Limbo** | I | The Grey Meadow (3.0): pale grass, calcite and birch in a mist. The only villages in Hell, trail ruins, and the **Noble Castle** on the east road ([below](#the-noble-castle-30)). No fighting other players. | none: Limbo is only longing |
+| **Lust** | II | The Storm Canyons: jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. Overhead, the souls whirl in vast flocks like starlings (3.0). | The wind is a road: white streams carry you down the circle |
+| **Gluttony** | III | The Mire: mud, filthy pools and endless rain. Rotting giant trees (some fallen), bloated fungus, and sunken feast tables with a barrel of leftovers at the head (3.0). Hoglins and slimes. | The mud swallows whoever stands still |
+| **Greed** | IV | The Counting House: blackstone, gilded blackstone and raw gold, heaped into hills of coin. Vaults with their round doors ajar (chests of gold, emeralds and diamonds) and giant scales tipped toward the gold (3.0). Piglins, buried bastions. | Gold draws the hoarders |
+| **Wrath** | V | The Fen of Styx: a dark marsh in fog, walled with reeds, crossed by plank roads; the city of Dis glows red through the fog toward the centre. A watchtower with twin beacons stands on the shore beside each road (3.0). Drowned, and vindicators with Strength. | The sullen lurk under the water |
 | Walls of Dis | – | A ring wall of blackstone brick with burning towers and 4 gates. | – |
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
 | **Violence** | VII | Phlegethon, a river of lava with crimson banks, where skeleton "centaurs" ride skeleton horses. The Wood of the Suicides (leafless trees, webs). The Burning Sands. | Breaking the trees hurts you. Fire rains on the sands. |
@@ -91,6 +91,9 @@ At the bottom of the world waits **Lucifer** (see [below](#lucifer)).
 - **Ruined Blood Altars** (twice as common as before): arrows, books, a Vigil Candle, sometimes an enchanted book
 - **Heretics' tombs**: one in four hides a chest of forbidden books (enchanted books of level 15-30, paper, lapis, bottles o' enchanting)
 - **Circle guardians**: 2 Blood Hearts, fragments, a Soul Anchor, 2 level-30 enchanted books and more
+- **Sunken feast tables** (Gluttony): a barrel of food, gold nuggets, sometimes a golden apple or a book
+- **Vaults** (Greed): gold, emeralds, diamonds, sometimes an enchanted golden apple (beware: gold draws the hoarders)
+- **Watchtowers** (the Fen): a cache at the foot of the ladder: a boat, water breathing, sometimes a trident
 
 Some other rules of Hell:
 - It is always dusk, so monsters never burn.
@@ -99,6 +102,22 @@ Some other rules of Hell:
 - The monster mob cap is 1.75× vanilla on 1.21.1 (vanilla on 26.3, where the circles are gentler; see [the torments](#the-torments-of-the-circles)).
 - A card names each circle as you enter it, and says what it does to you and the gear to bring.
 - Each circle has its own ambience (26.3): the wasps of the Vestibule, Charon's oar on the Acheron, the sighs of Limbo, the hurricane of Lust, rain in Gluttony, chinking gold in Greed, the bubbling Styx, crackling tombs, boiling blood, far-off screams in Malebolge and creaking ice in Cocytus. Turn it off with `circleAmbience`.
+
+### The Noble Castle (3.0)
+
+Halfway across Limbo the east road runs through the **Noble Castle**: "seven times encircled by high walls, defended round about by a fair rivulet" (Inferno IV). Its seven tiers of pale walls each have a gate on the road (and on the other three axes), and inside lies the only green meadow in Hell, with a pavilion of light on a mound at its heart. The great souls who lived before Christ live on there as **shades**: pale, see-through, harmless. **Right-click one** to talk: it says something worth knowing (in its own voice, but plainly), gives you a page for your Codex the first time, and trades for emeralds. Their wares restock every 10 minutes.
+
+| Shade | Codex page | Trades (emeralds) |
+|---|---|---|
+| Homer | Cerberus | Sharpness II book, iron sword |
+| Horace | Plutus | bread, cooked beef, golden carrots |
+| Ovid | the hoarders | Slow Falling (for Lust's wind), Water Breathing (for the Styx) |
+| Lucan | Phlegyas | shield, bow, arrows |
+| Aristotle | Minos | ender chest (to stash gold from the hoarders), spyglass |
+| Euclid | – | ladders, torches, lanterns |
+| Hippocrates | – | Healing, Regeneration, a golden apple |
+| Hector | – | iron armour |
+| Saladin (alone, apart, by the outer wall) | – | saddle, iron horse armour, leads |
 
 ## Finding your way (3.0)
 

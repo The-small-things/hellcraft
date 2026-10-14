@@ -674,8 +674,8 @@ public final class InfernoGeometry {
 		return lerp(lerp(a, b, fx), lerp(c, d, fx), fz) * 2.0 - 1.0;
 	}
 
-	/** Two-octave value noise in roughly [-1, 1]. */
-	static double fbm(double x, double z, int seed) {
+	/** Two-octave value noise in roughly [-1, 1], for features that want a smooth pattern of their own. */
+	public static double fbm(double x, double z, int seed) {
 		return valueNoise(x, z, seed) * 0.7 + valueNoise(x * 2.3, z * 2.3, seed + 1) * 0.3;
 	}
 

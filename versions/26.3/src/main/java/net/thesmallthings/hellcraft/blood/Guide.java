@@ -108,6 +108,12 @@ public final class Guide {
 				"Sands: falling fire (roof, water)",
 				"Fraud: invisible foes (watch for swirls)",
 				"Treachery: cold (leather, campfire)"));
+		pages.add(page("THE NOBLE CASTLE",
+				"Halfway across Limbo, the east road runs through a castle of seven walls. Inside is the only green meadow in Hell.",
+				"",
+				"The shades of the great poets and thinkers live there. Right-click one to talk: a tip, a page for your Codex, and trades for emeralds.",
+				"",
+				"Ovid sells potions for Lust's wind and the Styx; Aristotle an ender chest to keep gold from the hoarders."));
 		pages.add(page("VIRGIL'S RESTS",
 				"A safe camp beside each road in every circle: soul fire, a supply chest and a Blood Altar.",
 				"",

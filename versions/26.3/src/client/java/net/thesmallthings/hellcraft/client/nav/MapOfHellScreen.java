@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Navigation;
+import net.thesmallthings.hellcraft.world.NobleCastle;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 
 import java.util.ArrayList;
@@ -149,6 +150,9 @@ public class MapOfHellScreen extends Screen {
 			lines.add(Component.literal("The world's edge"));
 		} else {
 			lines.add(Component.literal(InfernoGeometry.regionName(x, z)));
+			if (NobleCastle.distance(x, z) < NobleCastle.STREAM_OUTER) {
+				lines.add(Component.literal("The Noble Castle: shades who talk, trade and give you Codex pages"));
+			}
 			lines.add(Component.literal(InfernoGeometry.circleAt(x, z).rule()).withColor(DIM));
 		}
 		String where = (int) x + ", " + (int) z;

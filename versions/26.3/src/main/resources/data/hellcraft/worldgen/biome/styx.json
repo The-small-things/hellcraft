@@ -18,6 +18,8 @@
         "offset": 2.0
       }
     },
+    "minecraft:visual/fog_start_distance": 4.0,
+    "minecraft:visual/fog_end_distance": 64.0,
     "minecraft:visual/ambient_particles": {
       "argument": [
         {
@@ -162,6 +164,7 @@
     ],
     [
       "minecraft:glow_lichen",
+      "hellcraft:reed_bed",
       "minecraft:trees_swamp",
       "minecraft:brown_mushroom_swamp",
       "minecraft:patch_waterlily",
@@ -170,6 +173,8 @@
     ],
     [
       "hellcraft:pilgrim_road",
+      "hellcraft:boardwalk",
+      "hellcraft:watchtower",
       "minecraft:freeze_top_layer"
     ]
   ],

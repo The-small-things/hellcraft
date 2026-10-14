@@ -43,7 +43,8 @@ CANON = {
     LAKES: ["hellcraft:ring_fluid", "minecraft:lake_lava_underground", "hellcraft:filth_pool"],
     LOCAL: ["minecraft:amethyst_geode"],
     UG_STRUCT: ["minecraft:monster_room", "minecraft:monster_room_deep"],
-    SURF_STRUCT: ["hellcraft:dis_wall", "hellcraft:burning_tomb", "hellcraft:altar_ruin", "minecraft:desert_well"],
+    SURF_STRUCT: ["hellcraft:dis_wall", "hellcraft:burning_tomb", "hellcraft:altar_ruin", "hellcraft:feast_table", "hellcraft:vault",
+                  "hellcraft:giant_scales", "minecraft:desert_well"],
     STRONGHOLDS: [],
     ORES: [
         "minecraft:ore_dirt", "minecraft:ore_gravel", "minecraft:ore_granite_upper", "minecraft:ore_granite_lower",
@@ -60,7 +61,7 @@ CANON = {
     SPRINGS: ["minecraft:spring_water", "minecraft:spring_lava"],
     VEG: [
         "minecraft:glow_lichen", "minecraft:dark_forest_vegetation", "minecraft:forest_rock", "hellcraft:limbo_birch",
-        "hellcraft:dead_tree", "minecraft:trees_swamp", "minecraft:crimson_fungi_surface_placeholder",
+        "hellcraft:dead_tree", "hellcraft:rotting_tree", "hellcraft:bloated_fungus", "hellcraft:coin_hill", "hellcraft:reed_bed", "minecraft:trees_swamp", "minecraft:crimson_fungi_surface_placeholder",
         "hellcraft:crimson_fungus", "hellcraft:boulder_blackstone", "hellcraft:boulder_crying_obsidian",
         "hellcraft:boulder_packed_ice", "hellcraft:boulder_deepslate", "minecraft:ice_spike",
         "hellcraft:surface_delta", "hellcraft:surface_basalt_columns", "hellcraft:surface_sculk",
@@ -71,7 +72,8 @@ CANON = {
         "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "minecraft:patch_berry_common",
         "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river", "hellcraft:sugar_cane",
     ],
-    TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "minecraft:freeze_top_layer"],
+    TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "hellcraft:noble_castle", "hellcraft:boardwalk", "hellcraft:watchtower",
+          "minecraft:freeze_top_layer"],
 }
 CANON[VEG].remove("minecraft:crimson_fungi_surface_placeholder")
 
@@ -160,6 +162,7 @@ SURFACE = {
     "limbo": layered(
         patches("grass_block", (noise("minecraft:calcite", 0.05), "calcite"), (noise("minecraft:surface", 0.5), "tuff")),
         "dirt", "calcite", steep="calcite"),
+    "noble_castle": layered("grass_block", "dirt", "stone"),
     "lust": layered(
         patches("tuff", (noise("minecraft:surface", 0.45), "amethyst_block"), (noise("minecraft:gravel", 0.35), "deepslate"),
                 (noise("minecraft:calcite", 0.55), "crying_obsidian")),
@@ -259,15 +262,26 @@ BIOMES = {
         monster=[spawn("drowned", 100, 1, 3), spawn("zombie", 40)],
         water_creature=[spawn("squid", 2, 1, 2)],
     ),
+    # the Grey Meadow: drained of colour, in a mist
     "limbo": dict(
-        temp=0.6, rain=True, downfall=0.5,
+        temp=0.6, rain=True, downfall=0.5, fog=(10, 110),
         colors=dict(fog_color=0x8A8A86, sky_color=0x5A5A5A, water_color=0x6A7078, water_fog_color=0x1A1C20,
-                    grass_color=0x8A9A7A, foliage_color=0x7A8A6A),
+                    grass_color=0x8E928A, foliage_color=0x8A8E86),
         particle=("minecraft:white_ash", 0.03), sound=CAVE_MOOD, music="music.overworld.meadow",
         features=["minecraft:forest_rock", "hellcraft:limbo_birch", "minecraft:patch_grass_plain", "minecraft:flower_meadow",
-                  "hellcraft:sugar_cane"],
+                  "hellcraft:sugar_cane", "hellcraft:noble_castle"],
         monster=[spawn("skeleton", 80), spawn("stray", 60), spawn("zombie", 30), spawn("enderman", 20, 1, 2)],
         creature=[spawn("sheep", 12), spawn("cow", 8), spawn("horse", 5, 2, 4), spawn("rabbit", 6, 2, 3), spawn("chicken", 6)],
+    ),
+    # the Noble Castle's meadow inside its seven walls (NobleCastle): the only green in Hell, and no monsters
+    "noble_castle": dict(
+        temp=0.7, rain=False, downfall=0.4,
+        colors=dict(fog_color=0xB8C2AE, sky_color=0x7A8C9A, water_color=0x3F76E4, water_fog_color=0x050533,
+                    grass_color=0x79C05A, foliage_color=0x59AE30),
+        sound=CAVE_MOOD, music="music.overworld.meadow",
+        features=["minecraft:patch_grass_plain", "minecraft:flower_meadow", "hellcraft:noble_castle"],
+        monster=[],
+        creature=[spawn("rabbit", 4, 2, 3)],
     ),
     "lust": dict(
         temp=0.8, rain=False, downfall=0.0,
@@ -283,7 +297,8 @@ BIOMES = {
         colors=dict(fog_color=0x3A3020, sky_color=0x2A2418, water_color=0x4A3A20, water_fog_color=0x1A1408,
                     grass_color=0x5A5A2A, foliage_color=0x4A4A20, grass_color_modifier="swamp"),
         particle=("minecraft:mycelium", 0.02), sound=CAVE_MOOD, music="music.overworld.swamp",
-        features=["hellcraft:filth_pool", "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "hellcraft:sugar_cane"],
+        features=["hellcraft:filth_pool", "hellcraft:feast_table", "hellcraft:rotting_tree", "hellcraft:bloated_fungus",
+                  "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "hellcraft:sugar_cane"],
         monster=[spawn("zombie", 100, 4, 6), spawn("slime", 80), spawn("hoglin", 40, 2, 4), spawn("husk", 40),
                  spawn("spider", 60), spawn("creeper", 60)],
         creature=[spawn("pig", 10, 2, 4)],
@@ -293,17 +308,19 @@ BIOMES = {
         colors=dict(fog_color=0x5A4A18, sky_color=0x3A3010, water_color=0x6A5A20, water_fog_color=0x1A1408,
                     grass_color=0x8A7A30, foliage_color=0x7A6A20),
         particle=("minecraft:wax_on", 0.004), sound=nether_sounds("nether_wastes"), music="music.nether.nether_wastes",
-        features=["minecraft:ore_gold_extra", "hellcraft:ore_gilded_blackstone", "hellcraft:boulder_blackstone"],
+        features=["minecraft:ore_gold_extra", "hellcraft:ore_gilded_blackstone", "hellcraft:vault", "hellcraft:giant_scales",
+                  "hellcraft:boulder_blackstone", "hellcraft:coin_hill"],
         monster=[spawn("piglin", 80, 2, 4), spawn("piglin_brute", 5, 1, 1), spawn("zombified_piglin", 30, 2, 4),
                  spawn("skeleton", 60), spawn("zombie", 60), spawn("creeper", 40)],
     ),
+    # the Fen of Styx: a dark marsh in fog
     "styx": dict(
-        temp=0.8, rain=True, downfall=0.9,
+        temp=0.8, rain=True, downfall=0.9, fog=(4, 64),
         colors=dict(fog_color=0x1A2A1A, sky_color=0x101A10, water_color=0x1A2A1A, water_fog_color=0x050A05,
                     grass_color=0x2A3A20, foliage_color=0x2A3A1A, grass_color_modifier="swamp"),
         particle=("minecraft:ash", 0.01), sound=CAVE_MOOD, music="music.overworld.swamp",
-        features=["hellcraft:dis_wall", "minecraft:trees_swamp", "minecraft:patch_waterlily", "minecraft:seagrass_swamp",
-                  "minecraft:brown_mushroom_swamp", "hellcraft:sugar_cane"],
+        features=["hellcraft:dis_wall", "hellcraft:reed_bed", "minecraft:trees_swamp", "minecraft:patch_waterlily", "minecraft:seagrass_swamp",
+                  "minecraft:brown_mushroom_swamp", "hellcraft:sugar_cane", "hellcraft:boardwalk", "hellcraft:watchtower"],
         monster=[spawn("drowned", 100, 2, 4), spawn("vindicator", 25, 1, 2), spawn("zombie", 60), spawn("witch", 10, 1, 1),
                  spawn("slime", 40)],
         creature=[spawn("frog", 6, 2, 4)],
@@ -475,6 +492,16 @@ CONFIGURED = {
     "dis_wall": {"type": "hellcraft:dis_wall", "config": {}},
     "gate_wall": {"type": "hellcraft:gate_wall", "config": {}},
     "pilgrim_road": {"type": "hellcraft:pilgrim_road", "config": {}},
+    "noble_castle": {"type": "hellcraft:noble_castle", "config": {}},
+    "rotting_tree": {"type": "hellcraft:rotting_tree", "config": {}},
+    "bloated_fungus": {"type": "hellcraft:bloated_fungus", "config": {}},
+    "feast_table": {"type": "hellcraft:feast_table", "config": {}},
+    "coin_hill": {"type": "hellcraft:coin_hill", "config": {}},
+    "vault": {"type": "hellcraft:vault", "config": {}},
+    "giant_scales": {"type": "hellcraft:giant_scales", "config": {}},
+    "watchtower": {"type": "hellcraft:watchtower", "config": {}},
+    "boardwalk": {"type": "hellcraft:boardwalk", "config": {}},
+    "reed_bed": {"type": "hellcraft:reed_bed", "config": {}},
     "burning_tomb": {"type": "hellcraft:burning_tomb", "config": {}},
     "altar_ruin": {"type": "hellcraft:altar_ruin", "config": {}},
     "boulder_blackstone": {"type": "hellcraft:boulder", "config": {"state": block("blackstone")}},
@@ -514,6 +541,16 @@ PLACED = {
     "dis_wall": placed("hellcraft:dis_wall"),
     "gate_wall": placed("hellcraft:gate_wall"),
     "pilgrim_road": placed("hellcraft:pilgrim_road"),
+    "noble_castle": placed("hellcraft:noble_castle"),
+    "rotting_tree": placed("hellcraft:rotting_tree", rarity(2), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
+    "bloated_fungus": placed("hellcraft:bloated_fungus", rarity(3), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
+    "feast_table": placed("hellcraft:feast_table", rarity(9), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
+    "coin_hill": placed("hellcraft:coin_hill", rarity(3), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
+    "vault": placed("hellcraft:vault", rarity(14), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
+    "giant_scales": placed("hellcraft:giant_scales", rarity(24), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
+    "watchtower": placed("hellcraft:watchtower"),
+    "boardwalk": placed("hellcraft:boardwalk"),
+    "reed_bed": placed("hellcraft:reed_bed", count(2), IN_SQUARE, heightmap(), BIOME),
     "burning_tomb": placed("hellcraft:burning_tomb", rarity(3), IN_SQUARE, heightmap(), BIOME),
     "altar_ruin": placed("hellcraft:altar_ruin", rarity(600), IN_SQUARE, heightmap(), BIOME),
     "boulder_blackstone": placed("hellcraft:boulder_blackstone", count(1), IN_SQUARE, heightmap(), BIOME),
@@ -766,6 +803,10 @@ def make_biome26(biome_id, d):
         ambient["additions"] = sound["additions_sound"]
     if ambient:
         attrs["minecraft:audio/ambient_sounds"] = ambient
+    if "fog" in d:
+        # (start, end) in blocks: Limbo's mist, the Fen's fog
+        attrs["minecraft:visual/fog_start_distance"] = float(d["fog"][0])
+        attrs["minecraft:visual/fog_end_distance"] = float(d["fog"][1])
     if "particle" in d:
         attrs["minecraft:visual/ambient_particles"] = {
             "argument": [{"particle": {"type": d["particle"][0]}, "probability": d["particle"][1]}], "modifier": "append"}

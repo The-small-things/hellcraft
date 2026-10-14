@@ -126,7 +126,9 @@
       "minecraft:monster_room_deep"
     ],
     [
-      "hellcraft:altar_ruin"
+      "hellcraft:altar_ruin",
+      "hellcraft:vault",
+      "hellcraft:giant_scales"
     ],
     [],
     [
@@ -165,6 +167,7 @@
     ],
     [
       "minecraft:glow_lichen",
+      "hellcraft:coin_hill",
       "hellcraft:boulder_blackstone"
     ],
     [

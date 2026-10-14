@@ -138,7 +138,8 @@
       "minecraft:monster_room_deep"
     ],
     [
-      "hellcraft:altar_ruin"
+      "hellcraft:altar_ruin",
+      "hellcraft:feast_table"
     ],
     [],
     [
@@ -175,6 +176,8 @@
     ],
     [
       "minecraft:glow_lichen",
+      "hellcraft:rotting_tree",
+      "hellcraft:bloated_fungus",
       "minecraft:brown_mushroom_swamp",
       "minecraft:red_mushroom_swamp",
       "hellcraft:sugar_cane"

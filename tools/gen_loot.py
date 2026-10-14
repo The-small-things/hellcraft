@@ -7,6 +7,9 @@ Run from the repo root:  python3 tools/gen_loot.py
 - chests/virgils_rest_upper|middle|lower: the supply chests at the Virgil's Rests (see ShrineSites.java),
   by depth: Limbo to Greed, the Styx and Heresy, then the Wood, the Sands and Malebolge
 - chests/heretic_tomb: the "forbidden books" in some of Heresy's burning tombs
+- chests/feast_table: the barrels at the heads of Gluttony's sunken feast tables
+- chests/vault: the vaults in Greed's Counting House
+- chests/fen_cache: the watchtowers and the drowned boats of the Fen of Styx
 - gameplay/guardian_spoils: what a slain circle guardian leaves besides its blood
 
 Blood Fragments, Vigil Candles and Soul Anchors are Hellcraft's own items (HellItems.java).
@@ -166,6 +169,47 @@ TABLES = {
             potion(4, "fire_resistance"),
         ]),
         pool(1, 1, [item("netherite_upgrade_smithing_template", 1), item("golden_apple", 2), book(2, 15, 30), empty(5)])),
+    "chests/feast_table": chest(
+        pool(4, 8, [
+            item("cooked_beef", 10, 2, 6),
+            item("cooked_porkchop", 10, 2, 6),
+            item("baked_potato", 8, 3, 8),
+            item("pumpkin_pie", 6, 1, 4),
+            item("cake", 3),
+            item("honey_bottle", 5, 1, 3),
+            item("rotten_flesh", 8, 2, 8),
+            item("bone", 6, 2, 6),
+            item("gold_nugget", 6, 3, 12),
+            item("golden_carrot", 4, 2, 6),
+            fragments(5, 1, 2),
+        ]),
+        pool(1, 1, [item("golden_apple", 2), book(2, 10, 20), potion(2, "regeneration"), empty(4)])),
+    "chests/vault": chest(
+        pool(3, 6, [
+            item("gold_ingot", 12, 2, 8),
+            item("gold_nugget", 10, 6, 18),
+            item("raw_gold", 8, 2, 6),
+            item("emerald", 8, 2, 6),
+            item("diamond", 4, 1, 3),
+            item("gold_block", 2),
+            item("golden_carrot", 4, 2, 5),
+            item("clock", 3),
+            fragments(5, 1, 3),
+        ]),
+        pool(1, 1, [item("golden_apple", 3), item("enchanted_golden_apple", 1), book(2, 20, 30), item("golden_horse_armor", 2), empty(4)])),
+    "chests/fen_cache": chest(
+        pool(3, 6, [
+            item("oak_boat", 6),
+            item("arrow", 8, 6, 16),
+            item("bread", 8, 2, 6),
+            item("iron_ingot", 6, 2, 5),
+            item("lily_pad", 4, 2, 6),
+            item("nautilus_shell", 2),
+            item("experience_bottle", 4, 2, 5),
+            potion(5, "water_breathing"),
+            fragments(6, 1, 3),
+        ]),
+        pool(1, 1, [item("trident", 1), book(2, 15, 25), item("turtle_helmet", 1), item("golden_apple", 2), empty(5)])),
     "gameplay/guardian_spoils": {"type": "minecraft:chest", "pools": [
         pool(2, 2, [book(1, 30, 30)]),
         pool(1, 2, [item("diamond", 3, 1, 3), item("golden_apple", 3), item("experience_bottle", 3, 4, 8), vigils(2, 1, 2)]),

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.monster.Hoarder;
+import net.thesmallthings.hellcraft.entity.npc.Shade;
 
 /** Hellcraft's own mobs. Each has a renderer and a model in the client sources (client/render). */
 public final class HellEntities {
@@ -29,10 +30,15 @@ public final class HellEntities {
 	public static final EntityType<Hoarder> HOARDER = register("hoarder",
 			EntityType.Builder.of(Hoarder::new, MobCategory.MONSTER).sized(0.8f, 1.7f).clientTrackingRange(8));
 
+	/** Limbo's shades, the great souls of the Noble Castle (Shades). */
+	public static final EntityType<Shade> SHADE = register("shade",
+			EntityType.Builder.of(Shade::new, MobCategory.CREATURE).sized(0.6f, 1.95f).clientTrackingRange(10));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
 		FabricDefaultAttributeRegistry.register(HOARDER, Hoarder.attributes());
+		FabricDefaultAttributeRegistry.register(SHADE, Shade.attributes());
 	}
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {

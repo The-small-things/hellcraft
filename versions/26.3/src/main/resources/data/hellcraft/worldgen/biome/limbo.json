@@ -18,6 +18,8 @@
         "offset": 2.0
       }
     },
+    "minecraft:visual/fog_start_distance": 10.0,
+    "minecraft:visual/fog_end_distance": 110.0,
     "minecraft:visual/ambient_particles": {
       "argument": [
         {
@@ -140,8 +142,8 @@
   "downfall": 0.5,
   "effects": {
     "water_color": "#6a7078",
-    "grass_color": "#8a9a7a",
-    "foliage_color": "#7a8a6a"
+    "grass_color": "#8e928a",
+    "foliage_color": "#8a8e86"
   },
   "features": [
     [],
@@ -200,6 +202,7 @@
     ],
     [
       "hellcraft:pilgrim_road",
+      "hellcraft:noble_castle",
       "minecraft:freeze_top_layer"
     ]
   ],

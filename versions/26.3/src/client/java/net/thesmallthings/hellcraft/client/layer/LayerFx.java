@@ -26,7 +26,7 @@ import java.util.List;
  *     <li>Lust's wind streams are pale twisting strands with streaks running along them (render), with a swirl
  *     over each pad; step into one and it carries you (the server lets you weigh nothing meanwhile: LayerRules).
  *     Sneak to let go.</li>
- *     <li>The Styx bubbles where the sullen lurk (Sullen).</li>
+ *     <li>The Styx bubbles where the sullen lurk (Sullen), and across it the city of Dis glows red through the fog.</li>
  * </ul>
  * Both come from the shared geometry, so the server sends nothing for them.
  */
@@ -101,6 +101,10 @@ public final class LayerFx {
 		}
 		Vec3 cam = context.levelState().cameraRenderState.pos;
 		double r = Math.sqrt(cam.x * cam.x + cam.z * cam.z);
+		if (InfernoGeometry.zoneAt(cam.x, cam.z) == Zone.STYX) {
+			disGlow(context, cam);
+			return;
+		}
 		if (r > InfernoGeometry.outerRadius(Zone.LUST) + RIBBON_SHOW || r < InfernoGeometry.outerRadius(Zone.GLUTTONY) - RIBBON_SHOW) {
 			return;
 		}
@@ -134,6 +138,45 @@ public final class LayerFx {
 				vertex(buffer, pose, q, 0);
 			}
 		});
+	}
+
+	/**
+	 * Across the Fen the city of Dis burns red on the horizon, through the fog, so you always know which way is in
+	 * (Inferno VIII: "the mosques within the valley, red as if they had come out of the fire"): a low red wash toward
+	 * the centre of Hell, and over it the flickering towers of the burning city.
+	 */
+	private static void disGlow(LevelRenderContext context, Vec3 cam) {
+		double centre = Math.atan2(-cam.z, -cam.x);
+		context.submitNodeCollector().submitCustomGeometry(context.poseStack(), RenderTypes.debugQuads(), (pose, buffer) -> {
+			// the wash
+			glowQuad(buffer, pose, centre, 0, 160, 90, -10, 22, 255, 70, 20, 80);
+			// the towers, each flickering on its own
+			for (int k = -3; k <= 3; k++) {
+				double flicker = 0.75 + 0.25 * Math.sin(ticks * 0.21 + k * 1.7) * Math.sin(ticks * 0.13 + k);
+				double height = (18 + 9 * Math.floorMod(k * 7 + 9, 4)) * (0.9 + 0.1 * flicker);
+				glowQuad(buffer, pose, centre, k * 0.09, 175 + 6 * (k & 1), 2.5 + (k & 1) * 1.5, -6, height, 255, 120, 40, (int) (170 * flicker));
+			}
+		});
+	}
+
+	/** A quad facing the camera, toward angle + offset at dist, half wide, from low to high: alpha fades upward. */
+	private static void glowQuad(VertexConsumer buffer, PoseStack.Pose pose, double angle, double offset, double dist, double half,
+								 double low, double high, int r, int g, int b, int alpha) {
+		double a = angle + offset;
+		float cx = (float) (Math.cos(a) * dist);
+		float cz = (float) (Math.sin(a) * dist);
+		float sx = (float) (-Math.sin(a) * half);
+		float sz = (float) (Math.cos(a) * half);
+		float lo = (float) low;
+		float hi = (float) high;
+		buffer.addVertex(pose, cx - sx, lo, cz - sz).setColor(r, g, b, alpha);
+		buffer.addVertex(pose, cx + sx, lo, cz + sz).setColor(r, g, b, alpha);
+		buffer.addVertex(pose, cx + sx, hi, cz + sz).setColor(r, g, b, 0);
+		buffer.addVertex(pose, cx - sx, hi, cz - sz).setColor(r, g, b, 0);
+		buffer.addVertex(pose, cx - sx, hi, cz - sz).setColor(r, g, b, 0);
+		buffer.addVertex(pose, cx + sx, hi, cz + sz).setColor(r, g, b, 0);
+		buffer.addVertex(pose, cx + sx, lo, cz + sz).setColor(r, g, b, alpha);
+		buffer.addVertex(pose, cx - sx, lo, cz - sz).setColor(r, g, b, alpha);
 	}
 
 	private static final double RIBBON_SHOW = 96.0;
@@ -231,7 +274,10 @@ public final class LayerFx {
 					continue;
 				}
 				double surface = InfernoGeometry.fluidLevel(s[0] + 0.5, s[1] + 0.5);
-				level.addParticle(ParticleTypes.BUBBLE_POP, s[0] + 0.3 + random.nextDouble() * 0.4, surface + 0.05, s[1] + 0.3 + random.nextDouble() * 0.4, 0, 0.02, 0);
+				for (int k = 0; k < 3; k++) {
+					level.addParticle(ParticleTypes.BUBBLE_POP, s[0] + 0.2 + random.nextDouble() * 0.6, surface + 0.05, s[1] + 0.2 + random.nextDouble() * 0.6, 0, 0.03, 0);
+				}
+				level.addParticle(ParticleTypes.SPLASH, s[0] + 0.5, surface + 0.1, s[1] + 0.5, 0, 0.05, 0);
 				level.addParticle(ParticleTypes.BUBBLE, s[0] + 0.5, surface - 0.6, s[1] + 0.5, 0, 0.1, 0);
 			}
 		}

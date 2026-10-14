@@ -46,6 +46,7 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
 import net.thesmallthings.hellcraft.world.Paradiso;
 import net.thesmallthings.hellcraft.world.Purgatory;
+import net.thesmallthings.hellcraft.world.Shades;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
 import net.thesmallthings.hellcraft.world.Villages;
@@ -111,6 +112,7 @@ public class HellcraftMod implements ModInitializer {
 			CircleHazards.tick(server);
 			LayerRules.tick(server);
 			Hoarders.tick(server);
+			Shades.tick(server);
 			LuciferManager.tick(server);
 			GuardianManager.tick(server);
 			BossModel.tickFalling(server);

@@ -205,7 +205,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=$rx,y=$ry,z=$rz,distance=..10]" || true)
   echo "Zombie at the Rest: $zombie"
   echo "$zombie" | grep -q "Test failed" || { echo "A monster survived inside Virgil's Rest"; exit 1; }
-  for t in chests/virgils_rest_upper chests/virgils_rest_middle chests/virgils_rest_lower chests/heretic_tomb chests/altar_ruin gameplay/guardian_spoils; do
+  for t in chests/virgils_rest_upper chests/virgils_rest_middle chests/virgils_rest_lower chests/heretic_tomb chests/altar_ruin \
+           chests/feast_table chests/vault chests/fen_cache gameplay/guardian_spoils; do
     drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:$t" || true)
     echo "$t: $drop"
     echo "$drop" | grep -q "Dropped" || { echo "Loot table hellcraft:$t does not work"; exit 1; }
@@ -331,6 +332,13 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   fair=$(rcon "hellcraft fairness test")
   echo "$fair"
   echo "$fair" | grep -q "dark_wood=true limbo=true lust=false; 10 vs 25 bullying=true, 15 vs 25 bullying=false" || { echo "The fairness rules are wrong"; exit 1; }
+  # Limbo's Noble Castle: its walls stand, and its nine shades are home
+  rcon "forceload add 2704 -56 2816 56" > /dev/null
+  sleep 3
+  castle=$(rcon "hellcraft castle test")
+  echo "$castle"
+  echo "$castle" | grep -q "standing=true; shades=9/9; Shades test: 9 shades, misplaced: none" || { echo "The Noble Castle or its shades are missing"; exit 1; }
+  rcon "forceload remove 2704 -56 2816 56" > /dev/null
   # the upper circles' rules: Lust's wind streams, Gluttony's mud, Greed's hoarders, Wrath's sullen
   layers=$(rcon "hellcraft layers test")
   echo "$layers"

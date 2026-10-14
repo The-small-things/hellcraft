@@ -42,6 +42,8 @@ public final class MapPainter {
 	private static final int LAVA = 0xFF5A00;
 	private static final int WALL = 0x111111;
 	private static final int GATE = 0xFF3020;
+	private static final int CASTLE_GREEN = 0x5E9A3C;
+	private static final int CASTLE_WALL = 0xD8D8CC;
 
 	/** The zone's flat colour (0xRRGGBB). */
 	public static int colour(Zone zone) {
@@ -69,6 +71,7 @@ public final class MapPainter {
 		if (Math.abs(re - InfernoGeometry.GATE_WALL_RADIUS) <= InfernoGeometry.GATE_WALL_HALF_THICKNESS + reach) {
 			c = gateNear(x, z, scale) ? GATE : WALL;
 		}
+		c = castle(x, z, scale, reach, c);
 		if (roadNear(x, z, InfernoGeometry.ROAD_HALF_WIDTH + reach)) {
 			c = ROAD;
 		}
@@ -76,6 +79,24 @@ public final class MapPainter {
 		double shade = Math.max(0.35, Math.min(1.4, 1.0 + slope * 0.6));
 		double height = 0.75 + (h + 60) / 320.0 * 0.5;
 		return tint(c, shade * height);
+	}
+
+	/** Limbo's Noble Castle: its green meadow ringed by pale walls (only the outermost when zoomed out) and its stream. */
+	private static int castle(double x, double z, double scale, double reach, int c) {
+		double d = NobleCastle.distance(x, z);
+		if (d >= NobleCastle.STREAM_OUTER + reach) {
+			return c;
+		}
+		if (d >= NobleCastle.STREAM_INNER) {
+			return WATER;
+		}
+		int out = CASTLE_GREEN;
+		for (int k = scale > 3 ? NobleCastle.WALLS - 1 : 0; k < NobleCastle.WALLS; k++) {
+			if (Math.abs(d - NobleCastle.radius(k)) <= 0.75 + reach) {
+				out = CASTLE_WALL;
+			}
+		}
+		return out;
 	}
 
 	/** On (or, at this half width, beside) one of the four roads. */

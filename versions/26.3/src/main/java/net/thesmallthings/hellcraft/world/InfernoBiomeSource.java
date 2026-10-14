@@ -24,11 +24,14 @@ public class InfernoBiomeSource extends BiomeSource {
 	).apply(instance, InfernoBiomeSource::new));
 
 	private final Map<Zone, Holder<Biome>> biomes = new EnumMap<>(Zone.class);
+	/** The Noble Castle's green meadow, inside Limbo. */
+	private final Holder<Biome> castle;
 
 	public InfernoBiomeSource(HolderGetter<Biome> getter) {
 		for (Zone zone : Zone.values()) {
 			biomes.put(zone, getter.getOrThrow(ResourceKey.create(Registries.BIOME, HellcraftMod.id(zone.id()))));
 		}
+		castle = getter.getOrThrow(ResourceKey.create(Registries.BIOME, HellcraftMod.id("noble_castle")));
 	}
 
 	@Override
@@ -38,11 +41,15 @@ public class InfernoBiomeSource extends BiomeSource {
 
 	@Override
 	protected Stream<Holder<Biome>> collectPossibleBiomes() {
-		return biomes.values().stream();
+		return Stream.concat(biomes.values().stream(), Stream.of(castle));
 	}
 
 	@Override
 	public BiomeResolver createResolver(Climate.Sampler sampler) {
-		return (quartX, quartY, quartZ) -> biomes.get(InfernoGeometry.zoneAt((quartX << 2) + 2, (quartZ << 2) + 2));
+		return (quartX, quartY, quartZ) -> {
+			int x = (quartX << 2) + 2;
+			int z = (quartZ << 2) + 2;
+			return NobleCastle.green(x, z) ? castle : biomes.get(InfernoGeometry.zoneAt(x, z));
+		};
 	}
 }
