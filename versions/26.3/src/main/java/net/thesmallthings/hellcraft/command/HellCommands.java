@@ -27,7 +27,6 @@ import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.Bounty;
 import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.Ghosts;
-import net.thesmallthings.hellcraft.blood.GuideBook;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
@@ -89,10 +88,9 @@ public final class HellCommands {
 
 		GhostPowers.register(dispatcher);
 
+		// the Journal (J) holds the Guide: this opens it, for anyone who'd rather type
 		dispatcher.register(Commands.literal("guide").executes(ctx -> {
-			ServerPlayer player = ctx.getSource().getPlayerOrException();
-			BloodItems.give(player, GuideBook.create(ctx.getSource().getServer()));
-			player.sendSystemMessage(Component.literal("You got The Pilgrim's Guide (the Hellcraft guide book).").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			MapSync.openJournal(ctx.getSource().getPlayerOrException());
 			return 1;
 		}));
 

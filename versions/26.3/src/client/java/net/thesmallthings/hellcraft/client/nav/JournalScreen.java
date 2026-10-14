@@ -10,7 +10,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.thesmallthings.hellcraft.blood.GuideBook;
+import net.thesmallthings.hellcraft.blood.Guide;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -64,7 +64,7 @@ public class JournalScreen extends Screen {
 		panelX = (width - panelW) / 2;
 		panelY = (height - panelH) / 2;
 		listW = font.width("Where you are") + 10;
-		for (GuideBook.Page page : ClientNav.pages()) {
+		for (Guide.Page page : ClientNav.pages()) {
 			listW = Math.max(listW, font.width(page.title()) + 10);
 		}
 		listW = Math.min(listW, panelW / 3);
@@ -79,7 +79,7 @@ public class JournalScreen extends Screen {
 	private List<String> titles() {
 		List<String> titles = new ArrayList<>();
 		titles.add("Where you are");
-		for (GuideBook.Page page : ClientNav.pages()) {
+		for (Guide.Page page : ClientNav.pages()) {
 			titles.add(page.title());
 		}
 		return titles;
@@ -155,7 +155,7 @@ public class JournalScreen extends Screen {
 			}
 			return out;
 		}
-		GuideBook.Page page = ClientNav.pages().get(selected - 1);
+		Guide.Page page = ClientNav.pages().get(selected - 1);
 		wrap(out, page.title(), HEADING);
 		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
 		for (String line : page.lines()) {

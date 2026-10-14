@@ -139,11 +139,14 @@ public final class BloodEvents {
 		Hearts.apply(player);
 		BloodItems.refresh(player);
 		if (firstJoin) {
-			// something to eat on the long walk down, and something to read
+			// something to eat on the long walk down, and where to read up
 			BloodItems.give(player, new ItemStack(Items.BREAD, 5));
-			if (HellConfig.get().guideBook) {
-				BloodItems.give(player, GuideBook.create(player.level().getServer()));
-			}
+			player.sendSystemMessage(Component.literal("Welcome to Hell. Press ").withStyle(ChatFormatting.GOLD)
+					.append(Component.keybind("key.hellcraft.journal").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
+					.append(Component.literal(" for the Pilgrim's Journal: where you are, where to go next, and how everything works. ")
+							.withStyle(ChatFormatting.GOLD))
+					.append(Component.keybind("key.hellcraft.map").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
+					.append(Component.literal(" opens the Map of Hell.").withStyle(ChatFormatting.GOLD)));
 		}
 		if (soul.kit < 1 && !soul.ghost) {
 			// a way back for the first falls (players from older versions get theirs once, too)

@@ -3,9 +3,10 @@ package net.thesmallthings.hellcraft.net;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.thesmallthings.hellcraft.blood.GuideBook;
+import net.thesmallthings.hellcraft.blood.Guide;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -23,6 +24,7 @@ public final class MapSync {
 	public static void register() {
 		PayloadTypeRegistry.clientboundPlay().register(MapPayload.TYPE, MapPayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(JournalPayload.TYPE, JournalPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(OpenJournalPayload.TYPE, OpenJournalPayload.CODEC);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			send(handler.getPlayer());
 			sendJournal(handler.getPlayer());
@@ -37,9 +39,18 @@ public final class MapSync {
 		}
 	}
 
+	/** Opens the Journal on the player's screen (/guide). */
+	public static void openJournal(ServerPlayer player) {
+		if (ServerPlayNetworking.canSend(player, OpenJournalPayload.TYPE)) {
+			ServerPlayNetworking.send(player, OpenJournalPayload.INSTANCE);
+		} else {
+			player.sendSystemMessage(Component.literal("The Journal needs Hellcraft on your side too: install it, then press J."));
+		}
+	}
+
 	private static void sendJournal(ServerPlayer player) {
 		if (ServerPlayNetworking.canSend(player, JournalPayload.TYPE)) {
-			ServerPlayNetworking.send(player, new JournalPayload(GuideBook.pages(player.level().getServer())));
+			ServerPlayNetworking.send(player, new JournalPayload(Guide.pages(player.level().getServer())));
 		}
 	}
 

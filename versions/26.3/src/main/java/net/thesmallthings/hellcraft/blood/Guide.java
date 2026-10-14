@@ -1,15 +1,7 @@
 package net.thesmallthings.hellcraft.blood;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.Filterable;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.WrittenBookContent;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.Spine;
@@ -18,27 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * "The Pilgrim's Guide", by Virgil: everything a new soul needs to know. The same pages fill the written
- * book (new players get one on their first join; {@code /guide} hands out another) and the Journal screen
- * (J), which the server sends them to (JournalPayload). The numbers come from the config, so they never go
+ * "The Pilgrim's Guide", by Virgil: everything a new soul needs to know, page by page. The pages fill the Journal
+ * screen (J), which the server sends them to (JournalPayload). The numbers come from the config, so they never go
  * stale.
  */
-public final class GuideBook {
-	private GuideBook() {
+public final class Guide {
+	private Guide() {
 	}
 
 	/** A page: a title and its lines (an empty line is a gap). */
 	public record Page(String title, List<String> lines) {
-	}
-
-	public static ItemStack create(MinecraftServer server) {
-		List<Filterable<Component>> filtered = new ArrayList<>();
-		for (Page p : pages(server)) {
-			filtered.add(Filterable.passThrough(text(p)));
-		}
-		ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
-		book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("The Pilgrim's Guide"), "Virgil", 0, filtered, true));
-		return book;
 	}
 
 	public static List<Page> pages(MinecraftServer server) {
@@ -181,11 +162,11 @@ public final class GuideBook {
 				"",
 				"It leads up to Purgatory: a mountain of seven ledges with a garden on top."));
 		pages.add(page("COMMANDS",
-				"/hearts",
-				"/withdraw [n]",
-				"/circle",
-				"/revive [name]",
-				"/guide",
+				"/hearts: your hearts",
+				"/withdraw [n]: turn hearts into Blood Hearts",
+				"/circle: where you are, and the nearest Rest",
+				"/revive [name]: bring a ghost back",
+				"/guide: open this Journal",
 				"",
 				"Go with God. He is not down here."));
 
@@ -194,14 +175,5 @@ public final class GuideBook {
 
 	private static Page page(String title, String... lines) {
 		return new Page(title, List.of(lines));
-	}
-
-	/** A book page: a dark red title line, then plain lines. */
-	private static Component text(Page p) {
-		MutableComponent page = Component.literal(p.title()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD);
-		for (String line : p.lines()) {
-			page.append(Component.literal("\n" + line).withStyle(s -> s.withBold(false).withColor(ChatFormatting.BLACK)));
-		}
-		return page;
 	}
 }

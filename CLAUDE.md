@@ -52,7 +52,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 ## Code map (`versions/26.3/src/main/java/net/thesmallthings/hellcraft/`; client-only code in `src/client`)
 - `blood/`: hearts and lifesteal (`Hearts`, `DeathHandler`, `HellState` = all saved data), Blood Altars and their
   menus, ghosts and revival, prestige (the Seven P's), hell weapons and blood armour, relics, boss spoils
-  (`BossSpoils` cooldowns, `Judgement` style-rank rewards), the bounty, the guide book.
+  (`BossSpoils` cooldowns, `Judgement` style-rank rewards), the bounty, `Guide` (the Journal's how-to pages).
 - `hazard/`: circle hazards; `BossModel` (boss models: item displays animated through their transformation),
   `BossRules` (boss damage scales with the victim's hearts, arrows weakened), `StyleMeter` (ULTRAKILL-style
   ranks); `guardian/` (the five guardians and Vulcan, `GuardianFight` base class) and `lucifer/` (the fight).

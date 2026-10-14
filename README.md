@@ -111,7 +111,7 @@ The keys can be changed under Options → Controls → Hellcraft.
 
 ## Blood is fuel
 
-New players start with 5 bread, 2 **Vigil Candles** (26.3) and **The Pilgrim's Guide** (26.3), a book by Virgil explaining hearts, blood, reviving, the circles, the weapons, the spines and Lucifer. Its numbers follow your config. `/guide` gives another copy.
+New players start with 5 bread and 2 **Vigil Candles** (26.3), and chat points them to the **Pilgrim's Journal** (J): its pages are Virgil's guide to hearts, blood, reviving, the circles, the weapons, the spines and Lucifer, with numbers that follow your config. `/guide` opens it too. (3.0: the written guide book is gone.)
 
 **Hearts show next to every name in the player list** (26.3). Once someone has cast Lucifer down, a **Hall of the Damned** sidebar lists every slayer and how many times they won. Toggle these with `tabListHearts` and `sidebarHall`.
 
@@ -486,7 +486,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/circle` | all | Where am I in Hell? |
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
-| `/guide` | all | Get a copy of The Pilgrim's Guide (26.3) |
+| `/guide` | all | Open the Pilgrim's Journal (the same as J) |
 | `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
 | `/hellcraft sethearts <player> <n>` | op | |
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
@@ -529,7 +529,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
-- the guide book, tab-list hearts, the Hall of the Damned and circle ambience (26.3): `guideBook`, `tabListHearts`, `sidebarHall`, `circleAmbience`
+- tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
 ## Development

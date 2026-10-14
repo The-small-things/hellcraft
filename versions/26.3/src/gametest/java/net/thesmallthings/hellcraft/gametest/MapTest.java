@@ -127,5 +127,9 @@ public class MapTest implements FabricClientGameTest {
 		context.waitTicks(5);
 		context.takeScreenshot("nav_journal_guide");
 		context.setScreen(() -> null);
+		// /guide opens the Journal too (the written guide book is gone)
+		server.runCommand("execute as Player0 run guide");
+		context.waitForScreen(JournalScreen.class);
+		context.setScreen(() -> null);
 	}
 }

@@ -2,7 +2,7 @@ package net.thesmallthings.hellcraft.client.nav;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.Level;
-import net.thesmallthings.hellcraft.blood.GuideBook;
+import net.thesmallthings.hellcraft.blood.Guide;
 import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
 
@@ -22,7 +22,7 @@ public final class ClientNav {
 	private static volatile boolean cards;
 	private static volatile Set<String> visited = Set.of();
 	private static volatile Set<String> beaten = Set.of();
-	private static volatile List<GuideBook.Page> pages = List.of();
+	private static volatile List<Guide.Page> pages = List.of();
 
 	public static void map(MapPayload payload) {
 		inferno = payload.inferno();
@@ -68,7 +68,7 @@ public final class ClientNav {
 		return beaten.contains(boss);
 	}
 
-	public static List<GuideBook.Page> pages() {
+	public static List<Guide.Page> pages() {
 		return pages;
 	}
 }

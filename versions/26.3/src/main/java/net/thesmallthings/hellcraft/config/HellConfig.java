@@ -90,8 +90,6 @@ public class HellConfig {
 	public boolean sidebarHall = true;
 	/** Per-circle ambient sounds and particles around players. */
 	public boolean circleAmbience = true;
-	/** Give new players "The Pilgrim's Guide" on their first join. */
-	public boolean guideBook = true;
 	/** The circle guardians (Minos, Cerberus, Plutus, the Minotaur, Geryon) wake when someone enters their lair. */
 	public boolean guardians = true;
 	/** How long a slain guardian sleeps before it can be fought again. */

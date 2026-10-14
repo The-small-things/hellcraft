@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.CompassHud;
+import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.LayerCard;
 import net.thesmallthings.hellcraft.client.nav.MapTexture;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
@@ -21,6 +22,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.net.HudPayload;
 import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
+import net.thesmallthings.hellcraft.net.OpenJournalPayload;
 import net.thesmallthings.hellcraft.net.VersionPayload;
 
 /** Hellcraft's client side. */
@@ -38,6 +40,7 @@ public class HellcraftClient implements ClientModInitializer {
 			}
 		});
 		ClientPlayNetworking.registerGlobalReceiver(JournalPayload.TYPE, (payload, context) -> ClientNav.journal(payload));
+		ClientPlayNetworking.registerGlobalReceiver(OpenJournalPayload.TYPE, (payload, context) -> context.client().gui.setScreen(new JournalScreen()));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			BloodHud.reset();
 			ClientNav.reset();
