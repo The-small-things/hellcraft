@@ -4,6 +4,7 @@
 	"package": "net.thesmallthings.hellcraft.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"BossOverlayAccessor",
 		"HeartTypeMixin"
 	],
 	"injectors": {

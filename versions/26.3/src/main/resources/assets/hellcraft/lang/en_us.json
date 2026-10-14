@@ -36,5 +36,8 @@
   "biome.hellcraft.paradiso_empyrean": "Paradiso: The Empyrean",
   "biome.minecraft.the_end": "Paradiso: The Threshold",
   "entity.minecraft.ender_dragon": "The Seraph",
-  "item.hellcraft.halo": "Halo"
+  "item.hellcraft.halo": "Halo",
+  "key.category.hellcraft.hellcraft": "Hellcraft",
+  "key.hellcraft.map": "Map of Hell",
+  "key.hellcraft.journal": "Pilgrim's Journal"
 }

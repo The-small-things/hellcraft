@@ -22,12 +22,12 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
+import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Signs;
 import org.jetbrains.annotations.Nullable;
@@ -107,6 +107,7 @@ public final class Shrines {
 				state.setDirty();
 				p.sendSystemMessage(Component.literal("Virgil's Rest remembered (" + site.title() + "): you can travel back here from any Blood Altar.")
 						.withStyle(ChatFormatting.GOLD));
+				MapSync.send(p);
 				level.playSound(null, p.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.6f, 1.4f);
 			}
 		}

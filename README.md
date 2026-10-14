@@ -64,7 +64,9 @@ You need `LEVEL_TYPE=hellcraft:inferno` (`level-type=hellcraft:inferno` in `serv
 
 ## The shape of Hell
 
-The world is a disc 12,000 blocks across, with the world border at radius 6000. You spawn at the rim, just outside the **Gate of Hell**: a black wall that rings the whole Vestibule and Acheron. It is crowned with towers of soul fire and pierced by 12 gates, each bearing Dante's inscription. Every gate opens onto a slope down into the Vestibule. Walking toward 0,0 always leads down. Each circle sits on a terrace below the last, separated by cliffs. Every cliff has a few *ruined slopes* (ramps) cut into it, so you'll need to find them, or bridge and pillar your way down.
+The world is a disc 7,000 blocks across, with the world border at radius 3,500 (3.0: a fresh world is needed). You spawn at the rim, in the Dark Wood, just outside the **Gate of Hell**: a black wall that rings the whole Vestibule and Acheron. It is crowned with towers of soul fire and pierced by 12 gates, each bearing Dante's inscription. Every gate opens onto a slope down into the Vestibule. Walking toward 0, 0 always leads down. Each circle sits on a terrace below the last, separated by cliffs.
+
+**You can't get lost (3.0).** Four **Pilgrim Roads** (east, south, west and north) run from the Gate of Hell all the way to the Well of Giants. Each is paved in its circle's own stone and lit by lantern posts, with stairs wherever the ground steps, causeways over the rivers and a gate through the Walls of Dis. Off the road, every cliff has **a way down every 30 degrees**, like the hours on a clock (12 in all); only the Walls of Dis must be passed through their four gates, on the roads. The Wood of the Suicides and Cocytus have no cliff at all: the ground just slopes down. See [Finding your way](#finding-your-way-30) for the compass, the Map of Hell and the Journal.
 
 | Ring | Circle | Land | Its torment |
 |---|---|---|---|
@@ -95,8 +97,17 @@ Some other rules of Hell:
 - Beds explode and respawn anchors don't work.
 - Monsters get tougher the deeper you go.
 - The monster mob cap is 1.75× vanilla on 1.21.1 (vanilla on 26.3, where the circles are gentler; see [the torments](#the-torments-of-the-circles)).
-- Titles announce each circle as you enter it.
+- A card names each circle as you enter it, and says what it does to you and the gear to bring.
 - Each circle has its own ambience (26.3): the wasps of the Vestibule, Charon's oar on the Acheron, the sighs of Limbo, the hurricane of Lust, rain in Gluttony, chinking gold in Greed, the bubbling Styx, crackling tombs, boiling blood, far-off screams in Malebolge and creaking ice in Cocytus. Turn it off with `circleAmbience`.
+
+## Finding your way (3.0)
+
+- **The compass**, at the top of the screen while you're in Hell: north, east, south and west, a **red arrow** to the nearest way down into the next circle (a ramp, a Gate of Hell, a gate in the Walls of Dis, a Spine or Lucifer's pit) and a **gold diamond** for the nearest Virgil's Rest (grey until you've found it), with how far each is. Under it, the name of where you stand and a thin **depth bar** that fills as you near the pit. It steps aside while boss bars show.
+- **Circle cards.** Entering a circle shows its name, typed out big ("CIRCLE II: LUST"), one plain line on what it does to you and how to deal with it, and the gear worth having there. `circleTitles: false` turns them off.
+- **The Map of Hell (M):** the whole funnel from above, drawn from the same shapes as the terrain: the roads, rivers and walls, every way down, the Rests (gold once found), the guardians' lairs (grey once beaten) and you. Scroll to zoom, drag to move, and point at anything to see what it is.
+- **The Pilgrim's Journal (J):** where you are, your goal, the next step (which way and how far), the nearest Rest, the guardians you've beaten, and every page of the Pilgrim's Guide with this server's numbers.
+
+The keys can be changed under Options → Controls → Hellcraft.
 
 ## Blood is fuel
 
@@ -206,15 +217,15 @@ They protect like diamond, look like crimson plate with bone rivets and burning 
 
 ## The circle guardians (26.3)
 
-On the straight road in from the Gate of Hell (the +X axis, z = 0), five of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign. Walk into a lair and its guardian wakes. It gets a title card, a boss bar and its own model from the resource pack, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, five of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Walk into a lair and its guardian wakes. It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
 | Guardian | Lair | Attacks |
 |---|---|---|
-| **Minos**, Judge of the Damned | Lust, x 4050 | *Tail of Judgement*: his tail sweeps the ground in a full circle (jump it). *Sentence*: a ring follows one player, then the hurricane tears up where they stand (keep moving). *Coil*: drags the nearest player into his coils until the others deal him 15 damage. |
-| **Cerberus**, the Great Worm | Gluttony, x 3575 | Hunts like a ravager. *Three Maws*: three bites in a cone in front (get behind him). *Filth*: puddles of mud that slow and sicken. *Howl*: stuns everyone close. |
-| **Plutus**, the Great Enemy | Greed, x 3125 | *Weight of Gold*: gold rain that hits harder the more gold you carry. *Lunge*: a golden line, then he hurls himself along it. *Pape Satàn*: a shriek that scatters and sickens. |
-| **The Minotaur**, Infamy of Crete | Burning Sands, x 1600 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
-| **Geryon**, Image of Fraud | edge of the great cliff, x 1480 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
+| **Minos**, Judge of the Damned | Lust, x 2425 | *Tail of Judgement*: his tail sweeps the ground in a full circle (jump it). *Sentence*: a ring follows one player, then the hurricane tears up where they stand (keep moving). *Coil*: drags the nearest player into his coils until the others deal him 15 damage. |
+| **Cerberus**, the Great Worm | Gluttony, x 2100 | Hunts like a ravager. *Three Maws*: three bites in a cone in front (get behind him). *Filth*: puddles of mud that slow and sicken. *Howl*: stuns everyone close. |
+| **Plutus**, the Great Enemy | Greed, x 1800 | *Weight of Gold*: gold rain that hits harder the more gold you carry. *Lunge*: a golden line, then he hurls himself along it. *Pape Satàn*: a shriek that scatters and sickens. |
+| **The Minotaur**, Infamy of Crete | Burning Sands, x 885 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
+| **Geryon**, Image of Fraud | edge of the great cliff, x 830 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
@@ -266,8 +277,8 @@ Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guar
 
 *"Nothing will touch thee on this road. I want thee WHOLE when thou arrivest."*
 
-The road to Lucifer is a quiet one. At each point of the compass on the **rim of the Well of Giants**, a colossal backbone leaves the cliff and runs toward the centre of Hell. They start 660 blocks out at y −13: east (660, 0), south (0, 660), west (−660, 0) and north (0, −660). `/hellcraft spine [north|east|south|west]` takes an op there.
-- For almost 500 blocks it hangs over **Cocytus**, 25 blocks above the frozen lake, with ribs curling down into the dark and soul lanterns along the way.
+The road to Lucifer is a quiet one. At each point of the compass on the **rim of the Well of Giants**, a colossal backbone leaves the cliff and runs toward the centre of Hell. They start 450 blocks out at y −13: east (450, 0), south (0, 450), west (−450, 0) and north (0, −450), where the four roads end. `/hellcraft spine [north|east|south|west]` takes an op there.
+- For about 340 blocks it hangs over **Cocytus**, 25 blocks above the frozen lake, with ribs curling down into the dark and soul lanterns along the way.
 - Over **Judecca** it becomes a long **staircase**, one step down every four blocks, all the way to the rim of Lucifer's pit.
 
 **No enemies.** Nothing hostile can exist on or near a spine, or anywhere in Judecca. The freezing of the ninth circle spares you while you walk it. The only company is a heartbeat that quickens the deeper you go, ash drifting in the dark, and **Lucifer's voice from far below**, a new line at every stretch of the descent.
@@ -397,12 +408,12 @@ These reshape the vanilla Nether and End by id. New worlds get them, and so do a
 
 ## Virgil's Rests (26.3)
 
-Where the ramps come down into each circle (Limbo, Lust, Gluttony, Greed, the Styx, Heresy, the Wood of Suicides, the Burning Sands and Malebolge) stands a **Virgil's Rest**, 26 in all:
+At the way in to each circle (Limbo, Lust, Gluttony, Greed, the Styx, Heresy, the Wood of Suicides, the Burning Sands and Malebolge) and to the Well of Giants, a **Virgil's Rest** stands beside each of the four roads, 40 in all:
 - a free **Blood Altar** to bind your respawn to
 - soul campfires, and a **supply chest** with arrows, food, torches, books, paper, sugar cane, Vigil Candles and enchanted books. Deeper Rests hold better loot: diamonds, Fire Resistance, and sometimes a Soul Anchor.
 - a safe ring (20 blocks): no circle torments you there, monsters don't spawn, and any that wander in are thrown back out.
 
-They are built the first time someone comes near. Entering a circle, and `/circle`, tell you where the nearest Rest is.
+They are built the first time someone comes near. The compass and the Map of Hell show them, and entering a circle, and `/circle`, tell you where the nearest one is.
 
 **Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off).
 

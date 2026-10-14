@@ -5,28 +5,60 @@ package net.thesmallthings.hellcraft.world;
  * and 1..9 for the nine circles.
  */
 public enum Circle {
-	DARK_WOOD(0, "The Dark Wood", "Midway upon the journey of our life, I found myself within a forest dark", "The straight way was lost"),
-	VESTIBULE(0, "The Vestibule", "Through me the way into the suffering city", "Neither good nor evil"),
-	LIMBO(1, "Circle I — Limbo", "Sighs, not lamentations, made the everlasting air to tremble", "Sighs without hope"),
-	LUST(2, "Circle II — Lust", "The infernal hurricane that never rests", "The winds of passion"),
-	GLUTTONY(3, "Circle III — Gluttony", "Rain eternal, maledict, and cold, and heavy", "The eternal rain"),
-	GREED(4, "Circle IV — Greed", "Why keepest? and why squanderest thou?", "The weight of gold"),
-	WRATH(5, "Circle V — Wrath", "Beneath the water people are who sigh", "The sullen and the wrathful"),
-	HERESY(6, "Circle VI — Heresy", "Their sepulchres were burning", "The burning tombs"),
-	VIOLENCE(7, "Circle VII — Violence", "The river of blood, within which boiling is", "Blood, thorns and fire"),
-	FRAUD(8, "Circle VIII — Fraud", "There is a place in Hell called Malebolge", "The evil ditches"),
-	TREACHERY(9, "Circle IX — Treachery", "The Emperor of the kingdom dolorous", "Frozen betrayal");
+	DARK_WOOD(0, "The Dark Wood", "Midway upon the journey of our life, I found myself within a forest dark", "The straight way was lost",
+			"THE DARK WOOD", "Safe ground. Build, gather and get ready here.", "Anything you have"),
+	VESTIBULE(0, "The Vestibule", "Through me the way into the suffering city", "Neither good nor evil",
+			"THE SHORE", "Follow the road over the river into Limbo.", "Stone tools and food"),
+	LIMBO(1, "Circle I — Limbo", "Sighs, not lamentations, made the everlasting air to tremble", "Sighs without hope",
+			"CIRCLE I: LIMBO", "A quiet place: few monsters and no torment.", "Stone tools and food"),
+	LUST(2, "Circle II — Lust", "The infernal hurricane that never rests", "The winds of passion",
+			"CIRCLE II: LUST", "Gusts throw you about in the open. Sneak, or get under a roof.", "Iron armour"),
+	GLUTTONY(3, "Circle III — Gluttony", "Rain eternal, maledict, and cold, and heavy", "The eternal rain",
+			"CIRCLE III: GLUTTONY", "The rain makes you hungry. Get under a roof.", "Iron armour and plenty of food"),
+	GREED(4, "Circle IV — Greed", "Why keepest? and why squanderest thou?", "The weight of gold",
+			"CIRCLE IV: GREED", "Gold you carry slows you. Stash it in an ender chest.", "Iron armour and a shield"),
+	WRATH(5, "Circle V — Wrath", "Beneath the water people are who sigh", "The sullen and the wrathful",
+			"CIRCLE V: WRATH", "The marsh water weakens you. Keep to the causeway, or take a boat.", "Iron or diamond armour, a boat"),
+	HERESY(6, "Circle VI — Heresy", "Their sepulchres were burning", "The burning tombs",
+			"CIRCLE VI: HERESY", "Smoke from the tombs brings darkness. Get under a roof.", "Diamond gear and torches"),
+	VIOLENCE(7, "Circle VII — Violence", "The river of blood, within which boiling is", "Blood, thorns and fire",
+			"CIRCLE VII: VIOLENCE", "Breaking the dead trees hurts you, and fire rains on the sands.", "Diamond armour, Fire Resistance"),
+	FRAUD(8, "Circle VIII — Fraud", "There is a place in Hell called Malebolge", "The evil ditches",
+			"CIRCLE VIII: FRAUD", "Some monsters are invisible. Watch for their swirl of particles.", "Diamond armour and a bow"),
+	TREACHERY(9, "Circle IX — Treachery", "The Emperor of the kingdom dolorous", "Frozen betrayal",
+			"CIRCLE IX: TREACHERY", "The ice freezes you. Wear leather, or stay near a fire.", "Your best gear, and leather to keep warm");
 
 	private final int depth;
 	private final String title;
 	private final String quote;
 	private final String tagline;
+	private final String cardTitle;
+	private final String rule;
+	private final String gear;
 
-	Circle(int depth, String title, String quote, String tagline) {
+	Circle(int depth, String title, String quote, String tagline, String cardTitle, String rule, String gear) {
 		this.depth = depth;
 		this.title = title;
 		this.quote = quote;
 		this.tagline = tagline;
+		this.cardTitle = cardTitle;
+		this.rule = rule;
+		this.gear = gear;
+	}
+
+	/** The big line of the card shown on entering ("CIRCLE II: LUST"). */
+	public String cardTitle() {
+		return cardTitle;
+	}
+
+	/** What this circle does to you and what to do about it, in one plain sentence. */
+	public String rule() {
+		return rule;
+	}
+
+	/** The gear worth having here. */
+	public String gear() {
+		return gear;
 	}
 
 	/** A few words for the on-screen subtitle (the full quote is too long for a title). */

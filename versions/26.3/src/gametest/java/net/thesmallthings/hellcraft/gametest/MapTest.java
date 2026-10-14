@@ -10,6 +10,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.client.nav.ClientNav;
+import net.thesmallthings.hellcraft.client.nav.JournalScreen;
+import net.thesmallthings.hellcraft.client.nav.LayerCard;
+import net.thesmallthings.hellcraft.client.nav.MapOfHellScreen;
+import net.thesmallthings.hellcraft.client.nav.NavKeys;
+import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 import java.util.Locale;
@@ -18,7 +24,7 @@ import java.util.Properties;
 /**
  * An Inferno world on a dedicated server, seen from a spectator's camera at places that show how the map
  * leads you down: the Gate of Hell at spawn, the roads, the Walls of Dis, Malebolge's bridges and a way down
- * off the road (screenshots map_*).
+ * off the road (screenshots map_*). Then the circle card, the compass, the Map of Hell and the Journal (nav_*).
  */
 public class MapTest implements FabricClientGameTest {
 	/** A camera position: where, and which way it looks (Minecraft yaw: 0 south, 90 west, 180 north, -90 east). */
@@ -67,6 +73,58 @@ public class MapTest implements FabricClientGameTest {
 					client.gui.hud.toggle();
 				}
 			});
+			findingTheWay(context, server, connection);
 		}
+	}
+
+	/**
+	 * The navigation HUD and screens (screenshots nav_*): Gluttony's card and the compass on the east road, the
+	 * Map of Hell (opened with its key, then zoomed on the east road) and the Journal.
+	 */
+	private static void findingTheWay(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		if (!context.computeOnClient(client -> ClientNav.inferno() && !ClientNav.pages().isEmpty())) {
+			throw new AssertionError("the server never sent the map state and the Guide's pages");
+		}
+		server.runCommand("gamemode creative Player0");
+		double x = 2160;
+		double y = InfernoGeometry.baseHeight(x, 6) + 2;
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 90 8", x, y));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitFor(client -> LayerCard.showing() == Circle.GLUTTONY, 100);
+		context.waitTicks(30);
+		context.takeScreenshot("nav_card_gluttony");
+		// the card fades after about seven seconds, leaving the compass
+		context.waitFor(client -> LayerCard.showing() == null, 300);
+		context.waitTicks(5);
+		context.takeScreenshot("nav_compass");
+
+		// the mouse off the map, so no tooltip covers it
+		context.getInput().setCursorPos(2, 2);
+		context.getInput().pressKey(NavKeys.MAP);
+		context.waitForScreen(MapOfHellScreen.class);
+		context.waitTicks(40);
+		context.takeScreenshot("nav_map");
+		context.setScreen(() -> MapOfHellScreen.at(2000, 0, 5));
+		context.waitTicks(10);
+		context.takeScreenshot("nav_map_east_road");
+		context.setScreen(() -> null);
+
+		context.getInput().pressKey(NavKeys.JOURNAL);
+		context.waitForScreen(JournalScreen.class);
+		context.waitTicks(5);
+		context.takeScreenshot("nav_journal");
+		int page = context.computeOnClient(client -> {
+			for (int i = 0; i < ClientNav.pages().size(); i++) {
+				if (ClientNav.pages().get(i).title().equals("FINDING THE WAY")) {
+					return i + 1;
+				}
+			}
+			throw new AssertionError("no FINDING THE WAY page in the Journal");
+		});
+		context.setScreen(() -> JournalScreen.at(page));
+		context.waitTicks(5);
+		context.takeScreenshot("nav_journal_guide");
+		context.setScreen(() -> null);
 	}
 }

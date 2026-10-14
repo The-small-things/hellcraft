@@ -32,6 +32,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.BossMusic;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.JoinCheck;
+import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HallOfTheDamned;
@@ -81,6 +82,7 @@ public class HellcraftMod implements ModInitializer {
 		BossModel.register();
 		LuciferRewards.register();
 		HudSync.register();
+		MapSync.register();
 
 		ServerLifecycleEvents.SERVER_STARTING.register(Paradiso::init);
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);

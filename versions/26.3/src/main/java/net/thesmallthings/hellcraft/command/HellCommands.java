@@ -42,6 +42,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.net.HudSync;
+import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HallOfTheDamned;
@@ -356,6 +357,7 @@ public final class HellCommands {
 											String result = HellConfig.setValue(StringArgumentType.getString(ctx, "key"), StringArgumentType.getString(ctx, "value"));
 											ctx.getSource().getServer().getPlayerList().getPlayers().forEach(Hearts::apply);
 											HudSync.sendAll(ctx.getSource().getServer());
+											MapSync.sendAll(ctx.getSource().getServer());
 											return reply(ctx.getSource(), result);
 										}))))
 				.then(Commands.literal("whiteroom")
@@ -413,6 +415,8 @@ public final class HellCommands {
 				.then(Commands.literal("reload").executes(ctx -> {
 					HellConfig.load();
 					ctx.getSource().getServer().getPlayerList().getPlayers().forEach(Hearts::apply);
+					HudSync.sendAll(ctx.getSource().getServer());
+					MapSync.sendAll(ctx.getSource().getServer());
 					ctx.getSource().sendSuccess(() -> Component.literal("Hellcraft config reloaded."), true);
 					return 1;
 				})));

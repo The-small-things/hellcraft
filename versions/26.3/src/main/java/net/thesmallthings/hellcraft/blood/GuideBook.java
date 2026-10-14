@@ -18,21 +18,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * "The Pilgrim's Guide", by Virgil: everything a new soul needs to know, in a written book. The
- * numbers come from the config, so the book never goes stale. New players get one on their first
- * join; {@code /guide} hands out another.
+ * "The Pilgrim's Guide", by Virgil: everything a new soul needs to know. The same pages fill the written
+ * book (new players get one on their first join; {@code /guide} hands out another) and the Journal screen
+ * (J), which the server sends them to (JournalPayload). The numbers come from the config, so they never go
+ * stale.
  */
 public final class GuideBook {
 	private GuideBook() {
 	}
 
+	/** A page: a title and its lines (an empty line is a gap). */
+	public record Page(String title, List<String> lines) {
+	}
+
 	public static ItemStack create(MinecraftServer server) {
+		List<Filterable<Component>> filtered = new ArrayList<>();
+		for (Page p : pages(server)) {
+			filtered.add(Filterable.passThrough(text(p)));
+		}
+		ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
+		book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("The Pilgrim's Guide"), "Virgil", 0, filtered, true));
+		return book;
+	}
+
+	public static List<Page> pages(MinecraftServer server) {
 		HellConfig c = HellConfig.get();
 		HellState.GlobalSpot altar = HellState.get(server).starterAltar;
 		String altarAt = altar != null ? " (" + altar.pos().getX() + ", " + altar.pos().getY() + ", " + altar.pos().getZ() + ")" : "";
 		BlockPos east = Spine.start(Spine.Way.EAST);
 
-		List<Component> pages = new ArrayList<>();
+		List<Page> pages = new ArrayList<>();
 		pages.add(page("THE PILGRIM'S GUIDE",
 				"",
 				"Abandon all hope, ye who enter here.",
@@ -86,6 +101,14 @@ public final class GuideBook {
 				"Vigil Candle (craft: torch, bone, string): right-click to light it where you stand. Next time you die, you respawn there.",
 				"",
 				"Soul Anchor (from bosses and loot): keep it in your inventory. Next time you die, you come back where you died."));
+		pages.add(page("FINDING THE WAY",
+				"Four roads (east, south, west and north) run from the Gate of Hell down to the Well of Giants. Follow one and you can't get lost.",
+				"",
+				"Off the road, every cliff has a way down every 30 degrees, like the hours on a clock.",
+				"",
+				"The compass at the top of the screen points to the next way down (red arrow) and the nearest Rest (gold diamond).",
+				"",
+				"M opens the Map of Hell. J opens the Pilgrim's Journal: its first page says where you are and where to go next."));
 		pages.add(page("THE CIRCLES",
 				"Each has a hazard. To avoid it:",
 				"Lust: wind (sneak)",
@@ -97,7 +120,7 @@ public final class GuideBook {
 				"Fraud: invisible foes (watch for swirls)",
 				"Treachery: cold (leather, campfire)"));
 		pages.add(page("VIRGIL'S RESTS",
-				"A safe camp in each circle, where the ramp comes down: soul fire, a supply chest and a Blood Altar.",
+				"A safe camp beside each road in every circle: soul fire, a supply chest and a Blood Altar.",
 				"",
 				"No hazards or monsters there. Set your respawn at its altar.",
 				"",
@@ -166,19 +189,17 @@ public final class GuideBook {
 				"",
 				"Go with God. He is not down here."));
 
-		List<Filterable<Component>> filtered = new ArrayList<>();
-		for (Component p : pages) {
-			filtered.add(Filterable.passThrough(p));
-		}
-		ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
-		book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(Filterable.passThrough("The Pilgrim's Guide"), "Virgil", 0, filtered, true));
-		return book;
+		return pages;
 	}
 
-	/** A page: a dark red title line, then plain lines. */
-	private static Component page(String title, String... lines) {
-		MutableComponent page = Component.literal(title).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD);
-		for (String line : lines) {
+	private static Page page(String title, String... lines) {
+		return new Page(title, List.of(lines));
+	}
+
+	/** A book page: a dark red title line, then plain lines. */
+	private static Component text(Page p) {
+		MutableComponent page = Component.literal(p.title()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD);
+		for (String line : p.lines()) {
 			page.append(Component.literal("\n" + line).withStyle(s -> s.withBold(false).withColor(ChatFormatting.BLACK)));
 		}
 		return page;

@@ -54,10 +54,10 @@ public enum Guardian {
 		return this == VULCAN;
 	}
 
-	/** The lair's centre column (y is filled in from the terrain). */
 	/** How far south of the east road the lairs lie (see ShrineSites, which keeps the Rests clear of them). */
 	public static final int LAIR_SIDE = 40;
 
+	/** The lair's centre column (y is filled in from the terrain). */
 	public BlockPos lairColumn() {
 		return new BlockPos(radius, 0, LAIR_SIDE);
 	}

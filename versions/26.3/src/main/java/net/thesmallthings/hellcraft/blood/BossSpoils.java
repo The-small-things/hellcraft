@@ -3,6 +3,7 @@ package net.thesmallthings.hellcraft.blood;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.thesmallthings.hellcraft.net.MapSync;
 
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public final class BossSpoils {
 	public static void record(ServerPlayer player, String boss) {
 		Hearts.soul(player).guardianSpoils.put(boss, player.level().getServer().overworld().getGameTime());
 		HellState.get(player.level().getServer()).setDirty();
+		MapSync.send(player);
 	}
 
 	/** Minutes until this boss pays this player again (0 if it would now). */

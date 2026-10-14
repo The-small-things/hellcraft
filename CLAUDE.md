@@ -56,16 +56,22 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - `hazard/`: circle hazards; `BossModel` (boss models: item displays animated through their transformation),
   `BossRules` (boss damage scales with the victim's hearts, arrows weakened), `StyleMeter` (ULTRAKILL-style
   ranks); `guardian/` (the five guardians and Vulcan, `GuardianFight` base class) and `lucifer/` (the fight).
-- `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`), the Spines, Purgatory, the
-  Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
+- `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
+  Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
+  `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
+  next way down) and `MapPainter` (the Map of Hell's colours, shared with `tools/RenderMap.java`) work from it
+  alone, so the client draws the compass and the map without asking the server.
 - `music/BossMusic`: Lucifer's tracks, shipped in the mod (none yet: vanilla discs until the owner sends some).
 - `net/`: `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
-  prestige rank). No resource pack is sent any more: all art ships in the jar.
+  prestige rank), `MapSync` (whether the world is the Inferno, the Rests found, the bosses beaten, and the Guide's
+  pages for the Journal). No resource pack is sent any more: all art ships in the jar.
 - `entity/`: Hellcraft's own mobs (`HellEntities`); `TestRig` is the animated test dummy.
 - `blood/HellItems`: the registered items (Blood Heart, Fragment, Bane, Vigil Candle, Soul Anchor) and the creative
   tab. Weapons, armour and relics are still vanilla items marked with custom_data (to convert later).
 - Client (`src/client/.../client/`): `HellcraftClient`, `BloodHud` + `mixin/HeartTypeMixin` (blood hearts and rank
-  rims, textures in `assets/hellcraft/textures/gui/sprites/hud/heart`), `render/` (entity models and renderers:
+  rims, textures in `assets/hellcraft/textures/gui/sprites/hud/heart`), `nav/` (finding the way: `LayerCard` circle
+  cards, `CompassHud`, `MapOfHellScreen` on M, `JournalScreen` on J, `NavKeys`; `ClientNav` holds what the server
+  sent; the client test `MapTest` screenshots them all as `nav_*`), `render/` (entity models and renderers:
   `TestRigModel` + `TestRigAnimation` show the pattern bosses will follow: jointed parts animated by
   `AnimationDefinition` keyframes).
 - `command/HellCommands`: `/hellcraft ...` admin and test commands (many smoke-test hooks live here).
@@ -92,10 +98,13 @@ Decided first (2026-10-12):
 - 1.21.1 is dropped for now (done: out of CI, `versions/26.3` self-contained, version 3.0.0).
 
 **Phase 0 (foundations) is done** (2026-10-13): 26.3 stands alone, the client side and join check, real blood
-items, no resource-pack server, the animated test rig, client tests in CI. **Next: Phase 1, the new map** (plan
-section 5): new geometry and terrain at radius 3,500, roads, ramps and Rests, title cards, the HUD compass, the
-Map of Hell and the Journal. Then Phase 2 (boss tech, proven on Minos): a `.bbmodel` to Java converter, real boss
-entities, cutscenes, the Codex. Each phase ships as a test build for a play session before the next.
+items, no resource-pack server, the animated test rig, client tests in CI. **Phase 1 (the new map) is built**
+(2026-10-14): the geometry and terrain at radius 3,500, the four Pilgrim Roads (`PilgrimRoadFeature`), a way down
+every 30 degrees on every cliff, 40 Rests beside the roads, the guardians' lairs 40 blocks south of the east road,
+circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a fresh world and waits on a play
+session ("you can walk from spawn to the bottom without help"). **Next: Phase 2** (boss tech, proven on Minos): a
+`.bbmodel` to Java converter, real boss entities, cutscenes, the Codex. Each phase ships as a test build for a play
+session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so

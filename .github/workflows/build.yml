@@ -127,6 +127,8 @@ jobs:
           body: |
             Test build from `${{ github.ref_name }}` @ ${{ github.sha }}. Hellcraft 3.0 is being rebuilt (see `docs/REVAMP.md`), so test builds can change a lot.
 
+            **In this build (phase 1, the new map):** Hell is 7,000 blocks across (border at 3,500). Four paved roads (east, south, west and north) lead from the Gate of Hell to the Well of Giants, and every cliff has a way down every 30 degrees. Entering a circle shows a card saying what it does and what to bring. A compass at the top of the screen points to the next way down and the nearest Virgil's Rest. **M** opens the Map of Hell and **J** the Pilgrim's Journal. **Make a new world:** worlds from older builds have the old map.
+
             **Every player installs Hellcraft**, the same version as the server:
             - **Modrinth App / Prism Launcher:** download `Hellcraft-${{ steps.tag.outputs.ver }}-mc26.3.mrpack` and import it (it installs Minecraft 26.3, Fabric and Fabric API for you). Use it for single player and to join a Hellcraft server.
             - **Official Minecraft Launcher:** download `hellcraft-${{ steps.tag.outputs.ver }}-mc26.3-mods.zip` and follow `INSTALL.txt`.

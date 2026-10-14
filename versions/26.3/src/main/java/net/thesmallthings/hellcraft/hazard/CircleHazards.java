@@ -5,9 +5,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -109,9 +106,7 @@ public final class CircleHazards {
 		UUID id = player.getUUID();
 		if (LAST_CIRCLE.get(id) != circle) {
 			LAST_CIRCLE.put(id, circle);
-			player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 25));
-			player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(circle.title()).withStyle(ChatFormatting.DARK_RED)));
-			player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(circle.tagline()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+			// the circle's card (name, what it does, what to bring) is drawn by the client (LayerCard)
 			player.sendSystemMessage(Component.literal("\"" + circle.quote() + "\"").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			Component rest = circle.depth() > 0 ? Shrines.nearestLine(player) : null;
 			if (rest != null) {
