@@ -272,8 +272,10 @@ stable without one.
 Phases 3, 4 and 5 are the biggest.
 
 **Progress.** Phase 0 was done on 2026-10-13. Phase 1 was built on 2026-10-14 (the map at radius 3,500, the four
-roads, 12 ways down per cliff, 40 Rests, circle cards, the compass, the Map of Hell on M and the Journal on J) and
-waits on its play session.
+roads, 12 ways down per cliff, 40 Rests, circle cards, the compass, the Map of Hell on M and the Journal on J).
+Phase 2 was built the same day: the Blockbench model pipeline, Minos's animated body and fight in the danger
+language, his entrance cutscene and Codex entry, and level arenas for the lairs. Multi-part hitboxes wait for the
+first boss that needs them (Minos fits one). Both wait on a play session.
 
 ## 14. The playtest loop
 

@@ -118,10 +118,13 @@ Decided first (2026-10-12):
 items, no resource-pack server, the animated test rig, client tests in CI. **Phase 1 (the new map) is built**
 (2026-10-14): the geometry and terrain at radius 3,500, the four Pilgrim Roads (`PilgrimRoadFeature`), a way down
 every 30 degrees on every cliff, 40 Rests beside the roads, the guardians' lairs 40 blocks south of the east road,
-circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a fresh world and waits on a play
-session ("you can walk from spawn to the bottom without help"). **Next: Phase 2** (boss tech, proven on Minos): a
-`.bbmodel` to Java converter, real boss entities, cutscenes, the Codex. Each phase ships as a test build for a play
-session before the next.
+circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a fresh world. **Phase 2 (boss tech,
+proven on Minos) is built** (2026-10-14): the model pipeline (tools/art, tools/gen_bosses.py), Minos's real body
+and fight in the danger language, cutscenes (his entrance), the Codex, level lair arenas; the written guide book is
+gone (the Journal holds it). Not done: multi-part hitboxes (26.3 hard-wires them to the Ender Dragon; add them with
+the first boss that needs them), boss music (none sent yet). Both phases wait on a play session ("you've fought
+Minos and told me how it feels"). **Next: Phase 3** (Upper Hell: Limbo to Wrath, their set-pieces and bosses), after
+that feedback. Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so
