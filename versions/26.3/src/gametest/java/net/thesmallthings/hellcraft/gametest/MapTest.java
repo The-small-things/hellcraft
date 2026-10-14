@@ -99,13 +99,14 @@ public class MapTest implements FabricClientGameTest {
 		context.waitTicks(5);
 		context.takeScreenshot("nav_compass");
 
-		// the mouse off the map, so no tooltip covers it
-		context.getInput().setCursorPos(2, 2);
 		context.getInput().pressKey(NavKeys.MAP);
 		context.waitForScreen(MapOfHellScreen.class);
+		// the mouse off the map (opening a screen centres it), so no tooltip covers it
+		context.getInput().setCursorPos(2, 2);
 		context.waitTicks(40);
 		context.takeScreenshot("nav_map");
 		context.setScreen(() -> MapOfHellScreen.at(2000, 0, 5));
+		context.getInput().setCursorPos(2, 2);
 		context.waitTicks(10);
 		context.takeScreenshot("nav_map_east_road");
 		context.setScreen(() -> null);

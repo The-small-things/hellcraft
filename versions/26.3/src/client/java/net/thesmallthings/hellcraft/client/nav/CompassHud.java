@@ -19,8 +19,9 @@ import net.thesmallthings.hellcraft.world.ShrineSites;
 
 /**
  * The compass strip at the top of the screen, in the Inferno: which way you face, a red arrow to the nearest way
- * down into the next circle and a gold diamond for the nearest Virgil's Rest, with how far each is. Under it,
- * where you are and a thin depth bar that fills toward the pit. It steps aside while boss bars show.
+ * down into the next circle and a gold diamond for the nearest Virgil's Rest, with how far each is. Under it, a
+ * thin depth bar that fills toward the pit, where you are and how far each marker is (those two lines give way to a
+ * circle's card while it shows). It steps aside while boss bars show.
  */
 public final class CompassHud implements HudElement {
 	public static final Identifier ID = HellcraftMod.id("compass");
@@ -93,7 +94,10 @@ public final class CompassHud implements HudElement {
 		g.fill(left, TOP + HEIGHT, right, TOP + HEIGHT + 2, ARGB.black(120));
 		g.fill(left, TOP + HEIGHT, left + (int) Math.round((right - left) * depth), TOP + HEIGHT + 2, ARGB.opaque(LayerCard.accent(circle)));
 
-		// where you are, then how far to each marker
+		// where you are, then how far to each marker (not while a circle's card is up: it says the same, bigger)
+		if (LayerCard.showing() != null) {
+			return;
+		}
 		int y = TOP + HEIGHT + 5;
 		g.centeredText(font, InfernoGeometry.regionName(pos.x, pos.z), cx, y, ARGB.opaque(LayerCard.accent(circle)));
 		String downText = down.label() + " " + distance(pos, down.x(), down.z());
