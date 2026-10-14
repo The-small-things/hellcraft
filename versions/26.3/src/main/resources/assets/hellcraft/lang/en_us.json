@@ -39,5 +39,7 @@
   "item.hellcraft.halo": "Halo",
   "key.category.hellcraft.hellcraft": "Hellcraft",
   "key.hellcraft.map": "Map of Hell",
-  "key.hellcraft.journal": "Pilgrim's Journal"
+  "key.hellcraft.journal": "Pilgrim's Journal",
+  "death.attack.hellcraft.judgement": "%1$s was judged by %2$s",
+  "death.attack.hellcraft.judgement.player": "%1$s was judged by %2$s while fighting %3$s"
 }

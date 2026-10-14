@@ -21,10 +21,12 @@ import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.command.HellCommands;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.hazard.Ambience;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
+import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
@@ -83,6 +85,8 @@ public class HellcraftMod implements ModInitializer {
 		LuciferRewards.register();
 		HudSync.register();
 		MapSync.register();
+		Danger.register();
+		CutsceneManager.register();
 
 		ServerLifecycleEvents.SERVER_STARTING.register(Paradiso::init);
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);

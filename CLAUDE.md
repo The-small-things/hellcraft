@@ -71,7 +71,18 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - `net/`: `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
   prestige rank), `MapSync` (whether the world is the Inferno, the Rests found, the bosses beaten, and the Guide's
   pages for the Journal). No resource pack is sent any more: all art ships in the jar.
-- `entity/`: Hellcraft's own mobs (`HellEntities`); `TestRig` is the animated test dummy.
+- `entity/`: Hellcraft's own mobs (`HellEntities`); `TestRig` is the animated test dummy. `entity/boss/`: bosses with
+  real bodies: `BossEntity` (plays the animation the server names, shows the danger warnings, plays its own death),
+  `MinosEntity`; `boss/gen/` is generated (tools/gen_bosses.py).
+- `hazard/Danger`: the danger language (red = get out, white = block now, a parry staggers, purple = can't be
+  blocked); marks on the ground, sent to clients (`client/danger/DangerMarks` draws them), and the unblockable
+  `hellcraft:judgement` damage type. `GuardianFight` gives real-bodied guardians an intro, a parry window
+  (`openParry`, `onParried`) and invulnerable spells (`shield`).
+- `cutscene/`: `Cutscene` (camera shots in the anchor's frame, captions, shakes, a name card), `Cutscenes` (by id),
+  `CutsceneManager` (plays one, keeps the player from harm, remembers it was seen so it can be skipped). Client:
+  `client/cutscene/CutscenePlayer` + the `CameraMixin`, `HudMixin`, `KeyboardInputMixin` and `MouseHandlerMixin`.
+- `codex/Codex`: the boss entries (who, how to fight, a quote); opened on meeting a boss (`MapSync.unlockCodex`) and
+  read in the Journal.
 - `blood/HellItems`: the registered items (Blood Heart, Fragment, Bane, Vigil Candle, Soul Anchor) and the creative
   tab. Weapons, armour and relics are still vanilla items marked with custom_data (to convert later).
 - Client (`src/client/.../client/`): `HellcraftClient`, `BloodHud` + `mixin/HeartTypeMixin` (blood hearts and rank

@@ -3,9 +3,11 @@ package net.thesmallthings.hellcraft.client.nav;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.Guide;
+import net.thesmallthings.hellcraft.codex.Codex;
 import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +24,7 @@ public final class ClientNav {
 	private static volatile boolean cards;
 	private static volatile Set<String> visited = Set.of();
 	private static volatile Set<String> beaten = Set.of();
+	private static volatile Set<String> codex = Set.of();
 	private static volatile List<Guide.Page> pages = List.of();
 
 	public static void map(MapPayload payload) {
@@ -29,6 +32,7 @@ public final class ClientNav {
 		cards = payload.cards();
 		visited = Set.copyOf(payload.visited());
 		beaten = Set.copyOf(payload.beaten());
+		codex = Set.copyOf(payload.codex());
 	}
 
 	public static void journal(JournalPayload payload) {
@@ -40,6 +44,7 @@ public final class ClientNav {
 		cards = false;
 		visited = Set.of();
 		beaten = Set.of();
+		codex = Set.of();
 		pages = List.of();
 	}
 
@@ -66,6 +71,17 @@ public final class ClientNav {
 
 	public static boolean beaten(String boss) {
 		return beaten.contains(boss);
+	}
+
+	/** The Codex entries this player has opened, in the Codex's order. */
+	public static List<Codex.Entry> codex() {
+		List<Codex.Entry> out = new ArrayList<>();
+		for (Codex.Entry e : Codex.ALL) {
+			if (codex.contains(e.id())) {
+				out.add(e);
+			}
+		}
+		return out;
 	}
 
 	public static List<Guide.Page> pages() {

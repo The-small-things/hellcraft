@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
@@ -15,6 +16,9 @@ import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.LayerCard;
 import net.thesmallthings.hellcraft.client.nav.MapOfHellScreen;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
+import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
+import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
@@ -74,7 +78,61 @@ public class MapTest implements FabricClientGameTest {
 				}
 			});
 			findingTheWay(context, server, connection);
+			minosFight(context, server, connection);
 		}
+	}
+
+	/**
+	 * Minos's fight in his lair, against a dummy (screenshots fight_*): his entrance, then each attack as its danger
+	 * mark fills: the white cone of his claw (and his white flash), the purple ring of his tail, the red circle of a
+	 * sentence and the red line of his coil.
+	 */
+	private static void minosFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		int x = Guardian.MINOS.lairColumn().getX();
+		int z = Guardian.MINOS.lairColumn().getZ();
+		// stand back from the lair (its floor is level), looking down at where Minos will rise and his marks will show
+		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", x, z));
+		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d -20 38", x - 6, ground + 13, z - 17));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		String out = server.computeOnServer(s -> GuardianManager.summon(s, Guardian.MINOS));
+		if (!out.contains("awakens")) {
+			throw new AssertionError("Minos could not be summoned: " + out);
+		}
+		server.runCommand(String.format(Locale.ROOT, "summon minecraft:villager %d %d %d {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"fight_dummy\"]}",
+				x - 2, ground, z - 6));
+		context.waitTicks(MinosAnim.INTRO.at("roar") + 6);
+		context.takeScreenshot("fight_intro");
+		context.waitTicks(MinosAnim.INTRO.ticks - MinosAnim.INTRO.at("roar"));
+		String[][] shots = {
+				{"strike", String.valueOf(MinosAnim.STRIKE.at("flash") + 5)},
+				{"tail", String.valueOf(MinosAnim.TAIL.at("sweep") - 6)},
+				{"sentence", "30"},
+				{"coil", String.valueOf(MinosAnim.GRAB.at("lunge") - 4)},
+		};
+		for (String[] shot : shots) {
+			String used = server.computeOnServer(s -> GuardianManager.attack(Guardian.MINOS, shot[0]));
+			if (!used.contains(" uses ")) {
+				throw new AssertionError("Minos could not use " + shot[0] + ": " + used);
+			}
+			context.waitTicks(Integer.parseInt(shot[1]));
+			context.takeScreenshot("fight_" + shot[0]);
+			context.waitTicks(80);
+		}
+		server.computeOnServer(s -> GuardianManager.slay(Guardian.MINOS));
+		context.waitTicks(30);
+		context.takeScreenshot("fight_death");
+		server.runCommand("kill @e[tag=fight_dummy]");
+		// meeting him opened his Codex entry, first after "Where you are"
+		if (!context.computeOnClient(client -> ClientNav.codex().stream().anyMatch(e -> e.id().equals("minos")))) {
+			throw new AssertionError("meeting Minos didn't open his Codex entry");
+		}
+		context.setScreen(() -> JournalScreen.at(1));
+		context.waitTicks(5);
+		context.takeScreenshot("fight_codex");
+		context.setScreen(() -> null);
 	}
 
 	/**

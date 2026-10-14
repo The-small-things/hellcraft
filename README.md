@@ -217,17 +217,28 @@ They protect like diamond, look like crimson plate with bone rivets and burning 
 
 ## The circle guardians (26.3)
 
-Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, five of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Walk into a lair and its guardian wakes. It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, five of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes. It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
 | Guardian | Lair | Attacks |
 |---|---|---|
-| **Minos**, Judge of the Damned | Lust, x 2425 | *Tail of Judgement*: his tail sweeps the ground in a full circle (jump it). *Sentence*: a ring follows one player, then the hurricane tears up where they stand (keep moving). *Coil*: drags the nearest player into his coils until the others deal him 15 damage. |
+| **Minos**, Judge of the Damned (3.0: a real, animated body) | Lust, x 2425 | *The Claw* (white): a claw from on high; block it with a shield as it lands and he staggers, armour gone, for two seconds. *Tail of Judgement* (purple): his tail sweeps the ground in a full circle (jump it as it passes). *Sentence* (red): a red circle follows one player, stops, then the hurricane tears up the ground there (keep moving). *Coil* (a red line): his tail lunges along the line and squeezes whoever is still in it, until the others deal him 15 damage. At half health he rears up in fury: every player is sentenced at once and he attacks faster. |
 | **Cerberus**, the Great Worm | Gluttony, x 2100 | Hunts like a ravager. *Three Maws*: three bites in a cone in front (get behind him). *Filth*: puddles of mud that slow and sicken. *Howl*: stuns everyone close. |
 | **Plutus**, the Great Enemy | Greed, x 1800 | *Weight of Gold*: gold rain that hits harder the more gold you carry. *Lunge*: a golden line, then he hurls himself along it. *Pape Satàn*: a shriek that scatters and sickens. |
 | **The Minotaur**, Infamy of Crete | Burning Sands, x 885 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
 | **Geryon**, Image of Fraud | edge of the great cliff, x 830 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
+
+**The danger language (3.0).** The same colours mean the same thing on every boss, and Virgil explains each the first time you see it:
+- **Red** on the ground: get out of it before it fills. A shield won't help.
+- **White**: the boss flashes white and the ground where the blow will land shows white. Raise your shield now: blocking that blow in time staggers the boss (a parry).
+- **Purple**: can't be blocked. Jump it, or get out of the way.
+
+Marks are drawn block by block on the ground, fill from the middle out, and the blow lands as they fill. Each colour has its own sound: a low horn for red, a bell for white, a chime for purple.
+
+**Minos's entrance (3.0).** When Minos wakes, everyone near his lair sees a short cutscene: he rises out of his coils and roars, his name card comes up, and Virgil says how to read the fight. You can't be hurt while it plays, and you can skip it (the jump key) once you've seen it. The fight starts when it ends.
+
+**The Codex (3.0).** Meeting a boss opens its entry in the Journal (J): who it is, how to fight it, and Dante's words about it.
 
 **Animated models (Lucifer too).** Each boss's model rises out of the ground and roars when it wakes, breathes while it stands, bobs and leans as it walks, rears back before every attack and lunges into it, squashes down into its stomps, shudders and flashes red when hit, and topples over and sinks when it dies. The server drives it all through the model's display entity. (3.0 replaces these with fully jointed, keyframe-animated models.)
 
@@ -501,6 +512,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
+| `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |
 | `/hellcraft paradiso status\|angels\|rose\|ascent` | op | Paradiso's state; call the Angelic Guard; build the Celestial Rose or the Ascent now (26.3) |

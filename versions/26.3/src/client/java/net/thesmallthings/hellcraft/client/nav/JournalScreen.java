@@ -11,6 +11,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.Guide;
+import net.thesmallthings.hellcraft.codex.Codex;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -63,12 +64,12 @@ public class JournalScreen extends Screen {
 		panelH = Math.min(height - 16, 260);
 		panelX = (width - panelW) / 2;
 		panelY = (height - panelH) / 2;
-		listW = font.width("Where you are") + 10;
-		for (Guide.Page page : ClientNav.pages()) {
-			listW = Math.max(listW, font.width(page.title()) + 10);
+		listW = 0;
+		for (String title : titles()) {
+			listW = Math.max(listW, font.width(title) + 10);
 		}
 		listW = Math.min(listW, panelW / 3);
-		selected = Mth.clamp(selected, 0, ClientNav.pages().size());
+		selected = Mth.clamp(selected, 0, titles().size() - 1);
 	}
 
 	@Override
@@ -76,9 +77,13 @@ public class JournalScreen extends Screen {
 		return false;
 	}
 
+	/** "Where you are", then the Codex entries opened so far, then the Guide's pages. */
 	private List<String> titles() {
 		List<String> titles = new ArrayList<>();
 		titles.add("Where you are");
+		for (Codex.Entry entry : ClientNav.codex()) {
+			titles.add("Codex: " + capitalised(entry.title()));
+		}
 		for (Guide.Page page : ClientNav.pages()) {
 			titles.add(page.title());
 		}
@@ -155,13 +160,39 @@ public class JournalScreen extends Screen {
 			}
 			return out;
 		}
-		Guide.Page page = ClientNav.pages().get(selected - 1);
+		List<Codex.Entry> codex = ClientNav.codex();
+		if (selected <= codex.size()) {
+			codexPage(out, codex.get(selected - 1));
+			return out;
+		}
+		Guide.Page page = ClientNav.pages().get(selected - 1 - codex.size());
 		wrap(out, page.title(), HEADING);
 		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
 		for (String line : page.lines()) {
 			wrap(out, line, TEXT);
 		}
 		return out;
+	}
+
+	/** A Codex entry: who it is, how to fight it, and Dante's words. */
+	private void codexPage(List<Line> out, Codex.Entry entry) {
+		wrap(out, entry.title() + ", " + entry.subtitle().toUpperCase(java.util.Locale.ROOT), HEADING);
+		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+		for (String line : entry.who()) {
+			wrap(out, line, TEXT);
+		}
+		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+		wrap(out, "HOW TO FIGHT", HEADING);
+		for (String line : entry.fight()) {
+			wrap(out, "· " + line, TEXT);
+		}
+		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+		wrap(out, "\"" + entry.quote() + "\"", DIM);
+		wrap(out, "  (" + entry.source() + ")", DIM);
+	}
+
+	private static String capitalised(String title) {
+		return title.isEmpty() ? title : title.charAt(0) + title.substring(1).toLowerCase(java.util.Locale.ROOT);
 	}
 
 	private void wrap(List<Line> out, String text, int colour) {

@@ -37,9 +37,13 @@ import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Judgement;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.cutscene.Cutscene;
+import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
+import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
+import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +93,8 @@ public abstract class GuardianFight {
 	private int missingTicks;
 	private boolean done;
 	private int nextPull;
+	/** Until this tick, a shield block of the body's blow staggers it (the white flash). */
+	private int parryUntil = -1;
 	/** player -> ticks spent perched high above the guardian */
 	private final Map<UUID, Integer> perched = new HashMap<>();
 	/** player -> tick before which they aren't told again that they're out of reach */
@@ -138,6 +144,49 @@ public abstract class GuardianFight {
 	protected void onHurt(float amount) {
 	}
 
+	/**
+	 * A body with its own animations (BossEntity) plays its entrance here; returns how long it takes (the first
+	 * attack waits for it, and the body can't be hurt meanwhile).
+	 */
+	protected int intro(Mob body) {
+		return 0;
+	}
+
+	/** The cutscene everyone near the lair sees as this guardian wakes (filmed around its body), or null. */
+	@Nullable
+	protected Cutscene introCutscene() {
+		return null;
+	}
+
+	/** A fighter blocked the body's blow while it flashed white: the boss reels (see {@link #openParry}). */
+	protected void onParried(Mob body, ServerPlayer by) {
+	}
+
+	/** For the next few ticks, blocking the body's blow with a shield counts as a parry. */
+	protected void openParry(int ticks) {
+		parryUntil = tick + ticks;
+	}
+
+	/** Holds off the next attack for at least this long. */
+	protected void delayNextAttack(int ticks) {
+		cooldown = Math.max(cooldown, ticks);
+	}
+
+	/** Makes the body unhurtable for a while (an entrance, a roar). */
+	protected void shield(Mob body, int ticks) {
+		body.setPermanentlyInvulnerable(true);
+		schedule(ticks, () -> {
+			Mob b = body();
+			if (b != null) {
+				b.setPermanentlyInvulnerable(false);
+			}
+		});
+	}
+
+	private boolean animated(Mob body) {
+		return body instanceof BossEntity;
+	}
+
 	// ------------------------------------------------------------------ lifecycle
 
 	void start() {
@@ -162,11 +211,26 @@ public abstract class GuardianFight {
 		}
 		level.addFreshEntity(body);
 		bodyId = body.getUUID();
-		model.attach(body, kind.model(), Math.max(kind.modelHeight, body.getBbHeight()));
-		model.pose(body, BossModel.Pose.ROAR);
+		if (animated(body)) {
+			int intro = intro(body);
+			if (intro > 0) {
+				shield(body, intro);
+				cooldown = intro + 10;
+			}
+		} else {
+			model.attach(body, kind.model(), Math.max(kind.modelHeight, body.getBbHeight()));
+			model.pose(body, BossModel.Pose.ROAR);
+		}
 		level.playSound(null, lair, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 2.0f, 1.2f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, body.getX(), body.getY() + 1, body.getZ(), 120, 1.5, 2, 1.5, 0.05);
+		Cutscene cutscene = animated(body) ? introCutscene() : null;
 		for (ServerPlayer p : audience()) {
+			MapSync.unlockCodex(p, kind.id());
+			if (cutscene != null) {
+				// its name card is in the cutscene
+				CutsceneManager.play(p, cutscene, body.position(), body.getYRot());
+				continue;
+			}
 			p.connection.send(new ClientboundSetTitlesAnimationPacket(5, 50, 15));
 			p.connection.send(new ClientboundSetTitleTextPacket(Component.literal(kind.title).withStyle(kind.color, ChatFormatting.BOLD)));
 			p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(kind.subtitle).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
@@ -247,6 +311,9 @@ public abstract class GuardianFight {
 
 	/** Every attack: the model rears back, then lunges as the blow comes (most telegraphs last about a second). */
 	private void windUp(Mob body) {
+		if (animated(body)) {
+			return;
+		}
 		model.pose(body, BossModel.Pose.WINDUP);
 		schedule(14, () -> model.pose(body(), BossModel.Pose.STRIKE));
 	}
@@ -277,6 +344,10 @@ public abstract class GuardianFight {
 		if (hurt != null && inArena(entity) && !(source.getEntity() instanceof Player)) {
 			if (blocked && source.getEntity() != null && BossRules.fromBoss(source.getEntity())) {
 				hurt.onParry();
+				if (tick <= parryUntil && source.getEntity().getUUID().equals(bodyId) && entity instanceof ServerPlayer player && body() != null) {
+					parryUntil = -1;
+					onParried(body(), player);
+				}
 			} else if (dealt > 0) {
 				hurt.onHurt(dealt / Math.max(1.0f, entity.getMaxHealth()));
 			}
@@ -286,7 +357,9 @@ public abstract class GuardianFight {
 			return;
 		}
 		onHurt(dealt);
-		model.hurt(entity);
+		if (!(entity instanceof BossEntity)) {
+			model.hurt(entity);
+		}
 		if (source.getEntity() instanceof ServerPlayer attacker && styles.containsKey(attacker.getUUID())) {
 			styles.get(attacker.getUUID()).onHit(attacker, source, dealt);
 		}
@@ -607,7 +680,9 @@ public abstract class GuardianFight {
 	 * {@code maxRadius}. Anyone standing on the ground as it passes is hit; jumping clears it.
 	 */
 	protected void shockwave(Mob body, Vec3 center, int maxRadius, float damage, ParticleOptions particle) {
-		model.pose(body, BossModel.Pose.SLAM);
+		if (!animated(body)) {
+			model.pose(body, BossModel.Pose.SLAM);
+		}
 		Set<UUID> hit = new java.util.HashSet<>();
 		for (int r = 2; r <= maxRadius; r++) {
 			int radius = r;

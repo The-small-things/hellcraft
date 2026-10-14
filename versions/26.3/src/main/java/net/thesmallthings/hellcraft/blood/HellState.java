@@ -107,6 +107,10 @@ public class HellState extends SavedData {
 		public int kit;
 		/** Virgil's Rests this soul has reached (by site id): the places they can travel back to. */
 		public final Set<String> visited = new HashSet<>();
+		/** Codex entries this soul has opened (the bosses it has met). */
+		public final Set<String> codex = new HashSet<>();
+		/** Cutscenes this soul has seen (it may skip them next time). */
+		public final Set<String> cutscenes = new HashSet<>();
 		/** Guardian id -> game time this soul last took its spoils (absent: never slain it). */
 		public final Map<String, Long> guardianSpoils = new HashMap<>();
 		/** Boss id -> the best grade (Judgement.Grade ordinal) this soul has earned against it. */
@@ -221,6 +225,12 @@ public class HellState extends SavedData {
 			CompoundTag visited = new CompoundTag();
 			s.visited.forEach(v -> visited.putBoolean(v, true));
 			st.put("visited", visited);
+			CompoundTag cutscenes = new CompoundTag();
+			s.cutscenes.forEach(c -> cutscenes.putBoolean(c, true));
+			st.put("cutscenes", cutscenes);
+			CompoundTag codex = new CompoundTag();
+			s.codex.forEach(c -> codex.putBoolean(c, true));
+			st.put("codex", codex);
 			CompoundTag spoils = new CompoundTag();
 			s.guardianSpoils.forEach(spoils::putLong);
 			st.put("guardianSpoils", spoils);
@@ -302,6 +312,8 @@ public class HellState extends SavedData {
 			s.deaths = st.getIntOr("deaths", 0);
 			s.guardiansSlain = st.getIntOr("guardiansSlain", 0);
 			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
+			s.cutscenes.addAll(st.getCompoundOrEmpty("cutscenes").keySet());
+			s.codex.addAll(st.getCompoundOrEmpty("codex").keySet());
 			CompoundTag spoils = st.getCompoundOrEmpty("guardianSpoils");
 			for (String key : spoils.keySet()) {
 				s.guardianSpoils.put(key, spoils.getLongOr(key, 0L));

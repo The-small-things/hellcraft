@@ -3,11 +3,14 @@ package net.thesmallthings.hellcraft.net;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.thesmallthings.hellcraft.blood.Guide;
+import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.codex.Codex;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 
@@ -39,6 +42,20 @@ public final class MapSync {
 		}
 	}
 
+	/** Opens a Codex entry for a player who has just met its boss, and tells them where to read it. */
+	public static void unlockCodex(ServerPlayer player, String id) {
+		Codex.Entry entry = Codex.byId(id);
+		if (entry == null || !Hearts.soul(player).codex.add(id)) {
+			return;
+		}
+		HellState.get(player.level().getServer()).setDirty();
+		player.sendSystemMessage(Component.literal("New in your Journal's Codex: " + entry.title().charAt(0) + entry.title().substring(1).toLowerCase(java.util.Locale.ROOT)
+				+ ", " + entry.subtitle() + ". Press ").withStyle(ChatFormatting.GOLD)
+				.append(Component.keybind("key.hellcraft.journal").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
+				.append(Component.literal(" to read how to fight it.").withStyle(ChatFormatting.GOLD)));
+		send(player);
+	}
+
 	/** Opens the Journal on the player's screen (/guide). */
 	public static void openJournal(ServerPlayer player) {
 		if (ServerPlayNetworking.canSend(player, OpenJournalPayload.TYPE)) {
@@ -62,7 +79,8 @@ public final class MapSync {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		List<String> visited = soul == null ? List.of() : List.copyOf(soul.visited);
 		List<String> beaten = soul == null ? List.of() : List.copyOf(soul.guardianSpoils.keySet());
+		List<String> codex = soul == null ? List.of() : List.copyOf(soul.codex);
 		boolean inferno = HellWorldgen.isInferno(player.level().getServer().overworld());
-		ServerPlayNetworking.send(player, new MapPayload(inferno, HellConfig.get().circleTitles, visited, beaten));
+		ServerPlayNetworking.send(player, new MapPayload(inferno, HellConfig.get().circleTitles, visited, beaten, codex));
 	}
 }

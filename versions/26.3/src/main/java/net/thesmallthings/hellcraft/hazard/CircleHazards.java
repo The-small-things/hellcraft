@@ -245,7 +245,7 @@ public final class CircleHazards {
 		for (BlockPos p : BlockPos.betweenClosed(pos.offset(-3, -2, -3), pos.offset(3, 2, 3))) {
 			if (level.getBlockState(p).is(Blocks.LAVA)) {
 				player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, true));
-				hintBit(player, 20, "The heat near lava hurts you here. Fire Resistance or standing in water protects you.");
+				hintOnce(player, 20, "The heat near lava hurts you here. Fire Resistance or standing in water protects you.");
 				return;
 			}
 		}
@@ -253,10 +253,14 @@ public final class CircleHazards {
 
 	/** Tells a player, once per circle, how to escape its torment. */
 	private static void hint(ServerPlayer player, Circle circle, String text) {
-		hintBit(player, circle.ordinal(), text);
+		hintOnce(player, circle.ordinal(), text);
 	}
 
-	private static void hintBit(ServerPlayer player, int index, String text) {
+	/**
+	 * Virgil tells a player something once (soul.hints is a bit set: 0-10 the circles' torments, 20 the Forge's heat,
+	 * 24-26 the danger language's colours).
+	 */
+	public static void hintOnce(ServerPlayer player, int index, String text) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		int bit = 1 << index;
 		if (soul == null || (soul.hints & bit) != 0) {

@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.world;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -41,8 +42,8 @@ public final class ShrineSites {
 	public static final int ROAD_OFFSET = 10;
 	/** Rests keep this far from a guardian's lair (they slide inward along the road). */
 	private static final double LAIR_CLEARANCE = 56.0;
-	/** The guardians' lairs beside the east road (x, z); must match Guardian (a unit test checks). */
-	static final int[][] LAIRS = {{2425, 40}, {2100, 40}, {1800, 40}, {885, 40}, {830, 40}};
+	/** The guardians' lairs beside the east road (x, z). */
+	static final int[][] LAIRS = InfernoGeometry.LAIRS;
 	/** The four roads, in the order of ROAD_ANGLES. */
 	private static final String[] ROADS = {"east", "south", "west", "north"};
 

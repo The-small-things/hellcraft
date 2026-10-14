@@ -306,7 +306,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   cxz=$(echo "$city" | grep -oE '\[-?[0-9]+, ~, -?[0-9]+\]' | tr -d '[]~ ' | tr ',' ' ' | head -1)
   [ -n "$cxz" ] || { echo "No End city could be located near the gateway exits"; exit 1; }
   read -r cx cz <<< "$cxz"
-  [ $(( cx * cx + cz * cz )) -lt $(( 1600 * 1600 )) ] || { echo "The nearest End city ($cx, $cz) is not in the first ring"; exit 1; }
+  # within a walk of where the gateways drop players (where exactly depends on the seed)
+  [ $(( (cx - 1100) * (cx - 1100) + cz * cz )) -lt $(( 900 * 900 )) ] || { echo "The nearest End city ($cx, $cz) is too far from the gateway exits"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
   for p in "0 0" "1500 0" "3000 0" "6600 0"; do
     read -r ex ez <<< "$p"
@@ -326,8 +327,12 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
 fi
 
 if [ "$MC_VERSION" != "1.21.1" ]; then
+  # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
+  danger=$(rcon "hellcraft danger test")
+  echo "$danger"
+  echo "$danger" | grep -q "bypasses shields: true" || { echo "Unblockable boss blows can be blocked"; exit 1; }
   # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
-  declare -A ATTACKS=([minos]="tail sentence coil" [cerberus]="maws filth howl" [plutus]="gold lunge pape" \
+  declare -A ATTACKS=([minos]="strike tail sentence coil" [cerberus]="maws filth howl" [plutus]="gold lunge pape" \
                       [minotaur]="charge stomp" [geryon]="sting falseface" [vulcan]="hammerfall molten forgeborn chains")
   for g in minos cerberus plutus minotaur geryon vulcan; do
     out=$(rcon "hellcraft guardian $g summon")
@@ -335,7 +340,12 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
     sleep 3
     rcon "execute at @e[tag=hellcraft_guardian_body,limit=1] run summon minecraft:villager ~4 ~ ~ {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
-    shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_guardian_model]" || true)
+    # Minos has a real body (hellcraft:minos, animated on the client); the others still wear item-display models
+    if [ "$g" = minos ]; then
+      shown=$(rcon "execute if entity @e[type=hellcraft:minos,tag=hellcraft_guardian_body]" || true)
+    else
+      shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_guardian_model]" || true)
+    fi
     echo "$g's model: $shown"
     echo "$shown" | grep -q "Test passed" || { echo "Guardian $g has no model"; exit 1; }
     for a in ${ATTACKS[$g]}; do
@@ -346,7 +356,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     done
     rcon "hellcraft guardian $g status"
     rcon "hellcraft guardian $g slay"
-    sleep 2
+    # a real body plays its death (Minos's takes 3.5 s) before it goes
+    sleep 6
     left=$(rcon "execute if entity @e[tag=hellcraft_guardian_body]" || true)
     echo "$g left behind: $left"
     echo "$left" | grep -q "Test failed" || { echo "Guardian $g's body was left behind"; exit 1; }

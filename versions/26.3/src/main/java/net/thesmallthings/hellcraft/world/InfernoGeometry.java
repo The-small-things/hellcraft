@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.world;
 
+
 /**
  * The shape of Hell. Pure math with no Minecraft dependencies, so terrain, biomes, features and
  * gameplay hazards all agree on where everything is (and so it can be unit-tested and rendered
@@ -36,6 +37,11 @@ public final class InfernoGeometry {
 	public static final double WAY_DOWN_STEP = Math.PI / 6;
 	/** The four Pilgrim Roads: east (the spawn's gate), south, west and north. */
 	public static final double[] ROAD_ANGLES = {0, Math.PI / 2, Math.PI, -Math.PI / 2};
+	/** The guardians' lairs (x, z), beside the east road; Guardian and ShrineSites follow them (unit tests check). */
+	public static final int[][] LAIRS = {{2425, 40}, {2100, 40}, {1800, 40}, {885, 40}, {830, 40}};
+	/** A lair's floor is level out to this radius (a fight's arena is 24 across), fading back into the land. */
+	private static final double ARENA_FLAT = 22.0;
+	private static final double ARENA_FADE = 12.0;
 	/** Half the width of a road's paving; the ground is levelled a little wider ({@link #ROAD_LEVEL_HALF_WIDTH}). */
 	public static final double ROAD_HALF_WIDTH = 2.5;
 	private static final double ROAD_LEVEL_HALF_WIDTH = 5.0;
@@ -262,8 +268,8 @@ public final class InfernoGeometry {
 			// keep Lucifer's pit clean
 			out[0] *= 0.3;
 		}
-		// the roads run on level ground
-		double flat = 1.0 - roadLevelling(Math.atan2(z, x), r);
+		// the roads and the guardians' arenas are level ground
+		double flat = (1.0 - roadLevelling(Math.atan2(z, x), r)) * (1.0 - arenaLevelling(x, z));
 		out[0] *= flat;
 		out[1] *= flat;
 		out[2] *= flat;
@@ -283,6 +289,20 @@ public final class InfernoGeometry {
 
 	public static double jaggedAmplitude(double x, double z) {
 		return roughness(x, z)[2];
+	}
+
+	/** 1 on a lair's floor, fading to 0 around it: no spires or ridges where a guardian fights. */
+	static double arenaLevelling(double x, double z) {
+		double best = 0.0;
+		for (int[] lair : LAIRS) {
+			double dx = x - lair[0];
+			double dz = z - lair[1];
+			double d = Math.sqrt(dx * dx + dz * dz);
+			if (d < ARENA_FLAT + ARENA_FADE) {
+				best = Math.max(best, smoothstep(clamp(1.0 - (d - ARENA_FLAT) / ARENA_FADE, 0.0, 1.0)));
+			}
+		}
+		return best;
 	}
 
 	// ------------------------------------------------------------------ ramps

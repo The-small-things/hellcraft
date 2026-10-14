@@ -5,7 +5,11 @@
 	"compatibilityLevel": "JAVA_25",
 	"client": [
 		"BossOverlayAccessor",
-		"HeartTypeMixin"
+		"CameraMixin",
+		"HeartTypeMixin",
+		"HudMixin",
+		"KeyboardInputMixin",
+		"MouseHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
