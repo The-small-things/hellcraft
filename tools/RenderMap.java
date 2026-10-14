@@ -48,10 +48,11 @@ public class RenderMap {
 	public static void main(String[] args) throws Exception {
 		File out = new File(args.length > 0 ? args[0] : "out");
 		out.mkdirs();
-		topDown(new File(out, "inferno_map.png"), 1400, 6300, 0, 0);
-		topDown(new File(out, "malebolge_zoom.png"), 1000, 900, 700, 700);
-		topDown(new File(out, "dis_gate_zoom.png"), 800, 120, 1715, 1715);
-		topDown(new File(out, "gate_of_hell_zoom.png"), 800, 90, 5460, 0);
+		double border = InfernoGeometry.BORDER_RADIUS;
+		topDown(new File(out, "inferno_map.png"), 1400, border + 150, 0, 0);
+		topDown(new File(out, "malebolge_zoom.png"), 1000, 460, 440, 440);
+		topDown(new File(out, "dis_gate_zoom.png"), 800, 120, InfernoGeometry.DIS_WALL_RADIUS, 0);
+		topDown(new File(out, "gate_of_hell_zoom.png"), 800, 90, InfernoGeometry.GATE_WALL_RADIUS, 0);
 		crossSection(new File(out, "cross_section.png"));
 		System.out.println("Wrote previews to " + out.getAbsolutePath());
 	}
@@ -81,6 +82,9 @@ public class RenderMap {
 				} else if (gate == InfernoGeometry.WallPart.GATE) {
 					c = new Color(0xFF3020);
 				}
+				if (InfernoGeometry.onRoad(x, z)) {
+					c = new Color(0xD8C8A0);
+				}
 				if (Math.sqrt(x * x + z * z) > InfernoGeometry.BORDER_RADIUS) {
 					c = c.darker().darker();
 				}
@@ -100,7 +104,7 @@ public class RenderMap {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setColor(new Color(0x120808));
 		g.fillRect(0, 0, w, h);
-		double maxR = 6200;
+		double maxR = InfernoGeometry.BORDER_RADIUS + 100;
 		int minY = -64, maxY = 320;
 		for (int px = 0; px < w; px++) {
 			double x = px * maxR / w;
@@ -122,7 +126,7 @@ public class RenderMap {
 		}
 		g.setColor(Color.WHITE);
 		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
-		g.drawString("Radial cross-section along +X (vertical exaggeration ~" + (int) (maxR / w / ((maxY - minY) / (double) h)) + "x). Left = centre (Judecca), right = world border.", 10, 20);
+		g.drawString("Radial cross-section along the east road (+X; vertical exaggeration ~" + (int) (maxR / w / ((maxY - minY) / (double) h)) + "x). Left = centre (Judecca), right = world border.", 10, 20);
 		g.dispose();
 		ImageIO.write(img, "png", file);
 	}

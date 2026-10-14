@@ -115,12 +115,12 @@ public final class GuideBook {
 				"",
 				"2 pieces: your hits heal you. 4 pieces: more healing, Regeneration when nearly dead, and Resistance during a Blood Oath."));
 		pages.add(page("THE GUARDIANS",
-				"Five bosses wait on the road from the Gate to the centre (z = 0), each in a ring of soul fire:",
-				"Minos (x 4050)",
-				"Cerberus (3575)",
-				"Plutus (3125)",
-				"Minotaur (1600)",
-				"Geryon (1480)",
+				"Five bosses wait just south of the east road (the one from spawn), each in a ring of soul fire. A sign by the road marks each:",
+				"Minos (in Lust)",
+				"Cerberus (Gluttony)",
+				"Plutus (Greed)",
+				"Minotaur (the Burning Sands)",
+				"Geryon (the edge of the great cliff)",
 				"First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
 		pages.add(page("STYLE",
 				"Bosses rank your STYLE: D C B A S SS SSS.",

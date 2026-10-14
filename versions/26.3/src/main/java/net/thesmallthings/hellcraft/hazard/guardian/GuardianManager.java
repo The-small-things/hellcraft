@@ -124,8 +124,9 @@ public final class GuardianManager {
 				continue;
 			}
 			for (ServerPlayer p : level.players()) {
-				double dx = p.getX() - (g.radius + 0.5);
-				double dz = p.getZ() - 0.5;
+				BlockPos column = g.lairColumn();
+				double dx = p.getX() - (column.getX() + 0.5);
+				double dz = p.getZ() - (column.getZ() + 0.5);
 				if (!p.isSpectator() && !p.isCreative() && dx * dx + dz * dz < TRIGGER * TRIGGER) {
 					start(level, g, false);
 					break;
@@ -213,7 +214,7 @@ public final class GuardianManager {
 
 	// ------------------------------------------------------------------ the lairs
 
-	/** A ring of soul-fire braziers and a sign, on the road in from the Gate, once per world. */
+	/** A ring of soul-fire braziers, and a sign at the roadside pointing to it, once per world. */
 	private static void buildLairs(MinecraftServer server) {
 		ServerLevel level = server.overworld();
 		HellState state = HellState.get(server);
@@ -235,15 +236,16 @@ public final class GuardianManager {
 				level.setBlock(new BlockPos(x, y + 1, z), Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
 				level.setBlock(new BlockPos(x, y + 2, z), Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true), 3);
 			}
-			int sx = c.getX() + 18;
-			int sz = 2;
+			// the sign stands by the east road, across from the lair
+			int sx = c.getX();
+			int sz = 6;
 			level.getChunk(sx >> 4, sz >> 4);
 			int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
 			Signs.place(level, new BlockPos(sx, sy, sz), 12, List.of(
 					Component.literal(g.title.toUpperCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.BOLD),
 					Component.literal(g.subtitle),
-					Component.literal("waits within."),
-					Component.literal("Enter if you dare.")));
+					Component.literal("waits to the south,"),
+					Component.literal("off the road.")));
 			HellcraftMod.LOGGER.info("Lair of {} at {}", g.id(), c.toShortString());
 		}
 		state.lairsBuilt = true;

@@ -6,15 +6,24 @@ package net.thesmallthings.hellcraft.world;
  * offline).
  *
  * <p>The world is Dante's funnel: concentric rings centred on 0,0. The outer rim (the Dark Wood)
- * sits high; every circle is a terrace lower than the one outside it, joined by cliffs with a few
- * "ruined slopes" (ramps) cut into them. The frozen lake Cocytus lies at the bottom.
+ * sits high; every circle is a terrace lower than the one outside it, joined by cliffs. The frozen
+ * lake Cocytus lies at the bottom.
+ *
+ * <p>Finding the way down is meant to be easy (3.0): every cliff has a ramp every 30 degrees, like the
+ * hours on a clock ({@link #WAY_DOWN_STEP}), so a straight line from the rim to the pit runs along any
+ * of the twelve; the Walls of Dis are the exception, crossed only at their four gates. The four
+ * Pilgrim Roads ({@link #ROAD_ANGLES}: east, south, west, north) follow four of those lines from the
+ * Gate of Hell to the Well of Giants, on level ground (no detail noise) and over the rivers on
+ * causeways.
  */
 public final class InfernoGeometry {
 	private InfernoGeometry() {
 	}
 
 	/** Radius of the world border; the Dark Wood climbs into mountains just before it. */
-	public static final int BORDER_RADIUS = 6000;
+	public static final int BORDER_RADIUS = 3500;
+	/** Where the Dark Wood starts climbing into the border mountains. */
+	private static final double MOUNTAINS_FROM = 3400;
 
 	private static final double WOBBLE_AMPLITUDE = 28.0;
 	private static final double WOBBLE_SCALE = 1.0 / 240.0;
@@ -23,9 +32,17 @@ public final class InfernoGeometry {
 	private static final double RAMP_HALF_ARC = 12.0;
 	private static final double RAMP_FADE_ARC = 24.0;
 
-	/** Four gates through the Walls of Dis; the ramps down into Heresy line up with them. */
-	public static final double[] DIS_GATE_ANGLES = {Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4};
-	/** Radial stone bridges ("spokes") crossing the ten ditches of Malebolge. */
+	/** The ways down every cliff are this far apart (radians): twelve, like the hours on a clock. */
+	public static final double WAY_DOWN_STEP = Math.PI / 6;
+	/** The four Pilgrim Roads: east (the spawn's gate), south, west and north. */
+	public static final double[] ROAD_ANGLES = {0, Math.PI / 2, Math.PI, -Math.PI / 2};
+	/** Half the width of a road's paving; the ground is levelled a little wider ({@link #ROAD_LEVEL_HALF_WIDTH}). */
+	public static final double ROAD_HALF_WIDTH = 2.5;
+	private static final double ROAD_LEVEL_HALF_WIDTH = 5.0;
+	private static final double ROAD_LEVEL_FADE = 6.0;
+	/** Four gates through the Walls of Dis, one on each road; the ramps on either side line up with them. */
+	public static final double[] DIS_GATE_ANGLES = ROAD_ANGLES;
+	/** Radial stone bridges ("spokes") crossing the ten ditches of Malebolge, on the twelve ways down. */
 	public static final int MALEBOLGE_SPOKES = 12;
 	public static final int MALEBOLGE_DITCHES = 10;
 	private static final double BRIDGE_HALF_WIDTH = 3.0;
@@ -35,7 +52,7 @@ public final class InfernoGeometry {
 	/** Kept above y=-54, below which Minecraft floods open air with lava. */
 	public static final int PIT_FLOOR_Y = -52;
 
-	public static final double DIS_WALL_RADIUS = 2425.0;
+	public static final double DIS_WALL_RADIUS = 1395.0;
 	public static final double DIS_WALL_HALF_THICKNESS = 3.5;
 	public static final int DIS_WALL_HEIGHT = 24;
 	public static final int DIS_TOWER_HEIGHT = 34;
@@ -53,31 +70,41 @@ public final class InfernoGeometry {
 	 * @param rough     amplitude (blocks) of smooth detail noise
 	 * @param ridged    amplitude (blocks) of ridged, spiky detail noise
 	 * @param jagged    strength of 3D overhang noise
-	 * @param ramps     number of ramps cut into the cliff on this band's inner edge
+	 * @param ways      the ways down the cliff on this band's inner edge
 	 * @param cliff     width of the cliff on this band's inner edge
 	 */
 	record Band(Zone zone, double outer, double inner, double hOut, double hIn,
-				double rough, double ridged, double jagged, int ramps, double cliff) {
+				double rough, double ridged, double jagged, Ways ways, double cliff) {
+	}
+
+	/** Where a cliff can be walked down. */
+	enum Ways {
+		/** A ramp every 30 degrees ({@link #WAY_DOWN_STEP}). */
+		CLOCK,
+		/** Only on the four roads (the Walls of Dis). */
+		ROADS,
+		/** No ramps: the cliff is a gentle slope all round. */
+		NONE
 	}
 
 	static final Band[] BANDS = {
-			new Band(Zone.DARK_WOOD, 6000, 5400, 172, 164, 7, 0, 0.12, InfernoGeometry.GATE_COUNT, 12),
-			new Band(Zone.VESTIBULE, 5400, 5000, 150, 142, 3, 0, 0.05, 5, 12),
-			new Band(Zone.ACHERON, 5000, 4900, 118, 118, 1.5, 0, 0.0, 3, 10),
-			new Band(Zone.LIMBO, 4900, 4300, 134, 126, 5, 0, 0.08, 3, 10),
-			new Band(Zone.LUST, 4300, 3800, 108, 100, 4, 16, 0.9, 3, 10),
-			new Band(Zone.GLUTTONY, 3800, 3350, 88, 84, 2.5, 0, 0.05, 3, 10),
-			new Band(Zone.GREED, 3350, 2900, 72, 66, 6, 3, 0.15, 3, 10),
-			new Band(Zone.STYX, 2900, 2450, 53, 52, 4, 0, 0.0, 4, 10),
-			new Band(Zone.WALLS_OF_DIS, 2450, 2400, 58, 58, 1, 0, 0.0, 4, 10),
-			new Band(Zone.HERESY, 2400, 2000, 44, 38, 4, 2, 0.25, 3, 10),
-			new Band(Zone.PHLEGETHON, 2000, 1880, 18, 18, 1.5, 0, 0.0, 3, 10),
-			new Band(Zone.WOOD_OF_SUICIDES, 1880, 1640, 34, 33, 3, 0, 0.1, 0, 30),
-			new Band(Zone.BURNING_SANDS, 1640, 1450, 33, 30, 6, 0, 0.0, 1, 10),
-			new Band(Zone.MALEBOLGE, 1450, 700, -2, -12, 2, 0, 0.1, 2, 10),
-			new Band(Zone.WELL_OF_GIANTS, 700, 600, -13, -14, 2, 0, 0.6, 2, 10),
-			new Band(Zone.COCYTUS, 600, 150, -38, -41, 0.8, 0, 0.0, 0, 30),
-			new Band(Zone.JUDECCA, 150, 0, -42, -43, 0.6, 0, 0.0, 0, 10),
+			new Band(Zone.DARK_WOOD, 3500, 3150, 172, 164, 7, 0, 0.12, Ways.CLOCK, 12),
+			new Band(Zone.VESTIBULE, 3150, 3010, 150, 142, 3, 0, 0.05, Ways.CLOCK, 12),
+			new Band(Zone.ACHERON, 3010, 2950, 118, 118, 1.5, 0, 0.0, Ways.CLOCK, 10),
+			new Band(Zone.LIMBO, 2950, 2600, 134, 126, 5, 0, 0.08, Ways.CLOCK, 10),
+			new Band(Zone.LUST, 2600, 2250, 108, 100, 4, 16, 0.9, Ways.CLOCK, 10),
+			new Band(Zone.GLUTTONY, 2250, 1950, 88, 84, 2.5, 0, 0.05, Ways.CLOCK, 10),
+			new Band(Zone.GREED, 1950, 1650, 72, 66, 6, 3, 0.15, Ways.CLOCK, 10),
+			new Band(Zone.STYX, 1650, 1410, 53, 52, 4, 0, 0.0, Ways.ROADS, 10),
+			new Band(Zone.WALLS_OF_DIS, 1410, 1380, 58, 58, 1, 0, 0.0, Ways.ROADS, 10),
+			new Band(Zone.HERESY, 1380, 1100, 44, 38, 4, 2, 0.25, Ways.CLOCK, 10),
+			new Band(Zone.PHLEGETHON, 1100, 1030, 18, 18, 1.5, 0, 0.0, Ways.CLOCK, 10),
+			new Band(Zone.WOOD_OF_SUICIDES, 1030, 910, 34, 33, 3, 0, 0.1, Ways.NONE, 30),
+			new Band(Zone.BURNING_SANDS, 910, 800, 33, 30, 6, 0, 0.0, Ways.CLOCK, 10),
+			new Band(Zone.MALEBOLGE, 800, 480, -2, -12, 2, 0, 0.1, Ways.CLOCK, 10),
+			new Band(Zone.WELL_OF_GIANTS, 480, 420, -13, -14, 2, 0, 0.6, Ways.CLOCK, 10),
+			new Band(Zone.COCYTUS, 420, 110, -38, -41, 0.8, 0, 0.0, Ways.NONE, 30),
+			new Band(Zone.JUDECCA, 110, 0, -42, -43, 0.6, 0, 0.0, Ways.NONE, 10),
 	};
 
 	public enum Fluid {NONE, WATER, LAVA}
@@ -93,7 +120,7 @@ public final class InfernoGeometry {
 	private static final River[] RIVERS = {
 			new River(Zone.ACHERON, 125, Fluid.WATER, 100, 40),
 			new River(Zone.STYX, 55, Fluid.WATER, 100, 0),
-			new River(Zone.PHLEGETHON, 26, Fluid.LAVA, 100, 30),
+			new River(Zone.PHLEGETHON, 26, Fluid.LAVA, 60, 30),
 	};
 
 	// ------------------------------------------------------------------ radius & zones
@@ -153,7 +180,7 @@ public final class InfernoGeometry {
 			case BURNING_SANDS -> "The Burning Sands";
 			case MALEBOLGE, MALEBOLGE_PITCH, MALEBOLGE_BLIGHT -> "Malebolge — Bolgia " + roman(ditchIndex(re) + 1);
 			case WELL_OF_GIANTS -> "The Well of the Giants";
-			case COCYTUS -> re > 450 ? "Caina" : re > 300 ? "Antenora" : "Ptolomea";
+			case COCYTUS -> re > 320 ? "Caina" : re > 215 ? "Antenora" : "Ptolomea";
 			case JUDECCA -> "Judecca";
 			default -> zone.circle().title();
 		};
@@ -162,7 +189,7 @@ public final class InfernoGeometry {
 	/** 0 at the edge of Cocytus, 1 at the very centre. Used to scale the cold. */
 	public static double treacheryDepth(double x, double z) {
 		double re = effectiveRadius(x, z);
-		return clamp(1.0 - re / 600.0, 0.0, 1.0);
+		return clamp(1.0 - re / bandFor(Zone.COCYTUS).outer, 0.0, 1.0);
 	}
 
 	// ------------------------------------------------------------------ height
@@ -181,8 +208,8 @@ public final class InfernoGeometry {
 		double t = clamp((b.outer - re) / width, 0.0, 1.0);
 		double h = lerp(b.hOut, b.hIn, t);
 
-		if (b.zone == Zone.DARK_WOOD && re > 5700) {
-			double m = (re - 5700) / 300.0;
+		if (b.zone == Zone.DARK_WOOD && re > MOUNTAINS_FROM) {
+			double m = (re - MOUNTAINS_FROM) / (BORDER_RADIUS - MOUNTAINS_FROM);
 			h += Math.min(m * m, 1.6) * 75.0;
 		}
 
@@ -203,6 +230,15 @@ public final class InfernoGeometry {
 		if (b.zone == Zone.JUDECCA && r < PIT_RADIUS) {
 			double s = smoothstep(1.0 - r / PIT_RADIUS);
 			h = lerp(h, PIT_FLOOR_Y, s);
+		}
+
+		// the roads cross the rivers on causeways a block above the water (or lava)
+		River river = riverAt(re);
+		if (river != null && h < river.level + 1) {
+			double c = causeway(theta, r);
+			if (c > 0) {
+				h = lerp(h, river.level + 1, c);
+			}
 		}
 		return h;
 	}
@@ -226,6 +262,11 @@ public final class InfernoGeometry {
 			// keep Lucifer's pit clean
 			out[0] *= 0.3;
 		}
+		// the roads run on level ground
+		double flat = 1.0 - roadLevelling(Math.atan2(z, x), r);
+		out[0] *= flat;
+		out[1] *= flat;
+		out[2] *= flat;
 		return out;
 	}
 
@@ -248,11 +289,8 @@ public final class InfernoGeometry {
 
 	static double rampFactor(int boundary, double theta, double re) {
 		Band b = BANDS[boundary];
-		if (b.ramps <= 0) {
-			return 0.0;
-		}
 		double best = 0.0;
-		for (int k = 0; k < b.ramps; k++) {
+		for (int k = 0; k < rampCount(b); k++) {
 			double angle = rampAngle(boundary, k);
 			double arc = angularDistance(theta, angle) * re;
 			double f = clamp(1.0 - (arc - RAMP_HALF_ARC) / RAMP_FADE_ARC, 0.0, 1.0);
@@ -261,27 +299,74 @@ public final class InfernoGeometry {
 		return best;
 	}
 
+	private static int rampCount(Band b) {
+		return switch (b.ways) {
+			case CLOCK -> 12;
+			case ROADS -> ROAD_ANGLES.length;
+			case NONE -> 0;
+		};
+	}
+
 	static double rampAngle(int boundary, int k) {
-		Zone zone = BANDS[boundary].zone;
-		if (zone == Zone.DARK_WOOD) {
-			// every gate in the Gate of Hell leads onto a slope down into the Vestibule
-			return gateAngle(k);
+		return BANDS[boundary].ways == Ways.ROADS ? ROAD_ANGLES[k] : wayDownAngle(k);
+	}
+
+	/** The k-th of the twelve ways down (0 = east, then clockwise seen from above: south is +Z). */
+	public static double wayDownAngle(int k) {
+		return normalizeAngle(k * WAY_DOWN_STEP);
+	}
+
+	// ------------------------------------------------------------------ roads
+
+	/** 1 on a Pilgrim Road's paving, fading to 0 beside it; 0 outside the stretch the roads run along. */
+	public static double roadFactor(double x, double z) {
+		double r = Math.sqrt(x * x + z * z);
+		return roadShape(Math.atan2(z, x), r, ROAD_HALF_WIDTH, 0.5);
+	}
+
+	/** True on a road's paving. */
+	public static boolean onRoad(double x, double z) {
+		return roadFactor(x, z) >= 0.5;
+	}
+
+	/** The roads run from just outside the Gate of Hell to the Well of Giants, where the Spines take over. */
+	public static double roadOuterRadius() {
+		return GATE_WALL_RADIUS + 60;
+	}
+
+	public static double roadInnerRadius() {
+		return bandFor(Zone.WELL_OF_GIANTS).outer;
+	}
+
+	private static double roadLevelling(double theta, double r) {
+		return roadShape(theta, r, ROAD_LEVEL_HALF_WIDTH, ROAD_LEVEL_FADE);
+	}
+
+	private static double causeway(double theta, double r) {
+		return roadShape(theta, r, ROAD_HALF_WIDTH + 1.5, 2.0);
+	}
+
+	private static double roadShape(double theta, double r, double halfWidth, double fade) {
+		if (r > roadOuterRadius() + fade || r < roadInnerRadius() - fade) {
+			return 0.0;
 		}
-		if (zone == Zone.WALLS_OF_DIS || zone == Zone.STYX) {
-			return DIS_GATE_ANGLES[k % DIS_GATE_ANGLES.length];
+		double best = 0.0;
+		for (double angle : ROAD_ANGLES) {
+			double side = Math.abs(Math.sin(theta - angle)) * r;
+			if (Math.cos(theta - angle) <= 0) {
+				continue;
+			}
+			best = Math.max(best, smoothstep(clamp(1.0 - (side - halfWidth) / fade, 0.0, 1.0)));
 		}
-		if (zone == Zone.BURNING_SANDS || zone == Zone.MALEBOLGE || zone == Zone.WELL_OF_GIANTS) {
-			// the descent through the lower circles follows Malebolge's bridges
-			int spoke = (int) Math.floor(hash01(boundary, k, 991) * MALEBOLGE_SPOKES);
-			return spokeAngle(spoke);
-		}
-		return hash01(boundary, k, 313) * 2.0 * Math.PI - Math.PI;
+		double along = Math.min(clamp((roadOuterRadius() - r) / fade + 1.0, 0.0, 1.0), clamp((r - roadInnerRadius()) / fade + 1.0, 0.0, 1.0));
+		return best * along;
 	}
 
 	// ------------------------------------------------------------------ malebolge
 
+	/** The Malebolge bridges lie on the twelve ways down. */
 	public static double spokeAngle(int spoke) {
-		return -Math.PI + (spoke + 0.5) * (2.0 * Math.PI / MALEBOLGE_SPOKES);
+		return wayDownAngle(spoke);
 	}
 
 	static int ditchIndex(double re) {
@@ -319,15 +404,28 @@ public final class InfernoGeometry {
 
 	// ------------------------------------------------------------------ rivers
 
-	/** Fluid that should fill air below {@link #fluidLevel} at this column. */
+	/** Fluid that should fill air below {@link #fluidLevel} at this column (none where a road's causeway rises above it). */
 	public static Fluid fluidAt(double x, double z) {
 		double re = effectiveRadius(x, z);
+		River river = riverAt(re);
+		if (river == null) {
+			return Fluid.NONE;
+		}
+		double theta = Math.atan2(z, x);
+		double r = Math.sqrt(x * x + z * z);
+		if (causeway(theta, r) > 0 && baseHeight(re, theta, r) >= river.level) {
+			return Fluid.NONE;
+		}
+		return river.fluid;
+	}
+
+	private static River riverAt(double re) {
 		for (River river : RIVERS) {
 			if (river.contains(re)) {
-				return river.fluid;
+				return river;
 			}
 		}
-		return Fluid.NONE;
+		return null;
 	}
 
 	/** Surface level of the river at this column, or {@link Integer#MIN_VALUE} if none. */
@@ -395,14 +493,14 @@ public final class InfernoGeometry {
 	/** The Gate of Hell is a ring wall enclosing the Vestibule and Acheron, pierced by these gates. */
 	public static final int GATE_COUNT = 12;
 	/** Effective radius of the wall: just outside the Dark Wood's cliff and the ramps cut into it. */
-	public static final double GATE_WALL_RADIUS = 5495.0;
+	public static final double GATE_WALL_RADIUS = 3245.0;
 	public static final double GATE_WALL_HALF_THICKNESS = 1.5;
 	public static final int GATE_WALL_HEIGHT = 18;
 	public static final int GATE_TOWER_HEIGHT = 26;
 	public static final int GATE_OPENING_HEIGHT = 10;
 	private static final double GATE_HALF_WIDTH = 4.5;
 	private static final double GATE_TOWER_RADIUS = 2.5;
-	private static final int GATE_TOWER_COUNT = 180;
+	private static final int GATE_TOWER_COUNT = 120;
 
 	public static double gateAngle(int k) {
 		return k * 2.0 * Math.PI / GATE_COUNT;
@@ -448,7 +546,7 @@ public final class InfernoGeometry {
 	public static int[] gateSignSpot(int k) {
 		double a = gateAngle(k);
 		double target = GATE_WALL_RADIUS + GATE_WALL_HALF_THICKNESS + 3.0;
-		double lo = 5300, hi = 5700;
+		double lo = GATE_WALL_RADIUS - 200, hi = GATE_WALL_RADIUS + 200;
 		for (int i = 0; i < 40; i++) {
 			double mid = (lo + hi) / 2;
 			if (effectiveRadius(Math.cos(a) * mid, Math.sin(a) * mid) < target) {
@@ -462,7 +560,7 @@ public final class InfernoGeometry {
 
 	/** X coordinate (on the +X axis, z = 0) where the Gate of Hell's wall crosses: the spawn gate. */
 	public static int gateX() {
-		for (int x = 5300; x < 5800; x++) {
+		for (int x = (int) GATE_WALL_RADIUS - 200; x < GATE_WALL_RADIUS + 300; x++) {
 			if (effectiveRadius(x, 0) >= GATE_WALL_RADIUS) {
 				return x;
 			}
@@ -471,7 +569,7 @@ public final class InfernoGeometry {
 	}
 
 	/** Radius at which the chained giants stand. */
-	public static final double GIANT_RADIUS = 660.0;
+	public static final double GIANT_RADIUS = 450.0;
 
 	// ------------------------------------------------------------------ helpers
 
@@ -479,7 +577,7 @@ public final class InfernoGeometry {
 	public static double[] rampAngles(Zone zone) {
 		for (int i = 0; i < BANDS.length; i++) {
 			if (BANDS[i].zone == zone) {
-				double[] angles = new double[BANDS[i].ramps];
+				double[] angles = new double[rampCount(BANDS[i])];
 				for (int k = 0; k < angles.length; k++) {
 					angles[k] = rampAngle(i, k);
 				}
@@ -501,6 +599,17 @@ public final class InfernoGeometry {
 			}
 		}
 		throw new IllegalArgumentException(zone.name());
+	}
+
+	/** An angle in (-PI, PI], as {@link Math#atan2} gives them. */
+	public static double normalizeAngle(double a) {
+		double t = a % (2.0 * Math.PI);
+		if (t > Math.PI) {
+			t -= 2.0 * Math.PI;
+		} else if (t <= -Math.PI) {
+			t += 2.0 * Math.PI;
+		}
+		return t;
 	}
 
 	public static double angularDistance(double a, double b) {

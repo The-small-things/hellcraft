@@ -10,7 +10,8 @@
 		"fabric-client-gametest": [
 			"net.thesmallthings.hellcraft.gametest.JoinTest",
 			"net.thesmallthings.hellcraft.gametest.HudTest",
-			"net.thesmallthings.hellcraft.gametest.RigTest"
+			"net.thesmallthings.hellcraft.gametest.RigTest",
+			"net.thesmallthings.hellcraft.gametest.MapTest"
 		]
 	},
 	"depends": {

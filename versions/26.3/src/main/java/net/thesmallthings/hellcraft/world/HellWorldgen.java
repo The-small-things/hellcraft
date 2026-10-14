@@ -11,6 +11,7 @@ import net.thesmallthings.hellcraft.world.feature.ChainPillarFeature;
 import net.thesmallthings.hellcraft.world.feature.DisWallFeature;
 import net.thesmallthings.hellcraft.world.feature.ForgeRuinFeature;
 import net.thesmallthings.hellcraft.world.feature.GateWallFeature;
+import net.thesmallthings.hellcraft.world.feature.PilgrimRoadFeature;
 import net.thesmallthings.hellcraft.world.feature.RingFluidFeature;
 import net.thesmallthings.hellcraft.world.feature.SlagHeapFeature;
 import net.thesmallthings.hellcraft.world.feature.StarClusterFeature;
@@ -29,6 +30,7 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("ring_fluid"), RingFluidFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("dis_wall"), DisWallFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("gate_wall"), GateWallFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("pilgrim_road"), PilgrimRoadFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("burning_tomb"), BurningTombFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("altar_ruin"), AltarRuinFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("boulder"), BoulderFeature.CODEC);

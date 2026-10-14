@@ -70,7 +70,7 @@ public final class Landmarks {
 
 		String[] giants = {"Nimrod", "Ephialtes", "Antaeus"};
 		for (int i = 0; i < giants.length; i++) {
-			double angle = InfernoGeometry.spokeAngle(i * 4 + 2) + 0.05;
+			double angle = InfernoGeometry.wayDownAngle(i * 4 + 2) + InfernoGeometry.WAY_DOWN_STEP / 2;
 			int x = (int) Math.round(Math.cos(angle) * InfernoGeometry.GIANT_RADIUS);
 			int z = (int) Math.round(Math.sin(angle) * InfernoGeometry.GIANT_RADIUS);
 			spawnGiant(level, giants[i], x, surface(level, x, z), z);

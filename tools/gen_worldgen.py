@@ -71,7 +71,7 @@ CANON = {
         "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "minecraft:patch_berry_common",
         "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river", "hellcraft:sugar_cane",
     ],
-    TOP: ["hellcraft:gate_wall", "minecraft:freeze_top_layer"],
+    TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "minecraft:freeze_top_layer"],
 }
 CANON[VEG].remove("minecraft:crimson_fungi_surface_placeholder")
 
@@ -84,7 +84,7 @@ OVERWORLD_ORES = [
     "minecraft:ore_diamond_medium", "minecraft:ore_diamond_large", "minecraft:ore_diamond_buried",
     "minecraft:ore_lapis", "minecraft:ore_lapis_buried", "minecraft:ore_copper",
 ]
-BASE_FEATURES = ["hellcraft:ring_fluid", "minecraft:lake_lava_underground", "minecraft:monster_room",
+BASE_FEATURES = ["hellcraft:ring_fluid", "hellcraft:pilgrim_road", "minecraft:lake_lava_underground", "minecraft:monster_room",
                  "minecraft:monster_room_deep", "hellcraft:altar_ruin", "minecraft:spring_water",
                  "minecraft:spring_lava", "minecraft:glow_lichen", "minecraft:freeze_top_layer"] + OVERWORLD_ORES
 
@@ -474,6 +474,7 @@ CONFIGURED = {
     "ring_fluid": {"type": "hellcraft:ring_fluid", "config": {}},
     "dis_wall": {"type": "hellcraft:dis_wall", "config": {}},
     "gate_wall": {"type": "hellcraft:gate_wall", "config": {}},
+    "pilgrim_road": {"type": "hellcraft:pilgrim_road", "config": {}},
     "burning_tomb": {"type": "hellcraft:burning_tomb", "config": {}},
     "altar_ruin": {"type": "hellcraft:altar_ruin", "config": {}},
     "boulder_blackstone": {"type": "hellcraft:boulder", "config": {"state": block("blackstone")}},
@@ -512,6 +513,7 @@ PLACED = {
     "ring_fluid": placed("hellcraft:ring_fluid"),
     "dis_wall": placed("hellcraft:dis_wall"),
     "gate_wall": placed("hellcraft:gate_wall"),
+    "pilgrim_road": placed("hellcraft:pilgrim_road"),
     "burning_tomb": placed("hellcraft:burning_tomb", rarity(3), IN_SQUARE, heightmap(), BIOME),
     "altar_ruin": placed("hellcraft:altar_ruin", rarity(600), IN_SQUARE, heightmap(), BIOME),
     "boulder_blackstone": placed("hellcraft:boulder_blackstone", count(1), IN_SQUARE, heightmap(), BIOME),

@@ -153,11 +153,12 @@ rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
 rcon "locate structure minecraft:stronghold" || true
 
-# Force-generate one chunk in every ring, from the rim down to Lucifer's pit (and the Walls of Dis gate)
-for x in 5700 5200 4950 4600 4000 3600 3100 2700 2425 2200 1950 1750 1520 1400 1100 800 650 400 100 0; do
+# Force-generate one chunk in every ring along the east road, from the rim down to Lucifer's pit (the Walls of Dis'
+# east gate at 1395), and one off the road (a way down at 30 degrees, in Lust)
+for x in 3450 3300 3080 2980 2770 2425 2100 1800 1530 1395 1240 1065 970 855 640 450 265 55 0; do
   rcon "forceload add $x 0"
 done
-rcon "forceload add 1715 1715"
+rcon "forceload add 2165 1250"
 echo "Generating..."
 sleep 60
 rcon "forceload query" || true
@@ -170,8 +171,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "Spine deck at $px,$pz: $deck"
     echo "$deck" | grep -q "Test passed" || { echo "No Emperor's Spine at $px,$pz"; exit 1; }
   done
-  stairs=$(rcon "execute if block 100 -26 0 minecraft:bone_block" || true)
-  echo "Spine stairs at x=100: $stairs"
+  stairs=$(rcon "execute if block 60 -26 0 minecraft:bone_block" || true)
+  echo "Spine stairs at x=60: $stairs"
   echo "$stairs" | grep -q "Test passed" || { echo "The Spine's staircase is not where it should be"; exit 1; }
   rcon "summon minecraft:zombie 402 -12 0"
   sleep 2
@@ -190,15 +191,15 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$guide"
   echo "$guide" | grep -qi "unknown or incomplete command" && { echo "/guide is not registered"; exit 1; }
 
-  # Virgil's Rests: build Limbo's three, then check the altar, the safe ring and every new loot table
+  # Virgil's Rests: build Limbo's four (one beside each road), then check the altar, the safe ring and every new loot table
   rests=$(rcon "hellcraft shrine build limbo")
   echo "$rests"
-  echo "$rests" | grep -q "Built 3 Virgil's Rest" || { echo "Limbo's Virgil's Rests were not built"; exit 1; }
-  read -r _ _ rx ry rz <<< "$(echo "$rests" | grep -oE 'limbo_1 at -?[0-9]+ -?[0-9]+ -?[0-9]+')"
+  echo "$rests" | grep -q "Built 4 Virgil's Rest" || { echo "Limbo's Virgil's Rests were not built"; exit 1; }
+  read -r _ _ rx ry rz <<< "$(echo "$rests" | grep -oE 'limbo_east at -?[0-9]+ -?[0-9]+ -?[0-9]+')"
   rcon "forceload add $rx $rz" > /dev/null
   altar=$(rcon "execute if block $rx $ry $rz minecraft:respawn_anchor" || true)
   echo "Rest altar at $rx $ry $rz: $altar"
-  echo "$altar" | grep -q "Test passed" || { echo "No Blood Altar at Virgil's Rest limbo_1"; exit 1; }
+  echo "$altar" | grep -q "Test passed" || { echo "No Blood Altar at Virgil's Rest limbo_east"; exit 1; }
   rcon "summon minecraft:zombie $rx $((ry + 1)) $((rz + 3))"
   sleep 2
   zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=$rx,y=$ry,z=$rz,distance=..10]" || true)
@@ -321,7 +322,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "$out" | grep -qi "nearest" || { echo "The sphere hellcraft:paradiso_$sphere is nowhere in the End"; exit 1; }
   done
   list=$(rcon "hellcraft shrine list")
-  echo "$list" | grep -q "heresy_1" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
+  echo "$list" | grep -q "heresy_east" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi
 
 if [ "$MC_VERSION" != "1.21.1" ]; then
