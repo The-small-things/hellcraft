@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -35,7 +36,8 @@ public final class Dialogue {
 
 	/** A character speaks, styled by the caller. */
 	public static void say(ServerPlayer player, String speaker, ChatFormatting colour, Component line, boolean shout) {
-		int rgb = colour.getColor() == null ? NOTICE : colour.getColor();
+		TextColor named = Style.EMPTY.applyFormat(colour).getColor();
+		int rgb = named == null ? NOTICE : named.getValue();
 		if (ServerPlayNetworking.canSend(player, DialoguePayload.TYPE)) {
 			ServerPlayNetworking.send(player, new DialoguePayload(speaker, rgb, line, shout));
 		} else {
