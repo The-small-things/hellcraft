@@ -133,19 +133,29 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 
 	/** Where to wait on the rim to be carried down. */
 	public Vec3 rimStop() {
-		return stop(AT_RIM, RIM_STEP, 0);
+		return rimStop(level(), position(), getYRot());
 	}
 
 	/** Where to wait on the ice to be carried up. */
 	public Vec3 iceStop() {
-		return stop(AT_ICE, 0, ICE_STEP);
+		return iceStop(level(), position(), getYRot());
 	}
 
-	private Vec3 stop(double[] hand, double out, double side) {
-		double yaw = Math.toRadians(getYRot());
-		Vec3 p = position().add(palm(getYRot(), hand, side));
+	/** The rim stop of a giant standing at `feet`, turned to `yRot` (his entity need not be loaded). */
+	public static Vec3 rimStop(Level level, Vec3 feet, float yRot) {
+		return stop(level, feet, yRot, AT_RIM, RIM_STEP, 0);
+	}
+
+	/** The ice stop of a giant standing at `feet`, turned to `yRot`. */
+	public static Vec3 iceStop(Level level, Vec3 feet, float yRot) {
+		return stop(level, feet, yRot, AT_ICE, 0, ICE_STEP);
+	}
+
+	private static Vec3 stop(Level level, Vec3 feet, float yRot, double[] hand, double out, double side) {
+		double yaw = Math.toRadians(yRot);
+		Vec3 p = feet.add(palm(yRot, hand, side));
 		p = p.add(-Math.sin(yaw) * out, 0, Math.cos(yaw) * out);
-		int y = level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(p.x), (int) Math.floor(p.z));
+		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(p.x), (int) Math.floor(p.z));
 		return new Vec3(p.x, y, p.z);
 	}
 

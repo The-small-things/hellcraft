@@ -8,9 +8,9 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
 import net.thesmallthings.hellcraft.util.Signs;
@@ -100,6 +100,9 @@ public final class AntaeusCleft {
 		giant.setCustomName(Component.literal("Antaeus"));
 		giant.setPersistenceRequired();
 		level.addFreshEntity(giant);
+		HellState state = HellState.get(level.getServer());
+		state.antaeus = new double[]{feet.x, feet.y, feet.z, yRot};
+		state.setDirty();
 
 		// the two stops, marked, each with a sign that says what to do
 		Vec3 up = giant.rimStop();
@@ -128,22 +131,21 @@ public final class AntaeusCleft {
 
 	/** /hellcraft antaeus test: he is there, his stops are marked and level, and the cleft is open where his hand goes down. */
 	public static String selfTest(ServerLevel level) {
-		double r = InfernoGeometry.outerRadius(Zone.COCYTUS) - 10;
-		double x = Math.cos(angle()) * r;
-		double z = Math.sin(angle()) * r;
+		double[] place = HellState.get(level.getServer()).antaeus;
+		if (place == null) {
+			return "Antaeus FAILED: he was never placed";
+		}
+		Vec3 feet = new Vec3(place[0], place[1], place[2]);
+		float yRot = (float) place[3];
 		for (int cx = -3; cx <= 3; cx++) {
 			for (int cz = -3; cz <= 3; cz++) {
-				level.getChunk(((int) Math.floor(x) >> 4) + cx, ((int) Math.floor(z) >> 4) + cz);
+				level.getChunk(((int) Math.floor(feet.x) >> 4) + cx, ((int) Math.floor(feet.z) >> 4) + cz);
 			}
 		}
-		List<AntaeusEntity> found = level.getEntitiesOfClass(AntaeusEntity.class, new AABB(x - 48, -64, z - 48, x + 48, 120, z + 48));
-		if (found.isEmpty()) {
-			return "Antaeus FAILED: he isn't there";
-		}
-		AntaeusEntity giant = found.getFirst();
-		Vec3 palm = giant.palmNow();
-		Vec3 up = giant.rimStop();
-		Vec3 down = giant.iceStop();
+		// his entity loads a little after its chunk, so the test works from where he was placed
+		Vec3 palm = feet.add(AntaeusEntity.restingPalm(yRot));
+		Vec3 up = AntaeusEntity.rimStop(level, feet, yRot);
+		Vec3 down = AntaeusEntity.iceStop(level, feet, yRot);
 		List<String> wrong = new java.util.ArrayList<>();
 		if (!level.getBlockState(BlockPos.containing(up.x, up.y - 1, up.z)).is(Blocks.CRYING_OBSIDIAN)) {
 			wrong.add("no mark at the rim stop");

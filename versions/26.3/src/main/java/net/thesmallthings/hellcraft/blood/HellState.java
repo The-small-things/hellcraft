@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -31,6 +32,8 @@ public class HellState extends SavedData {
 
 	private final Map<UUID, Soul> souls = new HashMap<>();
 	public boolean landmarksBuilt;
+	/** Where Antaeus stands (x, y, z of his feet, then his facing), once AntaeusCleft has placed him; null before. */
+	public double[] antaeus;
 	/** The Emperor's Spine has been laid (it is added to worlds made before it existed, too). */
 	public boolean spineBuilt;
 	/** The other three spines (north, south, west) have been laid too. */
@@ -251,6 +254,13 @@ public class HellState extends SavedData {
 		}
 		tag.put("souls", list);
 		tag.putBoolean("landmarks", landmarksBuilt);
+		if (antaeus != null) {
+			ListTag place = new ListTag();
+			for (double v : antaeus) {
+				place.add(DoubleTag.valueOf(v));
+			}
+			tag.put("antaeus", place);
+		}
 		tag.putBoolean("spine", spineBuilt);
 		tag.putBoolean("spines", spinesBuilt);
 		tag.putBoolean("lairs", lairsBuilt);
@@ -343,6 +353,10 @@ public class HellState extends SavedData {
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
+		ListTag place = tag.getListOrEmpty("antaeus");
+		if (place.size() == 4) {
+			state.antaeus = new double[]{place.getDoubleOr(0, 0), place.getDoubleOr(1, 0), place.getDoubleOr(2, 0), place.getDoubleOr(3, 0)};
+		}
 		state.spineBuilt = tag.getBooleanOr("spine", false);
 		state.spinesBuilt = tag.getBooleanOr("spines", false);
 		state.lairsBuilt = tag.getBooleanOr("lairs", false);

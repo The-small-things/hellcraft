@@ -525,7 +525,10 @@ public class MapTest implements FabricClientGameTest {
 		int tx = (int) Math.floor(tomb.centreX());
 		int tz = (int) Math.floor(tomb.centreZ());
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", tx, tz));
-		int tombY = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, tx, tz));
+		int tombY = server.computeOnServer(s -> {
+			s.overworld().getChunk(tx >> 4, tz >> 4);
+			return s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, tx, tz);
+		});
 		camera(server, tx - 7, tz - 9, 7, tomb.centreX(), tombY + 2, tomb.centreZ());
 		context.waitTicks(10);
 		connection.waitForChunksRender();
@@ -618,7 +621,7 @@ public class MapTest implements FabricClientGameTest {
 		int floor = server.computeOnServer(s -> HellState.get(s).fakeRests.get(fake.id()));
 		// along the ridge (round the circle), so the walls of the ditches either side don't block the view
 		double tangent = Math.atan2(fake.z(), fake.x()) + Math.PI / 2;
-		camera(server, fake.x() + Math.cos(tangent) * 15, fake.z() + Math.sin(tangent) * 15, 6, fake.x(), floor, fake.z());
+		camera(server, fake.x() + Math.cos(tangent) * 15, fake.z() + Math.sin(tangent) * 15, 12, fake.x(), floor, fake.z());
 		context.waitTicks(10);
 		connection.waitForChunksRender();
 		context.waitTicks(20);
