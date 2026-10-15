@@ -304,8 +304,9 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   cxz=$(echo "$city" | grep -oE '\[-?[0-9]+, ~, -?[0-9]+\]' | tr -d '[]~ ' | tr ',' ' ' | head -1)
   [ -n "$cxz" ] || { echo "No End city could be located near the gateway exits"; exit 1; }
   read -r cx cz <<< "$cxz"
-  # within a walk of where the gateways drop players (where exactly depends on the seed)
-  [ $(( (cx - 1100) * (cx - 1100) + cz * cz )) -lt $(( 900 * 900 )) ] || { echo "The nearest End city ($cx, $cz) is too far from the gateway exits"; exit 1; }
+  # within a walk of where the gateways drop players (where exactly depends on the seed, which changes every run: a
+  # ring is over a thousand blocks wide, so allow most of one)
+  [ $(( (cx - 1100) * (cx - 1100) + cz * cz )) -lt $(( 1200 * 1200 )) ] || { echo "The nearest End city ($cx, $cz) is too far from the gateway exits"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
   for p in "0 0" "1500 0" "3000 0" "6600 0"; do
     read -r ex ez <<< "$p"
