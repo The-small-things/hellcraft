@@ -163,17 +163,14 @@ echo "Generating..."
 sleep 60
 rcon "forceload query" || true
 if [ "$MC_VERSION" != "1.21.1" ]; then
-  # the Emperor's Spines: bone walkways over Cocytus at all four points of the compass
-  for p in "400 0" "0 400" "-400 0" "0 -400"; do
+  # the Emperor's Spines: bone walkways over Cocytus at all four points of the compass, bent off the straight
+  for p in "400 0" "0 400" "-400 0" "0 -400" "60 0"; do
     read -r px pz <<< "$p"
-    rcon "forceload add $px $pz" > /dev/null
-    deck=$(rcon "execute if block $px -13 $pz minecraft:bone_block" || true)
-    echo "Spine deck at $px,$pz: $deck"
-    echo "$deck" | grep -q "Test passed" || { echo "No Emperor's Spine at $px,$pz"; exit 1; }
+    rcon "forceload add $(( px - 16 )) $(( pz - 16 )) $(( px + 16 )) $(( pz + 16 ))" > /dev/null
   done
-  stairs=$(rcon "execute if block 60 -26 0 minecraft:bone_block" || true)
-  echo "Spine stairs at x=60: $stairs"
-  echo "$stairs" | grep -q "Test passed" || { echo "The Spine's staircase is not where it should be"; exit 1; }
+  spines=$(rcon "hellcraft spine test")
+  echo "$spines"
+  echo "$spines" | grep -q "Spine test OK" || { echo "The Emperor's Spines are not where they should be"; exit 1; }
   rcon "summon minecraft:zombie 402 -12 0"
   sleep 2
   zombie=$(rcon "execute if entity @e[type=minecraft:zombie,x=402,y=-12,z=0,distance=..8]" || true)

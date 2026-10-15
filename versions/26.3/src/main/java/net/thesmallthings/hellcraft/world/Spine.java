@@ -377,6 +377,30 @@ public final class Spine {
 		set(level, way, u, d + 9, 0, Blocks.SOUL_LANTERN.defaultBlockState());
 	}
 
+	/**
+	 * /hellcraft spine test: the deck is bone along each spine's bent middle, over the lake (u 400) and on the stair
+	 * (u 60), and it really is bent somewhere.
+	 */
+	public static String selfTest(ServerLevel level) {
+		StringBuilder out = new StringBuilder("Spines:");
+		boolean ok = true;
+		for (Way way : Way.values()) {
+			for (int u : new int[]{400, 60}) {
+				BlockPos p = at(way, u, deckY(u), 0);
+				level.getChunk(p.getX() >> 4, p.getZ() >> 4);
+				boolean bone = level.getBlockState(p).is(Blocks.BONE_BLOCK);
+				ok &= bone;
+				out.append(' ').append(way.id).append('@').append(u).append(bone ? " bone" : " MISSING at " + p.toShortString());
+			}
+		}
+		int most = 0;
+		for (int u = END; u <= START; u++) {
+			most = Math.max(most, Math.abs(bend(Way.EAST, u)));
+		}
+		ok &= most >= 6;
+		return (ok ? "Spine test OK. " : "Spine test FAILED. ") + out + "; the east spine bends up to " + most + " blocks";
+	}
+
 	/** The spines' own blocks can't be broken by hand (creative players excepted). */
 	public static boolean isProtected(ServerLevel level, BlockPos pos) {
 		for (Way way : Way.values()) {

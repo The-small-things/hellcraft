@@ -418,6 +418,7 @@ public final class HellCommands {
 				}))
 				.then(Commands.literal("spine")
 						.executes(ctx -> toSpine(ctx.getSource(), Spine.Way.EAST))
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Spine.selfTest(ctx.getSource().getServer().overworld()))))
 						.then(Commands.argument("way", StringArgumentType.word())
 								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Spine.Way.values()).map(w -> w.id), builder))
 								.executes(ctx -> {
