@@ -313,10 +313,10 @@ BIOMES = {
         monster=[spawn("piglin", 80, 2, 4), spawn("piglin_brute", 5, 1, 1), spawn("zombified_piglin", 30, 2, 4),
                  spawn("skeleton", 60), spawn("zombie", 60), spawn("creeper", 40)],
     ),
-    # the Fen of Styx: a dark marsh in fog
+    # the Fen of Styx: a grey-green marsh in a light fog (thick enough to hide Dis, thin enough to see the way)
     "styx": dict(
-        temp=0.8, rain=True, downfall=0.9, fog=(4, 64),
-        colors=dict(fog_color=0x1A2A1A, sky_color=0x101A10, water_color=0x1A2A1A, water_fog_color=0x050A05,
+        temp=0.8, rain=True, downfall=0.9, fog=(24, 150),
+        colors=dict(fog_color=0x48584A, sky_color=0x2E3A2C, water_color=0x2A3A2A, water_fog_color=0x141E14,
                     grass_color=0x2A3A20, foliage_color=0x2A3A1A, grass_color_modifier="swamp"),
         particle=("minecraft:ash", 0.01), sound=CAVE_MOOD, music="music.overworld.swamp",
         features=["hellcraft:dis_wall", "hellcraft:reed_bed", "minecraft:trees_swamp", "minecraft:patch_waterlily", "minecraft:seagrass_swamp",

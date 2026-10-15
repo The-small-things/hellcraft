@@ -6,7 +6,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -44,6 +43,7 @@ import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
@@ -271,7 +271,7 @@ public abstract class GuardianFight {
 			if (inArena(p) && p.isAlive() && !p.isSpectator() && !p.isCreative()) {
 				if (participants.add(p.getUUID())) {
 					styles.put(p.getUUID(), new StyleMeter(p));
-					p.sendSystemMessage(Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
+					Dialogue.notice(p, Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
 							+ "the better your style, the better your spoils.").withStyle(ChatFormatting.AQUA));
 				}
 				anyone = true;
@@ -643,14 +643,10 @@ public abstract class GuardianFight {
 		}
 	}
 
-	/** The guardian speaks (in chat, to everyone near the lair). */
+	/** The guardian speaks (in the dialogue box of everyone near the lair). */
 	protected void say(String line) {
-		boolean shout = line.equals(line.toUpperCase(java.util.Locale.ROOT)) || line.endsWith("!");
-		MutableComponent text = Component.literal(kind.title.toUpperCase(java.util.Locale.ROOT) + ": ").withStyle(kind.color, ChatFormatting.BOLD)
-				.append(Component.literal(line).withStyle(shout ? new ChatFormatting[]{ChatFormatting.RED, ChatFormatting.BOLD}
-						: new ChatFormatting[]{ChatFormatting.GRAY, ChatFormatting.ITALIC}));
 		for (ServerPlayer p : audience()) {
-			p.sendSystemMessage(text);
+			Dialogue.say(p, kind.title, kind.color, line);
 		}
 	}
 

@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Relics;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.util.Signs;
 
@@ -156,7 +157,7 @@ public final class Heaven {
 		Component next = Component.literal("Everyone on its island got a Halo. Next: throw an ender pearl into the small gateway portal "
 				+ "at the island's edge to reach the outer islands (End cities, Seraph Wings, and the Celestial Rose).").withStyle(ChatFormatting.WHITE);
 		for (ServerPlayer p : level.players()) {
-			p.sendSystemMessage(next);
+			Dialogue.notice(p, next);
 		}
 		HellcraftMod.LOGGER.info("The Seraph falls; halos for {}", n);
 	}
@@ -292,7 +293,7 @@ public final class Heaven {
 		}
 		Ghosts.teleport(player, new HellState.GlobalSpot(Level.END, to));
 		end.playSound(null, to, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.4f);
-		player.sendSystemMessage(Component.literal("You rise into Paradiso (the End).")
+		Dialogue.notice(player, Component.literal("You rise into Paradiso (the End).")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
 	}
 }

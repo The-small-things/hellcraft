@@ -24,6 +24,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -148,10 +149,10 @@ public final class Paradiso {
 	/** The first time a player reaches the outer islands: what Paradiso is, and a compass to the Rose. */
 	private static void welcome(ServerPlayer player) {
 		BloodItems.give(player, roseCompass());
-		player.sendSystemMessage(Component.literal("Welcome to Paradiso, the End's outer islands.").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-		player.sendSystemMessage(Component.literal("- Nine rings of islands go outward from the dragon's island. Each ring has End cities "
+		Dialogue.notice(player, Component.literal("Welcome to Paradiso, the End's outer islands.").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+		Dialogue.notice(player, Component.literal("- Nine rings of islands go outward from the dragon's island. Each ring has End cities "
 				+ "(their elytra are Seraph Wings) and chorus plants.").withStyle(ChatFormatting.WHITE));
-		player.sendSystemMessage(Component.literal("- The Rose Compass you were given points to the Celestial Rose, past the ninth ring at x "
+		Dialogue.notice(player, Component.literal("- The Rose Compass you were given points to the Celestial Rose, past the ninth ring at x "
 				+ ParadisoGeometry.ROSE_X + ", z " + ParadisoGeometry.ROSE_Z + ". Ring its bell for Beatrice's Rose.").withStyle(ChatFormatting.WHITE));
 		HellcraftMod.LOGGER.info("Rose Compass given to {}", player.getGameProfile().name());
 	}

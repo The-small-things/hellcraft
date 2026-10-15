@@ -14,6 +14,7 @@ import net.thesmallthings.hellcraft.entity.Ferry;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -66,7 +67,7 @@ public final class Ferries {
 			int[] t = Fen.tower(k);
 			for (ServerPlayer p : level.players()) {
 				if (p.distanceToSqr(t[0], p.getY(), t[1]) < 64 * 64) {
-					p.sendSystemMessage(Component.literal("Out of the fog a ferry comes gliding toward the tower. Board it (right-click) to cross to the gates of Dis.")
+					Dialogue.notice(p, Component.literal("Out of the fog a ferry comes gliding toward the tower. Board it (right-click) to cross to the gates of Dis.")
 							.withStyle(ChatFormatting.DARK_AQUA));
 				}
 			}

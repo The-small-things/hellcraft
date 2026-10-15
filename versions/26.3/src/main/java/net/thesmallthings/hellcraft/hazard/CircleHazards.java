@@ -19,6 +19,7 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -99,10 +100,10 @@ public final class CircleHazards {
 		if (LAST_CIRCLE.get(id) != circle) {
 			LAST_CIRCLE.put(id, circle);
 			// the circle's card (name, what it does, what to bring) is drawn by the client (LayerCard)
-			player.sendSystemMessage(Component.literal("\"" + circle.quote() + "\"").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+			Dialogue.say(player, "Dante", ChatFormatting.GRAY, Component.literal(circle.quote()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			Component rest = circle.depth() > 0 ? Shrines.nearestLine(player) : null;
 			if (rest != null) {
-				player.sendSystemMessage(rest);
+				Dialogue.notice(player, rest);
 			}
 		}
 		String region = InfernoGeometry.regionName(player.getX(), player.getZ());
@@ -218,8 +219,7 @@ public final class CircleHazards {
 		}
 		soul.hints |= bit;
 		HellState.get(player.level().getServer()).setDirty();
-		player.sendSystemMessage(Component.literal("Virgil: ").withStyle(ChatFormatting.GOLD)
-				.append(Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+		Dialogue.say(player, "Virgil", ChatFormatting.GOLD, Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 	}
 
 	public static void forget(ServerPlayer player) {

@@ -19,6 +19,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Signs;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,8 @@ import java.util.UUID;
  * only company is a heartbeat that quickens as you descend, and Lucifer's voice from below.
  *
  * <p>Positions are worked out along each spine: {@code u} is the distance from the centre of Hell
- * along the spine, {@code v} the sideways offset from its middle.
+ * along the spine, {@code v} the sideways offset from its middle. It broke when he fell, so it isn't straight:
+ * its middle wanders off the line in long curves ({@link #bend}), and no two of its bones are alike.
  */
 public final class Spine {
 	private Spine() {
@@ -123,6 +125,30 @@ public final class Spine {
 		return u >= STAIRS_FROM ? DECK_Y : DECK_Y - (STAIRS_FROM - u + 3) / 4;
 	}
 
+	/**
+	 * How far (blocks, sideways) the spine's middle has sagged off the straight line at u: two slow waves that
+	 * die away at both ends, so it still leaves the Well and meets the pit where the signs and the map say. Each
+	 * spine sags its own way. Never more than a block's change per block along, so the walkway stays whole.
+	 */
+	public static int bend(Way way, int u) {
+		double t = Math.clamp((u - END) / (double) (START - END), 0.0, 1.0);
+		double envelope = Math.sin(Math.PI * t);
+		double[] phase = {0.4, 2.1, 3.9, 5.3};
+		double[] side = {1, -1, -1, 1};
+		int k = way.ordinal();
+		double wave = 9.0 * Math.sin(Math.PI * 2 * t * 1.3 + phase[k]) + 3.0 * Math.sin(Math.PI * 2 * t * 3.4 + phase[(k + 2) % 4] * 1.7);
+		return (int) Math.round(side[k] * envelope * wave);
+	}
+
+	/** A stable random number in [0, 1) for this bone of this spine (salt tells the uses apart). */
+	private static double roll(Way way, int u, int salt) {
+		long h = (way.ordinal() + 1) * 0x9E3779B97F4A7C15L ^ (u * 0xC2B2AE3D27D4EB4FL) ^ (salt * 0x165667B19E3779F9L);
+		h ^= h >>> 33;
+		h *= 0xFF51AFD7ED558CCDL;
+		h ^= h >>> 33;
+		return (h >>> 11) * 0x1.0p-53;
+	}
+
 	@Nullable
 	public static Way byId(String id) {
 		for (Way way : Way.values()) {
@@ -154,7 +180,7 @@ public final class Spine {
 			double u = way.u(player.getX(), player.getZ());
 			int ui = (int) Math.floor(u);
 			double dy = player.getY() - deckY(ui);
-			if (ui >= END - 2 && ui <= START + 6 && Math.abs(way.v(player.getX(), player.getZ())) <= 4.5 && dy >= -1.0 && dy <= 8.0) {
+			if (ui >= END - 2 && ui <= START + 6 && Math.abs(way.v(player.getX(), player.getZ()) - bend(way, ui)) <= 4.5 && dy >= -1.0 && dy <= 8.0) {
 				return way;
 			}
 		}
@@ -224,8 +250,10 @@ public final class Spine {
 		return Blocks.BONE_BLOCK.defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
 	}
 
+	/** A block of the spine: v is measured from its (bent) middle at u. */
 	private static BlockPos at(Way way, int u, int y, int v) {
-		return new BlockPos(way.x(u, v), y, way.z(u, v));
+		int bent = v + bend(way, u);
+		return new BlockPos(way.x(u, bent), y, way.z(u, bent));
 	}
 
 	private static void set(ServerLevel level, Way way, int u, int y, int v, BlockState state) {
@@ -239,8 +267,9 @@ public final class Spine {
 
 	/** The walkway at u: a 3-wide deck of bone with a cord of flesh beneath, and headroom carved above. */
 	private static void segment(ServerLevel level, Way way, int u) {
-		for (int v = -8; v <= 8; v += 8) {
-			level.getChunk(way.x(u, v) >> 4, way.z(u, v) >> 4);
+		for (int v = -10; v <= 10; v += 10) {
+			BlockPos p = at(way, u, 0, v);
+			level.getChunk(p.getX() >> 4, p.getZ() >> 4);
 		}
 		int d = deckY(u);
 		for (int v = -2; v <= 2; v++) {
@@ -256,22 +285,44 @@ public final class Spine {
 		set(level, way, u, d - 1, 0, Blocks.NETHER_WART_BLOCK.defaultBlockState());
 	}
 
-	/** One vertebra: a wider body under the deck, processes to the sides and below, and (every other one) a pair of ribs. */
+	/**
+	 * One vertebra: a body under the deck, processes to the sides and below, and (every other one) a pair of ribs.
+	 * No two are alike: bodies swell and shrink, processes are snapped off, and each rib has its own length and
+	 * curl on its own side (some broken short, some splintered at the end, a few gone).
+	 */
 	private static void vertebra(ServerLevel level, Way way, int u, int d, boolean ribs, boolean lanterns) {
-		for (int v = -2; v <= 2; v++) {
+		int left = roll(way, u, 1) < 0.3 ? 1 : 2;
+		int right = roll(way, u, 2) < 0.3 ? 1 : 2;
+		for (int v = -left; v <= right; v++) {
 			set(level, way, u, d - 1, v, bone(way.along()));
 		}
 		for (int v = -1; v <= 1; v++) {
 			set(level, way, u, d - 2, v, bone(way.along()));
 		}
+		if (roll(way, u, 3) < 0.35) {
+			// a swollen one: a knob of bone bulging under it
+			for (int v = -1; v <= 1; v++) {
+				set(level, way, u + (roll(way, u, 4) < 0.5 ? 1 : -1), d - 2, v, bone(way.along()));
+			}
+			set(level, way, u, d - 3, (int) Math.floor(roll(way, u, 5) * 3) - 1, bone(way.along()));
+		}
 		for (int s : new int[]{-1, 1}) {
-			set(level, way, u, d, 2 * s, bone(way.across()));
-			set(level, way, u, d - 1, 3 * s, bone(way.across()));
+			int salt = s < 0 ? 10 : 20;
+			if (roll(way, u, salt) > 0.2) {
+				set(level, way, u, d, 2 * s, bone(way.across()));
+			}
+			if (roll(way, u, salt + 1) > 0.25) {
+				set(level, way, u, d - 1, 3 * s, bone(way.across()));
+				if (roll(way, u, salt + 2) < 0.3) {
+					set(level, way, u, d - 1, 4 * s, bone(way.across()));
+				}
+			}
 			if (lanterns) {
 				set(level, way, u, d + 1, 2 * s, Blocks.SOUL_LANTERN.defaultBlockState());
 			}
 		}
-		for (int y = d - 4; y <= d - 3; y++) {
+		int spur = 2 + (int) Math.floor(roll(way, u, 6) * 3);
+		for (int y = d - 2 - spur; y <= d - 3; y++) {
 			if (isAir(level, way, u, y, 0)) {
 				set(level, way, u, y, 0, bone(Direction.Axis.Y));
 			}
@@ -280,15 +331,36 @@ public final class Spine {
 			return;
 		}
 		// each rib curls out and down into the dark; it stops wherever it meets the ground
-		int[][] rib = {{4, -1}, {5, -2}, {6, -3}, {6, -4}, {6, -5}, {5, -6}, {5, -7}, {4, -8}};
 		for (int s : new int[]{-1, 1}) {
-			for (int[] p : rib) {
-				int v = p[0] * s;
+			int salt = s < 0 ? 30 : 40;
+			double r = roll(way, u, salt);
+			if (r < 0.12) {
+				continue;
+			}
+			// broken short, whole, or long; flared wide or drawn in; and leaning forward or back
+			int length = r < 0.35 ? 2 + (int) (roll(way, u, salt + 1) * 3) : r < 0.85 ? 8 : 10;
+			int flare = (int) Math.floor(roll(way, u, salt + 2) * 3) - 1;
+			int lean = roll(way, u, salt + 3) < 0.25 ? (roll(way, u, salt + 4) < 0.5 ? 1 : -1) : 0;
+			int[][] rib = {{4, -1}, {5, -2}, {6, -3}, {6, -4}, {6, -5}, {5, -6}, {5, -7}, {4, -8}, {4, -9}, {3, -10}};
+			for (int i = 0; i < length; i++) {
+				int[] p = rib[i];
+				int out = p[0] + (i >= 2 ? flare : 0);
+				int along = i >= 4 ? lean : 0;
+				int v = out * s;
 				int y = d + p[1];
-				if (!isAir(level, way, u, y, v)) {
+				if (!isAir(level, way, u + along, y, v)) {
 					break;
 				}
-				set(level, way, u, y, v, bone(Direction.Axis.Y));
+				set(level, way, u + along, y, v, bone(Direction.Axis.Y));
+			}
+			if (r < 0.35 && roll(way, u, salt + 5) < 0.6) {
+				// splintered: a shard of bone juts off the broken end
+				int[] p = rib[length - 1];
+				int v = (p[0] + (length - 1 >= 2 ? flare : 0) + 1) * s;
+				int along = length - 1 >= 4 ? lean : 0;
+				if (isAir(level, way, u + along, d + p[1] - 1, v)) {
+					set(level, way, u + along, d + p[1] - 1, v, bone(way.across()));
+				}
 			}
 		}
 	}
@@ -309,7 +381,7 @@ public final class Spine {
 	public static boolean isProtected(ServerLevel level, BlockPos pos) {
 		for (Way way : Way.values()) {
 			int u = (int) Math.floor(way.u(pos.getX() + 0.5, pos.getZ() + 0.5));
-			if (u < END - 2 || u > START + 4 || Math.abs(way.v(pos.getX() + 0.5, pos.getZ() + 0.5)) > 6.5) {
+			if (u < END - 2 || u > START + 4 || Math.abs(way.v(pos.getX() + 0.5, pos.getZ() + 0.5) - bend(way, u)) > 9.5) {
 				continue;
 			}
 			int dy = pos.getY() - deckY(u);
@@ -382,8 +454,8 @@ public final class Spine {
 			next++;
 		}
 		NEXT_WHISPER.put(player.getUUID(), next + 1);
-		player.sendSystemMessage(Component.literal("A voice from far below: ").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)
-				.append(Component.literal(WHISPERS[next]).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+		Dialogue.say(player, "A voice from far below", ChatFormatting.DARK_PURPLE,
+				Component.literal(WHISPERS[next]).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 		Feedback.sound(player, SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.4f);
 	}
 

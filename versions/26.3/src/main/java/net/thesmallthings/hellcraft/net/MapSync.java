@@ -49,7 +49,7 @@ public final class MapSync {
 			return;
 		}
 		HellState.get(player.level().getServer()).setDirty();
-		player.sendSystemMessage(Component.literal("New in your Journal's Codex: " + entry.title().charAt(0) + entry.title().substring(1).toLowerCase(java.util.Locale.ROOT)
+		Dialogue.notice(player, Component.literal("New in your Journal's Codex: " + entry.title().charAt(0) + entry.title().substring(1).toLowerCase(java.util.Locale.ROOT)
 				+ ", " + entry.subtitle() + ". Press ").withStyle(ChatFormatting.GOLD)
 				.append(Component.keybind("key.hellcraft.journal").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
 				.append(Component.literal(" to read how to fight it.").withStyle(ChatFormatting.GOLD)));

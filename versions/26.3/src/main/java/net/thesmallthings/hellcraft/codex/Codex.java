@@ -61,7 +61,7 @@ public final class Codex {
 			List.of("A king who burned a god's temple in his rage, now the boatman of the fifth circle. A beacon on the "
 							+ "watchtower calls him, and his ferry crosses the marsh to the burning walls of Dis.",
 					"He thinks every soul he carries is one more of the wrathful, and treats them so."),
-			List.of("Light both beacons on top of the east watchtower to call him, and fight him from the planks of his landing.",
+			List.of("Walk into the ring of braziers round his landing, or light both beacons on top of the east watchtower, and he rises. Fight him from the planks.",
 					"White line: his oar. Block it as it lands and he reels.",
 					"Purple ring: his oar sweeps the deck. It can't be blocked: jump it.",
 					"Red ring: a wave washes over the deck's outer part. Get in close to him.",

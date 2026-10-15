@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.util.Signs;
@@ -331,7 +332,7 @@ public final class Purgatory {
 			if (player.getY() < SHORE_Y - 8 && player.getY() > BOTTOM_Y - 70 && player.getDeltaMovement().y < -0.6 && !player.isFallFlying()) {
 				teleport(player, shore());
 				player.resetFallDistance();
-				player.sendSystemMessage(Component.literal("An angel caught you and set you down on the shore.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				Dialogue.notice(player, Component.literal("An angel caught you and set you down on the shore.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 				continue;
 			}
 			if (player.getY() < SHORE_Y) {
@@ -358,7 +359,7 @@ public final class Purgatory {
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("Thence we came forth to rebehold the stars.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.4f);
-		player.sendSystemMessage(Component.literal("You climbed out to Purgatory. Climb its seven ledges to the garden at the top, with "
+		Dialogue.notice(player, Component.literal("You climbed out to Purgatory. Climb its seven ledges to the garden at the top, with "
 				+ "its two streams (Lethe and Eunoë) and the Gate of Return home.").withStyle(ChatFormatting.AQUA));
 		TERRACE_REACHED.put(player.getUUID(), 0);
 	}
@@ -419,7 +420,7 @@ public final class Purgatory {
 		player.heal(player.getMaxHealth());
 		level.sendParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.5, player.getZ(), 8, 0.5, 0.3, 0.5, 0);
 		Feedback.sound(player, SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1.0f, 0.8f);
-		player.sendSystemMessage(Component.literal("Eunoë: +" + gained + " ❤.")
+		Dialogue.notice(player, Component.literal("Eunoë: +" + gained + " ❤.")
 				.withStyle(ChatFormatting.GOLD));
 	}
 
@@ -429,7 +430,7 @@ public final class Purgatory {
 		level.getChunk(x >> 4, 0);
 		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, 0);
 		teleport(player, new BlockPos(x, y, 0));
-		player.sendSystemMessage(Component.literal("You're back at the Gate of Hell.")
+		Dialogue.notice(player, Component.literal("You're back at the Gate of Hell.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 

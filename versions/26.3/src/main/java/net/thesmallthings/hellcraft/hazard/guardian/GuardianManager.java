@@ -124,11 +124,9 @@ public final class GuardianManager {
 			if (g.inNether() || FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
 				continue;
 			}
-			if (g.wakesByBeacon()) {
-				// Phlegyas comes when the east watchtower's twin beacons are lit
-				if (Fen.beaconsLit(level, 0)) {
-					start(level, g, false);
-				}
+			// Phlegyas also comes when the east watchtower's twin beacons are lit
+			if (g.wakesByBeacon() && Fen.beaconsLit(level, 0)) {
+				start(level, g, false);
 				continue;
 			}
 			for (ServerPlayer p : level.players()) {

@@ -119,7 +119,7 @@ public final class Guide {
 				"",
 				"Light both (flint and steel) and a ferry comes out of the fog. Right-click it to board: it carries you across the Styx to the gate of Dis.",
 				"",
-				"At the east tower the beacons call Phlegyas, the ferryman, first: beat him on his landing and his ferry is yours."));
+				"Phlegyas, the ferryman, waits at his landing south of the east road: walk into his ring of braziers, or light the east tower's beacons, and he rises. Beat him and his ferry is yours."));
 		pages.add(page("VIRGIL'S RESTS",
 				"A safe camp beside each road in every circle: soul fire, a supply chest and a Blood Altar.",
 				"",

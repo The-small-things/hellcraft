@@ -68,7 +68,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   next way down) and `MapPainter` (the Map of Hell's colours, shared with `tools/RenderMap.java`) work from it
   alone, so the client draws the compass and the map without asking the server.
 - `music/BossMusic`: Lucifer's tracks, shipped in the mod (none yet: vanilla discs until the owner sends some).
-- `net/`: `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
+- `net/`: `Dialogue` (what characters say and Hellcraft's notices go to a box above the hotbar, `client/dialogue/DialogueHud`,
+  not the chat; chat keeps server-wide news), `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
   prestige rank), `MapSync` (whether the world is the Inferno, the Rests found, the bosses beaten, and the Guide's
   pages for the Journal). No resource pack is sent any more: all art ships in the jar.
 - `entity/`: Hellcraft's own mobs (`HellEntities`); `TestRig` is the animated test dummy. `entity/boss/`: bosses with

@@ -19,6 +19,7 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
+import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.LayerCard;
@@ -75,6 +76,9 @@ public class MapTest implements FabricClientGameTest {
 				new Shot("map_walls_of_dis", 1470, 95, 8, 90, 22),
 				new Shot("map_malebolge_bridge", 700, 45, 6, 90, 30),
 				new Shot("map_way_down_greed", Math.cos(way) * 1740, 112, Math.sin(way) * 1740, 120, 30),
+				// the east Spine over Cocytus, sagging and broken (Spine.bend)
+				new Shot("map_spine", 345, 10, 32, 110, 28),
+				new Shot("map_spine_above", 330, 70, 0, 90, 62),
 		};
 		// the test world is made on the client first, so the world type is chosen there, not in server.properties
 		try (TestDedicatedServerContext server = context.worldBuilder().adjustSettings(MapTest::inferno).createServer(properties);
@@ -99,6 +103,7 @@ public class MapTest implements FabricClientGameTest {
 				}
 			});
 			findingTheWay(context, server, connection);
+			dialogueBox(context, server);
 			nobleCastle(context, server, connection);
 			setPieces(context, server, connection);
 			layerRules(context, server, connection);
@@ -551,5 +556,24 @@ public class MapTest implements FabricClientGameTest {
 		server.runCommand("execute as Player0 run guide");
 		context.waitForScreen(JournalScreen.class);
 		context.setScreen(() -> null);
+	}
+
+	/**
+	 * The dialogue box (screenshots dialogue_*): what characters say is drawn above the hotbar instead of in the
+	 * chat. /hellcraft dialogue test sends a line, a shout and a notice.
+	 */
+	private static void dialogueBox(ClientGameTestContext context, TestDedicatedServerContext server) {
+		context.waitFor(client -> DialogueHud.idle(), 1200);
+		int before = context.computeOnClient(client -> DialogueHud.shown());
+		server.runCommand("execute as Player0 run hellcraft dialogue test");
+		context.waitFor(client -> DialogueHud.shown() > before, 100);
+		context.waitTicks(60);
+		context.takeScreenshot("dialogue_line");
+		context.waitFor(client -> DialogueHud.shown() > before + 1, 300);
+		context.waitTicks(4);
+		context.takeScreenshot("dialogue_shout");
+		context.waitFor(client -> DialogueHud.shown() > before + 2, 300);
+		context.waitTicks(30);
+		context.takeScreenshot("dialogue_notice");
 	}
 }

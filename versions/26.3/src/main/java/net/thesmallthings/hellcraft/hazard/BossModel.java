@@ -262,6 +262,11 @@ public final class BossModel {
 			if (display == null) {
 				return false;
 			}
+			// any change to its potion effects (a poisoned blade, an effect running out) makes a mob visible
+			// again, which would show the vanilla body inside the model
+			if (!boss.isInvisible()) {
+				boss.setInvisible(true);
+			}
 			float yaw = turnToward(entry.getKey(), boss, nearest(boss, watchers));
 			display.snapTo(boss.getX(), boss.getY(), boss.getZ(), yaw + HellConfig.get().luciferModelYawOffset, 0.0f);
 			Anim a = anims.get(entry.getKey());

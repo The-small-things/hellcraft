@@ -31,6 +31,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.npc.Shade;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,8 +156,7 @@ public final class Shades {
 		if (last == null || now - last > 60) {
 			LAST_WORDS.put(player.getUUID(), now);
 			int turn = (int) Math.floorMod(now / 60 + shade.getId(), (long) who.lines().size());
-			player.sendSystemMessage(Component.literal(who.name() + ": ").withStyle(ChatFormatting.AQUA)
-					.append(Component.literal(who.lines().get(turn)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+			Dialogue.say(player, who.name(), ChatFormatting.AQUA, Component.literal(who.lines().get(turn)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			player.level().playSound(null, shade.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.NEUTRAL, 0.8f, 0.55f);
 		}
 		if (who.codex() != null) {

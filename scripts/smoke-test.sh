@@ -362,6 +362,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   ferry=$(rcon "hellcraft ferry test")
   echo "$ferry"
   echo "$ferry" | grep -q "called to tower 1" || { echo "The ferry could not be called"; exit 1; }
+  # the dialogue box (what characters say goes there, not in chat)
+  dialogue=$(rcon "hellcraft dialogue test")
+  echo "$dialogue"
+  echo "$dialogue" | grep -q "Dialogue OK" || { echo "The dialogue test failed"; exit 1; }
   # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
   danger=$(rcon "hellcraft danger test")
   echo "$danger"

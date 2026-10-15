@@ -76,7 +76,7 @@ The world is a disc 7,000 blocks across, with the world border at radius 3,500 (
 | **Lust** | II | The Storm Canyons: jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. Overhead, the souls whirl in vast flocks like starlings (3.0). | The wind is a road: white streams carry you down the circle |
 | **Gluttony** | III | The Mire: mud, filthy pools and endless rain. Rotting giant trees (some fallen), bloated fungus, and sunken feast tables with a barrel of leftovers at the head (3.0). Hoglins and slimes. | The mud swallows whoever stands still |
 | **Greed** | IV | The Counting House: blackstone, gilded blackstone and raw gold, heaped into hills of coin. Vaults with their round doors ajar (chests of gold, emeralds and diamonds) and giant scales tipped toward the gold; now and then a great coin as tall as a house comes rolling across, down a red line (get off it) (3.0). Piglins, buried bastions. | Gold draws the hoarders |
-| **Wrath** | V | The Fen of Styx: a dark marsh in fog, walled with reeds, crossed by plank roads; the city of Dis glows red through the fog toward the centre. A watchtower with twin beacons stands on the shore beside each road (3.0). Drowned, and vindicators with Strength. | The sullen lurk under the water |
+| **Wrath** | V | The Fen of Styx: a grey-green marsh in a light fog, walled with reeds, crossed by plank roads; the city of Dis glows red through the fog toward the centre. A watchtower with twin beacons stands on the shore beside each road (3.0). Drowned, and vindicators with Strength. | The sullen lurk under the water |
 | Walls of Dis | – | A ring wall of blackstone brick with burning towers and 4 gates. | – |
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
 | **Violence** | VII | Phlegethon, a river of lava with crimson banks, where skeleton "centaurs" ride skeleton horses. The Wood of the Suicides (leafless trees, webs). The Burning Sands. | Breaking the trees hurts you. Fire rains on the sands. |
@@ -118,6 +118,10 @@ Halfway across Limbo the east road runs through the **Noble Castle**: "seven tim
 | Hippocrates | the gluttons | Healing, Regeneration, a golden apple |
 | Hector | the wrathful | iron armour |
 | Saladin (alone, apart, by the outer wall) | – | saddle, iron horse armour, leads |
+
+## The dialogue box (3.0)
+
+What the souls of Hell say to you no longer fills the chat. The guardians, Lucifer, the shades of the Noble Castle, Virgil's tips, Dante's line as you enter each circle, the voice in the Spine and Hellcraft's own notices (a Rest remembered, a Codex page, the ferry) appear one at a time in a **dialogue box above the hotbar**: the speaker's name in their colour, then the words typed out. A line stays long enough to read, less when more are waiting; a shout shakes the box. Lines wait while a cutscene plays. Chat keeps what the whole server should hear (a guardian slain, Cain's Mark, a tunnel opening in the pit).
 
 ## Finding your way (3.0)
 
@@ -236,14 +240,14 @@ They protect like diamond, look like crimson plate with bone rivets and burning 
 
 ## The circle guardians (26.3)
 
-Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, six of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas comes when you light the east watchtower's beacons instead). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, six of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas also comes when you light the east watchtower's beacons). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
 | Guardian | Lair | Attacks |
 |---|---|---|
 | **Minos**, Judge of the Damned (3.0: a real, animated body) | Lust, x 2425 | *The Claw* (white): a claw from on high; block it with a shield as it lands and he staggers, armour gone, for two seconds. *Tail of Judgement* (purple): his tail sweeps the ground in a full circle (jump it as it passes). *Sentence* (red): a red circle follows one player, stops, then the hurricane tears up the ground there (keep moving). *Coil* (a red line): his tail lunges along the line and squeezes whoever is still in it, until the others deal him 15 damage. At half health he rears up in fury: every player is sentenced at once and he attacks faster. |
 | **Cerberus**, the Great Worm (3.0: a real, animated body with three heads) | Gluttony, x 2100 | He stalks you round the lair (and the mire's mud takes whoever stands still). *Bite* (white): one head flashes white and snaps; block it as it lands and he reels for two seconds. *Three Maws* (a red cone): all three bite in front of him one after another (get behind him). *Filth* (red circles): puddles that slow and sicken. *Howl* (a purple ring): can't be blocked; be out of it or be stunned. At half health he rears up and slams the ground (a red ring), and from then on charges along red lines. |
 | **Plutus**, the Great Enemy (3.0: a real, animated body, a golden wolf-headed banker) | Greed, x 1800 | He waddles after you. *The Fist* (white): block it as it lands and he reels. *Weight of Gold* (red circles): gold falls there, harder on whoever carries more gold (leave it behind). *Lunge* (a red line): he hurls himself along it. *Pape Satàn* (a purple ring): a shriek that can't be blocked; it scatters and sickens. At half health the Mint opens: great coins as tall as a house roll across the lair along red lines. |
-| **Phlegyas**, the Ferryman of the Styx (3.0: a real, animated body) | the Fen, a plank landing by the east watchtower, x 1605 | Light both beacons on top of the east watchtower (flint and steel) and he rises from the pool at the heart of his landing. Fight from the planks. *The Oar* (a white line): block it as it lands and he reels. *The Sweep* (a purple ring): his oar skims round the deck, jump it. *The Wave* (a red ring over the deck's outer part): get in close or be thrown into the Styx. *The Grab* (a red circle that follows you): he throws whoever is in it out into the marsh, where the sullen lurk. At half health the sullen's hands burst up through the deck in red circles. Beaten, he leaves his ferry at the landing. |
+| **Phlegyas**, the Ferryman of the Styx (3.0: a real, animated body) | the Fen, a plank landing by the east watchtower, x 1605 | Walk into the ring of braziers round his landing, or light both beacons on top of the east watchtower (flint and steel), and he rises from the pool at its heart. Fight from the planks. *The Oar* (a white line): block it as it lands and he reels. *The Sweep* (a purple ring): his oar skims round the deck, jump it. *The Wave* (a red ring over the deck's outer part): get in close or be thrown into the Styx. *The Grab* (a red circle that follows you): he throws whoever is in it out into the marsh, where the sullen lurk. At half health the sullen's hands burst up through the deck in red circles. Beaten, he leaves his ferry at the landing. |
 | **The Minotaur**, Infamy of Crete | Burning Sands, x 885 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
 | **Geryon**, Image of Fraud | edge of the great cliff, x 830 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
 
@@ -311,7 +315,7 @@ Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guar
 *"Nothing will touch thee on this road. I want thee WHOLE when thou arrivest."*
 
 The road to Lucifer is a quiet one. At each point of the compass on the **rim of the Well of Giants**, a colossal backbone leaves the cliff and runs toward the centre of Hell. They start 450 blocks out at y −13: east (450, 0), south (0, 450), west (−450, 0) and north (0, −450), where the four roads end. `/hellcraft spine [north|east|south|west]` takes an op there.
-- For about 340 blocks it hangs over **Cocytus**, 25 blocks above the frozen lake, with ribs curling down into the dark and soul lanterns along the way.
+- For about 340 blocks it hangs over **Cocytus**, 25 blocks above the frozen lake, with ribs curling down into the dark and soul lanterns along the way. It broke when he fell (3.0): each spine sags off the straight line in its own long curves, and no two of its bones are alike (some ribs are snapped short or splintered, a few are gone). Its ends stay where they are.
 - Over **Judecca** it becomes a long **staircase**, one step down every four blocks, all the way to the rim of Lucifer's pit.
 
 **No enemies.** Nothing hostile can exist on or near a spine, or anywhere in Judecca. The freezing of the ninth circle spares you while you walk it. The only company is a heartbeat that quickens the deeper you go, ash drifting in the dark, and **Lucifer's voice from far below**, a new line at every stretch of the descent.
@@ -391,7 +395,7 @@ The fight has music: a different track for the duel, the enraged phase and the t
 
 He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mocks them and returns after 5 minutes. Health, cooldowns, champion scaling, the Bane bonus and the fallback music are all in the config.
 
-His dialogue appears in chat, each line with a low voice cue.
+His lines appear in the dialogue box, each with a low voice cue.
 
 Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
 

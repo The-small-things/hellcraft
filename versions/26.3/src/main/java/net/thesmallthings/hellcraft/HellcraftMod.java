@@ -36,6 +36,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.music.BossMusic;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.JoinCheck;
 import net.thesmallthings.hellcraft.net.MapSync;
@@ -91,6 +92,7 @@ public class HellcraftMod implements ModInitializer {
 		BossModel.register();
 		LuciferRewards.register();
 		HudSync.register();
+		Dialogue.register();
 		MapSync.register();
 		Danger.register();
 		CutsceneManager.register();

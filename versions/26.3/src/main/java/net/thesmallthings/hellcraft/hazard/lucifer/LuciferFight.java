@@ -44,6 +44,7 @@ import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.music.BossMusic;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Purgatory;
@@ -538,7 +539,7 @@ public final class LuciferFight {
 		for (ServerPlayer p : level.players()) {
 			if (!p.isSpectator() && !p.isCreative() && p.isAlive() && LuciferArena.inside(p.getX(), p.getZ()) && !styles.containsKey(p.getUUID())) {
 				styles.put(p.getUUID(), new StyleMeter(p));
-				p.sendSystemMessage(Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
+				Dialogue.notice(p, Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
 						+ "the better your style, the better your spoils.").withStyle(ChatFormatting.AQUA));
 			}
 		}

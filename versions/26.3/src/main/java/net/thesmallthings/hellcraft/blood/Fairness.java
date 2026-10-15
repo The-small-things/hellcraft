@@ -12,6 +12,7 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -48,7 +49,7 @@ public final class Fairness {
 			if (soul.graceTicks > 0) {
 				soul.graceTicks = 0;
 				HellState.get(attacker.level().getServer()).setDirty();
-				attacker.sendSystemMessage(Component.literal("You attacked a player, so your newcomer protection has ended: other players can take your hearts now.")
+				Dialogue.notice(attacker, Component.literal("You attacked a player, so your newcomer protection has ended: other players can take your hearts now.")
 						.withStyle(ChatFormatting.GOLD));
 				updateTeam(attacker, false);
 			}
@@ -64,7 +65,7 @@ public final class Fairness {
 		}
 		soul.graceTicks = minutes * 1200;
 		HellState.get(player.level().getServer()).setDirty();
-		player.sendSystemMessage(Component.literal("For your first " + hours(minutes) + " of play, other players can't take your hearts "
+		Dialogue.notice(player, Component.literal("For your first " + hours(minutes) + " of play, other players can't take your hearts "
 				+ "(\"new\" shows after your name). Attack a player and the protection ends.").withStyle(ChatFormatting.GOLD));
 		updateTeam(player, true);
 	}
@@ -85,7 +86,7 @@ public final class Fairness {
 				soul.graceTicks = Math.max(0, soul.graceTicks - 20);
 				state.setDirty();
 				if (soul.graceTicks == 0) {
-					p.sendSystemMessage(Component.literal("Your newcomer protection has ended: from now on, other players can take your hearts.")
+					Dialogue.notice(p, Component.literal("Your newcomer protection has ended: from now on, other players can take your hearts.")
 							.withStyle(ChatFormatting.GOLD));
 				}
 			}
@@ -95,7 +96,7 @@ public final class Fairness {
 			} else if (soul.cainUntil != 0) {
 				soul.cainUntil = 0;
 				state.setDirty();
-				p.sendSystemMessage(Component.literal("Cain's Mark has faded.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				Dialogue.notice(p, Component.literal("Cain's Mark has faded.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			}
 		}
 	}
@@ -151,9 +152,9 @@ public final class Fairness {
 					+ ", who bore Cain's Mark (" + reward + " Blood Hearts).").withStyle(ChatFormatting.GOLD), false);
 		}
 		if (deadSoul.graceTicks > 0) {
-			dead.sendSystemMessage(Component.literal("You're new here, so you kept your hearts (newcomer protection: " + minutesLeft(deadSoul) + " min left).")
+			Dialogue.notice(dead, Component.literal("You're new here, so you kept your hearts (newcomer protection: " + minutesLeft(deadSoul) + " min left).")
 					.withStyle(ChatFormatting.GOLD));
-			killer.sendSystemMessage(Component.literal(dead.getGameProfile().name() + " is new here and protected: you took no heart.")
+			Dialogue.notice(killer, Component.literal(dead.getGameProfile().name() + " is new here and protected: you took no heart.")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			return false;
 		}
@@ -162,8 +163,8 @@ public final class Fairness {
 			killerSoul.cainUntil = now + minutes * 1200L;
 			state.setDirty();
 			killer.addEffect(new MobEffectInstance(MobEffects.GLOWING, 40, 0, false, false, true));
-			dead.sendSystemMessage(Component.literal("Your killer had more than twice your hearts, so you kept yours.").withStyle(ChatFormatting.GOLD));
-			killer.sendSystemMessage(Component.literal("Killing a soul with less than half your hearts takes nothing, and marks you: Cain's Mark. For "
+			Dialogue.notice(dead, Component.literal("Your killer had more than twice your hearts, so you kept yours.").withStyle(ChatFormatting.GOLD));
+			Dialogue.notice(killer, Component.literal("Killing a soul with less than half your hearts takes nothing, and marks you: Cain's Mark. For "
 					+ minutes + " min you glow, and whoever kills you gets " + HellConfig.get().cainBountyHearts + " Blood Hearts.")
 					.withStyle(ChatFormatting.DARK_RED));
 			server.getPlayerList().broadcastSystemMessage(Component.literal("☠ " + killer.getGameProfile().name() + " killed a far weaker soul and bears Cain's Mark: ")

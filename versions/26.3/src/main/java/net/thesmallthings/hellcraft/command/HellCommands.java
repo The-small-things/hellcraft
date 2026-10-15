@@ -44,6 +44,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -348,6 +349,8 @@ public final class HellCommands {
 						})))
 				.then(Commands.literal("fairness")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Fairness.selfTest()))))
+				.then(Commands.literal("dialogue")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Dialogue.selfTest(ctx.getSource().getPlayer())))))
 				.then(Commands.literal("ferry")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Ferries.selfTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("castle")

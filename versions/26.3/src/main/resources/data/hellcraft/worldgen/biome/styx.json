@@ -1,8 +1,8 @@
 {
   "attributes": {
-    "minecraft:visual/fog_color": "#1a2a1a",
-    "minecraft:visual/sky_color": "#101a10",
-    "minecraft:visual/water_fog_color": "#050a05",
+    "minecraft:visual/fog_color": "#48584a",
+    "minecraft:visual/sky_color": "#2e3a2c",
+    "minecraft:visual/water_fog_color": "#141e14",
     "minecraft:audio/background_music": {
       "default": {
         "sound": "minecraft:music.overworld.swamp",
@@ -18,8 +18,8 @@
         "offset": 2.0
       }
     },
-    "minecraft:visual/fog_start_distance": 4.0,
-    "minecraft:visual/fog_end_distance": 64.0,
+    "minecraft:visual/fog_start_distance": 24.0,
+    "minecraft:visual/fog_end_distance": 150.0,
     "minecraft:visual/ambient_particles": {
       "argument": [
         {
@@ -109,7 +109,7 @@
   ],
   "downfall": 0.9,
   "effects": {
-    "water_color": "#1a2a1a",
+    "water_color": "#2a3a2a",
     "grass_color": "#2a3a20",
     "foliage_color": "#2a3a1a",
     "grass_color_modifier": "swamp"

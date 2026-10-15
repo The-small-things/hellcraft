@@ -2,7 +2,6 @@ package net.thesmallthings.hellcraft.hazard.lucifer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -11,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.List;
@@ -85,14 +85,13 @@ final class LuciferDialogue {
 		return lines[random.nextInt(lines.length)];
 	}
 
-	/** Lucifer speaks in chat (only there, so nothing overlaps), with a low voice cue so lines aren't missed. */
+	/** Lucifer speaks in the dialogue box, with a low voice cue so lines aren't missed. */
 	static void say(List<ServerPlayer> audience, String line) {
 		boolean shout = line.equals(line.toUpperCase()) || line.endsWith("!");
-		MutableComponent text = Component.literal("LUCIFER: ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
-				.append(Component.literal(line).withStyle(shout ? new ChatFormatting[]{ChatFormatting.RED, ChatFormatting.BOLD}
-						: new ChatFormatting[]{ChatFormatting.GOLD, ChatFormatting.ITALIC}));
+		Component text = Component.literal(line).withStyle(shout ? new ChatFormatting[]{ChatFormatting.RED, ChatFormatting.BOLD}
+				: new ChatFormatting[]{ChatFormatting.GOLD, ChatFormatting.ITALIC});
 		for (ServerPlayer p : audience) {
-			p.sendSystemMessage(text);
+			Dialogue.say(p, "Lucifer", ChatFormatting.DARK_RED, text, shout);
 			if (shout) {
 				Feedback.sound(p, SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 0.35f, 0.5f);
 			} else {

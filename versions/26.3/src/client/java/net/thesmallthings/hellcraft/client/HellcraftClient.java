@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.danger.DangerMarks;
+import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
 import net.thesmallthings.hellcraft.client.layer.LayerFx;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
@@ -58,6 +59,7 @@ import net.thesmallthings.hellcraft.client.render.npc.ShadeRenderer;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.net.CutscenePayload;
 import net.thesmallthings.hellcraft.net.DangerPayload;
+import net.thesmallthings.hellcraft.net.DialoguePayload;
 import net.thesmallthings.hellcraft.net.HudPayload;
 import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
@@ -82,12 +84,14 @@ public class HellcraftClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(OpenJournalPayload.TYPE, (payload, context) -> context.client().gui.setScreen(new JournalScreen()));
 		ClientPlayNetworking.registerGlobalReceiver(DangerPayload.TYPE, (payload, context) -> DangerMarks.receive(payload));
 		ClientPlayNetworking.registerGlobalReceiver(CutscenePayload.TYPE, (payload, context) -> CutscenePlayer.start(payload));
+		ClientPlayNetworking.registerGlobalReceiver(DialoguePayload.TYPE, (payload, context) -> DialogueHud.receive(payload));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			DangerMarks.clear();
 			CutscenePlayer.reset();
 			BloodHud.reset();
 			ClientNav.reset();
 			LayerCard.reset();
+			DialogueHud.reset();
 		});
 
 		// finding the way: the circle cards, the compass, and the keys for the Map of Hell and the Journal
@@ -98,9 +102,12 @@ public class HellcraftClient implements ClientModInitializer {
 			DangerMarks.tick(client);
 			CutscenePlayer.tick(client);
 			LayerFx.tick(client);
+			DialogueHud.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
 		HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, LayerCard.ID, new LayerCard());
+		// what the souls of Hell say, in a box above the hotbar instead of the chat
+		HudElementRegistry.attachElementAfter(VanillaHudElements.OVERLAY_MESSAGE, DialogueHud.ID, new DialogueHud());
 
 		// the danger language's marks on the ground
 		LevelRenderEvents.COLLECT_SUBMITS.register(DangerMarks::render);

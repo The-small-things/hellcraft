@@ -51,7 +51,7 @@ public enum Guardian {
 		return "guardian_" + id();
 	}
 
-	/** True for Phlegyas, who comes when the east watchtower's beacons are lit rather than when someone walks in. */
+	/** True for Phlegyas, who also comes when the east watchtower's beacons are lit (as well as when someone walks in). */
 	public boolean wakesByBeacon() {
 		return this == PHLEGYAS;
 	}
