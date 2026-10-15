@@ -347,8 +347,14 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "Hoarder: $hoarder"
   echo "$hoarder" | grep -q "Test passed" || { echo "A hoarder could not be summoned"; exit 1; }
   rcon "kill @e[type=hellcraft:hoarder,tag=smoke_hoarder]" > /dev/null || true
-  # the upper circles' other monsters
-  for m in lovers glutton wrathful; do
+  # Hell's own monsters, upper and lower
+  # Lower Hell's rules: the tombs, the Sands' rhythm, the centaurs' posts by the fords, Malebolge's lies
+  lower=$(rcon "hellcraft lower test")
+  echo "$lower"
+  echo "$lower" | grep -q "=false" && { echo "Lower Hell's rules are wrong"; exit 1; }
+  echo "$lower" | grep -q "16 centaur posts" || { echo "The fords have no centaur posts"; exit 1; }
+  echo "$lower" | grep -q "8 fake Rests" || { echo "Malebolge has no fake Rests"; exit 1; }
+  for m in lovers glutton wrathful heretic centaur harpy mimic thief; do
     rcon "summon hellcraft:$m 2165 200 1250 {NoAI:1b,Tags:[\"smoke_monster\"]}" > /dev/null
     there=$(rcon "execute if entity @e[type=hellcraft:$m,tag=smoke_monster]" || true)
     echo "$m: $there"

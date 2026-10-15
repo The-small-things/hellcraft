@@ -10,6 +10,8 @@ Run from the repo root:  python3 tools/gen_loot.py
 - chests/feast_table: the barrels at the heads of Gluttony's sunken feast tables
 - chests/vault: the vaults in Greed's Counting House
 - chests/fen_cache: the watchtowers and the drowned boats of the Fen of Styx
+- chests/malebolge_cache: the caches on the ridges of Malebolge (one in three is a mimic instead)
+- entities/mimic: what a mimic gives up when killed (better than the caches it pretends to be)
 - gameplay/guardian_spoils: what a slain circle guardian leaves besides its blood
 
 Blood Fragments, Vigil Candles and Soul Anchors are Hellcraft's own items (HellItems.java).
@@ -210,6 +212,30 @@ TABLES = {
             fragments(6, 1, 3),
         ]),
         pool(1, 1, [item("trident", 1), book(2, 15, 25), item("turtle_helmet", 1), item("golden_apple", 2), empty(5)])),
+    "chests/malebolge_cache": chest(
+        pool(3, 6, [
+            item("arrow", 8, 6, 16),
+            item("bread", 8, 2, 6),
+            item("gold_ingot", 8, 2, 6),
+            item("iron_ingot", 6, 2, 5),
+            item("diamond", 3, 1, 2),
+            item("emerald", 5, 1, 4),
+            item("experience_bottle", 4, 2, 5),
+            item("ender_pearl", 3, 1, 2),
+            potion(4, "invisibility"),
+            fragments(6, 1, 3),
+        ]),
+        pool(1, 1, [book(3, 20, 30), item("golden_apple", 2), vigils(2), anchor(1), empty(4)])),
+    "entities/mimic": {"type": "minecraft:entity", "pools": [
+        pool(3, 5, [
+            item("gold_ingot", 8, 3, 8),
+            item("diamond", 5, 1, 3),
+            item("emerald", 6, 2, 6),
+            item("experience_bottle", 4, 3, 6),
+            item("ender_pearl", 3, 1, 3),
+            fragments(6, 2, 4),
+        ]),
+        pool(1, 1, [book(4, 25, 30), item("golden_apple", 3), item("enchanted_golden_apple", 1), anchor(2)])]},
     "gameplay/guardian_spoils": {"type": "minecraft:chest", "pools": [
         pool(2, 2, [book(1, 30, 30)]),
         pool(1, 2, [item("diamond", 3, 1, 3), item("golden_apple", 3), item("experience_bottle", 3, 4, 8), vigils(2, 1, 2)]),

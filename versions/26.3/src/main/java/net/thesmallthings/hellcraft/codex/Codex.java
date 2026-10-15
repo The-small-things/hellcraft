@@ -108,7 +108,49 @@ public final class Codex {
 			"And they smote each other not only with the hand, but with the head and with the chest and with the feet, tearing each other piecemeal with their teeth.",
 			"Inferno VII");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, HOARDER, LOVERS, GLUTTON, WRATHFUL);
+	public static final Entry HERETIC = new Entry("heretic", "THE HERETICS", "Souls of the Sixth Circle",
+			List.of("Those who denied the soul lie in open tombs in the Iron City, burnt black by the fire inside.",
+					"When a tomb blasts near you, one may climb out of it."),
+			List.of("Its grip sets you alight. Fire can't hurt it; water and a good blade can.",
+					"It can't do anything while it climbs out: hit it then."),
+			"From within came forth such dire laments, that well they seemed to be of wretched souls and tormented.",
+			"Inferno IX");
+
+	public static final Entry CENTAUR = new Entry("centaur", "THE CENTAURS", "Archers of the River of Blood",
+			List.of("The centaurs patrol the banks of the river of blood, shooting any soul that rises out of it further than its guilt allows.",
+					"One stands on each bank beside every ford."),
+			List.of("Each paces its bank, then stops and watches the river: the red cone on the ground is where it's looking.",
+					"Anyone it sees in the river or on the ford gets burning arrows. Wait on the bank and cross while it looks away.",
+					"Hurt one and it shoots back whatever it was doing."),
+			"Round about the moat in thousands go, shooting with shafts whatever soul uplifts itself out of the blood more than its guilt allotted.",
+			"Inferno XII");
+
+	public static final Entry HARPY = new Entry("harpy", "THE HARPIES", "the Wood of the Suicides",
+			List.of("Women's heads on great birds' bodies, the harpies roost in the dead trees of the suicides and feed on their leaves.",
+					"They come when the trees scream."),
+			List.of("Push through the branches or break them, and the trees scream: sneak through the Wood and they stay asleep.",
+					"They wheel overhead, then stoop: their talons leave you slowed. Hit them as they come in."),
+			"Broad wings have they, and human necks and faces, feet with claws, and their great belly feathered; they make lament upon the strange trees.",
+			"Inferno XIII");
+
+	public static final Entry MIMIC = new Entry("mimic", "THE MIMICS", "Lies of the Eighth Circle",
+			List.of("In Malebolge nothing is what it seems. A third of the chests on the ridges between the ditches are mimics,",
+					"waiting with their teeth shut for a hand to reach in."),
+			List.of("The tell: now and then a mimic's lid lifts a crack and settles, as if breathing. Watch a chest for a few seconds before you open it.",
+					"Come close, touch it or hit it and it wakes: it bites hard and hops after you. Killed, it gives up its treasure, better than a chest's."),
+			"There is a place in Hell called Malebolge, wholly of stone and of an iron colour.",
+			"Inferno XVIII");
+
+	public static final Entry THIEF = new Entry("thief", "THE THIEVES", "Souls of the Seventh Ditch",
+			List.of("The thieves run naked through Malebolge, their hands bound behind them with serpents.",
+					"They snatch what they can and run."),
+			List.of("A thief's grab takes a stack from your pack (never the item in your hand, nor your armour).",
+					"It keeps what it took until it dies: chase it down. A bow helps."),
+			"With serpents were their hands behind them bound, which through the loins thrust forward tail and head.",
+			"Inferno XXIV");
+
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
+			MIMIC, THIEF);
 
 	@Nullable
 	public static Entry byId(String id) {

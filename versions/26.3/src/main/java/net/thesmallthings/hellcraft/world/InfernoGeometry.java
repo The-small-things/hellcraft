@@ -245,6 +245,13 @@ public final class InfernoGeometry {
 			if (c > 0) {
 				h = lerp(h, river.level + 1, c);
 			}
+			// and the river of blood has fords at the other ways down, flush with its surface
+			if (river.zone == Zone.PHLEGETHON) {
+				double f = fordFactor(theta, r);
+				if (f > 0 && h < river.level + 0.5) {
+					h = lerp(h, river.level + 0.5, f);
+				}
+			}
 		}
 		return h;
 	}
@@ -269,8 +276,10 @@ public final class InfernoGeometry {
 			out[0] *= 0.3;
 		}
 		// the roads, the guardians' arenas, Lust's wind pads and the Noble Castle are level ground
-		double flat = (1.0 - roadLevelling(Math.atan2(z, x), r)) * (1.0 - arenaLevelling(x, z)) * (1.0 - WindStreams.padLevelling(x, z))
-				* (1.0 - NobleCastle.levelling(x, z));
+		double theta = Math.atan2(z, x);
+		double ford = riverAt(re) != null && riverAt(re).zone == Zone.PHLEGETHON ? fordFactor(theta, r) : 0.0;
+		double flat = (1.0 - roadLevelling(theta, r)) * (1.0 - arenaLevelling(x, z)) * (1.0 - WindStreams.padLevelling(x, z))
+				* (1.0 - NobleCastle.levelling(x, z)) * (1.0 - ford);
 		out[0] *= flat;
 		out[1] *= flat;
 		out[2] *= flat;
@@ -383,6 +392,32 @@ public final class InfernoGeometry {
 		return best * along;
 	}
 
+	/** How far either side of a ford's middle it is firm footing (blocks). */
+	public static final double FORD_HALF_WIDTH = 2.0;
+
+	/**
+	 * 1 on a ford across the river of blood, fading to 0 beside it (L-VII). The fords lie on the eight ways down the
+	 * roads don't take (the roads cross on their causeways), so every ramp down the cliff of Heresy meets one.
+	 */
+	public static double fordFactor(double theta, double r) {
+		double best = 0.0;
+		for (int k = 0; k < 12; k++) {
+			if (k % 3 == 0) {
+				continue;
+			}
+			double arc = angularDistance(theta, wayDownAngle(k)) * r;
+			best = Math.max(best, smoothstep(clamp(1.0 - (arc - FORD_HALF_WIDTH) / 1.5, 0.0, 1.0)));
+		}
+		return best;
+	}
+
+	/** True on a ford's firm footing. */
+	public static boolean onFord(double x, double z) {
+		double re = effectiveRadius(x, z);
+		River river = riverAt(re);
+		return river != null && river.zone == Zone.PHLEGETHON && fordFactor(Math.atan2(z, x), Math.sqrt(x * x + z * z)) >= 0.5;
+	}
+
 	// ------------------------------------------------------------------ malebolge
 
 	/** The Malebolge bridges lie on the twelve ways down. */
@@ -434,7 +469,7 @@ public final class InfernoGeometry {
 		}
 		double theta = Math.atan2(z, x);
 		double r = Math.sqrt(x * x + z * z);
-		if (causeway(theta, r) > 0 && baseHeight(re, theta, r) >= river.level) {
+		if ((causeway(theta, r) > 0 || river.zone == Zone.PHLEGETHON && fordFactor(theta, r) > 0) && baseHeight(re, theta, r) >= river.level) {
 			return Fluid.NONE;
 		}
 		return river.fluid;

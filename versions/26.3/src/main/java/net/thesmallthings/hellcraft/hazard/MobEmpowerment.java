@@ -4,14 +4,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.equine.SkeletonHorse;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
@@ -21,16 +18,12 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 /** The deeper you go, the worse the damned: each circle toughens and twists its monsters. */
 public final class MobEmpowerment {
 	private MobEmpowerment() {
 	}
 
 	private static final String TOUCHED = "hellcraft_touched";
-	private static final Deque<Skeleton> CENTAURS = new ArrayDeque<>();
 
 	public static void onLoad(Entity entity, ServerLevel level) {
 		if (!(entity instanceof Monster monster) || entity.entityTags().contains(TOUCHED) || LuciferManager.isLucifer(entity)
@@ -55,27 +48,6 @@ public final class MobEmpowerment {
 		if (circle == Circle.FRAUD && monster.getType() != EntityTypes.CREEPER && level.getRandom().nextFloat() < 0.2f) {
 			// the frauds hide, but their swirl of particles gives them away
 			monster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, MobEffectInstance.INFINITE_DURATION, 0, false, true));
-		}
-		if (zone == Zone.PHLEGETHON && monster instanceof Skeleton skeleton && !skeleton.isPassenger() && level.getRandom().nextFloat() < 0.4f) {
-			// centaurs patrol the river of blood; mount them next tick, not while the chunk is loading
-			CENTAURS.add(skeleton);
-		}
-	}
-
-	public static void tick() {
-		while (!CENTAURS.isEmpty()) {
-			Skeleton skeleton = CENTAURS.poll();
-			if (!skeleton.isAlive() || skeleton.isPassenger() || !(skeleton.level() instanceof ServerLevel level)) {
-				continue;
-			}
-			SkeletonHorse horse = EntityTypes.SKELETON_HORSE.create(level, EntitySpawnReason.JOCKEY);
-			if (horse == null) {
-				continue;
-			}
-			horse.snapTo(skeleton.getX(), skeleton.getY(), skeleton.getZ(), skeleton.getYRot(), 0.0f);
-			horse.setTamed(true);
-			level.addFreshEntity(horse);
-			skeleton.startRiding(horse, true, true);
 		}
 	}
 }

@@ -8,6 +8,9 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 
+import java.util.Arrays;
+import java.util.List;
+
 /** Minos's animations from art/minos.bbmodel, as Minecraft keyframes (Catmull-Rom curves where Blockbench has them). */
 public final class MinosAnimations {
 	private MinosAnimations() {
@@ -709,5 +712,10 @@ public final class MinosAnimations {
 			case HURT -> HURT;
 			case DEATH -> DEATH;
 		};
+	}
+
+	/** Every animation, in MinosAnim's order. */
+	public static List<AnimationDefinition> all() {
+		return Arrays.stream(MinosAnim.values()).map(MinosAnimations::of).toList();
 	}
 }

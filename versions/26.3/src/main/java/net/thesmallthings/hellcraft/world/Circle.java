@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.world;
 
+
 /**
  * The gameplay-level circles of Hell, outermost first. {@link #depth()} is 0 outside Hell proper
  * and 1..9 for the nine circles.
@@ -20,9 +21,9 @@ public enum Circle {
 	WRATH(5, "Circle V — Wrath", "Beneath the water people are who sigh", "The sullen and the wrathful",
 			"CIRCLE V: WRATH", "The sullen lurk under the water where bubbles rise. Keep to the roads, or take a boat.", "Iron or diamond armour, a boat"),
 	HERESY(6, "Circle VI — Heresy", "Their sepulchres were burning", "The burning tombs",
-			"CIRCLE VI: HERESY", "Smoke from the tombs brings darkness. Get under a roof.", "Diamond gear and torches"),
+			"CIRCLE VI: HERESY", "The tombs blast fire in turn: a red circle warns which is next. Cross between the blasts.", "Diamond gear and Fire Resistance"),
 	VIOLENCE(7, "Circle VII — Violence", "The river of blood, within which boiling is", "Blood, thorns and fire",
-			"CIRCLE VII: VIOLENCE", "Breaking the dead trees hurts you, and fire rains on the sands.", "Diamond armour, Fire Resistance"),
+			"CIRCLE VII: VIOLENCE", "Ford the blood while the centaurs look away. Sneak in the wood. Hide under rocks when fire falls.", "Diamond armour, Fire Resistance"),
 	FRAUD(8, "Circle VIII — Fraud", "There is a place in Hell called Malebolge", "The evil ditches",
 			"CIRCLE VIII: FRAUD", "Some monsters are invisible. Watch for their swirl of particles.", "Diamond armour and a bow"),
 	TREACHERY(9, "Circle IX — Treachery", "The Emperor of the kingdom dolorous", "Frozen betrayal",

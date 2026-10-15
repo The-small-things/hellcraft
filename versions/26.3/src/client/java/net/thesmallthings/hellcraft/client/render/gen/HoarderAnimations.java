@@ -8,6 +8,9 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.thesmallthings.hellcraft.entity.boss.gen.HoarderAnim;
 
+import java.util.Arrays;
+import java.util.List;
+
 /** Hoarder's animations from art/hoarder.bbmodel, as Minecraft keyframes (Catmull-Rom curves where Blockbench has them). */
 public final class HoarderAnimations {
 	private HoarderAnimations() {
@@ -129,5 +132,10 @@ public final class HoarderAnimations {
 			case HURT -> HURT;
 			case DEATH -> DEATH;
 		};
+	}
+
+	/** Every animation, in HoarderAnim's order. */
+	public static List<AnimationDefinition> all() {
+		return Arrays.stream(HoarderAnim.values()).map(HoarderAnimations::of).toList();
 	}
 }

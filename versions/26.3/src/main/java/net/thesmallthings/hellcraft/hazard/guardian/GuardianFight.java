@@ -51,12 +51,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * One fight against a circle guardian, from the moment someone walks into its lair to its death (or
@@ -619,6 +621,81 @@ public abstract class GuardianFight {
 				&& !e.isSpectator()
 				&& !(e instanceof Player p && p.isCreative())
 				&& e.position().distanceToSqr(center) <= radius * radius);
+	}
+
+	/** Who stands in the band from c toward angle (radians, atan2(z, x)), reach long, halfWidth either side. */
+	protected List<LivingEntity> inBand(Vec3 c, double angle, double reach, double halfWidth) {
+		List<LivingEntity> out = new ArrayList<>();
+		for (LivingEntity e : victims(c, reach + 1)) {
+			Vec3 d = e.position().subtract(c);
+			double along = d.x * Math.cos(angle) + d.z * Math.sin(angle);
+			double across = Math.abs(-d.x * Math.sin(angle) + d.z * Math.cos(angle));
+			if (along > -0.5 && along <= reach && across <= halfWidth + 0.4) {
+				out.add(e);
+			}
+		}
+		return out;
+	}
+
+	/** Who stands in the wedge from c toward angle, reach long, arc radians either side (anyone right at c too). */
+	protected List<LivingEntity> inWedge(Vec3 c, double angle, double reach, double arc) {
+		List<LivingEntity> out = new ArrayList<>();
+		for (LivingEntity e : victims(c, reach + 0.5)) {
+			Vec3 d = e.position().subtract(c);
+			if (d.x * d.x + d.z * d.z < 2.0 || Math.abs(wrap(Math.atan2(d.z, d.x) - angle)) <= arc + 0.15) {
+				out.add(e);
+			}
+		}
+		return out;
+	}
+
+	/** Who stands between two radii of c (measured flat). */
+	protected List<LivingEntity> inRing(Vec3 c, double inner, double outer) {
+		List<LivingEntity> out = new ArrayList<>();
+		for (LivingEntity e : victims(c, outer + 1)) {
+			double r = Math.hypot(e.getX() - c.x, e.getZ() - c.z);
+			if (r >= inner - 0.3 && r <= outer + 0.3) {
+				out.add(e);
+			}
+		}
+		return out;
+	}
+
+	/**
+	 * Something sweeps right round c (an oar, a tail, flailing arms) between ticks `from` and `to` from now, starting
+	 * where `start` points (radians) and turning clockwise seen from above. Each soul between inner and outer is hit
+	 * once, as it passes them; with `jumpable`, a soul in the air at that moment is missed.
+	 */
+	protected void sweepRound(Vec3 c, double start, double inner, double outer, int from, int to, boolean jumpable,
+							  Consumer<LivingEntity> hit) {
+		Set<UUID> passed = new HashSet<>();
+		for (int t = from; t <= to; t++) {
+			double before = 2 * Math.PI * Math.max(0, t - 1 - from) / (to - from);
+			double now = 2 * Math.PI * (t - from) / (to - from);
+			boolean first = t == from;
+			schedule(t, () -> {
+				for (LivingEntity e : victims(c, outer + 0.5)) {
+					Vec3 d = e.position().subtract(c);
+					double r = Math.sqrt(d.x * d.x + d.z * d.z);
+					if (r < inner - 0.5 || passed.contains(e.getUUID())) {
+						continue;
+					}
+					double needed = positive(start - Math.atan2(d.z, d.x));
+					if ((first || needed > before) && needed <= now + 1e-6) {
+						passed.add(e.getUUID());
+						if (!jumpable || e.onGround()) {
+							hit.accept(e);
+						}
+					}
+				}
+			});
+		}
+	}
+
+	/** An angle in [0, 2 PI). */
+	protected static double positive(double a) {
+		double w = a % (2 * Math.PI);
+		return w < 0 ? w + 2 * Math.PI : w;
 	}
 
 	protected void schedule(int delay, Runnable action) {

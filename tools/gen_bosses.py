@@ -228,6 +228,9 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.thesmallthings.hellcraft.entity.boss.gen.{self.java}Anim;
 
+import java.util.Arrays;
+import java.util.List;
+
 /** {self.java}'s animations from art/{self.src}, as Minecraft keyframes (Catmull-Rom curves where Blockbench has them). */
 public final class {self.java}Animations {{
 	private {self.java}Animations() {{
@@ -240,11 +243,18 @@ public final class {self.java}Animations {{
 {chr(10).join(cases)}
 		}};
 	}}
+
+	/** Every animation, in {self.java}Anim's order. */
+	public static List<AnimationDefinition> all() {{
+		return Arrays.stream({self.java}Anim.values()).map({self.java}Animations::of).toList();
+	}}
 }}
 """
         enum_java = f"""package net.thesmallthings.hellcraft.entity.boss.gen;
 
 {HEADER.format(src=self.src)}
+
+import net.thesmallthings.hellcraft.entity.boss.BossAnim;
 
 import java.util.Map;
 
@@ -252,7 +262,7 @@ import java.util.Map;
  * {self.java}'s animations as the server sees them: how long each runs (ticks), whether it loops, and its named
  * events (the tick into the animation at which, say, a claw lands), so blows land when the model shows them.
  */
-public enum {self.java}Anim {{
+public enum {self.java}Anim implements BossAnim {{
 {(","+chr(10)).join(common)};
 
 	public final int ticks;
@@ -265,7 +275,18 @@ public enum {self.java}Anim {{
 		this.events = events;
 	}}
 
+	@Override
+	public int ticks() {{
+		return ticks;
+	}}
+
+	@Override
+	public boolean looping() {{
+		return looping;
+	}}
+
 	/** The tick into this animation at which the named event happens. */
+	@Override
 	public int at(String event) {{
 		Integer tick = events.get(event);
 		if (tick == null) {{

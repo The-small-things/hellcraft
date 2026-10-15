@@ -37,8 +37,11 @@ import net.thesmallthings.hellcraft.blood.TravelMenu;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.hazard.Frauds;
 import net.thesmallthings.hellcraft.hazard.Hoarders;
 import net.thesmallthings.hellcraft.hazard.LayerRules;
+import net.thesmallthings.hellcraft.hazard.LowerMonsters;
+import net.thesmallthings.hellcraft.hazard.LowerRules;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
@@ -357,6 +360,8 @@ public final class HellCommands {
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Shades.castleTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("layers")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LayerRules.selfTest() + "; " + Hoarders.selfTest()))))
+				.then(Commands.literal("lower")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LowerRules.selfTest() + "; " + LowerMonsters.selfTest() + "; " + Frauds.selfTest()))))
 				.then(Commands.literal("danger")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Danger.selfTest(ctx.getSource().getLevel())))))
 				.then(Commands.literal("spoils")

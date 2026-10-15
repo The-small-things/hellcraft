@@ -14,9 +14,14 @@ import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
+import net.thesmallthings.hellcraft.entity.monster.Centaur;
 import net.thesmallthings.hellcraft.entity.monster.Glutton;
+import net.thesmallthings.hellcraft.entity.monster.Harpy;
+import net.thesmallthings.hellcraft.entity.monster.Heretic;
 import net.thesmallthings.hellcraft.entity.monster.Hoarder;
 import net.thesmallthings.hellcraft.entity.monster.Lovers;
+import net.thesmallthings.hellcraft.entity.monster.Mimic;
+import net.thesmallthings.hellcraft.entity.monster.Thief;
 import net.thesmallthings.hellcraft.entity.monster.Wrathful;
 import net.thesmallthings.hellcraft.entity.npc.Shade;
 
@@ -73,6 +78,26 @@ public final class HellEntities {
 	public static final EntityType<Wrathful> WRATHFUL = register("wrathful",
 			EntityType.Builder.of(Wrathful::new, MobCategory.MONSTER).sized(0.7f, 1.9f).clientTrackingRange(8));
 
+	/** The harpies of the Wood of the Suicides, called by the trees' scream (LowerRules). */
+	public static final EntityType<Harpy> HARPY = register("harpy",
+			EntityType.Builder.of(Harpy::new, MobCategory.MONSTER).sized(0.9f, 1.6f).clientTrackingRange(10));
+
+	/** The centaurs posted by the fords of the river of blood (LowerMonsters). */
+	public static final EntityType<Centaur> CENTAUR = register("centaur",
+			EntityType.Builder.of(Centaur::new, MobCategory.MONSTER).sized(1.4f, 2.4f).eyeHeight(2.1f).clientTrackingRange(10));
+
+	/** The heretics, who climb out of their burning tombs (LowerRules). */
+	public static final EntityType<Heretic> HERETIC = register("heretic",
+			EntityType.Builder.of(Heretic::new, MobCategory.MONSTER).sized(0.6f, 1.95f).fireImmune().clientTrackingRange(8));
+
+	/** Malebolge's mimics, chests that aren't (Frauds). */
+	public static final EntityType<Mimic> MIMIC = register("mimic",
+			EntityType.Builder.of(Mimic::new, MobCategory.MONSTER).sized(0.9f, 0.9f).clientTrackingRange(8));
+
+	/** Malebolge's thieves, who snatch from your pack and run (Frauds). */
+	public static final EntityType<Thief> THIEF = register("thief",
+			EntityType.Builder.of(Thief::new, MobCategory.MONSTER).sized(0.6f, 1.8f).clientTrackingRange(8));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
@@ -84,6 +109,11 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(GLUTTON, Glutton.attributes());
 		FabricDefaultAttributeRegistry.register(WRATHFUL, Wrathful.attributes());
 		FabricDefaultAttributeRegistry.register(SHADE, Shade.attributes());
+		FabricDefaultAttributeRegistry.register(HARPY, Harpy.attributes());
+		FabricDefaultAttributeRegistry.register(CENTAUR, Centaur.attributes());
+		FabricDefaultAttributeRegistry.register(HERETIC, Heretic.attributes());
+		FabricDefaultAttributeRegistry.register(MIMIC, Mimic.attributes());
+		FabricDefaultAttributeRegistry.register(THIEF, Thief.attributes());
 	}
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {

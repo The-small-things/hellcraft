@@ -18,8 +18,9 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
-import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
+import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
+import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.LayerCard;
@@ -32,14 +33,18 @@ import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 import net.thesmallthings.hellcraft.entity.npc.Shade;
+import net.thesmallthings.hellcraft.hazard.LowerMonsters;
+import net.thesmallthings.hellcraft.hazard.LowerRules;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.Fen;
+import net.thesmallthings.hellcraft.world.FraudSites;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.NobleCastle;
 import net.thesmallthings.hellcraft.world.Shades;
 import net.thesmallthings.hellcraft.world.Sullen;
+import net.thesmallthings.hellcraft.world.Tombs;
 import net.thesmallthings.hellcraft.world.WindStreams;
 import net.thesmallthings.hellcraft.world.Zone;
 import net.thesmallthings.hellcraft.world.feature.WatchtowerFeature;
@@ -107,6 +112,7 @@ public class MapTest implements FabricClientGameTest {
 			nobleCastle(context, server, connection);
 			setPieces(context, server, connection);
 			layerRules(context, server, connection);
+			lowerRules(context, server, connection);
 			minosFight(context, server, connection);
 			cerberusFight(context, server, connection);
 			plutusFight(context, server, connection);
@@ -500,6 +506,163 @@ public class MapTest implements FabricClientGameTest {
 				client.gui.hud.toggle();
 			}
 		});
+	}
+
+	/**
+	 * Lower Hell's rules (screenshots lower_*): a tomb of Heresy warning, then blasting; the Burning Sands' countdown and
+	 * the fire falling; a centaur watching the river from its post by a ford (its gaze is the red cone); the harpies the
+	 * Wood's trees call; a fake Rest of Malebolge, and its trap springing.
+	 */
+	private static void lowerRules(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode creative Player0");
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		// Heresy: a tomb by the east road, its red circle filling, then the fire
+		Tombs.Tomb tomb = Tombs.within(1180, 30, 1320, 140).getFirst();
+		int tx = (int) Math.floor(tomb.centreX());
+		int tz = (int) Math.floor(tomb.centreZ());
+		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", tx, tz));
+		int tombY = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, tx, tz));
+		camera(server, tx - 7, tz - 9, 7, tomb.centreX(), tombY + 2, tomb.centreZ());
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		waitForServerTime(context, server, t -> tomb.phase(t) == Tombs.WARN - 8);
+		context.takeScreenshot("lower_tomb_warning");
+		waitForServerTime(context, server, t -> tomb.phase(t) == Tombs.WARN + 8);
+		context.takeScreenshot("lower_tomb_blast");
+		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d", tx, tz));
+
+		// the Burning Sands: the countdown, then the fire falling on the open sand
+		int sx = 850;
+		int sz = 70;
+		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", sx, sz));
+		int sandY = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 120 10", sx, sandY, sz));
+		server.runCommand("gamemode survival Player0");
+		server.runCommand("effect give Player0 minecraft:resistance 120 4 true");
+		context.runOnClient(client -> {
+			if (client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		waitForServerTime(context, server, t -> LowerRules.sandsPhase(t) == LowerRules.SANDS_WARN_AT + 30);
+		context.takeScreenshot("lower_sands_warning");
+		waitForServerTime(context, server, t -> LowerRules.sandsPhase(t) == LowerRules.SANDS_FIRE_AT + 30);
+		context.takeScreenshot("lower_sands_fire");
+		server.runCommand("gamemode creative Player0");
+		server.runCommand("extinguish Player0");
+		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d", sx, sz));
+
+		// the river of blood: a centaur on its post by a ford, watching the river
+		LowerMonsters.Post post = LowerMonsters.posts().getFirst();
+		double out = Math.atan2(post.z(), post.x());
+		int postY = server.computeOnServer(s -> {
+			s.overworld().getChunk((int) Math.floor(post.x()) >> 4, (int) Math.floor(post.z()) >> 4);
+			return s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(post.x()), (int) Math.floor(post.z()));
+		});
+		// from along the bank, looking past the centaur's post and out over the river
+		double along = out + Math.PI / 2;
+		camera(server, post.x() + Math.cos(along) * 14 + Math.cos(out) * 4, post.z() + Math.sin(along) * 14 + Math.sin(out) * 4, 9,
+				post.x() - Math.cos(out) * 12, postY - 2, post.z() - Math.sin(out) * 12);
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		boolean watching = false;
+		for (int i = 0; i < 40 && !watching; i++) {
+			context.waitTicks(10);
+			watching = server.computeOnServer(s -> s.overworld().getEntities(HellEntities.CENTAUR, c -> c.watching()).size() > 0);
+		}
+		if (!watching) {
+			throw new AssertionError("no centaur took its post by the ford and watched the river");
+		}
+		context.waitTicks(30);
+		context.takeScreenshot("lower_ford_centaur");
+		server.runCommand("kill @e[type=hellcraft:centaur]");
+
+		// the Wood of the Suicides: the trees scream and the harpies come
+		int wx = 975;
+		int wz = 70;
+		int woodY = server.computeOnServer(s -> {
+			s.overworld().getChunk(wx >> 4, wz >> 4);
+			return s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, wx, wz);
+		});
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 90 -25", wx, woodY + 1, wz));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		server.runOnServer(s -> LowerMonsters.harpies(s.overworld(), s.getPlayerList().getPlayerByName("Player0"), 3));
+		context.waitTicks(30);
+		context.takeScreenshot("lower_wood_harpies");
+		server.runCommand("kill @e[type=hellcraft:harpy]");
+
+		// Malebolge: a fake Rest, and its trap springing
+		FraudSites.FakeRest fake = FraudSites.fakeRests().getFirst();
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d", fake.x() - 30, 40, fake.z()));
+		context.waitTicks(10);
+		boolean built = false;
+		for (int i = 0; i < 20 && !built; i++) {
+			context.waitTicks(20);
+			built = server.computeOnServer(s -> HellState.get(s).fakeRests.containsKey(fake.id()));
+		}
+		if (!built) {
+			throw new AssertionError("the fake Rest " + fake.id() + " was never built");
+		}
+		int floor = server.computeOnServer(s -> HellState.get(s).fakeRests.get(fake.id()));
+		// along the ridge (round the circle), so the walls of the ditches either side don't block the view
+		double tangent = Math.atan2(fake.z(), fake.x()) + Math.PI / 2;
+		camera(server, fake.x() + Math.cos(tangent) * 15, fake.z() + Math.sin(tangent) * 15, 6, fake.x(), floor, fake.z());
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("lower_fake_rest");
+		server.runCommand("gamemode survival Player0");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d", fake.x() + 2, floor, fake.z() - 3));
+		context.waitTicks(40);
+		camera(server, fake.x() + Math.cos(tangent) * 12, fake.z() + Math.sin(tangent) * 12, 5, fake.x(), floor, fake.z());
+		context.waitTicks(20);
+		context.takeScreenshot("lower_fake_rest_sprung");
+		if (!server.computeOnServer(s -> HellState.get(s).fraudSpent.contains(fake.id()))) {
+			throw new AssertionError("stepping into the fake Rest didn't spring its trap");
+		}
+		server.runCommand("kill @e[type=hellcraft:thief]");
+		server.runCommand("kill @e[type=hellcraft:mimic]");
+		server.runCommand("gamemode spectator Player0");
+		server.runCommand("effect clear Player0");
+		context.runOnClient(client -> {
+			if (client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+	}
+
+	/** Puts the camera `above` blocks over the ground at (x, z) (or over the target, if that's higher), looking at the target. */
+	private static void camera(TestDedicatedServerContext server, double x, double z, int above, double tx, double ty, double tz) {
+		int ground = server.computeOnServer(s -> {
+			s.overworld().getChunk((int) Math.floor(x) >> 4, (int) Math.floor(z) >> 4);
+			return s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(x), (int) Math.floor(z));
+		});
+		double y = Math.max(ground, ty) + above;
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f %.1f facing %.1f %.1f %.1f", x, y, z, tx, ty, tz));
+	}
+
+	/** Waits (up to a minute) until the server's game time satisfies the test. */
+	private static void waitForServerTime(ClientGameTestContext context, TestDedicatedServerContext server, java.util.function.LongPredicate test) {
+		for (int i = 0; i < 1200; i++) {
+			long t = server.computeOnServer(s -> s.overworld().getGameTime());
+			if (test.test(t)) {
+				return;
+			}
+			context.waitTicks(1);
+		}
+		throw new AssertionError("waited a minute for the right moment and it never came");
 	}
 
 	/**

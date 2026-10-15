@@ -26,13 +26,17 @@ public class SoulMonsterRenderer<T extends SoulMonster> extends MobRenderer<T, S
 		super(context, new SoulMonsterModel(context.bakeLayer(layer), anims, alpha < 255, headPath), shadow);
 		this.texture = HellcraftMod.id("textures/entity/" + name + ".png");
 		this.alpha = alpha;
-		RenderType glow = RenderTypes.eyes(HellcraftMod.id("textures/entity/" + name + "_glow.png"));
-		addLayer(new EyesLayer<>(this) {
-			@Override
-			public RenderType renderType() {
-				return glow;
-			}
-		});
+		// the parts that glow in the dark, if it has any (a mimic has none: it would give itself away)
+		Identifier glowTexture = HellcraftMod.id("textures/entity/" + name + "_glow.png");
+		if (context.getResourceManager().getResource(glowTexture).isPresent()) {
+			RenderType glow = RenderTypes.eyes(glowTexture);
+			addLayer(new EyesLayer<>(this) {
+				@Override
+				public RenderType renderType() {
+					return glow;
+				}
+			});
+		}
 	}
 
 	public static ModelLayerLocation layer(String name) {

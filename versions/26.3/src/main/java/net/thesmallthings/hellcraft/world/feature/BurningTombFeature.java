@@ -12,11 +12,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.world.Tombs;
 
-/** The open, burning sepulchres of the heretics (Inferno, Canto IX-X). */
+/**
+ * The open, burning sepulchres of the heretics (Inferno, Canto IX-X), one on each of the Tombs sites: their fires
+ * blast up in turn (LayerRules times them), so the way through the Iron City is a matter of rhythm.
+ */
 public record BurningTombFeature() implements Feature {
 	public static final BurningTombFeature INSTANCE = new BurningTombFeature();
 	public static final MapCodec<BurningTombFeature> CODEC = MapCodec.unit(INSTANCE);
@@ -29,13 +34,30 @@ public record BurningTombFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
-		if (!level.getBlockState(origin.below()).isSolid()) {
-			return false;
+		int x0 = origin.getX() & ~15;
+		int z0 = origin.getZ() & ~15;
+		boolean placed = false;
+		// each tomb is built from the chunk holding its corner (Tombs: the server times their blasts by the same sites)
+		for (Tombs.Tomb t : Tombs.within(x0, z0, x0 + 15, z0 + 15)) {
+			if (t.x() < x0 || t.x() > x0 + 15 || t.z() < z0 || t.z() > z0 + 15) {
+				continue;
+			}
+			int spanX = t.alongX() ? Tombs.LENGTH : Tombs.WIDTH;
+			int spanZ = t.alongX() ? Tombs.WIDTH : Tombs.LENGTH;
+			int y = Integer.MIN_VALUE;
+			for (int[] c : new int[][]{{t.x(), t.z()}, {t.x() + spanX - 1, t.z()}, {t.x(), t.z() + spanZ - 1}, {t.x() + spanX - 1, t.z() + spanZ - 1}}) {
+				y = Math.max(y, level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, c[0], c[1]));
+			}
+			build(level, random, new BlockPos(t.x(), y, t.z()), t.alongX());
+			placed = true;
 		}
-		boolean alongX = random.nextBoolean();
+		return placed;
+	}
+
+	private static void build(WorldGenLevel level, RandomSource random, BlockPos origin, boolean alongX) {
 		boolean soul = random.nextInt(3) == 0;
-		int length = 5;
-		int width = 3;
+		int length = Tombs.LENGTH;
+		int width = Tombs.WIDTH;
 		BlockState wall = Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
 		BlockState cracked = Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
 		BlockState fuel = soul ? Blocks.SOUL_SOIL.defaultBlockState() : Blocks.NETHERRACK.defaultBlockState();
@@ -81,6 +103,5 @@ public record BurningTombFeature() implements Feature {
 				RandomizableContainer.setBlockEntityLootTable(level, random, pos.immutable(), LOOT);
 			}
 		}
-		return true;
 	}
 }

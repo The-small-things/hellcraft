@@ -36,18 +36,28 @@ import net.thesmallthings.hellcraft.client.render.boss.PhlegyasModel;
 import net.thesmallthings.hellcraft.client.render.boss.PhlegyasRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.PlutusModel;
 import net.thesmallthings.hellcraft.client.render.boss.PlutusRenderer;
+import net.thesmallthings.hellcraft.client.render.gen.CentaurAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.CentaurMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CerberusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CoinMesh;
 import net.thesmallthings.hellcraft.client.render.gen.FerryMesh;
 import net.thesmallthings.hellcraft.client.render.gen.GluttonAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.GluttonMesh;
+import net.thesmallthings.hellcraft.client.render.gen.HarpyAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.HarpyMesh;
+import net.thesmallthings.hellcraft.client.render.gen.HereticAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.HereticMesh;
 import net.thesmallthings.hellcraft.client.render.gen.HoarderMesh;
 import net.thesmallthings.hellcraft.client.render.gen.LoversAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.LoversMesh;
+import net.thesmallthings.hellcraft.client.render.gen.MimicAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.MimicMesh;
 import net.thesmallthings.hellcraft.client.render.gen.MinosMesh;
 import net.thesmallthings.hellcraft.client.render.gen.PhlegyasMesh;
 import net.thesmallthings.hellcraft.client.render.gen.PlutusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ShadeMesh;
+import net.thesmallthings.hellcraft.client.render.gen.ThiefAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.ThiefMesh;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulMesh;
 import net.thesmallthings.hellcraft.client.render.monster.HoarderModel;
@@ -142,6 +152,28 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.WRATHFUL, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("wrathful"),
 				new SoulMonsterModel.Anims(WrathfulAnimations.IDLE, WrathfulAnimations.WALK, WrathfulAnimations.ATTACK, WrathfulAnimations.HURT,
 						WrathfulAnimations.DEATH, WrathfulAnimations.RAGE), "wrathful", 0.5f, 255, "body", "head"));
+		// Lower Hell's: the heretics out of their tombs, the centaurs of the river of blood, the harpies of the Wood
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("heretic"), HereticMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.HERETIC, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("heretic"),
+				new SoulMonsterModel.Anims(HereticAnimations.IDLE, HereticAnimations.WALK, HereticAnimations.ATTACK, HereticAnimations.HURT,
+						HereticAnimations.DEATH, HereticAnimations.RISE), "heretic", 0.5f, 255, "body", "head"));
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("centaur"), CentaurMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.CENTAUR, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("centaur"),
+				new SoulMonsterModel.Anims(CentaurAnimations.IDLE, CentaurAnimations.WALK, CentaurAnimations.ATTACK, CentaurAnimations.HURT,
+						CentaurAnimations.DEATH, CentaurAnimations.LOOK), "centaur", 1.0f, 255, "horse", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("harpy"), HarpyMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.HARPY, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("harpy"),
+				new SoulMonsterModel.Anims(HarpyAnimations.IDLE, null, HarpyAnimations.ATTACK, HarpyAnimations.HURT, HarpyAnimations.DEATH,
+						HarpyAnimations.SHRIEK), "harpy", 0.4f, 255, "body", "head"));
+		// Malebolge's: mimics (no glow: nothing gives them away but their breathing) and thieves
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("mimic"), MimicMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.MIMIC, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("mimic"),
+				new SoulMonsterModel.Anims(MimicAnimations.IDLE, MimicAnimations.WALK, MimicAnimations.ATTACK, MimicAnimations.HURT,
+						MimicAnimations.DEATH, MimicAnimations.BREATHE), "mimic", 0.4f, 255));
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("thief"), ThiefMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.THIEF, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("thief"),
+				new SoulMonsterModel.Anims(ThiefAnimations.IDLE, ThiefAnimations.WALK, ThiefAnimations.ATTACK, ThiefAnimations.HURT,
+						ThiefAnimations.DEATH, ThiefAnimations.FLEE), "thief", 0.5f, 255, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(HoarderModel.LAYER, HoarderMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HOARDER, HoarderRenderer::new);
 		ModelLayerRegistry.registerModelLayer(ShadeModel.LAYER, ShadeMesh::createLayer);

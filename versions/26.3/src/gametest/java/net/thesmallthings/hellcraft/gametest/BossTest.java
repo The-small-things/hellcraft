@@ -97,21 +97,28 @@ public class BossTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * The upper circles' monsters in a row (screenshots monsters_*): the lovers, a glutton, a wrathful soul and a
-	 * hoarder, at rest, then attacking, then each with its special (the glutton rising from the mud, the wrathful
-	 * beating its chest).
+	 * Hell's own monsters in rows (screenshots monsters_* and lower_*): first the upper circles' (the lovers, a glutton,
+	 * a wrathful soul and a hoarder), then the lower circles' (a heretic, a centaur, a harpy, a mimic and a thief); each
+	 * row at rest, then attacking, then with its specials (a glutton rising from the mud, a centaur's long look round,
+	 * a mimic's breath...).
 	 */
 	private static void monsters(ClientGameTestContext context, TestSingleplayerContext world) {
-		String[] kinds = {"lovers", "glutton", "wrathful", "hoarder"};
+		lineup(context, world, "monsters_", new String[]{"lovers", "glutton", "wrathful", "hoarder"}, "lovers", 4, HellEntities.WRATHFUL);
+		lineup(context, world, "lower_", new String[]{"heretic", "centaur", "harpy", "mimic", "thief"}, "harpy", 4, HellEntities.THIEF);
+	}
+
+	private static void lineup(ClientGameTestContext context, TestSingleplayerContext world, String prefix, String[] kinds, String flyer, int gap,
+							   net.minecraft.world.entity.EntityType<?> last) {
+		double first = -gap * (kinds.length - 1) / 2.0;
 		for (int i = 0; i < kinds.length; i++) {
 			world.getServer().runCommand(String.format(java.util.Locale.ROOT,
-					"execute at Player0 run summon hellcraft:%s ~%d ~%s ~120 {NoAI:1b,Rotation:[180f,0f],Silent:1b,Tags:[\"lineup\"]}",
-					kinds[i], -6 + i * 4, kinds[i].equals("lovers") ? "1.5" : "0"));
+					"execute at Player0 run summon hellcraft:%s ~%.1f ~%s ~120 {NoAI:1b,Rotation:[180f,0f],Silent:1b,Tags:[\"lineup\"]}",
+					kinds[i], first + i * gap, kinds[i].equals(flyer) ? "1.5" : "0"));
 		}
-		world.getConnection().waitForClientboundEntityUpdates(HellEntities.WRATHFUL);
+		world.getConnection().waitForClientboundEntityUpdates(last);
 		world.getServer().runCommand("execute at Player0 run tp Player0 ~ ~2.5 ~111 0 8");
 		context.waitTicks(30);
-		context.takeScreenshot("monsters_lineup");
+		context.takeScreenshot(prefix + "lineup");
 		world.getServer().runOnServer(server -> {
 			for (var e : server.overworld().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
 					server.getPlayerList().getPlayerByName("Player0").getBoundingBox().inflate(30), m -> m.entityTags().contains("lineup"))) {
@@ -119,7 +126,7 @@ public class BossTest implements FabricClientGameTest {
 			}
 		});
 		context.waitTicks(8);
-		context.takeScreenshot("monsters_attack");
+		context.takeScreenshot(prefix + "attack");
 		context.waitTicks(30);
 		world.getServer().runOnServer(server -> {
 			for (var e : server.overworld().getEntitiesOfClass(SoulMonster.class,
@@ -128,8 +135,10 @@ public class BossTest implements FabricClientGameTest {
 			}
 		});
 		context.waitTicks(16);
-		context.takeScreenshot("monsters_special");
+		context.takeScreenshot(prefix + "special");
 		world.getServer().runCommand("kill @e[tag=lineup]");
+		world.getServer().runCommand("execute at Player0 run tp Player0 ~ ~-2.5 ~-111 0 8");
+		context.waitTicks(40);
 	}
 
 	/** Phlegyas's model and animations (screenshots phlegyas_*), as Minos's, and his ferry beside him. */

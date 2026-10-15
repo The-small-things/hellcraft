@@ -28,9 +28,12 @@ import net.thesmallthings.hellcraft.hazard.Ambience;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.hazard.Frauds;
 import net.thesmallthings.hellcraft.hazard.Hoarders;
 import net.thesmallthings.hellcraft.hazard.LayerMonsters;
 import net.thesmallthings.hellcraft.hazard.LayerRules;
+import net.thesmallthings.hellcraft.hazard.LowerMonsters;
+import net.thesmallthings.hellcraft.hazard.LowerRules;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
@@ -115,6 +118,9 @@ public class HellcraftMod implements ModInitializer {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			CircleHazards.tick(server);
 			LayerRules.tick(server);
+			LowerRules.tick(server);
+			LowerMonsters.tick(server);
+			Frauds.tick(server);
 			Hoarders.tick(server);
 			LayerMonsters.tick(server);
 			Shades.tick(server);
@@ -137,7 +143,6 @@ public class HellcraftMod implements ModInitializer {
 			WhiteRoom.tick(server);
 			Bounty.tick(server);
 			Fairness.tick(server);
-			MobEmpowerment.tick();
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			CircleHazards.forget(handler.getPlayer());

@@ -126,7 +126,8 @@
     ],
     [
       "hellcraft:altar_ruin",
-      "minecraft:desert_well"
+      "minecraft:desert_well",
+      "hellcraft:sand_rock"
     ],
     [],
     [

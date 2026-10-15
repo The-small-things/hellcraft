@@ -48,6 +48,10 @@ public class HellState extends SavedData {
 	public final Map<String, Long> guardianNext = new HashMap<>();
 	/** Virgil's Rests already built: site id -> the height of its floor. */
 	public final Map<String, Integer> shrines = new HashMap<>();
+	/** Malebolge's fake Rests already built: site id -> the height of its floor (Frauds). */
+	public final Map<String, Integer> fakeRests = new HashMap<>();
+	/** Malebolge's lies that are spent: mimics killed and fake Rests whose trap has sprung (FraudSites ids). */
+	public final Set<String> fraudSpent = new HashSet<>();
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
 	public boolean arenaSealed;
 	public int luciferDefeats;
@@ -101,8 +105,8 @@ public class HellState extends SavedData {
 		/** Where a Soul Anchor will bring this soul back (set as they die, spent as they respawn). */
 		@Nullable
 		public GlobalSpot anchorAt;
-		/** Circle hazards whose counter this soul has been told about (a bit per circle). */
-		public int hints;
+		/** Virgil's one-time tips this soul has had (a bit per tip; see CircleHazards.hintOnce). */
+		public long hints;
 		/** Starter kit version this soul has received. */
 		public int kit;
 		/** Newcomer protection left, in ticks of play (Fairness). */
@@ -219,7 +223,7 @@ public class HellState extends SavedData {
 			if (s.anchorAt != null) {
 				st.put("anchor", s.anchorAt.save());
 			}
-			st.putInt("hints", s.hints);
+			st.putLong("hints", s.hints);
 			st.putInt("kit", s.kit);
 			st.putInt("grace", s.graceTicks);
 			st.putLong("cain", s.cainUntil);
@@ -260,6 +264,12 @@ public class HellState extends SavedData {
 		CompoundTag shrineTag = new CompoundTag();
 		shrines.forEach(shrineTag::putInt);
 		tag.put("shrines", shrineTag);
+		CompoundTag fakeTag = new CompoundTag();
+		fakeRests.forEach(fakeTag::putInt);
+		tag.put("fakeRests", fakeTag);
+		CompoundTag spentTag = new CompoundTag();
+		fraudSpent.forEach(id -> spentTag.putBoolean(id, true));
+		tag.put("fraudSpent", spentTag);
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
@@ -310,7 +320,7 @@ public class HellState extends SavedData {
 			s.reviveAt = GlobalSpot.load(st, "revive");
 			s.vigil = GlobalSpot.load(st, "vigil");
 			s.anchorAt = GlobalSpot.load(st, "anchor");
-			s.hints = st.getIntOr("hints", 0);
+			s.hints = st.getLongOr("hints", 0L);
 			s.kit = st.getIntOr("kit", 0);
 			s.graceTicks = st.getIntOr("grace", 0);
 			s.cainUntil = st.getLongOr("cain", 0L);
@@ -348,6 +358,11 @@ public class HellState extends SavedData {
 		for (String key : shrineTag.keySet()) {
 			state.shrines.put(key, shrineTag.getIntOr(key, 0));
 		}
+		CompoundTag fakeTag = tag.getCompoundOrEmpty("fakeRests");
+		for (String key : fakeTag.keySet()) {
+			state.fakeRests.put(key, fakeTag.getIntOr(key, 0));
+		}
+		state.fraudSpent.addAll(tag.getCompoundOrEmpty("fraudSpent").keySet());
 		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);
