@@ -26,6 +26,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.Carrier;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
@@ -111,7 +112,10 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 		carrier.landing = landing;
 		carrier.snapTo(home.x, home.y, home.z, (float) Math.toDegrees(angle) + 90.0f, 0.0f);
 		carrier.setCustomName(Component.literal("Geryon"));
-		level.addFreshEntity(carrier);
+		if (level.addFreshEntity(carrier)) {
+			HellcraftMod.LOGGER.info("Geryon perches at the brink at {} {} {}, and lands on the first ridge at {} {} {}", (int) home.x, (int) home.y,
+					(int) home.z, (int) landing.x, (int) landing.y, (int) landing.z);
+		}
 	}
 
 	private static int surface(ServerLevel level, double x, double z) {

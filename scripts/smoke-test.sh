@@ -418,9 +418,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     fi
     if [ "$g" = geryon ]; then
       # beaten, Geryon stays at the brink to fly souls down
-      tamed=$(rcon "execute if entity @e[type=hellcraft:geryon_carrier]" || true)
-      echo "Tamed Geryon: $tamed"
-      echo "$tamed" | grep -q "Test passed" || { echo "Geryon did not stay to carry souls down"; exit 1; }
+      # (by the log: the lair's chunks unload once the fight is over, so a selector can miss him)
+      sleep 1
+      docker logs "$NAME" > "$LOG" 2>&1 || true
+      grep "Geryon perches at the brink" "$LOG" || { echo "Geryon did not stay to carry souls down"; exit 1; }
     fi
     rcon "kill @e[tag=smoke_dummy]"
   done

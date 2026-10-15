@@ -514,7 +514,8 @@ public class MapTest implements FabricClientGameTest {
 	 * Wood's trees call; a fake Rest of Malebolge, and its trap springing.
 	 */
 	private static void lowerRules(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
-		server.runCommand("gamemode creative Player0");
+		// a spectator hangs where it's put (a creative player would drop to the ground)
+		server.runCommand("gamemode spectator Player0");
 		context.runOnClient(client -> {
 			if (!client.gui.hud.isHidden()) {
 				client.gui.hud.toggle();
@@ -621,6 +622,7 @@ public class MapTest implements FabricClientGameTest {
 		int floor = server.computeOnServer(s -> HellState.get(s).fakeRests.get(fake.id()));
 		// along the ridge (round the circle), so the walls of the ditches either side don't block the view
 		double tangent = Math.atan2(fake.z(), fake.x()) + Math.PI / 2;
+		server.runCommand("gamemode spectator Player0");
 		camera(server, fake.x() + Math.cos(tangent) * 15, fake.z() + Math.sin(tangent) * 15, 12, fake.x(), floor, fake.z());
 		context.waitTicks(10);
 		connection.waitForChunksRender();
