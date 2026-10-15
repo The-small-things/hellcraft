@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.phys.AABB;
@@ -23,8 +24,12 @@ import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.LayerCard;
 import net.thesmallthings.hellcraft.client.nav.MapOfHellScreen;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
+import net.thesmallthings.hellcraft.entity.Ferry;
 import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 import net.thesmallthings.hellcraft.entity.npc.Shade;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
@@ -98,6 +103,9 @@ public class MapTest implements FabricClientGameTest {
 			setPieces(context, server, connection);
 			layerRules(context, server, connection);
 			minosFight(context, server, connection);
+			cerberusFight(context, server, connection);
+			plutusFight(context, server, connection);
+			phlegyasFight(context, server, connection);
 		}
 	}
 
@@ -107,51 +115,152 @@ public class MapTest implements FabricClientGameTest {
 	 * sentence and the red line of his coil.
 	 */
 	private static void minosFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		guardianFight(context, server, connection, Guardian.MINOS, "fight_", MinosAnim.INTRO.at("roar"), MinosAnim.INTRO.ticks, new String[][]{
+				{"strike", String.valueOf(MinosAnim.STRIKE.at("flash") + 5)},
+				{"tail", String.valueOf(MinosAnim.TAIL.at("sweep") - 6)},
+				{"sentence", "30"},
+				{"coil", String.valueOf(MinosAnim.GRAB.at("lunge") - 4)},
+		});
+		context.setScreen(() -> JournalScreen.at(1));
+		context.waitTicks(5);
+		context.takeScreenshot("fight_codex");
+		context.setScreen(() -> null);
+	}
+
+	/**
+	 * Cerberus's fight in his lair (screenshots cerberus_fight_*): his entrance out of the mud, then a bite (white),
+	 * Three Maws (a red cone), Filth (red circles) and his Howl (a purple ring), each as its mark fills.
+	 */
+	private static void cerberusFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		guardianFight(context, server, connection, Guardian.CERBERUS, "cerberus_fight_", CerberusAnim.INTRO.at("roar"), CerberusAnim.INTRO.ticks,
+				new String[][]{
+						{"bite", String.valueOf(CerberusAnim.BITE_MID.at("flash") + 4)},
+						{"maws", String.valueOf(CerberusAnim.MAWS.at("maw1") - 6)},
+						{"filth", String.valueOf(CerberusAnim.FILTH.at("spew") + 6)},
+						{"howl", String.valueOf(CerberusAnim.HOWL.at("howl") - 6)},
+				});
+	}
+
+	/**
+	 * Plutus's fight in the Mint (screenshots plutus_fight_*): his entrance, his fist (white), the gold rain (red
+	 * circles), his lunge (a red line) and Pape Satàn (a purple ring), then the great coins of his fury.
+	 */
+	private static void plutusFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		guardianFight(context, server, connection, Guardian.PLUTUS, "plutus_fight_", PlutusAnim.INTRO.at("roar"), PlutusAnim.INTRO.ticks,
+				new String[][]{
+						{"fist", String.valueOf(PlutusAnim.FIST.at("flash") + 4)},
+						{"gold", String.valueOf(PlutusAnim.GOLD.at("rain") - 8)},
+						{"lunge", String.valueOf(PlutusAnim.LUNGE.at("leap") - 4)},
+						{"pape", String.valueOf(PlutusAnim.PAPE.at("shriek") - 6)},
+						{"rage", String.valueOf(PlutusAnim.PHASE.at("roar") + 6)},
+						{"coins", "40"},
+				});
+	}
+
+	/**
+	 * Phlegyas's fight on his landing in the Fen (screenshots phlegyas_fight_*): his rise from the pool, the oar (a
+	 * white line), the sweep (a purple ring), the wave (a red ring) and the grab (a red circle), his fury and the
+	 * sullen's hands. Beaten, he leaves his ferry at the landing: ride it to the Walls of Dis (ferry_*), which must set
+	 * the player down on the east road by the gate.
+	 */
+	private static void phlegyasFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		guardianFight(context, server, connection, Guardian.PHLEGYAS, "phlegyas_fight_", PhlegyasAnim.INTRO.at("roar"), PhlegyasAnim.INTRO.ticks,
+				new String[][]{
+						{"oar", String.valueOf(PhlegyasAnim.OAR.at("flash") + 4)},
+						{"sweep", String.valueOf(PhlegyasAnim.SWEEP.at("sweep") - 6)},
+						{"wave", String.valueOf(PhlegyasAnim.WAVE.at("slam"))},
+						{"grab", String.valueOf(PhlegyasAnim.GRAB.at("grab") - 8)},
+						{"rage", String.valueOf(PhlegyasAnim.PHASE.at("roar") + 6)},
+						{"hands", "24"},
+				});
+		// his ferry waits at the landing: board it
+		int lx = Fen.LANDING_X;
+		int lz = Fen.LANDING_Z;
+		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d %d %d", lx - 40, lz - 40, lx + 40, lz + 40));
+		context.waitTicks(20);
+		boolean docked = server.computeOnServer(s -> !s.overworld().getEntities(HellEntities.FERRY, f -> true).isEmpty());
+		if (!docked) {
+			throw new AssertionError("beaten, Phlegyas left no ferry at his landing");
+		}
+		server.runCommand("gamemode survival Player0");
+		server.runCommand("effect give Player0 minecraft:resistance 120 4 true");
+		server.computeOnServer(s -> {
+			Ferry ferry = s.overworld().getEntities(HellEntities.FERRY, f -> true).getFirst();
+			ServerPlayer player = s.getPlayerList().getPlayerByName("Player0");
+			player.teleportTo(ferry.getX(), ferry.getY() + 1, ferry.getZ());
+			return ferry.interact(player, InteractionHand.MAIN_HAND, ferry.position());
+		});
+		context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
+		context.waitTicks(200);
+		connection.waitForChunksRender();
+		context.takeScreenshot("ferry_ride");
+		double wall = InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS);
+		context.waitFor(client -> !client.player.isPassenger() && Math.hypot(client.player.getX() - (wall + 6), client.player.getZ()) < 6, 900);
+		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
+		server.runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 90 5");
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("ferry_arrived");
+		server.runCommand("effect clear Player0");
 		server.runCommand("gamemode spectator Player0");
-		int x = Guardian.MINOS.lairColumn().getX();
-		int z = Guardian.MINOS.lairColumn().getZ();
-		// stand back from the lair (its floor is level), looking down at where Minos will rise and his marks will show
+		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d %d %d", lx - 40, lz - 40, lx + 40, lz + 40));
+	}
+
+	/**
+	 * A guardian's fight in its lair against a dummy: its entrance (shot at the roar), each attack after the given
+	 * number of ticks, and its death; meeting it must open its Codex entry.
+	 */
+	private static void guardianFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection,
+									  Guardian guardian, String prefix, int roar, int introTicks, String[][] shots) {
+		server.runCommand("gamemode spectator Player0");
+		int x = guardian.lairColumn().getX();
+		int z = guardian.lairColumn().getZ();
+		// stand back from the lair (its floor is level), looking down at where it will rise and its marks will show
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", x, z));
 		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z));
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d -20 38", x - 6, ground + 13, z - 17));
 		context.waitTicks(10);
 		connection.waitForChunksRender();
-		String out = server.computeOnServer(s -> GuardianManager.summon(s, Guardian.MINOS));
+		String out = server.computeOnServer(s -> GuardianManager.summon(s, guardian));
 		if (!out.contains("awakens")) {
-			throw new AssertionError("Minos could not be summoned: " + out);
+			throw new AssertionError(guardian.id() + " could not be summoned: " + out);
 		}
 		server.runCommand(String.format(Locale.ROOT, "summon minecraft:villager %d %d %d {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"fight_dummy\"]}",
 				x - 2, ground, z - 6));
-		context.waitTicks(MinosAnim.INTRO.at("roar") + 6);
-		context.takeScreenshot("fight_intro");
-		context.waitTicks(MinosAnim.INTRO.ticks - MinosAnim.INTRO.at("roar"));
-		String[][] shots = {
-				{"strike", String.valueOf(MinosAnim.STRIKE.at("flash") + 5)},
-				{"tail", String.valueOf(MinosAnim.TAIL.at("sweep") - 6)},
-				{"sentence", "30"},
-				{"coil", String.valueOf(MinosAnim.GRAB.at("lunge") - 4)},
-		};
+		context.waitTicks(roar + 6);
+		context.takeScreenshot(prefix + "intro");
+		context.waitTicks(introTicks - roar);
 		for (String[] shot : shots) {
-			String used = server.computeOnServer(s -> GuardianManager.attack(Guardian.MINOS, shot[0]));
+			if (shot[0].equals("rage")) {
+				// bring it to under half its health: it turns to its fury
+				server.computeOnServer(s -> {
+					LivingEntity body = s.overworld().getEntitiesOfClass(LivingEntity.class, new AABB(x - 40, -64, z - 40, x + 40, 320, z + 40),
+							e -> e.entityTags().contains("hellcraft_guardian_body")).getFirst();
+					body.setHealth(body.getMaxHealth() * 0.45f);
+					return true;
+				});
+				context.waitTicks(Integer.parseInt(shot[1]));
+				context.takeScreenshot(prefix + "rage");
+				context.waitTicks(40);
+				continue;
+			}
+			String used = server.computeOnServer(s -> GuardianManager.attack(guardian, shot[0]));
 			if (!used.contains(" uses ")) {
-				throw new AssertionError("Minos could not use " + shot[0] + ": " + used);
+				throw new AssertionError(guardian.id() + " could not use " + shot[0] + ": " + used);
 			}
 			context.waitTicks(Integer.parseInt(shot[1]));
-			context.takeScreenshot("fight_" + shot[0]);
+			context.takeScreenshot(prefix + shot[0]);
 			context.waitTicks(80);
 		}
-		server.computeOnServer(s -> GuardianManager.slay(Guardian.MINOS));
+		server.computeOnServer(s -> GuardianManager.slay(guardian));
 		context.waitTicks(30);
-		context.takeScreenshot("fight_death");
+		context.takeScreenshot(prefix + "death");
 		server.runCommand("kill @e[tag=fight_dummy]");
-		// meeting him opened his Codex entry, first after "Where you are"
-		if (!context.computeOnClient(client -> ClientNav.codex().stream().anyMatch(e -> e.id().equals("minos")))) {
-			throw new AssertionError("meeting Minos didn't open his Codex entry");
+		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d", x, z));
+		if (!context.computeOnClient(client -> ClientNav.codex().stream().anyMatch(e -> e.id().equals(guardian.id())))) {
+			throw new AssertionError("meeting " + guardian.id() + " didn't open its Codex entry");
 		}
-		context.setScreen(() -> JournalScreen.at(1));
-		context.waitTicks(5);
-		context.takeScreenshot("fight_codex");
-		context.setScreen(() -> null);
 	}
 
 	/**

@@ -20,6 +20,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.util.Signs;
+import net.thesmallthings.hellcraft.world.Fen;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 
@@ -123,6 +124,13 @@ public final class GuardianManager {
 			if (g.inNether() || FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
 				continue;
 			}
+			if (g.wakesByBeacon()) {
+				// Phlegyas comes when the east watchtower's twin beacons are lit
+				if (Fen.beaconsLit(level, 0)) {
+					start(level, g, false);
+				}
+				continue;
+			}
 			for (ServerPlayer p : level.players()) {
 				BlockPos column = g.lairColumn();
 				double dx = p.getX() - (column.getX() + 0.5);
@@ -179,6 +187,16 @@ public final class GuardianManager {
 		}
 		start(level, g, true);
 		return g.title + " awakens at " + lair(level, g).toShortString() + ".";
+	}
+
+	/** True while this guardian is awake. */
+	public static boolean awake(Guardian g) {
+		return FIGHTS.containsKey(g);
+	}
+
+	/** True while this guardian sleeps after being beaten (or is otherwise not ready to wake). */
+	public static boolean resting(ServerLevel level, Guardian g) {
+		return level.getGameTime() < HellState.get(level.getServer()).guardianNext.getOrDefault(g.id(), 0L);
 	}
 
 	public static String slay(Guardian g) {

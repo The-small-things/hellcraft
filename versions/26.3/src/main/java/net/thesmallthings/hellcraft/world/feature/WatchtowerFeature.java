@@ -62,9 +62,8 @@ public record WatchtowerFeature() implements Feature {
 		return Direction.getApproximateNearest(Math.sin(a), 0, -Math.cos(a));
 	}
 
-	/** The tower's door step: the shore, or a block above the water. */
 	public static int base(int[] t) {
-		return Math.max((int) Math.round(InfernoGeometry.baseHeight(t[0], t[1])) + 1, InfernoGeometry.fluidLevel(t[0], t[1]) + 1);
+		return Fen.base(t);
 	}
 
 	private static void build(WorldGenLevel level, RandomSource random, int k, int[] t, int x0, int z0) {

@@ -15,6 +15,8 @@ public enum Guardian {
 	MINOS("Minos", "Judge of the Damned", 2425, ChatFormatting.DARK_PURPLE, 300, 7.0f, MinosFight::new),
 	CERBERUS("Cerberus", "the Great Worm", 2100, ChatFormatting.DARK_GREEN, 350, 5.0f, CerberusFight::new),
 	PLUTUS("Plutus", "the Great Enemy", 1800, ChatFormatting.GOLD, 300, 5.0f, PlutusFight::new),
+	/** In the Fen of Styx, at a landing beside the east watchtower: lighting its twin beacons calls him (Fen). */
+	PHLEGYAS("Phlegyas", "the Ferryman of the Styx", 1605, ChatFormatting.DARK_AQUA, 320, 7.0f, PhlegyasFight::new),
 	MINOTAUR("The Minotaur", "Infamy of Crete", 885, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
 	GERYON("Geryon", "Image of Fraud", 830, ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
 	/** Not on the road: at the Great Forge of Dis, in the Nether (GreatForge). */
@@ -47,6 +49,11 @@ public enum Guardian {
 	/** The item model drawn for this guardian (assets/hellcraft/models/item/guardian_*.json). */
 	String model() {
 		return "guardian_" + id();
+	}
+
+	/** True for Phlegyas, who comes when the east watchtower's beacons are lit rather than when someone walks in. */
+	public boolean wakesByBeacon() {
+		return this == PHLEGYAS;
 	}
 
 	/** True for the guardian of the Nether (Vulcan), whose lair is the Great Forge. */

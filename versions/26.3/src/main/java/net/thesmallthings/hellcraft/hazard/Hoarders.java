@@ -16,6 +16,7 @@ import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.monster.Hoarder;
+import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Shrines;
@@ -111,6 +112,7 @@ public final class Hoarders {
 			}
 			h.setTarget(p);
 			level.addFreshEntity(h);
+			MapSync.unlockCodex(p, "hoarder");
 			level.playSound(null, x, y, z, SoundEvents.ARMOR_EQUIP_GOLD.value(), SoundSource.HOSTILE, 1.0f, 0.6f);
 			CircleHazards.hintOnce(p, HINT, "Gold draws the hoarders: the more you carry, the more come, and they steal it. "
 					+ "Kill them to get it back, or stash your gold (an ender chest) and they lose interest.");

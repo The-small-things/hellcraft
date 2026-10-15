@@ -64,6 +64,8 @@ public class HellConfig {
 	/** Greed: each this much more draws one more hoarder, up to hoardersMax. */
 	public int hoarderGoldPerExtra = 24;
 	public int hoardersMax = 6;
+	/** Each upper circle's own monster comes out near souls passing through: lovers in Lust, gluttons, the wrathful. */
+	public boolean layerMonsters = true;
 	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
 	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */

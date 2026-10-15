@@ -75,7 +75,7 @@ The world is a disc 7,000 blocks across, with the world border at radius 3,500 (
 | **Limbo** | I | The Grey Meadow (3.0): pale grass, calcite and birch in a mist. The only villages in Hell, trail ruins, and the **Noble Castle** on the east road ([below](#the-noble-castle-30)). No fighting other players. | none: Limbo is only longing |
 | **Lust** | II | The Storm Canyons: jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. Overhead, the souls whirl in vast flocks like starlings (3.0). | The wind is a road: white streams carry you down the circle |
 | **Gluttony** | III | The Mire: mud, filthy pools and endless rain. Rotting giant trees (some fallen), bloated fungus, and sunken feast tables with a barrel of leftovers at the head (3.0). Hoglins and slimes. | The mud swallows whoever stands still |
-| **Greed** | IV | The Counting House: blackstone, gilded blackstone and raw gold, heaped into hills of coin. Vaults with their round doors ajar (chests of gold, emeralds and diamonds) and giant scales tipped toward the gold (3.0). Piglins, buried bastions. | Gold draws the hoarders |
+| **Greed** | IV | The Counting House: blackstone, gilded blackstone and raw gold, heaped into hills of coin. Vaults with their round doors ajar (chests of gold, emeralds and diamonds) and giant scales tipped toward the gold; now and then a great coin as tall as a house comes rolling across, down a red line (get off it) (3.0). Piglins, buried bastions. | Gold draws the hoarders |
 | **Wrath** | V | The Fen of Styx: a dark marsh in fog, walled with reeds, crossed by plank roads; the city of Dis glows red through the fog toward the centre. A watchtower with twin beacons stands on the shore beside each road (3.0). Drowned, and vindicators with Strength. | The sullen lurk under the water |
 | Walls of Dis | – | A ring wall of blackstone brick with burning towers and 4 gates. | – |
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
@@ -114,9 +114,9 @@ Halfway across Limbo the east road runs through the **Noble Castle**: "seven tim
 | Ovid | the hoarders | Slow Falling (for Lust's wind), Water Breathing (for the Styx) |
 | Lucan | Phlegyas | shield, bow, arrows |
 | Aristotle | Minos | ender chest (to stash gold from the hoarders), spyglass |
-| Euclid | – | ladders, torches, lanterns |
-| Hippocrates | – | Healing, Regeneration, a golden apple |
-| Hector | – | iron armour |
+| Euclid | the lovers | ladders, torches, lanterns |
+| Hippocrates | the gluttons | Healing, Regeneration, a golden apple |
+| Hector | the wrathful | iron armour |
 | Saladin (alone, apart, by the outer wall) | – | saddle, iron horse armour, leads |
 
 ## Finding your way (3.0)
@@ -236,15 +236,18 @@ They protect like diamond, look like crimson plate with bone rivets and burning 
 
 ## The circle guardians (26.3)
 
-Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, five of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes. It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, six of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas comes when you light the east watchtower's beacons instead). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
 | Guardian | Lair | Attacks |
 |---|---|---|
 | **Minos**, Judge of the Damned (3.0: a real, animated body) | Lust, x 2425 | *The Claw* (white): a claw from on high; block it with a shield as it lands and he staggers, armour gone, for two seconds. *Tail of Judgement* (purple): his tail sweeps the ground in a full circle (jump it as it passes). *Sentence* (red): a red circle follows one player, stops, then the hurricane tears up the ground there (keep moving). *Coil* (a red line): his tail lunges along the line and squeezes whoever is still in it, until the others deal him 15 damage. At half health he rears up in fury: every player is sentenced at once and he attacks faster. |
-| **Cerberus**, the Great Worm | Gluttony, x 2100 | Hunts like a ravager. *Three Maws*: three bites in a cone in front (get behind him). *Filth*: puddles of mud that slow and sicken. *Howl*: stuns everyone close. |
-| **Plutus**, the Great Enemy | Greed, x 1800 | *Weight of Gold*: gold rain that hits harder the more gold you carry. *Lunge*: a golden line, then he hurls himself along it. *Pape Satàn*: a shriek that scatters and sickens. |
+| **Cerberus**, the Great Worm (3.0: a real, animated body with three heads) | Gluttony, x 2100 | He stalks you round the lair (and the mire's mud takes whoever stands still). *Bite* (white): one head flashes white and snaps; block it as it lands and he reels for two seconds. *Three Maws* (a red cone): all three bite in front of him one after another (get behind him). *Filth* (red circles): puddles that slow and sicken. *Howl* (a purple ring): can't be blocked; be out of it or be stunned. At half health he rears up and slams the ground (a red ring), and from then on charges along red lines. |
+| **Plutus**, the Great Enemy (3.0: a real, animated body, a golden wolf-headed banker) | Greed, x 1800 | He waddles after you. *The Fist* (white): block it as it lands and he reels. *Weight of Gold* (red circles): gold falls there, harder on whoever carries more gold (leave it behind). *Lunge* (a red line): he hurls himself along it. *Pape Satàn* (a purple ring): a shriek that can't be blocked; it scatters and sickens. At half health the Mint opens: great coins as tall as a house roll across the lair along red lines. |
+| **Phlegyas**, the Ferryman of the Styx (3.0: a real, animated body) | the Fen, a plank landing by the east watchtower, x 1605 | Light both beacons on top of the east watchtower (flint and steel) and he rises from the pool at the heart of his landing. Fight from the planks. *The Oar* (a white line): block it as it lands and he reels. *The Sweep* (a purple ring): his oar skims round the deck, jump it. *The Wave* (a red ring over the deck's outer part): get in close or be thrown into the Styx. *The Grab* (a red circle that follows you): he throws whoever is in it out into the marsh, where the sullen lurk. At half health the sullen's hands burst up through the deck in red circles. Beaten, he leaves his ferry at the landing. |
 | **The Minotaur**, Infamy of Crete | Burning Sands, x 885 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
 | **Geryon**, Image of Fraud | edge of the great cliff, x 830 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
+
+**The ferry (3.0).** Light both beacons on any watchtower of the Fen and Phlegyas's ferry comes gliding out of the fog to the water by the tower. Right-click it to board; a few seconds later it carries everyone aboard across the Styx and sets them down on the road by the gate of Dis (sneak to get off before it leaves). At the east tower the beacons call Phlegyas himself while he is there to fight; once he is beaten his ferry waits at his landing. The roads cross the Styx on causeways too: the ferry is a shortcut, never the only way.
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
@@ -461,6 +464,12 @@ Each circle torments the living (26.3: each has a counter, and the first time it
 | Burning Sands | Fire rains on the open sand (you see it falling first) | A roof, water, Fire Resistance, or leaving the sand |
 | Fraud | Some monsters are invisible | Watch for their swirl of particles (never creepers) |
 | Treachery | The ice freezes you | Leather armour, or a campfire, fire or lava within 4 blocks |
+
+**The upper circles' own monsters (3.0)**, each with a real, animated body, come out near pilgrims passing through (`layerMonsters`), and the first meeting opens their Codex page:
+- **Lust: the lovers**, two souls turning round each other on the wind. They circle over you and dive; their blow throws you up and away (mind the cliffs). They fly.
+- **Gluttony: the gluttons**, sunk in the mud until you come within a few blocks, then heaving themselves up. Their belly slam leaves you starving and sick, and they burst into a cloud of filth when they die.
+- **Greed: the hoarders** (see the Greed rule above).
+- **Wrath: the wrathful**, muddy brawlers in packs of three who fight anything near them, each other included. Hurt one and it rages, faster and harder, for a few seconds.
 
 The monsters are tougher the deeper you go (+3% health per circle on 26.3). On 26.3 the Vestibule, Acheron and Limbo also have sparse, solitary spawns like the Dark Wood, and the monster cap is vanilla's.
 

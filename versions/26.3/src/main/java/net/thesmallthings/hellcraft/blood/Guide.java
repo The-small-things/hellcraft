@@ -114,6 +114,12 @@ public final class Guide {
 				"The shades of the great poets and thinkers live there. Right-click one to talk: a tip, a page for your Codex, and trades for emeralds.",
 				"",
 				"Ovid sells potions for Lust's wind and the Styx; Aristotle an ender chest to keep gold from the hoarders."));
+		pages.add(page("THE FERRY",
+				"A watchtower stands on the Fen's shore beside each road, with two beacons on top.",
+				"",
+				"Light both (flint and steel) and a ferry comes out of the fog. Right-click it to board: it carries you across the Styx to the gate of Dis.",
+				"",
+				"At the east tower the beacons call Phlegyas, the ferryman, first: beat him on his landing and his ferry is yours."));
 		pages.add(page("VIRGIL'S RESTS",
 				"A safe camp beside each road in every circle: soul fire, a supply chest and a Blood Altar.",
 				"",

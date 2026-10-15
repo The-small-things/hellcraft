@@ -23,13 +23,36 @@ import net.thesmallthings.hellcraft.client.nav.MapTexture;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
 import net.thesmallthings.hellcraft.client.render.TestRigModel;
 import net.thesmallthings.hellcraft.client.render.TestRigRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.CerberusModel;
+import net.thesmallthings.hellcraft.client.render.boss.CerberusRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.CoinModel;
+import net.thesmallthings.hellcraft.client.render.boss.CoinRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.FerryModel;
+import net.thesmallthings.hellcraft.client.render.boss.FerryRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.MinosModel;
 import net.thesmallthings.hellcraft.client.render.boss.MinosRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.PhlegyasModel;
+import net.thesmallthings.hellcraft.client.render.boss.PhlegyasRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.PlutusModel;
+import net.thesmallthings.hellcraft.client.render.boss.PlutusRenderer;
+import net.thesmallthings.hellcraft.client.render.gen.CerberusMesh;
+import net.thesmallthings.hellcraft.client.render.gen.CoinMesh;
+import net.thesmallthings.hellcraft.client.render.gen.FerryMesh;
+import net.thesmallthings.hellcraft.client.render.gen.GluttonAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.GluttonMesh;
 import net.thesmallthings.hellcraft.client.render.gen.HoarderMesh;
+import net.thesmallthings.hellcraft.client.render.gen.LoversAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.LoversMesh;
 import net.thesmallthings.hellcraft.client.render.gen.MinosMesh;
+import net.thesmallthings.hellcraft.client.render.gen.PhlegyasMesh;
+import net.thesmallthings.hellcraft.client.render.gen.PlutusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ShadeMesh;
+import net.thesmallthings.hellcraft.client.render.gen.WrathfulAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.WrathfulMesh;
 import net.thesmallthings.hellcraft.client.render.monster.HoarderModel;
 import net.thesmallthings.hellcraft.client.render.monster.HoarderRenderer;
+import net.thesmallthings.hellcraft.client.render.monster.SoulMonsterModel;
+import net.thesmallthings.hellcraft.client.render.monster.SoulMonsterRenderer;
 import net.thesmallthings.hellcraft.client.render.npc.ShadeModel;
 import net.thesmallthings.hellcraft.client.render.npc.ShadeRenderer;
 import net.thesmallthings.hellcraft.entity.HellEntities;
@@ -89,6 +112,29 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.TEST_RIG, TestRigRenderer::new);
 		ModelLayerRegistry.registerModelLayer(MinosModel.LAYER, MinosMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MINOS, MinosRenderer::new);
+		ModelLayerRegistry.registerModelLayer(CerberusModel.LAYER, CerberusMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.CERBERUS, CerberusRenderer::new);
+		ModelLayerRegistry.registerModelLayer(PlutusModel.LAYER, PlutusMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.PLUTUS, PlutusRenderer::new);
+		ModelLayerRegistry.registerModelLayer(CoinModel.LAYER, CoinMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.ROLLING_COIN, CoinRenderer::new);
+		ModelLayerRegistry.registerModelLayer(PhlegyasModel.LAYER, PhlegyasMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.PHLEGYAS, PhlegyasRenderer::new);
+		ModelLayerRegistry.registerModelLayer(FerryModel.LAYER, FerryMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.FERRY, FerryRenderer::new);
+		// the upper circles' monsters: the lovers of Lust (see-through), the gluttons, the wrathful
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("lovers"), LoversMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.LOVERS, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("lovers"),
+				new SoulMonsterModel.Anims(LoversAnimations.IDLE, null, LoversAnimations.ATTACK, LoversAnimations.HURT, LoversAnimations.DEATH, null),
+				"lovers", 0.0f, 175));
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("glutton"), GluttonMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.GLUTTON, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("glutton"),
+				new SoulMonsterModel.Anims(GluttonAnimations.IDLE, GluttonAnimations.WALK, GluttonAnimations.ATTACK, GluttonAnimations.HURT,
+						GluttonAnimations.DEATH, GluttonAnimations.EMERGE), "glutton", 0.8f, 255, "body", "head"));
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("wrathful"), WrathfulMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.WRATHFUL, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("wrathful"),
+				new SoulMonsterModel.Anims(WrathfulAnimations.IDLE, WrathfulAnimations.WALK, WrathfulAnimations.ATTACK, WrathfulAnimations.HURT,
+						WrathfulAnimations.DEATH, WrathfulAnimations.RAGE), "wrathful", 0.5f, 255, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(HoarderModel.LAYER, HoarderMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HOARDER, HoarderRenderer::new);
 		ModelLayerRegistry.registerModelLayer(ShadeModel.LAYER, ShadeMesh::createLayer);

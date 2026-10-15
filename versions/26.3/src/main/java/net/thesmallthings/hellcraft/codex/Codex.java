@@ -35,11 +35,12 @@ public final class Codex {
 			List.of("The three-headed hound of the old stories, grown into a worm of the mire. He guards the gluttons in the "
 							+ "endless rain of the third circle, and barks over them until they wish they were deaf.",
 					"Virgil quieted him once with a fistful of earth thrown into his throats. You will need more than that."),
-			List.of("Each head fights on its own: watch the one that is about to strike.",
+			List.of("He hunts you round the lair, and the mud there swallows whoever stands still: keep moving.",
 					"White flash: a head bites. Block it with your shield and that head reels.",
 					"Red cone: all three maws at once, in front of him. Get behind him.",
 					"Red puddles: his filth. Keep off them: they slow and sicken you.",
-					"Purple ring: his howl. It can't be blocked: be out of its reach or be stunned."),
+					"Purple ring: his howl. It can't be blocked: be out of its reach or be stunned.",
+					"At half his health he rears up and slams the ground (a red ring), then charges along red lines. Step aside."),
 			"Cerberus, a monster fierce and strange, with three gullets doglike barketh over the people that are there submerged.",
 			"Inferno VI");
 
@@ -51,7 +52,8 @@ public final class Codex {
 					"Red circles: gold falls there. Step out.",
 					"White flash: his fist. Block it and he reels.",
 					"Red line: he hurls himself along it. Step aside.",
-					"Purple: \"Pape Satàn\", a shriek that can't be blocked. Get away from him before it sounds."),
+					"Purple ring: \"Pape Satàn\", a shriek that can't be blocked. Get out of the ring before it sounds.",
+					"At half his health the Mint opens: great coins roll across the lair along red lines. Get off the lines."),
 			"\"Pape Satàn, Pape Satàn aleppe!\" thus Plutus with his clucking voice began.",
 			"Inferno VII");
 
@@ -59,10 +61,13 @@ public final class Codex {
 			List.of("A king who burned a god's temple in his rage, now the boatman of the fifth circle. A beacon on the "
 							+ "watchtower calls him, and his ferry crosses the marsh to the burning walls of Dis.",
 					"He thinks every soul he carries is one more of the wrathful, and treats them so."),
-			List.of("Light the watchtower's beacon to call him.",
-					"White flash: his oar. Block it and he reels.",
-					"Red: the water churns where his oar will come down. Get out of it.",
-					"Beat him and his ferry is yours: it carries you across to the Walls of Dis."),
+			List.of("Light both beacons on top of the east watchtower to call him, and fight him from the planks of his landing.",
+					"White line: his oar. Block it as it lands and he reels.",
+					"Purple ring: his oar sweeps the deck. It can't be blocked: jump it.",
+					"Red ring: a wave washes over the deck's outer part. Get in close to him.",
+					"Red circle: he reaches for you and throws you into the Styx. Keep moving; if you're thrown, swim clear of the bubbles.",
+					"At half his health the sullen's hands burst up through the deck in red circles.",
+					"Beat him and his ferry is yours: board it to cross to the Walls of Dis. At the other watchtowers the beacons call it too."),
 			"\"Phlegyas, Phlegyas, thou criest out in vain for this once,\" my Lord said; \"longer thou shalt not have us than in passing o'er the mire.\"",
 			"Inferno VIII");
 
@@ -76,7 +81,34 @@ public final class Codex {
 			"Here saw I people, more than elsewhere, many, on one side and the other, with great howls, rolling weights forward by main force of chest.",
 			"Inferno VII");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, HOARDER);
+	public static final Entry LOVERS = new Entry("lovers", "THE LOVERS", "Souls of the Second Circle",
+			List.of("Those who gave themselves to love above all else, blown forever on the hurricane of Lust, two by two. "
+							+ "Dante meets a pair who will not be parted even here, and faints from pity.",
+					"The wind carries them; they never touch the ground."),
+			List.of("They circle over you, then dive. Their blow throws you hard, up and away: keep away from cliff edges.",
+					"A bow or a well-timed swing as they come in brings them down."),
+			"Love, that exempts no one beloved from loving, seized me with such delight in him, that, as thou seest, it doth not leave me yet.",
+			"Inferno V");
+
+	public static final Entry GLUTTON = new Entry("glutton", "THE GLUTTONS", "Souls of the Third Circle",
+			List.of("The gluttons lie sunk in the filthy mire under the cold, heavy rain, swollen past their shape.",
+					"They wait half-buried, and heave themselves up when something edible comes close."),
+			List.of("A hump in the mud may be one: it rises when you come within a few blocks.",
+					"Its belly slam leaves you starving and sick. Keep food at hand.",
+					"It bursts into a cloud of filth when it dies: step out of it."),
+			"The others lay all of them upon the ground, except a single one who sat up straight, as soon as he saw us passing.",
+			"Inferno VI");
+
+	public static final Entry WRATHFUL = new Entry("wrathful", "THE WRATHFUL", "Souls of the Fifth Circle",
+			List.of("The wrathful brawl forever in the mud of the Styx, naked and furious, tearing at each other with hands, "
+							+ "heads, chests and teeth.",
+					"They will fight anything, each other included, and come in packs."),
+			List.of("Hurt one and it flies into a rage: faster and harder for a few seconds. Back off, or finish it.",
+					"Lead a pack into another and they may turn on each other."),
+			"And they smote each other not only with the hand, but with the head and with the chest and with the feet, tearing each other piecemeal with their teeth.",
+			"Inferno VII");
+
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, HOARDER, LOVERS, GLUTTON, WRATHFUL);
 
 	@Nullable
 	public static Entry byId(String id) {

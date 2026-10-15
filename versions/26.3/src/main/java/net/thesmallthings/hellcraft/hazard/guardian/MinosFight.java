@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -402,50 +401,5 @@ final class MinosFight extends GuardianFight {
 		if (coiled != null) {
 			coilDamage += amount;
 		}
-	}
-
-	// ------------------------------------------------------------------ helpers
-
-	@Nullable
-	private static LivingEntity nearest(Mob body, List<LivingEntity> targets) {
-		LivingEntity best = null;
-		double bestD = Double.MAX_VALUE;
-		for (LivingEntity e : targets) {
-			double d = e.distanceToSqr(body);
-			if (d < bestD) {
-				bestD = d;
-				best = e;
-			}
-		}
-		return best;
-	}
-
-	/** Turns him to face someone at once. */
-	private static void face(Mob body, LivingEntity target) {
-		float yaw = yawToward(body, target);
-		body.setYRot(yaw);
-		body.setYBodyRot(yaw);
-		body.setYHeadRot(yaw);
-	}
-
-	/** Turns him toward someone, at most maxStep degrees this tick. */
-	private static void turnToward(Mob body, LivingEntity target, float maxStep) {
-		float want = yawToward(body, target);
-		float delta = Mth.wrapDegrees(want - body.getYRot());
-		float yaw = body.getYRot() + Mth.clamp(delta, -maxStep, maxStep);
-		body.setYRot(yaw);
-		body.setYBodyRot(yaw);
-		body.setYHeadRot(want);
-	}
-
-	private static float yawToward(Mob body, LivingEntity target) {
-		double dx = target.getX() - body.getX();
-		double dz = target.getZ() - body.getZ();
-		return (float) Math.toDegrees(Math.atan2(-dx, dz));
-	}
-
-	/** An angle in (-PI, PI]. */
-	private static double wrap(double a) {
-		return Math.atan2(Math.sin(a), Math.cos(a));
 	}
 }

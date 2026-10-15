@@ -83,6 +83,15 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `client/cutscene/CutscenePlayer` + the `CameraMixin`, `HudMixin`, `KeyboardInputMixin` and `MouseHandlerMixin`.
 - `codex/Codex`: the boss entries (who, how to fight, a quote); opened on meeting a boss (`MapSync.unlockCodex`) and
   read in the Journal.
+- Phase 3 (Upper Hell): `blood/Fairness` (sanctuary, newcomer grace, Cain's Mark); `hazard/LayerRules` (Lust's wind,
+  Gluttony's mud, Wrath's sullen; the geometry is `world/WindStreams` and `world/Sullen`, the client side
+  `client/layer/LayerFx`), `hazard/Hoarders` (Greed) and `hazard/LayerMonsters` (brings out the lovers, gluttons and
+  wrathful: `entity/monster/SoulMonster` and kin, one generic client renderer `render/monster/SoulMonsterRenderer`);
+  `world/NobleCastle` (+ `feature/NobleCastleFeature`, its own `noble_castle` biome) and `world/Shades` (the castle's
+  NPCs, `entity/npc/Shade`); `world/Fen` (watchtowers, boardwalks, Phlegyas's landing) and `world/Ferries` (beacons call
+  the ferry, `entity/Ferry`); set-piece features in `world/feature` (rotting trees, bloated fungus, feast tables, coin
+  hills, vaults, scales, reeds, boardwalks, watchtowers); `client/layer/SoulFlocks` (Lust's sky). Cerberus, Plutus
+  (with `entity/boss/RollingCoin`) and Phlegyas are real-bodied guardians like Minos.
 - `blood/HellItems`: the registered items (Blood Heart, Fragment, Bane, Vigil Candle, Soul Anchor) and the creative
   tab. Weapons, armour and relics are still vanilla items marked with custom_data (to convert later).
 - Client (`src/client/.../client/`): `HellcraftClient`, `BloodHud` + `mixin/HeartTypeMixin` (blood hearts and rank
@@ -122,9 +131,11 @@ circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a f
 proven on Minos) is built** (2026-10-14): the model pipeline (tools/art, tools/gen_bosses.py), Minos's real body
 and fight in the danger language, cutscenes (his entrance), the Codex, level lair arenas; the written guide book is
 gone (the Journal holds it). Not done: multi-part hitboxes (26.3 hard-wires them to the Ender Dragon; add them with
-the first boss that needs them), boss music (none sent yet). Both phases wait on a play session ("you've fought
-Minos and told me how it feels"). **Next: Phase 3** (Upper Hell: Limbo to Wrath, their set-pieces and bosses), after
-that feedback. Each phase ships as a test build for a play session before the next.
+the first boss that needs them), boss music (none sent yet). **Phase 3 (Upper Hell) is built** (2026-10-15): the fairness
+rules, a rule to play with in each upper circle, the Noble Castle and its shades, set-pieces in every circle, Cerberus,
+Plutus and Phlegyas on real bodies (Phlegyas is called by the east watchtower's beacons; any watchtower's beacons call
+his ferry to Dis), and a new monster per circle. Phases 1 to 3 wait on a play session. **Next: Phase 4** (Lower Hell),
+after that feedback. Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so

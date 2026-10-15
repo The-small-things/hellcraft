@@ -73,7 +73,7 @@ CANON = {
         "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river", "hellcraft:sugar_cane",
     ],
     TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "hellcraft:noble_castle", "hellcraft:boardwalk", "hellcraft:watchtower",
-          "minecraft:freeze_top_layer"],
+          "hellcraft:phlegyas_landing", "minecraft:freeze_top_layer"],
 }
 CANON[VEG].remove("minecraft:crimson_fungi_surface_placeholder")
 
@@ -320,7 +320,8 @@ BIOMES = {
                     grass_color=0x2A3A20, foliage_color=0x2A3A1A, grass_color_modifier="swamp"),
         particle=("minecraft:ash", 0.01), sound=CAVE_MOOD, music="music.overworld.swamp",
         features=["hellcraft:dis_wall", "hellcraft:reed_bed", "minecraft:trees_swamp", "minecraft:patch_waterlily", "minecraft:seagrass_swamp",
-                  "minecraft:brown_mushroom_swamp", "hellcraft:sugar_cane", "hellcraft:boardwalk", "hellcraft:watchtower"],
+                  "minecraft:brown_mushroom_swamp", "hellcraft:sugar_cane", "hellcraft:boardwalk", "hellcraft:watchtower",
+                  "hellcraft:phlegyas_landing"],
         monster=[spawn("drowned", 100, 2, 4), spawn("vindicator", 25, 1, 2), spawn("zombie", 60), spawn("witch", 10, 1, 1),
                  spawn("slime", 40)],
         creature=[spawn("frog", 6, 2, 4)],
@@ -502,6 +503,7 @@ CONFIGURED = {
     "watchtower": {"type": "hellcraft:watchtower", "config": {}},
     "boardwalk": {"type": "hellcraft:boardwalk", "config": {}},
     "reed_bed": {"type": "hellcraft:reed_bed", "config": {}},
+    "phlegyas_landing": {"type": "hellcraft:phlegyas_landing", "config": {}},
     "burning_tomb": {"type": "hellcraft:burning_tomb", "config": {}},
     "altar_ruin": {"type": "hellcraft:altar_ruin", "config": {}},
     "boulder_blackstone": {"type": "hellcraft:boulder", "config": {"state": block("blackstone")}},
@@ -551,6 +553,7 @@ PLACED = {
     "watchtower": placed("hellcraft:watchtower"),
     "boardwalk": placed("hellcraft:boardwalk"),
     "reed_bed": placed("hellcraft:reed_bed", count(2), IN_SQUARE, heightmap(), BIOME),
+    "phlegyas_landing": placed("hellcraft:phlegyas_landing"),
     "burning_tomb": placed("hellcraft:burning_tomb", rarity(3), IN_SQUARE, heightmap(), BIOME),
     "altar_ruin": placed("hellcraft:altar_ruin", rarity(600), IN_SQUARE, heightmap(), BIOME),
     "boulder_blackstone": placed("hellcraft:boulder_blackstone", count(1), IN_SQUARE, heightmap(), BIOME),

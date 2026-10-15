@@ -350,22 +350,34 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "Hoarder: $hoarder"
   echo "$hoarder" | grep -q "Test passed" || { echo "A hoarder could not be summoned"; exit 1; }
   rcon "kill @e[type=hellcraft:hoarder,tag=smoke_hoarder]" > /dev/null || true
+  # the upper circles' other monsters
+  for m in lovers glutton wrathful; do
+    rcon "summon hellcraft:$m 2165 200 1250 {NoAI:1b,Tags:[\"smoke_monster\"]}" > /dev/null
+    there=$(rcon "execute if entity @e[type=hellcraft:$m,tag=smoke_monster]" || true)
+    echo "$m: $there"
+    echo "$there" | grep -q "Test passed" || { echo "A $m could not be summoned"; exit 1; }
+  done
+  rcon "kill @e[tag=smoke_monster]" > /dev/null || true
+  # the Fen's ferry: lighting a watchtower's beacons calls it
+  ferry=$(rcon "hellcraft ferry test")
+  echo "$ferry"
+  echo "$ferry" | grep -q "called to tower 1" || { echo "The ferry could not be called"; exit 1; }
   # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
   danger=$(rcon "hellcraft danger test")
   echo "$danger"
   echo "$danger" | grep -q "bypasses shields: true" || { echo "Unblockable boss blows can be blocked"; exit 1; }
   # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
-  declare -A ATTACKS=([minos]="strike tail sentence coil" [cerberus]="maws filth howl" [plutus]="gold lunge pape" \
+  declare -A ATTACKS=([minos]="strike tail sentence coil" [cerberus]="bite maws filth howl" [plutus]="fist gold lunge pape" [phlegyas]="oar sweep wave grab" \
                       [minotaur]="charge stomp" [geryon]="sting falseface" [vulcan]="hammerfall molten forgeborn chains")
-  for g in minos cerberus plutus minotaur geryon vulcan; do
+  for g in minos cerberus plutus phlegyas minotaur geryon vulcan; do
     out=$(rcon "hellcraft guardian $g summon")
     echo "$out"
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
     sleep 3
     rcon "execute at @e[tag=hellcraft_guardian_body,limit=1] run summon minecraft:villager ~4 ~ ~ {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
-    # Minos has a real body (hellcraft:minos, animated on the client); the others still wear item-display models
-    if [ "$g" = minos ]; then
-      shown=$(rcon "execute if entity @e[type=hellcraft:minos,tag=hellcraft_guardian_body]" || true)
+    # Minos, Cerberus, Plutus and Phlegyas have real bodies (animated on the client); the others still wear item-display models
+    if [ "$g" = minos ] || [ "$g" = cerberus ] || [ "$g" = plutus ] || [ "$g" = phlegyas ]; then
+      shown=$(rcon "execute if entity @e[type=hellcraft:$g,tag=hellcraft_guardian_body]" || true)
     else
       shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_guardian_model]" || true)
     fi
@@ -495,7 +507,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   # the true form is killed with real damage: its death must reach the fight (the event, or the fight's own watch)
   grep -E "Lucifer's true form is (slain|dead)" "$LOG" || { echo "Lucifer's death never reached the fight"; fail=1; }
-  for g in minos cerberus plutus minotaur geryon; do
+  for g in minos cerberus plutus phlegyas minotaur geryon; do
     grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }
   done

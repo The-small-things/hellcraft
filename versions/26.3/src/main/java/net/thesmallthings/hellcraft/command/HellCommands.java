@@ -47,6 +47,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.world.Circle;
+import net.thesmallthings.hellcraft.world.Ferries;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HallOfTheDamned;
 import net.thesmallthings.hellcraft.world.Heaven;
@@ -347,6 +348,8 @@ public final class HellCommands {
 						})))
 				.then(Commands.literal("fairness")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Fairness.selfTest()))))
+				.then(Commands.literal("ferry")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Ferries.selfTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("castle")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Shades.castleTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("layers")

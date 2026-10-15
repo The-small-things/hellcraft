@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -309,6 +310,10 @@ public abstract class GuardianFight {
 		return next >= 0;
 	}
 
+	/** When the fight is over (won, or everyone left): for whatever the guardian leaves behind. */
+	protected void onEnd(boolean won) {
+	}
+
 	/** Every attack: the model rears back, then lunges as the blow comes (most telegraphs last about a second). */
 	private void windUp(Mob body) {
 		if (animated(body)) {
@@ -533,6 +538,7 @@ public abstract class GuardianFight {
 				e.discard();
 			}
 		}
+		onEnd(won);
 		if (won) {
 			HellState state = HellState.get(level.getServer());
 			state.guardianNext.put(kind.id(), level.getGameTime() + HellConfig.get().guardianRespawnMinutes * 1200L);
@@ -745,5 +751,50 @@ public abstract class GuardianFight {
 				level.setChunkForced(x, z, forced);
 			}
 		}
+	}
+
+	// ------------------------------------------------------------------ turning (real-bodied guardians)
+
+	@Nullable
+	protected static LivingEntity nearest(Mob body, List<LivingEntity> targets) {
+		LivingEntity best = null;
+		double bestD = Double.MAX_VALUE;
+		for (LivingEntity e : targets) {
+			double d = e.distanceToSqr(body);
+			if (d < bestD) {
+				bestD = d;
+				best = e;
+			}
+		}
+		return best;
+	}
+
+	/** Turns him to face someone at once. */
+	protected static void face(Mob body, LivingEntity target) {
+		float yaw = yawToward(body, target);
+		body.setYRot(yaw);
+		body.setYBodyRot(yaw);
+		body.setYHeadRot(yaw);
+	}
+
+	/** Turns him toward someone, at most maxStep degrees this tick. */
+	protected static void turnToward(Mob body, LivingEntity target, float maxStep) {
+		float want = yawToward(body, target);
+		float delta = Mth.wrapDegrees(want - body.getYRot());
+		float yaw = body.getYRot() + Mth.clamp(delta, -maxStep, maxStep);
+		body.setYRot(yaw);
+		body.setYBodyRot(yaw);
+		body.setYHeadRot(want);
+	}
+
+	protected static float yawToward(Mob body, LivingEntity target) {
+		double dx = target.getX() - body.getX();
+		double dz = target.getZ() - body.getZ();
+		return (float) Math.toDegrees(Math.atan2(-dx, dz));
+	}
+
+	/** An angle in (-PI, PI]. */
+	protected static double wrap(double a) {
+		return Math.atan2(Math.sin(a), Math.cos(a));
 	}
 }

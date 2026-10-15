@@ -134,6 +134,11 @@ public final class Shrines {
 				&& inside(player.level().getServer(), player.getX(), player.getY(), player.getZ());
 	}
 
+	/** True inside the ring of a built Rest (monsters are not brought out there). */
+	public static boolean near(ServerLevel level, BlockPos pos) {
+		return inside(level.getServer(), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+	}
+
 	private static boolean inside(MinecraftServer server, double x, double y, double z) {
 		ShrineSites.Site site = ShrineSites.nearest(x, z);
 		if (site == null || dist2(site, x, z) > SAFE_RADIUS * SAFE_RADIUS) {

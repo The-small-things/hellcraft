@@ -1,6 +1,9 @@
 package net.thesmallthings.hellcraft.world;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Wrath's Fen of Styx (L-V): where its watchtowers stand and where its plank roads wind, shared by the worldgen
@@ -61,6 +64,75 @@ public final class Fen {
 	public static BlockPos[] beacons(int k, int platformY) {
 		int[] t = tower(k);
 		return new BlockPos[]{new BlockPos(t[0] - HALF + 1, platformY + 1, t[1] - HALF + 1), new BlockPos(t[0] + HALF - 1, platformY + 1, t[1] + HALF - 1)};
+	}
+
+	/** The tower's door step: the shore, or a block above the water. */
+	public static int base(int[] t) {
+		return Math.max((int) Math.round(InfernoGeometry.baseHeight(t[0], t[1])) + 1, InfernoGeometry.fluidLevel(t[0], t[1]) + 1);
+	}
+
+	/** The height of tower k's platform (its beacons stand on it). */
+	public static int platform(int k) {
+		return base(tower(k)) + HEIGHT;
+	}
+
+	/** True if both of tower k's beacons burn (and the tower is loaded). */
+	public static boolean beaconsLit(ServerLevel level, int k) {
+		for (BlockPos b : beacons(k, platform(k))) {
+			if (!level.isLoaded(b)) {
+				return false;
+			}
+			BlockState state = level.getBlockState(b);
+			if (!state.hasProperty(CampfireBlock.LIT) || !state.getValue(CampfireBlock.LIT)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/** Puts tower k's beacons out (so they can be lit again). */
+	public static void douse(ServerLevel level, int k) {
+		for (BlockPos b : beacons(k, platform(k))) {
+			BlockState state = level.getBlockState(b);
+			if (level.isLoaded(b) && state.hasProperty(CampfireBlock.LIT)) {
+				level.setBlock(b, state.setValue(CampfireBlock.LIT, false), 3);
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------ Phlegyas's landing
+
+	/** Phlegyas's landing: a ring of planks on the water round the deep pool he rises from (his lair, Guardian). */
+	public static final int LANDING_X = 1605;
+	public static final int LANDING_Z = 40;
+	public static final double POOL = 3.5;
+	public static final double LANDING = 21;
+
+	public enum Landing {
+		NONE,
+		/** The deep water he stands in. */
+		POOL,
+		/** Planks on the water. */
+		DECK,
+		/** The rail round the deck's edge (posts with lanterns here and there). */
+		RAIL,
+		/** The jetty out from the east road. */
+		JETTY
+	}
+
+	public static Landing landingAt(double x, double z) {
+		double d = Math.hypot(x - LANDING_X - 0.5, z - LANDING_Z - 0.5);
+		if (d < POOL) {
+			return Landing.POOL;
+		}
+		boolean jetty = Math.abs(x - LANDING_X - 0.5) <= 2 && z >= 3 && z < LANDING_Z;
+		if (d < LANDING - 1) {
+			return Landing.DECK;
+		}
+		if (d < LANDING) {
+			return jetty ? Landing.DECK : Landing.RAIL;
+		}
+		return jetty ? Landing.JETTY : Landing.NONE;
 	}
 
 	/** True where a plank road crosses the Fen's water: thin winding lines along a noise's contours. */

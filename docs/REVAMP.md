@@ -1,7 +1,7 @@
 # Hellcraft 3.0: the revamp plan
 
-**Status:** approved by the owner on 2026-10-13, with section 6 redone after their answer to Q7. Nothing in it is
-built yet. The owner marks it up in a commentable copy, the "Hellcraft 3.0 Revamp Plan" doc
+**Status:** approved by the owner on 2026-10-13, with section 6 redone after their answer to Q7. Phases 0 to 3
+are built (see Progress in section 13) and wait on a play session. The owner marks it up in a commentable copy, the "Hellcraft 3.0 Revamp Plan" doc
 (https://claude.ai/code/artifact/4b8ddced-e5ed-48a4-9b7f-3bafdffe313d); keep this file in step with it.
 Section 15 records the answers.
 
@@ -275,7 +275,15 @@ Phases 3, 4 and 5 are the biggest.
 roads, 12 ways down per cliff, 40 Rests, circle cards, the compass, the Map of Hell on M and the Journal on J).
 Phase 2 was built the same day: the Blockbench model pipeline, Minos's animated body and fight in the danger
 language, his entrance cutscene and Codex entry, and level arenas for the lairs. Multi-part hitboxes wait for the
-first boss that needs them (Minos fits one). Both wait on a play session.
+first boss that needs them (Minos fits one). Phase 3 was built on 2026-10-15: the fairness rules F1-F3; the
+upper circles' rules (Lust's wind streams, Gluttony's sinking mud, Greed's hoarders, Wrath's sullen under the
+Styx); Limbo's Grey Meadow and the Noble Castle with nine shades who talk, trade and hand out Codex pages; the
+set-pieces (soul flocks over Lust, the Mire's rotting trees, bloated fungus and sunken feast tables, the Counting
+House's coin hills, vaults, giant scales and rolling coins, the Fen's fog, reeds, boardwalks, watchtowers and Dis glowing on the
+horizon); Cerberus, Plutus and Phlegyas on real bodies with fights in the danger language (Phlegyas is called by
+the east watchtower's beacons, and every watchtower's beacons call his ferry to Dis); and a new monster per circle
+(the lovers, the gluttons, the hoarders, the wrathful), each with a Codex page. Phases 1 to 3 wait on a play
+session.
 
 ## 14. The playtest loop
 
