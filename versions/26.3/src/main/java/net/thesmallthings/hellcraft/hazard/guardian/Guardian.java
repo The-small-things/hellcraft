@@ -17,7 +17,12 @@ public enum Guardian {
 	PLUTUS("Plutus", "the Great Enemy", 1800, ChatFormatting.GOLD, 300, 5.0f, PlutusFight::new),
 	/** In the Fen of Styx, at a landing beside the east watchtower: lighting its twin beacons calls him (Fen). */
 	PHLEGYAS("Phlegyas", "the Ferryman of the Styx", 1605, ChatFormatting.DARK_AQUA, 320, 7.0f, PhlegyasFight::new),
-	MINOTAUR("The Minotaur", "Infamy of Crete", 885, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
+	/** Inside the Walls of Dis: the three Furies, who call up Medusa when hard pressed (FuriesFight). */
+	FURIES("The Furies", "the Erinyes of Dis", 1360, ChatFormatting.DARK_RED, 420, 2.5f, FuriesFight::new),
+	/** In the Iron City, standing in his burning tomb (FarinataFight). */
+	FARINATA("Farinata", "the Proud Heretic", 1260, ChatFormatting.GOLD, 360, 3.0f, FarinataFight::new),
+	/** On the shattered slope at the top of Violence. */
+	MINOTAUR("The Minotaur", "Infamy of Crete", 1150, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
 	GERYON("Geryon", "Image of Fraud", 830, ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
 	/** Not on the road: at the Great Forge of Dis, in the Nether (GreatForge). */
 	VULCAN("Vulcan", "Smith of the Gods", 0, ChatFormatting.GOLD, 600, 6.5f, VulcanFight::new);

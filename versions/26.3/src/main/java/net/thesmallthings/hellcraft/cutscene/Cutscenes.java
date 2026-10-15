@@ -1,7 +1,11 @@
 package net.thesmallthings.hellcraft.cutscene;
 
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 import org.jetbrains.annotations.Nullable;
@@ -104,7 +108,89 @@ public final class Cutscenes {
 			.card(PhlegyasAnim.INTRO.at("roar") + 4, 118, "PHLEGYAS", "THE FERRYMAN OF THE STYX", PHLEGYAS)
 			.build();
 
-	private static final List<Cutscene> ALL = List.of(MINOS_INTRO, CERBERUS_INTRO, PLUTUS_INTRO, PHLEGYAS_INTRO);
+	private static final int FURIES = 0xC0303A;
+
+	/**
+	 * The Furies rise over the battlements of Dis, tearing at their breasts, and scream for Medusa. Filmed low from the
+	 * road, tilting up as they rise, close on the leader's face for the scream, and wide as their name comes up.
+	 */
+	public static final Cutscene FURIES_INTRO = Cutscene.builder("furies_intro", FuryAnim.INTRO.ticks)
+			.fadeIn(10)
+			.blendOut(12)
+			.shot(0, -3, 0.5, 11, 0, 1.0, 0)
+			.shot(FuryAnim.INTRO.at("rise"), -4, 1.0, 12, 0, 2.0, 0)
+			.shot(FuryAnim.INTRO.at("scream") - 6, -1.5, 2.4, 6.5, 0, 2.6, 0)
+			.shot(FuryAnim.INTRO.at("scream") + 12, -1.2, 2.5, 6.0, 0, 2.6, 0)
+			.shot(FuryAnim.INTRO.at("scream") + 24, 6, 3.0, 12, 0, 2.2, 0)
+			.caption(8, 42, "Virgil", VIRGIL, "The Furies. Three of them, one life between them: hit any. White, block; purple, keep away; red, move.")
+			.caption(FuryAnim.INTRO.at("scream") + 2, 78, "The Furies", FURIES, "Let Medusa come, and we will make him stone!")
+			.shake(FuryAnim.INTRO.at("scream"), FuryAnim.INTRO.at("scream") + 20, 0.8f)
+			.card(FuryAnim.INTRO.at("scream") + 4, 78, "THE FURIES", "THE ERINYES OF DIS", FURIES)
+			.build();
+
+	private static final int FARINATA = 0xE8A040;
+
+	/**
+	 * Farinata rises from his burning tomb "from the girdle upward", looks you over with scorn and speaks. Filmed low
+	 * past the tomb's lid, rising with him, close on his face as he speaks, then round to his side for his name.
+	 */
+	public static final Cutscene FARINATA_INTRO = Cutscene.builder("farinata_intro", FarinataAnim.INTRO.ticks)
+			.fadeIn(10)
+			.blendOut(12)
+			.shot(0, -3, 0.8, 8, 0, 1.0, 0)
+			.shot(FarinataAnim.INTRO.at("rise"), -3.5, 1.2, 9, 0, 1.8, 0)
+			.shot(FarinataAnim.INTRO.at("speak") - 8, -1.2, 3.2, 5.0, 0, 3.4, 0)
+			.shot(FarinataAnim.INTRO.at("speak") + 14, -1.0, 3.3, 4.6, 0, 3.4, 0)
+			.shot(FarinataAnim.INTRO.at("speak") + 30, 5, 3.5, 8, 0, 2.8, 0)
+			.caption(8, 64, "Virgil", VIRGIL, "Farinata, who scorns Hell itself. Watch the tombs: they burn in turn. Stand by a cold one.")
+			.caption(FarinataAnim.INTRO.at("speak") + 2, 98, "Farinata", FARINATA, "Who were thine ancestors?")
+			.card(FarinataAnim.INTRO.at("speak") + 4, 98, "FARINATA", "THE PROUD HERETIC", FARINATA)
+			.build();
+
+	private static final int MINOTAUR = 0xA04A2A;
+
+	/**
+	 * The Minotaur lies across the broken slope; he heaves himself up, paws the rubble and bellows. Filmed low past his
+	 * horns, pulling back as he rises, up at his face for the bellow, then round to his flank for his name.
+	 */
+	public static final Cutscene MINOTAUR_INTRO = Cutscene.builder("minotaur_intro", MinotaurAnim.INTRO.ticks)
+			.fadeIn(10)
+			.blendOut(12)
+			.shot(0, -3, 1.0, 9, 0, 1.0, 0)
+			.shot(MinotaurAnim.INTRO.at("rise") - 10, -4, 1.4, 10, 0, 1.6, 0)
+			.shot(MinotaurAnim.INTRO.at("rise") + 10, -5, 2.5, 12, 0, 3.6, 0)
+			.shot(MinotaurAnim.INTRO.at("roar") - 4, -2, 3.8, 8.5, 0, 4.6, 0)
+			.shot(MinotaurAnim.INTRO.at("roar") + 20, -1.5, 4.0, 8.0, 0, 4.8, 0)
+			.shot(MinotaurAnim.INTRO.at("roar") + 40, 7, 4.0, 11, 0, 3.4, 0)
+			.caption(8, MinotaurAnim.INTRO.at("roar") - 2, "Virgil", VIRGIL, "The Minotaur. When he lowers his horns and the line goes red, step aside: "
+					+ "if he hits a wall, he's stunned.")
+			.caption(MinotaurAnim.INTRO.at("roar") + 2, 98, "The Minotaur", MINOTAUR, "RRRRAAAAAWWWGH!")
+			.shake(MinotaurAnim.INTRO.at("roar"), MinotaurAnim.INTRO.at("roar") + 24, 1.2f)
+			.card(MinotaurAnim.INTRO.at("roar") + 4, 98, "THE MINOTAUR", "THE INFAMY OF CRETE", MINOTAUR)
+			.build();
+
+	private static final int GERYON = 0x3A6AB0;
+
+	/**
+	 * Geryon rises out of the abyss and lays his kindly face on the brink, his tail quivering in the void; then the
+	 * face smiles too wide. Filmed from the brink, looking out and down as he rises, close on the face, then wide.
+	 */
+	public static final Cutscene GERYON_INTRO = Cutscene.builder("geryon_intro", GeryonAnim.INTRO.ticks)
+			.fadeIn(10)
+			.blendOut(12)
+			.shot(0, -2, 3.0, 12, 0, -1.0, 0)
+			.shot(GeryonAnim.INTRO.at("rise"), -3, 3.5, 13, 0, 1.0, 0)
+			.shot(GeryonAnim.INTRO.at("rise") + 20, -2, 3.0, 10, 0, 2.4, 2)
+			.shot(GeryonAnim.INTRO.at("roar") - 4, -1.5, 2.8, 8.0, 0, 2.6, 3)
+			.shot(GeryonAnim.INTRO.at("roar") + 14, 5, 4.5, 12, 0, 2.0, 0)
+			.caption(8, GeryonAnim.INTRO.at("roar") - 2, "Virgil", VIRGIL, "Geryon, the image of fraud. Don't trust the copies of him: hit one and "
+					+ "it pops. Beat him and he'll fly you down.")
+			.caption(GeryonAnim.INTRO.at("roar") + 2, 98, "Geryon", GERYON, "Peace, pilgrims. Come closer.")
+			.card(GeryonAnim.INTRO.at("roar") + 4, 98, "GERYON", "THE IMAGE OF FRAUD", GERYON)
+			.build();
+
+	private static final List<Cutscene> ALL = List.of(MINOS_INTRO, CERBERUS_INTRO, PLUTUS_INTRO, PHLEGYAS_INTRO, FURIES_INTRO, FARINATA_INTRO,
+			MINOTAUR_INTRO, GERYON_INTRO);
 
 	@Nullable
 	public static Cutscene byId(String id) {

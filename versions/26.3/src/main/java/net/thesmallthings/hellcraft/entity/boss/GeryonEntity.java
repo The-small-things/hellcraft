@@ -1,5 +1,10 @@
 package net.thesmallthings.hellcraft.entity.boss;
 
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -12,6 +17,8 @@ import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
  * air; the fight moves him. Beaten, he yields, and a tamed Geryon (GeryonCarrier) stays at the cliff to fly souls down.
  */
 public class GeryonEntity extends AnimatedBoss {
+	private static final String FALSE = "hellcraft_false_geryon";
+
 	public GeryonEntity(EntityType<? extends Monster> type, Level level) {
 		super(type, level, GeryonAnim.values());
 		setNoGravity(true);
@@ -29,5 +36,30 @@ public class GeryonEntity extends AnimatedBoss {
 
 	@Override
 	protected void registerGoals() {
+	}
+
+	/** A false Geryon (his False Face): one blow and it pops; it's never saved. */
+	public void makeFalse() {
+		addTag(FALSE);
+	}
+
+	public boolean isFalse() {
+		return entityTags().contains(FALSE);
+	}
+
+	@Override
+	public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+		if (isFalse()) {
+			level.sendParticles(ParticleTypes.WITCH, getX(), getY() + 1, getZ(), 30, 1.2, 0.8, 1.2, 0.05);
+			level.playSound(null, blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.HOSTILE, 1.5f, 1.4f);
+			discard();
+			return false;
+		}
+		return super.hurtServer(level, source, amount);
+	}
+
+	@Override
+	public boolean shouldBeSaved() {
+		return !isFalse() && super.shouldBeSaved();
 	}
 }

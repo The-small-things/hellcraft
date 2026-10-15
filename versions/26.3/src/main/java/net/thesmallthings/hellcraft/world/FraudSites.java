@@ -36,7 +36,7 @@ public final class FraudSites {
 	}
 
 	/** The real radius at this angle whose wobbled radius is `wanted` (so a site sits on the ridge as drawn). */
-	static double onRidge(double angle, double wanted) {
+	public static double onRidge(double angle, double wanted) {
 		double r = wanted;
 		for (int i = 0; i < 4; i++) {
 			r += wanted - InfernoGeometry.effectiveRadius(Math.cos(angle) * r, Math.sin(angle) * r);

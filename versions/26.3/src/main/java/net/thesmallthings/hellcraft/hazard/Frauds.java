@@ -16,10 +16,13 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.monster.Malacoda;
+import net.thesmallthings.hellcraft.entity.monster.Malebranche;
 import net.thesmallthings.hellcraft.entity.monster.Mimic;
 import net.thesmallthings.hellcraft.entity.monster.Thief;
 import net.thesmallthings.hellcraft.net.Dialogue;
@@ -44,6 +47,8 @@ import java.util.List;
  *     altar, a sign), but step into it and the trap springs: the fires turn red, the altar goes dead, its chest is a
  *     mimic and thieves come for you. The tell: it isn't on your compass.</li>
  *     <li>Thieves prowl the ridges, snatch something from your pack and run (Thief).</li>
+ *     <li>The Malebranche keep the ditches of pitch, hooks ready (Malebranche); the first time a soul comes down a road
+ *     onto the fifth ridge their captain Malacoda meets it with a kindly lie and leads it into an ambush (Malacoda).</li>
  *     <li>Some of Malebolge's monsters are invisible, but give themselves away with a swirl (MobEmpowerment).</li>
  * </ul>
  */
@@ -56,6 +61,11 @@ public final class Frauds {
 	private static final double FAKE_BUILD_RANGE = 96;
 	private static final double FAKE_TRAP = 7;
 	private static final int THIEVES_NEAR = 3;
+	private static final int DEVILS_NEAR = 3;
+	static final int HINT_MALACODA = 36;
+	static final int HINT_DEVILS = 38;
+	/** Where Malacoda meets you: the fifth ridge, the bank of the fifth ditch (the first of boiling pitch he keeps). */
+	private static final int MALACODA_RIDGE = 5;
 
 	public static void tick(MinecraftServer server) {
 		if (server.getTickCount() % 20 != 7) {
@@ -84,6 +94,10 @@ public final class Frauds {
 				if (server.getTickCount() % 100 == 7 && level.getRandom().nextFloat() < 0.3f) {
 					thiefNear(level, p);
 				}
+				if (server.getTickCount() % 100 == 47 && level.getRandom().nextFloat() < 0.35f) {
+					devilNear(level, p);
+				}
+				malacoda(level, p);
 			}
 			for (FraudSites.FakeRest f : FraudSites.fakeRests()) {
 				double d = Math.hypot(p.getX() - f.x(), p.getZ() - f.z());
@@ -121,6 +135,71 @@ public final class Frauds {
 		mimic.lurk(id, facing);
 		level.addFreshEntity(mimic);
 		return mimic;
+	}
+
+	/** A Malebranche comes up out of a ditch of pitch near a soul passing it. */
+	private static void devilNear(ServerLevel level, ServerPlayer p) {
+		boolean pitch = false;
+		for (int i = 0; i < 8 && !pitch; i++) {
+			double a = i * Math.PI / 4;
+			pitch = InfernoGeometry.zoneAt(p.getX() + Math.cos(a) * 14, p.getZ() + Math.sin(a) * 14) == Zone.MALEBOLGE_PITCH;
+		}
+		if (!pitch || level.getEntitiesOfClass(Malebranche.class, new AABB(p.blockPosition()).inflate(40)).size() >= DEVILS_NEAR) {
+			return;
+		}
+		for (int tries = 0; tries < 6; tries++) {
+			double a = level.getRandom().nextDouble() * Math.PI * 2;
+			double d = 14 + level.getRandom().nextDouble() * 10;
+			int x = (int) Math.floor(p.getX() + Math.cos(a) * d);
+			int z = (int) Math.floor(p.getZ() + Math.sin(a) * d);
+			if (InfernoGeometry.zoneAt(x, z) != Zone.MALEBOLGE || !level.isLoaded(new BlockPos(x, 0, z)) || Shrines.near(level, new BlockPos(x, 0, z))) {
+				continue;
+			}
+			Malebranche devil = HellEntities.MALEBRANCHE.create(level, EntitySpawnReason.NATURAL);
+			if (devil == null) {
+				return;
+			}
+			devil.snapTo(x + 0.5, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z), z + 0.5, level.getRandom().nextFloat() * 360, 0);
+			if (!level.noCollision(devil)) {
+				continue;
+			}
+			level.addFreshEntity(devil);
+			MapSync.unlockCodex(p, "malebranche");
+			CircleHazards.hintOnce(p, HINT_DEVILS, "The Malebranche throw their hooks along a red line on the ground. Step off the line "
+					+ "before the hook flies, or you're dragged to their claws.");
+			return;
+		}
+	}
+
+	/** Malacoda's trick, once per soul: on a road where it crosses the fifth ridge. */
+	private static void malacoda(ServerLevel level, ServerPlayer p) {
+		if (p.isCreative() || CircleHazards.hinted(p, HINT_MALACODA) || !InfernoGeometry.onRoad(p.getX(), p.getZ())) {
+			return;
+		}
+		double angle = Math.atan2(p.getZ(), p.getX());
+		double ridge = FraudSites.onRidge(angle, FraudSites.ridgeRadius(MALACODA_RIDGE));
+		double r = Math.hypot(p.getX(), p.getZ());
+		if (Math.abs(r - ridge) > 4 || !level.getEntitiesOfClass(Malacoda.class, new AABB(p.blockPosition()).inflate(64)).isEmpty()) {
+			return;
+		}
+		CircleHazards.spendHint(p, HINT_MALACODA);
+		// he steps out a little along the ridge, and will lead you about 40 blocks further along it, away from the road
+		double side = level.getRandom().nextBoolean() ? 1 : -1;
+		double a0 = angle + side * 7 / ridge;
+		double a1 = angle + side * 46 / ridge;
+		double r0 = FraudSites.onRidge(a0, FraudSites.ridgeRadius(MALACODA_RIDGE));
+		double r1 = FraudSites.onRidge(a1, FraudSites.ridgeRadius(MALACODA_RIDGE));
+		int x0 = (int) Math.floor(Math.cos(a0) * r0);
+		int z0 = (int) Math.floor(Math.sin(a0) * r0);
+		int x1 = (int) Math.floor(Math.cos(a1) * r1);
+		int z1 = (int) Math.floor(Math.sin(a1) * r1);
+		if (!level.isLoaded(new BlockPos(x1, 0, z1))) {
+			return;
+		}
+		Vec3 at = new Vec3(x0 + 0.5, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x0, z0), z0 + 0.5);
+		Vec3 to = new Vec3(x1 + 0.5, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x1, z1), z1 + 0.5);
+		Malacoda.meet(level, p, at, to);
+		HellcraftMod.LOGGER.info("Malacoda meets {} on the fifth ridge at {} {} {}", p.getName().getString(), x0, (int) at.y, z0);
 	}
 
 	private static void thiefNear(ServerLevel level, ServerPlayer p) {

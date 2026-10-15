@@ -79,6 +79,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   blocked); marks on the ground, sent to clients (`client/danger/DangerMarks` draws them), and the unblockable
   `hellcraft:judgement` damage type. `GuardianFight` gives real-bodied guardians an intro, a parry window
   (`openParry`, `onParried`) and invulnerable spells (`shield`).
+- Hint bits (`CircleHazards.hintOnce`, 64 of them in `HellState.Soul.hints`): 0-31 upper Hell, 32-38 lower Hell
+  (36 is Malacoda's one-time trick, spent with `spendHint`).
 - `cutscene/`: `Cutscene` (camera shots in the anchor's frame, captions, shakes, a name card), `Cutscenes` (by id),
   `CutsceneManager` (plays one, keeps the player from harm, remembers it was seen so it can be skipped). Client:
   `client/cutscene/CutscenePlayer` + the `CameraMixin`, `HudMixin`, `KeyboardInputMixin` and `MouseHandlerMixin`.
@@ -135,8 +137,15 @@ gone (the Journal holds it). Not done: multi-part hitboxes (26.3 hard-wires them
 the first boss that needs them), boss music (none sent yet). **Phase 3 (Upper Hell) is built** (2026-10-15): the fairness
 rules, a rule to play with in each upper circle, the Noble Castle and its shades, set-pieces in every circle, Cerberus,
 Plutus and Phlegyas on real bodies (Phlegyas is called by the east watchtower's beacons; any watchtower's beacons call
-his ferry to Dis), and a new monster per circle. Phases 1 to 3 wait on a play session. **Next: Phase 4** (Lower Hell),
-after that feedback. Each phase ships as a test build for a play session before the next.
+his ferry to Dis), and a new monster per circle. **Phase 4 (Lower Hell) is built** (2026-10-15): a rule in each lower
+circle (`hazard/LowerRules`, `world/Tombs`, `hazard/Frauds`, `world/FraudSites`), their monsters (`hazard/LowerMonsters`;
+`entity/monster` Heretic, Centaur, Harpy, Mimic, Thief, Malebranche, Malacoda), and the Furies with Medusa, Farinata,
+the Minotaur and Geryon on real bodies. Later bosses use the generic `entity/boss/AnimatedBoss` and
+`client/render/boss/AnimatedBossRenderer` (no per-boss entity or renderer code beyond the fight). Geryon, beaten, becomes
+`GeryonCarrier` (rides down the great cliff); `world/AntaeusCleft` places `AntaeusEntity`, whose hand carries riders
+along the same path its animation follows (keep the `LOWER_PATH` and `RAISE_PATH` of `tools/art/antaeus.py` and `AntaeusEntity` in step); riders of
+either can't be hurt (`entity/Carrier`). Phases 1 to 4 wait on a play session. **Next: Phase 5** (Lucifer), after that
+feedback. Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so

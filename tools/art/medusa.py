@@ -7,7 +7,8 @@ to stone; Virgil's advice to Dante was to turn round and cover his eyes.
 Run from the repo root:  python3 tools/art/medusa.py && python3 tools/gen_bosses.py
 
 Her open eyes are a separate glowing part ("eyes") that is only there (scaled up from nothing) while she gazes, so the
-gaze is plain to see. The events time her (FuriesFight): "open" and "close" bound her gaze; "rise" her coming.
+gaze is plain to see. Only the gaze keys them: animations add up in the game, so the renderer hides the part outright
+whenever the gaze isn't playing (AnimatedBossModel.onlyDuring). The events time her (FuriesFight): "open" and "close" bound her gaze; "rise" her coming.
 """
 import os
 import sys
@@ -76,7 +77,6 @@ def animations(m):
     # eyes shut, the serpents writhing
     idle = m.animation("idle", 2.0, loop=True)
     writhe(idle, 2.0)
-    idle.scale("eyes", [(0, HIDDEN), (2.0, HIDDEN)])
     idle.rot("head", [(0, ZERO), (1.0, (0, 6, 0)), (2.0, ZERO)])
 
     # the gaze: her head lifts, her eyes open in a cold light, and hold
@@ -93,13 +93,11 @@ def animations(m):
     intro = m.animation("intro", 3.0)
     intro.pos("bust", [(0, (0, -40, 0)), (2.2, ZERO), (3.0, ZERO)])
     writhe(intro, 1.5, 30)
-    intro.scale("eyes", [(0, HIDDEN), (3.0, HIDDEN)])
     intro.event(0.4, "rise")
 
     # she sinks back behind the wall
     death = m.animation("death", 2.0)
     death.pos("bust", [(0, ZERO), (2.0, (0, -40, 0))])
-    death.scale("eyes", [(0, HIDDEN), (2.0, HIDDEN)])
     writhe(death, 0.5, 45)
 
 

@@ -13,7 +13,8 @@ import java.util.Map;
 public enum AntaeusAnim implements BossAnim {
 	IDLE(100, true, Map.of()),
 	LOWER(80, false, Map.of("take", 10, "set", 70)),
-	RAISE(60, false, Map.of("ready", 50));
+	LOW(40, true, Map.of()),
+	RAISE(60, false, Map.of("take", 5, "set", 55));
 
 	public final int ticks;
 	public final boolean looping;

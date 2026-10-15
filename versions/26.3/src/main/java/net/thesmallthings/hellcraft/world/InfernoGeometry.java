@@ -38,7 +38,7 @@ public final class InfernoGeometry {
 	/** The four Pilgrim Roads: east (the spawn's gate), south, west and north. */
 	public static final double[] ROAD_ANGLES = {0, Math.PI / 2, Math.PI, -Math.PI / 2};
 	/** The guardians' lairs (x, z), beside the east road; Guardian and ShrineSites follow them (unit tests check). */
-	public static final int[][] LAIRS = {{2425, 40}, {2100, 40}, {1800, 40}, {1605, 40}, {885, 40}, {830, 40}};
+	public static final int[][] LAIRS = {{2425, 40}, {2100, 40}, {1800, 40}, {1605, 40}, {1360, 40}, {1260, 40}, {1150, 40}, {830, 40}};
 	/** A lair's floor is level out to this radius (a fight's arena is 24 across), fading back into the land. */
 	private static final double ARENA_FLAT = 22.0;
 	private static final double ARENA_FADE = 12.0;

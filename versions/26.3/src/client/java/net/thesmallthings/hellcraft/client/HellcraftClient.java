@@ -10,10 +10,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.danger.DangerMarks;
 import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
+import net.thesmallthings.hellcraft.client.layer.GazeOverlay;
 import net.thesmallthings.hellcraft.client.layer.LayerFx;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
@@ -24,6 +26,7 @@ import net.thesmallthings.hellcraft.client.nav.MapTexture;
 import net.thesmallthings.hellcraft.client.nav.NavKeys;
 import net.thesmallthings.hellcraft.client.render.TestRigModel;
 import net.thesmallthings.hellcraft.client.render.TestRigRenderer;
+import net.thesmallthings.hellcraft.client.render.boss.AnimatedBossRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.CerberusModel;
 import net.thesmallthings.hellcraft.client.render.boss.CerberusRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.CoinModel;
@@ -36,11 +39,19 @@ import net.thesmallthings.hellcraft.client.render.boss.PhlegyasModel;
 import net.thesmallthings.hellcraft.client.render.boss.PhlegyasRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.PlutusModel;
 import net.thesmallthings.hellcraft.client.render.boss.PlutusRenderer;
+import net.thesmallthings.hellcraft.client.render.gen.AntaeusAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.AntaeusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CentaurAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.CentaurMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CerberusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CoinMesh;
+import net.thesmallthings.hellcraft.client.render.gen.FarinataAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.FarinataMesh;
 import net.thesmallthings.hellcraft.client.render.gen.FerryMesh;
+import net.thesmallthings.hellcraft.client.render.gen.FuryAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.FuryMesh;
+import net.thesmallthings.hellcraft.client.render.gen.GeryonAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.GeryonMesh;
 import net.thesmallthings.hellcraft.client.render.gen.GluttonAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.GluttonMesh;
 import net.thesmallthings.hellcraft.client.render.gen.HarpyAnimations;
@@ -50,9 +61,17 @@ import net.thesmallthings.hellcraft.client.render.gen.HereticMesh;
 import net.thesmallthings.hellcraft.client.render.gen.HoarderMesh;
 import net.thesmallthings.hellcraft.client.render.gen.LoversAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.LoversMesh;
+import net.thesmallthings.hellcraft.client.render.gen.MalacodaAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.MalacodaMesh;
+import net.thesmallthings.hellcraft.client.render.gen.MalebrancheAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.MalebrancheMesh;
+import net.thesmallthings.hellcraft.client.render.gen.MedusaAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.MedusaMesh;
 import net.thesmallthings.hellcraft.client.render.gen.MimicAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.MimicMesh;
 import net.thesmallthings.hellcraft.client.render.gen.MinosMesh;
+import net.thesmallthings.hellcraft.client.render.gen.MinotaurAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.MinotaurMesh;
 import net.thesmallthings.hellcraft.client.render.gen.PhlegyasMesh;
 import net.thesmallthings.hellcraft.client.render.gen.PlutusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ShadeMesh;
@@ -67,6 +86,10 @@ import net.thesmallthings.hellcraft.client.render.monster.SoulMonsterRenderer;
 import net.thesmallthings.hellcraft.client.render.npc.ShadeModel;
 import net.thesmallthings.hellcraft.client.render.npc.ShadeRenderer;
 import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
+import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.net.CutscenePayload;
 import net.thesmallthings.hellcraft.net.DangerPayload;
 import net.thesmallthings.hellcraft.net.DialoguePayload;
@@ -102,6 +125,7 @@ public class HellcraftClient implements ClientModInitializer {
 			ClientNav.reset();
 			LayerCard.reset();
 			DialogueHud.reset();
+			GazeOverlay.reset();
 		});
 
 		// finding the way: the circle cards, the compass, and the keys for the Map of Hell and the Journal
@@ -113,11 +137,14 @@ public class HellcraftClient implements ClientModInitializer {
 			CutscenePlayer.tick(client);
 			LayerFx.tick(client);
 			DialogueHud.tick(client);
+			GazeOverlay.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
 		HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, LayerCard.ID, new LayerCard());
 		// what the souls of Hell say, in a box above the hotbar instead of the chat
 		HudElementRegistry.attachElementAfter(VanillaHudElements.OVERLAY_MESSAGE, DialogueHud.ID, new DialogueHud());
+		// Medusa's gaze greys the screen of whoever looks at her
+		HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, GazeOverlay.ID, new GazeOverlay());
 
 		// the danger language's marks on the ground
 		LevelRenderEvents.COLLECT_SUBMITS.register(DangerMarks::render);
@@ -174,6 +201,47 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.THIEF, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("thief"),
 				new SoulMonsterModel.Anims(ThiefAnimations.IDLE, ThiefAnimations.WALK, ThiefAnimations.ATTACK, ThiefAnimations.HURT,
 						ThiefAnimations.DEATH, ThiefAnimations.FLEE), "thief", 0.5f, 255, "body", "head"));
+		// Lower Hell's guardians (AnimatedBoss: one renderer for all), Medusa, the tamed Geryon and Antaeus
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("fury"), FuryMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.FURY, context -> new AnimatedBossRenderer<>(context, "fury", FuryAnimations.all(), -1, 1.4f, 1.0f,
+				0.5f, "body", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("medusa"), MedusaMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.MEDUSA, context -> {
+			AnimatedBossRenderer<MedusaEntity> r = new AnimatedBossRenderer<>(context, "medusa", MedusaAnimations.all(), -1, MedusaEntity.SCALE, 0.0f,
+					0.6f, "bust", "head");
+			// her open eyes show only while she gazes
+			r.getModel().onlyDuring(MedusaAnim.GAZE.ordinal(), "bust", "head", "eyes");
+			return r;
+		});
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("farinata"), FarinataMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.FARINATA, context -> new AnimatedBossRenderer<>(context, "farinata", FarinataAnimations.all(), -1,
+				1.8f, 1.0f, 0.6f, "body", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("minotaur"), MinotaurMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.MINOTAUR, context -> new AnimatedBossRenderer<>(context, "minotaur", MinotaurAnimations.all(),
+				MinotaurAnim.WALK.ordinal(), 1.4f, 2.0f, 0.5f, "hips", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("geryon"), GeryonMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.GERYON, context -> new AnimatedBossRenderer<>(context, "geryon", GeryonAnimations.all(), -1, 2.0f,
+				2.0f, 0.4f, "root", "chest", "neck", "head"));
+		EntityRendererRegistry.register(HellEntities.GERYON_CARRIER, context -> new AnimatedBossRenderer<>(context, "geryon", GeryonAnimations.all(), -1,
+				2.0f, 2.0f, 0.0f));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("antaeus"), AntaeusMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.ANTAEUS, context -> new AnimatedBossRenderer<>(context, "antaeus", AntaeusAnimations.all(), -1,
+				AntaeusEntity.SCALE, 0.0f, 0.0f) {
+			// his arm reaches far past his feet: don't hide him when only his hand is in view
+			@Override
+			protected AABB getBoundingBoxForCulling(AntaeusEntity entity, float partialTicks) {
+				return super.getBoundingBoxForCulling(entity, partialTicks).inflate(16);
+			}
+		});
+		// the Malebranche (special: the jeer) and their captain Malacoda (attack: pointing the way; special: his laugh)
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("malebranche"), MalebrancheMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.MALEBRANCHE, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("malebranche"),
+				new SoulMonsterModel.Anims(MalebrancheAnimations.IDLE, MalebrancheAnimations.WALK, MalebrancheAnimations.ATTACK,
+						MalebrancheAnimations.HURT, MalebrancheAnimations.DEATH, MalebrancheAnimations.JEER), "malebranche", 0.6f, 255, "body", "head"));
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("malacoda"), MalacodaMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.MALACODA, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("malacoda"),
+				new SoulMonsterModel.Anims(MalacodaAnimations.IDLE, MalacodaAnimations.WALK, MalacodaAnimations.POINT, MalacodaAnimations.HURT,
+						MalacodaAnimations.DEATH, MalacodaAnimations.LAUGH), "malacoda", 0.6f, 255, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(HoarderModel.LAYER, HoarderMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HOARDER, HoarderRenderer::new);
 		ModelLayerRegistry.registerModelLayer(ShadeModel.LAYER, ShadeMesh::createLayer);

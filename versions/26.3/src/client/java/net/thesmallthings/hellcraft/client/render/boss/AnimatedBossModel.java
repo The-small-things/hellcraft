@@ -34,9 +34,28 @@ public class AnimatedBossModel extends EntityModel<AnimatedBossRenderState> {
 		this.head = h;
 	}
 
+	/** A part drawn only while one animation plays (Medusa's open eyes), or null. */
+	@Nullable
+	private ModelPart onlyPart;
+	private int onlyAnim = -1;
+
+	/** Draws the part at this path only while animation `anim` plays (keyframes add up, so they can't hide it alone). */
+	public AnimatedBossModel onlyDuring(int anim, String... path) {
+		ModelPart p = root();
+		for (String bone : path) {
+			p = p.getChild(bone);
+		}
+		this.onlyPart = p;
+		this.onlyAnim = anim;
+		return this;
+	}
+
 	@Override
 	public void setupAnim(AnimatedBossRenderState state) {
 		super.setupAnim(state);
+		if (onlyPart != null) {
+			onlyPart.visible = state.states[onlyAnim].isStarted();
+		}
 		if (head != null) {
 			head.yRot += state.yRot * gaze * ((float) Math.PI / 180f);
 			head.xRot += state.xRot * gaze * ((float) Math.PI / 180f);

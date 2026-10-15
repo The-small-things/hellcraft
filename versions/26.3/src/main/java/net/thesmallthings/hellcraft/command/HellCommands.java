@@ -50,6 +50,7 @@ import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.world.AntaeusCleft;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.Ferries;
 import net.thesmallthings.hellcraft.world.GreatForge;
@@ -362,6 +363,8 @@ public final class HellCommands {
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LayerRules.selfTest() + "; " + Hoarders.selfTest()))))
 				.then(Commands.literal("lower")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LowerRules.selfTest() + "; " + LowerMonsters.selfTest() + "; " + Frauds.selfTest()))))
+				.then(Commands.literal("antaeus")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), AntaeusCleft.selfTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("danger")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Danger.selfTest(ctx.getSource().getLevel())))))
 				.then(Commands.literal("spoils")

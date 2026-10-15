@@ -139,13 +139,18 @@ public final class Guide {
 				"",
 				"2 pieces: your hits heal you. 4 pieces: more healing, Regeneration when nearly dead, and Resistance during a Blood Oath."));
 		pages.add(page("THE GUARDIANS",
-				"Five bosses wait just south of the east road (the one from spawn), each in a ring of soul fire. A sign by the road marks each:",
-				"Minos (in Lust)",
-				"Cerberus (Gluttony)",
-				"Plutus (Greed)",
-				"Minotaur (the Burning Sands)",
-				"Geryon (the edge of the great cliff)",
-				"First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
+				"Eight bosses wait just south of the east road (the one from spawn), each in a ring of soul fire, with a sign by the road:",
+				"Minos (Lust), Cerberus (Gluttony), Plutus (Greed), Phlegyas (the Fen of Styx)",
+				"The Furies (inside the Walls of Dis), Farinata (Heresy)",
+				"The Minotaur (above the river of blood), Geryon (the edge of the great cliff)",
+				"None blocks the way down. First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
+		pages.add(page("RIDES DOWN",
+				"Geryon: beat him, then right-click him at the brink of the great cliff. He flies you down to Malebolge, and back up.",
+				"",
+				"Antaeus: below the Well of Giants. Wait on the crying obsidian by his hand and he sets you down on the ice; wait on the one "
+						+ "below to go back up.",
+				"",
+				"Don't sneak while riding: you'd let go."));
 		pages.add(page("STYLE",
 				"Bosses rank your STYLE: D C B A S SS SSS.",
 				"Hits fill the bar. Swap weapons: one used again and again goes stale. Crits, smashes, parries score extra.",

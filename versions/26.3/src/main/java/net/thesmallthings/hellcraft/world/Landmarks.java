@@ -68,13 +68,15 @@ public final class Landmarks {
 		buildAltar(level, gateX + 14, altarY, 9);
 		state.starterAltar = new HellState.GlobalSpot(level.dimension(), new BlockPos(gateX + 14, altarY, 9));
 
-		String[] giants = {"Nimrod", "Ephialtes", "Antaeus"};
+		// the chained giants stand in the Well; Antaeus, unchained, in the ice below it, and he carries souls down
+		String[] giants = {"Nimrod", "Ephialtes"};
 		for (int i = 0; i < giants.length; i++) {
 			double angle = InfernoGeometry.wayDownAngle(i * 4 + 2) + InfernoGeometry.WAY_DOWN_STEP / 2;
 			int x = (int) Math.round(Math.cos(angle) * InfernoGeometry.GIANT_RADIUS);
 			int z = (int) Math.round(Math.sin(angle) * InfernoGeometry.GIANT_RADIUS);
 			spawnGiant(level, giants[i], x, surface(level, x, z), z);
 		}
+		AntaeusCleft.build(level, AntaeusCleft.angle());
 		buildPit(level);
 
 		state.landmarksBuilt = true;

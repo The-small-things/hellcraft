@@ -71,6 +71,61 @@ public final class Codex {
 			"\"Phlegyas, Phlegyas, thou criest out in vain for this once,\" my Lord said; \"longer thou shalt not have us than in passing o'er the mire.\"",
 			"Inferno VIII");
 
+	public static final Entry FURIES = new Entry("furies", "THE FURIES", "the Erinyes of Dis",
+			List.of("Megaera, Alecto and Tisiphone, girt with green hydras, who keep the gate of the Iron City. They wheel over "
+							+ "their lair just inside the wall of Dis and come down one at a time.",
+					"Three bodies, one life: a blow to any of them counts. When they are hard pressed they call Medusa."),
+			List.of("Walk into their lair just inside the wall, by the east road, and they rise over it.",
+					"White circle that follows you: a Fury's talons. Block as she drops and she tumbles to the ground: hit her.",
+					"Purple circle under a Fury: her shriek. It can't be blocked: get out from under her.",
+					"Red line: her serpent hair cracks like a whip. Step aside.",
+					"Red circles: tears of blood rain where you stand. Move.",
+					"At half their life Medusa rises over the battlements. While her eyes glow, don't look at her: the screen greys as "
+							+ "you start to turn to stone. Look away and you're fine."),
+			"\"Let Medusa come, so we will make him stone,\" they all were saying, looking down.",
+			"Inferno IX");
+
+	public static final Entry FARINATA = new Entry("farinata", "FARINATA", "the Proud Heretic",
+			List.of("Farinata degli Uberti, who drove his enemies out of Florence and denied the soul outlives the body. He "
+							+ "stands in his burning tomb in the middle of the Iron City as if he held Hell in great disdain.",
+					"He never leaves his tomb. Eight more tombs stand round it, and they burn at his word."),
+			List.of("Walk into his lair among the tombs, by the east road, and he rises.",
+					"White line: his fist strikes the rim and fire runs at you. Block it and he sinks into his tomb: hit him.",
+					"Red circles on the tombs: they blast fire in patterns (every other one, round the ring, or all but one). "
+							+ "Stand by a tomb that isn't marked.",
+					"Purple ring round his tomb: the air blasts outward. It can't be blocked: stay out of the ring.",
+					"At half his health the tombs fire twice for every command."),
+			"He rose upright with his breast and with his front, as if he had Hell in great disdain.",
+			"Inferno X");
+
+	public static final Entry MINOTAUR = new Entry("minotaur", "THE MINOTAUR", "the Infamy of Crete",
+			List.of("The bull-headed son of Pasiphaë, who ate the youths of Athens in the Labyrinth until Theseus killed him. "
+							+ "He guards the broken slope down to the river of blood, mad with rage.",
+					"Like a bull that breaks loose when it has had its death blow, he plunges this way and that."),
+			List.of("Walk into his lair on the slope, by the east road, and he gets up.",
+					"White wedge in front of him: his horns. Block the thrust and he drops to one knee: hit him.",
+					"Red line: he paws the ground and charges along it. Step aside. If he runs into rock he stuns himself.",
+					"Red circle round him: he stamps. Get away from him.",
+					"Purple ring round him: he whirls with his fists out. It can't be blocked: jump it or keep out of the ring.",
+					"At half his health he charges twice in a row."),
+			"And when he saw us, he bit himself, like one whom anger inwardly consumes.",
+			"Inferno XII");
+
+	public static final Entry GERYON = new Entry("geryon", "GERYON", "the Image of Fraud",
+			List.of("The face of a just man, kindly to look at, on the painted body of a serpent with a scorpion's sting. He "
+							+ "swims in the air at the brink of the great cliff down to Malebolge.",
+					"Beaten, he bows his kindly head: from then on he flies anyone down the cliff, as he carried Dante and Virgil."),
+			List.of("Walk to the brink of the cliff at the inner edge of the Burning Sands, by the east road, and he rises out of the abyss.",
+					"White circle that follows you: his sting. Block it as it strikes and he sags to the ground: hit him.",
+					"Purple lines: he and two false copies of him dive along them. They can't be blocked: get off the lines. One "
+							+ "blow pops a copy.",
+					"Red ring round the edge of the lair: his coils squeeze. Get to the middle.",
+					"Red line: he swoops low across the lair. Step aside.",
+					"At half his health venom drips where you stand (red circles). Keep moving.",
+					"Beat him and right-click him at the brink: he flies you down to the first ridge of Malebolge, and back up."),
+			"Behold the monster with the pointed tail, who crosses mountains, and breaks walls and weapons; behold the one who all the world doth stink!",
+			"Inferno XVII");
+
 	public static final Entry HOARDER = new Entry("hoarder", "THE HOARDERS", "the Misers of the Fourth Circle",
 			List.of("The misers of Greed, bent under sacks of coin. In the poem they roll great weights against the "
 							+ "spendthrifts forever; these have found something lighter to carry: other people's gold.",
@@ -149,8 +204,18 @@ public final class Codex {
 			"With serpents were their hands behind them bound, which through the loins thrust forward tail and head.",
 			"Inferno XXIV");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
-			MIMIC, THIEF);
+	public static final Entry MALEBRANCHE = new Entry("malebranche", "THE MALEBRANCHE", "the Evil Claws of the Fifth Ditch",
+			List.of("Winged devils with long hooks who keep the ditches of boiling pitch, where the grafters are sunk. Whoever "
+							+ "shows above the pitch they rake under again, and they would gladly do the same to you.",
+					"Their captain is Malacoda, Evil Tail. He's friendly, helpful, and he lies."),
+			List.of("Red line from a devil to you: it is aiming its hook. Step off the line before it throws, or it drags you to its claws.",
+					"Hit one while it aims and its throw is spoiled.",
+					"If a devil offers to show you a better way, don't believe it. The road's bridges are the way down."),
+			"\"Let not one of you be wicked!\" ... and he had made a trumpet of his rump.",
+			"Inferno XXI");
+
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
+			MIMIC, THIEF, MALEBRANCHE);
 
 	@Nullable
 	public static Entry byId(String id) {

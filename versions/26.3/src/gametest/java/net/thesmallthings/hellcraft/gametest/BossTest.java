@@ -5,17 +5,26 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.Ferry;
 import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.boss.AnimatedBoss;
+import net.thesmallthings.hellcraft.entity.boss.BossAnim;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
+import net.thesmallthings.hellcraft.entity.boss.gen.AntaeusAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 import net.thesmallthings.hellcraft.entity.monster.SoulMonster;
@@ -87,6 +96,7 @@ public class BossTest implements FabricClientGameTest {
 			phlegyas(context, world);
 			world.getServer().runCommand("kill @e[type=hellcraft:phlegyas]");
 			world.getServer().runCommand("kill @e[type=hellcraft:ferry]");
+			lowerBosses(context, world);
 			monsters(context, world);
 			context.runOnClient(client -> {
 				if (client.gui.hud.isHidden()) {
@@ -94,6 +104,102 @@ public class BossTest implements FabricClientGameTest {
 				}
 			});
 		}
+	}
+
+	/** One of a generic boss's poses: an animation, how far into it to look, and what it warns of meanwhile. */
+	private record Shot(BossAnim anim, int at, BossEntity.Warning warning) {
+	}
+
+	/**
+	 * Lower Hell's guardians, Medusa, the tamed Geryon and Antaeus (screenshots fury_*, medusa_*, farinata_*,
+	 * minotaur_*, geryon_*, antaeus_*): each from the front and the side, then each animation at its telling moment.
+	 */
+	private static void lowerBosses(ClientGameTestContext context, TestSingleplayerContext world) {
+		BossEntity.Warning w = BossEntity.Warning.WHITE;
+		BossEntity.Warning p = BossEntity.Warning.PURPLE;
+		BossEntity.Warning n = BossEntity.Warning.NONE;
+		boss(context, world, HellEntities.FURY, "fury", 9, 2, List.of(
+				new Shot(FuryAnim.INTRO, FuryAnim.INTRO.at("scream") + 6, n),
+				new Shot(FuryAnim.TALONS, FuryAnim.TALONS.at("flash") + 3, w),
+				new Shot(FuryAnim.TALONS, FuryAnim.TALONS.at("hit"), n),
+				new Shot(FuryAnim.SHRIEK, FuryAnim.SHRIEK.at("scream") + 6, p),
+				new Shot(FuryAnim.LASH, FuryAnim.LASH.at("lash"), n),
+				new Shot(FuryAnim.TEAR, FuryAnim.TEAR.at("tear"), n),
+				new Shot(FuryAnim.STAGGER, 8, n),
+				new Shot(FuryAnim.PHASE, FuryAnim.PHASE.at("call") + 6, n),
+				new Shot(FuryAnim.DEATH, FuryAnim.DEATH.ticks - 4, n)));
+		boss(context, world, HellEntities.MEDUSA, "medusa", 14, 3, List.of(
+				new Shot(MedusaAnim.INTRO, MedusaAnim.INTRO.ticks - 6, n),
+				new Shot(MedusaAnim.GAZE, MedusaAnim.GAZE.at("open") + 12, n)));
+		boss(context, world, HellEntities.FARINATA, "farinata", 10, 3, List.of(
+				new Shot(FarinataAnim.INTRO, FarinataAnim.INTRO.at("speak") + 6, n),
+				new Shot(FarinataAnim.DISDAIN, FarinataAnim.DISDAIN.at("flash") + 3, w),
+				new Shot(FarinataAnim.DISDAIN, FarinataAnim.DISDAIN.at("hit"), n),
+				new Shot(FarinataAnim.COMMAND, FarinataAnim.COMMAND.at("fire"), n),
+				new Shot(FarinataAnim.EXILE, FarinataAnim.EXILE.at("blast"), p),
+				new Shot(FarinataAnim.STAGGER, FarinataAnim.STAGGER.at("sink") + 6, n),
+				new Shot(FarinataAnim.PHASE, FarinataAnim.PHASE.at("roar") + 6, n),
+				new Shot(FarinataAnim.DEATH, FarinataAnim.DEATH.ticks - 4, n)));
+		boss(context, world, HellEntities.MINOTAUR, "minotaur", 13, 4, List.of(
+				new Shot(MinotaurAnim.INTRO, MinotaurAnim.INTRO.at("roar") + 8, n),
+				new Shot(MinotaurAnim.GORE, MinotaurAnim.GORE.at("flash") + 3, w),
+				new Shot(MinotaurAnim.GORE, MinotaurAnim.GORE.at("hit"), n),
+				new Shot(MinotaurAnim.CHARGE, MinotaurAnim.CHARGE.at("go") - 6, n),
+				new Shot(MinotaurAnim.STOMP, MinotaurAnim.STOMP.at("slam"), n),
+				new Shot(MinotaurAnim.FRENZY, (MinotaurAnim.FRENZY.at("spin") + MinotaurAnim.FRENZY.at("spun")) / 2, p),
+				new Shot(MinotaurAnim.STAGGER, 8, n),
+				new Shot(MinotaurAnim.PHASE, MinotaurAnim.PHASE.at("bite") + 4, n),
+				new Shot(MinotaurAnim.DEATH, MinotaurAnim.DEATH.ticks - 4, n)));
+		boss(context, world, HellEntities.GERYON, "geryon", 16, 3, List.of(
+				new Shot(GeryonAnim.INTRO, GeryonAnim.INTRO.at("roar") + 6, n),
+				new Shot(GeryonAnim.STING, GeryonAnim.STING.at("flash") + 3, w),
+				new Shot(GeryonAnim.STING, GeryonAnim.STING.at("hit"), n),
+				new Shot(GeryonAnim.FALSEFACE, GeryonAnim.FALSEFACE.at("split"), p),
+				new Shot(GeryonAnim.COIL, GeryonAnim.COIL.at("squeeze"), n),
+				new Shot(GeryonAnim.DIVE, GeryonAnim.DIVE.at("go"), n),
+				new Shot(GeryonAnim.CARRY, 20, n),
+				new Shot(GeryonAnim.STAGGER, 8, n),
+				new Shot(GeryonAnim.PHASE, GeryonAnim.PHASE.at("roar") + 6, n),
+				new Shot(GeryonAnim.DEATH, GeryonAnim.DEATH.at("bow") + 8, n)));
+		boss(context, world, HellEntities.ANTAEUS, "antaeus", 46, 14, List.of(
+				new Shot(AntaeusAnim.LOWER, 25, n),
+				new Shot(AntaeusAnim.LOWER, 50, n),
+				new Shot(AntaeusAnim.LOWER, AntaeusAnim.LOWER.at("set"), n),
+				new Shot(AntaeusAnim.RAISE, 30, n)));
+	}
+
+	private static <T extends AnimatedBoss> void boss(ClientGameTestContext context, TestSingleplayerContext world, EntityType<T> type, String name,
+													  double far, double eye, List<Shot> shots) {
+		world.getServer().runCommand("execute at Player0 run summon hellcraft:" + name + " ~ ~ ~" + (int) (far + 20) + " {Rotation:[180f,0f],Silent:1b}");
+		world.getConnection().waitForClientboundEntityUpdates(type);
+		String at = "execute at @e[type=hellcraft:" + name + ",limit=1] run ";
+		world.getServer().runCommand(at + String.format("tp Player0 ~ ~%.1f ~%.1f 0 8", eye, -far));
+		context.waitTicks(30);
+		boolean animated = context.computeOnClient(client -> client.level.getEntitiesOfClass(AnimatedBoss.class,
+				client.player.getBoundingBox().inflate(far * 2)).stream().anyMatch(b -> b.getType() == type && b.states[0].isStarted()));
+		if (!animated) {
+			throw new AssertionError("the client sees no " + name + " with its idle animation running");
+		}
+		context.takeScreenshot(name + "_front");
+		world.getServer().runCommand(at + String.format("tp Player0 ~%.1f ~%.1f ~-2 90 10", far, eye));
+		context.waitTicks(20);
+		context.takeScreenshot(name + "_side");
+		// from in front and to its left; Antaeus from his right, where the hand that carries you is
+		boolean right = type == HellEntities.ANTAEUS;
+		world.getServer().runCommand(at + String.format("tp Player0 ~%.1f ~%.1f ~%.1f %d 12", right ? far * 0.6 : -far * 0.6, eye + 1, -far * 0.85,
+				right ? 35 : -35));
+		for (Shot shot : shots) {
+			world.getServer().runOnServer(server -> {
+				T b = server.overworld().getEntities(type, e -> true).getFirst();
+				b.warn(shot.warning());
+				b.play(shot.anim());
+			});
+			context.waitTicks(shot.at());
+			context.takeScreenshot(name + "_" + shot.anim().name().toLowerCase() + "_" + shot.at());
+			world.getServer().runOnServer(server -> server.overworld().getEntities(type, e -> true).getFirst().warn(BossEntity.Warning.NONE));
+			context.waitTicks(Math.max(5, shot.anim().ticks() - shot.at() + 5));
+		}
+		world.getServer().runCommand("kill @e[type=hellcraft:" + name + "]");
 	}
 
 	/**
@@ -105,6 +211,7 @@ public class BossTest implements FabricClientGameTest {
 	private static void monsters(ClientGameTestContext context, TestSingleplayerContext world) {
 		lineup(context, world, "monsters_", new String[]{"lovers", "glutton", "wrathful", "hoarder"}, "lovers", 4, HellEntities.WRATHFUL);
 		lineup(context, world, "lower_", new String[]{"heretic", "centaur", "harpy", "mimic", "thief"}, "harpy", 4, HellEntities.THIEF);
+		lineup(context, world, "devils_", new String[]{"malebranche", "malacoda", "malebranche"}, "", 4, HellEntities.MALACODA);
 	}
 
 	private static void lineup(ClientGameTestContext context, TestSingleplayerContext world, String prefix, String[] kinds, String flyer, int gap,

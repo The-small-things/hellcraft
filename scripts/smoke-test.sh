@@ -355,13 +355,17 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$lower" | grep -q "=false" && { echo "Lower Hell's rules are wrong"; exit 1; }
   echo "$lower" | grep -q "16 centaur posts" || { echo "The fords have no centaur posts"; exit 1; }
   echo "$lower" | grep -q "8 fake Rests" || { echo "Malebolge has no fake Rests"; exit 1; }
-  for m in lovers glutton wrathful heretic centaur harpy mimic thief; do
+  for m in lovers glutton wrathful heretic centaur harpy mimic thief malebranche malacoda; do
     rcon "summon hellcraft:$m 2165 200 1250 {NoAI:1b,Tags:[\"smoke_monster\"]}" > /dev/null
     there=$(rcon "execute if entity @e[type=hellcraft:$m,tag=smoke_monster]" || true)
     echo "$m: $there"
     echo "$there" | grep -q "Test passed" || { echo "A $m could not be summoned"; exit 1; }
   done
   rcon "kill @e[tag=smoke_monster]" > /dev/null || true
+  # Antaeus stands in the ice below the Well, his hand on the rim, and the cleft below it is open
+  antaeus=$(rcon "hellcraft antaeus test")
+  echo "$antaeus"
+  echo "$antaeus" | grep -q "Antaeus OK" || { echo "Antaeus's ride is broken"; exit 1; }
   # the Fen's ferry: lighting a watchtower's beacons calls it
   ferry=$(rcon "hellcraft ferry test")
   echo "$ferry"
@@ -376,15 +380,18 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$danger" | grep -q "bypasses shields: true" || { echo "Unblockable boss blows can be blocked"; exit 1; }
   # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
   declare -A ATTACKS=([minos]="strike tail sentence coil" [cerberus]="bite maws filth howl" [plutus]="fist gold lunge pape" [phlegyas]="oar sweep wave grab" \
-                      [minotaur]="charge stomp" [geryon]="sting falseface" [vulcan]="hammerfall molten forgeborn chains")
-  for g in minos cerberus plutus phlegyas minotaur geryon vulcan; do
+                      [furies]="talons shriek lash tear medusa" [farinata]="disdain pyres exile" [minotaur]="gore charge stomp frenzy" \
+                      [geryon]="sting falseface coil dive" [vulcan]="hammerfall molten forgeborn chains")
+  for g in minos cerberus plutus phlegyas furies farinata minotaur geryon vulcan; do
     out=$(rcon "hellcraft guardian $g summon")
     echo "$out"
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
     sleep 3
     rcon "execute at @e[tag=hellcraft_guardian_body,limit=1] run summon minecraft:villager ~4 ~ ~ {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
-    # Minos, Cerberus, Plutus and Phlegyas have real bodies (animated on the client); the others still wear item-display models
-    if [ "$g" = minos ] || [ "$g" = cerberus ] || [ "$g" = plutus ] || [ "$g" = phlegyas ]; then
+    # every guardian but Vulcan has a real body (animated on the client); he still wears an item-display model
+    if [ "$g" = furies ]; then
+      shown=$(rcon "execute if entity @e[type=hellcraft:fury,tag=hellcraft_guardian_body]" || true)
+    elif [ "$g" != vulcan ]; then
       shown=$(rcon "execute if entity @e[type=hellcraft:$g,tag=hellcraft_guardian_body]" || true)
     else
       shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_guardian_model]" || true)
@@ -404,6 +411,17 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     left=$(rcon "execute if entity @e[tag=hellcraft_guardian_body]" || true)
     echo "$g left behind: $left"
     echo "$left" | grep -q "Test failed" || { echo "Guardian $g's body was left behind"; exit 1; }
+    if [ "$g" = furies ]; then
+      gone=$(rcon "execute if entity @e[type=hellcraft:medusa]" || true)
+      echo "Medusa after the Furies: $gone"
+      echo "$gone" | grep -q "Test failed" || { echo "Medusa outlived the Furies"; exit 1; }
+    fi
+    if [ "$g" = geryon ]; then
+      # beaten, Geryon stays at the brink to fly souls down
+      tamed=$(rcon "execute if entity @e[type=hellcraft:geryon_carrier]" || true)
+      echo "Tamed Geryon: $tamed"
+      echo "$tamed" | grep -q "Test passed" || { echo "Geryon did not stay to carry souls down"; exit 1; }
+    fi
     rcon "kill @e[tag=smoke_dummy]"
   done
 fi
@@ -515,7 +533,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }
   # the true form is killed with real damage: its death must reach the fight (the event, or the fight's own watch)
   grep -E "Lucifer's true form is (slain|dead)" "$LOG" || { echo "Lucifer's death never reached the fight"; fail=1; }
-  for g in minos cerberus plutus phlegyas minotaur geryon; do
+  grep -q "Antaeus stands in the ice at" "$LOG" || { echo "Antaeus was not placed"; fail=1; }
+  for g in minos cerberus plutus phlegyas furies farinata minotaur geryon; do
     grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }
   done

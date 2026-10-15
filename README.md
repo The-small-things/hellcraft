@@ -81,7 +81,7 @@ The world is a disc 7,000 blocks across, with the world border at radius 3,500 (
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
 | **Violence** | VII | Phlegethon, a river of lava with crimson banks, where skeleton "centaurs" ride skeleton horses. The Wood of the Suicides (leafless trees, webs). The Burning Sands. | Breaking the trees hurts you. Fire rains on the sands. |
 | **Fraud** | VIII | Malebolge: 10 concentric ditches crossed by 12 stone bridges. The ditch floors are pitch (magma and lava deltas) or blight (sculk). Ancient cities lie below. | 25% of monsters are invisible (26.3: 20%, never creepers, and they give themselves away with a swirl of particles) |
-| Well of Giants | – | Nimrod, Ephialtes and Antaeus stand chained. | – |
+| Well of Giants | – | Nimrod and Ephialtes stand chained. Antaeus, unchained, stands in the ice below and carries souls down (3.0). | – |
 | **Treachery** | IX | Cocytus, a frozen lake of packed and blue ice. At the very centre is Lucifer's pit. | Freezing cold that gets worse toward the centre. Leather armor protects, as in vanilla. |
 
 At the bottom of the world waits **Lucifer** (see [below](#lucifer)).
@@ -240,7 +240,7 @@ They protect like diamond, look like crimson plate with bone rivets and burning 
 
 ## The circle guardians (26.3)
 
-Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, six of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas also comes when you light the east watchtower's beacons). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its south, eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each with a sign on the road. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas also comes when you light the east watchtower's beacons). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
 | Guardian | Lair | Attacks |
 |---|---|---|
@@ -248,10 +248,16 @@ Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its so
 | **Cerberus**, the Great Worm (3.0: a real, animated body with three heads) | Gluttony, x 2100 | He stalks you round the lair (and the mire's mud takes whoever stands still). *Bite* (white): one head flashes white and snaps; block it as it lands and he reels for two seconds. *Three Maws* (a red cone): all three bite in front of him one after another (get behind him). *Filth* (red circles): puddles that slow and sicken. *Howl* (a purple ring): can't be blocked; be out of it or be stunned. At half health he rears up and slams the ground (a red ring), and from then on charges along red lines. |
 | **Plutus**, the Great Enemy (3.0: a real, animated body, a golden wolf-headed banker) | Greed, x 1800 | He waddles after you. *The Fist* (white): block it as it lands and he reels. *Weight of Gold* (red circles): gold falls there, harder on whoever carries more gold (leave it behind). *Lunge* (a red line): he hurls himself along it. *Pape Satàn* (a purple ring): a shriek that can't be blocked; it scatters and sickens. At half health the Mint opens: great coins as tall as a house roll across the lair along red lines. |
 | **Phlegyas**, the Ferryman of the Styx (3.0: a real, animated body) | the Fen, a plank landing by the east watchtower, x 1605 | Walk into the ring of braziers round his landing, or light both beacons on top of the east watchtower (flint and steel), and he rises from the pool at its heart. Fight from the planks. *The Oar* (a white line): block it as it lands and he reels. *The Sweep* (a purple ring): his oar skims round the deck, jump it. *The Wave* (a red ring over the deck's outer part): get in close or be thrown into the Styx. *The Grab* (a red circle that follows you): he throws whoever is in it out into the marsh, where the sullen lurk. At half health the sullen's hands burst up through the deck in red circles. Beaten, he leaves his ferry at the landing. |
-| **The Minotaur**, Infamy of Crete | Burning Sands, x 885 | *Charge*: tramples along a burning line. *Stomp*: a ground shockwave (jump it). Below ⅓ health he goes berserk. |
-| **Geryon**, Image of Fraud | edge of the great cliff, x 830 | Flies and swoops. *Sting*: a red ring follows a player, then he drops onto it, tail first (poison and wither). *False Face*: vanishes, reappears elsewhere, and leaves three frauds (vexes) behind. |
+| **The Furies**, the Erinyes of Dis (3.0: three real, animated bodies, one life) | just inside the Walls of Dis, x 1360 | They wheel over the lair and come down one at a time; a blow to any of the three counts. *The Talons* (a white circle that follows you): block as she drops and she tumbles to the ground. *The Shriek* (a purple circle under her): get out from under. *The Lash* (a red line): her serpent hair cracks along it. *Tears of Blood* (red circles). At half their life they call **Medusa**, who rises over the battlements: while her eyes glow, don't look at her. Whoever does turns to stone (the screen greys as it starts; look away and it clears). |
+| **Farinata**, the Proud Heretic (3.0: a real, animated body) | Heresy, in the Iron City, x 1260 | He stands in his burning tomb and never leaves it; eight tombs ring it. *Disdain* (a white line): fire runs along the ground at you; block it and he sinks into his tomb, open to blows. *The Pyres* (red circles on the tombs): they blast in patterns (every other one, round the ring, all but one): stand by a cold one. *Exile* (a purple ring round him): keep out. At half health every command fires twice. |
+| **The Minotaur**, Infamy of Crete (3.0: a real, animated body) | the broken slope above the river of blood, x 1150 | He hunts you round the lair. *The Horns* (a white wedge): block the thrust and he drops to one knee. *The Charge* (a red line): step aside; if he runs into rock he stuns himself. *The Stomp* (a red circle round him). *The Frenzy* (a purple ring): he whirls with his fists out; jump it or keep out. At half health he charges twice in a row. |
+| **Geryon**, Image of Fraud (3.0: a real, animated body) | the brink of the great cliff, x 830 | He swims in the air. *The Sting* (a white circle that follows you): block it and he sags to the ground. *The False Face* (purple lines): he and two copies dive along them; one blow pops a copy. *The Coils* (a red ring round the lair's edge): get to the middle. *The Dive* (a red line). At half health venom drips where you stand. Beaten, he doesn't die: he stays at the brink and carries souls down (below). |
 
 **The ferry (3.0).** Light both beacons on any watchtower of the Fen and Phlegyas's ferry comes gliding out of the fog to the water by the tower. Right-click it to board; a few seconds later it carries everyone aboard across the Styx and sets them down on the road by the gate of Dis (sneak to get off before it leaves). At the east tower the beacons call Phlegyas himself while he is there to fight; once he is beaten his ferry waits at his landing. The roads cross the Styx on causeways too: the ferry is a shortcut, never the only way.
+
+**Geryon's flight (3.0).** Once Geryon is beaten he waits at the brink of the great cliff. Right-click him to climb on (two can ride); a few seconds later he glides out over the abyss and wheels slowly down to the first ridge of Malebolge, as he carried Dante. He waits there a while for anyone going back up (right-click him again), then flies home. Nobody riding him can be hurt; don't sneak in the air, or you let go (you fall slowly, at least). The cliff's ramps are still there: he is a shortcut, never the only way.
+
+**Antaeus (3.0).** The unchained giant stands in the ice of Cocytus at the foot of the Well of Giants, his hand resting on the rim of a cleft worn in the cliff. Wait on the crying obsidian at the brink by his hand: he lifts you, bends, and sets you down on the ice. To go back up, wait on the crying obsidian beside his hand down on the ice. Nobody in his hand can be hurt.
 
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
@@ -456,7 +462,7 @@ They are built the first time someone comes near. The compass and the Map of Hel
 
 ## The torments of the circles
 
-Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all. Since 3.0 the upper circles' punishments are things to play with rather than debuffs: each is a rule you can use or get round.
+Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all. Since 3.0 the circles' punishments are things to play with rather than debuffs: each is a rule you can use or get round.
 
 | Circle | Torment | Counter (26.3) |
 |---|---|---|
@@ -464,9 +470,11 @@ Each circle torments the living (26.3: each has a counter, and the first time it
 | Gluttony | **The mud swallows you if you stand still** (3.0). Stand still on mud, dirt or soul soil and you sink: slowed after 2 s, held after 4 s, choking after 6 s (`mudSeconds`) | Keep moving, or stand on mangrove roots, stone or planks |
 | Greed | **Gold draws the hoarders** (3.0). Carry 8 or more gold ingots' worth (gold, diamonds, emeralds, netherite; a block counts 9) and hunched hoarders come for it: one, plus one for every 24 more, up to six (`hoarderGold`, `hoarderGoldPerExtra`, `hoardersMax`). They hunt only the laden, and each blow steals some of your treasure | Stash it (an ender chest) and they lose interest; kill a hoarder and it drops all it stole |
 | Wrath | **The sullen lurk under the water** (3.0). Where bubbles rise in the Styx, hands drag a swimmer down for two seconds (drowning damage; `sullenGripTicks`) | Keep to the roads, take a boat, or swim clear of the bubbles |
-| Heresy | The tombs' smoke brings Darkness now and then | A roof |
-| Burning Sands | Fire rains on the open sand (you see it falling first) | A roof, water, Fire Resistance, or leaving the sand |
-| Fraud | Some monsters are invisible | Watch for their swirl of particles (never creepers) |
+| Heresy | **The tombs blast fire in turn** (3.0). Every open tomb shows a red circle, then shoots a column of fire for a moment; they go in waves across the plain, every six seconds. Now and then a heretic climbs out of a tomb that just blasted | Watch the rhythm and cross between blasts |
+| Phlegethon | **The river of blood can be forded** (3.0) where the shallows run between two banks, at eight places round the circle. A centaur keeps each bank: now and then it stops and stares down the river (a red cone), and shoots fire arrows at whoever is in it | Cross while the centaurs look away, or fight them |
+| Wood of the Suicides | **The trees scream** (3.0). Pushing through the dead branches without sneaking, or breaking them, makes noise; the trees groan as a warning, and too much makes them scream and call the harpies | Sneak through the wood. The noise fades if you stay quiet |
+| Burning Sands | **Fire falls in waves** (3.0). The sky reddens and a countdown warns, then fire rains on the open sand for a few seconds, every 24 seconds | Shelter under one of the rock arches standing on the sand, in water, or under any roof |
+| Fraud | **Nothing is what it seems** (3.0). Some chests on the ridges are mimics. A fake Virgil's Rest stands beside each bridge the roads don't take (it isn't on your compass): step in and the trap springs. Thieves snatch something from your pack and run. Some monsters are invisible | Watch a chest for breathing before you open it; trust only the Rests on your compass; kill a thief to get your things back; watch for the swirl of particles (never creepers) |
 | Treachery | The ice freezes you | Leather armour, or a campfire, fire or lava within 4 blocks |
 
 **The upper circles' own monsters (3.0)**, each with a real, animated body, come out near pilgrims passing through (`layerMonsters`), and the first meeting opens their Codex page:
@@ -474,6 +482,12 @@ Each circle torments the living (26.3: each has a counter, and the first time it
 - **Gluttony: the gluttons**, sunk in the mud until you come within a few blocks, then heaving themselves up. Their belly slam leaves you starving and sick, and they burst into a cloud of filth when they die.
 - **Greed: the hoarders** (see the Greed rule above).
 - **Wrath: the wrathful**, muddy brawlers in packs of three who fight anything near them, each other included. Hurt one and it rages, faster and harder, for a few seconds.
+
+**Lower Hell's own monsters (3.0)**, the same way:
+- **Heresy: the heretics**, who climb out of the burning tombs.
+- **Phlegethon: the centaurs**, who keep the fords with bows of fire (see the Phlegethon rule above).
+- **The Wood: the harpies**, called by the trees' scream; they swoop and claw.
+- **Malebolge: the mimics** (chests that breathe), **the thieves**, and **the Malebranche**, devils with long hooks by the ditches of pitch. A Malebranche lines up its hook along a red line on the ground: step off it before the hook flies, or you're dragged to its claws. The first time you come down a road onto the fifth ridge, their captain **Malacoda** meets you, friendly as anything: the bridge ahead is broken, he says, but he'll show you another. There is no other.
 
 The monsters are tougher the deeper you go (+3% health per circle on 26.3). On 26.3 the Vestibule, Acheron and Limbo also have sparse, solitary spawns like the Dark Wood, and the monster cap is vanilla's.
 

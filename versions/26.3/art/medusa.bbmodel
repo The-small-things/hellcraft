@@ -2101,40 +2101,6 @@
    "start_delay": "",
    "loop_delay": "",
    "animators": {
-    "1d44cd18-1a1e-5f51-92c9-754a73f8a4f5": {
-     "name": "eyes",
-     "type": "bone",
-     "keyframes": [
-      {
-       "channel": "scale",
-       "data_points": [
-        {
-         "x": 0.01,
-         "y": 0.01,
-         "z": 0.01
-        }
-       ],
-       "uuid": "69be08bd-442f-59d2-a3d2-71db15bb58f3",
-       "time": 0.0,
-       "color": -1,
-       "interpolation": "catmullrom"
-      },
-      {
-       "channel": "scale",
-       "data_points": [
-        {
-         "x": 0.01,
-         "y": 0.01,
-         "z": 0.01
-        }
-       ],
-       "uuid": "139b3c45-5edd-5d9d-a849-019aff38913d",
-       "time": 2.0,
-       "color": -1,
-       "interpolation": "catmullrom"
-      }
-     ]
-    },
     "1e5a4383-24ea-5c5f-ac72-080d49628fab": {
      "name": "head",
      "type": "bone",
@@ -3498,40 +3464,6 @@
       }
      ]
     },
-    "1d44cd18-1a1e-5f51-92c9-754a73f8a4f5": {
-     "name": "eyes",
-     "type": "bone",
-     "keyframes": [
-      {
-       "channel": "scale",
-       "data_points": [
-        {
-         "x": 0.01,
-         "y": 0.01,
-         "z": 0.01
-        }
-       ],
-       "uuid": "1ae626ea-fb7c-5f70-b51c-65dbea169337",
-       "time": 0.0,
-       "color": -1,
-       "interpolation": "catmullrom"
-      },
-      {
-       "channel": "scale",
-       "data_points": [
-        {
-         "x": 0.01,
-         "y": 0.01,
-         "z": 0.01
-        }
-       ],
-       "uuid": "fdf3c4f2-9ff0-5416-bcba-48555f6992e8",
-       "time": 3.0,
-       "color": -1,
-       "interpolation": "catmullrom"
-      }
-     ]
-    },
     "42622e55-fa92-542c-818b-ccb8747236f7": {
      "name": "snake0",
      "type": "bone",
@@ -4089,40 +4021,6 @@
         }
        ],
        "uuid": "f13947e4-78dd-5917-96c3-8a5d0176e76f",
-       "time": 2.0,
-       "color": -1,
-       "interpolation": "catmullrom"
-      }
-     ]
-    },
-    "1d44cd18-1a1e-5f51-92c9-754a73f8a4f5": {
-     "name": "eyes",
-     "type": "bone",
-     "keyframes": [
-      {
-       "channel": "scale",
-       "data_points": [
-        {
-         "x": 0.01,
-         "y": 0.01,
-         "z": 0.01
-        }
-       ],
-       "uuid": "21bf228b-3e2a-5d2a-9f07-ac0028fc3253",
-       "time": 0.0,
-       "color": -1,
-       "interpolation": "catmullrom"
-      },
-      {
-       "channel": "scale",
-       "data_points": [
-        {
-         "x": 0.01,
-         "y": 0.01,
-         "z": 0.01
-        }
-       ],
-       "uuid": "a8e180c9-7e06-5781-9e1b-d10c0620b194",
        "time": 2.0,
        "color": -1,
        "interpolation": "catmullrom"

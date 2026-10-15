@@ -171,8 +171,24 @@ public final class CircleHazards {
 	/**
 	 * Virgil tells a player something once (soul.hints is a bit set of 64: 0-10 the circles' torments, 11 the Noble
 	 * Castle, 20 the Forge's heat, 24-26 the danger language's colours, 27-31 the upper circles' rules, 32 on the lower
-	 * circles' (LowerRules and their monsters) from 32 on).
+	 * circles' (LowerRules and their monsters) from 32 on, 36 Malacoda's trick, 37 Antaeus, 38 the
+	 * Malebranche's hooks).
 	 */
+	/** Whether Virgil has told this player hint `index` (or it was spent some other way, see spendHint). */
+	public static boolean hinted(ServerPlayer player, int index) {
+		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
+		return soul == null || (soul.hints & (1L << index)) != 0;
+	}
+
+	/** Marks hint `index` as told without saying anything (for one-time events). */
+	public static void spendHint(ServerPlayer player, int index) {
+		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
+		if (soul != null) {
+			soul.hints |= 1L << index;
+			HellState.get(player.level().getServer()).setDirty();
+		}
+	}
+
 	public static void hintOnce(ServerPlayer player, int index, String text) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		long bit = 1L << index;

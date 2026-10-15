@@ -9,8 +9,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
+import net.thesmallthings.hellcraft.entity.boss.FarinataEntity;
+import net.thesmallthings.hellcraft.entity.boss.FuryEntity;
+import net.thesmallthings.hellcraft.entity.boss.GeryonCarrier;
+import net.thesmallthings.hellcraft.entity.boss.GeryonEntity;
+import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
+import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
@@ -20,6 +27,8 @@ import net.thesmallthings.hellcraft.entity.monster.Harpy;
 import net.thesmallthings.hellcraft.entity.monster.Heretic;
 import net.thesmallthings.hellcraft.entity.monster.Hoarder;
 import net.thesmallthings.hellcraft.entity.monster.Lovers;
+import net.thesmallthings.hellcraft.entity.monster.Malacoda;
+import net.thesmallthings.hellcraft.entity.monster.Malebranche;
 import net.thesmallthings.hellcraft.entity.monster.Mimic;
 import net.thesmallthings.hellcraft.entity.monster.Thief;
 import net.thesmallthings.hellcraft.entity.monster.Wrathful;
@@ -98,6 +107,44 @@ public final class HellEntities {
 	public static final EntityType<Thief> THIEF = register("thief",
 			EntityType.Builder.of(Thief::new, MobCategory.MONSTER).sized(0.6f, 1.8f).clientTrackingRange(8));
 
+	/** The Malebranche, the devils with hooks who keep Malebolge's ditches of pitch (Frauds). */
+	public static final EntityType<Malebranche> MALEBRANCHE = register("malebranche",
+			EntityType.Builder.of(Malebranche::new, MobCategory.MONSTER).sized(0.8f, 2.0f).fireImmune().clientTrackingRange(10));
+
+	/** Malacoda, their captain, who leads souls along the fifth ridge to a bridge that isn't there (Frauds). */
+	public static final EntityType<Malacoda> MALACODA = register("malacoda",
+			EntityType.Builder.of(Malacoda::new, MobCategory.MISC).sized(0.9f, 2.4f).fireImmune().clientTrackingRange(10));
+
+	/** The Furies at the Walls of Dis (FuriesFight): the leader is the fight's body, her sisters fly with her. */
+	public static final EntityType<FuryEntity> FURY = register("fury",
+			EntityType.Builder.of(FuryEntity::new, MobCategory.MONSTER).sized(1.4f, 3.0f).eyeHeight(2.6f).fireImmune().clientTrackingRange(16));
+
+	/** Medusa, called up over the battlements of Dis by the Furies (FuriesFight). */
+	public static final EntityType<MedusaEntity> MEDUSA = register("medusa",
+			EntityType.Builder.of(MedusaEntity::new, MobCategory.MONSTER).sized(1.5f, 5.5f).eyeHeight(2.8f).fireImmune().clientTrackingRange(16));
+
+	/** Farinata, the Proud Heretic, in his burning tomb (FarinataFight). */
+	public static final EntityType<FarinataEntity> FARINATA = register("farinata",
+			EntityType.Builder.of(FarinataEntity::new, MobCategory.MONSTER).sized(1.6f, 3.8f).eyeHeight(3.3f).fireImmune().clientTrackingRange(16));
+
+	/** The Minotaur, the Infamy of Crete, on the ruined slope down to the river of blood (MinotaurFight). */
+	public static final EntityType<MinotaurEntity> MINOTAUR = register("minotaur",
+			EntityType.Builder.of(MinotaurEntity::new, MobCategory.MONSTER).sized(2.4f, 5.6f).eyeHeight(4.9f).fireImmune().clientTrackingRange(16));
+
+	/** Geryon, the Image of Fraud, at the brink of the great cliff (GeryonFight). */
+	public static final EntityType<GeryonEntity> GERYON = register("geryon",
+			EntityType.Builder.of(GeryonEntity::new, MobCategory.MONSTER).sized(3.0f, 3.0f).eyeHeight(2.4f).fireImmune().clientTrackingRange(16)
+					.updateInterval(1));
+
+	/** Geryon tamed, who flies souls down the cliff once he's beaten (GeryonCarrier). */
+	public static final EntityType<GeryonCarrier> GERYON_CARRIER = register("geryon_carrier",
+			EntityType.Builder.of(GeryonCarrier::new, MobCategory.MISC).sized(3.0f, 3.0f).eyeHeight(2.4f).fireImmune().clientTrackingRange(16)
+					.updateInterval(1));
+
+	/** Antaeus, the unchained giant who sets souls down on the ice of Cocytus (AntaeusCleft). */
+	public static final EntityType<AntaeusEntity> ANTAEUS = register("antaeus",
+			EntityType.Builder.of(AntaeusEntity::new, MobCategory.MISC).sized(6.0f, 28.0f).eyeHeight(25.0f).fireImmune().clientTrackingRange(24));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
@@ -114,6 +161,16 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(HERETIC, Heretic.attributes());
 		FabricDefaultAttributeRegistry.register(MIMIC, Mimic.attributes());
 		FabricDefaultAttributeRegistry.register(THIEF, Thief.attributes());
+		FabricDefaultAttributeRegistry.register(MALEBRANCHE, Malebranche.attributes());
+		FabricDefaultAttributeRegistry.register(MALACODA, Malacoda.attributes());
+		FabricDefaultAttributeRegistry.register(FURY, FuryEntity.attributes());
+		FabricDefaultAttributeRegistry.register(MEDUSA, MedusaEntity.attributes());
+		FabricDefaultAttributeRegistry.register(FARINATA, FarinataEntity.attributes());
+		FabricDefaultAttributeRegistry.register(MINOTAUR, MinotaurEntity.attributes());
+		FabricDefaultAttributeRegistry.register(GERYON, GeryonEntity.attributes());
+		FabricDefaultAttributeRegistry.register(GERYON_CARRIER, GeryonCarrier.attributes());
+		FabricDefaultAttributeRegistry.register(ANTAEUS, AntaeusEntity.attributes());
+		Carrier.register();
 	}
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {

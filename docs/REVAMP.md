@@ -1,6 +1,6 @@
 # Hellcraft 3.0: the revamp plan
 
-**Status:** approved by the owner on 2026-10-13, with section 6 redone after their answer to Q7. Phases 0 to 3
+**Status:** approved by the owner on 2026-10-13, with section 6 redone after their answer to Q7. Phases 0 to 4
 are built (see Progress in section 13) and wait on a play session. The owner marks it up in a commentable copy, the "Hellcraft 3.0 Revamp Plan" doc
 (https://claude.ai/code/artifact/4b8ddced-e5ed-48a4-9b7f-3bafdffe313d); keep this file in step with it.
 Section 15 records the answers.
@@ -282,8 +282,14 @@ set-pieces (soul flocks over Lust, the Mire's rotting trees, bloated fungus and 
 House's coin hills, vaults, giant scales and rolling coins, the Fen's fog, reeds, boardwalks, watchtowers and Dis glowing on the
 horizon); Cerberus, Plutus and Phlegyas on real bodies with fights in the danger language (Phlegyas is called by
 the east watchtower's beacons, and every watchtower's beacons call his ferry to Dis); and a new monster per circle
-(the lovers, the gluttons, the hoarders, the wrathful), each with a Codex page. Phases 1 to 3 wait on a play
-session.
+(the lovers, the gluttons, the hoarders, the wrathful), each with a Codex page. Phase 4 was built the same day: the
+lower circles' rules (Heresy's tombs blast fire in turn; Phlegethon's fords, watched by centaurs; the Wood's trees
+scream and call the harpies unless you sneak; the Sands' fire falls in waves, with rock arches for shelter;
+Malebolge's mimics, fake Rests, thieves and the Malebranche's hooks, and Malacoda's lying escort on the fifth
+ridge); the Furies (who call Medusa: look away from her) inside the Walls of Dis, Farinata in his burning tomb, the
+Minotaur and Geryon, all on real bodies with intro cutscenes and Codex pages; Geryon, once beaten, flies souls down
+the great cliff, and Antaeus sets them down on the ice from the Well (both optional: the ramps stay). New monsters:
+heretics, centaurs, harpies, mimics, thieves and the Malebranche. Phases 1 to 4 wait on a play session.
 
 ## 14. The playtest loop
 

@@ -17,9 +17,6 @@ public final class MedusaAnimations {
 	}
 
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(2F).looping()
-			.addAnimation("eyes", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, -6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -130,9 +127,6 @@ public final class MedusaAnimations {
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
-			.addAnimation("eyes", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake0", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
@@ -178,9 +172,6 @@ public final class MedusaAnimations {
 			.addAnimation("bust", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
-			.addAnimation("eyes", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake0", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
