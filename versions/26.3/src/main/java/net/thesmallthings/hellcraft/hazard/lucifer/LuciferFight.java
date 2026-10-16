@@ -175,9 +175,9 @@ public final class LuciferFight {
 		scheduled.add(new Scheduled(tick + Math.max(0, paced(delay)), action));
 	}
 
-	/** A fight delay at the bosses' tempo (the intro keeps its own timing). */
+	/** A fight delay at the bosses' tempo, while he fights (his entrance, transformations and defeat keep their timing). */
 	int paced(int ticks) {
-		if (phase == Phase.INTRO) {
+		if (phase != Phase.DUEL && phase != Phase.ENRAGED && phase != Phase.TRUE_FORM) {
 			return ticks;
 		}
 		return (int) Math.round(ticks / Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo)));
