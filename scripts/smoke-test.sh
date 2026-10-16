@@ -142,7 +142,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$item"
   echo "$item" | grep -qi "unknown or incomplete command" && { echo "/hellcraft giveitem is not registered"; exit 1; }
   cfg=$(docker exec "$NAME" cat /data/config/hellcraft.json)
-  for want in '"configVersion": 2' '"monsterCapMultiplier": 1.0' '"mobHealthPerDepth": 0.03' '"fragmentChanceBase": 0.05' '"pveDeathsCostHearts": false' '"bindCostHearts": 0'; do
+  for want in '"configVersion": 3' '"bossHeartScaling": 0.5' '"monsterCapMultiplier": 1.0' '"mobHealthPerDepth": 0.03' '"fragmentChanceBase": 0.05' '"pveDeathsCostHearts": false' '"bindCostHearts": 0'; do
     echo "$cfg" | grep -qF "$want" || { echo "$cfg"; echo "Config was not migrated: missing $want"; exit 1; }
   done
   ghost=$(rcon "ghost" || true)
