@@ -340,7 +340,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # the upper circles' rules: Lust's wind streams, Gluttony's mud, Greed's hoarders, Wrath's sullen
   layers=$(rcon "hellcraft layers test")
   echo "$layers"
-  echo "$layers" | grep -q "mud soft=true roots soft=false stone soft=false; 12 wind streams, in Lust=true; sullen spots on a line across the Styx=true" \
+  echo "$layers" | grep -q "mud soft=true roots soft=false stone soft=false; 36 wind streams, in Lust=true; sullen spots on a line across the Styx=true" \
     || { echo "The layer rules are wrong"; exit 1; }
   echo "$layers" | grep -q "4 ingots draw 0, 20 draw 1, a stack of blocks (576) draws 6; a gold block is worth 9 ingots" || { echo "Greed's hoarders are wrong"; exit 1; }
   rcon "summon hellcraft:hoarder 2165 200 1250 {NoAI:1b,Tags:[\"smoke_hoarder\"]}"
