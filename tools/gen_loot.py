@@ -257,6 +257,21 @@ TABLES = {
     "entities/centaur": {"type": "minecraft:entity", "pools": [
         pool(1, 1, [item("arrow", 1, 2, 8)]),
         rare_drop([circle_book("judgement", 1, 1, 4)], 0.08)]},
+    # the Forge of Dis: a Cyclops of the quarries, and the chest at his camp
+    "entities/cyclops": {"type": "minecraft:entity", "pools": [
+        pool(1, 1, [item("gold_ingot", 3, 2, 6), item("iron_ingot", 2, 3, 8)]),
+        pool(1, 1, [fragments(1, 1, 3)]),
+        rare_drop([item("netherite_scrap", 1)], 0.35)]},
+    "chests/cyclops_camp": chest(
+        pool(3, 5, [
+            item("gold_ingot", 6, 2, 6),
+            item("iron_ingot", 6, 3, 9),
+            item("coal", 5, 4, 12),
+            item("blackstone", 3, 8, 24),
+            item("obsidian", 2, 1, 4),
+            fragments(4, 1, 3),
+        ]),
+        pool(1, 1, [item("netherite_scrap", 1), item("golden_apple", 2), vigils(2), book(2, 20, 30), empty(3)])),
     "gameplay/guardian_spoils": {"type": "minecraft:chest", "pools": [
         pool(2, 2, [book(1, 30, 30)]),
         pool(1, 2, [item("diamond", 3, 1, 3), item("golden_apple", 3), item("experience_bottle", 3, 4, 8), vigils(2, 1, 2)]),

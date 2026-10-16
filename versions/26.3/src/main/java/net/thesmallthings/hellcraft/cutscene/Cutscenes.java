@@ -1,15 +1,16 @@
 package net.thesmallthings.hellcraft.cutscene;
 
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
-import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
-import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -171,6 +172,26 @@ public final class Cutscenes {
 			.card(MinotaurAnim.INTRO.at("roar") + 4, 98, "THE MINOTAUR", "THE INFAMY OF CRETE", MINOTAUR)
 			.build();
 
+	private static final int VULCAN = 0xE07A20;
+
+	/**
+	 * Vulcan bent over his anvil, hammering; the camera comes round him through the sparks as he straightens and roars.
+	 */
+	public static final Cutscene VULCAN_INTRO = Cutscene.builder("vulcan_intro", VulcanAnim.INTRO.ticks)
+			.fadeIn(10)
+			.blendOut(12)
+			.shot(0, 5, 2.0, 7, 0, 2.6, 0)
+			.shot(VulcanAnim.INTRO.at("clang2"), 3, 2.8, 6, 0, 3.0, -1)
+			.shot(VulcanAnim.INTRO.at("roar") - 4, -2, 3.6, 8, 0, 4.4, 0)
+			.shot(VulcanAnim.INTRO.at("roar") + 14, -1.5, 3.0, 7.5, 0, 4.8, 0)
+			.shot(VulcanAnim.INTRO.ticks, 6, 4.0, 12, 0, 3.6, 0)
+			.caption(6, VulcanAnim.INTRO.at("roar") - 2, "Virgil", VIRGIL, "Vulcan, the gods' own smith. When his hammer flashes white, raise your "
+					+ "shield: a blocked blow brings him to his knee.")
+			.caption(VulcanAnim.INTRO.at("roar") + 2, 98, "Vulcan", VULCAN, "WHO COMES TO MY FORGE UNBIDDEN?")
+			.shake(VulcanAnim.INTRO.at("roar"), VulcanAnim.INTRO.at("roar") + 20, 1.0f)
+			.card(VulcanAnim.INTRO.at("roar") + 4, 98, "VULCAN", "SMITH OF THE GODS", VULCAN)
+			.build();
+
 	private static final int GERYON = 0x3A6AB0;
 
 	/**
@@ -254,7 +275,7 @@ public final class Cutscenes {
 			.build();
 
 	private static final List<Cutscene> ALL = List.of(MINOS_INTRO, CERBERUS_INTRO, PLUTUS_INTRO, PHLEGYAS_INTRO, FURIES_INTRO, FARINATA_INTRO,
-			MINOTAUR_INTRO, GERYON_INTRO, LUCIFER_DESCENT, LUCIFER_REVEAL, LUCIFER_CLIMB);
+			MINOTAUR_INTRO, GERYON_INTRO, VULCAN_INTRO, LUCIFER_DESCENT, LUCIFER_REVEAL, LUCIFER_CLIMB);
 
 	@Nullable
 	public static Cutscene byId(String id) {

@@ -10,7 +10,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.block.SlagCrustBlock;
+import net.thesmallthings.hellcraft.client.nav.ClientNav;
+import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.boss.CyclopsEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
+import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
+import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.world.ForgeGeometry;
+import net.thesmallthings.hellcraft.world.feature.CyclopsCampFeature;
 
 import java.util.Locale;
 import java.util.Properties;
@@ -82,7 +89,120 @@ public class NetherTest implements FabricClientGameTest {
 			connection.waitForChunksRender();
 			context.waitTicks(10);
 			context.takeScreenshot("forge_heat_column");
+			vulcanFight(context, server, connection);
+			cyclopsCamp(context, server, connection);
 		}
+	}
+
+	/**
+	 * Vulcan's fight in the Great Forge, against a dummy (screenshots vulcan_fight_*): his entrance, then each blow as its
+	 * danger mark fills, his rage at half health, and his death.
+	 */
+	private static void vulcanFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		server.runCommand("execute in minecraft:the_nether run tp Player0 -6 76 -11 facing 1 71 -2");
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		String out = server.computeOnServer(s -> GuardianManager.summon(s, Guardian.VULCAN));
+		if (!out.contains("awakens")) {
+			throw new AssertionError("Vulcan could not be summoned: " + out);
+		}
+		server.runCommand("execute in minecraft:the_nether run summon minecraft:villager 3 70 -6 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"fight_dummy\"]}");
+		context.waitTicks(VulcanAnim.INTRO.at("roar") + 6);
+		context.takeScreenshot("vulcan_fight_intro");
+		context.waitTicks(VulcanAnim.INTRO.ticks - VulcanAnim.INTRO.at("roar") + 10);
+		String[][] shots = {
+				{"strike", String.valueOf(VulcanAnim.STRIKE.at("flash") + 6)},
+				{"hammerfall", String.valueOf(VulcanAnim.HAMMERFALL.at("leap"))},
+				{"molten", String.valueOf(VulcanAnim.POUR.at("pour") + 4)},
+				{"chains", String.valueOf(VulcanAnim.THROW.at("throw") - 6)},
+				{"seams", "18"},
+				{"forgeborn", String.valueOf(VulcanAnim.SUMMON.at("ring") + 10)},
+		};
+		for (String[] shot : shots) {
+			String used = server.computeOnServer(s -> GuardianManager.attack(Guardian.VULCAN, shot[0]));
+			if (!used.contains(" uses ")) {
+				throw new AssertionError("Vulcan could not use " + shot[0] + ": " + used);
+			}
+			context.waitTicks(Integer.parseInt(shot[1]));
+			context.takeScreenshot("vulcan_fight_" + shot[0]);
+			context.waitTicks(90);
+		}
+		// bring him under half his health: he drives his hammer into the floor
+		server.runOnServer(s -> s.getLevel(Level.NETHER).getEntities(HellEntities.VULCAN, e -> true)
+				.forEach(v -> v.setHealth(v.getMaxHealth() * 0.45f)));
+		context.waitTicks(VulcanAnim.PHASE.at("plunge") + 4);
+		context.takeScreenshot("vulcan_fight_rage");
+		context.waitTicks(80);
+		server.computeOnServer(s -> GuardianManager.slay(Guardian.VULCAN));
+		context.waitTicks(VulcanAnim.DEATH.at("fall"));
+		context.takeScreenshot("vulcan_fight_death");
+		server.runCommand("kill @e[tag=fight_dummy]");
+		if (!context.computeOnClient(client -> ClientNav.codex().stream().anyMatch(e -> e.id().equals("vulcan")))) {
+			throw new AssertionError("meeting Vulcan didn't open his Codex entry");
+		}
+	}
+
+	/**
+	 * A Cyclops's camp in the quarries (screenshots cyclops_camp, cyclops_*): the camp from above, then his three blows
+	 * against a dummy as their danger marks fill.
+	 */
+	private static void cyclopsCamp(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		int[] camp = null;
+		for (int i = -4; i <= -1 && camp == null; i++) {
+			for (int j = -2; j <= 1 && camp == null; j++) {
+				camp = CyclopsCampFeature.site(i, j);
+			}
+		}
+		if (camp == null) {
+			throw new AssertionError("no Cyclops camp west of the Forge");
+		}
+		int[] at = camp;
+		server.runCommand(String.format(Locale.ROOT, "execute in minecraft:the_nether run tp Player0 %d 100 %d facing %d 60 %d", at[0] + 14, at[1] + 14,
+				at[0], at[1]));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		int floor = server.computeOnServer(s -> {
+			ServerLevel nether = s.getLevel(Level.NETHER);
+			for (int y = 100; y > ForgeGeometry.LAVA; y--) {
+				if (nether.getBlockState(new BlockPos(at[0], y, at[1])).is(net.minecraft.world.level.block.Blocks.CAMPFIRE)) {
+					return y;
+				}
+			}
+			return -1;
+		});
+		if (floor < 0) {
+			throw new AssertionError("the camp at " + at[0] + ", " + at[1] + " has no fire");
+		}
+		server.runCommand(String.format(Locale.ROOT, "execute in minecraft:the_nether run tp Player0 %d %d %d facing %d %d %d", at[0] - 10, floor + 5,
+				at[1] - 7, at[0] - 2, floor + 2, at[1]));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("cyclops_camp");
+		boolean there = server.computeOnServer(s -> !s.getLevel(Level.NETHER).getEntities(HellEntities.CYCLOPS,
+				c -> c.distanceToSqr(at[0], c.getY(), at[1]) < 100).isEmpty());
+		if (!there) {
+			throw new AssertionError("no Cyclops at his camp");
+		}
+		server.runCommand(String.format(Locale.ROOT, "execute in minecraft:the_nether run summon minecraft:villager %d %d %d {NoAI:1b,Invulnerable:1b,"
+				+ "PersistenceRequired:1b,Tags:[\"fight_dummy\"]}", at[0] + 3, floor, at[1] - 4));
+		String[][] blows = {{"smash", "16"}, {"boulder", "40"}, {"quake", "22"}};
+		for (String[] blow : blows) {
+			String out = server.computeOnServer(s -> CyclopsEntity.attackNear(s.getLevel(Level.NETHER),
+					new net.minecraft.world.phys.Vec3(at[0], floor, at[1]), blow[0]));
+			if (!out.contains("uses")) {
+				throw new AssertionError("the Cyclops could not use " + blow[0] + ": " + out);
+			}
+			context.waitTicks(Integer.parseInt(blow[1]));
+			context.takeScreenshot("cyclops_" + blow[0]);
+			context.waitTicks(70);
+		}
+		server.runCommand("kill @e[tag=fight_dummy]");
 	}
 
 	/** The causeway east of the mesa wears crust; cracked, it glows through three stages and melts. */

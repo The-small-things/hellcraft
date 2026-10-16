@@ -126,6 +126,21 @@ public final class Codex {
 			"Behold the monster with the pointed tail, who crosses mountains, and breaks walls and weapons; behold the one who all the world doth stink!",
 			"Inferno XVII");
 
+	public static final Entry VULCAN = new Entry("vulcan", "VULCAN", "Smith of the Gods",
+			List.of("The lame god of the forge, who made the thunderbolts Jove hurled at the giants. Dante hears the giant Capaneus "
+							+ "dare Jove to weary all his smiths at the black forge of Mongibello: here, under Hell, that forge is the Great Forge of Dis.",
+					"He made the gods' weapons, and he guards the secret of the Hellforge: beat him and its fire is yours to use."),
+			List.of("White flash, white ground: his hammer comes down in front of him. Block it as it lands and he goes down on one knee.",
+					"Red circle, then a purple ring: he leaps and lands on the circle; the shockwave rolls out across the floor. Get out of the "
+							+ "circle, then jump the wave.",
+					"Red circles round each of you: molten iron pours there. Move.",
+					"Red line: his chain flies along it and drags whoever it catches to his feet. Step off the line.",
+					"He calls smiths out of the fire: kill them before they surround you.",
+					"At half his health he drives his hammer into the floor: the seams of the floor (red lines through the middle) burst "
+							+ "between his blows."),
+			"Then let him weary out the others, one by one, at the black forge of Mongibello.",
+			"Inferno XIV");
+
 	public static final Entry LUCIFER = new Entry("lucifer", "LUCIFER", "Emperor of the Kingdom Dolorous",
 			List.of("Once the fairest of the angels, he rose against his maker and fell. Where he struck the earth, Hell opened, "
 							+ "and he stands frozen at its bottom to the chest in the ice of Cocytus, the wind of his six wings keeping it frozen.",
@@ -230,8 +245,20 @@ public final class Codex {
 			"\"Let not one of you be wicked!\" ... and he had made a trumpet of his rump.",
 			"Inferno XXI");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
-			MIMIC, THIEF, MALEBRANCHE);
+	public static final Entry CYCLOPS = new Entry("cyclops", "THE CYCLOPES", "Smiths of the Quarries",
+			List.of("One-eyed giants, Vulcan's smiths: under Etna they forged Jove's thunderbolts. In the Forge of Dis they cut stone in "
+							+ "the quarries west of the Great Forge, and each keeps a camp by his fire.",
+					"Leave a Cyclops alone and he stays by his fire. Come near and he wakes."),
+			List.of("White flash: his maul. Block it with your shield as it lands and he goes down on one knee.",
+					"Red circle: he tears up a boulder and throws it there. Move.",
+					"Purple ring round him: his stamp. Jump as it comes, or keep out of the ring.",
+					"At half his health he throws two boulders at a time. His camp's chest and his body hold gold, iron, and sometimes "
+							+ "netherite scrap."),
+			"Within, the Cyclopes were forging iron in the vast cave, Brontes and Steropes and naked-limbed Pyracmon.",
+			"Aeneid VIII");
+
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, VULCAN, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
+			MIMIC, THIEF, MALEBRANCHE, CYCLOPS);
 
 	@Nullable
 	public static Entry byId(String id) {

@@ -275,6 +275,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "Nether $f: $out"
     echo "$out" | grep -qiE "unknown|can't find|invalid" && { echo "Nether feature hellcraft:$f is missing"; exit 1; }
   done
+  # the Forge of Dis's own map (Phase 6): each region where ForgeGeometry puts it, crust on the Slag Sea's causeways
+  forge=$(rcon "hellcraft forge test")
+  echo "$forge"
+  echo "$forge" | grep -q "Forge test OK" || { echo "The Forge of Dis is not laid out as it should be"; exit 1; }
   drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:chests/forge_ruin" || true)
   echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "The forge ruin loot table does not work"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
@@ -390,20 +394,18 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
   declare -A ATTACKS=([minos]="strike tail sentence coil" [cerberus]="bite maws filth howl" [plutus]="fist gold lunge pape" [phlegyas]="oar sweep wave grab" \
                       [furies]="talons shriek lash tear medusa" [farinata]="disdain pyres exile" [minotaur]="gore charge stomp frenzy" \
-                      [geryon]="sting falseface coil dive" [vulcan]="hammerfall molten forgeborn chains")
+                      [geryon]="sting falseface coil dive" [vulcan]="strike hammerfall molten chains forgeborn seams")
   for g in minos cerberus plutus phlegyas furies farinata minotaur geryon vulcan; do
     out=$(rcon "hellcraft guardian $g summon")
     echo "$out"
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
     sleep 3
     rcon "execute at @e[tag=hellcraft_guardian_body,limit=1] run summon minecraft:villager ~4 ~ ~ {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
-    # every guardian but Vulcan has a real body (animated on the client); he still wears an item-display model
+    # every guardian has a real body (animated on the client)
     if [ "$g" = furies ]; then
       shown=$(rcon "execute if entity @e[type=hellcraft:fury,tag=hellcraft_guardian_body]" || true)
-    elif [ "$g" != vulcan ]; then
-      shown=$(rcon "execute if entity @e[type=hellcraft:$g,tag=hellcraft_guardian_body]" || true)
     else
-      shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_guardian_model]" || true)
+      shown=$(rcon "execute if entity @e[type=hellcraft:$g,tag=hellcraft_guardian_body]" || true)
     fi
     echo "$g's model: $shown"
     echo "$shown" | grep -q "Test passed" || { echo "Guardian $g has no model"; exit 1; }

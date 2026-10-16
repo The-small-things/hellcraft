@@ -20,6 +20,7 @@ import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
 import net.thesmallthings.hellcraft.entity.boss.gen.AntaeusAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.CyclopsAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
@@ -30,6 +31,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import net.thesmallthings.hellcraft.entity.monster.SoulMonster;
 
 import java.util.List;
@@ -60,6 +62,8 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(PhlegyasAnim.WAVE, PhlegyasAnim.WAVE.at("slam"), null), new Shot(PhlegyasAnim.STAGGER, 10, null)),
 				(e, a) -> ((PhlegyasEntity) e).play((PhlegyasAnim) a));
 		lowerBosses(context, world);
+		vulcan(context, world);
+		cyclops(context, world);
 		lucifer(context, world);
 		for (String m : List.of("lovers", "glutton", "wrathful", "hoarder", "heretic", "centaur", "harpy", "mimic", "thief", "malebranche", "malacoda")) {
 			monster(context, world, m);
@@ -181,6 +185,8 @@ public class BossTest implements FabricClientGameTest {
 			world.getServer().runCommand("kill @e[type=hellcraft:phlegyas]");
 			world.getServer().runCommand("kill @e[type=hellcraft:ferry]");
 			lowerBosses(context, world);
+			vulcan(context, world);
+			cyclops(context, world);
 			lucifer(context, world);
 			monsters(context, world);
 			context.runOnClient(client -> {
@@ -251,6 +257,44 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(AntaeusAnim.LOWER, 50, n),
 				new Shot(AntaeusAnim.LOWER, AntaeusAnim.LOWER.at("set"), n),
 				new Shot(AntaeusAnim.RAISE, 30, n)));
+	}
+
+	/** A Cyclops of the quarries (screenshots cyclops_*): from the front and the side, then each blow at its telling moment. */
+	private static void cyclops(ClientGameTestContext context, TestSingleplayerContext world) {
+		BossEntity.Warning w = BossEntity.Warning.WHITE;
+		BossEntity.Warning p = BossEntity.Warning.PURPLE;
+		BossEntity.Warning n = BossEntity.Warning.NONE;
+		boss(context, world, HellEntities.CYCLOPS, "cyclops", 9, 2, List.of(
+				new Shot(CyclopsAnim.ROAR, CyclopsAnim.ROAR.at("roar") + 4, n),
+				new Shot(CyclopsAnim.SMASH, CyclopsAnim.SMASH.at("flash") + 3, w),
+				new Shot(CyclopsAnim.SMASH, CyclopsAnim.SMASH.at("hit"), n),
+				new Shot(CyclopsAnim.THROW, CyclopsAnim.THROW.at("throw") - 6, n),
+				new Shot(CyclopsAnim.QUAKE, CyclopsAnim.QUAKE.at("stamp") - 6, p),
+				new Shot(CyclopsAnim.STAGGER, 10, n),
+				new Shot(CyclopsAnim.WALK, 12, n),
+				new Shot(CyclopsAnim.DEATH, CyclopsAnim.DEATH.ticks - 4, n)));
+	}
+
+	/** Vulcan, smith of the gods (screenshots vulcan_*): from the front and the side, then each blow at its telling moment. */
+	private static void vulcan(ClientGameTestContext context, TestSingleplayerContext world) {
+		BossEntity.Warning w = BossEntity.Warning.WHITE;
+		BossEntity.Warning p = BossEntity.Warning.PURPLE;
+		BossEntity.Warning n = BossEntity.Warning.NONE;
+		boss(context, world, HellEntities.VULCAN, "vulcan", 11, 3, List.of(
+				new Shot(VulcanAnim.INTRO, VulcanAnim.INTRO.at("clang2"), n),
+				new Shot(VulcanAnim.INTRO, VulcanAnim.INTRO.at("roar") + 6, n),
+				new Shot(VulcanAnim.STRIKE, VulcanAnim.STRIKE.at("flash") + 3, w),
+				new Shot(VulcanAnim.STRIKE, VulcanAnim.STRIKE.at("hit"), n),
+				new Shot(VulcanAnim.HAMMERFALL, VulcanAnim.HAMMERFALL.at("leap") + 4, n),
+				new Shot(VulcanAnim.HAMMERFALL, VulcanAnim.HAMMERFALL.at("land"), p),
+				new Shot(VulcanAnim.POUR, VulcanAnim.POUR.at("pour"), n),
+				new Shot(VulcanAnim.THROW, VulcanAnim.THROW.at("throw"), n),
+				new Shot(VulcanAnim.SUMMON, VulcanAnim.SUMMON.at("ring"), n),
+				new Shot(VulcanAnim.STAGGER, 10, n),
+				new Shot(VulcanAnim.PHASE, VulcanAnim.PHASE.at("plunge"), n),
+				new Shot(VulcanAnim.PHASE, VulcanAnim.PHASE.at("roar") + 6, n),
+				new Shot(VulcanAnim.WALK, 14, n),
+				new Shot(VulcanAnim.DEATH, VulcanAnim.DEATH.ticks - 4, n)));
 	}
 
 	/**

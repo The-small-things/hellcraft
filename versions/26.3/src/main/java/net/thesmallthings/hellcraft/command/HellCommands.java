@@ -235,6 +235,22 @@ public final class HellCommands {
 										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "sweep", "stars", "lunge",
 												"slam", "bite", "wingbeat", "weep"}, builder))
 										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
+				.then(Commands.literal("cyclops")
+						.then(Commands.literal("summon").executes(ctx -> {
+							net.minecraft.world.phys.Vec3 at = ctx.getSource().getPosition();
+							net.thesmallthings.hellcraft.entity.boss.CyclopsEntity c = net.thesmallthings.hellcraft.entity.HellEntities.CYCLOPS
+									.create(ctx.getSource().getLevel(), net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+							if (c == null) {
+								return reply(ctx.getSource(), "Could not make a Cyclops.");
+							}
+							c.snapTo(at.x, at.y, at.z, 0, 0);
+							ctx.getSource().getLevel().addFreshEntity(c);
+							return reply(ctx.getSource(), "A Cyclops stands at " + (int) at.x + ", " + (int) at.y + ", " + (int) at.z + ".");
+						}))
+						.then(Commands.literal("attack").then(Commands.argument("attack", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"smash", "boulder", "quake"}, builder))
+								.executes(ctx -> reply(ctx.getSource(), net.thesmallthings.hellcraft.entity.boss.CyclopsEntity.attackNear(
+										ctx.getSource().getLevel(), ctx.getSource().getPosition(), StringArgumentType.getString(ctx, "attack")))))))
 				.then(Commands.literal("forge").then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
 						net.thesmallthings.hellcraft.world.ForgeOfDis.selfTest(ctx.getSource().getServer())))))
 				.then(Commands.literal("brazier").then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),

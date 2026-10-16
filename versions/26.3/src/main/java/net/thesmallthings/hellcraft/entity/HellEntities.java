@@ -11,6 +11,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
+import net.thesmallthings.hellcraft.entity.boss.CyclopsEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorWeakPoint;
 import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
@@ -24,6 +25,7 @@ import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
+import net.thesmallthings.hellcraft.entity.boss.VulcanEntity;
 import net.thesmallthings.hellcraft.entity.monster.Centaur;
 import net.thesmallthings.hellcraft.entity.monster.Glutton;
 import net.thesmallthings.hellcraft.entity.monster.Harpy;
@@ -130,6 +132,12 @@ public final class HellEntities {
 	public static final EntityType<FarinataEntity> FARINATA = register("farinata",
 			EntityType.Builder.of(FarinataEntity::new, MobCategory.MONSTER).sized(1.6f, 3.8f).eyeHeight(3.3f).fireImmune().clientTrackingRange(16));
 
+	/** Vulcan, smith of the gods, at the Great Forge of Dis in the Nether (VulcanFight). */
+	public static final EntityType<VulcanEntity> VULCAN = register("vulcan",
+			EntityType.Builder.of(VulcanEntity::new, MobCategory.MONSTER).sized(2.6f, 5.8f).eyeHeight(5.0f).fireImmune().clientTrackingRange(16));
+	/** A Cyclops of the quarries, a mini-boss at a camp in the Cyclops Quarries of the Forge of Dis (CyclopsCampFeature). */
+	public static final EntityType<CyclopsEntity> CYCLOPS = register("cyclops",
+			EntityType.Builder.of(CyclopsEntity::new, MobCategory.MONSTER).sized(2.0f, 4.4f).eyeHeight(3.8f).fireImmune().clientTrackingRange(12));
 	/** The Minotaur, the Infamy of Crete, on the ruined slope down to the river of blood (MinotaurFight). */
 	public static final EntityType<MinotaurEntity> MINOTAUR = register("minotaur",
 			EntityType.Builder.of(MinotaurEntity::new, MobCategory.MONSTER).sized(2.4f, 5.6f).eyeHeight(4.9f).fireImmune().clientTrackingRange(16));
@@ -185,6 +193,8 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(MEDUSA, MedusaEntity.attributes());
 		FabricDefaultAttributeRegistry.register(FARINATA, FarinataEntity.attributes());
 		FabricDefaultAttributeRegistry.register(MINOTAUR, MinotaurEntity.attributes());
+		FabricDefaultAttributeRegistry.register(VULCAN, VulcanEntity.attributes());
+		FabricDefaultAttributeRegistry.register(CYCLOPS, CyclopsEntity.attributes());
 		FabricDefaultAttributeRegistry.register(GERYON, GeryonEntity.attributes());
 		FabricDefaultAttributeRegistry.register(GERYON_CARRIER, GeryonCarrier.attributes());
 		FabricDefaultAttributeRegistry.register(ANTAEUS, AntaeusEntity.attributes());

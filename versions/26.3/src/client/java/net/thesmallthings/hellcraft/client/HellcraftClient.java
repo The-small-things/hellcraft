@@ -49,6 +49,8 @@ import net.thesmallthings.hellcraft.client.render.gen.CentaurAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.CentaurMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CerberusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CoinMesh;
+import net.thesmallthings.hellcraft.client.render.gen.CyclopsAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.CyclopsMesh;
 import net.thesmallthings.hellcraft.client.render.gen.EmperorAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.EmperorMesh;
 import net.thesmallthings.hellcraft.client.render.gen.FallenSeraphAnimations;
@@ -85,6 +87,8 @@ import net.thesmallthings.hellcraft.client.render.gen.PlutusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ShadeMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ThiefAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.ThiefMesh;
+import net.thesmallthings.hellcraft.client.render.gen.VulcanAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.VulcanMesh;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulMesh;
 import net.thesmallthings.hellcraft.client.render.monster.HoarderModel;
@@ -98,8 +102,10 @@ import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.CyclopsAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import net.thesmallthings.hellcraft.net.CutscenePayload;
 import net.thesmallthings.hellcraft.net.DangerPayload;
 import net.thesmallthings.hellcraft.net.DialoguePayload;
@@ -234,6 +240,12 @@ public class HellcraftClient implements ClientModInitializer {
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("farinata"), FarinataMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.FARINATA, context -> new AnimatedBossRenderer<>(context, "farinata", FarinataAnimations.all(), -1,
 				1.8f, 1.0f, 0.6f, "body", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("cyclops"), CyclopsMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.CYCLOPS, context -> new AnimatedBossRenderer<>(context, "cyclops", CyclopsAnimations.all(),
+				CyclopsAnim.WALK.ordinal(), 1.3f, 1.6f, 0.5f, "hips", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("vulcan"), VulcanMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.VULCAN, context -> new AnimatedBossRenderer<>(context, "vulcan", VulcanAnimations.all(),
+				VulcanAnim.WALK.ordinal(), 1.6f, 2.2f, 0.5f, "hips", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("minotaur"), MinotaurMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MINOTAUR, context -> new AnimatedBossRenderer<>(context, "minotaur", MinotaurAnimations.all(),
 				MinotaurAnim.WALK.ordinal(), 1.4f, 2.0f, 0.5f, "hips", "torso", "head"));

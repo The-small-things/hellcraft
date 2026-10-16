@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -172,7 +173,7 @@ public final class DangerMarks {
 					if (alpha <= 0.01f) {
 						continue;
 					}
-					int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, bx, bz);
+					int top = ground(level, bx, m.p.y(), bz);
 					quads.add(new float[]{(float) (bx - camera.x), (float) (top + 0.03 - camera.y), (float) (bz - camera.z), r, g, b, alpha * 255});
 				}
 			}
@@ -185,6 +186,21 @@ public final class DangerMarks {
 				quad(buffer, pose, q);
 			}
 		});
+	}
+
+	/**
+	 * The top of the ground under a mark: the first solid block from just above the mark's own height down to a few
+	 * below (the heightmap would find the roof of the Nether, or Purgatory over Lucifer's pit), else the heightmap's.
+	 */
+	private static int ground(ClientLevel level, int x, double y, int z) {
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		int start = (int) Math.floor(y) + 2;
+		for (int yy = start; yy > start - 12; yy--) {
+			if (level.getBlockState(pos.set(x, yy, z)).isSolid() && !level.getBlockState(pos.set(x, yy + 1, z)).isSolid()) {
+				return yy + 1;
+			}
+		}
+		return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
 	}
 
 	private static void quad(VertexConsumer buffer, PoseStack.Pose pose, float[] q) {

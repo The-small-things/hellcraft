@@ -85,6 +85,7 @@ public class HellcraftMod implements ModInitializer {
 		HellBlocks.register();
 		HellItems.register();
 		HellEntities.register();
+		net.thesmallthings.hellcraft.entity.boss.CyclopsEntity.register();
 		HellWorldgen.register();
 		BloodEvents.register();
 		Fairness.register();
