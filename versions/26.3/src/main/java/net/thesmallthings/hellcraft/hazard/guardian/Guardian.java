@@ -26,7 +26,9 @@ public enum Guardian {
 	MINOTAUR("The Minotaur", "Infamy of Crete", 970, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
 	GERYON("Geryon", "Image of Fraud", 870, ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
 	/** Not on the road: at the Great Forge of Dis, in the Nether (GreatForge). */
-	VULCAN("Vulcan", "Smith of the Gods", 0, ChatFormatting.GOLD, 600, 6.5f, VulcanFight::new);
+	VULCAN("Vulcan", "Smith of the Gods", 0, ChatFormatting.GOLD, 600, 6.5f, VulcanFight::new),
+	/** Not in Hell: on the crystal floor of the Primum Mobile, Paradiso's ninth sphere; the last trial (SeraphFight). */
+	SERAPH("The Seraph", "Burning One of the Primum Mobile", 0, ChatFormatting.YELLOW, 700, 6.5f, SeraphFight::new);
 
 	public final String title;
 	public final String subtitle;
@@ -65,6 +67,16 @@ public enum Guardian {
 	/** True for the guardian of the Nether (Vulcan), whose lair is the Great Forge. */
 	public boolean inNether() {
 		return this == VULCAN;
+	}
+
+	/** True for the Seraph, whose lair is the Primum Mobile's great island in Paradiso. */
+	public boolean inParadiso() {
+		return this == SERAPH;
+	}
+
+	/** True for the guardians whose lairs aren't in Hell (Vulcan, the Seraph): they have no lair on the map. */
+	public boolean offMap() {
+		return inNether() || inParadiso();
 	}
 
 	/** The lair's centre column (y is filled in from the terrain). */

@@ -35,7 +35,7 @@ class ShrineSitesTest {
 	void theRestsKnowWhereTheLairsAre() {
 		int i = 0;
 		for (Guardian g : Guardian.values()) {
-			if (g.inNether()) {
+			if (g.offMap()) {
 				continue;
 			}
 			BlockPos lair = g.lairColumn();

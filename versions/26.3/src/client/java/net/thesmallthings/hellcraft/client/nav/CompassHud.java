@@ -14,6 +14,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.mixin.BossOverlayAccessor;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.ForgeGeometry;
+import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Navigation;
 import net.thesmallthings.hellcraft.world.ShrineSites;
@@ -41,7 +42,8 @@ public final class CompassHud implements HudElement {
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		Minecraft mc = Minecraft.getInstance();
 		boolean forge = ClientNav.inForge(mc);
-		if (!ClientNav.inHell(mc) && !forge || !((BossOverlayAccessor) mc.gui.hud.getBossOverlay()).hellcraft$events().isEmpty()) {
+		boolean paradiso = ClientNav.inParadiso(mc);
+		if (!ClientNav.inHell(mc) && !forge && !paradiso || !((BossOverlayAccessor) mc.gui.hud.getBossOverlay()).hellcraft$events().isEmpty()) {
 			return;
 		}
 		LocalPlayer player = mc.player;
@@ -81,6 +83,10 @@ public final class CompassHud implements HudElement {
 
 		if (forge) {
 			forge(g, font, cx, pos, yaw);
+			return;
+		}
+		if (paradiso) {
+			paradiso(g, font, cx, pos, yaw);
 			return;
 		}
 		// the nearest Rest and the way down, above the strip; pinned faintly to its ends when they're behind you
@@ -135,6 +141,36 @@ public final class CompassHud implements HudElement {
 	}
 
 	static final int FORGE = 0xFFFF8A30;
+
+	/**
+	 * Paradiso (Phase 7): the sphere you're in, and the way on: its great island while its trial is still to do, then the
+	 * column of light up to the next sphere.
+	 */
+	private static void paradiso(GuiGraphicsExtractor g, Font font, int cx, Vec3 pos, float yaw) {
+		ParadisoGeometry.Sphere s = ParadisoGeometry.sphereAtY(pos.y);
+		int colour = ARGB.opaque(s.colour);
+		int y = TOP + HEIGHT + 5;
+		g.centeredText(font, s.title, cx, y, colour);
+		double[] to;
+		String text;
+		if (s.last()) {
+			to = ParadisoGeometry.centre(s);
+			text = "The Celestial Rose ";
+		} else if (ClientNav.passed(s)) {
+			to = ParadisoGeometry.departure(s);
+			text = "Column of light up ";
+		} else {
+			to = ParadisoGeometry.centre(s);
+			text = "The trial ";
+		}
+		float rel = relative(pos, to[0], to[1], yaw);
+		arrow(g, stripX(cx, rel), TOP - 5, ARGB.multiplyAlpha(colour, Math.abs(rel) > 90 ? 0.5f : 1));
+		text += distance(pos, to[0], to[1]);
+		int x = cx - (9 + font.width(text)) / 2;
+		y += 11;
+		arrow(g, x + 3, y, colour);
+		g.text(font, text, x + 9, y, 0xFFE8E8E8);
+	}
 
 	/** A small flame, 5 wide and 6 tall, its base at (x, y + 5). */
 	static void flame(GuiGraphicsExtractor g, int x, int y, int colour) {

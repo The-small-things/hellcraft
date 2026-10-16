@@ -22,6 +22,8 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.util.Signs;
 import net.thesmallthings.hellcraft.world.Fen;
 import net.thesmallthings.hellcraft.world.GreatForge;
+import net.thesmallthings.hellcraft.world.Paradiso;
+import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 
 import java.util.ArrayList;
@@ -121,7 +123,7 @@ public final class GuardianManager {
 		}
 		HellState state = HellState.get(server);
 		for (Guardian g : Guardian.values()) {
-			if (g.inNether() || FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
+			if (g.offMap() || FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
 				continue;
 			}
 			// Phlegyas also comes when the east watchtower's twin beacons are lit
@@ -151,11 +153,27 @@ public final class GuardianManager {
 				}
 			}
 		}
+		// the Seraph, on the Primum Mobile's floor in Paradiso
+		ServerLevel paradiso = Paradiso.level(server);
+		if (paradiso != null && !FIGHTS.containsKey(Guardian.SERAPH)
+				&& paradiso.getGameTime() >= state.guardianNext.getOrDefault(Guardian.SERAPH.id(), 0L)) {
+			BlockPos c = lair(paradiso, Guardian.SERAPH);
+			for (ServerPlayer p : paradiso.players()) {
+				if (!p.isSpectator() && !p.isCreative() && p.distanceToSqr(c.getX() + 0.5, c.getY(), c.getZ() + 0.5) < TRIGGER * TRIGGER) {
+					start(paradiso, Guardian.SERAPH, false);
+					break;
+				}
+			}
+		}
 	}
 
 	private static BlockPos lair(ServerLevel level, Guardian g) {
 		if (g.inNether()) {
 			return GreatForge.center();
+		}
+		if (g.inParadiso()) {
+			double[] c = ParadisoGeometry.centre(ParadisoGeometry.Sphere.PRIMUM_MOBILE);
+			return BlockPos.containing(c[0], ParadisoGeometry.topY(ParadisoGeometry.Sphere.PRIMUM_MOBILE) + 1, c[1]);
 		}
 		BlockPos column = g.lairColumn();
 		level.getChunk(column.getX() >> 4, column.getZ() >> 4);
@@ -174,12 +192,18 @@ public final class GuardianManager {
 		if (FIGHTS.containsKey(g)) {
 			return g.title + " is already awake.";
 		}
-		ServerLevel level = g.inNether() ? GreatForge.nether(server) : server.overworld();
+		ServerLevel level = g.inNether() ? GreatForge.nether(server) : g.inParadiso() ? Paradiso.level(server) : server.overworld();
 		if (g.inNether()) {
 			if (level == null) {
 				return "This server has no Nether.";
 			}
 			GreatForge.build(server);
+		} else if (g.inParadiso()) {
+			if (level == null) {
+				return "This world has no Paradiso.";
+			}
+			BlockPos c = lair(level, g);
+			level.getChunk(c.getX() >> 4, c.getZ() >> 4);
 		} else if (!HellWorldgen.isInferno(level)) {
 			return "This world is not an Inferno world.";
 		}
@@ -238,7 +262,7 @@ public final class GuardianManager {
 			return;
 		}
 		for (Guardian g : Guardian.values()) {
-			if (g.inNether()) {
+			if (g.offMap()) {
 				continue;
 			}
 			BlockPos c = lair(level, g);

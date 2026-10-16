@@ -25,6 +25,7 @@ import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
+import net.thesmallthings.hellcraft.entity.boss.SeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.VulcanEntity;
 import net.thesmallthings.hellcraft.entity.monster.Centaur;
 import net.thesmallthings.hellcraft.entity.monster.Glutton;
@@ -135,6 +136,9 @@ public final class HellEntities {
 	/** Vulcan, smith of the gods, at the Great Forge of Dis in the Nether (VulcanFight). */
 	public static final EntityType<VulcanEntity> VULCAN = register("vulcan",
 			EntityType.Builder.of(VulcanEntity::new, MobCategory.MONSTER).sized(2.6f, 5.8f).eyeHeight(5.0f).fireImmune().clientTrackingRange(16));
+	/** The Seraph of the Primum Mobile, Paradiso's guardian (SeraphFight). */
+	public static final EntityType<SeraphEntity> SERAPH = register("seraph",
+			EntityType.Builder.of(SeraphEntity::new, MobCategory.MONSTER).sized(2.4f, 6.4f).eyeHeight(5.4f).fireImmune().clientTrackingRange(16));
 	/** A Cyclops of the quarries, a mini-boss at a camp in the Cyclops Quarries of the Forge of Dis (CyclopsCampFeature). */
 	public static final EntityType<CyclopsEntity> CYCLOPS = register("cyclops",
 			EntityType.Builder.of(CyclopsEntity::new, MobCategory.MONSTER).sized(2.0f, 4.4f).eyeHeight(3.8f).fireImmune().clientTrackingRange(12));
@@ -194,6 +198,7 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(FARINATA, FarinataEntity.attributes());
 		FabricDefaultAttributeRegistry.register(MINOTAUR, MinotaurEntity.attributes());
 		FabricDefaultAttributeRegistry.register(VULCAN, VulcanEntity.attributes());
+		FabricDefaultAttributeRegistry.register(SERAPH, SeraphEntity.attributes());
 		FabricDefaultAttributeRegistry.register(CYCLOPS, CyclopsEntity.attributes());
 		FabricDefaultAttributeRegistry.register(GERYON, GeryonEntity.attributes());
 		FabricDefaultAttributeRegistry.register(GERYON_CARRIER, GeryonCarrier.attributes());

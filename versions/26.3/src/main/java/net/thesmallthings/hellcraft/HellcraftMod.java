@@ -140,6 +140,7 @@ public class HellcraftMod implements ModInitializer {
 			Shrines.tick(server);
 			Villages.tick(server);
 			Paradiso.tick(server);
+			net.thesmallthings.hellcraft.world.ParadisoTrials.tick(server);
 			GreatForge.tick(server);
 			net.thesmallthings.hellcraft.world.ForgeOfDis.tick(server);
 			Relics.tick(server);
@@ -158,6 +159,7 @@ public class HellcraftMod implements ModInitializer {
 			Ambience.forget(handler.getPlayer());
 			Purgatory.forget(handler.getPlayer());
 			Paradiso.forget(handler.getPlayer());
+			net.thesmallthings.hellcraft.world.ParadisoTrials.forget(handler.getPlayer());
 		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> HellCommands.register(dispatcher));
 

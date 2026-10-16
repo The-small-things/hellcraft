@@ -236,6 +236,55 @@ public final class Paradiso {
 				+ " at " + moon.toShortString() + " in " + biome;
 	}
 
+	/**
+	 * /hellcraft paradiso test: every sphere's great island stands where ParadisoGeometry puts it, in its own biome, with
+	 * its departure dais; the Moon's gate back to Purgatory, the Empyrean's gate home and Beatrice's bell are in place.
+	 */
+	public static String selfTest(MinecraftServer server) {
+		ServerLevel level = level(server);
+		if (level == null) {
+			return "Paradiso test FAILED: no Paradiso dimension";
+		}
+		java.util.List<String> wrong = new ArrayList<>();
+		for (Sphere s : ParadisoGeometry.SPHERES) {
+			double[] c = ParadisoGeometry.centre(s);
+			// a little off the middle, clear of centrepieces (the Rose's bowl is sunk below the top)
+			BlockPos ground = BlockPos.containing(c[0] + 3, ParadisoGeometry.topY(s) - (s.last() ? ParadisoIslandFeature.ROSE_DEPTH : 0), c[1] + 17);
+			level.getChunk(ground.getX() >> 4, ground.getZ() >> 4);
+			if (level.getBlockState(ground).isAir()) {
+				wrong.add(s.id + " has no island at " + ground.toShortString());
+			}
+			String biome = level.getBiome(ground).unwrapKey().map(k -> k.identifier().getPath()).orElse("?");
+			if (!biome.equals("paradiso_" + s.id)) {
+				wrong.add(s.id + "'s island is in " + biome);
+			}
+			double[] d = ParadisoGeometry.departure(s);
+			if (d != null) {
+				BlockPos dais = BlockPos.containing(d[0], ParadisoGeometry.topY(s), d[1]);
+				level.getChunk(dais.getX() >> 4, dais.getZ() >> 4);
+				if (level.getBlockState(dais).isAir()) {
+					wrong.add(s.id + " has no departure dais");
+				}
+			}
+		}
+		double[] moon = ParadisoGeometry.arrival(Sphere.MOON);
+		BlockPos down = BlockPos.containing(moon[0], ParadisoGeometry.topY(Sphere.MOON) + 1, moon[1]);
+		int[] h = ParadisoIslandFeature.homeGate();
+		BlockPos home = new BlockPos(h[0], h[1], h[2]);
+		for (BlockPos gate : new BlockPos[]{down, home}) {
+			level.getChunk(gate.getX() >> 4, gate.getZ() >> 4);
+			if (!level.getBlockState(gate).is(net.minecraft.world.level.block.Blocks.END_GATEWAY)) {
+				wrong.add("no gate at " + gate.toShortString());
+			}
+		}
+		level.getChunk(bell().getX() >> 4, bell().getZ() >> 4);
+		if (!level.getBlockState(bell()).is(net.minecraft.world.level.block.Blocks.BELL)) {
+			wrong.add("no bell at " + bell().toShortString());
+		}
+		return wrong.isEmpty() ? "Paradiso test OK: " + ParadisoGeometry.SPHERES.length + " spheres, both gates and the bell"
+				: "Paradiso test FAILED: " + String.join("; ", wrong);
+	}
+
 	public static void forget(ServerPlayer player) {
 		STANDING.remove(player.getUUID());
 		TITLED.remove(player.getUUID());

@@ -186,7 +186,7 @@ public class MapOfHellScreen extends Screen {
 					Component.literal(found ? "Found: travel here from any Blood Altar." : "Not found yet: step into its ring to remember it.").withColor(DIM))));
 		}
 		for (Guardian guardian : Guardian.values()) {
-			if (guardian.inNether()) {
+			if (guardian.offMap()) {
 				continue;
 			}
 			boolean beaten = ClientNav.beaten(guardian.id());

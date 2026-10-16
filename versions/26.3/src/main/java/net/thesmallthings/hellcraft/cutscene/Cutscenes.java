@@ -10,6 +10,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.SeraphAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import org.jetbrains.annotations.Nullable;
 
@@ -192,6 +193,27 @@ public final class Cutscenes {
 			.card(VulcanAnim.INTRO.at("roar") + 4, 98, "VULCAN", "SMITH OF THE GODS", VULCAN)
 			.build();
 
+	private static final int SERAPH = 0xFFD860;
+	private static final int BEATRICE = 0xF0A0C8;
+
+	/**
+	 * The Seraph comes down out of the light onto the Primum Mobile's crystal floor; the camera rises with it as its face
+	 * wings open and it cries "Holy, holy, holy".
+	 */
+	public static final Cutscene SERAPH_INTRO = Cutscene.builder("seraph_intro", SeraphAnim.INTRO.ticks)
+			.fadeIn(10)
+			.blendOut(12)
+			.shot(0, 6, 2.0, 12, 0, 10, 0)
+			.shot(SeraphAnim.INTRO.at("land") - 10, 4, 3.0, 10, 0, 6, 0)
+			.shot(SeraphAnim.INTRO.at("cry"), -2, 5.0, 9, 0, 6.5, 0)
+			.shot(SeraphAnim.INTRO.ticks, 7, 4.5, 14, 0, 5, 0)
+			.caption(6, SeraphAnim.INTRO.at("cry") - 2, "Beatrice", BEATRICE, "The Seraph, the burning one, nearest to God. It will not "
+					+ "hate you; it will test you. When its wings flash white, raise your shield.")
+			.caption(SeraphAnim.INTRO.at("cry") + 2, 98, "The Seraph", SERAPH, "HOLY, HOLY, HOLY.")
+			.shake(SeraphAnim.INTRO.at("land"), SeraphAnim.INTRO.at("land") + 10, 0.5f)
+			.card(SeraphAnim.INTRO.at("cry") + 4, 98, "THE SERAPH", "BURNING ONE OF THE PRIMUM MOBILE", SERAPH)
+			.build();
+
 	private static final int GERYON = 0x3A6AB0;
 
 	/**
@@ -275,7 +297,7 @@ public final class Cutscenes {
 			.build();
 
 	private static final List<Cutscene> ALL = List.of(MINOS_INTRO, CERBERUS_INTRO, PLUTUS_INTRO, PHLEGYAS_INTRO, FURIES_INTRO, FARINATA_INTRO,
-			MINOTAUR_INTRO, GERYON_INTRO, VULCAN_INTRO, LUCIFER_DESCENT, LUCIFER_REVEAL, LUCIFER_CLIMB);
+			MINOTAUR_INTRO, GERYON_INTRO, VULCAN_INTRO, SERAPH_INTRO, LUCIFER_DESCENT, LUCIFER_REVEAL, LUCIFER_CLIMB);
 
 	@Nullable
 	public static Cutscene byId(String id) {

@@ -151,7 +151,6 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
 fi
 rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
-rcon "locate structure minecraft:stronghold" || true
 
 # Force-generate one chunk in every ring along the east road, from the rim down to Lucifer's pit (the Walls of Dis'
 # east gate at 1395), and one off the road (a way down at 30 degrees, in Lust)
@@ -295,49 +294,26 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:chests/forge_ruin" || true)
   echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "The forge ruin loot table does not work"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
-  # Heaven: the Rose, the Ascent, the Seraph's angels, the relics and the wings in end city treasure
-  rose=$(rcon "hellcraft paradiso rose")
-  echo "$rose"
-  rcon "execute in minecraft:the_end run forceload add 7000 0" > /dev/null
-  bell=$(rcon "execute in minecraft:the_end if block 7000 92 0 minecraft:bell" || true)
-  echo "The Rose's bell: $bell"
-  echo "$bell" | grep -q "Test passed" || { echo "The Celestial Rose has no bell"; exit 1; }
-  angels=$(rcon "execute in minecraft:the_end positioned 7000 95 0 run hellcraft paradiso angels" || true)
-  echo "$angels"
-  echo "$angels" | grep -qE "[1-9][0-9]* angels descend" || { echo "No angels came"; exit 1; }
-  rcon "kill @e[tag=hellcraft_angel]" > /dev/null || true
-  gate=$(rcon "execute if block 0 291 8 minecraft:end_gateway" || true)
+  # Purgatory and Paradiso (Phase 7): their own dimensions; the Ascent on Purgatory's summit, every sphere's island,
+  # the gates and Beatrice's bell; the angels; the relics
+  gate=$(rcon "execute in hellcraft:purgatory if block 0 131 8 minecraft:end_gateway" || true)
   echo "The Ascent: $gate"
   echo "$gate" | grep -q "Test passed" || { echo "The Ascent is not on Purgatory's summit"; exit 1; }
+  paradiso=$(rcon "hellcraft paradiso test" || true)
+  echo "$paradiso"
+  echo "$paradiso" | grep -q "Paradiso test OK" || { echo "Paradiso is not laid out as it should be"; exit 1; }
+  angels=$(rcon "execute in hellcraft:paradiso positioned 49 66 0 run hellcraft paradiso angels" || true)
+  echo "$angels"
+  echo "$angels" | grep -qE "[1-9][0-9]* angels descend" || { echo "No angels came"; exit 1; }
+  rcon "execute in hellcraft:paradiso run kill @e[tag=hellcraft_angel]" > /dev/null || true
   for r in halo seraph_wings beatrices_rose; do
     out=$(rcon "hellcraft giveitem nobody $r" || true)
     echo "$out" | grep -qi "unknown item" && { echo "Relic $r is unknown"; exit 1; }
   done
-  drop=$(rcon "execute in minecraft:the_end run loot spawn 7000 95 0 loot minecraft:chests/end_city_treasure" || true)
-  echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "End city treasure does not work"; exit 1; }
-  # the End's gateways drop players about 1000 blocks out, in the first ring: End cities must be there too
-  city=$(rcon "execute in minecraft:the_end positioned 1100 64 0 run locate structure minecraft:end_city" || true)
-  echo "$city"
-  cxz=$(echo "$city" | grep -oE '\[-?[0-9]+, ~, -?[0-9]+\]' | tr -d '[]~ ' | tr ',' ' ' | head -1)
-  [ -n "$cxz" ] || { echo "No End city could be located near the gateway exits"; exit 1; }
-  read -r cx cz <<< "$cxz"
-  # within a walk of where the gateways drop players (where exactly depends on the seed, which changes every run: a
-  # ring is over a thousand blocks wide, so allow most of one)
-  [ $(( (cx - 1100) * (cx - 1100) + cz * cz )) -lt $(( 1200 * 1200 )) ] || { echo "The nearest End city ($cx, $cz) is too far from the gateway exits"; exit 1; }
-  rcon "kill @e[type=minecraft:item]" > /dev/null || true
-  for p in "0 0" "1500 0" "3000 0" "6600 0"; do
-    read -r ex ez <<< "$p"
-    rcon "execute in minecraft:the_end run forceload add $ex $ez" > /dev/null
-  done
-  sleep 10
-  # Paradiso: the End's outer islands belong to the nine spheres
-  rcon "hellcraft paradiso status" || true
-  echo "Generated biome at 1500 0: $(rcon "execute in minecraft:the_end if biome 1500 64 0 hellcraft:paradiso_moon" || true)"
-  for sphere in moon venus sun primum_mobile empyrean; do
-    out=$(rcon "execute in minecraft:the_end positioned 0 64 0 run locate biome hellcraft:paradiso_$sphere" || true)
-    echo "Paradiso $sphere: $out"
-    echo "$out" | grep -qi "nearest" || { echo "The sphere hellcraft:paradiso_$sphere is nowhere in the End"; exit 1; }
-  done
+  # no strongholds in the Inferno: the only way into Paradiso is from Purgatory's summit
+  stronghold=$(rcon "locate structure minecraft:stronghold" || true)
+  echo "$stronghold"
+  echo "$stronghold" | grep -qi "nearest" && { echo "There is a stronghold in the Inferno"; exit 1; }
   list=$(rcon "hellcraft shrine list")
   echo "$list" | grep -q "heresy_east" || { echo "/hellcraft shrine list does not list the Rests"; exit 1; }
 fi
@@ -407,8 +383,9 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # the circle guardians: wake each one, give it something to fight, run every attack, then slay it
   declare -A ATTACKS=([minos]="strike tail sentence coil" [cerberus]="bite maws filth howl" [plutus]="fist gold lunge pape" [phlegyas]="oar sweep wave grab" \
                       [furies]="talons shriek lash tear medusa" [farinata]="disdain pyres exile" [minotaur]="gore charge stomp frenzy" \
-                      [geryon]="sting falseface coil dive" [vulcan]="strike hammerfall molten chains forgeborn seams")
-  for g in minos cerberus plutus phlegyas furies farinata minotaur geryon vulcan; do
+                      [geryon]="sting falseface coil dive" [vulcan]="strike hammerfall molten chains forgeborn seams" \
+                      [seraph]="wings fire coal gloria host turning")
+  for g in minos cerberus plutus phlegyas furies farinata minotaur geryon vulcan seraph; do
     out=$(rcon "hellcraft guardian $g summon")
     echo "$out"
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
@@ -527,7 +504,7 @@ rcon "forceload add -16 0" > /dev/null
 burrow=$(rcon "execute if block -16 $floor 0 minecraft:end_gateway" || true)
 echo "Burrow in the pit: $burrow"
 echo "$burrow" | grep -q "Test passed" || { echo "No burrow opened behind Lucifer"; exit 1; }
-summit=$(rcon "execute if block 0 291 0 minecraft:end_gateway" || true)
+summit=$(rcon "execute in hellcraft:purgatory if block 0 131 0 minecraft:end_gateway" || true)
 echo "Gate of Return on the summit: $summit"
 echo "$summit" | grep -q "Test passed" || { echo "The Mountain of Purgatory has no Gate of Return"; exit 1; }
 purgatory=$(rcon "hellcraft purgatory" || true)
@@ -562,10 +539,9 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -qE "Hellcraft recipes: 9; take Blood Hearts: 3; take Blood Fragments: 8(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
   grep -q "Hellcraft config updated from version 0 to 3" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }
-  grep -q "Paradiso: 10 spheres ready" "$LOG" || { echo "The Paradiso biomes were not found"; fail=1; }
   grep -q "The Great Forge of Dis at" "$LOG" || { echo "The Great Forge of Dis was not built"; fail=1; }
   grep -q "Guardian slain: vulcan" "$LOG" || { echo "Vulcan was never slain"; fail=1; }
-  grep -q "The Celestial Rose blooms at" "$LOG" || { echo "The Celestial Rose was not built"; fail=1; }
+  grep -q "Guardian slain: seraph" "$LOG" || { echo "The Seraph was never beaten"; fail=1; }
   grep -q "The Ascent opens on the summit" "$LOG" || { echo "The Ascent was not built"; fail=1; }
   grep -q "The Mountain of Purgatory rises" "$LOG" || { echo "Purgatory was not raised"; fail=1; }
   grep -q "The burrow opens" "$LOG" || { echo "The burrow never opened"; fail=1; }

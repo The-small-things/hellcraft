@@ -89,6 +89,8 @@ import net.thesmallthings.hellcraft.client.render.gen.ShadeMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ThiefAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.ThiefMesh;
 import net.thesmallthings.hellcraft.client.render.gen.VulcanAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.SeraphAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.SeraphMesh;
 import net.thesmallthings.hellcraft.client.render.gen.VulcanMesh;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulMesh;
@@ -107,6 +109,7 @@ import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.CyclopsAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.SeraphAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import net.thesmallthings.hellcraft.net.CutscenePayload;
 import net.thesmallthings.hellcraft.net.DangerPayload;
@@ -254,6 +257,9 @@ public class HellcraftClient implements ClientModInitializer {
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("vulcan"), VulcanMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.VULCAN, context -> new AnimatedBossRenderer<>(context, "vulcan", VulcanAnimations.all(),
 				VulcanAnim.WALK.ordinal(), 1.6f, 2.2f, 0.5f, "hips", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("seraph"), SeraphMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.SERAPH, context -> new AnimatedBossRenderer<>(context, "seraph", SeraphAnimations.all(),
+				SeraphAnim.WALK.ordinal(), 2.0f, 2.0f, 0.5f, "root", "body", "chest", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("minotaur"), MinotaurMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MINOTAUR, context -> new AnimatedBossRenderer<>(context, "minotaur", MinotaurAnimations.all(),
 				MinotaurAnim.WALK.ordinal(), 1.4f, 2.0f, 0.5f, "hips", "torso", "head"));

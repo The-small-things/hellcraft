@@ -171,8 +171,9 @@ public class LuciferTest implements FabricClientGameTest {
 		if (!status.contains("No fight")) {
 			throw new AssertionError("the fight didn't end after the climb: " + status);
 		}
-		// Purgatory's shore is high above the pit (Purgatory.shore)
-		boolean out = server.computeOnServer(s -> s.getPlayerList().getPlayerByName("Player0").getY() > 200);
+		// Purgatory is its own dimension (Purgatory.LEVEL)
+		boolean out = server.computeOnServer(s -> s.getPlayerList().getPlayerByName("Player0").level().dimension()
+				== net.thesmallthings.hellcraft.world.Purgatory.LEVEL);
 		context.waitTicks(20);
 		context.takeScreenshot("lucifer_purgatory");
 		if (!out) {

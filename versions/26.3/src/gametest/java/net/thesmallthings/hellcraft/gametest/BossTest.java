@@ -31,6 +31,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.SeraphAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import net.thesmallthings.hellcraft.entity.monster.SoulMonster;
 
@@ -63,6 +64,7 @@ public class BossTest implements FabricClientGameTest {
 				(e, a) -> ((PhlegyasEntity) e).play((PhlegyasAnim) a));
 		lowerBosses(context, world);
 		vulcan(context, world);
+		seraph(context, world);
 		cyclops(context, world);
 		lucifer(context, world);
 		for (String m : List.of("lovers", "glutton", "wrathful", "hoarder", "heretic", "centaur", "harpy", "mimic", "thief", "malebranche", "malacoda")) {
@@ -186,6 +188,7 @@ public class BossTest implements FabricClientGameTest {
 			world.getServer().runCommand("kill @e[type=hellcraft:ferry]");
 			lowerBosses(context, world);
 			vulcan(context, world);
+			seraph(context, world);
 			cyclops(context, world);
 			lucifer(context, world);
 			monsters(context, world);
@@ -273,6 +276,28 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(CyclopsAnim.STAGGER, 10, n),
 				new Shot(CyclopsAnim.WALK, 12, n),
 				new Shot(CyclopsAnim.DEATH, CyclopsAnim.DEATH.ticks - 4, n)));
+	}
+
+	/** The Seraph of the Primum Mobile (screenshots seraph_*): from the front and the side, then each blow at its telling moment. */
+	private static void seraph(ClientGameTestContext context, TestSingleplayerContext world) {
+		BossEntity.Warning w = BossEntity.Warning.WHITE;
+		BossEntity.Warning p = BossEntity.Warning.PURPLE;
+		BossEntity.Warning n = BossEntity.Warning.NONE;
+		boss(context, world, HellEntities.SERAPH, "seraph", 13, 4, List.of(
+				new Shot(SeraphAnim.INTRO, SeraphAnim.INTRO.at("land") - 20, n),
+				new Shot(SeraphAnim.INTRO, SeraphAnim.INTRO.at("cry") + 6, n),
+				new Shot(SeraphAnim.WINGS, SeraphAnim.WINGS.at("flash") + 3, w),
+				new Shot(SeraphAnim.WINGS, SeraphAnim.WINGS.at("hit") + 2, n),
+				new Shot(SeraphAnim.FIRE, SeraphAnim.FIRE.at("call"), n),
+				new Shot(SeraphAnim.COAL, SeraphAnim.COAL.at("throw") - 6, n),
+				new Shot(SeraphAnim.GLORIA, SeraphAnim.GLORIA.at("blaze"), n),
+				new Shot(SeraphAnim.TURNING, SeraphAnim.TURNING.at("turn") + 12, p),
+				new Shot(SeraphAnim.HOST, SeraphAnim.HOST.at("host"), n),
+				new Shot(SeraphAnim.STAGGER, 10, n),
+				new Shot(SeraphAnim.PHASE, SeraphAnim.PHASE.at("flare") + 4, n),
+				new Shot(SeraphAnim.WALK, 14, n),
+				new Shot(SeraphAnim.DEATH, SeraphAnim.DEATH.at("yield") + 6, n),
+				new Shot(SeraphAnim.DEATH, SeraphAnim.DEATH.at("rise") + 14, n)));
 	}
 
 	/** Vulcan, smith of the gods (screenshots vulcan_*): from the front and the side, then each blow at its telling moment. */

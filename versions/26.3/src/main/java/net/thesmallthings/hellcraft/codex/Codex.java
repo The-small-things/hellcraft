@@ -141,6 +141,22 @@ public final class Codex {
 			"Then let him weary out the others, one by one, at the black forge of Mongibello.",
 			"Inferno XIV");
 
+	public static final Entry SERAPH = new Entry("seraph", "THE SERAPH", "Burning One of the Primum Mobile",
+			List.of("Highest of the angels, burning nearest the point of light round which all the heavens turn. Isaiah saw them: six "
+							+ "wings each, two to veil the face, two the feet, and two to fly.",
+					"It guards the way from the Primum Mobile to the Empyrean, Paradiso's last trial. It does not die: beaten, it bows "
+							+ "and rises into the light, gives each victor a Halo, and the column to the Empyrean opens."),
+			List.of("White flash, white ground: its great wings sweep forward. Block them as they land and it sinks, reeling.",
+					"Red circles round each of you: fire falls there. Move.",
+					"A red circle on you: it throws the live coal, which bursts there. Get out of it.",
+					"A red ring round it, everywhere but close beside it: the Gloria. Run IN, close to it, before it blazes.",
+					"It calls down the Angelic Guard: kill them.",
+					"At half its strength all six wings flare. From then on a purple ring means the turning heavens: a beam sweeps "
+							+ "round the floor. Jump it as it passes."),
+			"Above it stood the seraphim: each one had six wings; with twain he covered his face, and with twain he covered his "
+					+ "feet, and with twain he did fly.",
+			"Isaiah VI");
+
 	public static final Entry LUCIFER = new Entry("lucifer", "LUCIFER", "Emperor of the Kingdom Dolorous",
 			List.of("Once the fairest of the angels, he rose against his maker and fell. Where he struck the earth, Hell opened, "
 							+ "and he stands frozen at its bottom to the chest in the ice of Cocytus, the wind of his six wings keeping it frozen.",
@@ -257,7 +273,7 @@ public final class Codex {
 			"Within, the Cyclopes were forging iron in the vast cave, Brontes and Steropes and naked-limbed Pyracmon.",
 			"Aeneid VIII");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, VULCAN, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, VULCAN, SERAPH, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
 			MIMIC, THIEF, MALEBRANCHE, CYCLOPS);
 
 	@Nullable

@@ -343,6 +343,10 @@ public abstract class GuardianFight {
 		return next >= 0;
 	}
 
+	/** Each fighter when the guardian falls, after their spoils: for what a guardian gives besides (the Seraph's Halo). */
+	protected void onVictor(ServerPlayer player) {
+	}
+
 	/** When the fight is over (won, or everyone left): for whatever the guardian leaves behind. */
 	protected void onEnd(boolean won) {
 	}
@@ -499,6 +503,7 @@ public abstract class GuardianFight {
 			spoils(p, soul);
 			HellState.get(level.getServer()).setDirty();
 			Journey.award(p, "journey/guardian_" + kind.id());
+			onVictor(p);
 		}
 		String who = names.isEmpty() ? "Someone" : String.join(", ", names);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " slew " + kind.title + ", " + kind.subtitle + ".")

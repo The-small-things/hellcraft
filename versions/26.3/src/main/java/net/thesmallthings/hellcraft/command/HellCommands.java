@@ -313,6 +313,7 @@ public final class HellCommands {
 							ctx.getSource().sendSuccess(() -> Component.literal(status), false);
 							return 1;
 						}))
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Paradiso.selfTest(ctx.getSource().getServer()))))
 						.then(Commands.literal("angels").executes(ctx -> {
 							int n = Heaven.angels(ctx.getSource().getLevel(), BlockPos.containing(ctx.getSource().getPosition()));
 							ctx.getSource().sendSuccess(() -> Component.literal(n + " angels descend"), true);
