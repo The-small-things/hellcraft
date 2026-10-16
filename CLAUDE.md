@@ -64,7 +64,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   (`BossSpoils` cooldowns, `Judgement` style-rank rewards), the bounty, `Guide` (the Journal's how-to pages).
 - `hazard/`: circle hazards; `BossModel` (boss models: item displays animated through their transformation),
   `BossRules` (boss damage scales with the victim's hearts, arrows weakened), `StyleMeter` (ULTRAKILL-style
-  ranks); `guardian/` (the five guardians and Vulcan, `GuardianFight` base class) and `lucifer/` (the fight).
+  ranks); `guardian/` (the five guardians and Vulcan, `GuardianFight` base class) and `lucifer/` (the fight:
+  `LuciferFight` from the ready check to the climb out, `SeraphAttacks`, `EmperorAttacks`, `LuciferArena` the pit and its pillars;
+  the bodies are `entity/boss/FallenSeraphEntity`, `EmperorEntity` (hurt only through `EmperorWeakPoint`s he opens)).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
@@ -83,10 +85,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `hellcraft:judgement` damage type. `GuardianFight` gives real-bodied guardians an intro, a parry window
   (`openParry`, `onParried`) and invulnerable spells (`shield`).
 - Hint bits (`CircleHazards.hintOnce`, 64 of them in `HellState.Soul.hints`): 0-31 upper Hell, 32-38 lower Hell
-  (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat.
+  (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat,
+  42 the Emperor's open hand, 43 his wingbeat in the fight.
 - Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
   (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
-  death). Lucifer's delays go through `LuciferFight.paced`. Time new fights with `schedule` and anim events as usual.
+  death, nor Lucifer's SNAP, REVEAL and DORMANT). `LuciferFight` has the same clock (`update` per real tick, `step` per
+  fight tick; `realTicks` converts). Time new fights with `schedule` and anim events as usual.
 - Blood gear (3.0): real items in `HellItems` (and `infernal_*` forms the Hellforge makes); `BloodArmour.of` and
   `HellWeapons.of` also accept pieces made before 3.0 (vanilla items with custom data). The circles' enchantments:
   `tools/gen_enchants.py` (data), `tools/gen_loot.py` (`circle_book`, where each is found), `blood/LayerEnchants`
@@ -155,8 +159,11 @@ the Minotaur and Geryon on real bodies. Later bosses use the generic `entity/bos
 `client/render/boss/AnimatedBossRenderer` (no per-boss entity or renderer code beyond the fight). Geryon, beaten, becomes
 `GeryonCarrier` (rides down the great cliff); `world/AntaeusCleft` places `AntaeusEntity`, whose hand carries riders
 along the same path its animation follows (keep the `LOWER_PATH` and `RAISE_PATH` of `tools/art/antaeus.py` and `AntaeusEntity` in step); riders of
-either can't be hurt (`entity/Carrier`). Phases 1 to 4 wait on a play session. **Next: Phase 5** (Lucifer), after that
-feedback. Each phase ships as a test build for a play session before the next.
+either can't be hurt (`entity/Carrier`). **Phase 5 (Lucifer) is built** (2026-10-16): Cocytus's cold, braziers and
+wingbeat (`hazard/Wingbeat`, client `layer/WingbeatFx` and the `Colossus` windmill), the ready check, the Fallen Seraph's
+duel and the Emperor on real bodies, three cutscenes (descent, reveal, the climb out with a camera roll), the burrow at
+his back. Phases 1 to 5 wait on a play session; next is Phase 6 (the Nether, the Forge of Dis) after that feedback.
+Not done in Phase 5: the other bosses' lines about him and a Codex page that fills in as they fall (REVAMP L1). Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so

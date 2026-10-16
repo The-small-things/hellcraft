@@ -81,6 +81,13 @@ public final class Wingbeat {
 				+ "them.");
 	}
 
+	/** Only the shake and the boom (a slammed hand, nearby): no frost, no tip. */
+	public static void shake(ServerPlayer player, float strength) {
+		if (ServerPlayNetworking.canSend(player, WingbeatPayload.TYPE)) {
+			ServerPlayNetworking.send(player, new WingbeatPayload(-strength));
+		}
+	}
+
 	/** /hellcraft wingbeat: one beat now, for everyone. */
 	public static String now(MinecraftServer server) {
 		next = 0;

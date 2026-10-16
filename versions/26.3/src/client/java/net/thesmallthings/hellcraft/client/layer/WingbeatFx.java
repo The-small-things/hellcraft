@@ -25,6 +25,8 @@ public final class WingbeatFx implements HudElement {
 	private static final int SHAKE = 36;
 
 	private static float strength;
+	/** False for a lesser shock (a slammed hand): a shake and a boom, no frost or flaps. */
+	private static boolean frost;
 	private static int age = -1;
 
 	private WingbeatFx() {
@@ -32,9 +34,10 @@ public final class WingbeatFx implements HudElement {
 
 	public static final WingbeatFx INSTANCE = new WingbeatFx();
 
-	/** The server says the wings beat this hard. */
+	/** The server says the wings beat this hard (negative: only the ground shaking, this hard). */
 	public static void beat(float s) {
-		strength = Mth.clamp(s, 0, 1);
+		frost = s >= 0;
+		strength = Mth.clamp(Math.abs(s), 0, 1);
 		age = 0;
 	}
 
@@ -42,7 +45,7 @@ public final class WingbeatFx implements HudElement {
 		if (age < 0 || mc.player == null) {
 			return;
 		}
-		if (age == 0 || age == 14) {
+		if (frost && (age == 0 || age == 14)) {
 			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ENDER_DRAGON_FLAP, 0.45f, 0.3f + 0.3f * strength));
 		}
 		if (age == 4) {
@@ -65,7 +68,7 @@ public final class WingbeatFx implements HudElement {
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
-		if (age < 0) {
+		if (age < 0 || !frost) {
 			return;
 		}
 		float t = (age + delta.getGameTimeDeltaPartialTick(false)) / LENGTH;

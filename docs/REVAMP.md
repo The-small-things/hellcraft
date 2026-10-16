@@ -289,7 +289,15 @@ Malebolge's mimics, fake Rests, thieves and the Malebranche's hooks, and Malacod
 ridge); the Furies (who call Medusa: look away from her) inside the Walls of Dis, Farinata in his burning tomb, the
 Minotaur and Geryon, all on real bodies with intro cutscenes and Codex pages; Geryon, once beaten, flies souls down
 the great cliff, and Antaeus sets them down on the ice from the Well (both optional: the ramps stay). New monsters:
-heretics, centaurs, harpies, mimics, thieves and the Malebranche. Phases 1 to 4 wait on a play session.
+heretics, centaurs, harpies, mimics, thieves and the Malebranche. Phase 5 was built on 2026-10-16, with the
+playtest fixes from Phases 1 to 4 (lairs and Rests spread out, a ruined road with slab steps, Antaeus's arm, Geryon's
+flight, more wind in Lust, a ferry that gets you somewhere): Cocytus's cold and its braziers, which stay lit for
+everyone; his wingbeat felt all over Hell and the windmill seen across the ice; a 70-block pit with six ice pillars;
+the ready check and the point-of-no-return warning; the Fallen Seraph's descent (a cutscene), his duel in the danger
+language and his enrage; his breaking and the reveal of the Emperor (a cutscene), who is hurt only through the hands
+and faces he leaves down and whose wingbeat you hide from behind the pillars; and the climb out down his side with
+the camera rolling over, into Purgatory. Not yet: the other bosses' lines about him, and a Codex page that fills in
+as they fall. Phases 1 to 5 wait on a play session.
 
 ## 14. The playtest loop
 

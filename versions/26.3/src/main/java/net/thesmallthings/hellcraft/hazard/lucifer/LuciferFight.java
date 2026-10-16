@@ -2,7 +2,6 @@ package net.thesmallthings.hellcraft.hazard.lucifer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -11,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,19 +19,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodItems;
@@ -40,11 +38,21 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Judgement;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import net.thesmallthings.hellcraft.hazard.BossModel;
+import net.thesmallthings.hellcraft.cutscene.Cutscene;
+import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
+import net.thesmallthings.hellcraft.cutscene.Cutscenes;
+import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.boss.BossEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
+import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.music.BossMusic;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Purgatory;
@@ -52,65 +60,79 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
- * One fight against Lucifer, from the moment the pit seals to the moment it opens again.
+ * One fight against Lucifer (Phase 5 of the revamp), from the ready check at the pit's edge to the climb out.
  *
  * <pre>
- * INTRO -> DUEL -(50%)-> ENRAGE_TRANSITION -> ENRAGED -(0%)-> TRUE_FORM_TRANSITION -> TRUE_FORM -(Wither dies)-> DEFEAT
- *                     \______________________ nobody left alive in the pit for 30 s ______________________/-> FAILED
+ * READY -(countdown, or everyone in)-> INTRO (the Fallen Seraph descends) -> DUEL -(half)-> ENRAGE_TRANSITION -> ENRAGED
+ *   -(his seraph form breaks)-> TRUE_FORM_TRANSITION (the Emperor wakes) -> TRUE_FORM -(he freezes)-> DEFEAT (the climb out) -> DONE
+ *                       \____________________ nobody left alive in the pit for 30 s ____________________/-> FAILED
  * </pre>
+ *
+ * The Emperor sleeps in the pit the whole time (the client draws him asleep when there is no fight); the fight brings
+ * the real body (EmperorEntity) and wakes it. Like the guardians' fights, this one runs on its own clock at the
+ * bosses' tempo (config bossTempo) while anyone is fighting, so every wind-up, warning and pause lasts 1/tempo as long
+ * as it was made and the models' blows slow to match; the cutscenes and transitions keep their own time.
  */
 public final class LuciferFight {
-	enum Phase {INTRO, DUEL, ENRAGE_TRANSITION, ENRAGED, TRUE_FORM_TRANSITION, TRUE_FORM, DEFEAT, FAILED, DONE}
+	enum Phase {READY, INTRO, DUEL, ENRAGE_TRANSITION, ENRAGED, TRUE_FORM_TRANSITION, TRUE_FORM, DEFEAT, FAILED, DONE}
 
-	private static final String AVATAR_TAG = LuciferManager.TAG + "_avatar";
 	private static final double AUDIENCE_RADIUS = 96.0;
-	private static final int INTRO_LENGTH = 280;
+	/** The ready check: how long until the pit seals (real ticks), and how long once everyone near is in. */
+	private static final int READY_TICKS = 600;
+	private static final int READY_ALL_IN = 100;
 	private static final int FAIL_AFTER_EMPTY_TICKS = 600;
 	private static final Identifier VETERAN_MODIFIER = HellcraftMod.id("veteran");
+	/** Where the Seraph comes down: this far out from the centre, between the Emperor and the fighters. */
+	private static final double DESCENT = 22.0;
+	/** The Emperor faces east, the way the first road comes in. */
+	private static final float EMPEROR_FACING = -90.0f;
 
 	private final ServerLevel level;
-	/** Started by a command with nobody around: never fails for lack of players (used by tests). */
+	/** Started by a command with nobody around: no ready check, and never fails for lack of players (used by tests). */
 	private final boolean debug;
 	private final int floorY;
-	private final ServerBossEvent bar = new ServerBossEvent(java.util.UUID.randomUUID(), Component.literal("LUCIFER").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+	private final ServerBossEvent bar = new ServerBossEvent(UUID.randomUUID(), Component.literal("LUCIFER").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 			BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 	private final Map<UUID, Float> participants = new LinkedHashMap<>();
 	/** Each fighter's style: its average over the fight decides their spoils (Judgement). */
 	private final Map<UUID, StyleMeter> styles = new HashMap<>();
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final List<UUID> traitors = new ArrayList<>();
+	/** Everything else the fight made (the Emperor's weak points), so it isn't taken for a stray. */
+	private final Set<UUID> owned = new HashSet<>();
 	private final LuciferMusic music;
-	private final BossModel model;
 	/** Returning champions in this round; each one makes Lucifer harder for everyone. */
 	private final List<String> veterans = new ArrayList<>();
+	private final SeraphAttacks seraphAttacks;
+	private final EmperorAttacks emperorAttacks;
 	private boolean traitorsRaised;
 
-	private Phase phase = Phase.INTRO;
+	private Phase phase = Phase.READY;
+	/** The fight's own clock (fight ticks), and how far the next tick has come. */
 	private int tick;
+	private double clock;
 	private int phaseTick;
-	private int attackCooldown;
+	private int realTicks;
+	private int readyLeft = READY_TICKS;
+	private boolean warnedNoReturn;
 	private int emptyTicks;
 	private int lastHurtBark = -1000;
-	/** Ticks the current boss form has been missing from a loaded arena (it is never assumed dead). */
 	private int missingTicks;
-	/** The true form's last seen health fraction (so a body that vanishes at death's door still counts as slain). */
-	private float lastTrueFormHealth = 1.0f;
-	/** The same for the Morning Star: if his first body dies for real, the Emperor still rises. */
-	private float lastAvatarHealth = 1.0f;
+	/** Until this fight tick, a shield block of the boss's blow staggers it (the white flash). */
+	private int parryUntil = -1;
 	@Nullable
-	private UUID avatarId;
+	private UUID seraphId;
 	@Nullable
-	private UUID witherId;
-	/** The Emperor's attacks (true form only). */
-	@Nullable
-	private EmperorAttacks emperor;
+	private UUID emperorId;
 	/** The pit as it was when the fight began; whatever the fight blows out of it freezes back. */
 	@Nullable
 	private Map<Long, BlockState> floor;
@@ -123,11 +145,14 @@ public final class LuciferFight {
 		this.debug = debug;
 		this.floorY = LuciferArena.floorY(level);
 		this.music = new LuciferMusic(level);
-		this.model = new BossModel(level, "hellcraft_lucifer_model", LuciferManager.TAG, Vec3.ZERO);
+		this.seraphAttacks = new SeraphAttacks(this);
+		this.emperorAttacks = new EmperorAttacks(this);
 		bar.setDarkenScreen(true);
 		bar.setCreateWorldFog(true);
 		bar.setProgress(1.0f);
 	}
+
+	// ------------------------------------------------------------------ for the attacks
 
 	ServerLevel level() {
 		return level;
@@ -137,8 +162,9 @@ public final class LuciferFight {
 		return floorY;
 	}
 
-	BossModel model() {
-		return model;
+	/** The fight's clock (fight ticks). */
+	int tick() {
+		return tick;
 	}
 
 	boolean enraged() {
@@ -162,45 +188,204 @@ public final class LuciferFight {
 		return (float) (1.0 + HellConfig.get().luciferVeteranDamageBonus * tier());
 	}
 
-	int extraLines() {
-		return tier();
-	}
-
 	int extraMarks() {
 		return tier();
 	}
 
-	/** Schedules an action; once he fights, every wind-up and pause lasts 1/bossTempo as long (as the guardians'). */
+	/** Runs an action this many fight ticks from now. */
 	void schedule(int delay, Runnable action) {
-		scheduled.add(new Scheduled(tick + Math.max(0, paced(delay)), action));
+		scheduled.add(new Scheduled(tick + Math.max(0, delay), action));
 	}
 
-	/** A fight delay at the bosses' tempo, while he fights (his entrance, transformations and defeat keep their timing). */
-	int paced(int ticks) {
-		if (phase != Phase.DUEL && phase != Phase.ENRAGED && phase != Phase.TRUE_FORM) {
-			return ticks;
-		}
-		return (int) Math.round(ticks / Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo)));
+	/** How fast the fight runs: at the bosses' tempo while anyone fights, as made in between. */
+	private double tempo() {
+		return fighting(phase) ? Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo)) : 1.0;
+	}
+
+	/** How many real ticks this many fight ticks take now. */
+	int realTicks(int fightTicks) {
+		return (int) Math.round(fightTicks / tempo());
+	}
+
+	private static boolean fighting(Phase p) {
+		return p == Phase.DUEL || p == Phase.ENRAGED || p == Phase.TRUE_FORM;
+	}
+
+	/** For the next few fight ticks, blocking the boss's blow with a shield counts as a parry. */
+	void openParry(int ticks) {
+		parryUntil = tick + ticks;
 	}
 
 	void say(String line) {
-		LuciferDialogue.say(LuciferDialogue.audience(level, AUDIENCE_RADIUS), line);
+		LuciferDialogue.say(audience(), line);
 	}
 
 	private void sayLater(int delay, String line) {
 		schedule(delay, () -> say(line));
 	}
 
+	/** A plain tip for everyone in the pit. */
+	void tip(String text) {
+		for (ServerPlayer p : audience()) {
+			Dialogue.notice(p, Component.literal(text).withStyle(ChatFormatting.AQUA));
+		}
+	}
+
+	List<ServerPlayer> audience() {
+		return LuciferDialogue.audience(level, AUDIENCE_RADIUS);
+	}
+
+	/** Everyone fighting in the pit. */
+	List<ServerPlayer> fighters() {
+		List<ServerPlayer> out = new ArrayList<>();
+		for (ServerPlayer p : level.players()) {
+			if (p.isAlive() && !p.isSpectator() && LuciferArena.inside(p.getX(), p.getZ()) && p.getY() < floorY + 30) {
+				out.add(p);
+			}
+		}
+		return out;
+	}
+
+	void own(UUID id) {
+		owned.add(id);
+	}
+
+	@Nullable
+	FallenSeraphEntity seraph() {
+		Entity e = seraphId == null ? null : level.getEntity(seraphId);
+		return e instanceof FallenSeraphEntity s && s.isAlive() ? s : null;
+	}
+
+	@Nullable
+	EmperorEntity emperor() {
+		Entity e = emperorId == null ? null : level.getEntity(emperorId);
+		return e instanceof EmperorEntity m && m.isAlive() ? m : null;
+	}
+
+	/** A point on the pit's floor. */
+	Vec3 onFloor(double x, double z) {
+		double r = Math.sqrt(x * x + z * z);
+		return new Vec3(x, r < LuciferArena.RADIUS - 2 ? floorY : LuciferArena.groundY(level, (int) Math.floor(x), (int) Math.floor(z)), z);
+	}
+
+	/** The Seraph's height over the ice: hovering, breathing up and down a little. */
+	double hover(double x, double z) {
+		return floorY + 0.25 + 0.2 * Math.sin(tick * 0.08);
+	}
+
+	/** Keeps a point out of the Emperor's body and inside the pit. */
+	Vec3 clampToRing(Vec3 p) {
+		double r = Math.sqrt(p.x * p.x + p.z * p.z);
+		double min = SeraphAttacks.bodyRadius();
+		double max = LuciferArena.RADIUS - 1.5;
+		if (r >= min && r <= max) {
+			return p;
+		}
+		double k = r < 1.0e-4 ? 0 : Mth.clamp(r, min, max) / r;
+		return r < 1.0e-4 ? new Vec3(min, p.y, 0) : new Vec3(p.x * k, p.y, p.z * k);
+	}
+
+	/** Living things a blow at this point reaches (horizontally within radius, about the same height). */
+	List<LivingEntity> victims(Vec3 centre, double radius) {
+		List<LivingEntity> out = new ArrayList<>();
+		for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(centre, centre).inflate(radius, 6, radius))) {
+			if (!e.isAlive() || LuciferManager.isLucifer(e) || e instanceof Player p && (p.isSpectator() || p.isCreative())) {
+				continue;
+			}
+			double dx = e.getX() - centre.x;
+			double dz = e.getZ() - centre.z;
+			if (dx * dx + dz * dz <= radius * radius) {
+				out.add(e);
+			}
+		}
+		return out;
+	}
+
+	/** Players worth attacking; if none (tests), any other living thing in the pit. */
+	List<LivingEntity> targets() {
+		List<LivingEntity> players = new ArrayList<>();
+		for (ServerPlayer p : level.players()) {
+			if (p.isAlive() && !p.isSpectator() && !p.isCreative() && LuciferArena.inside(p.getX(), p.getZ()) && p.getY() < floorY + 30) {
+				players.add(p);
+			}
+		}
+		if (!players.isEmpty()) {
+			return players;
+		}
+		double r = LuciferArena.RADIUS;
+		return level.getEntitiesOfClass(LivingEntity.class, new AABB(-r, floorY - 12, -r, r, floorY + 30, r),
+				e -> e.isAlive() && !LuciferManager.isLucifer(e) && !(e instanceof ServerPlayer));
+	}
+
+	// ------------------------------------------------------------------ the ready check
+
+	/** The pit's edge: tells everyone near that the fight is about to start, and when. */
+	void ready() {
+		setPhase(Phase.READY);
+		for (ServerPlayer p : audience()) {
+			Dialogue.notice(p, Component.literal("Lucifer's pit. The fight starts in 30 seconds, sooner once everyone near is down on the pit's "
+					+ "floor. When it starts, the pit seals: nobody gets in or out until it's over.").withStyle(ChatFormatting.GOLD));
+			Feedback.sound(p, SoundEvents.BELL_RESONATE, SoundSource.HOSTILE, 1.0f, 0.5f);
+		}
+	}
+
+	/** One real tick of the ready check. */
+	private void readyTick() {
+		List<ServerPlayer> near = new ArrayList<>();
+		int in = 0;
+		for (ServerPlayer p : level.players()) {
+			if (!p.isSpectator() && !p.isCreative() && p.getX() * p.getX() + p.getZ() * p.getZ() < 80 * 80) {
+				near.add(p);
+				if (LuciferArena.inside(p.getX(), p.getZ()) && p.getY() < floorY + 12) {
+					in++;
+				}
+			}
+		}
+		if (in == 0) {
+			if (++emptyTicks > 200) {
+				// everyone went back up: no fight after all
+				HellcraftMod.LOGGER.info("Lucifer's ready check called off (nobody in the pit)");
+				setPhase(Phase.DONE);
+			}
+			return;
+		}
+		emptyTicks = 0;
+		if (in == near.size() && readyLeft > READY_ALL_IN) {
+			readyLeft = READY_ALL_IN;
+		}
+		readyLeft--;
+		if (readyLeft % 20 == 0) {
+			Component text = Component.literal("The pit seals in " + (readyLeft / 20) + " s. Everyone fighting: down on the pit's floor.")
+					.withStyle(readyLeft <= 200 ? ChatFormatting.RED : ChatFormatting.GOLD);
+			for (ServerPlayer p : near) {
+				p.sendOverlayMessage(text);
+			}
+		}
+		if (!warnedNoReturn && readyLeft <= 200) {
+			warnedNoReturn = true;
+			for (ServerPlayer p : near) {
+				Dialogue.notice(p, Component.literal("Point of no return in 10 seconds: once the pit seals, nobody gets out until Lucifer or you fall. "
+						+ "Climb back up now if you're not ready.").withStyle(ChatFormatting.RED));
+				Feedback.sound(p, SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 1.5f, 0.6f);
+			}
+		}
+		if (readyLeft <= 0) {
+			begin();
+		}
+	}
+
 	// ------------------------------------------------------------------ lifecycle
 
-	void start() {
+	/** The pit seals and the Fallen Seraph comes down. */
+	void begin() {
 		LuciferArena.forceLoad(level, true);
 		discardStrays();
 		LuciferArena.seal(level);
 		LuciferArena.fillHoles(level, floorY);
+		LuciferArena.raisePillars(level, floorY);
 		floor = LuciferArena.snapshot(level);
-		for (ServerPlayer p : LuciferDialogue.audience(level, LuciferArena.RADIUS + 4)) {
-			if (!p.isSpectator()) {
+		for (ServerPlayer p : level.players()) {
+			if (!p.isSpectator() && LuciferArena.inside(p.getX(), p.getZ()) && p.getY() < floorY + 30) {
 				participants.putIfAbsent(p.getUUID(), 0.0f);
 			}
 		}
@@ -211,32 +396,68 @@ public final class LuciferFight {
 				veterans.add(soul.name);
 			}
 		}
-		WitherSkeleton avatar = spawnAvatar();
-		avatarId = avatar.getUUID();
-		applyVeteranScaling(avatar);
-		for (ServerPlayer p : LuciferDialogue.audience(level, AUDIENCE_RADIUS)) {
+		EmperorEntity emperor = spawnEmperor();
+		emperorId = emperor.getUUID();
+		// the Seraph comes down between the Emperor and the fighters
+		double angle = descentAngle();
+		Vec3 landing = new Vec3(Math.cos(angle) * DESCENT, floorY, Math.sin(angle) * DESCENT);
+		float facing = (float) Math.toDegrees(angle) - 90.0f;
+		FallenSeraphEntity seraph = spawnSeraph(landing, facing);
+		seraphId = seraph.getUUID();
+		applyVeteranScaling(seraph);
+		Cutscene descent = Cutscenes.LUCIFER_DESCENT;
+		for (ServerPlayer p : audience()) {
+			MapSync.unlockCodex(p, "lucifer");
+			CutsceneManager.play(p, descent, landing, facing);
 			Feedback.sound(p, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.0f, 0.6f);
 		}
-		for (int i = 0; i < 4; i++) {
-			double a = i * Math.PI / 2 + Math.PI / 4;
-			strikeLightning(Math.cos(a) * 18, Math.sin(a) * 18);
-		}
-		List<String> intro = new ArrayList<>(List.of(LuciferDialogue.INTRO));
 		if (!veterans.isEmpty()) {
-			intro.add(2, LuciferDialogue.veteranLine(veterans));
+			sayLater(descent.ticks() - 10, LuciferDialogue.veteranLine(veterans));
 		}
-		int spacing = (INTRO_LENGTH - 60) / intro.size();
-		for (int i = 0; i < intro.size(); i++) {
-			sayLater(30 + i * spacing, intro.get(i));
-		}
-		String subtitle = "The Morning Star" + (tier() > 0 ? " " + stars() : "");
-		schedule(INTRO_LENGTH - 30, () -> LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS),
-				"LUCIFER", subtitle, ChatFormatting.DARK_RED));
-		updateBarName("LUCIFER \u2014 The Fallen Seraph");
+		sayLater(descent.ticks() - 4, LuciferDialogue.INTRO[2]);
+		updateBarName("LUCIFER — The Fallen Seraph");
 		setPhase(Phase.INTRO);
+		schedule(descent.ticks(), () -> {
+			FallenSeraphEntity s = seraph();
+			if (s != null) {
+				s.setPermanentlyInvulnerable(false);
+			}
+			setPhase(Phase.DUEL);
+			tip(LuciferDialogue.DESCENT_TIP);
+		});
 	}
 
-	void tick() {
+	/** The direction the fighters mostly are, seen from the centre. */
+	private double descentAngle() {
+		double sx = 0;
+		double sz = 0;
+		for (ServerPlayer p : fighters()) {
+			double r = Math.max(1, Math.hypot(p.getX(), p.getZ()));
+			sx += p.getX() / r;
+			sz += p.getZ() / r;
+		}
+		return sx * sx + sz * sz < 1.0e-4 ? 0.0 : Math.atan2(sz, sx);
+	}
+
+	/** One real tick (LuciferManager): the ready check, or as many fight ticks as the tempo gives. */
+	void update() {
+		realTicks++;
+		if (phase == Phase.DONE) {
+			return;
+		}
+		if (phase == Phase.READY) {
+			readyTick();
+			return;
+		}
+		double t = tempo();
+		clock += t;
+		while (clock >= 1.0 && phase != Phase.DONE) {
+			clock -= 1.0;
+			Danger.stretched(1.0 / t, this::step);
+		}
+	}
+
+	private void step() {
 		tick++;
 		phaseTick++;
 		runScheduled();
@@ -247,120 +468,77 @@ public final class LuciferFight {
 			// someone may have run /forceload remove; the pit must stay loaded while he fights
 			LuciferArena.forceLoad(level, true);
 		}
+		if (tick % 10 == 1) {
+			float tempo = (float) tempo();
+			for (BossEntity b : new BossEntity[]{seraph(), emperor()}) {
+				if (b != null && b.tempo() != tempo) {
+					b.tempo(tempo);
+				}
+			}
+		}
 		updateBar();
-		List<ServerPlayer> watching = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
-		music.tick(watching, tick);
-		model.tick(watching);
+		List<ServerPlayer> watching = audience();
+		music.tick(watching, realTicks);
 		tickStyles();
+		pushOutOfHim();
 		if (floor != null && tick % 10 == 0) {
 			LuciferArena.heal(level, floor);
 		}
 		switch (phase) {
-			case INTRO -> {
-				Mob avatar = avatar();
-				if (avatar != null && tick % 2 == 0) {
-					double a = tick * 0.35;
-					double r = 3.5 - (phaseTick % 60) / 20.0;
-					level.sendParticles(ParticleTypes.SNOWFLAKE, avatar.getX() + Math.cos(a) * r, avatar.getY() + phaseTick % 60 / 10.0,
-							avatar.getZ() + Math.sin(a) * r, 4, 0.1, 0.1, 0.1, 0.0);
-					level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, avatar.getX() - Math.cos(a) * r, avatar.getY() + phaseTick % 60 / 10.0,
-							avatar.getZ() - Math.sin(a) * r, 2, 0.1, 0.1, 0.1, 0.0);
-				}
-				if (phaseTick >= INTRO_LENGTH) {
-					if (avatar != null) {
-						avatar.setNoAi(false);
+			case DUEL, ENRAGED -> {
+				FallenSeraphEntity seraph = seraph();
+				if (seraph == null) {
+					if (++missingTicks > 600) {
+						HellcraftMod.LOGGER.warn("The Fallen Seraph vanished without dying; revealing the Emperor");
+						beginTrueFormTransition();
 					}
-					setPhase(Phase.DUEL);
-				}
-			}
-			case DUEL, ENRAGED -> fightTick();
-			case TRUE_FORM_TRANSITION -> {
-				if (phaseTick > 300) {
-					HellcraftMod.LOGGER.warn("Lucifer's true form never appeared; revealing it again");
-					try {
-						revealTrueForm();
-					} catch (RuntimeException e) {
-						HellcraftMod.LOGGER.error("Lucifer's true form could not be revealed", e);
-						fail("Lucifer's last form didn't appear, so the fight is over. He'll be back later.");
-					}
-				}
-			}
-			case TRUE_FORM -> {
-				// his death is also watched for here, not only through the death event (so a victory is never lost)
-				Entity body = witherId != null ? level.getEntity(witherId) : null;
-				if (body instanceof WitherBoss dying && dying.isDeadOrDying()) {
-					HellcraftMod.LOGGER.info("Lucifer's true form is dead (seen by the fight)");
-					beginDefeat();
 					return;
 				}
-				WitherBoss wither = wither();
-				if (wither == null) {
-					if (lastTrueFormHealth <= 0.1f) {
-						// gone at death's door: that was the killing blow
-						HellcraftMod.LOGGER.info("Lucifer's true form is gone at {}% health: a victory", Math.round(lastTrueFormHealth * 100));
-						beginDefeat();
-						return;
-					}
-					// a missing boss is not a dead boss
-					bossMissing();
-					return;
-				}
-				lastTrueFormHealth = wither.getHealth() / Math.max(1.0f, wither.getMaxHealth());
 				missingTicks = 0;
 				if (checkForFailure()) {
 					return;
 				}
-				if (emperor != null) {
-					emperor.tick(wither);
+				if (phase == Phase.DUEL && seraph.getHealth() <= seraph.getMaxHealth() * 0.5f) {
+					beginEnrage();
+					return;
 				}
+				seraphAttacks.tick(seraph, targets());
+			}
+			case TRUE_FORM -> {
+				EmperorEntity emperor = emperor();
+				if (emperor == null) {
+					if (++missingTicks > 600) {
+						HellcraftMod.LOGGER.warn("The Emperor vanished without dying; ending the fight without a victory");
+						fail("Lucifer's body disappeared, so the fight is over. He'll be back later.");
+					}
+					return;
+				}
+				missingTicks = 0;
+				if (checkForFailure()) {
+					return;
+				}
+				emperorAttacks.tick(emperor, targets());
 			}
 			default -> {
 			}
 		}
 	}
 
-	private void fightTick() {
-		Mob avatar = avatar();
-		if (avatar == null) {
-			Entity body = avatarId != null ? level.getEntity(avatarId) : null;
-			if ((body instanceof LivingEntity dying && dying.isDeadOrDying()) || lastAvatarHealth <= 0.1f) {
-				// the Morning Star died outright instead of shattering: the Emperor rises all the same
-				HellcraftMod.LOGGER.info("The Morning Star died outright; revealing the true form");
-				beginTrueFormTransition();
-				return;
+	/** Nobody stands inside the Emperor's body: whoever walks in is pushed back out. */
+	private void pushOutOfHim() {
+		double r = EmperorEntity.BODY_RADIUS;
+		for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(-r, floorY - 4, -r, r, floorY + 18, r))) {
+			if (LuciferManager.isLucifer(e) || e instanceof Player p && p.isSpectator()) {
+				continue;
 			}
-			bossMissing();
-			return;
-		}
-		lastAvatarHealth = avatar.getHealth() / Math.max(1.0f, avatar.getMaxHealth());
-		missingTicks = 0;
-		leash(avatar, 24);
-		if (checkForFailure()) {
-			return;
-		}
-		List<LivingEntity> targets = targets();
-		if (!targets.isEmpty() && avatar.getTarget() == null) {
-			avatar.setTarget(targets.get(level.getRandom().nextInt(targets.size())));
-		}
-		if (phase == Phase.DUEL && avatar.getHealth() <= avatar.getMaxHealth() * 0.5f) {
-			beginEnrage();
-			return;
-		}
-		if (--attackCooldown <= 0 && !targets.isEmpty()) {
-			LivingEntity target = targets.get(level.getRandom().nextInt(targets.size()));
-			LuciferAttacks.Attack[] all = LuciferAttacks.Attack.values();
-			LuciferAttacks.perform(this, all[level.getRandom().nextInt(all.length)], avatar, target);
-			if (phase == Phase.ENRAGED && level.getRandom().nextFloat() < 0.6f) {
-				LuciferAttacks.Attack follow = all[level.getRandom().nextInt(all.length)];
-				schedule(30, () -> {
-					Mob a = avatar();
-					if (a != null && target.isAlive() && phase == Phase.ENRAGED) {
-						LuciferAttacks.perform(this, follow, a, target);
-					}
-				});
+			double d = Math.hypot(e.getX(), e.getZ());
+			if (d < r) {
+				Vec3 out = d < 1.0e-3 ? new Vec3(1, 0, 0) : new Vec3(e.getX() / d, 0, e.getZ() / d);
+				e.setPos(out.x * (r + 0.5), Math.max(e.getY(), floorY), out.z * (r + 0.5));
+				if (e instanceof ServerPlayer p) {
+					p.connection.teleport(p.getX(), p.getY(), p.getZ(), p.getYRot(), p.getXRot());
+				}
 			}
-			double faster = Math.max(0.6, 1.0 - 0.12 * tier());
-			attackCooldown = paced((int) Math.round((phase == Phase.ENRAGED ? 50 : 80) * faster));
 		}
 	}
 
@@ -369,7 +547,7 @@ public final class LuciferFight {
 		if (debug) {
 			return false;
 		}
-		boolean anyone = level.players().stream().anyMatch(p -> p.isAlive() && !p.isSpectator() && LuciferArena.inside(p.getX(), p.getZ()));
+		boolean anyone = !fighters().isEmpty();
 		emptyTicks = anyone ? 0 : emptyTicks + 1;
 		if (emptyTicks > FAIL_AFTER_EMPTY_TICKS) {
 			fail(LuciferDialogue.FAIL);
@@ -397,97 +575,88 @@ public final class LuciferFight {
 		});
 	}
 
-	/** The boss entity can't be found even though the pit is loaded (e.g. removed by a command). */
-	private void bossMissing() {
-		if (++missingTicks > 600) {
-			HellcraftMod.LOGGER.warn("Lucifer's body vanished without dying; ending the fight without a victory");
-			fail("Lucifer's body disappeared, so the fight is over. He'll be back later.");
-		}
-	}
-
 	// ------------------------------------------------------------------ phase changes
 
 	private void setPhase(Phase next) {
 		phase = next;
 		phaseTick = 0;
 		HellcraftMod.LOGGER.info("Lucifer phase: {}{}", next, next == Phase.INTRO && tier() > 0 ? " (returning champions: " + veterans + ")" : "");
-		List<ServerPlayer> audience = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
+		List<ServerPlayer> audience = audience();
 		switch (next) {
 			case DUEL -> {
-				music.switchTo(BossMusic.Track.DUEL, audience, tick);
+				music.switchTo(BossMusic.Track.DUEL, audience, realTicks);
 				if (tier() >= 2) {
 					raiseTraitors();
 				}
 			}
-			case ENRAGED -> music.switchTo(BossMusic.Track.ENRAGED, audience, tick);
-			case TRUE_FORM -> music.switchTo(BossMusic.Track.TRUE_FORM, audience, tick);
+			case ENRAGED -> music.switchTo(BossMusic.Track.ENRAGED, audience, realTicks);
+			case TRUE_FORM -> music.switchTo(BossMusic.Track.TRUE_FORM, audience, realTicks);
 			case DEFEAT, FAILED, DONE -> music.stopAll(audience);
 			default -> {
 			}
 		}
 	}
 
+	/** Half his health: the Seraph stops pretending. */
 	private void beginEnrage() {
-		Mob avatar = avatar();
-		if (avatar == null) {
+		FallenSeraphEntity seraph = seraph();
+		if (seraph == null) {
 			return;
 		}
 		setPhase(Phase.ENRAGE_TRANSITION);
-		avatar.setNoAi(true);
 		scheduled.clear();
+		seraph.setPermanentlyInvulnerable(true);
+		seraph.warn(BossEntity.Warning.NONE);
+		seraph.play(FallenSeraphAnim.SNAP);
 		for (int i = 0; i < LuciferDialogue.ENRAGE.length; i++) {
-			sayLater(i * 30, LuciferDialogue.ENRAGE[i]);
+			sayLater(i * 18, LuciferDialogue.ENRAGE[i]);
 		}
-		level.playSound(null, avatar.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 3.0f, 1.4f);
-		schedule(75, () -> {
-			Mob a = avatar();
-			if (a == null) {
+		level.playSound(null, seraph.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 3.0f, 1.4f);
+		schedule(FallenSeraphAnim.SNAP.at("snap"), () -> {
+			FallenSeraphEntity s = seraph();
+			if (s == null) {
 				return;
 			}
-			level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, a.getX(), a.getY() + 2, a.getZ(), 1, 0, 0, 0, 0);
-			level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, a.getX(), a.getY() + 2, a.getZ(), 200, 4, 2, 4, 0.2);
-			a.addEffect(new MobEffectInstance(MobEffects.GLOWING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
-			a.addEffect(new MobEffectInstance(MobEffects.SPEED, MobEffectInstance.INFINITE_DURATION, 1, false, false));
-			a.addEffect(new MobEffectInstance(MobEffects.STRENGTH, MobEffectInstance.INFINITE_DURATION, 0, false, false));
-			a.setNoAi(false);
+			level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, s.getX(), s.getY() + 2, s.getZ(), 1, 0, 0, 0, 0);
+			level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, s.getX(), s.getY() + 2, s.getZ(), 200, 4, 2, 4, 0.2);
+			s.addEffect(new MobEffectInstance(MobEffects.GLOWING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
 			raiseTraitors();
-			updateBarName("LUCIFER \u2014 The Morning Star");
+			updateBarName("LUCIFER — The Morning Star");
 			bar.setColor(BossEvent.BossBarColor.PURPLE);
-			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "ENOUGH!", "The Morning Star unbound", ChatFormatting.RED);
-			model.pose(avatar(), BossModel.Pose.ROAR);
-			attackCooldown = paced(30);
+			LuciferDialogue.nameCard(audience(), "ENOUGH!", "The Morning Star unbound", ChatFormatting.RED);
+		});
+		schedule(FallenSeraphAnim.SNAP.ticks, () -> {
+			FallenSeraphEntity s = seraph();
+			if (s != null) {
+				s.setPermanentlyInvulnerable(false);
+			}
 			setPhase(Phase.ENRAGED);
+			tip("He's faster now, and often strikes twice. Keep blocking the white flashes.");
 		});
 	}
 
+	/** The seraph's form breaks, and the mountain of the pit opens six eyes. */
 	private void beginTrueFormTransition() {
 		if (phase == Phase.TRUE_FORM_TRANSITION || phase == Phase.TRUE_FORM || phase == Phase.DEFEAT) {
 			return;
 		}
 		setPhase(Phase.TRUE_FORM_TRANSITION);
 		scheduled.clear();
-		Mob avatar = avatar();
-		if (avatar != null) {
-			avatar.setNoAi(true);
+		FallenSeraphEntity seraph = seraph();
+		int breakAt = 0;
+		if (seraph != null) {
+			seraph.setPermanentlyInvulnerable(true);
+			seraph.warn(BossEntity.Warning.NONE);
+			seraph.play(FallenSeraphAnim.DEATH);
+			breakAt = FallenSeraphAnim.DEATH.at("break");
 		}
-		for (int i = 0; i < LuciferDialogue.TRUE_FORM.length; i++) {
-			sayLater(i * 45, LuciferDialogue.TRUE_FORM[i]);
-		}
-		schedule(95, this::revealTrueForm);
-	}
-
-	/** The Morning Star shatters and the Emperor, frozen in the ice, is revealed. */
-	private void revealTrueForm() {
-		if (phase != Phase.TRUE_FORM_TRANSITION) {
-			return;
-		}
-		{
-			Mob a = avatar();
-			if (a != null) {
-				level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, a.getX(), a.getY() + 2, a.getZ(), 2, 1, 1, 1, 0);
-				level.sendParticles(ParticleTypes.SNOWFLAKE, a.getX(), a.getY() + 2, a.getZ(), 500, 3, 3, 3, 0.5);
-				level.playSound(null, a.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3.0f, 0.4f);
-				a.discard();
+		schedule(breakAt, () -> {
+			FallenSeraphEntity s = seraph();
+			if (s != null) {
+				level.sendParticles(ParticleTypes.END_ROD, s.getX(), s.getY() + 2.5, s.getZ(), 300, 1, 1.5, 1, 0.3);
+				level.sendParticles(ParticleTypes.SNOWFLAKE, s.getX(), s.getY() + 2, s.getZ(), 300, 2, 2, 2, 0.4);
+				level.playSound(null, s.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3.0f, 0.4f);
+				s.discard();
 			}
 			for (UUID id : traitors) {
 				Entity t = level.getEntity(id);
@@ -496,17 +665,42 @@ public final class LuciferFight {
 				}
 			}
 			traitors.clear();
-			WitherBoss wither = spawnTrueForm();
-			witherId = wither.getUUID();
-			emperor = new EmperorAttacks(this, witherId);
-			bar.removeAllPlayers();
-			lastTrueFormHealth = 1.0f;
-			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "LUCIFER", "Three-Faced Emperor", ChatFormatting.DARK_PURPLE);
-			model.pose(wither, BossModel.Pose.ROAR);
-			setPhase(Phase.TRUE_FORM);
-		}
+			revealEmperor();
+		});
 	}
 
+	private void revealEmperor() {
+		EmperorEntity emperor = emperor();
+		if (emperor == null) {
+			emperor = spawnEmperor();
+			emperorId = emperor.getUUID();
+		}
+		applyVeteranScaling(emperor);
+		emperor.play(EmperorAnim.REVEAL);
+		for (ServerPlayer p : audience()) {
+			CutsceneManager.play(p, Cutscenes.LUCIFER_REVEAL, emperor.position(), emperor.getYRot());
+		}
+		bar.removeAllPlayers();
+		schedule(EmperorAnim.REVEAL.at("open"), () -> {
+			EmperorEntity e = emperor();
+			if (e != null) {
+				e.awake(true);
+				level.playSound(null, e.blockPosition().above(20), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 5.0f, 0.4f);
+			}
+		});
+		schedule(EmperorAnim.REVEAL.at("roar"), () -> {
+			for (ServerPlayer p : audience()) {
+				net.thesmallthings.hellcraft.hazard.Wingbeat.beat(p, 1.0f);
+			}
+		});
+		schedule(Cutscenes.LUCIFER_REVEAL.ticks(), () -> {
+			updateBarName("LUCIFER — The Three-Faced Emperor");
+			bar.setColor(BossEvent.BossBarColor.BLUE);
+			setPhase(Phase.TRUE_FORM);
+		});
+	}
+
+	/** His health is gone: he freezes, weeps, and the way out is through him. */
 	private void beginDefeat() {
 		if (phase == Phase.DEFEAT || phase == Phase.DONE) {
 			return;
@@ -515,47 +709,100 @@ public final class LuciferFight {
 		scheduled.clear();
 		bar.removeAllPlayers();
 		styles.values().forEach(StyleMeter::finish);
-		for (int i = 0; i < LuciferDialogue.DEFEAT.length; i++) {
-			sayLater(20 + i * 60, LuciferDialogue.DEFEAT[i]);
+		EmperorEntity emperor = emperor();
+		if (emperor != null) {
+			emperor.setPermanentlyInvulnerable(true);
+			emperor.warn(BossEntity.Warning.NONE);
+			emperor.play(EmperorAnim.DEATH);
 		}
-		schedule(210, () -> {
+		for (Entity e : level.getEntitiesOfClass(Entity.class, new AABB(-50, floorY - 10, -50, 50, floorY + 40, 50), e -> owned.contains(e.getUUID()))) {
+			e.discard();
+		}
+		for (int i = 0; i < LuciferDialogue.DEFEAT.length; i++) {
+			sayLater(10 + i * 40, LuciferDialogue.DEFEAT[i]);
+		}
+		schedule(EmperorAnim.DEATH.at("freeze"), () -> {
+			EmperorEntity e = emperor();
+			if (e != null) {
+				level.sendParticles(ParticleTypes.SNOWFLAKE, e.getX(), e.getY() + 15, e.getZ(), 800, 12, 12, 12, 0.1);
+				level.playSound(null, e.blockPosition().above(15), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 4.0f, 0.3f);
+			}
+		});
+		// the victors climb down his side and out of Hell
+		List<ServerPlayer> climbers = new ArrayList<>();
+		schedule(EmperorAnim.DEATH.ticks, () -> {
+			EmperorEntity e = emperor();
+			Vec3 at = e != null ? e.position() : new Vec3(0.5, floorY, 0.5);
+			float yaw = e != null ? e.getYRot() : EMPEROR_FACING;
+			climbers.addAll(fighters());
+			for (ServerPlayer p : climbers) {
+				CutsceneManager.play(p, Cutscenes.LUCIFER_CLIMB, at, yaw);
+			}
+		});
+		schedule(EmperorAnim.DEATH.ticks + Cutscenes.LUCIFER_CLIMB.ticks() - 2, () -> {
 			// each on its own: whatever goes wrong with one, the victors still get their spoils and their way out
 			step("rewards", this::reward);
-			step("the burrow", () -> Purgatory.openBurrow(level, floorY));
+			step("the climb out", () -> {
+				for (ServerPlayer p : climbers) {
+					if (p.isAlive() && p.level() == level) {
+						Purgatory.arrive(p);
+					}
+				}
+			});
+			step("the burrow", () -> Purgatory.openBurrow(level, burrow()));
 			step("the cleanup", this::cleanup);
 			setPhase(Phase.DONE);
 		});
 	}
 
+	/** The way out for anyone who missed the climb: a tunnel in the ice at his back. */
+	private net.minecraft.core.BlockPos burrow() {
+		return burrowAt(floorY);
+	}
+
+	/** Where the burrow opens for a pit floor at this height (/hellcraft lucifer openburrow uses it too). */
+	public static net.minecraft.core.BlockPos burrowAt(int floorY) {
+		double yaw = Math.toRadians(EMPEROR_FACING);
+		double bx = Math.sin(yaw) * (EmperorEntity.BODY_RADIUS + 3);
+		double bz = -Math.cos(yaw) * (EmperorEntity.BODY_RADIUS + 3);
+		return net.minecraft.core.BlockPos.containing(bx, floorY, bz);
+	}
+
+	private void step(String what, Runnable action) {
+		try {
+			action.run();
+		} catch (RuntimeException e) {
+			HellcraftMod.LOGGER.error("Lucifer's defeat: {} failed", what, e);
+		}
+	}
+
 	// ------------------------------------------------------------------ hooks (from LuciferManager)
 
 	boolean allowDamage(LivingEntity entity) {
-		if (entity.getUUID().equals(avatarId)) {
+		if (entity.getUUID().equals(seraphId)) {
 			return phase == Phase.DUEL || phase == Phase.ENRAGED;
+		}
+		if (entity.getUUID().equals(emperorId)) {
+			return phase == Phase.TRUE_FORM;
 		}
 		return true;
 	}
 
-	private boolean fighting() {
-		return phase == Phase.DUEL || phase == Phase.ENRAGE_TRANSITION || phase == Phase.ENRAGED
-				|| phase == Phase.TRUE_FORM_TRANSITION || phase == Phase.TRUE_FORM;
-	}
-
 	/** Everyone fighting in the pit has a style meter; each keeps count while the fight is on. */
 	private void tickStyles() {
-		if (!fighting()) {
+		if (!fighting(phase) && phase != Phase.ENRAGE_TRANSITION && phase != Phase.TRUE_FORM_TRANSITION) {
 			return;
 		}
-		for (ServerPlayer p : level.players()) {
-			if (!p.isSpectator() && !p.isCreative() && p.isAlive() && LuciferArena.inside(p.getX(), p.getZ()) && !styles.containsKey(p.getUUID())) {
+		for (ServerPlayer p : fighters()) {
+			if (!p.isCreative() && !styles.containsKey(p.getUUID())) {
 				styles.put(p.getUUID(), new StyleMeter(p));
 				Dialogue.notice(p, Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
 						+ "the better your style, the better your spoils.").withStyle(ChatFormatting.AQUA));
 			}
 		}
-		Entity boss = avatar();
-		if (boss == null && witherId != null) {
-			boss = level.getEntity(witherId);
+		Entity boss = seraph();
+		if (boss == null) {
+			boss = emperor();
 		}
 		for (Map.Entry<UUID, StyleMeter> e : styles.entrySet()) {
 			ServerPlayer p = level.getServer().getPlayerList().getPlayer(e.getKey());
@@ -571,18 +818,22 @@ public final class LuciferFight {
 		if (hurt != null && !(source.getEntity() instanceof Player) && LuciferArena.inside(entity.getX(), entity.getZ())) {
 			if (blocked && source.getEntity() != null && BossRules.fromBoss(source.getEntity())) {
 				hurt.onParry();
+				if (tick <= parryUntil) {
+					parryUntil = -1;
+					FallenSeraphEntity s = seraph();
+					EmperorEntity m = emperor();
+					if (s != null && source.getEntity() == s) {
+						seraphAttacks.parried(s);
+					} else if (m != null && source.getEntity() == m) {
+						emperorAttacks.parried(m);
+					}
+				}
 			} else if (dealt > 0) {
 				hurt.onHurt(dealt / Math.max(1.0f, entity.getMaxHealth()));
 			}
 			return;
 		}
-		if (emperor != null && entity.getUUID().equals(witherId)) {
-			emperor.onHurt(dealt);
-		}
-		boolean boss = entity.getUUID().equals(avatarId) || entity.getUUID().equals(witherId);
-		if (boss && dealt > 0) {
-			model.hurt(entity);
-		}
+		boolean boss = entity.getUUID().equals(seraphId) || entity.getUUID().equals(emperorId);
 		if (!boss || !(source.getEntity() instanceof ServerPlayer player)) {
 			return;
 		}
@@ -595,55 +846,49 @@ public final class LuciferFight {
 			HellState.Soul soul = HellState.get(level.getServer()).existing(player.getUUID());
 			if (soul != null && soul.slewLucifer && !veterans.contains(soul.name)) {
 				veterans.add(soul.name);
-				Mob avatar = avatar();
-				if (avatar != null) {
-					applyVeteranScaling(avatar);
+				FallenSeraphEntity s = seraph();
+				if (s != null) {
+					applyVeteranScaling(s);
 				}
-				WitherBoss wither = wither();
-				if (wither != null) {
-					applyVeteranScaling(wither);
+				EmperorEntity m = emperor();
+				if (m != null && phase == Phase.TRUE_FORM) {
+					applyVeteranScaling(m);
 				}
 				say(LuciferDialogue.veteranLine(List.of(soul.name)));
 			}
 		}
-		if (entity.getUUID().equals(avatarId) && dealt >= 7.0f && tick - lastHurtBark > 120 && level.getRandom().nextFloat() < 0.4f) {
+		if (dealt >= 7.0f && tick - lastHurtBark > 120 && level.getRandom().nextFloat() < 0.4f) {
 			lastHurtBark = tick;
 			say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.HURT));
 		}
 	}
 
-	/** The avatar can't truly die: at zero health he reveals his true form instead. */
+	/** Neither body truly dies: the Seraph breaks into the Emperor, and the Emperor freezes. */
 	boolean allowDeath(LivingEntity entity) {
-		if (!entity.getUUID().equals(avatarId)) {
-			return true;
+		if (entity.getUUID().equals(seraphId)) {
+			entity.setHealth(1.0f);
+			beginTrueFormTransition();
+			return false;
 		}
-		entity.setHealth(1.0f);
-		beginTrueFormTransition();
-		return false;
-	}
-
-	private void step(String what, Runnable action) {
-		try {
-			action.run();
-		} catch (RuntimeException e) {
-			HellcraftMod.LOGGER.error("Lucifer's defeat: {} failed", what, e);
+		if (entity.getUUID().equals(emperorId)) {
+			entity.setHealth(1.0f);
+			HellcraftMod.LOGGER.info("Lucifer's true form is slain");
+			beginDefeat();
+			return false;
 		}
+		return true;
 	}
 
 	void onDeath(LivingEntity entity, DamageSource source) {
 		StyleMeter fallen = styles.get(entity.getUUID());
 		if (fallen != null) {
 			fallen.onDeath();
-		} else if (LuciferManager.isLucifer(entity) && !entity.getUUID().equals(witherId) && !entity.getUUID().equals(avatarId)
-				&& source.getEntity() != null && styles.containsKey(source.getEntity().getUUID())) {
+		} else if (LuciferManager.isLucifer(entity) && traitors.contains(entity.getUUID()) && source.getEntity() != null
+				&& styles.containsKey(source.getEntity().getUUID())) {
 			// one of his traitors, killed by a fighter
 			styles.get(source.getEntity().getUUID()).onCleanup();
 		}
-		if (entity.getUUID().equals(witherId)) {
-			HellcraftMod.LOGGER.info("Lucifer's true form is slain");
-			beginDefeat();
-		} else if (entity instanceof ServerPlayer player && LuciferArena.inside(player.getX(), player.getZ())
-				&& (phase == Phase.DUEL || phase == Phase.ENRAGED || phase == Phase.TRUE_FORM)) {
+		if (entity instanceof ServerPlayer player && LuciferArena.inside(player.getX(), player.getZ()) && fighting(phase)) {
 			sayLater(10, LuciferDialogue.pick(level.getRandom(), LuciferDialogue.PLAYER_DEATH));
 		}
 	}
@@ -651,21 +896,22 @@ public final class LuciferFight {
 	/** Test helper: jump to the next phase. */
 	void skip() {
 		switch (phase) {
+			case READY -> begin();
 			case INTRO -> {
 				scheduled.clear();
-				Mob avatar = avatar();
-				if (avatar != null) {
-					avatar.setNoAi(false);
+				FallenSeraphEntity s = seraph();
+				if (s != null) {
+					s.setPermanentlyInvulnerable(false);
 				}
 				setPhase(Phase.DUEL);
 			}
 			case DUEL -> beginEnrage();
 			case ENRAGED -> beginTrueFormTransition();
 			case TRUE_FORM -> {
-				// killed the way players kill him, so the test covers the real death
-				WitherBoss wither = wither();
-				if (wither != null) {
-					wither.hurtServer(level, level.damageSources().genericKill(), Float.MAX_VALUE);
+				// killed the way nothing but a command can, so the test covers his real end
+				EmperorEntity m = emperor();
+				if (m != null) {
+					m.hurtServer(level, level.damageSources().genericKill(), Float.MAX_VALUE);
 				}
 			}
 			default -> {
@@ -673,21 +919,26 @@ public final class LuciferFight {
 		}
 	}
 
-	/** Test helper: run one attack at the nearest target. */
-	boolean forceAttack(LuciferAttacks.Attack attack) {
-		Mob avatar = avatar();
+	/** Test helper: one of the Seraph's attacks now, at the nearest target. */
+	boolean forceAttack(SeraphAttacks.Attack attack) {
+		FallenSeraphEntity s = seraph();
 		List<LivingEntity> targets = targets();
-		if (avatar == null || targets.isEmpty()) {
+		if (s == null || targets.isEmpty() || !fighting(phase)) {
 			return false;
 		}
-		LuciferAttacks.perform(this, attack, avatar, targets.get(0));
+		Danger.stretched(1.0 / tempo(), () -> seraphAttacks.perform(attack, s, targets.getFirst()));
 		return true;
 	}
 
-	/** Test helper: run one of the Emperor's attacks now. */
+	/** Test helper: one of the Emperor's attacks now. */
 	boolean forceEmperorAttack(EmperorAttacks.Attack attack) {
-		WitherBoss wither = wither();
-		return phase == Phase.TRUE_FORM && wither != null && emperor != null && emperor.perform(attack, wither);
+		EmperorEntity m = emperor();
+		List<LivingEntity> targets = targets();
+		if (phase != Phase.TRUE_FORM || m == null || targets.isEmpty()) {
+			return false;
+		}
+		Danger.stretched(1.0 / tempo(), () -> emperorAttacks.perform(attack, m, targets.getFirst()));
+		return true;
 	}
 
 	void stop() {
@@ -696,22 +947,6 @@ public final class LuciferFight {
 	}
 
 	// ------------------------------------------------------------------ helpers
-
-	/** Players worth attacking; if none (tests), any other living thing in the pit. */
-	List<LivingEntity> targets() {
-		List<LivingEntity> players = new ArrayList<>();
-		for (ServerPlayer p : level.players()) {
-			if (p.isAlive() && !p.isSpectator() && !p.isCreative() && LuciferArena.inside(p.getX(), p.getZ())) {
-				players.add(p);
-			}
-		}
-		if (!players.isEmpty()) {
-			return players;
-		}
-		return level.getEntitiesOfClass(LivingEntity.class,
-				new net.minecraft.world.phys.AABB(-LuciferArena.RADIUS, floorY - 12, -LuciferArena.RADIUS, LuciferArena.RADIUS, floorY + 30, LuciferArena.RADIUS),
-				e -> e.isAlive() && !LuciferManager.isLucifer(e) && !(e instanceof ServerPlayer));
-	}
 
 	private void runScheduled() {
 		List<Scheduled> due = new ArrayList<>();
@@ -732,10 +967,10 @@ public final class LuciferFight {
 	}
 
 	private void updateBar() {
-		if (phase == Phase.TRUE_FORM || phase == Phase.TRUE_FORM_TRANSITION || phase == Phase.DEFEAT || phase == Phase.FAILED) {
+		if (phase == Phase.TRUE_FORM_TRANSITION || phase == Phase.DEFEAT || phase == Phase.FAILED) {
 			return;
 		}
-		List<ServerPlayer> audience = LuciferDialogue.audience(level, AUDIENCE_RADIUS);
+		List<ServerPlayer> audience = audience();
 		for (ServerPlayer p : new ArrayList<>(bar.getPlayers())) {
 			if (!audience.contains(p)) {
 				bar.removePlayer(p);
@@ -744,38 +979,11 @@ public final class LuciferFight {
 		for (ServerPlayer p : audience) {
 			bar.addPlayer(p);
 		}
-		Mob avatar = avatar();
-		if (avatar != null) {
-			bar.setProgress(phase == Phase.INTRO ? Math.min(1.0f, phaseTick / (float) INTRO_LENGTH)
-					: Math.max(0.0f, avatar.getHealth() / avatar.getMaxHealth()));
-		}
-	}
-
-	private void leash(Mob mob, double radius) {
-		if (mob.getX() * mob.getX() + mob.getZ() * mob.getZ() > radius * radius || mob.getY() < floorY - 10) {
-			level.sendParticles(ParticleTypes.REVERSE_PORTAL, mob.getX(), mob.getY() + 1, mob.getZ(), 40, 0.5, 1, 0.5, 0.1);
-			mob.teleportTo(0.5, floorY, 0.5);
-		}
-	}
-
-	@Nullable
-	private Mob avatar() {
-		Entity e = avatarId == null ? null : level.getEntity(avatarId);
-		return e instanceof Mob m && m.isAlive() ? m : null;
-	}
-
-	@Nullable
-	WitherBoss wither() {
-		Entity e = witherId == null ? null : level.getEntity(witherId);
-		return e instanceof WitherBoss w && w.isAlive() ? w : null;
-	}
-
-	private void strikeLightning(double x, double z) {
-		LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.EVENT);
-		if (bolt != null) {
-			bolt.snapTo(x, floorY, z);
-			bolt.setVisualOnly(true);
-			level.addFreshEntity(bolt);
+		LivingEntity body = phase == Phase.TRUE_FORM ? emperor() : seraph();
+		if (phase == Phase.INTRO) {
+			bar.setProgress(Math.min(1.0f, phaseTick / (float) Cutscenes.LUCIFER_DESCENT.ticks()));
+		} else if (body != null) {
+			bar.setProgress(Math.max(0.0f, body.getHealth() / body.getMaxHealth()));
 		}
 	}
 
@@ -786,36 +994,41 @@ public final class LuciferFight {
 		}
 	}
 
-	private WitherSkeleton spawnAvatar() {
-		WitherSkeleton avatar = EntityTypes.WITHER_SKELETON.create(level, EntitySpawnReason.EVENT);
-		if (avatar == null) {
-			throw new IllegalStateException("could not create Lucifer");
+	private EmperorEntity spawnEmperor() {
+		EmperorEntity emperor = HellEntities.EMPEROR.create(level, EntitySpawnReason.EVENT);
+		if (emperor == null) {
+			throw new IllegalStateException("could not create the Emperor");
 		}
-		avatar.snapTo(0.5, floorY, 0.5, 90.0f, 0.0f);
-		avatar.addTag(LuciferManager.TAG);
-		avatar.addTag(AVATAR_TAG);
-		avatar.addTag(BossRules.BODY_TAG);
-		avatar.setCustomName(Component.literal("Lucifer").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		avatar.setCustomNameVisible(true);
-		avatar.setPersistenceRequired();
-		avatar.setNoAi(true);
-		setBase(avatar, Attributes.SCALE, 2.4);
-		setBase(avatar, Attributes.MAX_HEALTH, HellConfig.get().luciferAvatarHealth);
-		setBase(avatar, Attributes.ATTACK_DAMAGE, 12.0);
-		setBase(avatar, Attributes.ARMOR, 12.0);
-		setBase(avatar, Attributes.MOVEMENT_SPEED, 0.3);
-		setBase(avatar, Attributes.KNOCKBACK_RESISTANCE, 1.0);
-		setBase(avatar, Attributes.FOLLOW_RANGE, 64.0);
-		avatar.setHealth(avatar.getMaxHealth());
-		ItemStack sword = new ItemStack(Items.NETHERITE_SWORD);
-		sword.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-		avatar.setItemSlot(EquipmentSlot.MAINHAND, sword);
-		for (EquipmentSlot slot : EquipmentSlot.values()) {
-			avatar.setDropChance(slot, 0.0f);
+		emperor.snapTo(0.5, floorY, 0.5, EMPEROR_FACING, 0.0f);
+		emperor.setYBodyRot(EMPEROR_FACING);
+		emperor.setYHeadRot(EMPEROR_FACING);
+		emperor.addTag(LuciferManager.TAG);
+		emperor.addTag(BossRules.BODY_TAG);
+		emperor.setCustomName(Component.literal("Lucifer, Three-Faced Emperor").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+		setBase(emperor, Attributes.MAX_HEALTH, HellConfig.get().luciferHealth);
+		emperor.setHealth(emperor.getMaxHealth());
+		emperor.play(EmperorAnim.DORMANT);
+		level.addFreshEntity(emperor);
+		return emperor;
+	}
+
+	private FallenSeraphEntity spawnSeraph(Vec3 at, float facing) {
+		FallenSeraphEntity seraph = HellEntities.FALLEN_SERAPH.create(level, EntitySpawnReason.EVENT);
+		if (seraph == null) {
+			throw new IllegalStateException("could not create the Fallen Seraph");
 		}
-		level.addFreshEntity(avatar);
-		model.attach(avatar, "lucifer_morning_star", Math.max(avatar.getBbHeight(), 5.6f));
-		return avatar;
+		seraph.snapTo(at.x, floorY + 0.25, at.z, facing, 0.0f);
+		seraph.setYBodyRot(facing);
+		seraph.setYHeadRot(facing);
+		seraph.addTag(LuciferManager.TAG);
+		seraph.addTag(BossRules.BODY_TAG);
+		seraph.setCustomName(Component.literal("Lucifer").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		setBase(seraph, Attributes.MAX_HEALTH, HellConfig.get().luciferAvatarHealth);
+		seraph.setHealth(seraph.getMaxHealth());
+		seraph.setPermanentlyInvulnerable(true);
+		seraph.play(FallenSeraphAnim.INTRO);
+		level.addFreshEntity(seraph);
+		return seraph;
 	}
 
 	private WitherSkeleton spawnTraitor(String name, double x, double z) {
@@ -823,8 +1036,8 @@ public final class LuciferFight {
 		if (traitor == null) {
 			throw new IllegalStateException("could not create " + name);
 		}
-		double y = LuciferAttacks.floorAt(level, x, floorY + 2, z);
-		traitor.snapTo(x, y, z, 0.0f, 0.0f);
+		Vec3 at = onFloor(x, z);
+		traitor.snapTo(at.x, at.y, at.z, 0.0f, 0.0f);
 		traitor.addTag(LuciferManager.TAG);
 		traitor.setCustomName(Component.literal(name).withStyle(ChatFormatting.GRAY));
 		traitor.setCustomNameVisible(true);
@@ -837,28 +1050,8 @@ public final class LuciferFight {
 			traitor.setDropChance(slot, 0.0f);
 		}
 		level.addFreshEntity(traitor);
-		level.sendParticles(ParticleTypes.SOUL, x, y + 1, z, 30, 0.5, 1, 0.5, 0.05);
+		level.sendParticles(ParticleTypes.SOUL, at.x, at.y + 1, at.z, 30, 0.5, 1, 0.5, 0.05);
 		return traitor;
-	}
-
-	private WitherBoss spawnTrueForm() {
-		WitherBoss wither = EntityTypes.WITHER.create(level, EntitySpawnReason.EVENT);
-		if (wither == null) {
-			throw new IllegalStateException("could not create Lucifer's true form");
-		}
-		// frozen to the chest in the ice at the very centre (EmperorAttacks keeps him there); no vanilla
-		// spawn charge-up, whose blast used to crater the pit
-		wither.snapTo(0.5, floorY, 0.5, 0.0f, 0.0f);
-		wither.addTag(LuciferManager.TAG);
-		wither.setPersistenceRequired();
-		setBase(wither, Attributes.MAX_HEALTH, HellConfig.get().luciferHealth);
-		wither.setHealth(wither.getMaxHealth());
-		applyVeteranScaling(wither);
-		level.playSound(null, wither.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 4.0f, 0.5f);
-		wither.setCustomName(Component.literal("Lucifer, Three-Faced Emperor").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
-		level.addFreshEntity(wither);
-		model.attach(wither, "lucifer_emperor", Math.max(4.0f, wither.getBbHeight() * 1.2f));
-		return wither;
 	}
 
 	/** Removes every trace of the fight except the rewards. */
@@ -866,26 +1059,13 @@ public final class LuciferFight {
 		scheduled.clear();
 		bar.removeAllPlayers();
 		styles.values().forEach(StyleMeter::finish);
-		Mob avatar = avatar();
-		if (avatar != null) {
-			avatar.discard();
-		}
-		WitherBoss wither = wither();
-		if (wither != null) {
-			wither.discard();
-		}
-		for (UUID id : traitors) {
-			Entity t = level.getEntity(id);
-			if (t != null) {
-				t.discard();
-			}
-		}
-		traitors.clear();
-		model.clear();
 		discardStrays();
+		traitors.clear();
+		owned.clear();
 		if (floor != null) {
 			LuciferArena.heal(level, floor);
 		}
+		LuciferArena.lowerPillars(level, floorY);
 		LuciferArena.unseal(level);
 		LuciferArena.forceLoad(level, false);
 	}
@@ -893,22 +1073,27 @@ public final class LuciferFight {
 	/** Removes every Lucifer-tagged entity in and around the pit. */
 	private void discardStrays() {
 		double r = LuciferArena.RADIUS + 24;
-		for (Entity e : level.getEntitiesOfClass(Entity.class, new net.minecraft.world.phys.AABB(-r, level.getMinY(), -r, r, level.getMaxY() + 1, r),
+		for (Entity e : level.getEntitiesOfClass(Entity.class, new AABB(-r, level.getMinY(), -r, r, level.getMaxY() + 1, r),
 				e -> LuciferManager.isLucifer(e) && e.isAlive())) {
 			e.discard();
 		}
 	}
 
-	/** True if this entity is one of the fight's own bodies (anything else tagged as Lucifer is a stray). */
+	/** True if this entity is one of the fight's own (anything else tagged as Lucifer is a stray). */
 	boolean owns(UUID id) {
-		return id.equals(avatarId) || id.equals(witherId) || traitors.contains(id) || model.owns(id);
+		return id.equals(seraphId) || id.equals(emperorId) || traitors.contains(id) || owned.contains(id);
 	}
 
 	String status() {
-		return "phase=" + phase + " tick=" + tick + " avatar=" + (avatar() != null ? "present" : avatarId == null ? "none" : "missing")
-				+ " trueForm=" + (wither() != null ? "present" : witherId == null ? "none" : "missing")
-				+ " traitors=" + traitors.size() + " floor=" + floorY + (emperor != null ? " emperorStage=" + emperor.stage() : "") + " participants=" + participants.size() + " champions=" + veterans;
+		return "phase=" + phase + " tick=" + tick + " avatar=" + (seraph() != null ? "present" : seraphId == null ? "none" : "missing")
+				+ " trueForm=" + (emperor() != null ? "present" : emperorId == null ? "none" : "missing")
+				+ " awake=" + (emperor() != null && emperor().awake()) + " traitors=" + traitors.size() + " floor=" + floorY
+				+ (phase == Phase.TRUE_FORM ? " emperorHalved=" + emperorAttacks.halved() : "") + " participants=" + participants.size()
+				+ " champions=" + veterans;
 	}
+
+
+	// ------------------------------------------------------------------ the reward
 
 	private void reward() {
 		HellConfig config = HellConfig.get();
@@ -926,7 +1111,7 @@ public final class LuciferFight {
 			}
 			ServerPlayer present = level.getServer().getPlayerList().getPlayer(id);
 			boolean standing = present != null && present.isAlive() && !present.isSpectator() && present.level() == level
-					&& present.getX() * present.getX() + present.getZ() * present.getZ() < 40 * 40;
+					&& present.getX() * present.getX() + present.getZ() * present.getZ() < (LuciferArena.RADIUS + 4) * (LuciferArena.RADIUS + 4);
 			if (!standing) {
 				if (present != null) {
 					present.sendSystemMessage(Component.literal("You died before Lucifer did, so you get no reward.")
@@ -1017,16 +1202,6 @@ public final class LuciferFight {
 		}
 	}
 
-	/** The Emperor spits out the three traitors he chews (the last third of the true form). */
-	void releaseTraitors(WitherBoss boss) {
-		String[] names = {"Judas", "Brutus", "Cassius"};
-		for (int i = 0; i < names.length; i++) {
-			double ang = i * 2 * Math.PI / names.length;
-			WitherSkeleton traitor = spawnTraitor(names[i], boss.getX() + Math.cos(ang) * 4, boss.getZ() + Math.sin(ang) * 4);
-			traitors.add(traitor.getUUID());
-		}
-	}
-
 	/** Judas, Brutus and Cassius, plus one more traitor of Antenora or Ptolomea per returning champion. */
 	private void raiseTraitors() {
 		if (traitorsRaised) {
@@ -1037,7 +1212,7 @@ public final class LuciferFight {
 		int count = Math.min(all.length, 3 + tier());
 		for (int i = 0; i < count; i++) {
 			double ang = i * 2 * Math.PI / count;
-			traitors.add(spawnTraitor(all[i], Math.cos(ang) * 10, Math.sin(ang) * 10).getUUID());
+			traitors.add(spawnTraitor(all[i], Math.cos(ang) * 20, Math.sin(ang) * 20).getUUID());
 		}
 	}
 

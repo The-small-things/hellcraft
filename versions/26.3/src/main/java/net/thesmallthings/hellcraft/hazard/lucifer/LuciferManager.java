@@ -32,7 +32,8 @@ public final class LuciferManager {
 	}
 
 	static final String TAG = "hellcraft_lucifer";
-	private static final double TRIGGER_RADIUS = 28.0;
+	/** Anyone down on the pit's flat floor starts the ready check. */
+	private static final double TRIGGER_RADIUS = InfernoGeometry.PIT_FLAT;
 
 	@Nullable
 	private static LuciferFight fight;
@@ -122,7 +123,7 @@ public final class LuciferManager {
 			strays.clear();
 		}
 		if (fight != null) {
-			fight.tick();
+			fight.update();
 			if (fight.done()) {
 				fight = null;
 			}
@@ -144,7 +145,10 @@ public final class LuciferManager {
 		}
 	}
 
-	/** Starts a fight now (used by the trigger and by {@code /hellcraft lucifer summon}). */
+	/**
+	 * Starts a fight: the ready check at the pit's edge when a player walks in, or straight away for
+	 * {@code /hellcraft lucifer summon} (debug).
+	 */
 	public static String start(MinecraftServer server, boolean debug) {
 		if (fight != null) {
 			return "Lucifer is already fighting (" + fight.phaseName() + ").";
@@ -154,8 +158,12 @@ public final class LuciferManager {
 			return "This world is not an Inferno world.";
 		}
 		fight = new LuciferFight(level, debug);
-		fight.start();
-		return "Lucifer awakens.";
+		if (debug) {
+			fight.begin();
+			return "Lucifer descends.";
+		}
+		fight.ready();
+		return "The ready check has started.";
 	}
 
 	public static String skip() {
@@ -186,7 +194,7 @@ public final class LuciferManager {
 		if (!HellWorldgen.isInferno(level)) {
 			return "This is not an Inferno world.";
 		}
-		net.thesmallthings.hellcraft.world.Purgatory.openBurrow(level, LuciferArena.floorY(level));
+		net.thesmallthings.hellcraft.world.Purgatory.openBurrow(level, LuciferFight.burrowAt(LuciferArena.floorY(level)));
 		return "The burrow to Purgatory is open for five minutes.";
 	}
 
@@ -204,12 +212,12 @@ public final class LuciferManager {
 				return fight.forceEmperorAttack(attack) ? "The Emperor uses " + attack + "." : "The Emperor isn't here yet, or there is no target.";
 			}
 		}
-		LuciferAttacks.Attack attack;
+		SeraphAttacks.Attack attack;
 		try {
-			attack = LuciferAttacks.Attack.valueOf(upper);
+			attack = SeraphAttacks.Attack.valueOf(upper);
 		} catch (IllegalArgumentException e) {
-			return "Unknown attack: " + name;
+			return "Unknown attack: " + name + " (the Seraph: slash, sweep, stars, lunge; the Emperor: slam, bite, wingbeat, weep)";
 		}
-		return fight.forceAttack(attack) ? "Lucifer uses " + attack + "." : "No target in the pit.";
+		return fight.forceAttack(attack) ? "The Seraph uses " + attack + "." : "The Seraph isn't fighting now, or there is no target.";
 	}
 }

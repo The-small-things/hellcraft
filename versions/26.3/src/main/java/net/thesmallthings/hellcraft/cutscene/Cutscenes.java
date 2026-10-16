@@ -4,6 +4,8 @@ import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
@@ -189,8 +191,70 @@ public final class Cutscenes {
 			.card(GeryonAnim.INTRO.at("roar") + 4, 98, "GERYON", "THE IMAGE OF FRAUD", GERYON)
 			.build();
 
+	private static final int LUCIFER = 0xC02020;
+	private static final int DANTE = 0xB0B0B0;
+
+	/**
+	 * The Fallen Seraph comes down out of the dark onto the ice, beautiful and calm, and lies. Filmed from the ice in
+	 * front of where he lands (the anchor faces out of the pit, toward the players), looking up as he descends, close
+	 * on his face as he speaks, then wide, with the black mountain of the pit behind him.
+	 */
+	public static final Cutscene LUCIFER_DESCENT = Cutscene.builder("lucifer_descent", FallenSeraphAnim.INTRO.ticks + 50)
+			.fadeIn(20)
+			.blendOut(16)
+			.shot(0, 0, 2.0, 11, 0, 14, 0)
+			.shot(FallenSeraphAnim.INTRO.at("land") - 10, 1.5, 2.2, 9, 0, 5, 0)
+			.shot(FallenSeraphAnim.INTRO.at("land") + 4, 2, 2.6, 7, 0, 3.4, 0)
+			.shot(FallenSeraphAnim.INTRO.at("speak") + 4, 0.8, 4.2, 4.2, 0, 4.4, 0)
+			.shot(FallenSeraphAnim.INTRO.at("speak") + 40, 0.6, 4.3, 3.8, 0, 4.5, 0)
+			.shot(FallenSeraphAnim.INTRO.ticks + 30, 5, 4, 13, 0, 9, -12)
+			.caption(8, FallenSeraphAnim.INTRO.at("land") - 2, "Virgil", VIRGIL, "There he is: Lucifer, as he was before the Fall. Whatever he says, "
+					+ "he is the enemy. Block his blade when it flashes white.")
+			.caption(FallenSeraphAnim.INTRO.at("speak"), FallenSeraphAnim.INTRO.at("speak") + 30, "Lucifer", LUCIFER, "Peace. Lower thy blade, pilgrim.")
+			.caption(FallenSeraphAnim.INTRO.at("speak") + 31, FallenSeraphAnim.INTRO.ticks + 26, "Lucifer", LUCIFER, "I am not thy enemy.")
+			.card(FallenSeraphAnim.INTRO.ticks + 10, FallenSeraphAnim.INTRO.ticks + 48, "LUCIFER", "THE FALLEN SERAPH", LUCIFER)
+			.build();
+
+	/**
+	 * The seraph's form breaks, and the camera pulls back and up from the shards to show what the pit's mountain is:
+	 * him. The Emperor lifts his head and opens six eyes. Filmed in the Emperor's frame (forward is the way he faces).
+	 */
+	public static final Cutscene LUCIFER_REVEAL = Cutscene.builder("lucifer_reveal", EmperorAnim.REVEAL.ticks + 30)
+			.fadeIn(6)
+			.blendOut(20)
+			.shot(0, 2, 4, 26, 0, 3, 22)
+			.shot(25, 6, 9, 40, 0, 10, 10)
+			.shot(EmperorAnim.REVEAL.at("open") - 5, 4, 16, 48, 0, 19, 0)
+			.shot(EmperorAnim.REVEAL.at("open") + 12, 2, 20, 34, 0, 21, 0)
+			.shot(EmperorAnim.REVEAL.at("roar") + 10, 14, 18, 58, 0, 24, 0)
+			.shot(EmperorAnim.REVEAL.ticks + 28, 22, 16, 64, 0, 26, 0)
+			.caption(6, 34, "Lucifer", LUCIFER, "...So be it. Thou wouldst see me as I am? LOOK DOWN.")
+			.caption(36, EmperorAnim.REVEAL.at("roar") - 2, "Lucifer", LUCIFER, "The mountain thou hast been walking toward... was ME.")
+			.caption(EmperorAnim.REVEAL.at("roar") + 24, EmperorAnim.REVEAL.ticks + 28, "Virgil", VIRGIL, "He can't leave the ice. When a hand or a face "
+					+ "comes down, it glows: hit it then. Hide behind the pillars when his wings glow purple.")
+			.shake(EmperorAnim.REVEAL.at("roar"), EmperorAnim.REVEAL.at("roar") + 30, 1.4f)
+			.card(EmperorAnim.REVEAL.at("roar") + 4, EmperorAnim.REVEAL.at("roar") + 40, "LUCIFER", "THE THREE-FACED EMPEROR", LUCIFER)
+			.build();
+
+	/**
+	 * The way out is through him (Inferno XXXIV): down his shaggy side, past the centre of the earth, where everything
+	 * turns over (the camera rolls), and up toward the stars. Filmed in the Emperor's frame, down his left flank.
+	 */
+	public static final Cutscene LUCIFER_CLIMB = Cutscene.builder("lucifer_climb", 180)
+			.fadeIn(10)
+			.blendOut(1)
+			.shot(0, -20, 14, -4, -2, 9, -2)
+			.shot(45, -17, 6, -7, -2, 1, -5)
+			.shot(80, -15, -2, -8, -2, -8, -6, 20)
+			.shot(120, -15, -5, -8, -2, -12, -6, 180)
+			.shot(179, -15, -4, -8, -2, -1, -6, 180)
+			.caption(6, 60, "Virgil", VIRGIL, "Hold on to me. By such stairs as these we must leave so much evil behind.")
+			.caption(62, 118, "Dante", DANTE, "We climbed down his shaggy side, between the hair and the crusts of ice...")
+			.caption(120, 178, "Dante", DANTE, "...and where the thigh turns, I saw his legs held upward. Thence we came forth to see the stars again.")
+			.build();
+
 	private static final List<Cutscene> ALL = List.of(MINOS_INTRO, CERBERUS_INTRO, PLUTUS_INTRO, PHLEGYAS_INTRO, FURIES_INTRO, FARINATA_INTRO,
-			MINOTAUR_INTRO, GERYON_INTRO);
+			MINOTAUR_INTRO, GERYON_INTRO, LUCIFER_DESCENT, LUCIFER_REVEAL, LUCIFER_CLIMB);
 
 	@Nullable
 	public static Cutscene byId(String id) {

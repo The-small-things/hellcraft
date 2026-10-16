@@ -288,11 +288,11 @@ Marks are drawn block by block on the ground, fill from the middle out, and the 
 
 **The Codex (3.0).** Meeting a boss opens its entry in the Journal (J): who it is, how to fight it, and Dante's words about it.
 
-**Animated models (Lucifer too).** Each boss's model rises out of the ground and roars when it wakes, breathes while it stands, bobs and leans as it walks, rears back before every attack and lunges into it, squashes down into its stomps, shudders and flashes red when hit, and topples over and sinks when it dies. The server drives it all through the model's display entity. (3.0 replaces these with fully jointed, keyframe-animated models.)
+**Animated models (Lucifer too).** Since 3.0 every boss has a real, jointed body animated with Minecraft's own keyframes: an entrance, an idle, a wind-up before every blow (timed to its warning on the ground), a flinch when hit and a death of its own.
 
 **No cheesing (these rules also apply to Lucifer where it says so):**
 - **Hearts help, but don't make you a tank.** Boss hits grow with your heart capacity (3.0: half as fast as before), so 40 hearts takes 2.5 times the damage of 10: more hearts still last longer, but dodging the telegraphed attacks is the way to win. (Lucifer too.)
-- **Arrows do 40% damage** to a guardian, and to Lucifer's Morning Star form. Geryon flies, and Lucifer's true form is the Wither, so arrows do full damage to both.
+- **Arrows do 40% damage** to a guardian, and to the Fallen Seraph. Geryon flies, so arrows do full damage to him.
 - **Shoot from afar and you get pulled in.** Hit a guardian with an arrow from more than 8 blocks away and, a second after a warning, it drags you toward it (at most once every 8 seconds).
 - **You can only hurt a guardian from inside its lair.** Damage from outside the brazier ring does nothing.
 - **No building in a lair while its guardian is awake,** and anyone standing more than 6 blocks above the guardian for 3 seconds is dragged down beside it.
@@ -344,38 +344,38 @@ The road to Lucifer is a quiet one. At each point of the compass on the **rim of
 
 The first time you reach the Well of Giants or Cocytus, chat tells you where the nearest spine starts. Their bones can't be broken. Worlds made with just the east spine get the other three on their next start.
 
-### The fight
+### The fight (3.0)
 
-Walk into the pit at the centre of Judecca and the ice closes behind you. This is a scripted, three-phase fight with spoken dialogue, inspired by ULTRAKILL's 3-2.
+Lucifer's pit is a flat floor of ice about 70 blocks across at the very centre of Judecca, walled in by sheer ice. In the middle of it, chest-deep in the frozen lake, sleeps a mountain with three faces.
 
-**The pit can't be broken.** Its ice (the floor, the seal and the pillars) can't be mined except in creative. Anything you build down there you can still take away. On 26.3, whatever explosions or the Emperor blow out of the pit during the fight freezes back within half a second.
+**The ready check.** Step down onto the pit's floor and everyone near hears it: the fight starts in 30 seconds, or 5 seconds once everyone nearby is down in the pit. Ten seconds before it seals you're told it's the point of no return, so anyone not ready can climb back up. If everyone leaves the pit, it's called off. Once it seals, nobody gets in or out until Lucifer or the last of you falls. Six **ice pillars** rise round the floor: you'll want them later.
 
-1. **The Fallen Seraph.** Lucifer is a towering, sword-wielding fallen angel who taunts you and fights like a duelist:
-   - he teleports behind you
-   - he sends lines of judgement fangs across the ice
-   - his wings blast the pit with freezing wind
-   - he calls hellfire down wherever flames mark the ground
+**The pit can't be broken.** Its ice (the floor, the wall and the pillars) can't be mined except in creative, and whatever explosions blow out of the floor during the fight freezes back within half a second.
 
-   Every attack is telegraphed, so watch for it and dodge.
-2. **The Morning Star.** At half health he snaps. He gets faster, glows, chains his attacks together, and raises the three great traitors he chews on for eternity to fight beside him.
-3. **The Three-Faced Emperor.** Break his seraph form and he reveals his true face. On 26.3 he is Dante's Lucifer: frozen to the chest in the ice at the centre of the pit, so he can't move, but his reach is the whole pit. Each of his three faces turns toward its victim when it strikes. The action bar tells you how to survive each attack the first time you see it:
-   - **Hatred** (red face): rings of fire sweep out across the ice, one after another. *Jump them.*
-   - **Impotence** (pale yellow face): he weeps, frost rings mark where the tears will land, and they fall as ice. *Get out of the rings.*
-   - **Ignorance** (black face): the light goes out, and a turning spiral of jaws sweeps out of the dark.
-   - **The six wings**: a freezing gale drives everyone out toward the wall. *Sneak to brace yourself.*
-   - **The mouths** (below ⅔ health, when "the ice cracks"): he drags someone to his jaws and chews. *Everyone else must hurt him to make him let go.*
-   - Below ⅓ health **all three faces rage together**. Attacks come faster, rings of hatred run under his other attacks, and Judas, Brutus and Cassius crawl out of his mouths to fight for him.
+1. **The Fallen Seraph.** A cutscene: a shining angel with six white wings comes down between you and the sleeping mountain. Lucifer as he was before the Fall, gentle, kind, telling you to lower your blade. He is still the boss. He glides round you and fights like a duelist, in Hellcraft's danger language:
+   - **White flash, white cone:** his blade. *Raise your shield as it lands:* he reels, open, for two seconds.
+   - **Purple ring:** his wings sweep all the way round. It can't be blocked. *Jump as it reaches you, or be out of the ring.*
+   - **Red circles:** stars fall there. *Step out.*
+   - **Red line:** he lunges along it. *Step aside.*
+2. **The Morning Star.** At half health his kindness snaps ("ENOUGH!"). He glows, moves faster, often strikes twice, and Judas, Brutus and Cassius crawl out of the ice to fight for him.
+3. **The Three-Faced Emperor.** Break the Seraph and he shatters like glass. Another cutscene: the mountain in the middle of the pit opens its eyes. It was him all along: Dante's Lucifer, frozen to the chest, three faces (red, pale yellow, black) and six bat wings. He can't move, but his reach is the whole pit, and **he can only be hurt where he opens up**:
+   - **Red, under a hand:** the hand slams down. *Get out of the red.* Then it stays down on the ice, glowing: **hit the hand** while it lasts.
+   - **White flash:** a face bites. *Block it* and the face stays down, glowing, longer, and takes three times the damage; dodge it and it's down for a moment at half that.
+   - **Purple ring round the whole pit:** his wingbeat. It can't be blocked or jumped: **get behind an ice pillar** (anywhere his head can't see you) before it comes.
+   - **Red circles, from half health:** he weeps, and his tears fall as ice. *Keep moving.*
 
-   He still fires wither skulls between attacks.
+   Every attack is told on the ground first, and the first time you see each one a plain tip says what to do.
 
 **Returning champions make him harder.** For every player in the fight who has beaten him before, he gets tougher for *everyone* in that round:
 - +35% health on both forms
 - +20% damage
-- attacks come faster
-- extra fang lines and hellfire
+- faster attacks
+- more falling stars and tears
 - an extra traitor
 
 With two or more champions, the traitors rise from the start. He calls champions out by name, and their difficulty shows as ✦ on his health bar.
+
+**The climb out.** When he freezes for good, everyone still standing in the pit climbs down his shaggy side with Virgil (a last cutscene, the world turning over as you pass his middle) and comes out on the shore of **Purgatory**. Anyone who missed it can still take the burrow (below).
 
 **Rewards: pick ONE.** When he falls, every fighter still **alive in the pit** gets a chest-style menu (reopen it any time with `/lucifer reward`). There are no spoils for those who died before he did.
 - **First victory:** pick one of
@@ -391,7 +391,7 @@ With two or more champions, the traitors rise from the start. He calls champions
 
 *"Thence we came forth to rebehold the stars."*
 
-When Lucifer falls, a **burrow** (an end gateway) opens in the ice where he was frozen, for five minutes. Step in and you climb out onto the shore of **Purgatory**, a mountain island floating high above the pit (y 226–290) under the eternal night sky:
+When Lucifer falls, the fighters climb straight out (above), and a **burrow** (an end gateway) opens in the ice at his back, for five minutes, for anyone who missed it. Step in and you climb out onto the shore of **Purgatory**, a mountain island floating high above the pit (y 226–290) under the eternal night sky:
 - **Seven terraces** spiral up the mountain, one for each capital sin, with stairways cut into the cliffs. Each has a sign, and at each new terrace an angel's wing erases a P from your brow.
 - The **Earthly Paradise** on the summit has flowers and trees and two streams:
   - **Lethe** (west) washes away every harmful effect, fire and frost.
@@ -405,11 +405,7 @@ When Lucifer falls, a **burrow** (an end gateway) opens in the ice where he was 
 
 ### Lucifer's look (26.3)
 
-On 26.3 Lucifer has his own models: the **Fallen Seraph** (horned, crimson, black-winged, with a broken halo and a bloodied blade) and then the **Three-Faced Emperor** (red, pale and black faces, six bat wings, shards of the ice he's frozen in). Blood Hearts, Fragments and Lucifer's Bane get their own art too, all of it inside the mod.
-
-| Fallen Seraph | Three-Faced Emperor |
-|---|---|
-| ![Fallen Seraph](docs/lucifer_morning_star_angle.png) | ![Three-Faced Emperor](docs/lucifer_emperor_angle.png) |
+Since 3.0 Lucifer has two real, animated bodies: the **Fallen Seraph** (an angel twice your height, six white wings, a sword of light) and the **Three-Faced Emperor**, a giant 10 times that size frozen in the middle of the pit, whom you see from across Cocytus as a windmill turning in the fog. The client tests film every animation of both (`fallen_seraph_*` and `emperor_*`) and the whole fight (`lucifer_*`).
 
 ### Boss music
 
@@ -419,7 +415,7 @@ He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mock
 
 His lines appear in the dialogue box, each with a low voice cue.
 
-Testing it: `/hellcraft lucifer summon` teleports you to the pit and wakes him. `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, and `/hellcraft lucifer stop` ends the fight.
+Testing it: `/hellcraft lucifer summon` skips the ready check and starts the fight now (stand in the pit). `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, `/hellcraft lucifer attack <slash|sweep|stars|lunge|slam|bite|wingbeat|weep>` forces a blow, and `/hellcraft lucifer stop` ends the fight.
 
 ## Beyond the Inferno (26.3)
 

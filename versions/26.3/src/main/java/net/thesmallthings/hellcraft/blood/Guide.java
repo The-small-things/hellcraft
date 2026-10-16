@@ -184,15 +184,17 @@ public final class Guide {
 				"",
 				"There you get a Rose Compass to the Celestial Rose (x " + ParadisoGeometry.ROSE_X + ")."));
 		pages.add(page("LUCIFER",
-				"The final boss, in the pit at the centre (0, 0). Once you go in, the way out is sealed until the fight ends.",
+				"The final boss, in the pit at the centre (0, 0). Step onto its floor and the fight starts in 30 s; then the pit seals until it ends.",
 				"",
-				"He fights in three phases: the Morning Star, the Morning Star enraged, then the Emperor (a Wither).",
+				"First an angel, the Fallen Seraph: block his white blows, dodge red and purple. At half health he speeds up.",
+				"",
+				"Then the Emperor: hit only the hands and faces he leaves down, and hide behind an ice pillar from his wingbeat.",
 				"",
 				"Win and you choose a reward (/lucifer reward)."));
 		pages.add(page("THE CLIMB OUT",
-				"When Lucifer dies, a tunnel opens in the middle of the pit.",
+				"When Lucifer dies, everyone still in the pit climbs out to Purgatory. A tunnel also opens behind him for 5 minutes.",
 				"",
-				"It leads up to Purgatory: a mountain of seven ledges with a garden on top."));
+				"Purgatory is a mountain of seven ledges with a garden on top."));
 		pages.add(page("COMMANDS",
 				"/hearts: your hearts",
 				"/withdraw [n]: turn hearts into Blood Hearts",

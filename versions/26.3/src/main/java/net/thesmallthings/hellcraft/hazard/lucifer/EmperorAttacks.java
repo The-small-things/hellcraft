@@ -1,435 +1,311 @@
 package net.thesmallthings.hellcraft.hazard.lucifer;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.thesmallthings.hellcraft.hazard.BossModel;
-import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.boss.BossEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorWeakPoint;
+import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
+import net.thesmallthings.hellcraft.hazard.CircleHazards;
+import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.hazard.Wingbeat;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 /**
- * Lucifer's true form, as Dante found him (Inferno XXXIV): the Emperor frozen to the chest in the ice at
- * the centre of the pit, three faces on one head and six wings beating the wind that freezes Cocytus.
- * He can't leave the ice, so the whole pit is his reach. Each face has its own attack and turns toward
- * its victim when it strikes:
+ * The Emperor (Inferno XXXIV), the last of the fight: frozen to the chest in the ice at the centre of the pit, he
+ * turns in the ice toward whoever he hunts and reaches across the whole arena. He can only be hurt where he lays
+ * himself open, and those places glow:
  * <ul>
- *     <li><b>Hatred</b> (red): rings of fire sweep out across the ice. Jump them.</li>
- *     <li><b>Impotence</b> (pale yellow): he weeps, and the tears fall frozen where the frost marks the ice.</li>
- *     <li><b>Ignorance</b> (black): darkness, and a spiral of jaws sweeping out of it.</li>
- *     <li><b>The wings</b>: a freezing gale that drives everyone out toward the wall. Sneak to brace against it.</li>
- *     <li><b>The mouths</b> (from two thirds health): he drags someone to his jaws and chews; the others free
- *     them by hurting him.</li>
+ *     <li><b>Slam</b> (red): a hand rises and comes down where the red circle is. Then it lies on the ice for a few
+ *     seconds: hit the hand.</li>
+ *     <li><b>Bite</b> (white): a face comes down, flashes white, and bites where the white circle is. Block the bite and
+ *     he reels with the face left low for longer, and it takes twice the damage. After a bite, hit the face.</li>
+ *     <li><b>Wingbeat</b> (purple): his wings glow and the whole pit turns purple: hide behind an ice pillar, or be
+ *     thrown back and frozen.</li>
+ *     <li><b>Weep</b> (red, from half health): he weeps with six eyes, and the tears fall as frozen blood.</li>
  * </ul>
- * Below a third of his health all three faces rage together: attacks come faster, the rings of hatred
- * run under everything else, and Judas, Brutus and Cassius crawl out of his mouths.
  */
 final class EmperorAttacks {
-	enum Attack {HATRED, IMPOTENCE, IGNORANCE, WINGBEAT, MOUTHS}
+	enum Attack {SLAM, BITE, WINGBEAT, WEEP}
 
-	/** Model turns (degrees) that bring each face toward the target: see BossModel.showFace. */
-	private static final float RED_FACE = 0.0f;
-	private static final float YELLOW_FACE = -90.0f;
-	private static final float BLACK_FACE = 90.0f;
-	private static final DustParticleOptions BLOOD = new DustParticleOptions(0x8C0000, 1.8f);
-	private static final double REACH = 30.0;
+	private static final float SLAM_DAMAGE = 12.0f;
+	private static final float BITE_DAMAGE = 14.0f;
+	private static final float WINGBEAT_DAMAGE = 6.0f;
+	private static final float TEAR_DAMAGE = 8.0f;
+	private static final double SLAM_RADIUS = 6.0;
+	private static final double BITE_RADIUS = 6.5;
+	/** How far round he turns a tick (degrees), and how near facing his prey he must be to strike. */
+	private static final float TURN = 1.6f;
+	private static final float AIM = 22.0f;
+	/** Hint bits: his first open hand, his first wingbeat. */
+	private static final int HINT_HAND = 42;
+	private static final int HINT_WINGS = 43;
 
 	private final LuciferFight fight;
 	private final ServerLevel level;
-	private final UUID bossId;
-	private int stage = 1;
-	private int cooldown = 80;
+	private int cooldown = 40;
+	private int busyUntil;
 	private int cycle;
-	private int windTicks;
+	private boolean halved;
 	@Nullable
-	private UUID grabbed;
-	private int grabTicks;
-	private float grabDamage;
+	private LivingEntity prey;
+	/** The weak point of the face now down, for a parry to keep it open longer. */
+	@Nullable
+	private EmperorWeakPoint face;
+	private int faceOpenUntil;
 
-	EmperorAttacks(LuciferFight fight, UUID bossId) {
+	EmperorAttacks(LuciferFight fight) {
 		this.fight = fight;
 		this.level = fight.level();
-		this.bossId = bossId;
 	}
 
-	int stage() {
-		return stage;
+	boolean halved() {
+		return halved;
 	}
 
-	/** Every tick of the true form: keep him frozen in place, run his attack cycle, hold whoever he chews. */
-	void tick(WitherBoss boss) {
-		anchor(boss);
-		float health = boss.getHealth() / Math.max(1.0f, boss.getMaxHealth());
-		if (stage == 1 && health <= 0.66f) {
-			stage = 2;
-			crack(boss);
-		} else if (stage == 2 && health <= 0.33f) {
-			stage = 3;
-			rage(boss);
+	/** Every fight tick of the true form. */
+	void tick(EmperorEntity emperor, List<LivingEntity> targets) {
+		if (!halved && emperor.getHealth() <= emperor.getMaxHealth() * 0.5f) {
+			halved = true;
+			fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.EMPEROR_HALF));
+			fight.tip("He weeps now too: red circles of frozen tears. Keep hitting his hands and faces when they're down.");
 		}
-		wind(boss);
-		chew(boss);
-		if (--cooldown <= 0) {
-			List<Attack> pool = stage == 1 ? List.of(Attack.HATRED, Attack.IMPOTENCE, Attack.WINGBEAT)
-					: List.of(Attack.HATRED, Attack.MOUTHS, Attack.IMPOTENCE, Attack.IGNORANCE, Attack.WINGBEAT);
-			Attack next = pool.get(cycle++ % pool.size());
-			if (next == Attack.MOUTHS && grabbed != null) {
-				next = Attack.HATRED;
-			}
-			if (!perform(next, boss)) {
-				cooldown = fight.paced(20);
-			}
-		}
-	}
-
-	/** He is frozen into the lake: whatever his wither body tries, it stays at the centre of the pit. */
-	private void anchor(WitherBoss boss) {
-		double y = fight.floorY();
-		if (boss.distanceToSqr(0.5, y, 0.5) > 0.01) {
-			boss.teleportTo(0.5, y, 0.5);
-		}
-		boss.setDeltaMovement(Vec3.ZERO);
-	}
-
-	boolean perform(Attack attack, WitherBoss boss) {
-		List<LivingEntity> targets = fight.targets();
 		if (targets.isEmpty()) {
-			return false;
-		}
-		fight.model().pose(boss, attack == Attack.WINGBEAT ? BossModel.Pose.ROAR : BossModel.Pose.WINDUP);
-		if (attack != Attack.WINGBEAT) {
-			fight.schedule(14, () -> fight.model().pose(boss, BossModel.Pose.STRIKE));
-		}
-		LivingEntity target = targets.get(level.getRandom().nextInt(targets.size()));
-		double pace = (stage == 3 ? 0.7 : stage == 2 ? 0.85 : 1.0) * Math.max(0.6, 1.0 - 0.12 * fight.tier());
-		switch (attack) {
-			case HATRED -> {
-				hatred(boss, stage == 3 ? 4 : 3, true);
-				cooldown = fight.paced((int) (110 * pace));
-			}
-			case IMPOTENCE -> {
-				impotence(boss, targets);
-				cooldown = fight.paced((int) (80 * pace));
-			}
-			case IGNORANCE -> {
-				ignorance(boss);
-				cooldown = fight.paced((int) (110 * pace));
-			}
-			case WINGBEAT -> {
-				wingbeat(boss, targets);
-				cooldown = fight.paced((int) (100 * pace));
-			}
-			case MOUTHS -> {
-				mouths(boss, target);
-				cooldown = fight.paced((int) (120 * pace));
-			}
-		}
-		if (stage == 3 && attack != Attack.HATRED && level.getRandom().nextFloat() < 0.5f) {
-			// all three faces at once: the rings of hatred run under the other attacks
-			fight.schedule(40, () -> hatred(boss, 1, false));
-		}
-		return true;
-	}
-
-	// ------------------------------------------------------------------ stage changes
-
-	private void crack(WitherBoss boss) {
-		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.EMPEROR_CRACK));
-		level.playSound(null, boss.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 4.0f, 0.3f);
-		level.sendParticles(ParticleTypes.SNOWFLAKE, boss.getX(), boss.getY() + 1, boss.getZ(), 300, 4, 1, 4, 0.3);
-		tip("The ice cracks: his mouths are free. Hurt him to make him let go of anyone he grabs.");
-		cooldown = fight.paced(40);
-	}
-
-	private void rage(WitherBoss boss) {
-		fight.say(LuciferDialogue.EMPEROR_RAGE[0]);
-		fight.schedule(40, () -> fight.say(LuciferDialogue.EMPEROR_RAGE[1]));
-		LuciferDialogue.nameCard(LuciferDialogue.audience(level, REACH + 60), "ALL THREE FACES", "The Emperor rages", ChatFormatting.DARK_RED);
-		level.playSound(null, boss.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 3.0f, 0.6f);
-		level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, boss.getX(), boss.getY() + 2, boss.getZ(), 1, 0, 0, 0, 0);
-		fight.releaseTraitors(boss);
-		cooldown = fight.paced(60);
-	}
-
-	// ------------------------------------------------------------------ the red face: hatred
-
-	/** Rings of fire sweep outward from him, one after another; anyone standing on the ice when one passes burns. */
-	private void hatred(WitherBoss boss, int waves, boolean announce) {
-		if (announce) {
-			fight.model().showFace(bossId, RED_FACE);
-			fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.HATRED));
-			tip("Rings across the ice! Jump over them.");
-		}
-		level.playSound(null, boss.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 3.0f, 0.4f);
-		for (int t = 0; t < 20; t += 2) {
-			int step = t;
-			fight.schedule(t, () -> level.sendParticles(ParticleTypes.FLAME, boss.getX(), boss.getY() + 0.2 + step * 0.1, boss.getZ(), 30, 1.5, 0.1, 1.5, 0.02));
-		}
-		for (int w = 0; w < waves; w++) {
-			Set<UUID> burned = new HashSet<>();
-			int start = 20 + w * 22;
-			fight.schedule(start, () -> level.playSound(null, boss.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 3.0f, 0.6f));
-			for (int r = 3; r <= (int) REACH; r++) {
-				int radius = r;
-				fight.schedule(start + (r - 3), () -> ring(boss, radius, burned));
-			}
-		}
-	}
-
-	private void ring(WitherBoss boss, double radius, Set<UUID> burned) {
-		int points = Math.max(12, (int) (radius * 2 * Math.PI / 1.2));
-		for (int i = 0; i < points; i++) {
-			double a = i * 2 * Math.PI / points;
-			double x = 0.5 + Math.cos(a) * radius;
-			double z = 0.5 + Math.sin(a) * radius;
-			double y = LuciferArena.groundY(level, (int) Math.floor(x), (int) Math.floor(z));
-			level.sendParticles(i % 3 == 0 ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME, x, y + 0.15, z, 2, 0.1, 0.15, 0.1, 0.01);
-		}
-		for (LivingEntity e : victims(radius + 10)) {
-			double d = Math.sqrt((e.getX() - 0.5) * (e.getX() - 0.5) + (e.getZ() - 0.5) * (e.getZ() - 0.5));
-			if (Math.abs(d - radius) < 0.9 && e.onGround() && burned.add(e.getUUID())) {
-				e.hurt(level.damageSources().mobAttack(boss), 7.0f * fight.damageMultiplier());
-				e.igniteForSeconds(3.0f);
-				e.push(0, 0.45, 0);
-				Feedback.syncMotion(e);
-			}
-		}
-	}
-
-	// ------------------------------------------------------------------ the yellow face: impotence
-
-	/** He weeps. Frost rings mark where the tears will land; a moment later they fall as ice. */
-	private void impotence(WitherBoss boss, List<LivingEntity> targets) {
-		turnFace(YELLOW_FACE, 60);
-		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.IMPOTENCE));
-		tip("His tears fall frozen: get out of the frost rings!");
-		level.playSound(null, boss.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.5f, 1.4f);
-		List<Vec3> marks = new ArrayList<>();
-		int around = stage >= 2 ? 4 : 3;
-		for (LivingEntity target : targets) {
-			marks.add(ground(target.getX(), target.getZ()));
-			for (int k = 0; k < around; k++) {
-				marks.add(ground(target.getX() + (level.getRandom().nextDouble() - 0.5) * 12, target.getZ() + (level.getRandom().nextDouble() - 0.5) * 12));
-			}
-		}
-		for (int k = 0; k < 4 + 2 * stage; k++) {
-			double a = level.getRandom().nextDouble() * 2 * Math.PI;
-			double r = 5 + level.getRandom().nextDouble() * (REACH - 7);
-			marks.add(ground(0.5 + Math.cos(a) * r, 0.5 + Math.sin(a) * r));
-		}
-		for (int t = 0; t < 32; t += 3) {
-			fight.schedule(t, () -> {
-				for (Vec3 m : marks) {
-					for (int i = 0; i < 10; i++) {
-						double a = i * Math.PI / 5;
-						level.sendParticles(ParticleTypes.SNOWFLAKE, m.x + Math.cos(a) * 2, m.y + 0.1, m.z + Math.sin(a) * 2, 1, 0, 0, 0, 0);
-					}
-					level.sendParticles(ParticleTypes.FALLING_WATER, m.x, m.y + 9, m.z, 3, 0.4, 0.5, 0.4, 0);
-				}
-			});
-		}
-		fight.schedule(35, () -> {
-			for (Vec3 m : marks) {
-				level.sendParticles(ParticleTypes.SNOWFLAKE, m.x, m.y + 0.5, m.z, 40, 1.2, 0.4, 1.2, 0.15);
-				level.sendParticles(ParticleTypes.CLOUD, m.x, m.y + 0.3, m.z, 6, 0.8, 0.1, 0.8, 0.02);
-				for (LivingEntity e : victims(REACH + 10)) {
-					if (e.distanceToSqr(m) <= 2.3 * 2.3) {
-						e.hurt(level.damageSources().freeze(), 6.0f * fight.damageMultiplier() * BossRules.luciferScale(e));
-						e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1));
-						e.setTicksFrozen(Math.min(e.getTicksRequiredToFreeze() + 100, e.getTicksFrozen() + 140));
-					}
-				}
-			}
-			level.playSound(null, boss.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3.0f, 0.5f);
-		});
-	}
-
-	// ------------------------------------------------------------------ the black face: ignorance
-
-	/** The light goes out, and jaws of ice sweep out of the dark in a turning spiral. */
-	private void ignorance(WitherBoss boss) {
-		turnFace(BLACK_FACE, 100);
-		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.IGNORANCE));
-		tip("Jaws burst from the ice: watch for the spiral and keep moving.");
-		for (ServerPlayer p : LuciferDialogue.audience(level, REACH + 4)) {
-			if (!p.isSpectator() && !p.isCreative()) {
-				p.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 160, 0));
-			}
-			Feedback.sound(p, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.0f, 0.5f);
-		}
-		int arms = stage == 3 ? 3 : 2;
-		double turn = level.getRandom().nextBoolean() ? 0.09 : -0.09;
-		double offset = level.getRandom().nextDouble() * 2 * Math.PI;
-		for (int t = 0; t < 72; t++) {
-			int step = t;
-			fight.schedule(20 + t, () -> {
-				double r = 3.0 + step * 0.37;
-				for (int arm = 0; arm < arms; arm++) {
-					double a = offset + arm * 2 * Math.PI / arms + step * turn;
-					double x = 0.5 + Math.cos(a) * r;
-					double z = 0.5 + Math.sin(a) * r;
-					Vec3 g = ground(x, z);
-					level.addFreshEntity(new EvokerFangs(level, x, g.y, z, (float) a, 6, boss));
-				}
-			});
-		}
-	}
-
-	// ------------------------------------------------------------------ the six wings
-
-	/** Six wings beat: a freezing gale drives everyone out toward the wall. Sneaking braces against it. */
-	private void wingbeat(WitherBoss boss, List<LivingEntity> targets) {
-		fight.model().showFace(bossId, RED_FACE);
-		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.WINGBEAT));
-		tip("Freezing wind! SNEAK so it can't push you.");
-		for (int t = 0; t < 15; t += 5) {
-			fight.schedule(t, () -> level.playSound(null, boss.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 4.0f, 0.4f));
-		}
-		windTicks = 15 + 70;
-	}
-
-	private void wind(WitherBoss boss) {
-		if (windTicks <= 0) {
 			return;
 		}
-		windTicks--;
-		if (windTicks > 70) {
+		if (prey == null || !prey.isAlive() || !targets.contains(prey)) {
+			prey = targets.get(level.getRandom().nextInt(targets.size()));
+		}
+		if (fight.tick() < busyUntil) {
 			return;
 		}
-		if (windTicks % 20 == 0) {
-			level.playSound(null, boss.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 4.0f, 0.3f);
+		emperor.turnToward(prey.getX(), prey.getZ(), TURN * (halved ? 1.4f : 1.0f));
+		if (--cooldown > 0 || emperor.angleTo(prey.getX(), prey.getZ()) > AIM) {
+			return;
 		}
-		for (LivingEntity e : victims(REACH + 10)) {
-			if (e.getUUID().equals(grabbed) || !LuciferArena.inside(e.getX(), e.getZ())) {
-				continue;
-			}
-			Vec3 away = new Vec3(e.getX() - 0.5, 0, e.getZ() - 0.5);
-			away = away.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : away.normalize();
-			boolean braced = e.isShiftKeyDown();
-			double strength = braced ? 0.025 : 0.11;
-			e.push(away.x * strength, 0, away.z * strength);
-			Feedback.syncMotion(e);
-			e.setTicksFrozen(Math.min(e.getTicksRequiredToFreeze() + 60, e.getTicksFrozen() + (braced ? 1 : 4)));
-			if (windTicks % 3 == 0) {
-				level.sendParticles(ParticleTypes.SNOWFLAKE, e.getX() - away.x * 2, e.getY() + 1, e.getZ() - away.z * 2, 6, 0.4, 0.6, 0.4, 0.2);
-			}
-			if (windTicks == 0 && !braced) {
-				e.hurt(level.damageSources().freeze(), 4.0f * fight.damageMultiplier() * BossRules.luciferScale(e));
-			}
-		}
-		if (windTicks % 4 == 0) {
-			level.sendParticles(ParticleTypes.CLOUD, boss.getX(), boss.getY() + 2, boss.getZ(), 30, 6, 1, 6, 0.3);
-		}
+		Attack[] pattern = halved ? new Attack[]{Attack.SLAM, Attack.BITE, Attack.WEEP, Attack.SLAM, Attack.WINGBEAT, Attack.BITE}
+				: new Attack[]{Attack.SLAM, Attack.BITE, Attack.SLAM, Attack.WINGBEAT, Attack.BITE};
+		Attack attack = pattern[cycle++ % pattern.length];
+		int length = perform(attack, emperor, prey);
+		double faster = Math.max(0.6, 1.0 - 0.12 * fight.tier());
+		cooldown = (int) Math.round((halved ? 30 : 50) * faster);
+		busyUntil = fight.tick() + length;
+		// the next blow goes to someone else as often as not
+		prey = level.getRandom().nextBoolean() ? null : prey;
 	}
 
-	// ------------------------------------------------------------------ the mouths
+	/** Runs one attack at a target; returns how long he is busy with it (fight ticks). */
+	int perform(Attack attack, EmperorEntity emperor, LivingEntity target) {
+		return switch (attack) {
+			case SLAM -> slam(emperor, target);
+			case BITE -> bite(emperor);
+			case WINGBEAT -> wingbeat(emperor);
+			case WEEP -> weep(emperor);
+		};
+	}
 
-	/** He reaches for someone. If they are still in the pit a second later, he drags them to his jaws. */
-	private void mouths(WitherBoss boss, LivingEntity target) {
-		fight.model().showFace(bossId, RED_FACE);
-		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.MOUTHS));
-		if (target instanceof ServerPlayer p) {
-			p.sendOverlayMessage(Component.literal("The Emperor reaches for you!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		}
-		for (int t = 0; t < 20; t += 2) {
-			fight.schedule(t, () -> level.sendParticles(BLOOD, target.getX(), target.getY() + 1, target.getZ(), 12, 0.5, 0.8, 0.5, 0));
-		}
-		fight.schedule(20, () -> {
-			if (grabbed != null || !target.isAlive() || !LuciferArena.inside(target.getX(), target.getZ()) || fight.wither() == null) {
+	// ------------------------------------------------------------------ his hands
+
+	private int slam(EmperorEntity emperor, LivingEntity target) {
+		// the hand on the target's side
+		double yaw = Math.toRadians(emperor.getYRot());
+		double rx = -Math.cos(yaw);
+		double rz = -Math.sin(yaw);
+		boolean right = (target.getX() - emperor.getX()) * rx + (target.getZ() - emperor.getZ()) * rz >= 0;
+		EmperorAnim a = right ? EmperorAnim.SLAM_RIGHT : EmperorAnim.SLAM_LEFT;
+		emperor.play(a);
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.SLAM));
+		Vec3 hand = emperor.slamPoint(right);
+		Vec3 ground = fight.onFloor(hand.x, hand.z);
+		Danger.circle(level, Danger.Colour.RED, ground, SLAM_RADIUS, a.at("slam"));
+		fight.schedule(a.at("slam"), () -> {
+			if (!emperor.isAlive()) {
 				return;
 			}
-			grabbed = target.getUUID();
-			grabTicks = 0;
-			grabDamage = 0;
-			level.playSound(null, boss.blockPosition(), SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 3.0f, 0.5f);
-			tip(target.getName().getString() + " is in his jaws! Hurt the Emperor to make him let go.");
-		});
-	}
-
-	private void chew(WitherBoss boss) {
-		if (grabbed == null) {
-			return;
-		}
-		Entity found = level.getEntity(grabbed);
-		if (!(found instanceof LivingEntity victim) || !victim.isAlive() || victim.isSpectator()) {
-			grabbed = null;
-			return;
-		}
-		grabTicks++;
-		Vec3 toward = new Vec3(victim.getX() - boss.getX(), 0, victim.getZ() - boss.getZ());
-		toward = toward.lengthSqr() < 1.0e-4 ? new Vec3(0, 0, -1) : toward.normalize();
-		Vec3 mouth = boss.position().add(toward.scale(1.6)).add(0, 2.1, 0);
-		if (victim.position().distanceToSqr(mouth) > 36) {
-			victim.teleportTo(mouth.x, mouth.y, mouth.z);
-		} else {
-			victim.setDeltaMovement(mouth.subtract(victim.position()).scale(0.4));
-			Feedback.syncMotion(victim);
-		}
-		victim.resetFallDistance();
-		if (grabTicks % 10 == 0) {
-			victim.hurt(level.damageSources().mobAttack(boss), 2.0f * fight.damageMultiplier());
-			level.sendParticles(BLOOD, victim.getX(), victim.getY() + 1, victim.getZ(), 20, 0.4, 0.6, 0.4, 0);
-		}
-		if (grabDamage >= 16.0f + 4.0f * fight.tier() || grabTicks >= 80) {
-			boolean freed = grabDamage >= 16.0f + 4.0f * fight.tier();
-			grabbed = null;
-			victim.setDeltaMovement(toward.x * 1.4, 0.6, toward.z * 1.4);
-			Feedback.syncMotion(victim);
-			level.playSound(null, boss.blockPosition(), SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 3.0f, 1.2f);
-			if (freed) {
-				fight.say("AAARGH! Take thy morsel, then!");
-			} else {
-				fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.SPIT));
+			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.sendParticles(ParticleTypes.EXPLOSION, ground.x, ground.y + 1, ground.z, 6, 2.5, 0.5, 2.5, 0);
+			level.sendParticles(ParticleTypes.SNOWFLAKE, ground.x, ground.y + 1, ground.z, 200, 4, 1, 4, 0.2);
+			for (LivingEntity e : fight.victims(ground, SLAM_RADIUS)) {
+				if (e.hurtServer(level, Danger.unblockable(level, emperor), SLAM_DAMAGE * fight.damageMultiplier())) {
+					e.push(0, 0.6, 0);
+					Feedback.syncMotion(e);
+				}
 			}
+			for (ServerPlayer p : fight.fighters()) {
+				Wingbeat.shake(p, 0.5f);
+			}
+			int open = a.at("lift") - a.at("slam");
+			open(emperor, ground.add(0, -1.0, 0), 1.0f, open);
+			for (ServerPlayer p : fight.fighters()) {
+				CircleHazards.hintOnce(p, HINT_HAND, "His hand lies on the ice: hit it now, while it glows! That is the only way to hurt him.");
+			}
+		});
+		return a.ticks;
+	}
+
+	// ------------------------------------------------------------------ his three mouths
+
+	private int bite(EmperorEntity emperor) {
+		EmperorAnim[] faces = {EmperorAnim.BITE, EmperorAnim.BITE_RIGHT, EmperorAnim.BITE_LEFT};
+		EmperorAnim a = faces[level.getRandom().nextInt(faces.length)];
+		emperor.play(a);
+		Vec3 head = emperor.bitePoint();
+		Vec3 ground = fight.onFloor(head.x, head.z);
+		fight.schedule(a.at("flash"), () -> {
+			if (!emperor.isAlive()) {
+				return;
+			}
+			fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.BITE));
+			emperor.warn(BossEntity.Warning.WHITE);
+			fight.openParry(a.at("bite") - a.at("flash") + 5);
+			Danger.circle(level, Danger.Colour.WHITE, ground, BITE_RADIUS, a.at("bite") - a.at("flash"));
+			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f);
+		});
+		fight.schedule(a.at("bite"), () -> {
+			emperor.warn(BossEntity.Warning.NONE);
+			if (!emperor.isAlive()) {
+				return;
+			}
+			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.EVOKER_FANGS_ATTACK, SoundSource.HOSTILE, 3.0f, 0.5f);
+			for (LivingEntity e : fight.victims(ground, BITE_RADIUS)) {
+				e.hurtServer(level, level.damageSources().mobAttack(emperor), BITE_DAMAGE * fight.damageMultiplier());
+			}
+			int open = a.at("rise") - a.at("bite");
+			face = open(emperor, head.add(0, -3.5, 0), 1.5f, open);
+			faceOpenUntil = fight.tick() + open;
+		});
+		return a.ticks;
+	}
+
+	/** Someone blocked his bite: he reels, the face stays down longer and takes twice the damage. */
+	void parried(EmperorEntity emperor) {
+		emperor.warn(BossEntity.Warning.NONE);
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.PARRIED));
+		level.playSound(null, emperor.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 3.0f, 0.4f);
+		fight.tip("Blocked! His face stays down: hit it now, it takes twice the damage.");
+		// the face's weak point appears at the bite (a tick after this): stretch it then
+		fight.schedule(2, () -> {
+			if (face != null && !face.isRemoved()) {
+				face.open(emperor, 3.0f, faceOpenUntil - fight.tick() + 50);
+			}
+		});
+		busyUntil += 50;
+		fight.schedule(1, () -> emperor.play(EmperorAnim.HURT));
+	}
+
+	// ------------------------------------------------------------------ his wings
+
+	private int wingbeat(EmperorEntity emperor) {
+		EmperorAnim a = EmperorAnim.WINGBEAT;
+		emperor.play(a);
+		emperor.warn(BossEntity.Warning.PURPLE);
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.WINGBEAT));
+		Vec3 centre = fight.onFloor(emperor.getX(), emperor.getZ());
+		Danger.ring(level, Danger.Colour.PURPLE, centre, EmperorEntity.BODY_RADIUS, LuciferArena.RADIUS, a.at("beat"));
+		for (ServerPlayer p : fight.fighters()) {
+			CircleHazards.hintOnce(p, HINT_WINGS, "His wings glow purple: get behind an ice pillar before they beat, or be thrown back and frozen.");
 		}
+		fight.schedule(a.at("beat"), () -> {
+			emperor.warn(BossEntity.Warning.NONE);
+			if (!emperor.isAlive()) {
+				return;
+			}
+			level.playSound(null, emperor.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 5.0f, 0.3f);
+			level.sendParticles(ParticleTypes.SNOWFLAKE, centre.x, centre.y + 2, centre.z, 600, 20, 2, 20, 0.4);
+			Vec3 eyes = emperor.position().add(0, 20, 0);
+			for (ServerPlayer p : fight.audience()) {
+				Wingbeat.beat(p, 1.0f);
+			}
+			for (LivingEntity e : fight.victims(centre, LuciferArena.RADIUS + 2)) {
+				if (sheltered(eyes, e)) {
+					continue;
+				}
+				Vec3 away = e.position().subtract(centre).multiply(1, 0, 1);
+				away = away.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : away.normalize();
+				e.push(away.x * 1.8, 0.5, away.z * 1.8);
+				Feedback.syncMotion(e);
+				e.setTicksFrozen(Math.min(e.getTicksFrozen() + 160, e.getTicksRequiredToFreeze() + 120));
+				e.hurtServer(level, Danger.unblockable(level, emperor), WINGBEAT_DAMAGE * fight.damageMultiplier());
+			}
+		});
+		return a.ticks;
 	}
 
-	/** Damage anyone deals the Emperor counts toward making him drop whoever he is chewing. */
-	void onHurt(float amount) {
-		if (grabbed != null) {
-			grabDamage += amount;
+	/** Behind an ice pillar (or anything solid) seen from his head. */
+	private boolean sheltered(Vec3 from, LivingEntity e) {
+		Vec3 to = e.getEyePosition();
+		HitResult hit = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, e));
+		return hit.getType() == HitResult.Type.BLOCK && hit.getLocation().distanceToSqr(to) > 1.0;
+	}
+
+	// ------------------------------------------------------------------ his tears
+
+	private int weep(EmperorEntity emperor) {
+		EmperorAnim a = EmperorAnim.WEEP;
+		emperor.play(a);
+		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.WEEP));
+		fight.schedule(a.at("weep"), () -> {
+			if (!emperor.isAlive()) {
+				return;
+			}
+			List<Vec3> marks = new ArrayList<>();
+			for (LivingEntity t : fight.targets()) {
+				marks.add(fight.onFloor(t.getX(), t.getZ()));
+			}
+			int scattered = 8 + 2 * fight.extraMarks();
+			for (int k = 0; k < scattered; k++) {
+				double ang = level.getRandom().nextDouble() * Math.PI * 2;
+				double r = EmperorEntity.BODY_RADIUS + 2 + level.getRandom().nextDouble() * (LuciferArena.RADIUS - EmperorEntity.BODY_RADIUS - 4);
+				marks.add(fight.onFloor(Math.cos(ang) * r, Math.sin(ang) * r));
+			}
+			int warn = 32;
+			for (Vec3 m : marks) {
+				Danger.circle(level, Danger.Colour.RED, m, 2.5, warn);
+			}
+			fight.schedule(warn, () -> {
+				for (Vec3 m : marks) {
+					level.sendParticles(ParticleTypes.FALLING_DRIPSTONE_LAVA, m.x, m.y + 8, m.z, 10, 0.4, 2, 0.4, 0);
+					level.sendParticles(ParticleTypes.SNOWFLAKE, m.x, m.y + 0.5, m.z, 30, 1.0, 0.2, 1.0, 0.05);
+					level.playSound(null, m.x, m.y, m.z, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.2f, 0.6f);
+					for (LivingEntity e : fight.victims(m, 2.5)) {
+						if (e.hurtServer(level, Danger.unblockable(level, emperor), TEAR_DAMAGE * fight.damageMultiplier())) {
+							e.setTicksFrozen(Math.min(e.getTicksFrozen() + 80, e.getTicksRequiredToFreeze() + 80));
+						}
+					}
+				}
+			});
+		});
+		return a.ticks;
+	}
+
+	// ------------------------------------------------------------------ his weak points
+
+	/** Lays him open at a point for so many fight ticks (a hand on the ice, a face down low). */
+	@Nullable
+	private EmperorWeakPoint open(EmperorEntity emperor, Vec3 at, float multiplier, int fightTicks) {
+		EmperorWeakPoint point = HellEntities.EMPEROR_WEAK_POINT.create(level, EntitySpawnReason.EVENT);
+		if (point == null) {
+			return null;
 		}
-	}
-
-	// ------------------------------------------------------------------ helpers
-
-	/** Turns a side face toward the victim, and the red face back to the front once the attack is over. */
-	private void turnFace(float face, int ticks) {
-		fight.model().showFace(bossId, face);
-		fight.schedule(ticks, () -> fight.model().showFace(bossId, RED_FACE));
-	}
-
-	private Vec3 ground(double x, double z) {
-		return new Vec3(x, LuciferArena.groundY(level, (int) Math.floor(x), (int) Math.floor(z)), z);
-	}
-
-	/** Everything in the pit that can be hurt, except Lucifer and his servants. */
-	private List<LivingEntity> victims(double radius) {
-		return LuciferAttacks.victims(fight, new Vec3(0.5, fight.floorY(), 0.5), radius);
-	}
-
-	/** A hint in the action bar of everyone in the pit (the attacks are new; nobody should die not knowing why). */
-	private void tip(String text) {
-		for (ServerPlayer p : LuciferDialogue.audience(level, REACH + 4)) {
-			p.sendOverlayMessage(Component.literal(text).withStyle(ChatFormatting.AQUA));
-		}
+		point.snapTo(at.x, at.y, at.z, 0, 0);
+		point.addTag(LuciferManager.TAG);
+		// the weak point's own life is in real ticks
+		point.open(emperor, multiplier, fight.realTicks(fightTicks));
+		level.addFreshEntity(point);
+		fight.own(point.getUUID());
+		return point;
 	}
 }

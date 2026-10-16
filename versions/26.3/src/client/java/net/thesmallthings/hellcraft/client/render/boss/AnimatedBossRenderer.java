@@ -26,6 +26,8 @@ public class AnimatedBossRenderer<T extends AnimatedBoss> extends MobRenderer<T,
 	private final Identifier texture;
 	private final float scale;
 	private final int animations;
+	/** The least block light it's drawn with, however dark its spot (the Fallen Seraph shines; the Emperor looms). */
+	private int minLight;
 
 	public AnimatedBossRenderer(EntityRendererProvider.Context context, String name, List<AnimationDefinition> anims, int walk, float scale,
 								float shadow, float gaze, String... headPath) {
@@ -43,6 +45,17 @@ public class AnimatedBossRenderer<T extends AnimatedBoss> extends MobRenderer<T,
 				}
 			});
 		}
+	}
+
+	/** Draws it at least this lit (block light 0 to 15). */
+	public AnimatedBossRenderer<T> minLight(int light) {
+		this.minLight = light;
+		return this;
+	}
+
+	@Override
+	protected int getBlockLightLevel(T boss, net.minecraft.core.BlockPos pos) {
+		return Math.max(minLight, super.getBlockLightLevel(boss, pos));
 	}
 
 	public static ModelLayerLocation layer(String name) {

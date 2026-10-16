@@ -20,7 +20,8 @@ import java.util.List;
  */
 public record Cutscene(String id, int ticks, List<Shot> shots, List<Caption> captions, List<Shake> shakes, @Nullable Card card,
 					   int fadeIn, int blendOut) {
-	public record Shot(int tick, double right, double up, double forward, double lookRight, double lookUp, double lookForward) {
+	/** roll: how far the camera is turned over (degrees; 180 is upside down), for the climb out of Hell. */
+	public record Shot(int tick, double right, double up, double forward, double lookRight, double lookUp, double lookForward, double roll) {
 	}
 
 	public record Caption(int from, int to, String speaker, int colour, String line) {
@@ -53,7 +54,12 @@ public record Cutscene(String id, int ticks, List<Shot> shots, List<Caption> cap
 
 		/** The camera at a tick: where (right, up, forward of the anchor) and what it looks at. */
 		public Builder shot(int tick, double right, double up, double forward, double lookRight, double lookUp, double lookForward) {
-			shots.add(new Shot(tick, right, up, forward, lookRight, lookUp, lookForward));
+			return shot(tick, right, up, forward, lookRight, lookUp, lookForward, 0);
+		}
+
+		/** The same, turned over by roll degrees. */
+		public Builder shot(int tick, double right, double up, double forward, double lookRight, double lookUp, double lookForward, double roll) {
+			shots.add(new Shot(tick, right, up, forward, lookRight, lookUp, lookForward, roll));
 			return this;
 		}
 

@@ -436,8 +436,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   done
 fi
 
-# Lucifer: run the whole fight against a dummy target in the pit
-rcon "summon minecraft:villager 4 -45 0 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b}"
+# Lucifer: run the whole fight against a dummy target in the pit (between the Emperor's body and the ice pillars)
+rcon "summon minecraft:villager 20 -50 4 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b}"
 rcon "hellcraft lucifer summon"
 second=$(rcon "hellcraft lucifer summon")
 echo "$second"
@@ -450,60 +450,74 @@ status=$(rcon "hellcraft lucifer status")
 echo "$status"
 echo "$status" | grep -q "phase=DUEL" || { echo "Fight advanced on its own after the chunks were unloaded"; exit 1; }
 echo "$status" | grep -q "avatar=present" || { echo "Lucifer went missing after the chunks were unloaded"; exit 1; }
-if [ "$MC_VERSION" != "1.21.1" ]; then
-  shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_lucifer_model]" || true)
-  echo "Lucifer's model in the duel: $shown"
-  echo "$shown" | grep -q "Test passed" || { echo "Lucifer has no model in the duel"; exit 1; }
-fi
-for a in slash fangs wings hellfire; do rcon "hellcraft lucifer attack $a"; sleep 3; done
+echo "$status" | grep -q "trueForm=present" || { echo "The Emperor isn't asleep in the pit during the duel"; exit 1; }
+echo "$status" | grep -q "awake=false" || { echo "The Emperor woke too early"; exit 1; }
+seraph=$(rcon "execute if entity @e[type=hellcraft:fallen_seraph,tag=hellcraft_lucifer]" || true)
+echo "The Fallen Seraph in the duel: $seraph"
+echo "$seraph" | grep -q "Test passed" || { echo "The Fallen Seraph is missing from the duel"; exit 1; }
+for a in slash sweep stars lunge; do
+  out=$(rcon "hellcraft lucifer attack $a")
+  echo "$out"
+  echo "$out" | grep -q "The Seraph uses" || { echo "The Seraph could not use $a"; exit 1; }
+  sleep 4
+done
 rcon "hellcraft lucifer skip"   # -> enraged
 sleep 8
-rcon "hellcraft lucifer attack fangs"
+rcon "hellcraft lucifer attack lunge"
 sleep 3
-rcon "hellcraft lucifer skip"   # -> true form
-sleep 10
-if [ "$MC_VERSION" != "1.21.1" ]; then
-  shown=$(rcon "execute if entity @e[type=minecraft:item_display,tag=hellcraft_lucifer_model]" || true)
-  echo "Lucifer's model in his true form: $shown"
-  echo "$shown" | grep -q "Test passed" || { echo "Lucifer has no model in his true form"; exit 1; }
-  status=$(rcon "hellcraft lucifer status")
-  echo "$status"
-  echo "$status" | grep -q "emperorStage=1" || { echo "The Emperor's attacks did not start"; exit 1; }
-  floor=$(echo "$status" | sed -n 's/.*floor=\(-\{0,1\}[0-9]*\).*/\1/p')
-  for a in hatred impotence ignorance mouths wingbeat; do
-    out=$(rcon "hellcraft lucifer attack $a")
-    echo "$out"
-    echo "$out" | grep -q "The Emperor uses" || { echo "The Emperor could not use $a"; exit 1; }
-    sleep 4
-  done
-  frozen=$(rcon "execute if entity @e[type=minecraft:wither,tag=hellcraft_lucifer,x=0.5,y=$floor,z=0.5,distance=..2]" || true)
-  echo "Emperor frozen at the centre: $frozen"
-  echo "$frozen" | grep -q "Test passed" || { echo "The Emperor left the centre of the pit"; exit 1; }
-  # blow a hole in the pit floor: it must freeze back
-  rcon "setblock 2 $((floor - 1)) 0 minecraft:air"
-  sleep 2
-  healed=$(rcon "execute unless block 2 $((floor - 1)) 0 minecraft:air" || true)
-  echo "Pit floor healed: $healed"
-  echo "$healed" | grep -q "Test passed" || { echo "The pit floor did not heal"; exit 1; }
-fi
-rcon "hellcraft lucifer skip"   # -> defeat
+rcon "hellcraft lucifer skip"   # -> the Seraph breaks, the Emperor wakes
 sleep 16
+status=$(rcon "hellcraft lucifer status")
+echo "$status"
+echo "$status" | grep -q "phase=TRUE_FORM" || { echo "The Emperor's fight did not start"; exit 1; }
+echo "$status" | grep -q "awake=true" || { echo "The Emperor did not wake"; exit 1; }
+echo "$status" | grep -q "avatar=none\|avatar=missing" || { echo "The Fallen Seraph outlived his break"; exit 1; }
+floor=$(echo "$status" | sed -n 's/.*floor=\(-\{0,1\}[0-9]*\).*/\1/p')
+out=$(rcon "hellcraft lucifer attack slam")
+echo "$out"
+echo "$out" | grep -q "The Emperor uses" || { echo "The Emperor could not slam"; exit 1; }
+# the hand that lands stays down, glowing: the only place he can be hurt
+opened=""
+for i in 1 2 3 4 5 6 7 8; do
+  sleep 1
+  opened=$(rcon "execute if entity @e[type=hellcraft:emperor_weak_point]" || true)
+  echo "$opened" | grep -q "Test passed" && break
+done
+echo "Weak point after the slam: $opened"
+echo "$opened" | grep -q "Test passed" || { echo "The Emperor's hand never opened a weak point"; exit 1; }
+sleep 4
+for a in bite wingbeat weep; do
+  out=$(rcon "hellcraft lucifer attack $a")
+  echo "$out"
+  echo "$out" | grep -q "The Emperor uses" || { echo "The Emperor could not use $a"; exit 1; }
+  sleep 6
+done
+frozen=$(rcon "execute if entity @e[type=hellcraft:emperor,tag=hellcraft_lucifer,x=0.5,y=$floor,z=0.5,distance=..2]" || true)
+echo "Emperor at the centre: $frozen"
+echo "$frozen" | grep -q "Test passed" || { echo "The Emperor left the centre of the pit"; exit 1; }
+# blow a hole in the pit floor: it must freeze back
+rcon "setblock 20 $((floor - 1)) 0 minecraft:air"
+sleep 2
+healed=$(rcon "execute unless block 20 $((floor - 1)) 0 minecraft:air" || true)
+echo "Pit floor healed: $healed"
+echo "$healed" | grep -q "Test passed" || { echo "The pit floor did not heal"; exit 1; }
+rcon "hellcraft lucifer skip"   # -> defeat: he freezes, the climb out
+sleep 20
 leftover=$(rcon "execute if entity @e[tag=hellcraft_lucifer]" || true)
 echo "leftover Lucifer entities: $leftover"
 echo "$leftover" | grep -q "Test failed" || { echo "Lucifer entities left behind after the fight"; exit 1; }
-if [ "$MC_VERSION" != "1.21.1" ]; then
-  # the climb out: the burrow at the bottom of the pit, and the Gate of Return on Purgatory's summit
-  rcon "forceload add 0 0" > /dev/null
-  burrow=$(rcon "execute if block 0 $floor 0 minecraft:end_gateway" || true)
-  echo "Burrow in the pit: $burrow"
-  echo "$burrow" | grep -q "Test passed" || { echo "No burrow opened where Lucifer fell"; exit 1; }
-  summit=$(rcon "execute if block 0 291 0 minecraft:end_gateway" || true)
-  echo "Gate of Return on the summit: $summit"
-  echo "$summit" | grep -q "Test passed" || { echo "The Mountain of Purgatory has no Gate of Return"; exit 1; }
-  purgatory=$(rcon "hellcraft purgatory" || true)
-  echo "$purgatory"
-  echo "$purgatory" | grep -qi "unknown or incomplete command" && { echo "/hellcraft purgatory is not registered"; exit 1; }
-fi
+# the way out: the burrow in the ice at the Emperor's back (LuciferFight.burrowAt: 16 blocks west of the centre),
+# and the Gate of Return on Purgatory's summit
+rcon "forceload add -16 0" > /dev/null
+burrow=$(rcon "execute if block -16 $floor 0 minecraft:end_gateway" || true)
+echo "Burrow in the pit: $burrow"
+echo "$burrow" | grep -q "Test passed" || { echo "No burrow opened behind Lucifer"; exit 1; }
+summit=$(rcon "execute if block 0 291 0 minecraft:end_gateway" || true)
+echo "Gate of Return on the summit: $summit"
+echo "$summit" | grep -q "Test passed" || { echo "The Mountain of Purgatory has no Gate of Return"; exit 1; }
+purgatory=$(rcon "hellcraft purgatory" || true)
+echo "$purgatory"
+echo "$purgatory" | grep -qi "unknown or incomplete command" && { echo "/hellcraft purgatory is not registered"; exit 1; }
 rcon "hellcraft ghosts"
 rcon "stop" || true
 sleep 15
@@ -515,7 +529,7 @@ grep -i 'hellcraft\|inferno\|Gate of Hell\|Lucifer\|Reliquary\|Arena' "$LOG" || 
 fail=0
 grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is the overworld an Inferno world?)"; fail=1; }
 grep -qE 'Gate wall: [1-9][0-9]* blocks' "$LOG" || { echo "The Gate of Hell wall was not generated"; fail=1; }
-for phase in INTRO DUEL ENRAGED TRUE_FORM DEFEAT DONE; do
+for phase in INTRO DUEL ENRAGE_TRANSITION ENRAGED TRUE_FORM_TRANSITION TRUE_FORM DEFEAT DONE; do
   grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
 done
 grep -q 'Lucifer rewards:' "$LOG" || { echo "No reward hand-out"; fail=1; }
@@ -530,7 +544,6 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "Villager clock running" "$LOG" || { echo "The villagers' own clock is missing, so they would never idle or breed"; fail=1; }
   adv=$(grep -oE 'Hellcraft advancements: [0-9]+' "$LOG" | tail -1 | grep -oE '[0-9]+$' || echo 0)
   [ "${adv:-0}" -ge 25 ] || { echo "Only ${adv:-0} Dante's Journey advancements loaded"; fail=1; }
-  grep -q 'Boss model attached: lucifer_emperor' "$LOG" || { echo "The Emperor's model was never attached"; fail=1; }
   grep -qE "Hellcraft recipes: 9; take Blood Hearts: 3; take Blood Fragments: 8(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
   grep -q "Hellcraft config updated from version 0 to 3" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }

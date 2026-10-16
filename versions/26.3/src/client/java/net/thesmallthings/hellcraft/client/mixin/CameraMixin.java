@@ -4,6 +4,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,6 +29,17 @@ public abstract class CameraMixin {
 	public abstract Vec3 position();
 
 	@Shadow
+	public abstract Quaternionf rotation();
+
+	@Shadow
+	@Final
+	private Vector3f up;
+
+	@Shadow
+	@Final
+	private Vector3f left;
+
+	@Shadow
 	public abstract float yRot();
 
 	@Shadow
@@ -37,6 +51,12 @@ public abstract class CameraMixin {
 		if (frame != null) {
 			setPosition(frame.pos());
 			setRotation(frame.yaw(), frame.pitch());
+			if (frame.roll() != 0) {
+				// turned over (the climb out of Hell, past the centre of the earth)
+				rotation().rotateZ((float) Math.toRadians(frame.roll()));
+				new Vector3f(0, 1, 0).rotate(rotation(), up);
+				new Vector3f(-1, 0, 0).rotate(rotation(), left);
+			}
 			detached = true;
 			return;
 		}

@@ -126,6 +126,22 @@ public final class Codex {
 			"Behold the monster with the pointed tail, who crosses mountains, and breaks walls and weapons; behold the one who all the world doth stink!",
 			"Inferno XVII");
 
+	public static final Entry LUCIFER = new Entry("lucifer", "LUCIFER", "Emperor of the Kingdom Dolorous",
+			List.of("Once the fairest of the angels, he rose against his maker and fell. Where he struck the earth, Hell opened, "
+							+ "and he stands frozen at its bottom to the chest in the ice of Cocytus, the wind of his six wings keeping it frozen.",
+					"He meets you first as the Seraph he was before the Fall, beautiful and kind. It is a lie: underneath sleeps the "
+							+ "giant with three faces, chewing the three worst traitors."),
+			List.of("The Seraph. White flash: his blade. Block it and he reels. Purple ring: his wings sweep round; jump it or stand "
+							+ "out of reach. Red circles: stars fall there. Red line: he lunges along it. At half his health he is faster.",
+					"The Emperor. He can't be hurt anywhere but where he opens up. Red: a hand slams down; once it lands, hit the "
+							+ "glowing hand. White flash: a face bites; block it and the face stays down, glowing, for longer, and takes "
+							+ "more damage.",
+					"Purple ring round the whole pit: his wingbeat. It can't be blocked: get behind one of the ice pillars before it comes.",
+					"At half his health he weeps too: red circles of frozen tears. Keep moving.",
+					"The wingbeat reaches all of Cocytus: if you feel it far from the pit, a lit brazier keeps you warm."),
+			"The Emperor of the kingdom dolorous from his mid-breast forth issued from the ice.",
+			"Inferno XXXIV");
+
 	public static final Entry HOARDER = new Entry("hoarder", "THE HOARDERS", "the Misers of the Fourth Circle",
 			List.of("The misers of Greed, bent under sacks of coin. In the poem they roll great weights against the "
 							+ "spendthrifts forever; these have found something lighter to carry: other people's gold.",
@@ -214,7 +230,7 @@ public final class Codex {
 			"\"Let not one of you be wicked!\" ... and he had made a trumpet of his rump.",
 			"Inferno XXI");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
 			MIMIC, THIEF, MALEBRANCHE);
 
 	@Nullable

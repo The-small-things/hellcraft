@@ -22,14 +22,18 @@ final class LuciferArena {
 	private LuciferArena() {
 	}
 
-	/** Players and targets count as "in the arena" inside this horizontal radius. */
-	static final double RADIUS = 30.0;
-	private static final double WALL_INNER = 31.0;
-	private static final double WALL_OUTER = 33.0;
+	/** Players and targets count as "in the arena" inside this horizontal radius (the pit's level floor and a little more). */
+	static final double RADIUS = InfernoGeometry.PIT_FLAT + 2;
+	private static final double WALL_INNER = RADIUS + 1;
+	private static final double WALL_OUTER = RADIUS + 3;
 	private static final int WALL_HEIGHT = 9;
 	/** The protected cylinder: the pit, its seal and its ice pillars. */
-	private static final double PROTECTED_RADIUS = 34.0;
+	private static final double PROTECTED_RADIUS = InfernoGeometry.PIT_RADIUS + 2;
 	private static final int PROTECTED_TOP = InfernoGeometry.PIT_FLOOR_Y + 24;
+	/** The ice pillars to hide behind from his wingbeat: how many, how far out, how tall. */
+	private static final int PILLARS = 6;
+	private static final double PILLAR_RING = 27.0;
+	private static final int PILLAR_HEIGHT = 7;
 
 	/**
 	 * The pit's floor: the most common ground height round the centre, so one hole (a cave, something dug) can't put
@@ -188,6 +192,51 @@ final class LuciferArena {
 		double x = pos.getX() + 0.5;
 		double z = pos.getZ() + 0.5;
 		return x * x + z * z <= PROTECTED_RADIUS * PROTECTED_RADIUS && pos.getY() <= PROTECTED_TOP;
+	}
+
+	/** Where pillar k stands (x, z). */
+	static int[] pillar(int k) {
+		double a = Math.PI / 6 + k * Math.PI * 2 / PILLARS;
+		return new int[]{(int) Math.round(Math.cos(a) * PILLAR_RING), (int) Math.round(Math.sin(a) * PILLAR_RING)};
+	}
+
+	/** Raises the ice pillars round the ring (3 by 3, blue ice inside packed ice). */
+	static void raisePillars(ServerLevel level, int floorY) {
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int k = 0; k < PILLARS; k++) {
+			int[] p = pillar(k);
+			int top = PILLAR_HEIGHT - (k % 2);
+			for (int dx = -1; dx <= 1; dx++) {
+				for (int dz = -1; dz <= 1; dz++) {
+					for (int y = floorY; y < floorY + top; y++) {
+						pos.set(p[0] + dx, y, p[1] + dz);
+						if (!level.getEntitiesOfClass(LivingEntity.class, new AABB(pos)).isEmpty()) {
+							continue;
+						}
+						level.setBlock(pos, dx == 0 && dz == 0 ? Blocks.BLUE_ICE.defaultBlockState() : Blocks.PACKED_ICE.defaultBlockState(), 3);
+					}
+				}
+			}
+		}
+	}
+
+	/** Takes the pillars away again (the fight is over). */
+	static void lowerPillars(ServerLevel level, int floorY) {
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int k = 0; k < PILLARS; k++) {
+			int[] p = pillar(k);
+			for (int dx = -1; dx <= 1; dx++) {
+				for (int dz = -1; dz <= 1; dz++) {
+					for (int y = floorY; y < floorY + PILLAR_HEIGHT; y++) {
+						pos.set(p[0] + dx, y, p[1] + dz);
+						BlockState state = level.getBlockState(pos);
+						if (state.is(Blocks.BLUE_ICE) || state.is(Blocks.PACKED_ICE)) {
+							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/** Remembers every solid block of the pit so that {@link #heal} can put back what the fight destroys. */

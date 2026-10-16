@@ -24,7 +24,8 @@ public abstract class BossEntity extends Monster {
 	private static final EntityDataAccessor<Byte> DATA_DANGER = SynchedEntityData.defineId(BossEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Float> DATA_TEMPO = SynchedEntityData.defineId(BossEntity.class, EntityDataSerializers.FLOAT);
 	/** The animations a boss's tempo leaves alone: its breathing, walk, flinch, entrance (filmed by its cutscene) and death. */
-	private static final Set<String> UNPACED = Set.of("IDLE", "WALK", "HURT", "INTRO", "DEATH", "CARRY", "LOWER", "LOW", "RAISE");
+	private static final Set<String> UNPACED = Set.of("IDLE", "WALK", "HURT", "INTRO", "DEATH", "CARRY", "LOWER", "LOW", "RAISE", "SNAP", "REVEAL",
+			"DORMANT");
 
 	/** What a boss is warning of (P6, the danger language). Red marks on the ground are drawn separately (Danger). */
 	public enum Warning {

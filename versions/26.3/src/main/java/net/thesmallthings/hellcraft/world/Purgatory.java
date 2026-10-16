@@ -282,24 +282,26 @@ public final class Purgatory {
 
 	// ---------------------------------------------------------------------------------- the burrow
 
-	/** Opens the natural burrow at the bottom of the pit, for five minutes. */
-	public static void openBurrow(ServerLevel level, int floorY) {
-		BlockPos at = new BlockPos(0, floorY, 0);
+	/** Opens the burrow in the pit's floor (at the Emperor's back: LuciferFight.burrowAt), for five minutes. */
+	public static void openBurrow(ServerLevel level, BlockPos at) {
 		level.setBlock(at, Blocks.END_GATEWAY.defaultBlockState(), 3);
 		burrow = at;
 		burrowUntil = level.getGameTime() + BURROW_TICKS;
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("A tunnel opened in the middle of Lucifer's pit. "
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal("A tunnel opened in the ice behind Lucifer's frozen body. "
 				+ "Step into it within 5 minutes to climb out to Purgatory.").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		HellcraftMod.LOGGER.info("The burrow opens at {}", at.toShortString());
 	}
 
 	/** A burrow left open by a restart closes (it only stays open for five minutes). */
 	private static void closeLeftoverBurrow(ServerLevel level) {
-		level.getChunk(0, 0);
-		for (int y = InfernoGeometry.PIT_FLOOR_Y - 8; y < InfernoGeometry.PIT_FLOOR_Y + 16; y++) {
-			BlockPos p = new BlockPos(0, y, 0);
-			if (level.getBlockState(p).is(Blocks.END_GATEWAY)) {
-				level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+		BlockPos column = net.thesmallthings.hellcraft.hazard.lucifer.LuciferFight.burrowAt(0);
+		for (int[] xz : new int[][]{{0, 0}, {column.getX(), column.getZ()}}) {
+			level.getChunk(xz[0] >> 4, xz[1] >> 4);
+			for (int y = InfernoGeometry.PIT_FLOOR_Y - 8; y < InfernoGeometry.PIT_FLOOR_Y + 16; y++) {
+				BlockPos p = new BlockPos(xz[0], y, xz[1]);
+				if (level.getBlockState(p).is(Blocks.END_GATEWAY)) {
+					level.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+				}
 			}
 		}
 	}
@@ -350,7 +352,8 @@ public final class Purgatory {
 		}
 	}
 
-	private static void arrive(ServerPlayer player) {
+	/** Sets a player down on Purgatory's shore, out of Hell (the burrow, or the climb out after Lucifer). */
+	public static void arrive(ServerPlayer player) {
 		teleport(player, shore());
 		Journey.award(player, "journey/purgatory");
 		player.resetFallDistance();

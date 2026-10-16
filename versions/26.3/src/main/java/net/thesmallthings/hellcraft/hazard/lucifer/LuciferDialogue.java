@@ -23,17 +23,21 @@ final class LuciferDialogue {
 	private LuciferDialogue() {
 	}
 
+	/** The Fallen Seraph comes down: beautiful, calm, and lying. */
 	static final String[] INTRO = {
-			"Another soul crawls to the bottom of the world.",
-			"Thou hast waded through fire, blood and ice... only to kneel before ME?",
-			"I was the brightest of them all. I will not be judged by dirt and borrowed blood.",
-			"Come then, heart-thief. Let the ice drink thy heart.",
+			"Peace. Lower thy blade, pilgrim.",
+			"I am not thy enemy. I was the brightest of them all, and I am still the most beautiful thing in this place.",
+			"Stay with me here, where it is quiet. There is nothing above but more judgement.",
 	};
+	/** The plain tip once he has landed (whatever he says, he's the boss). */
+	static final String DESCENT_TIP = "This is Lucifer as he was before the Fall, and the fight has begun. Block his blade when it flashes white. "
+			+ "Purple can't be blocked: jump it or step out. Red: get out of it.";
 
-	static final String[] SLASH = {"Behind thee.", "Too slow!", "Here."};
-	static final String[] FANGS = {"BE JUDGED!", "KNEEL!", "The ice remembers every traitor."};
-	static final String[] WINGS = {"FREEZE!", "Feel the wind of Cocytus!", "My wings froze this lake. Thou art nothing."};
-	static final String[] HELLFIRE = {"BURN!", "Rain, fire!", "Dance for me."};
+	// the Fallen Seraph's blows
+	static final String[] SLASH = {"Hold still.", "Gently now.", "Thou art tired. Rest."};
+	static final String[] SWEEP = {"Behold my wings.", "Six wings, and still the most beautiful.", "Bow."};
+	static final String[] STARS = {"Fall with me!", "I was the Morning Star. Watch the stars come down.", "Look up."};
+	static final String[] LUNGE = {"Here.", "Too slow.", "Behind thee? No. HERE."};
 
 	static final String[] ENRAGE = {
 			"ENOUGH!",
@@ -41,26 +45,24 @@ final class LuciferDialogue {
 			"Judas! Brutus! Cassius! RISE, AND FEED!",
 	};
 
+	/** The seraph's form breaks, and the pit's mountain opens six eyes. */
 	static final String[] TRUE_FORM = {
 			"...So be it.",
-			"Behold the face that God cast down!",
-			"Frozen here since the Fall... but my faces still bite.",
+			"Thou wouldst see me as I am? LOOK DOWN.",
+			"The mountain thou hast been walking toward... was ME.",
 	};
 
-	// the Emperor (true form): one set of lines per face, his wings and his mouths
-	static final String[] HATRED = {"HATE WITH ME!", "Burn in the fire I carry!", "Feel how I HATE Him!"};
-	static final String[] IMPOTENCE = {"Six eyes weep... and still I cannot rise.", "Drown in my tears.", "Weep with me, heart-thief."};
-	static final String[] IGNORANCE = {"See nothing. Know nothing. As I do.", "Into the dark with thee.", "Where is thy God now? I cannot see Him either."};
+	// the Emperor (true form): his hands, his three mouths, his wings and his tears
+	static final String[] SLAM = {"BE CRUSHED!", "Down, worm!", "I cannot rise. But I can REACH."};
+	static final String[] BITE = {"Judas has room for company!", "Into the mouth, TRAITOR!", "I shall chew thee for eternity."};
 	static final String[] WINGBEAT = {"The wind of my wings froze all of Cocytus!", "BE STILL!", "Six wings, and I cannot fly. FEEL THEM!"};
-	static final String[] MOUTHS = {"Judas has room for company!", "Into the mouth, TRAITOR!", "I shall chew thee for eternity."};
-	static final String[] SPIT = {"Bitter. Like all the rest.", "Thou tastest of stolen blood.", "Pah! Next!"};
-	static final String[] EMPEROR_CRACK = {"The ice... CRACKS!", "Thou bleedest the Emperor? Then BLEED WITH ME!"};
-	static final String[] EMPEROR_RAGE = {"JUDAS! BRUTUS! CASSIUS! Out of my mouths, and FIGHT FOR ME!", "All three faces see thee now."};
+	static final String[] WEEP = {"Six eyes weep... and still I cannot rise.", "Drown in my tears.", "Weep with me, heart-thief."};
+	static final String[] EMPEROR_HALF = {"Thou bleedest the Emperor? Then BLEED WITH ME!", "All three faces see thee now."};
 
 	static final String[] DEFEAT = {
 			"Impossible... bested by a thing of dirt...",
-			"Mark me, heart-thief. Hell is FULL, and every soul in it is MINE.",
-			"Go. Climb. I will be waiting at the bottom of the world.",
+			"The ice... takes me. It always takes me.",
+			"Go, then. Climb. Thou shalt see the stars again. I never shall.",
 	};
 
 	static final String FAIL = "Crawl back to thy circle, worm.";
@@ -72,6 +74,7 @@ final class LuciferDialogue {
 	};
 
 	static final String[] HURT = {"Hah! AGAIN!", "A scratch!", "Thou bleedest me? Good. GOOD!", "Insolent WORM!"};
+	static final String[] PARRIED = {"Thou... blocked ME?", "Impudence!", "A shield. How very mortal."};
 
 	/** Lucifer remembers everyone who has beaten him before. */
 	static String veteranLine(List<String> veterans) {

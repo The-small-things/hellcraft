@@ -29,7 +29,7 @@ public final class CutscenePlayer {
 	}
 
 	/** Where the camera is this frame, and which way it looks. */
-	public record Frame(Vec3 pos, float yaw, float pitch) {
+	public record Frame(Vec3 pos, float yaw, float pitch, float roll) {
 	}
 
 	private static final int BARS_IN = 10;
@@ -146,6 +146,7 @@ public final class CutscenePlayer {
 		Vec3 look = world(curve(u, p0.lookRight(), p1.lookRight(), p2.lookRight(), p3.lookRight()),
 				curve(u, p0.lookUp(), p1.lookUp(), p2.lookUp(), p3.lookUp()),
 				curve(u, p0.lookForward(), p1.lookForward(), p2.lookForward(), p3.lookForward()));
+		float roll = (float) (p1.roll() + (p2.roll() - p1.roll()) * (u * u * (3 - 2 * u)));
 		Vec3 dir = look.subtract(pos);
 		float yaw = (float) Math.toDegrees(Math.atan2(-dir.x, dir.z));
 		float pitch = (float) -Math.toDegrees(Math.atan2(dir.y, Math.sqrt(dir.x * dir.x + dir.z * dir.z)));
@@ -165,7 +166,7 @@ public final class CutscenePlayer {
 			yaw = yaw + Mth.wrapDegrees(eyeYaw - yaw) * e;
 			pitch = Mth.lerp(e, pitch, eyePitch);
 		}
-		return new Frame(pos, yaw, pitch);
+		return new Frame(pos, yaw, pitch, roll * (1 - back));
 	}
 
 	/** From the anchor's frame (right, up, forward) to the world. */
