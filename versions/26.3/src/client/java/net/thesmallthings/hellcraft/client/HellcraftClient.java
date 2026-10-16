@@ -263,7 +263,7 @@ public class HellcraftClient implements ClientModInitializer {
 				}
 			};
 			r.getModel().hideable("root", "upper", "neck", "head", "eyes");
-			return r.minLight(9);
+			return r.minLight(12);
 		});
 		EntityRendererRegistry.register(HellEntities.EMPEROR_WEAK_POINT, NoopRenderer::new);
 		// the Malebranche (special: the jeer) and their captain Malacoda (attack: pointing the way; special: his laugh)

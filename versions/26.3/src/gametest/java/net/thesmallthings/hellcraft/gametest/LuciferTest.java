@@ -119,6 +119,12 @@ public class LuciferTest implements FabricClientGameTest {
 
 	/** The Emperor's blows, seen from the pit's floor: a slam and the hand it leaves down, his wingbeat, his tears. */
 	private static void emperor(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		// from high up beside the pit, the whole of him
+		server.runCommand("execute as Player0 at @s run tp @s 34 ~30 -26 facing 0 ~18 0");
+		context.waitTicks(10);
+		context.takeScreenshot("lucifer_emperor_overview");
+		server.runCommand("execute as Player0 at @s run tp @s 30.5 ~-30 0.5 90 -28");
+		context.waitTicks(10);
 		// look up at him from the floor
 		server.runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 90 -28");
 		context.waitTicks(10);

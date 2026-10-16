@@ -53,7 +53,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   play the animations). `tools/gen_bosses.py` turns every .bbmodel into `client/render/gen/<Boss>Mesh` and
   `<Boss>Animations` (Minecraft keyframes), `entity/boss/gen/<Boss>Anim` (each animation's length and named events,
   which the server times blows by) and `textures/entity/<boss>.png` (+ `_glow`). Run both after any change; the
-  client test `BossTest` screenshots every animation (`minos_*`). Rotations in tools/art follow Blockbench: +X swings a hanging
+  client test `BossTest` screenshots every animation (`minos_*`). `LuciferTest` plays Lucifer's whole fight in an Inferno world (`lucifer_*`). Rotations in tools/art follow Blockbench: +X swings a hanging
   arm forward and tips a body or head back (the model faces -Z). `HELLCRAFT_POSE_AUDIT=1 bash tools/dev/clienttest.sh`
   (with only BossTest listed) films every model's key frames from its side, front on the right (`audit_*`): check
   that blows swing forward.
