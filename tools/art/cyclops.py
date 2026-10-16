@@ -73,7 +73,7 @@ def build():
             maul = forearm.bone("maul", (13.5, 16, 0))
             maul.cube("maul_haft", (12, -6, -1.5), (3, 26, 3), HAFT)
             maul.cube("maul_head", (8.5, -12, -5), (10, 7, 10), IRON)
-    # the boulder he throws, held over his head when he does (hidden in its socket otherwise: scaled to nothing)
+    # the boulder he throws, held over his head when he does (hidden otherwise: CyclopsEntity.partHidden)
     boulder = torso.bone("boulder", (0, 60, -2))
     boulder.cube("boulder", (-6, 55, -8), (12, 11, 12), STONE)
     animations(m)
@@ -89,7 +89,6 @@ def animations(m):
     idle = m.animation("idle", 3.0, loop=True)
     idle.pos("torso", [(0, ZERO), (1.5, (0, 0.6, 0)), (3.0, ZERO)])
     idle.rot("head", [(0, (0, -12, 0)), (1.5, (0, 12, 0)), (3.0, (0, -12, 0))])
-    idle.scale("boulder", [(0, HIDDEN), (3.0, HIDDEN)])
 
     walk = m.animation("walk", 1.3, loop=True)
     walk.rot("right_thigh", [(0, (-28, 0, 0)), (0.65, (28, 0, 0)), (1.3, (-28, 0, 0))])
@@ -98,14 +97,12 @@ def animations(m):
     walk.rot("left_shin", [(0, ZERO), (0.65, ZERO), (0.95, (-30, 0, 0)), (1.3, ZERO)])
     walk.rot("left_arm", [(0, (-20, 0, -6)), (0.65, (20, 0, -6)), (1.3, (-20, 0, -6))])
     walk.pos("hips", [(0, ZERO), (0.32, (0, -0.8, 0)), (0.65, ZERO), (0.97, (0, -0.8, 0)), (1.3, ZERO)])
-    walk.scale("boulder", [(0, HIDDEN), (1.3, HIDDEN)])
 
     # the Smash: the maul swung up over his head, a white flash, then down in front of him
     smash = m.animation("smash", 1.7)
     smash.rot("right_arm", [(0, ZERO), (0.65, (160, 0, 0)), (0.95, (165, 0, 0)), (1.1, (40, 0, 0)), (1.7, ZERO)])
     smash.rot("left_arm", [(0, ZERO), (0.65, (150, 0, 20)), (1.1, (40, 0, 10)), (1.7, ZERO)])
     smash.rot("torso", [(0, ZERO), (0.65, (12, 0, 0)), (1.1, (-25, 0, 0)), (1.7, ZERO)])
-    smash.scale("boulder", [(0, HIDDEN), (1.7, HIDDEN)])
     smash.event(0.55, "flash").event(1.1, "hit")
 
     # the Throw: he wrenches a boulder from the ground, lifts it over his head and hurls it
@@ -113,7 +110,8 @@ def animations(m):
     throw.rot("torso", [(0, ZERO), (0.5, (-35, 0, 0)), (1.0, (15, 0, 0)), (1.35, (-25, 0, 0)), (2.0, ZERO)])
     throw.rot("right_arm", [(0, ZERO), (0.5, (60, 0, 0)), (1.0, (170, 0, 10)), (1.35, (60, 0, 0)), (2.0, ZERO)])
     throw.rot("left_arm", [(0, ZERO), (0.5, (60, 0, 0)), (1.0, (170, 0, -10)), (1.35, (60, 0, 0)), (2.0, ZERO)])
-    throw.scale("boulder", [(0, HIDDEN), (0.5, HIDDEN), (0.55, SHOWN), (1.35, SHOWN), (1.4, HIDDEN), (2.0, HIDDEN)])
+    # (the boulder is hidden whenever he isn't throwing: CyclopsEntity.partHidden; here it drops out of sight once thrown)
+    throw.scale("boulder", [(0, SHOWN), (1.35, SHOWN), (1.4, HIDDEN), (2.0, HIDDEN)])
     throw.pos("boulder", [(0, (0, -40, -10)), (0.55, (0, -40, -10)), (1.0, ZERO), (1.35, ZERO)])
     throw.event(1.35, "throw")
 
@@ -123,7 +121,6 @@ def animations(m):
     quake.rot("right_shin", [(0, ZERO), (0.6, (60, 0, 0)), (1.05, ZERO)])
     quake.rot("torso", [(0, ZERO), (0.6, (10, 0, 0)), (1.05, (-15, 0, 0)), (1.6, ZERO)])
     quake.pos("hips", [(0, ZERO), (0.6, (0, 2, 0)), (1.05, (0, -3, 0)), (1.6, ZERO)])
-    quake.scale("boulder", [(0, HIDDEN), (1.6, HIDDEN)])
     quake.event(1.05, "stamp")
 
     # reels after a blocked blow
@@ -133,7 +130,6 @@ def animations(m):
     stagger.rot("right_shin", [(0, ZERO), (0.3, (-90, 0, 0)), (1.8, (-90, 0, 0)), (2.2, ZERO)])
     stagger.rot("torso", [(0, ZERO), (0.3, (-25, 0, 0)), (1.8, (-25, 0, 0)), (2.2, ZERO)])
     stagger.rot("head", [(0, ZERO), (0.6, (-10, -25, 0)), (0.9, (-10, 25, 0)), (1.2, (-10, -25, 0)), (2.2, ZERO)])
-    stagger.scale("boulder", [(0, HIDDEN), (2.2, HIDDEN)])
 
     # woken (and again at half health): he beats his chest and roars
     roar = m.animation("roar", 2.4)
@@ -142,12 +138,10 @@ def animations(m):
                            (2.4, ZERO)])
     roar.rot("left_arm", [(0, ZERO), (0.5, (100, 0, 40)), (0.7, (80, 0, 30)), (1.0, (20, 0, -60)), (1.8, (20, 0, -60)), (2.4, ZERO)])
     roar.rot("torso", [(0, ZERO), (0.8, (12, 0, 0)), (1.8, (12, 0, 0)), (2.4, ZERO)])
-    roar.scale("boulder", [(0, HIDDEN), (2.4, HIDDEN)])
     roar.event(1.0, "roar")
 
     hurt = m.animation("hurt", 0.4)
     hurt.rot("torso", [(0, ZERO), (0.12, (10, 0, 0)), (0.4, ZERO)])
-    hurt.scale("boulder", [(0, HIDDEN), (0.4, HIDDEN)])
 
     death = m.animation("death", 2.8)
     death.pos("hips", [(0, ZERO), (0.8, (0, -8, 0)), (1.6, (0, -14, -8)), (2.8, (0, -18, -14))])
@@ -156,7 +150,6 @@ def animations(m):
     death.rot("left_thigh", [(0, ZERO), (0.8, (75, 0, 0)), (2.8, (75, 0, 0))])
     death.rot("right_arm", [(0, ZERO), (1.6, (140, 0, 20)), (2.8, (160, 0, 20))])
     death.rot("left_arm", [(0, ZERO), (1.6, (140, 0, -20)), (2.8, (160, 0, -20))])
-    death.scale("boulder", [(0, HIDDEN), (2.8, HIDDEN)])
     death.event(1.6, "fall")
 
 

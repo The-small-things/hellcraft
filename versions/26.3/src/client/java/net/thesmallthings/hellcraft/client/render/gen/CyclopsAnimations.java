@@ -17,9 +17,6 @@ public final class CyclopsAnimations {
 	}
 
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(3F).looping()
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 12F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, -12F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -30,9 +27,6 @@ public final class CyclopsAnimations {
 					new Keyframe(3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1.3F).looping()
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.3F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.32F, KeyframeAnimations.posVec(0F, -0.8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -63,9 +57,6 @@ public final class CyclopsAnimations {
 					new Keyframe(1.3F, KeyframeAnimations.degreeVec(28F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition SMASH = AnimationDefinition.Builder.withLength(1.7F)
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.7F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.degreeVec(-150F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
@@ -90,9 +81,7 @@ public final class CyclopsAnimations {
 					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.35F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.5F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.55F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.35F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
@@ -116,9 +105,6 @@ public final class CyclopsAnimations {
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition QUAKE = AnimationDefinition.Builder.withLength(1.6F)
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -141,9 +127,6 @@ public final class CyclopsAnimations {
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition STAGGER = AnimationDefinition.Builder.withLength(2.2F)
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.2F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(10F, 25F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -172,9 +155,6 @@ public final class CyclopsAnimations {
 					new Keyframe(2.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition ROAR = AnimationDefinition.Builder.withLength(2.4F)
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.4F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -202,18 +182,12 @@ public final class CyclopsAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.4F)
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.4F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("torso", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.12F, KeyframeAnimations.degreeVec(-10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition DEATH = AnimationDefinition.Builder.withLength(2.8F)
-			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
-					new Keyframe(0F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.8F, KeyframeAnimations.scaleVec(0.01, 0.01, 0.01), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

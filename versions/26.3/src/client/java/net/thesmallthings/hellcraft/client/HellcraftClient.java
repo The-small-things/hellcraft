@@ -99,6 +99,7 @@ import net.thesmallthings.hellcraft.client.render.npc.ShadeModel;
 import net.thesmallthings.hellcraft.client.render.npc.ShadeRenderer;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
+import net.thesmallthings.hellcraft.entity.boss.CyclopsEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
@@ -241,8 +242,13 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.FARINATA, context -> new AnimatedBossRenderer<>(context, "farinata", FarinataAnimations.all(), -1,
 				1.8f, 1.0f, 0.6f, "body", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("cyclops"), CyclopsMesh::createLayer);
-		EntityRendererRegistry.register(HellEntities.CYCLOPS, context -> new AnimatedBossRenderer<>(context, "cyclops", CyclopsAnimations.all(),
-				CyclopsAnim.WALK.ordinal(), 1.3f, 1.6f, 0.5f, "hips", "torso", "head"));
+		EntityRendererRegistry.register(HellEntities.CYCLOPS, context -> {
+			AnimatedBossRenderer<CyclopsEntity> r = new AnimatedBossRenderer<>(context, "cyclops", CyclopsAnimations.all(), CyclopsAnim.WALK.ordinal(),
+					1.3f, 1.6f, 0.5f, "hips", "torso", "head");
+			// the boulder shows only while he throws it
+			r.getModel().hideable("hips", "torso", "boulder");
+			return r;
+		});
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("vulcan"), VulcanMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.VULCAN, context -> new AnimatedBossRenderer<>(context, "vulcan", VulcanAnimations.all(),
 				VulcanAnim.WALK.ordinal(), 1.6f, 2.2f, 0.5f, "hips", "torso", "head"));

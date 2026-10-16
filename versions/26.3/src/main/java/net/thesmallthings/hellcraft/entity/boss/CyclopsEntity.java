@@ -99,6 +99,12 @@ public class CyclopsEntity extends AnimatedBoss {
 		});
 	}
 
+	/** The boulder shows only while he throws it (AnimatedBossModel.hideable, set up in HellcraftClient). */
+	@Override
+	public boolean partHidden() {
+		return !states[CyclopsAnim.THROW.ordinal()].isStarted();
+	}
+
 	@Override
 	protected void registerGoals() {
 		// none: he fights on his own clock (customServerAiStep)
