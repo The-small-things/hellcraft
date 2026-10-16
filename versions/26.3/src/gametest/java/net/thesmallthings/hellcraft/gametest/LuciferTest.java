@@ -119,6 +119,9 @@ public class LuciferTest implements FabricClientGameTest {
 
 	/** The Emperor's blows, seen from the pit's floor: a slam and the hand it leaves down, his wingbeat, his tears. */
 	private static void emperor(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		// look up at him from the floor
+		server.runCommand("tp Player0 ~ ~ ~ 90 -28");
+		context.waitTicks(10);
 		context.takeScreenshot("lucifer_emperor");
 		use(server, "slam");
 		boolean opened = false;
@@ -129,8 +132,10 @@ public class LuciferTest implements FabricClientGameTest {
 		if (!opened) {
 			throw new AssertionError("the Emperor's slam left no hand down to hit");
 		}
+		server.runCommand("tp Player0 ~ ~ ~ facing entity @e[type=hellcraft:emperor_weak_point,limit=1] feet");
 		context.waitTicks(6);
 		context.takeScreenshot("lucifer_slam_hand");
+		server.runCommand("tp Player0 ~ ~ ~ 90 -28");
 		context.waitTicks(160);
 		use(server, "bite");
 		context.waitTicks((int) (EmperorAnim.BITE.at("flash") * SLOW) + 4);

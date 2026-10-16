@@ -351,7 +351,9 @@ public final class LuciferFight {
 		}
 		emptyTicks = 0;
 		if (in == near.size() && readyLeft > READY_ALL_IN) {
+			// everyone is in: no need for the point-of-no-return warning, the first notice said the pit seals
 			readyLeft = READY_ALL_IN;
+			warnedNoReturn = true;
 		}
 		readyLeft--;
 		if (readyLeft % 20 == 0) {

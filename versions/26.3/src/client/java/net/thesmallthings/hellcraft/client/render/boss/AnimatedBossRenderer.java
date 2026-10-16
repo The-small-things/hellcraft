@@ -103,7 +103,7 @@ public class AnimatedBossRenderer<T extends AnimatedBoss> extends MobRenderer<T,
 			return -1;
 		}
 		float t = 0.5f + 0.5f * Mth.sin(state.ageInTicks * 1.2f);
-		return ARGB.colorFromFloat(1, 0.75f + 0.15f * t, 0.35f + 0.2f * t, 1);
+		return ARGB.colorFromFloat(1, 0.55f + 0.15f * t, 0.25f + 0.15f * t, 1);
 	}
 
 	@Override
