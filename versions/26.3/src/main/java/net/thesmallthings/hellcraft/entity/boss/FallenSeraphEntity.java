@@ -31,6 +31,12 @@ public class FallenSeraphEntity extends AnimatedBoss {
 				.add(Attributes.FOLLOW_RANGE, 64.0);
 	}
 
+	/** He glides: gravity never takes him, however he was made (a summon's data would otherwise turn it back on). */
+	@Override
+	public boolean isNoGravity() {
+		return true;
+	}
+
 	@Override
 	protected void registerGoals() {
 		// none: the fight moves him

@@ -8,6 +8,7 @@ import net.thesmallthings.hellcraft.world.feature.AltarRuinFeature;
 import net.thesmallthings.hellcraft.world.feature.BloatedFungusFeature;
 import net.thesmallthings.hellcraft.world.feature.BoardwalkFeature;
 import net.thesmallthings.hellcraft.world.feature.BoulderFeature;
+import net.thesmallthings.hellcraft.world.feature.BrazierFeature;
 import net.thesmallthings.hellcraft.world.feature.BurningTombFeature;
 import net.thesmallthings.hellcraft.world.feature.ChainPillarFeature;
 import net.thesmallthings.hellcraft.world.feature.CoinHillFeature;
@@ -54,6 +55,7 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("vault"), VaultFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("giant_scales"), GiantScalesFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("watchtower"), WatchtowerFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("brazier"), BrazierFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("boardwalk"), BoardwalkFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("reed_bed"), ReedBedFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("phlegyas_landing"), PhlegyasLandingFeature.CODEC);

@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lust's rule (L-II): the wind is a road. The infernal hurricane blows in twelve streams that spiral in across the
- * Storm Canyons, each from a pad on the circle's outer side, up over the spires, and down onto a pad beside the next
- * way down. Step into one and it carries you (client/layer/LayerFx moves you; LayerRules keeps the server happy);
+ * Lust's rule (L-II): the wind is a road. The infernal hurricane blows in thirty-six streams (three between each pair
+ * of ways down) that spiral in across the Storm Canyons, each from a pad somewhere in the circle's outer half, up over
+ * the spires, and down onto a pad by the next way down. Step into one and it carries you (client/layer/LayerFx moves you; LayerRules keeps the server happy);
  * sneak to let go and you glide down. Both sides compute the same streams from the geometry, so nothing is sent.
  */
 public final class WindStreams {
@@ -25,7 +25,9 @@ public final class WindStreams {
 	private static final double RISE = 14.0;
 	private static final double FALL = 26.0;
 	private static final double STEP = 2.0;
-	public static final int COUNT = 12;
+	public static final int COUNT = 36;
+	/** Streams between each pair of ways down. */
+	private static final int PER_WAY = 3;
 	/** The ground around each pad is level (InfernoGeometry.roughness): a pad, then a fade. */
 	private static final double PAD = 7.0;
 	private static final double PAD_FADE = 12.0;
@@ -81,25 +83,31 @@ public final class WindStreams {
 		return streams;
 	}
 
+	/** The outermost a stream starts. */
 	private static double startRadius() {
 		return InfernoGeometry.outerRadius(Zone.LUST) - 20;
+	}
+
+	/** Where stream k starts: the first of each three at the circle's outer edge, the others further in. */
+	private static double startRadius(int k) {
+		return startRadius() - 55.0 * (k % PER_WAY);
 	}
 
 	private static double endRadius() {
 		return InfernoGeometry.outerRadius(Zone.GLUTTONY) + 25;
 	}
 
-	/** Stream k starts between ways down k and k + 1 and curls round to land by way down k + 1. */
+	/** The three streams after way down w start spread across the gap and curl round to land by way down w + 1. */
 	private static double startAngle(int k) {
-		return InfernoGeometry.wayDownAngle(k) + InfernoGeometry.WAY_DOWN_STEP * 0.75;
+		return InfernoGeometry.wayDownAngle(k / PER_WAY) + InfernoGeometry.WAY_DOWN_STEP * (0.3 + 0.2 * (k % PER_WAY));
 	}
 
 	private static double endAngle(int k) {
-		return startAngle(k) + InfernoGeometry.WAY_DOWN_STEP * 0.25;
+		return InfernoGeometry.wayDownAngle(k / PER_WAY) + InfernoGeometry.WAY_DOWN_STEP * (0.88 + 0.12 * (k % PER_WAY));
 	}
 
 	private static Stream build(int k) {
-		double r0 = startRadius();
+		double r0 = startRadius(k);
 		double r1 = endRadius();
 		double a0 = startAngle(k);
 		double a1 = endAngle(k);
@@ -178,7 +186,7 @@ public final class WindStreams {
 	public static double[][] pads() {
 		double[][] out = new double[COUNT * 2][];
 		for (int k = 0; k < COUNT; k++) {
-			out[2 * k] = new double[]{Math.cos(startAngle(k)) * startRadius(), Math.sin(startAngle(k)) * startRadius()};
+			out[2 * k] = new double[]{Math.cos(startAngle(k)) * startRadius(k), Math.sin(startAngle(k)) * startRadius(k)};
 			out[2 * k + 1] = new double[]{Math.cos(endAngle(k)) * endRadius(), Math.sin(endAngle(k)) * endRadius()};
 		}
 		return out;

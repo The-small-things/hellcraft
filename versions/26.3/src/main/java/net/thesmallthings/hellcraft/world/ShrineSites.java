@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Where the Virgil's Rests stand: beside each Pilgrim Road where it comes down into a new circle, on the
- * first dry ground past the river banks, {@link #ROAD_OFFSET} blocks to the road's side so they never block
- * it. Pure geometry (no world access), so the list is the same on every server and can be worked out offline.
+ * Where the Virgil's Rests stand: beside each Pilgrim Road, a third of the way into each circle (well inside it, so a
+ * Rest is plainly of its circle and not of the cliff above), on the first dry ground from there, {@link #ROAD_OFFSET}
+ * blocks to the road's side so they never block it; on alternate sides of the road from circle to circle. Pure geometry (no world access), so the list is the same on every server and can be worked out offline.
  */
 public final class ShrineSites {
 	private ShrineSites() {
@@ -58,16 +58,20 @@ public final class ShrineSites {
 
 	private static List<Site> compute() {
 		List<Site> out = new ArrayList<>();
-		for (Entry e : ENTRIES) {
+		for (int n = 0; n < ENTRIES.length; n++) {
+			Entry e = ENTRIES[n];
 			double outer = InfernoGeometry.outerRadius(e.into);
+			double inner = InfernoGeometry.bandFor(e.into).inner();
+			double from = outer - Math.max(10, (outer - inner) / 3);
+			// to the left of the road walking in, in every other circle to the right
+			double side = n % 2 == 0 ? ROAD_OFFSET : -ROAD_OFFSET;
 			for (int k = 0; k < InfernoGeometry.ROAD_ANGLES.length; k++) {
 				double a = InfernoGeometry.ROAD_ANGLES[k];
-				// to the left of the road, walking toward the centre
-				double sideX = Math.sin(a) * ROAD_OFFSET;
-				double sideZ = -Math.cos(a) * ROAD_OFFSET;
+				double sideX = Math.sin(a) * side;
+				double sideZ = -Math.cos(a) * side;
 				int[] spot = null;
-				// walk in from the foot of the ramp to the first dry ground inside the circle, clear of the lairs
-				for (double r = outer - 10; r > outer - 120; r -= 3) {
+				// walk in from a third of the way into the circle to the first dry ground, clear of the lairs
+				for (double r = from; r > inner + 12; r -= 3) {
 					double x = Math.cos(a) * r + sideX;
 					double z = Math.sin(a) * r + sideZ;
 					if (InfernoGeometry.zoneAt(x, z) == e.into && dry(x, z) && clearOfLairs(x, z)) {
@@ -77,7 +81,7 @@ public final class ShrineSites {
 				}
 				boolean dry = spot != null;
 				if (!dry) {
-					double r = outer - 20;
+					double r = from;
 					spot = new int[]{(int) Math.round(Math.cos(a) * r + sideX), (int) Math.round(Math.sin(a) * r + sideZ)};
 				}
 				String id = e.into.name().toLowerCase(Locale.ROOT) + "_" + ROADS[k];

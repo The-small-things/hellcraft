@@ -73,40 +73,40 @@ ZERO = (0, 0, 0)
 def animations(m):
     idle = m.animation("idle", 2.4, loop=True)
     idle.rot("tail", [(0, (20, 0, 0)), (1.2, (20, 25, 0)), (2.4, (20, 0, 0))])
-    idle.rot("left_arm", [(0, (-15, 0, 0)), (2.4, (-15, 0, 0))])
+    idle.rot("left_arm", [(0, (15, 0, 0)), (2.4, (15, 0, 0))])
     idle.rot("head", [(0, ZERO), (1.2, (0, 12, 4)), (2.4, ZERO)])
 
     walk = m.animation("walk", 1.0, loop=True)
     walk.rot("right_leg", [(0, (30, 0, 0)), (0.5, (-30, 0, 0)), (1.0, (30, 0, 0))])
     walk.rot("left_leg", [(0, (-30, 0, 0)), (0.5, (30, 0, 0)), (1.0, (-30, 0, 0))])
-    walk.rot("right_arm", [(0, (-20, 0, 0)), (0.5, (20, 0, 0)), (1.0, (-20, 0, 0))])
-    walk.rot("left_arm", [(0, (-15, 0, 0)), (1.0, (-15, 0, 0))])
+    walk.rot("right_arm", [(0, (20, 0, 0)), (0.5, (-20, 0, 0)), (1.0, (20, 0, 0))])
+    walk.rot("left_arm", [(0, (15, 0, 0)), (1.0, (15, 0, 0))])
     walk.rot("tail", [(0, (20, -15, 0)), (0.5, (20, 15, 0)), (1.0, (20, -15, 0))])
 
     # a courtly gesture: hand to the breast, a little bow
     talk = m.animation("talk", 2.0)
-    talk.rot("right_arm", [(0, ZERO), (0.4, (-70, 40, 0)), (1.4, (-70, 40, 0)), (2.0, ZERO)])
-    talk.rot("body", [(0, ZERO), (0.6, (15, 0, 0)), (1.2, (15, 0, 0)), (2.0, ZERO)])
-    talk.rot("head", [(0, ZERO), (0.6, (10, 0, 0)), (2.0, ZERO)])
+    talk.rot("right_arm", [(0, ZERO), (0.4, (70, 40, 0)), (1.4, (70, 40, 0)), (2.0, ZERO)])
+    talk.rot("body", [(0, ZERO), (0.6, (-15, 0, 0)), (1.2, (-15, 0, 0)), (2.0, ZERO)])
+    talk.rot("head", [(0, ZERO), (0.6, (-10, 0, 0)), (2.0, ZERO)])
 
     # "this way": a long arm pointing down the ridge
     point = m.animation("point", 1.6)
-    point.rot("right_arm", [(0, ZERO), (0.4, (-95, 0, 0)), (1.2, (-95, 0, 0)), (1.6, ZERO)])
+    point.rot("right_arm", [(0, ZERO), (0.4, (95, 0, 0)), (1.2, (95, 0, 0)), (1.6, ZERO)])
     point.rot("head", [(0, ZERO), (0.4, (0, -20, 0)), (1.2, (0, -20, 0)), (1.6, ZERO)])
 
     # the trap springs: he throws his head back and laughs, staff raised to signal his devils
     laugh = m.animation("laugh", 2.4)
-    laugh.rot("head", [(0, ZERO), (0.3, (-40, 0, 0)), (0.5, (-25, 0, 0)), (0.7, (-40, 0, 0)), (0.9, (-25, 0, 0)), (1.1, (-40, 0, 0)), (2.4, ZERO)])
-    laugh.rot("left_arm", [(0, (-15, 0, 0)), (0.6, (-170, 0, 0)), (1.8, (-170, 0, 0)), (2.4, (-15, 0, 0))])
+    laugh.rot("head", [(0, ZERO), (0.3, (40, 0, 0)), (0.5, (25, 0, 0)), (0.7, (40, 0, 0)), (0.9, (25, 0, 0)), (1.1, (40, 0, 0)), (2.4, ZERO)])
+    laugh.rot("left_arm", [(0, (15, 0, 0)), (0.6, (170, 0, 0)), (1.8, (170, 0, 0)), (2.4, (15, 0, 0))])
     laugh.rot("staff", [(0, ZERO), (0.6, (0, 0, 0)), (2.4, ZERO)])
-    laugh.rot("body", [(0, ZERO), (0.3, (-10, 0, 0)), (2.0, (-10, 0, 0)), (2.4, ZERO)])
+    laugh.rot("body", [(0, ZERO), (0.3, (10, 0, 0)), (2.0, (10, 0, 0)), (2.4, ZERO)])
     laugh.event(0.6, "signal")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("body", [(0, ZERO), (0.1, (-12, 0, 0)), (0.3, ZERO)])
+    hurt.rot("body", [(0, ZERO), (0.1, (12, 0, 0)), (0.3, ZERO)])
 
     death = m.animation("death", 1.4)
-    death.rot("body", [(0, ZERO), (0.6, (70, 0, 0)), (1.4, (85, 0, 0))])
+    death.rot("body", [(0, ZERO), (0.6, (-70, 0, 0)), (1.4, (-85, 0, 0))])
     death.pos("body", [(0, ZERO), (0.6, (0, -8, -2)), (1.4, (0, -13, -3))])
 
 

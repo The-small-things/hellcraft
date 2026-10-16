@@ -37,8 +37,27 @@ public final class InfernoGeometry {
 	public static final double WAY_DOWN_STEP = Math.PI / 6;
 	/** The four Pilgrim Roads: east (the spawn's gate), south, west and north. */
 	public static final double[] ROAD_ANGLES = {0, Math.PI / 2, Math.PI, -Math.PI / 2};
-	/** The guardians' lairs (x, z), beside the east road; Guardian and ShrineSites follow them (unit tests check). */
-	public static final int[][] LAIRS = {{2425, 40}, {2100, 40}, {1800, 40}, {1605, 40}, {1360, 40}, {1260, 40}, {1150, 40}, {830, 40}};
+	/**
+	 * Where the guardians wait, in Guardian's order: distance from the centre, the angle round Hell (degrees from east,
+	 * south = 90), and how far to the side of that line (for the two by a road: Phlegyas at the east watchtower's
+	 * landing, the Furies inside the south gate of Dis). They are spread round the funnel, each well inside its own
+	 * circle, between the ways down.
+	 */
+	private static final double[][] LAIR_PLACES = {
+			{2425, 45, 0}, {2100, 135, 0}, {1800, 225, 0}, {1605, 0, 40}, {1360, 90, 40}, {1260, 195, 0}, {970, 285, 0}, {870, 315, 0}};
+	/** The guardians' lairs (x, z); Guardian and ShrineSites follow them (unit tests check). */
+	public static final int[][] LAIRS = lairs();
+
+	private static int[][] lairs() {
+		int[][] out = new int[LAIR_PLACES.length][];
+		for (int i = 0; i < out.length; i++) {
+			double r = LAIR_PLACES[i][0];
+			double a = Math.toRadians(LAIR_PLACES[i][1]);
+			double side = LAIR_PLACES[i][2];
+			out[i] = new int[]{(int) Math.round(Math.cos(a) * r - Math.sin(a) * side), (int) Math.round(Math.sin(a) * r + Math.cos(a) * side)};
+		}
+		return out;
+	}
 	/** A lair's floor is level out to this radius (a fight's arena is 24 across), fading back into the land. */
 	private static final double ARENA_FLAT = 22.0;
 	private static final double ARENA_FADE = 12.0;

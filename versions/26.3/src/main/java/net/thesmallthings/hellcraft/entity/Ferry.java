@@ -23,12 +23,17 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Phlegyas's ferry (tools/art/ferry.py): it glides in to a dock, waits for pilgrims, and carries whoever boards it
- * (right-click) across the Fen of Styx to a gate of Dis, where it sets them down on the road and goes back into the fog
- * (world/Ferries says where and when). It can't be hurt, and doesn't outlast a server restart.
+ * (right-click) across the Fen of Styx and through a gate of Dis, where it sets them down on the road inside the walls and
+ * goes back into the fog (world/Ferries says where and when). It skims over whatever stands in the water (reeds,
+ * boardwalks, the banks) instead of ploughing through it, and nobody aboard can be hurt (Carrier): not the sullen, not
+ * the rock. It can't be hurt either, and doesn't outlast a server restart.
  */
-public class Ferry extends Entity {
+public class Ferry extends Entity implements Carrier {
 	/** Blocks a tick, crossing. */
-	private static final double SPEED = 0.4;
+	private static final double SPEED = 0.8;
+	/** How fast it rises over something in the water, and settles back (blocks a tick). */
+	private static final double RISE = 0.35;
+	private static final double SETTLE = 0.12;
 	private static final int MAX_PASSENGERS = 8;
 	/** Ticks it waits after the first pilgrim boards, for the others. */
 	private static final int BOARDING = 60;
@@ -130,7 +135,8 @@ public class Ferry extends Entity {
 					phase = Phase.SAILING;
 					for (Entity e : getPassengers()) {
 						if (e instanceof ServerPlayer p) {
-							p.sendOverlayMessage(Component.literal("The ferry carries you across the Styx to the gates of Dis.").withStyle(ChatFormatting.DARK_AQUA));
+							p.sendOverlayMessage(Component.literal("The ferry carries you across the Styx and through the gate of Dis. Nothing can hurt you aboard.")
+									.withStyle(ChatFormatting.DARK_AQUA));
 						}
 					}
 				}
@@ -155,20 +161,44 @@ public class Ferry extends Entity {
 		}
 	}
 
-	/** One step toward a point on the water; true once there. */
+	/** One step toward a point on the water (lifted over anything in the way); true once there. */
 	private boolean glide(Vec3 to) {
 		Vec3 d = to.subtract(position());
 		double flat = Math.sqrt(d.x * d.x + d.z * d.z);
 		if (flat <= SPEED) {
-			setPos(to.x, to.y, to.z);
+			setPos(to.x, Math.max(to.y, clearance(to.x, to.z, 0, 0)), to.z);
 			return true;
 		}
+		double dx = d.x / flat;
+		double dz = d.z / flat;
+		double x = getX() + dx * SPEED;
+		double z = getZ() + dz * SPEED;
+		// what it must clear: under its hull, and a few blocks ahead so it lifts before it gets there
+		double want = Math.max(to.y, clearance(x, z, dx, dz));
+		double y = want > getY() ? Math.min(want, getY() + RISE) : Math.max(want, getY() - SETTLE);
 		setYRot(yawToward(position(), to));
-		setPos(getX() + d.x / flat * SPEED, to.y, getZ() + d.z / flat * SPEED);
+		setPos(x, y, z);
 		return false;
 	}
 
-	/** Sets its passengers down on the road by the gate. */
+	/** The height its hull must float at to pass over everything round (x, z) and just ahead of it. */
+	private double clearance(double x, double z, double dx, double dz) {
+		double top = Double.NEGATIVE_INFINITY;
+		for (double ahead = 0; ahead <= 4; ahead += 2) {
+			for (int ox = -2; ox <= 2; ox += 2) {
+				for (int oz = -2; oz <= 2; oz += 2) {
+					int bx = (int) Math.floor(x + dx * ahead + ox);
+					int bz = (int) Math.floor(z + dz * ahead + oz);
+					// the first free block above the ground or the water there
+					top = Math.max(top, level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, bx, bz));
+				}
+			}
+		}
+		// the water itself is "ground" one block up: the hull rides 0.6 below its surface, as on open water
+		return top - 0.6;
+	}
+
+	/** Sets its passengers down on the road inside the gate. */
 	private void setDown() {
 		for (Entity e : getPassengers()) {
 			e.stopRiding();
@@ -176,7 +206,7 @@ public class Ferry extends Entity {
 			e.teleportTo(land.x, y, land.z);
 			e.resetFallDistance();
 			if (e instanceof ServerPlayer p) {
-				p.sendOverlayMessage(Component.literal("The Walls of Dis. Go through the gate.").withStyle(ChatFormatting.RED));
+				p.sendOverlayMessage(Component.literal("Inside the Walls of Dis: Heresy lies ahead.").withStyle(ChatFormatting.RED));
 			}
 		}
 		level().playSound(null, blockPosition(), SoundEvents.WOOD_PLACE, SoundSource.NEUTRAL, 1.5f, 0.5f);

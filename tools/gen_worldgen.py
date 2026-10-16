@@ -72,7 +72,7 @@ CANON = {
         "minecraft:brown_mushroom_swamp", "minecraft:red_mushroom_swamp", "minecraft:patch_berry_common",
         "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river", "hellcraft:sugar_cane",
     ],
-    TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "hellcraft:noble_castle", "hellcraft:boardwalk", "hellcraft:watchtower",
+    TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "hellcraft:brazier", "hellcraft:noble_castle", "hellcraft:boardwalk", "hellcraft:watchtower",
           "hellcraft:phlegyas_landing", "minecraft:freeze_top_layer"],
 }
 CANON[VEG].remove("minecraft:crimson_fungi_surface_placeholder")
@@ -401,7 +401,7 @@ BIOMES = {
         temp=-0.8, rain=True, downfall=0.5,
         colors=dict(fog_color=0x9AB8D0, sky_color=0x5A7A9A, water_color=0x3A5A8A, water_fog_color=0x0A1A2A),
         particle=("minecraft:snowflake", 0.05), sound=CAVE_MOOD, music="music.overworld.frozen_peaks",
-        features=["minecraft:ice_spike", "hellcraft:boulder_packed_ice"],
+        features=["minecraft:ice_spike", "hellcraft:boulder_packed_ice", "hellcraft:brazier"],
         monster=[spawn("stray", 120, 2, 4), spawn("skeleton", 40), spawn("zombie", 40)],
         creature=[spawn("polar_bear", 2, 1, 2)],
     ),
@@ -409,7 +409,7 @@ BIOMES = {
         temp=-1.0, rain=True, downfall=0.5,
         colors=dict(fog_color=0x7A9AC8, sky_color=0x3A5A8A, water_color=0x3A5A8A, water_fog_color=0x0A1A2A),
         particle=("minecraft:snowflake", 0.1), sound=CAVE_MOOD, music="music.overworld.frozen_peaks",
-        features=["hellcraft:boulder_packed_ice"],
+        features=["hellcraft:boulder_packed_ice", "hellcraft:brazier"],
         monster=[spawn("stray", 120, 2, 4), spawn("wither_skeleton", 40, 1, 2), spawn("evoker", 3, 1, 1)],
     ),
 }
@@ -503,6 +503,7 @@ CONFIGURED = {
     "vault": {"type": "hellcraft:vault", "config": {}},
     "giant_scales": {"type": "hellcraft:giant_scales", "config": {}},
     "watchtower": {"type": "hellcraft:watchtower", "config": {}},
+    "brazier": {"type": "hellcraft:brazier", "config": {}},
     "boardwalk": {"type": "hellcraft:boardwalk", "config": {}},
     "reed_bed": {"type": "hellcraft:reed_bed", "config": {}},
     "phlegyas_landing": {"type": "hellcraft:phlegyas_landing", "config": {}},
@@ -555,6 +556,7 @@ PLACED = {
     "vault": placed("hellcraft:vault", rarity(14), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
     "giant_scales": placed("hellcraft:giant_scales", rarity(24), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
     "watchtower": placed("hellcraft:watchtower"),
+    "brazier": placed("hellcraft:brazier"),
     "boardwalk": placed("hellcraft:boardwalk"),
     "reed_bed": placed("hellcraft:reed_bed", count(2), IN_SQUARE, heightmap(), BIOME),
     "phlegyas_landing": placed("hellcraft:phlegyas_landing"),

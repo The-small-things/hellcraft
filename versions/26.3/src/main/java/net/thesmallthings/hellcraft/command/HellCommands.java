@@ -235,6 +235,9 @@ public final class HellCommands {
 										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"slash", "fangs", "wings", "hellfire",
 												"hatred", "impotence", "ignorance", "wingbeat", "mouths"}, builder))
 										.executes(ctx -> reply(ctx.getSource(), LuciferManager.attack(StringArgumentType.getString(ctx, "attack")))))))
+				.then(Commands.literal("brazier").then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
+						net.thesmallthings.hellcraft.world.feature.BrazierFeature.selfTest(ctx.getSource().getServer().overworld())))))
+				.then(Commands.literal("wingbeat").executes(ctx -> reply(ctx.getSource(), net.thesmallthings.hellcraft.hazard.Wingbeat.now(ctx.getSource().getServer()))))
 				.then(Commands.literal("gate").executes(ctx -> teleportToSurface(ctx.getSource(), InfernoGeometry.gateX() + 24, 0)))
 				.then(Commands.literal("shrine")
 						.then(Commands.literal("list").executes(ctx -> {

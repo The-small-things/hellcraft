@@ -179,7 +179,7 @@ public final class LayerFx {
 		buffer.addVertex(pose, cx - sx, lo, cz - sz).setColor(r, g, b, alpha);
 	}
 
-	private static final double RIBBON_SHOW = 96.0;
+	private static final double RIBBON_SHOW = 160.0;
 	private static final double STRAND_RADIUS = 0.9;
 	private static final double STRAND_WIDTH = 0.16;
 

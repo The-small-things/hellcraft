@@ -8,7 +8,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -17,7 +16,8 @@ import net.thesmallthings.hellcraft.world.Zone;
 
 /**
  * The four Pilgrim Roads (see {@link InfernoGeometry#ROAD_ANGLES}): paving in each circle's own stone over the
- * levelled ground, stairs where the ground steps up, plants and trees cleared off, and a lantern post every
+ * levelled ground, worn like a ruin: a half step (a slab) where the ground steps up, so it is walked without jumping,
+ * and here and there a stone sunk to a slab. Plants and trees are cleared off, and a lantern post stands every
  * {@link #LAMP_EVERY} blocks on alternating sides. Runs late, after trees and the walls.
  */
 public record PilgrimRoadFeature() implements Feature {
@@ -29,26 +29,26 @@ public record PilgrimRoadFeature() implements Feature {
 	private static final int LAMP_SIDE = 4;
 
 	/** What a stretch of road is made of. */
-	private record Look(Block paving, Block stairs, Block post, Block lamp) {
+	private record Look(Block paving, Block slab, Block post, Block lamp) {
 	}
 
 	private static Look look(Zone zone) {
 		return switch (zone) {
-			case DARK_WOOD -> new Look(Blocks.MOSSY_COBBLESTONE, Blocks.MOSSY_COBBLESTONE_STAIRS, Blocks.OAK_FENCE, Blocks.LANTERN);
-			case VESTIBULE -> new Look(Blocks.COBBLESTONE, Blocks.COBBLESTONE_STAIRS, Blocks.SPRUCE_FENCE, Blocks.LANTERN);
-			case ACHERON, LIMBO -> new Look(Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.BIRCH_FENCE, Blocks.LANTERN);
-			case LUST -> new Look(Blocks.TUFF_BRICKS, Blocks.TUFF_BRICK_STAIRS, Blocks.TUFF_BRICK_WALL, Blocks.LANTERN);
-			case GLUTTONY -> new Look(Blocks.MUD_BRICKS, Blocks.MUD_BRICK_STAIRS, Blocks.MANGROVE_FENCE, Blocks.LANTERN);
-			case GREED -> new Look(Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS, Blocks.POLISHED_BLACKSTONE_WALL,
+			case DARK_WOOD -> new Look(Blocks.MOSSY_COBBLESTONE, Blocks.MOSSY_COBBLESTONE_SLAB, Blocks.OAK_FENCE, Blocks.LANTERN);
+			case VESTIBULE -> new Look(Blocks.COBBLESTONE, Blocks.COBBLESTONE_SLAB, Blocks.SPRUCE_FENCE, Blocks.LANTERN);
+			case ACHERON, LIMBO -> new Look(Blocks.STONE_BRICKS, Blocks.STONE_BRICK_SLAB, Blocks.BIRCH_FENCE, Blocks.LANTERN);
+			case LUST -> new Look(Blocks.TUFF_BRICKS, Blocks.TUFF_BRICK_SLAB, Blocks.TUFF_BRICK_WALL, Blocks.LANTERN);
+			case GLUTTONY -> new Look(Blocks.MUD_BRICKS, Blocks.MUD_BRICK_SLAB, Blocks.MANGROVE_FENCE, Blocks.LANTERN);
+			case GREED -> new Look(Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICK_SLAB, Blocks.POLISHED_BLACKSTONE_WALL,
 					Blocks.LANTERN);
-			case STYX -> new Look(Blocks.DARK_OAK_PLANKS, Blocks.DARK_OAK_STAIRS, Blocks.DARK_OAK_FENCE, Blocks.LANTERN);
-			case WALLS_OF_DIS -> new Look(Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS, Blocks.BLACKSTONE_WALL,
+			case STYX -> new Look(Blocks.DARK_OAK_PLANKS, Blocks.DARK_OAK_SLAB, Blocks.DARK_OAK_FENCE, Blocks.LANTERN);
+			case WALLS_OF_DIS -> new Look(Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICK_SLAB, Blocks.BLACKSTONE_WALL,
 					Blocks.SOUL_LANTERN);
-			case HERESY -> new Look(Blocks.DEEPSLATE_TILES, Blocks.DEEPSLATE_TILE_STAIRS, Blocks.BLACKSTONE_WALL, Blocks.SOUL_LANTERN);
-			case PHLEGETHON -> new Look(Blocks.NETHER_BRICKS, Blocks.NETHER_BRICK_STAIRS, Blocks.NETHER_BRICK_FENCE, Blocks.LANTERN);
-			case WOOD_OF_SUICIDES -> new Look(Blocks.BLACKSTONE, Blocks.BLACKSTONE_STAIRS, Blocks.DARK_OAK_FENCE, Blocks.SOUL_LANTERN);
-			case BURNING_SANDS -> new Look(Blocks.SMOOTH_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE_STAIRS, Blocks.RED_SANDSTONE_WALL, Blocks.LANTERN);
-			default -> new Look(Blocks.DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICK_STAIRS, Blocks.DEEPSLATE_BRICK_WALL, Blocks.SOUL_LANTERN);
+			case HERESY -> new Look(Blocks.DEEPSLATE_TILES, Blocks.DEEPSLATE_TILE_SLAB, Blocks.BLACKSTONE_WALL, Blocks.SOUL_LANTERN);
+			case PHLEGETHON -> new Look(Blocks.NETHER_BRICKS, Blocks.NETHER_BRICK_SLAB, Blocks.NETHER_BRICK_FENCE, Blocks.LANTERN);
+			case WOOD_OF_SUICIDES -> new Look(Blocks.BLACKSTONE, Blocks.BLACKSTONE_SLAB, Blocks.DARK_OAK_FENCE, Blocks.SOUL_LANTERN);
+			case BURNING_SANDS -> new Look(Blocks.SMOOTH_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE_SLAB, Blocks.RED_SANDSTONE_WALL, Blocks.LANTERN);
+			default -> new Look(Blocks.DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICK_SLAB, Blocks.DEEPSLATE_BRICK_WALL, Blocks.SOUL_LANTERN);
 		};
 	}
 
@@ -88,23 +88,33 @@ public record PilgrimRoadFeature() implements Feature {
 		}
 		Look look = look(InfernoGeometry.zoneAt(x, z));
 		Direction out = outward(x, z);
-		BlockState paving = look.paving.defaultBlockState();
-		// a stair where the road climbs a block, so it can be walked without jumping
+		BlockState slab = look.slab.defaultBlockState();
+		// where the road climbs a block, a half step on top of the lower stone, so it can be walked without jumping
 		int higherOut = ground(level, pos, x + out.getStepX(), z + out.getStepZ());
 		int higherIn = ground(level, pos, x - out.getStepX(), z - out.getStepZ());
-		if (higherOut == y + 1) {
-			paving = look.stairs.defaultBlockState().setValue(StairBlock.FACING, out);
-		} else if (higherIn == y + 1) {
-			paving = look.stairs.defaultBlockState().setValue(StairBlock.FACING, out.getOpposite());
-		}
-		level.setBlock(pos.set(x, y, z), paving, 2);
+		boolean step = higherOut == y + 1 || higherIn == y + 1;
+		// and, worn like a ruin, a stone here and there sunk to half its height
+		boolean sunk = !step && worn(x, z) && InfernoGeometry.fluidAt(x, z) == InfernoGeometry.Fluid.NONE;
+		level.setBlock(pos.set(x, y, z), sunk ? slab : look.paving.defaultBlockState(), 2);
 		for (int up = 1; up <= 4; up++) {
 			pos.set(x, y + up, z);
 			if (clearable(level.getBlockState(pos))) {
 				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 			}
 		}
+		if (step) {
+			level.setBlock(pos.set(x, y + 1, z), slab, 2);
+		}
 		return true;
+	}
+
+	/** One stone in about fourteen is sunk (the same ones on every server). */
+	private static boolean worn(int x, int z) {
+		long h = x * 0x9E3779B97F4A7C15L ^ z * 0xC2B2AE3D27D4EB4FL;
+		h ^= h >>> 31;
+		h *= 0xBF58476D1CE4E5B9L;
+		h ^= h >>> 29;
+		return Math.floorMod(h, 14) == 0;
 	}
 
 	private static boolean lampHere(int x, int z) {

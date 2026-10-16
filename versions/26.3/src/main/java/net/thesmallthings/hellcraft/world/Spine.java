@@ -173,6 +173,18 @@ public final class Spine {
 		return false;
 	}
 
+	/** True within halfWidth blocks (sideways) of a spine's middle, anywhere along it. */
+	public static boolean onSpine(double x, double z, double halfWidth) {
+		for (Way way : Way.values()) {
+			double u = way.u(x, z);
+			int ui = (int) Math.floor(u);
+			if (ui >= END - 2 && ui <= START + 6 && Math.abs(way.v(x, z) - bend(way, ui)) <= halfWidth) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/** The spine a player is walking right now, if any (the circle's freezing torment spares them). */
 	@Nullable
 	public static Way walking(ServerPlayer player) {

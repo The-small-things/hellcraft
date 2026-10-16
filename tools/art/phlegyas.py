@@ -157,10 +157,10 @@ def animations(m):
     oar = m.animation("oar", 1.8)
     oar.rot("right_arm", [(0, ZERO), (0.7, (175, 0, -10)), (1.05, (70, 0, 0)), (1.3, (65, 0, 0)), (1.8, ZERO)])
     oar.rot("left_arm", [(0, ZERO), (0.7, (165, 0, 20)), (1.05, (60, 0, 10)), (1.8, ZERO)])
-    oar.rot("torso", [(0, ZERO), (0.7, (-14, 0, 0)), (1.05, (22, 0, 0)), (1.3, (20, 0, 0)), (1.8, ZERO)])
-    oar.rot("head", [(0, ZERO), (0.7, (-12, 0, 0)), (1.05, (15, 0, 0)), (1.8, ZERO)])
+    oar.rot("torso", [(0, ZERO), (0.7, (14, 0, 0)), (1.05, (-22, 0, 0)), (1.3, (-20, 0, 0)), (1.8, ZERO)])
+    oar.rot("head", [(0, ZERO), (0.7, (12, 0, 0)), (1.05, (-15, 0, 0)), (1.8, ZERO)])
     oar.rot("jaw", [(0, ZERO), (0.9, (30, 0, 0)), (1.3, ZERO)])
-    oar.rot("oar", [(0, (10, 0, 0)), (0.7, (-20, 0, 0)), (1.05, (80, 0, 0)), (1.3, (85, 0, 0)), (1.8, (10, 0, 0))])
+    oar.rot("oar", [(0, (10, 0, 0)), (0.7, (30, 0, 0)), (1.05, (-10, 0, 0)), (1.3, (-5, 0, 0)), (1.8, (10, 0, 0))])
     oar.event(0.55, "flash").event(1.05, "hit")
 
     # the oar swept round over the water in a full circle (purple: it can't be blocked, jump it)
@@ -175,7 +175,7 @@ def animations(m):
     for side, s in (("right", 1), ("left", -1)):
         keys = [(0, ZERO), (0.6, (170, 0, 25)), (1.0, (40, 0, 5)), (1.4, (40, 0, 5)), (2.0, ZERO)]
         wave.rot(f"{side}_arm", keys if s == 1 else [(t, mirror(v)) for t, v in keys])
-    wave.rot("torso", [(0, ZERO), (0.6, (-12, 0, 0)), (1.0, (30, 0, 0)), (1.4, (28, 0, 0)), (2.0, ZERO)])
+    wave.rot("torso", [(0, ZERO), (0.6, (12, 0, 0)), (1.0, (-30, 0, 0)), (1.4, (-28, 0, 0)), (2.0, ZERO)])
     wave.rot("jaw", [(0, ZERO), (0.8, (35, 0, 0)), (1.4, ZERO)])
     wave.rot("oar", [(0, (10, 0, 0)), (0.6, (-30, 0, 0)), (2.0, (10, 0, 0))])
     wave.event(1.0, "slam")
@@ -197,7 +197,7 @@ def animations(m):
 
     # at half his health: he roars up at the burning city and beats the water with his oar
     phase = m.animation("phase", 3.0)
-    phase.rot("torso", [(0, ZERO), (0.8, (-25, 0, 0)), (2.0, (-25, 0, 0)), (2.4, (15, 0, 0)), (3.0, ZERO)])
+    phase.rot("torso", [(0, ZERO), (0.8, (25, 0, 0)), (2.0, (25, 0, 0)), (2.4, (-15, 0, 0)), (3.0, ZERO)])
     phase.rot("head", [(0, ZERO), (0.8, (-30, 0, 0)), (2.0, (-30, 0, 0)), (3.0, ZERO)])
     phase.rot("jaw", [(0, ZERO), (0.8, (55, 0, 0)), (2.0, (55, 0, 0)), (2.4, ZERO)])
     phase.rot("right_arm", [(0, ZERO), (0.8, (170, 0, -20)), (2.0, (170, 0, -20)), (2.4, (60, 0, 0)), (3.0, ZERO)])
@@ -214,7 +214,7 @@ def animations(m):
     intro.event(0.8, "rise").event(4.3, "roar")
 
     hurt = m.animation("hurt", 0.35)
-    hurt.rot("torso", [(0, ZERO), (0.1, (-6, 0, 0)), (0.35, ZERO)])
+    hurt.rot("torso", [(0, ZERO), (0.1, (6, 0, 0)), (0.35, ZERO)])
     hurt.rot("head", [(0, ZERO), (0.1, (-8, 0, 0)), (0.35, ZERO)])
 
     # he sinks back into the Styx, his oar left floating

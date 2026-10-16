@@ -84,6 +84,9 @@ public class MapTest implements FabricClientGameTest {
 				// the east Spine over Cocytus, sagging and broken (Spine.bend)
 				new Shot("map_spine", 345, 10, 32, 110, 28),
 				new Shot("map_spine_above", 330, 70, 0, 90, 62),
+				// the Emperor asleep in the pit: far off from the Well of Giants (a dark shape in the fog), then near
+				new Shot("cocytus_windmill", 470, -4, 30, 95, -4),
+				new Shot("cocytus_colossus", 95, -28, 20, 100, -12),
 		};
 		// the test world is made on the client first, so the world type is chosen there, not in server.properties
 		try (TestDedicatedServerContext server = context.worldBuilder().adjustSettings(MapTest::inferno).createServer(properties);
@@ -107,6 +110,7 @@ public class MapTest implements FabricClientGameTest {
 					client.gui.hud.toggle();
 				}
 			});
+			wingbeat(context, server, connection);
 			findingTheWay(context, server, connection);
 			dialogueBox(context, server);
 			nobleCastle(context, server, connection);
@@ -118,6 +122,17 @@ public class MapTest implements FabricClientGameTest {
 			plutusFight(context, server, connection);
 			phlegyasFight(context, server, connection);
 		}
+	}
+
+	/** Lucifer's wingbeat felt on the ice of Cocytus (screenshot cocytus_wingbeat): the frost at the screen's edges. */
+	private static void wingbeat(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("tp Player0 200 -36 14 90 0");
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		server.runCommand("hellcraft wingbeat");
+		context.waitTicks(14);
+		context.takeScreenshot("cocytus_wingbeat");
+		context.waitTicks(80);
 	}
 
 	/**
@@ -172,7 +187,7 @@ public class MapTest implements FabricClientGameTest {
 	 * Phlegyas's fight on his landing in the Fen (screenshots phlegyas_fight_*): his rise from the pool, the oar (a
 	 * white line), the sweep (a purple ring), the wave (a red ring) and the grab (a red circle), his fury and the
 	 * sullen's hands. Beaten, he leaves his ferry at the landing: ride it to the Walls of Dis (ferry_*), which must set
-	 * the player down on the east road by the gate.
+	 * the player down on the east road inside the gate.
 	 */
 	private static void phlegyasFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		guardianFight(context, server, connection, Guardian.PHLEGYAS, "phlegyas_fight_", PhlegyasAnim.INTRO.at("roar"), PhlegyasAnim.INTRO.ticks,
@@ -205,8 +220,9 @@ public class MapTest implements FabricClientGameTest {
 		context.waitTicks(200);
 		connection.waitForChunksRender();
 		context.takeScreenshot("ferry_ride");
-		double wall = InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS);
-		context.waitFor(client -> !client.player.isPassenger() && Math.hypot(client.player.getX() - (wall + 6), client.player.getZ()) < 6, 900);
+		// set down on the road inside the gate of Dis
+		double inside = InfernoGeometry.DIS_WALL_RADIUS - InfernoGeometry.DIS_WALL_HALF_THICKNESS - 10;
+		context.waitFor(client -> !client.player.isPassenger() && Math.hypot(client.player.getX() - inside, client.player.getZ()) < 6, 900);
 		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
 		server.runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 90 5");
 		context.waitTicks(10);

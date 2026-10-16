@@ -1,23 +1,31 @@
 package net.thesmallthings.hellcraft.hazard;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -41,8 +49,35 @@ public final class CircleHazards {
 	private static final Map<UUID, Circle> LAST_CIRCLE = new HashMap<>();
 	private static final Map<UUID, String> LAST_REGION = new HashMap<>();
 	private static int ticks;
+	/** Hint bit: the first unlit brazier someone tries. */
+	private static final int HINT_BRAZIER = 40;
 
 	public static void register() {
+		// Cocytus's braziers (and any campfire on the ice) light with a torch as well as flint and steel, and stay lit
+		UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+			if (!(level instanceof ServerLevel serverLevel) || !(player instanceof ServerPlayer sp) || !HellWorldgen.isInferno(serverLevel)) {
+				return InteractionResult.PASS;
+			}
+			BlockPos pos = hit.getBlockPos();
+			BlockState state = level.getBlockState(pos);
+			if (!state.is(BlockTags.CAMPFIRES) || state.getValue(CampfireBlock.LIT) || state.getValue(CampfireBlock.WATERLOGGED)
+					|| InfernoGeometry.zoneAt(pos.getX(), pos.getZ()).circle() != Circle.TREACHERY) {
+				return InteractionResult.PASS;
+			}
+			ItemStack held = sp.getItemInHand(hand);
+			boolean torch = held.is(Items.TORCH) || held.is(Items.SOUL_TORCH);
+			if (!torch && !held.is(Items.FLINT_AND_STEEL) && !held.is(Items.FIRE_CHARGE)) {
+				hintOnce(sp, HINT_BRAZIER, "This brazier is out. Light it with a torch or flint and steel, and it stays lit for everyone.");
+				return InteractionResult.PASS;
+			}
+			if (torch) {
+				level.setBlock(pos, state.setValue(CampfireBlock.LIT, true), 11);
+				level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0f, 1.2f);
+			}
+			Dialogue.notice(sp, Component.literal("The brazier burns, and will burn for everyone who crosses the ice after you. Stand by it to warm up.")
+					.withStyle(ChatFormatting.GOLD));
+			return torch ? InteractionResult.SUCCESS_SERVER : InteractionResult.PASS;
+		});
 		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
 			if (level instanceof ServerLevel serverLevel && player instanceof ServerPlayer sp && state.is(BlockTags.LOGS)
 					&& HellWorldgen.isInferno(serverLevel)
@@ -124,12 +159,15 @@ public final class CircleHazards {
 				if (nearHeat(level, pos)) {
 					// a fire keeps the cold of Cocytus away
 					player.setTicksFrozen(Math.max(0, player.getTicksFrozen() - 40));
-				} else if (player.canFreeze()) {
+				} else if (player.canFreeze() && !(LuciferManager.fighting() && LuciferManager.inPit(level, pos))) {
+					// the cold builds slowly while you're away from fire: frozen through in about 45 seconds at the lake's
+					// edge, 25 in Judecca (the game itself thaws 40 a second, so this is 3 to 6 a second more than that)
 					double depth = InfernoGeometry.treacheryDepth(player.getX(), player.getZ());
-					int add = 44 + (int) (depth * 60);
+					int add = 43 + (int) Math.round(depth * 4);
 					int cap = player.getTicksRequiredToFreeze() + 40;
 					player.setTicksFrozen(Math.min(cap, player.getTicksFrozen() + add));
-					hint(player, circle, "The ice freezes you. Wear leather armour or stay near a campfire.");
+					hint(player, circle, "The cold of Cocytus builds while you're away from fire (the frost at the screen's edges). Stand by a "
+							+ "lit campfire to warm up: light the braziers on the ice, they stay lit for everyone. Leather armour keeps the cold out.");
 				}
 			}
 			default -> {
@@ -137,11 +175,12 @@ public final class CircleHazards {
 		}
 	}
 
-	/** A campfire, fire, lava or magma within 4 blocks. */
-	private static boolean nearHeat(ServerLevel level, BlockPos pos) {
-		for (BlockPos p : BlockPos.betweenClosed(pos.offset(-4, -2, -4), pos.offset(4, 2, 4))) {
+	/** A lit campfire, fire, lava or magma within 5 blocks. */
+	public static boolean nearHeat(ServerLevel level, BlockPos pos) {
+		for (BlockPos p : BlockPos.betweenClosed(pos.offset(-5, -2, -5), pos.offset(5, 2, 5))) {
 			BlockState b = level.getBlockState(p);
-			if (b.is(BlockTags.CAMPFIRES) || b.is(BlockTags.FIRE) || b.is(Blocks.LAVA) || b.is(Blocks.MAGMA_BLOCK)) {
+			if (b.is(BlockTags.CAMPFIRES) && b.getValue(net.minecraft.world.level.block.CampfireBlock.LIT) || b.is(BlockTags.FIRE) || b.is(Blocks.LAVA)
+					|| b.is(Blocks.MAGMA_BLOCK)) {
 				return true;
 			}
 		}

@@ -55,6 +55,12 @@ public class EmperorEntity extends AnimatedBoss {
 				.add(Attributes.MOVEMENT_SPEED, 0.0);
 	}
 
+	/** He hangs in the ice: gravity never takes him, however he was made (a summon's data would otherwise turn it back on). */
+	@Override
+	public boolean isNoGravity() {
+		return true;
+	}
+
 	@Override
 	protected void registerGoals() {
 	}

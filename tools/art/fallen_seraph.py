@@ -100,8 +100,8 @@ def build():
 
 
 ZERO = (0, 0, 0)
-ARM_R = (-15, 0, 10)
-ARM_L = (-15, 0, -10)
+ARM_R = (15, 0, 10)
+ARM_L = (15, 0, -10)
 
 
 def beat(a, length, amount=12):
@@ -117,13 +117,13 @@ def animations(m):
     idle.pos("root", [(0, (0, 2, 0)), (1.5, (0, 3, 0)), (3.0, (0, 2, 0))])
     idle.rot("right_arm", [(0, ARM_R), (3.0, ARM_R)])
     idle.rot("left_arm", [(0, ARM_L), (3.0, ARM_L)])
-    idle.rot("blade", [(0, (-15, 0, 0)), (3.0, (-15, 0, 0))])
+    idle.rot("blade", [(0, (15, 0, 0)), (3.0, (15, 0, 0))])
 
     # the blade: raised high, a flash, and down across you
     slash = m.animation("slash", 1.6)
-    slash.rot("right_arm", [(0, ARM_R), (0.5, (-170, 0, 20)), (0.85, (-175, 0, 20)), (1.0, (-40, 0, -20)), (1.6, ARM_R)])
-    slash.rot("blade", [(0, (-15, 0, 0)), (0.5, (-170, 0, 20)), (0.85, (-175, 0, 20)), (1.0, (-40, 0, -20)), (1.6, (-15, 0, 0))])
-    slash.rot("torso", [(0, ZERO), (0.5, (-10, 20, 0)), (1.0, (20, -30, 0)), (1.6, ZERO)])
+    slash.rot("right_arm", [(0, ARM_R), (0.5, (170, 0, 20)), (0.85, (175, 0, 20)), (1.0, (40, 0, -20)), (1.6, ARM_R)])
+    slash.rot("blade", [(0, (15, 0, 0)), (0.5, (170, 0, 20)), (0.85, (175, 0, 20)), (1.0, (40, 0, -20)), (1.6, (15, 0, 0))])
+    slash.rot("torso", [(0, ZERO), (0.5, (10, 20, 0)), (1.0, (-20, -30, 0)), (1.6, ZERO)])
     slash.event(0.5, "flash").event(0.95, "hit")
 
     # the wings sweep round him, low over the ice
@@ -137,15 +137,15 @@ def animations(m):
     # the falling stars: his hand lifted, light called down
     stars = m.animation("stars", 2.0)
     beat(stars, 1.0, 20)
-    stars.rot("left_arm", [(0, ARM_L), (0.6, (-180, 0, -10)), (1.6, (-180, 0, -10)), (2.0, ARM_L)])
-    stars.rot("head", [(0, ZERO), (0.6, (-35, 0, 0)), (1.6, (-35, 0, 0)), (2.0, ZERO)])
+    stars.rot("left_arm", [(0, ARM_L), (0.6, (180, 0, -10)), (1.6, (180, 0, -10)), (2.0, ARM_L)])
+    stars.rot("head", [(0, ZERO), (0.6, (35, 0, 0)), (1.6, (35, 0, 0)), (2.0, ZERO)])
     stars.event(0.7, "call")
 
     # the lunge: he draws back, then crosses the ice like light
     lunge = m.animation("lunge", 1.4)
-    lunge.rot("body", [(0, ZERO), (0.6, (-20, 0, 0)), (0.8, (35, 0, 0)), (1.4, ZERO)])
-    lunge.rot("right_arm", [(0, ARM_R), (0.6, (-60, 0, 30)), (0.8, (-90, 0, 0)), (1.4, ARM_R)])
-    lunge.rot("blade", [(0, (-15, 0, 0)), (0.6, (-60, 0, 30)), (0.8, (-90, 0, 0)), (1.4, (-15, 0, 0))])
+    lunge.rot("body", [(0, ZERO), (0.6, (20, 0, 0)), (0.8, (-35, 0, 0)), (1.4, ZERO)])
+    lunge.rot("right_arm", [(0, ARM_R), (0.6, (60, 0, 30)), (0.8, (90, 0, 0)), (1.4, ARM_R)])
+    lunge.rot("blade", [(0, (15, 0, 0)), (0.6, (60, 0, 30)), (0.8, (90, 0, 0)), (1.4, (15, 0, 0))])
     for side, s in (("right", 1), ("left", -1)):
         for i in range(3):
             lunge.rot(f"{side}_wing{i}", [(0, ZERO), (0.6, (0, 30 * s, 20 * s)), (0.8, (0, -50 * s, -20 * s)), (1.4, ZERO)])
@@ -153,36 +153,36 @@ def animations(m):
 
     # parried: he reels, blade low, wings askew
     stagger = m.animation("stagger", 2.0)
-    stagger.rot("torso", [(0, ZERO), (0.3, (-30, 0, 20)), (1.6, (-30, 0, 20)), (2.0, ZERO)])
-    stagger.rot("right_arm", [(0, ARM_R), (0.3, (10, 0, 60)), (1.6, (10, 0, 60)), (2.0, ARM_R)])
+    stagger.rot("torso", [(0, ZERO), (0.3, (30, 0, 20)), (1.6, (30, 0, 20)), (2.0, ZERO)])
+    stagger.rot("right_arm", [(0, ARM_R), (0.3, (-10, 0, 60)), (1.6, (-10, 0, 60)), (2.0, ARM_R)])
     stagger.pos("root", [(0, (0, 2, 0)), (0.3, (0, -2, 0)), (1.6, (0, -2, 0)), (2.0, (0, 2, 0))])
 
     # half health: he stops pretending. The face hardens, the wings flare and the halo cracks wider.
     snap = m.animation("snap", 2.6)
-    snap.rot("head", [(0, ZERO), (0.6, (30, 0, 0)), (1.0, (-40, 0, 0)), (2.2, (-40, 0, 0)), (2.6, ZERO)])
+    snap.rot("head", [(0, ZERO), (0.6, (-30, 0, 0)), (1.0, (40, 0, 0)), (2.2, (40, 0, 0)), (2.6, ZERO)])
     snap.rot("halo", [(0, ZERO), (1.0, (0, 0, 25)), (2.6, (0, 0, 25))])
     for side, s in (("right", 1), ("left", -1)):
         for i in range(3):
             snap.rot(f"{side}_wing{i}", [(0, ZERO), (1.0, (0, -40 * s, -40 * s)), (2.2, (0, -40 * s, -40 * s)), (2.6, ZERO)])
-        snap.rot(f"{side}_arm", [(0, ARM_R if s == 1 else ARM_L), (1.0, (-20, 0, 80 * s)), (2.2, (-20, 0, 80 * s)), (2.6, ARM_R if s == 1 else ARM_L)])
+        snap.rot(f"{side}_arm", [(0, ARM_R if s == 1 else ARM_L), (1.0, (20, 0, 80 * s)), (2.2, (20, 0, 80 * s)), (2.6, ARM_R if s == 1 else ARM_L)])
     snap.event(1.0, "snap")
 
     # his descent: down out of the dark to the ice, wings folding, then he speaks
     intro = m.animation("intro", 5.0)
     intro.pos("root", [(0, (0, 60, 0)), (3.0, (0, 2, 0)), (5.0, (0, 2, 0))])
     beat(intro, 1.0, 25)
-    intro.rot("head", [(0, (20, 0, 0)), (3.0, (20, 0, 0)), (3.6, ZERO), (5.0, ZERO)])
-    intro.rot("left_arm", [(0, ARM_L), (3.6, ARM_L), (4.0, (-90, 0, -30)), (5.0, (-90, 0, -30))])
+    intro.rot("head", [(0, (-20, 0, 0)), (3.0, (-20, 0, 0)), (3.6, ZERO), (5.0, ZERO)])
+    intro.rot("left_arm", [(0, ARM_L), (3.6, ARM_L), (4.0, (90, 0, -30)), (5.0, (90, 0, -30))])
     intro.event(3.0, "land").event(3.6, "speak")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("torso", [(0, ZERO), (0.1, (-15, 0, 8)), (0.3, ZERO)])
+    hurt.rot("torso", [(0, ZERO), (0.1, (15, 0, 8)), (0.3, ZERO)])
 
     # his seraph form breaks: arms flung out, head thrown back, then he falls to pieces (the server shows the shards)
     death = m.animation("death", 2.4)
-    death.rot("head", [(0, ZERO), (0.8, (-60, 0, 0)), (2.4, (-60, 0, 0))])
-    death.rot("right_arm", [(0, ARM_R), (0.8, (-20, 0, 100)), (2.4, (-20, 0, 100))])
-    death.rot("left_arm", [(0, ARM_L), (0.8, (-20, 0, -100)), (2.4, (-20, 0, -100))])
+    death.rot("head", [(0, ZERO), (0.8, (60, 0, 0)), (2.4, (60, 0, 0))])
+    death.rot("right_arm", [(0, ARM_R), (0.8, (20, 0, 100)), (2.4, (20, 0, 100))])
+    death.rot("left_arm", [(0, ARM_L), (0.8, (20, 0, -100)), (2.4, (20, 0, -100))])
     for side, s in (("right", 1), ("left", -1)):
         for i in range(3):
             death.rot(f"{side}_wing{i}", [(0, ZERO), (0.8, (0, -60 * s, -50 * s)), (2.4, (0, -60 * s, -50 * s))])

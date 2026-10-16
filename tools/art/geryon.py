@@ -129,26 +129,27 @@ def animations(m):
     wave(idle, 2.4)
     idle.pos("root", [(0, ZERO), (1.2, (0, 2, 0)), (2.4, ZERO)])
     idle.rot("sting", [(0, (30, 0, 0)), (0.6, (40, 10, 0)), (1.2, (30, 0, 0)), (1.8, (40, -10, 0)), (2.4, (30, 0, 0))])
-    idle.rot("right_paw", [(0, (20, 0, 0)), (1.2, (30, 0, 0)), (2.4, (20, 0, 0))])
-    idle.rot("left_paw", [(0, (30, 0, 0)), (1.2, (20, 0, 0)), (2.4, (30, 0, 0))])
+    idle.rot("right_paw", [(0, (-20, 0, 0)), (1.2, (-30, 0, 0)), (2.4, (-20, 0, 0))])
+    idle.rot("left_paw", [(0, (-30, 0, 0)), (1.2, (-20, 0, 0)), (2.4, (-30, 0, 0))])
 
     # carrying a soul down the cliff: slow, wide wheeling strokes
     carry = m.animation("carry", 4.0, loop=True)
     wave(carry, 4.0, amp=8)
-    carry.rot("head", [(0, (10, 0, 0)), (4.0, (10, 0, 0))])
+    carry.rot("head", [(0, (-10, 0, 0)), (4.0, (-10, 0, 0))])
 
     # the sting: the tail arches up over his back, flashes, and strikes down in front of him
     sting = m.animation("sting", 1.8)
     for i, bone in enumerate(["seg2", "seg3", "seg4", "tail"]):
-        sting.rot(bone, [(0, ZERO), (0.6, (-35 - i * 5, 0, 0)), (1.0, (-40 - i * 5, 0, 0)), (1.15, (20, 0, 0)), (1.8, ZERO)])
-    sting.rot("sting", [(0, ZERO), (0.6, (-60, 0, 0)), (1.0, (-70, 0, 0)), (1.15, (60, 0, 0)), (1.8, (30, 0, 0))])
-    sting.rot("chest", [(0, ZERO), (0.6, (-10, 0, 0)), (1.15, (15, 0, 0)), (1.8, ZERO)])
+        # (each segment points back from the one before: -X curls it up, so the tail arches over and the sting whips forward)
+        sting.rot(bone, [(0, ZERO), (0.6, (-35 - i * 5, 0, 0)), (1.0, (-40 - i * 5, 0, 0)), (1.15, (-50 - i * 8, 0, 0)), (1.8, ZERO)])
+    sting.rot("sting", [(0, ZERO), (0.6, (-60, 0, 0)), (1.0, (-70, 0, 0)), (1.15, (-95, 0, 0)), (1.8, (30, 0, 0))])
+    sting.rot("chest", [(0, ZERO), (0.6, (10, 0, 0)), (1.15, (-15, 0, 0)), (1.8, ZERO)])
     sting.event(0.6, "flash").event(1.15, "hit")
 
     # the false face: he smiles, his head tilts, and the air shivers into copies of him
     false = m.animation("falseface", 2.0)
     false.rot("head", [(0, ZERO), (0.6, (0, 0, 20)), (1.2, (0, 0, -20)), (2.0, ZERO)])
-    false.rot("neck", [(0, ZERO), (0.6, (-15, 0, 0)), (2.0, ZERO)])
+    false.rot("neck", [(0, ZERO), (0.6, (15, 0, 0)), (2.0, ZERO)])
     wave(false, 2.0, amp=20, phase_step=0.15)
     false.event(1.0, "split")
 
@@ -161,9 +162,9 @@ def animations(m):
 
     # the dive: he pitches down and shoots forward, paws out
     dive = m.animation("dive", 1.6)
-    dive.rot("root", [(0, ZERO), (0.5, (-20, 0, 0)), (0.8, (25, 0, 0)), (1.6, ZERO)])
-    dive.rot("right_paw", [(0, ZERO), (0.8, (-70, 0, 0)), (1.6, ZERO)])
-    dive.rot("left_paw", [(0, ZERO), (0.8, (-70, 0, 0)), (1.6, ZERO)])
+    dive.rot("root", [(0, ZERO), (0.5, (20, 0, 0)), (0.8, (-25, 0, 0)), (1.6, ZERO)])
+    dive.rot("right_paw", [(0, ZERO), (0.8, (70, 0, 0)), (1.6, ZERO)])
+    dive.rot("left_paw", [(0, ZERO), (0.8, (70, 0, 0)), (1.6, ZERO)])
     for bone in BODY_BONES:
         dive.rot(bone, [(0, ZERO), (0.5, (10, 0, 0)), (0.8, (-6, 0, 0)), (1.6, ZERO)])
     dive.event(0.8, "go")
@@ -171,35 +172,35 @@ def animations(m):
     # blocked: he sags to the ground, dazed, his head hanging
     stagger = m.animation("stagger", 2.6)
     stagger.pos("root", [(0, ZERO), (0.4, (0, -10, 0)), (2.2, (0, -10, 0)), (2.6, ZERO)])
-    stagger.rot("head", [(0, ZERO), (0.4, (40, 0, 15)), (2.2, (40, 0, -15)), (2.6, ZERO)])
+    stagger.rot("head", [(0, ZERO), (0.4, (-40, 0, 15)), (2.2, (-40, 0, -15)), (2.6, ZERO)])
     for i, bone in enumerate(BODY_BONES):
         stagger.rot(bone, [(0, ZERO), (0.4, (0, 15 * (-1) ** i, 0)), (2.2, (0, 15 * (-1) ** i, 0)), (2.6, ZERO)])
 
     # his fury: he rears up, every knot and circlet ablaze
     phase = m.animation("phase", 2.8)
-    phase.rot("root", [(0, ZERO), (0.8, (-50, 0, 0)), (2.2, (-50, 0, 0)), (2.8, ZERO)])
-    phase.rot("head", [(0, ZERO), (0.8, (20, 0, 0)), (2.2, (20, 0, 0)), (2.8, ZERO)])
-    phase.rot("right_paw", [(0, ZERO), (0.8, (-90, 0, 20)), (2.2, (-90, 0, 20)), (2.8, ZERO)])
-    phase.rot("left_paw", [(0, ZERO), (0.8, (-90, 0, -20)), (2.2, (-90, 0, -20)), (2.8, ZERO)])
+    phase.rot("root", [(0, ZERO), (0.8, (50, 0, 0)), (2.2, (50, 0, 0)), (2.8, ZERO)])
+    phase.rot("head", [(0, ZERO), (0.8, (-20, 0, 0)), (2.2, (-20, 0, 0)), (2.8, ZERO)])
+    phase.rot("right_paw", [(0, ZERO), (0.8, (90, 0, 20)), (2.2, (90, 0, 20)), (2.8, ZERO)])
+    phase.rot("left_paw", [(0, ZERO), (0.8, (90, 0, -20)), (2.2, (90, 0, -20)), (2.8, ZERO)])
     phase.event(1.0, "roar")
 
     # his entrance: up out of the abyss below the cliff, head first
     intro = m.animation("intro", 5.0)
     intro.pos("root", [(0, (0, -60, 0)), (1.5, (0, -60, 0)), (3.0, (0, 4, 0)), (3.6, ZERO), (5.0, ZERO)])
-    intro.rot("root", [(0, (-70, 0, 0)), (3.0, (-40, 0, 0)), (3.6, ZERO)])
+    intro.rot("root", [(0, (70, 0, 0)), (3.0, (40, 0, 0)), (3.6, ZERO)])
     wave(intro, 5.0, amp=15)
-    intro.rot("head", [(0, ZERO), (3.6, (-20, 0, 0)), (4.4, (-20, 0, 0)), (5.0, ZERO)])
+    intro.rot("head", [(0, ZERO), (3.6, (20, 0, 0)), (4.4, (20, 0, 0)), (5.0, ZERO)])
     intro.event(1.6, "rise").event(3.7, "roar")
 
     hurt = m.animation("hurt", 0.4)
-    hurt.rot("chest", [(0, ZERO), (0.12, (-12, 0, 0)), (0.4, ZERO)])
-    hurt.rot("head", [(0, ZERO), (0.12, (-20, 0, 0)), (0.4, ZERO)])
+    hurt.rot("chest", [(0, ZERO), (0.12, (12, 0, 0)), (0.4, ZERO)])
+    hurt.rot("head", [(0, ZERO), (0.12, (20, 0, 0)), (0.4, ZERO)])
 
     # beaten, he doesn't die: he sinks to the ground and bows his kindly head, ready to carry you
     death = m.animation("death", 3.0)
     death.pos("root", [(0, ZERO), (1.2, (0, -10, 0)), (3.0, (0, -10, 0))])
-    death.rot("head", [(0, ZERO), (1.6, (45, 0, 0)), (3.0, (45, 0, 0))])
-    death.rot("neck", [(0, ZERO), (1.6, (30, 0, 0)), (3.0, (30, 0, 0))])
+    death.rot("head", [(0, ZERO), (1.6, (-45, 0, 0)), (3.0, (-45, 0, 0))])
+    death.rot("neck", [(0, ZERO), (1.6, (-30, 0, 0)), (3.0, (-30, 0, 0))])
     for i, bone in enumerate(BODY_BONES):
         death.rot(bone, [(0, ZERO), (1.6, (0, 10 * (-1) ** i, 0)), (3.0, (0, 10 * (-1) ** i, 0))])
     death.event(1.6, "bow")

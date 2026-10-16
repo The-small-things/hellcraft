@@ -76,7 +76,7 @@ def build():
 
 
 ZERO = (0, 0, 0)
-CROSSED = {"right_arm": (-70, -40, 0), "left_arm": (-75, 40, 0)}
+CROSSED = {"right_arm": (70, -40, 0), "left_arm": (75, 40, 0)}
 
 
 def animations(m):
@@ -84,44 +84,44 @@ def animations(m):
     idle = m.animation("idle", 4.0, loop=True)
     idle.rot("right_arm", [(0, CROSSED["right_arm"]), (4.0, CROSSED["right_arm"])])
     idle.rot("left_arm", [(0, CROSSED["left_arm"]), (4.0, CROSSED["left_arm"])])
-    idle.rot("head", [(0, (-10, 0, 0)), (2.0, (-12, 10, 0)), (4.0, (-10, 0, 0))])
+    idle.rot("head", [(0, (10, 0, 0)), (2.0, (12, 10, 0)), (4.0, (10, 0, 0))])
     idle.pos("torso", [(0, ZERO), (2.0, (0, 0.4, 0)), (4.0, ZERO)])
 
     # Disdain: he raises his fist, it flashes white, and he strikes the tomb's rim: fire runs along the ground at you
     disdain = m.animation("disdain", 1.6)
-    disdain.rot("right_arm", [(0, CROSSED["right_arm"]), (0.5, (-170, 0, 10)), (0.95, (-175, 0, 10)), (1.1, (-40, 0, 0)), (1.6, CROSSED["right_arm"])])
-    disdain.rot("left_arm", [(0, CROSSED["left_arm"]), (0.4, (-20, 0, -20)), (1.6, CROSSED["left_arm"])])
-    disdain.rot("torso", [(0, ZERO), (0.5, (-10, 0, 0)), (1.1, (25, 0, 0)), (1.6, ZERO)])
+    disdain.rot("right_arm", [(0, CROSSED["right_arm"]), (0.5, (170, 0, 10)), (0.95, (175, 0, 10)), (1.1, (40, 0, 0)), (1.6, CROSSED["right_arm"])])
+    disdain.rot("left_arm", [(0, CROSSED["left_arm"]), (0.4, (20, 0, -20)), (1.6, CROSSED["left_arm"])])
+    disdain.rot("torso", [(0, ZERO), (0.5, (10, 0, 0)), (1.1, (-25, 0, 0)), (1.6, ZERO)])
     disdain.event(0.5, "flash").event(1.1, "hit")
 
     # Exile: arms flung wide, the air round him blasts outward
     exile = m.animation("exile", 2.0)
-    exile.rot("right_arm", [(0, CROSSED["right_arm"]), (0.6, (-20, 0, 100)), (1.0, (-10, 0, 110)), (1.6, (-10, 0, 110)), (2.0, CROSSED["right_arm"])])
-    exile.rot("left_arm", [(0, CROSSED["left_arm"]), (0.6, (-20, 0, -100)), (1.0, (-10, 0, -110)), (1.6, (-10, 0, -110)), (2.0, CROSSED["left_arm"])])
-    exile.rot("head", [(0, ZERO), (0.6, (-30, 0, 0)), (1.6, (-30, 0, 0)), (2.0, ZERO)])
+    exile.rot("right_arm", [(0, CROSSED["right_arm"]), (0.6, (20, 0, 100)), (1.0, (10, 0, 110)), (1.6, (10, 0, 110)), (2.0, CROSSED["right_arm"])])
+    exile.rot("left_arm", [(0, CROSSED["left_arm"]), (0.6, (20, 0, -100)), (1.0, (10, 0, -110)), (1.6, (10, 0, -110)), (2.0, CROSSED["left_arm"])])
+    exile.rot("head", [(0, ZERO), (0.6, (30, 0, 0)), (1.6, (30, 0, 0)), (2.0, ZERO)])
     exile.pos("torso", [(0, ZERO), (0.6, (0, 2, 0)), (1.6, (0, 2, 0)), (2.0, ZERO)])
     exile.event(1.0, "blast")
 
     # the command: he points, and the tombs round him answer
     command = m.animation("command", 1.6)
-    command.rot("right_arm", [(0, CROSSED["right_arm"]), (0.5, (-90, -20, 0)), (1.2, (-90, 20, 0)), (1.6, CROSSED["right_arm"])])
+    command.rot("right_arm", [(0, CROSSED["right_arm"]), (0.5, (90, -20, 0)), (1.2, (90, 20, 0)), (1.6, CROSSED["right_arm"])])
     command.rot("torso", [(0, ZERO), (0.5, (0, -20, 0)), (1.2, (0, 20, 0)), (1.6, ZERO)])
     command.event(0.6, "fire")
 
     # blocked: he sinks back into his tomb, his cap knocked askew
     stagger = m.animation("stagger", 2.4)
     stagger.pos("body", [(0, ZERO), (0.4, (0, -14, 0)), (2.0, (0, -14, 0)), (2.4, ZERO)])
-    stagger.rot("head", [(0, ZERO), (0.4, (20, 0, 20)), (2.0, (20, 0, 20)), (2.4, ZERO)])
-    stagger.rot("right_arm", [(0, CROSSED["right_arm"]), (0.4, (-160, 0, 30)), (2.0, (-160, 0, 30)), (2.4, CROSSED["right_arm"])])
-    stagger.rot("left_arm", [(0, CROSSED["left_arm"]), (0.4, (-160, 0, -30)), (2.0, (-160, 0, -30)), (2.4, CROSSED["left_arm"])])
+    stagger.rot("head", [(0, ZERO), (0.4, (-20, 0, 20)), (2.0, (-20, 0, 20)), (2.4, ZERO)])
+    stagger.rot("right_arm", [(0, CROSSED["right_arm"]), (0.4, (160, 0, 30)), (2.0, (160, 0, 30)), (2.4, CROSSED["right_arm"])])
+    stagger.rot("left_arm", [(0, CROSSED["left_arm"]), (0.4, (160, 0, -30)), (2.0, (160, 0, -30)), (2.4, CROSSED["left_arm"])])
     stagger.event(0.4, "sink")
 
     # his fury: he rises higher out of the fire and bellows at the city that exiled him
     phase = m.animation("phase", 2.6)
     phase.pos("body", [(0, ZERO), (0.8, (0, 6, 0)), (2.2, (0, 6, 0)), (2.6, ZERO)])
-    phase.rot("right_arm", [(0, CROSSED["right_arm"]), (0.8, (-160, 0, 40)), (2.2, (-160, 0, 40)), (2.6, CROSSED["right_arm"])])
-    phase.rot("left_arm", [(0, CROSSED["left_arm"]), (0.8, (-160, 0, -40)), (2.2, (-160, 0, -40)), (2.6, CROSSED["left_arm"])])
-    phase.rot("head", [(0, ZERO), (0.8, (-40, 0, 0)), (2.2, (-40, 0, 0)), (2.6, ZERO)])
+    phase.rot("right_arm", [(0, CROSSED["right_arm"]), (0.8, (160, 0, 40)), (2.2, (160, 0, 40)), (2.6, CROSSED["right_arm"])])
+    phase.rot("left_arm", [(0, CROSSED["left_arm"]), (0.8, (160, 0, -40)), (2.2, (160, 0, -40)), (2.6, CROSSED["left_arm"])])
+    phase.rot("head", [(0, ZERO), (0.8, (40, 0, 0)), (2.2, (40, 0, 0)), (2.6, ZERO)])
     phase.event(1.0, "roar")
 
     # his entrance: he rises out of his tomb and asks who your ancestors were
@@ -129,16 +129,16 @@ def animations(m):
     intro.pos("body", [(0, (0, -30, 0)), (1.0, (0, -30, 0)), (2.6, ZERO), (5.0, ZERO)])
     intro.rot("right_arm", [(0, ZERO), (2.6, ZERO), (3.4, CROSSED["right_arm"]), (5.0, CROSSED["right_arm"])])
     intro.rot("left_arm", [(0, ZERO), (2.6, ZERO), (3.4, CROSSED["left_arm"]), (5.0, CROSSED["left_arm"])])
-    intro.rot("head", [(0, (20, 0, 0)), (2.6, (-15, 0, 0)), (5.0, (-10, 0, 0))])
+    intro.rot("head", [(0, (-20, 0, 0)), (2.6, (15, 0, 0)), (5.0, (10, 0, 0))])
     intro.event(1.2, "rise").event(3.4, "speak")
 
     hurt = m.animation("hurt", 0.4)
-    hurt.rot("torso", [(0, ZERO), (0.12, (-10, 0, 0)), (0.4, ZERO)])
+    hurt.rot("torso", [(0, ZERO), (0.12, (10, 0, 0)), (0.4, ZERO)])
 
     # beaten, he sinks back into the fire, still proud
     death = m.animation("death", 3.0)
     death.pos("body", [(0, ZERO), (1.0, (0, -4, 0)), (3.0, (0, -32, 0))])
-    death.rot("head", [(0, ZERO), (1.0, (-20, 0, 0)), (3.0, (-20, 0, 0))])
+    death.rot("head", [(0, ZERO), (1.0, (20, 0, 0)), (3.0, (20, 0, 0))])
     death.event(1.4, "sink")
 
 

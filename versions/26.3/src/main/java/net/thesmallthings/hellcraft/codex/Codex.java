@@ -75,7 +75,7 @@ public final class Codex {
 			List.of("Megaera, Alecto and Tisiphone, girt with green hydras, who keep the gate of the Iron City. They wheel over "
 							+ "their lair just inside the wall of Dis and come down one at a time.",
 					"Three bodies, one life: a blow to any of them counts. When they are hard pressed they call Medusa."),
-			List.of("Walk into their lair just inside the wall, by the east road, and they rise over it.",
+			List.of("Walk into their lair just inside the south gate of Dis, and they rise over it.",
 					"White circle that follows you: a Fury's talons. Block as she drops and she tumbles to the ground: hit her.",
 					"Purple circle under a Fury: her shriek. It can't be blocked: get out from under her.",
 					"Red line: her serpent hair cracks like a whip. Step aside.",
@@ -89,7 +89,7 @@ public final class Codex {
 			List.of("Farinata degli Uberti, who drove his enemies out of Florence and denied the soul outlives the body. He "
 							+ "stands in his burning tomb in the middle of the Iron City as if he held Hell in great disdain.",
 					"He never leaves his tomb. Eight more tombs stand round it, and they burn at his word."),
-			List.of("Walk into his lair among the tombs, by the east road, and he rises.",
+			List.of("Walk into his lair among the tombs, west in Heresy, and he rises.",
 					"White line: his fist strikes the rim and fire runs at you. Block it and he sinks into his tomb: hit him.",
 					"Red circles on the tombs: they blast fire in patterns (every other one, round the ring, or all but one). "
 							+ "Stand by a tomb that isn't marked.",
@@ -100,9 +100,9 @@ public final class Codex {
 
 	public static final Entry MINOTAUR = new Entry("minotaur", "THE MINOTAUR", "the Infamy of Crete",
 			List.of("The bull-headed son of Pasiphaë, who ate the youths of Athens in the Labyrinth until Theseus killed him. "
-							+ "He guards the broken slope down to the river of blood, mad with rage.",
+							+ "He guards the dead wood beyond the river of blood, mad with rage.",
 					"Like a bull that breaks loose when it has had its death blow, he plunges this way and that."),
-			List.of("Walk into his lair on the slope, by the east road, and he gets up.",
+			List.of("Walk into his lair in a clearing of the Wood of Suicides, to the north, and he gets up.",
 					"White wedge in front of him: his horns. Block the thrust and he drops to one knee: hit him.",
 					"Red line: he paws the ground and charges along it. Step aside. If he runs into rock he stuns himself.",
 					"Red circle round him: he stamps. Get away from him.",
@@ -115,14 +115,14 @@ public final class Codex {
 			List.of("The face of a just man, kindly to look at, on the painted body of a serpent with a scorpion's sting. He "
 							+ "swims in the air at the brink of the great cliff down to Malebolge.",
 					"Beaten, he bows his kindly head: from then on he flies anyone down the cliff, as he carried Dante and Virgil."),
-			List.of("Walk to the brink of the cliff at the inner edge of the Burning Sands, by the east road, and he rises out of the abyss.",
+			List.of("Walk to his lair at the brink of the cliff, the inner edge of the Burning Sands to the north-east, and he rises out of the abyss.",
 					"White circle that follows you: his sting. Block it as it strikes and he sags to the ground: hit him.",
 					"Purple lines: he and two false copies of him dive along them. They can't be blocked: get off the lines. One "
 							+ "blow pops a copy.",
 					"Red ring round the edge of the lair: his coils squeeze. Get to the middle.",
 					"Red line: he swoops low across the lair. Step aside.",
 					"At half his health venom drips where you stand (red circles). Keep moving.",
-					"Beat him and right-click him at the brink: he flies you down to the first ridge of Malebolge, and back up."),
+					"Beat him and right-click him at the brink: he flies you down over the first ditches to the fourth ridge of Malebolge, and back up."),
 			"Behold the monster with the pointed tail, who crosses mountains, and breaks walls and weapons; behold the one who all the world doth stink!",
 			"Inferno XVII");
 

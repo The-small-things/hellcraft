@@ -4220,7 +4220,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -6.0,
+         "x": 6.0,
          "y": -15.0,
          "z": 0.0
         }
@@ -4234,7 +4234,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 10.0,
+         "x": -10.0,
          "y": 20.0,
          "z": 0.0
         }
@@ -5180,7 +5180,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -12.0,
+         "x": 12.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -5194,7 +5194,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 35.0,
+         "x": -35.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -5208,7 +5208,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 40.0,
+         "x": -40.0,
          "y": 0.0,
          "z": 0.0
         }

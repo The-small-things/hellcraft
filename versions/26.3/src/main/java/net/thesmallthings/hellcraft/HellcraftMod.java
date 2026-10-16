@@ -36,6 +36,7 @@ import net.thesmallthings.hellcraft.hazard.LayerRules;
 import net.thesmallthings.hellcraft.hazard.LowerMonsters;
 import net.thesmallthings.hellcraft.hazard.LowerRules;
 import net.thesmallthings.hellcraft.hazard.MobEmpowerment;
+import net.thesmallthings.hellcraft.hazard.Wingbeat;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferRewards;
@@ -91,6 +92,7 @@ public class HellcraftMod implements ModInitializer {
 		Heaven.register();
 		BloodArmour.register();
 		LayerEnchants.register();
+		Wingbeat.register();
 		CircleHazards.register();
 		LuciferManager.register();
 		GuardianManager.register();
@@ -127,6 +129,7 @@ public class HellcraftMod implements ModInitializer {
 			LayerMonsters.tick(server);
 			Shades.tick(server);
 			Ferries.tick(server);
+			Wingbeat.tick(server);
 			LuciferManager.tick(server);
 			GuardianManager.tick(server);
 			BossModel.tickFalling(server);

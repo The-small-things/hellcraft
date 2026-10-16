@@ -86,34 +86,34 @@ def animations(m):
     # swaying, arms hanging, the flames flickering
     idle = m.animation("idle", 1.6, loop=True)
     idle.rot("body", [(0, ZERO), (0.8, (0, 0, 4)), (1.6, ZERO)])
-    idle.rot("right_arm", [(0, (-10, 0, 0)), (0.8, (-14, 0, 6)), (1.6, (-10, 0, 0))])
-    idle.rot("left_arm", [(0, (-12, 0, 0)), (0.8, (-8, 0, -6)), (1.6, (-12, 0, 0))])
+    idle.rot("right_arm", [(0, (10, 0, 0)), (0.8, (14, 0, 6)), (1.6, (10, 0, 0))])
+    idle.rot("left_arm", [(0, (12, 0, 0)), (0.8, (8, 0, -6)), (1.6, (12, 0, 0))])
     idle.scale("head", [(0, (1, 1, 1)), (0.4, (1.02, 1.04, 1.02)), (0.8, (1, 1, 1)), (1.2, (1.03, 1.02, 1.03)), (1.6, (1, 1, 1))])
 
     # a shamble, arms reaching
     walk = m.animation("walk", 1.0, loop=True)
     walk.rot("right_leg", [(0, (30, 0, 0)), (0.5, (-30, 0, 0)), (1.0, (30, 0, 0))])
     walk.rot("left_leg", [(0, (-30, 0, 0)), (0.5, (30, 0, 0)), (1.0, (-30, 0, 0))])
-    walk.rot("right_arm", [(0, (-70, 0, 0)), (0.5, (-80, 0, 0)), (1.0, (-70, 0, 0))])
-    walk.rot("left_arm", [(0, (-80, 0, 0)), (0.5, (-70, 0, 0)), (1.0, (-80, 0, 0))])
+    walk.rot("right_arm", [(0, (70, 0, 0)), (0.5, (80, 0, 0)), (1.0, (70, 0, 0))])
+    walk.rot("left_arm", [(0, (80, 0, 0)), (0.5, (70, 0, 0)), (1.0, (80, 0, 0))])
 
     # a burning embrace: both arms in
     attack = m.animation("attack", 0.7)
-    attack.rot("right_arm", [(0, (-70, 0, 0)), (0.2, (-110, 0, 30)), (0.35, (-80, 0, -25)), (0.7, (-70, 0, 0))])
-    attack.rot("left_arm", [(0, (-80, 0, 0)), (0.2, (-110, 0, -30)), (0.35, (-80, 0, 25)), (0.7, (-80, 0, 0))])
-    attack.rot("body", [(0, ZERO), (0.35, (20, 0, 0)), (0.7, ZERO)])
+    attack.rot("right_arm", [(0, (70, 0, 0)), (0.2, (110, 0, 30)), (0.35, (80, 0, -25)), (0.7, (70, 0, 0))])
+    attack.rot("left_arm", [(0, (80, 0, 0)), (0.2, (110, 0, -30)), (0.35, (80, 0, 25)), (0.7, (80, 0, 0))])
+    attack.rot("body", [(0, ZERO), (0.35, (-20, 0, 0)), (0.7, ZERO)])
     attack.event(0.35, "hit")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("body", [(0, ZERO), (0.1, (-12, 0, 0)), (0.3, ZERO)])
+    hurt.rot("body", [(0, ZERO), (0.1, (12, 0, 0)), (0.3, ZERO)])
 
     # climbing out of its tomb: up from below, hands on the rim, then up
     rise = m.animation("rise", 1.6)
     rise.pos("body", [(0, (0, -20, 0)), (0.6, (0, -10, 0)), (1.2, (0, -2, 0)), (1.6, ZERO)])
     rise.pos("right_leg", [(0, (0, -20, 0)), (1.2, (0, -4, 0)), (1.6, ZERO)])
     rise.pos("left_leg", [(0, (0, -20, 0)), (1.2, (0, -4, 0)), (1.6, ZERO)])
-    rise.rot("right_arm", [(0, (-170, 0, 0)), (0.6, (-160, 0, 10)), (1.2, (-40, 0, 0)), (1.6, (-10, 0, 0))])
-    rise.rot("left_arm", [(0, (-170, 0, 0)), (0.6, (-160, 0, -10)), (1.2, (-40, 0, 0)), (1.6, (-12, 0, 0))])
+    rise.rot("right_arm", [(0, (170, 0, 0)), (0.6, (160, 0, 10)), (1.2, (40, 0, 0)), (1.6, (10, 0, 0))])
+    rise.rot("left_arm", [(0, (170, 0, 0)), (0.6, (160, 0, -10)), (1.2, (40, 0, 0)), (1.6, (12, 0, 0))])
 
     # crumbles into ash
     death = m.animation("death", 1.0)

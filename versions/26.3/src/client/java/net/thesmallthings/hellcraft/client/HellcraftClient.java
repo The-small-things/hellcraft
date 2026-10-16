@@ -16,9 +16,11 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.danger.DangerMarks;
 import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
+import net.thesmallthings.hellcraft.client.layer.Colossus;
 import net.thesmallthings.hellcraft.client.layer.GazeOverlay;
 import net.thesmallthings.hellcraft.client.layer.LayerFx;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
+import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.CompassHud;
 import net.thesmallthings.hellcraft.client.nav.JournalScreen;
@@ -105,6 +107,7 @@ import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
 import net.thesmallthings.hellcraft.net.OpenJournalPayload;
 import net.thesmallthings.hellcraft.net.VersionPayload;
+import net.thesmallthings.hellcraft.net.WingbeatPayload;
 
 /** Hellcraft's client side. */
 public class HellcraftClient implements ClientModInitializer {
@@ -114,6 +117,7 @@ public class HellcraftClient implements ClientModInitializer {
 		ClientConfigurationNetworking.registerGlobalReceiver(VersionPayload.TYPE,
 				(payload, context) -> context.responseSender().sendPacket(new VersionPayload(HellcraftMod.VERSION)));
 		ClientPlayNetworking.registerGlobalReceiver(HudPayload.TYPE, (payload, context) -> BloodHud.set(payload.bloodHearts(), payload.rank()));
+		ClientPlayNetworking.registerGlobalReceiver(WingbeatPayload.TYPE, (payload, context) -> WingbeatFx.beat(payload.strength()));
 		ClientPlayNetworking.registerGlobalReceiver(MapPayload.TYPE, (payload, context) -> {
 			ClientNav.map(payload);
 			if (payload.inferno()) {
@@ -147,6 +151,7 @@ public class HellcraftClient implements ClientModInitializer {
 			LayerFx.tick(client);
 			DialogueHud.tick(client);
 			GazeOverlay.tick(client);
+			WingbeatFx.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
 		HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, LayerCard.ID, new LayerCard());
@@ -154,12 +159,14 @@ public class HellcraftClient implements ClientModInitializer {
 		HudElementRegistry.attachElementAfter(VanillaHudElements.OVERLAY_MESSAGE, DialogueHud.ID, new DialogueHud());
 		// Medusa's gaze greys the screen of whoever looks at her
 		HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, GazeOverlay.ID, new GazeOverlay());
+		HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, WingbeatFx.ID, WingbeatFx.INSTANCE);
 
 		// the danger language's marks on the ground
 		LevelRenderEvents.COLLECT_SUBMITS.register(DangerMarks::render);
 		// Lust's wind streams, and the flocks of souls in its sky
 		LevelRenderEvents.COLLECT_SUBMITS.register(LayerFx::render);
 		LevelRenderEvents.COLLECT_SUBMITS.register(SoulFlocks::render);
+		LevelRenderEvents.COLLECT_SUBMITS.register(Colossus::render);
 
 		ModelLayerRegistry.registerModelLayer(TestRigModel.LAYER, TestRigModel::createLayer);
 		EntityRendererRegistry.register(HellEntities.TEST_RIG, TestRigRenderer::new);

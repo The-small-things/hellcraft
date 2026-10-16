@@ -3445,7 +3445,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -12.0,
+         "x": 12.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3459,7 +3459,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 15.0,
+         "x": -15.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3617,7 +3617,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -20.0,
+         "x": 30.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3631,7 +3631,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 80.0,
+         "x": -10.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3645,7 +3645,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 85.0,
+         "x": -5.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3769,7 +3769,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -14.0,
+         "x": 14.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3783,7 +3783,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 22.0,
+         "x": -22.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -3797,7 +3797,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 20.0,
+         "x": -20.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -4383,7 +4383,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -12.0,
+         "x": 12.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -4397,7 +4397,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 30.0,
+         "x": -30.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -4411,7 +4411,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 28.0,
+         "x": -28.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -5400,7 +5400,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -25.0,
+         "x": 25.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -5414,7 +5414,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -25.0,
+         "x": 25.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -5428,7 +5428,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": 15.0,
+         "x": -15.0,
          "y": 0.0,
          "z": 0.0
         }
@@ -5994,7 +5994,7 @@
        "channel": "rotation",
        "data_points": [
         {
-         "x": -6.0,
+         "x": 6.0,
          "y": 0.0,
          "z": 0.0
         }

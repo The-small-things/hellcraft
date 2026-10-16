@@ -139,10 +139,10 @@ public final class Guide {
 				"",
 				"2 pieces: your hits heal you. 4 pieces: more healing, Regeneration when nearly dead, and Resistance during a Blood Oath."));
 		pages.add(page("THE GUARDIANS",
-				"Eight bosses wait just south of the east road (the one from spawn), each in a ring of soul fire, with a sign by the road:",
-				"Minos (Lust), Cerberus (Gluttony), Plutus (Greed), Phlegyas (the Fen of Styx)",
-				"The Furies (inside the Walls of Dis), Farinata (Heresy)",
-				"The Minotaur (above the river of blood), Geryon (the edge of the great cliff)",
+				"Eight bosses wait in rings of soul fire, each in its own circle and spread round Hell. The Map of Hell (M) shows where:",
+				"Minos (Lust, south-east), Cerberus (Gluttony, south-west), Plutus (Greed, north-west), Phlegyas (the Fen, by the east tower)",
+				"The Furies (inside the south gate of Dis), Farinata (Heresy, west)",
+				"The Minotaur (the Wood of Suicides, north), Geryon (the edge of the great cliff, north-east)",
 				"None blocks the way down. First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
 		pages.add(page("THE CIRCLES' ENCHANTMENTS",
 				"Five enchantments only Hell gives, each found as a book in one circle. Put them on at an anvil.",

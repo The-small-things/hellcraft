@@ -39,6 +39,83 @@ import java.util.List;
  * its telling moment, with the danger language's white flash and purple glow where his fight shows them.
  */
 public class BossTest implements FabricClientGameTest {
+	/**
+	 * Set HELLCRAFT_POSE_AUDIT=1 to film every model's key frames from straight beside it instead (screenshots audit_*):
+	 * the camera stands at the model's +X looking west, so its front (north) is always on the right of the picture.
+	 * That shows at a glance whether a blow swings forward and a body bends the right way.
+	 */
+	private static final boolean AUDIT = System.getenv("HELLCRAFT_POSE_AUDIT") != null;
+
+	private static void audit(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("kill @e[type=hellcraft:minos]");
+		upper(context, world, HellEntities.CERBERUS, "cerberus", 12, 3, List.of(new Shot(CerberusAnim.BITE_MID, CerberusAnim.BITE_MID.at("bite"), null),
+				new Shot(CerberusAnim.MAWS, CerberusAnim.MAWS.at("maw2"), null), new Shot(CerberusAnim.PHASE, CerberusAnim.PHASE.at("slam"), null),
+				new Shot(CerberusAnim.STAGGER, 10, null)), (e, a) -> ((CerberusEntity) e).play((CerberusAnim) a));
+		upper(context, world, HellEntities.PLUTUS, "plutus", 12, 3, List.of(new Shot(PlutusAnim.FIST, PlutusAnim.FIST.at("flash"), null),
+				new Shot(PlutusAnim.FIST, PlutusAnim.FIST.at("hit"), null), new Shot(PlutusAnim.LUNGE, PlutusAnim.LUNGE.at("leap"), null),
+				new Shot(PlutusAnim.LUNGE, PlutusAnim.LUNGE.at("land"), null), new Shot(PlutusAnim.STAGGER, 10, null)),
+				(e, a) -> ((PlutusEntity) e).play((PlutusAnim) a));
+		upper(context, world, HellEntities.PHLEGYAS, "phlegyas", 12, 3, List.of(new Shot(PhlegyasAnim.OAR, PhlegyasAnim.OAR.at("flash"), null),
+				new Shot(PhlegyasAnim.OAR, PhlegyasAnim.OAR.at("hit"), null), new Shot(PhlegyasAnim.GRAB, PhlegyasAnim.GRAB.at("grab"), null),
+				new Shot(PhlegyasAnim.WAVE, PhlegyasAnim.WAVE.at("slam"), null), new Shot(PhlegyasAnim.STAGGER, 10, null)),
+				(e, a) -> ((PhlegyasEntity) e).play((PhlegyasAnim) a));
+		lowerBosses(context, world);
+		lucifer(context, world);
+		for (String m : List.of("lovers", "glutton", "wrathful", "hoarder", "heretic", "centaur", "harpy", "mimic", "thief", "malebranche", "malacoda")) {
+			monster(context, world, m);
+		}
+	}
+
+	/** One of the upper guardians (their own entity classes) from beside it, at each shot. */
+	private static <T extends BossEntity> void upper(ClientGameTestContext context, TestSingleplayerContext world, EntityType<T> type, String name,
+													 double far, double eye, List<Shot> shots, java.util.function.BiConsumer<BossEntity, BossAnim> play) {
+		world.getServer().runCommand("execute at Player0 run summon hellcraft:" + name + " ~ ~ ~" + (int) (far + 20) + " {Rotation:[180f,0f],Silent:1b}");
+		world.getConnection().waitForClientboundEntityUpdates(type);
+		String at = "execute at @e[type=hellcraft:" + name + ",limit=1] run ";
+		world.getServer().runCommand(at + String.format("tp Player0 ~%.1f ~%.1f ~ 90 8", far, eye));
+		context.waitTicks(20);
+		for (Shot shot : shots) {
+			world.getServer().runOnServer(server -> play.accept(server.overworld().getEntities(type, e -> true).getFirst(), shot.anim()));
+			context.waitTicks(shot.at());
+			context.takeScreenshot("audit_" + name + "_" + shot.anim().name().toLowerCase() + "_" + shot.at());
+			context.waitTicks(Math.max(5, shot.anim().ticks() - shot.at() + 5));
+		}
+		world.getServer().runOnServer(server -> server.overworld().getEntities(type, e -> true).forEach(e -> e.discard()));
+	}
+
+	/** One of Hell's monsters from beside it: attacking (three moments), then its special. */
+	private static void monster(ClientGameTestContext context, TestSingleplayerContext world, String name) {
+		world.getServer().runCommand("execute at Player0 run summon hellcraft:" + name + " ~ ~ ~40 {NoAI:1b,Rotation:[180f,0f],Silent:1b,Tags:[\"audit\"]}");
+		context.waitTicks(10);
+		world.getServer().runCommand("execute at @e[tag=audit,limit=1] run tp Player0 ~5 ~1.2 ~ 90 5");
+		context.waitTicks(20);
+		context.takeScreenshot("audit_" + name + "_rest");
+		for (int at : new int[]{4, 8, 12}) {
+			world.getServer().runOnServer(server -> server.overworld().getAllEntities().forEach(e -> {
+				if (e.entityTags().contains("audit")) {
+					server.overworld().broadcastEntityEvent(e, net.minecraft.world.entity.EntityEvent.START_ATTACKING);
+				}
+			}));
+			context.waitTicks(at);
+			context.takeScreenshot("audit_" + name + "_attack_" + at);
+			context.waitTicks(30);
+		}
+		world.getServer().runOnServer(server -> server.overworld().getAllEntities().forEach(e -> {
+			if (e instanceof SoulMonster m && e.entityTags().contains("audit")) {
+				m.playSpecial();
+			}
+		}));
+		context.waitTicks(14);
+		context.takeScreenshot("audit_" + name + "_special");
+		world.getServer().runOnServer(server -> server.overworld().getAllEntities().forEach(e -> {
+			if (e.entityTags().contains("audit")) {
+				e.discard();
+			}
+		}));
+		world.getServer().runCommand("execute at Player0 run tp Player0 ~-5 ~-1.2 ~-40 0 5");
+		context.waitTicks(10);
+	}
+
 	/** An animation, how far into it to look (ticks), and what he warns of meanwhile. */
 	private record Pose(MinosAnim anim, int at, BossEntity.Warning warning) {
 	}
@@ -56,6 +133,10 @@ public class BossTest implements FabricClientGameTest {
 					client.gui.hud.toggle();
 				}
 			});
+			if (AUDIT) {
+				audit(context, world);
+				return;
+			}
 			// from the front, eye to eye
 			world.getServer().runCommand("execute at @e[type=hellcraft:minos,limit=1] run tp Player0 ~ ~5 ~-16 0 8");
 			context.waitTicks(30);
@@ -190,7 +271,7 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(FallenSeraphAnim.STAGGER, 8, n),
 				new Shot(FallenSeraphAnim.SNAP, FallenSeraphAnim.SNAP.at("snap") + 6, n),
 				new Shot(FallenSeraphAnim.DEATH, FallenSeraphAnim.DEATH.at("break") - 2, n)));
-		boss(context, world, HellEntities.EMPEROR, "emperor", 80, 24, List.of(
+		boss(context, world, HellEntities.EMPEROR, "emperor", 75, 28, List.of(
 				new Shot(EmperorAnim.DORMANT, 30, n),
 				new Shot(EmperorAnim.REVEAL, EmperorAnim.REVEAL.at("open") + 10, n),
 				new Shot(EmperorAnim.SLAM_RIGHT, EmperorAnim.SLAM_RIGHT.at("slam") - 12, n),
@@ -223,8 +304,12 @@ public class BossTest implements FabricClientGameTest {
 		context.takeScreenshot(name + "_side");
 		// from in front and to its left; Antaeus from his right, where the hand that carries you is
 		boolean right = type == HellEntities.ANTAEUS;
-		world.getServer().runCommand(at + String.format("tp Player0 ~%.1f ~%.1f ~%.1f %d 12", right ? far * 0.6 : -far * 0.6, eye + 1, -far * 0.85,
-				right ? 35 : -35));
+		if (AUDIT) {
+			world.getServer().runCommand(at + String.format("tp Player0 ~%.1f ~%.1f ~ 90 8", far, eye));
+		} else {
+			world.getServer().runCommand(at + String.format("tp Player0 ~%.1f ~%.1f ~%.1f %d 12", right ? far * 0.6 : -far * 0.6, eye + 1, -far * 0.85,
+					right ? 35 : -35));
+		}
 		for (Shot shot : shots) {
 			world.getServer().runOnServer(server -> {
 				T b = server.overworld().getEntities(type, e -> true).getFirst();
@@ -235,11 +320,12 @@ public class BossTest implements FabricClientGameTest {
 				b.play(shot.anim());
 			});
 			context.waitTicks(shot.at());
-			context.takeScreenshot(name + "_" + shot.anim().name().toLowerCase() + "_" + shot.at());
+			context.takeScreenshot((AUDIT ? "audit_" : "") + name + "_" + shot.anim().name().toLowerCase() + "_" + shot.at());
 			world.getServer().runOnServer(server -> server.overworld().getEntities(type, e -> true).getFirst().warn(BossEntity.Warning.NONE));
 			context.waitTicks(Math.max(5, shot.anim().ticks() - shot.at() + 5));
 		}
-		world.getServer().runCommand("kill @e[type=hellcraft:" + name + "]");
+		// (some can't be hurt, so they are removed rather than killed)
+		world.getServer().runOnServer(server -> server.overworld().getEntities(type, e -> true).forEach(e -> e.discard()));
 	}
 
 	/**

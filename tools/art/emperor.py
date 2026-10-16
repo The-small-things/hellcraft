@@ -44,6 +44,7 @@ AT_REST = 30  # the arms' rest: forward-down into the ice
 SLAM = 66  # a hand on the ice in front of him
 BEND = 55  # how far he bends to bite
 NOD = 35  # and his neck
+# (Blockbench's +X swings a hanging arm forward and tips a body or head back: the slams use +, the bites -.)
 
 
 def face_painter(material_, eye_row=6):
@@ -118,7 +119,7 @@ def build():
     for side, s in (("right", 1), ("left", -1)):
         def x(a, w):
             return a if s == 1 else -(a + w)
-        arm = upper.bone(f"{side}_arm", (SHOULDER_X * s, SHOULDER_Y, 0), rotation=(-AT_REST, 0, 0))
+        arm = upper.bone(f"{side}_arm", (SHOULDER_X * s, SHOULDER_Y, 0), rotation=(AT_REST, 0, 0))
         arm.cube(f"{side}_arm", (x(20, 8), -10, -4), (8, 24, 8), HIDE, mirror=s == -1, detail=frosted)
         arm.cube(f"{side}_hand", (x(18, 12), -16, -6), (12, 6, 12), HIDE, mirror=s == -1)
         arm.cube(f"{side}_claws", (x(18, 12), -18, -7), (12, 2, 3), HORN, mirror=s == -1)
@@ -156,22 +157,22 @@ def animations(m):
 
     # asleep: head bowed (his eyes are shut: the game hides them), the wings still turning in the fog
     dormant = m.animation("dormant", 8.0, loop=True)
-    dormant.rot("head", [(0, (15, 0, 0)), (8.0, (15, 0, 0))])
+    dormant.rot("head", [(0, (-15, 0, 0)), (8.0, (-15, 0, 0))])
 
     # a hand raised high and brought down on the ice; it lies there until it lifts (a weak point)
     for side, s in (("right", 1), ("left", -1)):
         slam = m.animation(f"slam_{side}", 5.0)
-        slam.rot(f"{side}_arm", [(0, ZERO), (1.2, (-(170 - AT_REST), 0, 10 * s)), (1.6, (-(SLAM - AT_REST), 0, 0)), (4.2, (-(SLAM - AT_REST), 0, 0)),
+        slam.rot(f"{side}_arm", [(0, ZERO), (1.2, (170 - AT_REST, 0, 10 * s)), (1.6, (SLAM - AT_REST, 0, 0)), (4.2, (SLAM - AT_REST, 0, 0)),
                                  (5.0, ZERO)], interp="linear")
-        slam.rot("upper", [(0, ZERO), (1.2, (-8, 8 * s, 0)), (1.6, (12, -6 * s, 0)), (4.2, (12, -6 * s, 0)), (5.0, ZERO)])
+        slam.rot("upper", [(0, ZERO), (1.2, (8, 8 * s, 0)), (1.6, (-12, -6 * s, 0)), (4.2, (-12, -6 * s, 0)), (5.0, ZERO)])
         slam.event(1.6, "slam").event(4.2, "lift")
 
     # a bite: he bends, a face comes down to the ice, flashes, bites, and stays low a moment (a weak point)
     for name, yaw in (("bite", 0), ("bite_right", 90), ("bite_left", -90)):
         bite = m.animation(name, 5.0)
-        bite.rot("upper", [(0, ZERO), (1.4, (BEND, 0, 0)), (4.0, (BEND, 0, 0)), (5.0, ZERO)])
-        bite.rot("neck", [(0, ZERO), (1.4, (NOD, 0, 0)), (4.0, (NOD, 0, 0)), (5.0, ZERO)])
-        bite.rot("head", [(0, ZERO), (0.8, (0, yaw, 0)), (1.5, (-10, yaw, 0)), (1.6, (10, yaw, 0)), (4.0, (10, yaw, 0)), (5.0, ZERO)])
+        bite.rot("upper", [(0, ZERO), (1.4, (-BEND, 0, 0)), (4.0, (-BEND, 0, 0)), (5.0, ZERO)])
+        bite.rot("neck", [(0, ZERO), (1.4, (-NOD, 0, 0)), (4.0, (-NOD, 0, 0)), (5.0, ZERO)])
+        bite.rot("head", [(0, ZERO), (0.8, (0, yaw, 0)), (1.5, (10, yaw, 0)), (1.6, (-10, yaw, 0)), (4.0, (-10, yaw, 0)), (5.0, ZERO)])
         bite.event(1.0, "flash").event(1.5, "bite").event(4.0, "rise")
 
     # his wingbeat: the cold wind across the whole pit
@@ -179,29 +180,29 @@ def animations(m):
     for side, s in (("right", 1), ("left", -1)):
         for i in range(3):
             beat.rot(f"{side}_wing{i}", [(0, ZERO), (1.2, (0, -30 * s, 40 * s)), (1.6, (0, 30 * s, -50 * s)), (3.0, ZERO)])
-    beat.rot("upper", [(0, ZERO), (1.2, (-10, 0, 0)), (1.6, (8, 0, 0)), (3.0, ZERO)])
+    beat.rot("upper", [(0, ZERO), (1.2, (10, 0, 0)), (1.6, (-8, 0, 0)), (3.0, ZERO)])
     beat.event(1.6, "beat")
 
     # half health: he weeps with six eyes, and the tears fall as frozen blood
     weep = m.animation("weep", 4.0)
     windmill(weep, 2.0, 30)
-    weep.rot("head", [(0, ZERO), (1.0, (-25, 0, 0)), (3.0, (-25, 0, 0)), (4.0, ZERO)])
+    weep.rot("head", [(0, ZERO), (1.0, (25, 0, 0)), (3.0, (25, 0, 0)), (4.0, ZERO)])
     weep.event(1.5, "weep")
 
     # the reveal: the head lifts and six eyes open
     reveal = m.animation("reveal", 6.0)
     windmill(reveal, 3.0, 40)
-    reveal.rot("head", [(0, (15, 0, 0)), (2.0, (15, 0, 0)), (3.0, (-20, 0, 0)), (6.0, ZERO)])
-    reveal.rot("upper", [(0, ZERO), (3.0, (-10, 0, 0)), (6.0, ZERO)])
+    reveal.rot("head", [(0, (-15, 0, 0)), (2.0, (-15, 0, 0)), (3.0, (20, 0, 0)), (6.0, ZERO)])
+    reveal.rot("upper", [(0, ZERO), (3.0, (10, 0, 0)), (6.0, ZERO)])
     reveal.event(2.5, "open").event(4.0, "roar")
 
     hurt = m.animation("hurt", 0.4)
-    hurt.rot("upper", [(0, ZERO), (0.15, (-3, 0, 0)), (0.4, ZERO)])
+    hurt.rot("upper", [(0, ZERO), (0.15, (3, 0, 0)), (0.4, ZERO)])
 
     # his end: he freezes, head bowed, the wings folding down, and weeps
     death = m.animation("death", 6.0)
-    death.rot("head", [(0, ZERO), (3.0, (35, 0, 0)), (6.0, (35, 0, 0))])
-    death.rot("upper", [(0, ZERO), (3.0, (10, 0, 0)), (6.0, (10, 0, 0))])
+    death.rot("head", [(0, ZERO), (3.0, (-35, 0, 0)), (6.0, (-35, 0, 0))])
+    death.rot("upper", [(0, ZERO), (3.0, (-10, 0, 0)), (6.0, (-10, 0, 0))])
     for side, s in (("right", 1), ("left", -1)):
         for i in range(3):
             death.rot(f"{side}_wing{i}", [(0, ZERO), (3.0, (0, 0, -60 * s)), (6.0, (0, 0, -60 * s))])

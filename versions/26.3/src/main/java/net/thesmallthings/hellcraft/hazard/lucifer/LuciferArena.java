@@ -6,8 +6,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.thesmallthings.hellcraft.HellcraftMod;
 import net.minecraft.world.phys.AABB;
+import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
@@ -31,8 +31,55 @@ final class LuciferArena {
 	private static final double PROTECTED_RADIUS = 34.0;
 	private static final int PROTECTED_TOP = InfernoGeometry.PIT_FLOOR_Y + 24;
 
+	/**
+	 * The pit's floor: the most common ground height round the centre, so one hole (a cave, something dug) can't put
+	 * Lucifer down a shaft.
+	 */
 	static int floorY(ServerLevel level) {
-		return groundY(level, 0, 0);
+		Map<Integer, Integer> counts = new HashMap<>();
+		for (int x = -12; x <= 12; x += 4) {
+			for (int z = -12; z <= 12; z += 4) {
+				counts.merge(groundY(level, x, z), 1, Integer::sum);
+			}
+		}
+		int best = InfernoGeometry.PIT_FLOOR_Y;
+		int most = 0;
+		for (Map.Entry<Integer, Integer> e : counts.entrySet()) {
+			if (e.getValue() > most || e.getValue() == most && e.getKey() > best) {
+				best = e.getKey();
+				most = e.getValue();
+			}
+		}
+		return best;
+	}
+
+	/**
+	 * Fills every hole in the pit's floor with ice (inside the arena), so nothing and nobody can hide down one. Returns
+	 * how many blocks it filled.
+	 */
+	static int fillHoles(ServerLevel level, int floorY) {
+		int r = (int) RADIUS;
+		int filled = 0;
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int x = -r; x <= r; x++) {
+			for (int z = -r; z <= r; z++) {
+				if (!inside(x + 0.5, z + 0.5)) {
+					continue;
+				}
+				for (int y = floorY - 6; y < floorY; y++) {
+					pos.set(x, y, z);
+					BlockState state = level.getBlockState(pos);
+					if (state.isAir() || state.canBeReplaced() || !state.getFluidState().isEmpty()) {
+						level.setBlock(pos, Blocks.PACKED_ICE.defaultBlockState(), 3);
+						filled++;
+					}
+				}
+			}
+		}
+		if (filled > 0) {
+			HellcraftMod.LOGGER.info("Filled {} holes in Lucifer's pit", filled);
+		}
+		return filled;
 	}
 
 	/**

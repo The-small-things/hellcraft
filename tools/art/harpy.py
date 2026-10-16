@@ -104,26 +104,26 @@ def animations(m):
     idle = m.animation("idle", 0.6, loop=True)
     flap(idle, 0.6)
     idle.pos("body", [(0, ZERO), (0.3, (0, 1.2, 0)), (0.6, ZERO)])
-    idle.rot("right_leg", [(0, (20, 0, 0)), (0.3, (26, 0, 0)), (0.6, (20, 0, 0))])
-    idle.rot("left_leg", [(0, (22, 0, 0)), (0.3, (16, 0, 0)), (0.6, (22, 0, 0))])
-    idle.rot("head", [(0, (-20, 0, 0)), (0.6, (-20, 0, 0))])
+    idle.rot("right_leg", [(0, (-20, 0, 0)), (0.3, (-26, 0, 0)), (0.6, (-20, 0, 0))])
+    idle.rot("left_leg", [(0, (-22, 0, 0)), (0.3, (-16, 0, 0)), (0.6, (-22, 0, 0))])
+    idle.rot("head", [(0, (20, 0, 0)), (0.6, (20, 0, 0))])
 
     # the stoop: wings swept back, talons thrown forward to rake
     attack = m.animation("attack", 0.6)
     for side, s in (("right", 1), ("left", -1)):
         attack.rot(f"{side}_wing", [(0, (0, 0, -35 * s)), (0.15, (0, 40 * s, -60 * s)), (0.35, (0, 20 * s, 20 * s)), (0.6, (0, 0, -35 * s))])
-        attack.rot(f"{side}_leg", [(0, (20, 0, 0)), (0.15, (-30, 0, 0)), (0.3, (-80, 0, 0)), (0.45, (10, 0, 0)), (0.6, (20, 0, 0))])
+        attack.rot(f"{side}_leg", [(0, (-20, 0, 0)), (0.15, (30, 0, 0)), (0.3, (80, 0, 0)), (0.45, (-10, 0, 0)), (0.6, (-20, 0, 0))])
         attack.rot(f"{side}_foot", [(0, ZERO), (0.25, (-40, 0, 0)), (0.32, (30, 0, 0)), (0.6, ZERO)])
-    attack.rot("body", [(0, ZERO), (0.2, (-30, 0, 0)), (0.4, (10, 0, 0)), (0.6, ZERO)])
+    attack.rot("body", [(0, ZERO), (0.2, (30, 0, 0)), (0.4, (-10, 0, 0)), (0.6, ZERO)])
     attack.event(0.3, "hit")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("body", [(0, ZERO), (0.1, (-20, 0, 8)), (0.3, ZERO)])
-    hurt.rot("head", [(0, ZERO), (0.1, (-25, 0, 0)), (0.3, ZERO)])
+    hurt.rot("body", [(0, ZERO), (0.1, (20, 0, 8)), (0.3, ZERO)])
+    hurt.rot("head", [(0, ZERO), (0.1, (25, 0, 0)), (0.3, ZERO)])
 
     # the lament: head thrown back, wings spread wide and shaking
     shriek = m.animation("shriek", 1.2)
-    shriek.rot("head", [(0, ZERO), (0.2, (-55, 0, 0)), (1.0, (-55, 0, 0)), (1.2, ZERO)])
+    shriek.rot("head", [(0, ZERO), (0.2, (55, 0, 0)), (1.0, (55, 0, 0)), (1.2, ZERO)])
     for side, s in (("right", 1), ("left", -1)):
         shriek.rot(f"{side}_wing", [(0, ZERO), (0.2, (0, 0, -60 * s)), (0.3, (0, 0, -50 * s)), (0.4, (0, 0, -62 * s)), (0.5, (0, 0, -50 * s)),
                                     (0.6, (0, 0, -62 * s)), (1.0, (0, 0, -60 * s)), (1.2, ZERO)])
@@ -132,11 +132,11 @@ def animations(m):
 
     # falls out of the air, wings crumpled
     death = m.animation("death", 1.2)
-    death.rot("body", [(0, ZERO), (0.4, (60, 0, 30)), (1.2, (90, 0, 40))])
+    death.rot("body", [(0, ZERO), (0.4, (-60, 0, 30)), (1.2, (-90, 0, 40))])
     death.pos("body", [(0, ZERO), (0.6, (0, -8, 0)), (1.2, (0, -11, 0))])
     for side, s in (("right", 1), ("left", -1)):
         death.rot(f"{side}_wing", [(0, ZERO), (0.4, (0, 0, 40 * s)), (1.2, (0, 0, 70 * s))])
-        death.rot(f"{side}_leg", [(0, ZERO), (1.2, (-60, 0, 0))])
+        death.rot(f"{side}_leg", [(0, ZERO), (1.2, (60, 0, 0))])
 
 
 if __name__ == "__main__":

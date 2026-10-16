@@ -71,36 +71,36 @@ def animations(m):
     idle = m.animation("idle", 1.4, loop=True)
     idle.rot("head", [(0, (0, -25, 0)), (0.7, (0, 25, 0)), (1.4, (0, -25, 0))])
     idle.rot("serpent", [(0, (0, 0, -10)), (0.7, (10, 0, 10)), (1.4, (0, 0, -10))])
-    idle.rot("right_arm", [(0, (-30, 0, 0)), (1.4, (-30, 0, 0))])
-    idle.rot("left_arm", [(0, (-30, 0, 0)), (1.4, (-30, 0, 0))])
+    idle.rot("right_arm", [(0, (30, 0, 0)), (1.4, (30, 0, 0))])
+    idle.rot("left_arm", [(0, (30, 0, 0)), (1.4, (30, 0, 0))])
 
     # a quick, low run
     walk = m.animation("walk", 0.5, loop=True)
     walk.rot("right_leg", [(0, (45, 0, 0)), (0.25, (-45, 0, 0)), (0.5, (45, 0, 0))])
     walk.rot("left_leg", [(0, (-45, 0, 0)), (0.25, (45, 0, 0)), (0.5, (-45, 0, 0))])
-    walk.rot("right_arm", [(0, (-45, 0, 0)), (0.25, (30, 0, 0)), (0.5, (-45, 0, 0))])
-    walk.rot("left_arm", [(0, (30, 0, 0)), (0.25, (-45, 0, 0)), (0.5, (30, 0, 0))])
-    walk.rot("body", [(0, (15, 0, 0)), (0.5, (15, 0, 0))])
+    walk.rot("right_arm", [(0, (45, 0, 0)), (0.25, (-30, 0, 0)), (0.5, (45, 0, 0))])
+    walk.rot("left_arm", [(0, (-30, 0, 0)), (0.25, (45, 0, 0)), (0.5, (-30, 0, 0))])
+    walk.rot("body", [(0, (-15, 0, 0)), (0.5, (-15, 0, 0))])
 
     # the snatch: a quick grab, while the serpent strikes
     attack = m.animation("attack", 0.5)
-    attack.rot("right_arm", [(0, (-30, 0, 0)), (0.15, (-100, -20, 0)), (0.3, (-20, 30, 0)), (0.5, (-30, 0, 0))])
+    attack.rot("right_arm", [(0, (30, 0, 0)), (0.15, (100, -20, 0)), (0.3, (20, 30, 0)), (0.5, (30, 0, 0))])
     attack.rot("serpent", [(0, ZERO), (0.15, (-40, 0, 0)), (0.25, (50, 0, 0)), (0.5, ZERO)])
     attack.event(0.25, "snatch")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("body", [(0, ZERO), (0.1, (-15, 0, 0)), (0.3, ZERO)])
+    hurt.rot("body", [(0, ZERO), (0.1, (15, 0, 0)), (0.3, ZERO)])
 
     # off and away with the prize: the sack hugged close, a glance back
     flee = m.animation("flee", 0.8)
     flee.rot("head", [(0, ZERO), (0.3, (0, 150, 0)), (0.6, (0, 150, 0)), (0.8, ZERO)])
-    flee.rot("right_arm", [(0, ZERO), (0.2, (-60, 0, -40)), (0.8, (-60, 0, -40))])
-    flee.rot("left_arm", [(0, ZERO), (0.2, (-60, 0, 40)), (0.8, (-60, 0, 40))])
+    flee.rot("right_arm", [(0, ZERO), (0.2, (60, 0, -40)), (0.8, (60, 0, -40))])
+    flee.rot("left_arm", [(0, ZERO), (0.2, (60, 0, 40)), (0.8, (60, 0, 40))])
 
     # the serpent turns on him at the last
     death = m.animation("death", 1.2)
     death.rot("serpent", [(0, ZERO), (0.3, (60, 0, -40)), (0.6, (90, 0, -60)), (1.2, (90, 0, -60))])
-    death.rot("body", [(0, ZERO), (0.6, (50, 0, 0)), (1.2, (80, 0, 0))])
+    death.rot("body", [(0, ZERO), (0.6, (-50, 0, 0)), (1.2, (-80, 0, 0))])
     death.pos("body", [(0, ZERO), (0.6, (0, -6, -2)), (1.2, (0, -10, -3))])
     death.rot("right_leg", [(0, ZERO), (1.2, (-50, 0, 0))])
     death.rot("left_leg", [(0, ZERO), (1.2, (-45, 0, 0))])

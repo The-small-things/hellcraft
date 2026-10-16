@@ -65,7 +65,7 @@ def animations(m):
 
     # a dive: both lean in together and sweep through
     attack = m.animation("attack", 0.8)
-    attack.rot("pair", [(0, ZERO), (0.3, (-20, 0, 0)), (0.45, (50, 0, 0)), (0.8, ZERO)])
+    attack.rot("pair", [(0, ZERO), (0.3, (20, 0, 0)), (0.45, (-50, 0, 0)), (0.8, ZERO)])
     attack.pos("pair", [(0, ZERO), (0.3, (0, 2, 2)), (0.45, (0, -2, -6)), (0.8, ZERO)])
     attack.event(0.45, "hit")
 

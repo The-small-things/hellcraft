@@ -130,6 +130,8 @@ public class HellConfig {
 	public double bossTempo = 0.6;
 	/** The share of their damage Lucifer's forms and attacks do (1.0 = full). */
 	public double luciferDamage = 0.7;
+	/** Lucifer's wings beat all over Hell about this often, in minutes (0 = never). */
+	public double wingbeatMinutes = 6.0;
 	/** The share of their damage arrows and other projectiles do to a boss (1.0 = full damage). */
 	public double bossProjectileDamage = 0.4;
 	/** A guardian pulls in a player who shoots it from afar, or who stands high above it. */
@@ -289,6 +291,7 @@ public class HellConfig {
 		bossHeartScaling = Math.max(0.0, bossHeartScaling);
 		bossTempo = Math.max(0.2, Math.min(1.0, bossTempo));
 		luciferDamage = Math.max(0.0, luciferDamage);
+		wingbeatMinutes = Math.max(0.0, wingbeatMinutes);
 		bossProjectileDamage = Math.max(0.0, Math.min(1.0, bossProjectileDamage));
 		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);
 		prestigeHeartBonus = Math.max(0, prestigeHeartBonus);

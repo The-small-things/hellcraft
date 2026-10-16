@@ -40,7 +40,7 @@ import java.util.UUID;
 
 /**
  * Geryon tamed (GeryonFight, once he's beaten): he waits at the brink of the great cliff, and whoever right-clicks him
- * rides on his back down to the first ridge of Malebolge, wheeling slowly down as he carried Dante ("he goes swimming
+ * rides on his back down over the first ditches to the fourth ridge of Malebolge, wheeling slowly down as he carried Dante ("he goes swimming
  * slowly, slowly; wheels and descends"). He waits there a while for anyone going back up, then flies home. He can't be
  * hurt, and nobody riding him can be (Carrier). Drawn with Geryon's own model.
  */
@@ -49,12 +49,13 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 	/** Ticks he waits after the first rider climbs on, for the others. */
 	private static final int BOARDING = 60;
 	/** Ticks the flight down (or up) takes. */
-	private static final int FLIGHT = 260;
-	/** The share of the flight spent gliding out over the brink, before he wheels down. */
-	private static final double GLIDE = 0.2;
-	/** The radius of his wheeling (blocks) and how many half turns he makes. */
-	private static final double WHEEL = 10.0;
-	private static final int HALF_TURNS = 3;
+	private static final int FLIGHT = 520;
+	/** The ridge of Malebolge he sets you down on, past the first ditches. */
+	private static final int RIDGE = 4;
+	/** The radius of his wheeling (blocks), how many full turns he makes on the way, and how high he swings over the ditches. */
+	private static final double WHEEL = 22.0;
+	private static final int TURNS = 2;
+	private static final double LOFT = 10.0;
 	/** Ticks he waits below for riders up, before he flies home. */
 	private static final int BELOW_WAIT = 400;
 
@@ -94,7 +95,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 		double cz = Math.sin(angle);
 		double lairR = Math.sqrt((double) lair.getX() * lair.getX() + (double) lair.getZ() * lair.getZ());
 		double edge = lairR - 10;
-		for (double r = lairR; r > lairR - 40; r -= 0.5) {
+		for (double r = lairR; r > lairR - 100; r -= 0.5) {
 			if (surface(level, cx * r, cz * r) < lair.getY() - 6) {
 				edge = r;
 				break;
@@ -102,7 +103,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 		}
 		double homeR = edge + 4;
 		Vec3 home = new Vec3(cx * homeR, surface(level, cx * homeR, cz * homeR) + 3, cz * homeR);
-		double ridgeR = FraudSites.onRidge(angle, FraudSites.ridgeRadius(1));
+		double ridgeR = FraudSites.onRidge(angle, FraudSites.ridgeRadius(RIDGE));
 		Vec3 landing = new Vec3(cx * ridgeR, surface(level, cx * ridgeR, cz * ridgeR) + 1.5, cz * ridgeR);
 		GeryonCarrier carrier = HellEntities.GERYON_CARRIER.create(level, EntitySpawnReason.EVENT);
 		if (carrier == null) {
@@ -113,8 +114,8 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 		carrier.snapTo(home.x, home.y, home.z, (float) Math.toDegrees(angle) + 90.0f, 0.0f);
 		carrier.setCustomName(Component.literal("Geryon"));
 		if (level.addFreshEntity(carrier)) {
-			HellcraftMod.LOGGER.info("Geryon perches at the brink at {} {} {}, and lands on the first ridge at {} {} {}", (int) home.x, (int) home.y,
-					(int) home.z, (int) landing.x, (int) landing.y, (int) landing.z);
+			HellcraftMod.LOGGER.info("Geryon perches at the brink at {} {} {}, and lands on ridge {} at {} {} {}", (int) home.x, (int) home.y,
+					(int) home.z, RIDGE, (int) landing.x, (int) landing.y, (int) landing.z);
 		}
 	}
 
@@ -127,21 +128,21 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 
 	// ------------------------------------------------------------------ the flight
 
-	/** Where he is `s` of the way down (0 at the brink, 1 on the ridge). */
+	/**
+	 * Where he is `s` of the way down (0 at the brink, 1 on the ridge): out over the abyss and down across the first
+	 * ditches of Malebolge, wheeling in wide loops (which open and close with the flight, so he leaves and lands
+	 * straight), and swung high enough over the ditches' ridges never to touch them.
+	 */
 	private Vec3 along(double s) {
+		double k = smooth(s);
+		Vec3 line = new Vec3(home.x + (landing.x - home.x) * k, 0, home.z + (landing.z - home.z) * k);
 		Vec3 out = new Vec3(home.x, 0, home.z).normalize();
 		Vec3 side = new Vec3(-out.z, 0, out.x);
-		double landR = Math.sqrt(landing.x * landing.x + landing.z * landing.z);
-		Vec3 centre = out.scale(landR + WHEEL);
-		Vec3 entry = centre.add(out.scale(WHEEL)).add(0, home.y - 4, 0);
-		if (s < GLIDE) {
-			double k = smooth(s / GLIDE);
-			return home.add(entry.subtract(home).scale(k));
-		}
-		double u = (s - GLIDE) / (1 - GLIDE);
-		double psi = Math.PI * HALF_TURNS * u;
-		Vec3 flat = centre.add(out.scale(WHEEL * Math.cos(psi))).add(side.scale(WHEEL * Math.sin(psi)));
-		return new Vec3(flat.x, entry.y + (landing.y - entry.y) * smooth(u), flat.z);
+		double psi = Math.PI * 2 * TURNS * s;
+		double open = Math.sin(Math.PI * s);
+		Vec3 flat = line.add(side.scale(WHEEL * open * Math.sin(psi))).add(out.scale(WHEEL * open * (Math.cos(psi) - 1) * 0.5));
+		double y = home.y + (landing.y - home.y) * smooth(s) + LOFT * Math.sin(Math.PI * Math.min(1.0, s * 1.2));
+		return new Vec3(flat.x, y, flat.z);
 	}
 
 	private static double smooth(double t) {
@@ -197,7 +198,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 					level.playSound(null, blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.NEUTRAL, 1.5f, 0.5f);
 				}
 				if (t >= FLIGHT) {
-					setDown(landing, "Geryon sets you down on the first ridge of Malebolge. He waits a little, if you want to go back up.");
+					setDown(landing, "Geryon sets you down on the fourth ridge of Malebolge. He waits a little, if you want to go back up.");
 					start(Phase.BELOW);
 				}
 			}

@@ -2,14 +2,15 @@ package net.thesmallthings.hellcraft.hazard.guardian;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.function.Function;
 
 /**
- * The circle guardians Dante meets on the way down, each waiting in a lair beside the east road (the +X
- * axis), {@link #LAIR_SIDE} blocks to its south, so the road itself never runs through a fight.
+ * The circle guardians Dante meets on the way down, each waiting in a lair in its own circle. The lairs are spread
+ * round the funnel (InfernoGeometry.LAIRS), off the roads and the ways down, so none of them blocks the way.
  */
 public enum Guardian {
 	MINOS("Minos", "Judge of the Damned", 2425, ChatFormatting.DARK_PURPLE, 300, 7.0f, MinosFight::new),
@@ -19,17 +20,17 @@ public enum Guardian {
 	PHLEGYAS("Phlegyas", "the Ferryman of the Styx", 1605, ChatFormatting.DARK_AQUA, 320, 7.0f, PhlegyasFight::new),
 	/** Inside the Walls of Dis: the three Furies, who call up Medusa when hard pressed (FuriesFight). */
 	FURIES("The Furies", "the Erinyes of Dis", 1360, ChatFormatting.DARK_RED, 420, 2.5f, FuriesFight::new),
-	/** In the Iron City, standing in his burning tomb (FarinataFight). */
+	/** In Heresy, standing in his burning tomb (FarinataFight). */
 	FARINATA("Farinata", "the Proud Heretic", 1260, ChatFormatting.GOLD, 360, 3.0f, FarinataFight::new),
-	/** On the shattered slope at the top of Violence. */
-	MINOTAUR("The Minotaur", "Infamy of Crete", 1150, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
-	GERYON("Geryon", "Image of Fraud", 830, ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
+	/** In a clearing of the Wood of Suicides, in Violence. */
+	MINOTAUR("The Minotaur", "Infamy of Crete", 970, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
+	GERYON("Geryon", "Image of Fraud", 870, ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
 	/** Not on the road: at the Great Forge of Dis, in the Nether (GreatForge). */
 	VULCAN("Vulcan", "Smith of the Gods", 0, ChatFormatting.GOLD, 600, 6.5f, VulcanFight::new);
 
 	public final String title;
 	public final String subtitle;
-	/** Distance of the lair from the centre of Hell, along +X. */
+	/** Distance of the lair from the centre of Hell. */
 	public final int radius;
 	public final ChatFormatting color;
 	final double health;
@@ -66,12 +67,10 @@ public enum Guardian {
 		return this == VULCAN;
 	}
 
-	/** How far south of the east road the lairs lie (see ShrineSites, which keeps the Rests clear of them). */
-	public static final int LAIR_SIDE = 40;
-
 	/** The lair's centre column (y is filled in from the terrain). */
 	public BlockPos lairColumn() {
-		return new BlockPos(radius, 0, LAIR_SIDE);
+		int[] lair = InfernoGeometry.LAIRS[ordinal()];
+		return new BlockPos(lair[0], 0, lair[1]);
 	}
 
 	@Nullable

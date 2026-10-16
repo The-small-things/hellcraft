@@ -230,7 +230,7 @@ public final class GuardianManager {
 
 	// ------------------------------------------------------------------ the lairs
 
-	/** A ring of soul-fire braziers, and a sign at the roadside pointing to it, once per world. */
+	/** A ring of soul-fire braziers, and a sign beside it, once per world. */
 	private static void buildLairs(MinecraftServer server) {
 		ServerLevel level = server.overworld();
 		HellState state = HellState.get(server);
@@ -252,16 +252,18 @@ public final class GuardianManager {
 				level.setBlock(new BlockPos(x, y + 1, z), Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
 				level.setBlock(new BlockPos(x, y + 2, z), Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true), 3);
 			}
-			// the sign stands by the east road, across from the lair
-			int sx = c.getX();
-			int sz = 6;
+			// a sign just outside the ring, on the side facing out of Hell (the way most come from), facing out
+			double out = Math.atan2(c.getZ(), c.getX());
+			int sx = c.getX() + (int) Math.round(Math.cos(out) * 17);
+			int sz = c.getZ() + (int) Math.round(Math.sin(out) * 17);
 			level.getChunk(sx >> 4, sz >> 4);
 			int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
-			Signs.place(level, new BlockPos(sx, sy, sz), 12, List.of(
+			int facing = Math.floorMod((int) Math.round(Math.toDegrees(Math.atan2(-Math.cos(out), Math.sin(out))) / 22.5), 16);
+			Signs.place(level, new BlockPos(sx, sy, sz), facing, List.of(
 					Component.literal(g.title.toUpperCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.BOLD),
 					Component.literal(g.subtitle),
-					Component.literal("waits to the south,"),
-					Component.literal("off the road.")));
+					Component.literal("Step inside the"),
+					Component.literal("fire to wake it.")));
 			HellcraftMod.LOGGER.info("Lair of {} at {}", g.id(), c.toShortString());
 		}
 		state.lairsBuilt = true;

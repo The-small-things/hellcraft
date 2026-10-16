@@ -53,7 +53,10 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   play the animations). `tools/gen_bosses.py` turns every .bbmodel into `client/render/gen/<Boss>Mesh` and
   `<Boss>Animations` (Minecraft keyframes), `entity/boss/gen/<Boss>Anim` (each animation's length and named events,
   which the server times blows by) and `textures/entity/<boss>.png` (+ `_glow`). Run both after any change; the
-  client test `BossTest` screenshots every animation (`minos_*`).
+  client test `BossTest` screenshots every animation (`minos_*`). Rotations in tools/art follow Blockbench: +X swings a hanging
+  arm forward and tips a body or head back (the model faces -Z). `HELLCRAFT_POSE_AUDIT=1 bash tools/dev/clienttest.sh`
+  (with only BossTest listed) films every model's key frames from its side, front on the right (`audit_*`): check
+  that blows swing forward.
 
 ## Code map (`versions/26.3/src/main/java/net/thesmallthings/hellcraft/`; client-only code in `src/client`)
 - `blood/`: hearts and lifesteal (`Hearts`, `DeathHandler`, `HellState` = all saved data), Blood Altars and their
@@ -80,7 +83,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `hellcraft:judgement` damage type. `GuardianFight` gives real-bodied guardians an intro, a parry window
   (`openParry`, `onParried`) and invulnerable spells (`shield`).
 - Hint bits (`CircleHazards.hintOnce`, 64 of them in `HellState.Soul.hints`): 0-31 upper Hell, 32-38 lower Hell
-  (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash.
+  (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat.
 - Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
   (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
   death). Lucifer's delays go through `LuciferFight.paced`. Time new fights with `schedule` and anim events as usual.
@@ -136,7 +139,8 @@ Decided first (2026-10-12):
 **Phase 0 (foundations) is done** (2026-10-13): 26.3 stands alone, the client side and join check, real blood
 items, no resource-pack server, the animated test rig, client tests in CI. **Phase 1 (the new map) is built**
 (2026-10-14): the geometry and terrain at radius 3,500, the four Pilgrim Roads (`PilgrimRoadFeature`), a way down
-every 30 degrees on every cliff, 40 Rests beside the roads, the guardians' lairs 40 blocks south of the east road,
+every 30 degrees on every cliff, 40 Rests beside the roads (a third of the way into each circle), the guardians' lairs (spread round the funnel since
+3.0's playtest: `InfernoGeometry.LAIRS`, each in its own circle, checked by `LairsTest`),
 circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a fresh world. **Phase 2 (boss tech,
 proven on Minos) is built** (2026-10-14): the model pipeline (tools/art, tools/gen_bosses.py), Minos's real body
 and fight in the danger language, cutscenes (his entrance), the Codex, level lair arenas; the written guide book is

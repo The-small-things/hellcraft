@@ -189,7 +189,7 @@ def animations(m):
     fist = m.animation("fist", 1.6)
     fist.rot("right_arm", [(0, ZERO), (0.6, (170, 0, 15)), (0.95, (60, 0, 0)), (1.2, (55, 0, 0)), (1.6, ZERO)])
     fist.rot("right_forearm", [(0, ZERO), (0.6, (20, 0, 0)), (0.95, (-5, 0, 0)), (1.6, ZERO)])
-    fist.rot("body", [(0, ZERO), (0.6, (-6, -15, 0)), (0.95, (10, 20, 0)), (1.6, ZERO)])
+    fist.rot("body", [(0, ZERO), (0.6, (6, -15, 0)), (0.95, (-10, 20, 0)), (1.6, ZERO)])
     fist.rot("head", [(0, ZERO), (0.6, (-10, 0, 0)), (0.95, (12, 0, 0)), (1.6, ZERO)])
     fist.rot("jaw", [(0, ZERO), (0.9, (30, 0, 0)), (1.2, ZERO)])
     fist.event(0.45, "flash").event(0.95, "hit")
@@ -205,7 +205,7 @@ def animations(m):
 
     # the Lunge: a crouch, then he hurls his bulk along the red line and lands on his belly
     lunge = m.animation("lunge", 1.8)
-    lunge.rot("body", [(0, ZERO), (0.6, (-12, 0, 0)), (0.75, (35, 0, 0)), (1.2, (40, 0, 0)), (1.8, ZERO)])
+    lunge.rot("body", [(0, ZERO), (0.6, (12, 0, 0)), (0.75, (-35, 0, 0)), (1.2, (-40, 0, 0)), (1.8, ZERO)])
     lunge.pos("body", [(0, ZERO), (0.6, (0, -4, 0)), (0.75, (0, 3, 0)), (1.2, (0, -6, 0)), (1.8, ZERO)])
     arms(lunge, [(0, ZERO), (0.6, (-40, 0, 0)), (0.75, (150, 0, 20)), (1.2, (110, 0, 25)), (1.8, ZERO)])
     lunge.rot("right_leg", [(0, ZERO), (0.6, (40, 0, 0)), (0.75, (-30, 0, 0)), (1.8, ZERO)])

@@ -3,13 +3,14 @@ package net.thesmallthings.hellcraft.client.mixin;
 import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
+import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** During a cutscene the camera follows its path (CutscenePlayer), seeing the player from outside. */
+/** During a cutscene the camera follows its path (CutscenePlayer), seeing the player from outside; a wingbeat shakes it. */
 @Mixin(Camera.class)
 public abstract class CameraMixin {
 	@Shadow
@@ -37,6 +38,12 @@ public abstract class CameraMixin {
 			setPosition(frame.pos());
 			setRotation(frame.yaw(), frame.pitch());
 			detached = true;
+			return;
+		}
+		// Lucifer's wingbeat throws the view about for a moment (the player's own aim is untouched)
+		float[] shake = WingbeatFx.shake(partialTicks);
+		if (shake[0] != 0 || shake[1] != 0) {
+			setRotation(yRot() + shake[0], xRot() + shake[1]);
 		}
 	}
 }

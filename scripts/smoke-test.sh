@@ -370,6 +370,11 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   antaeus=$(rcon "hellcraft antaeus test")
   echo "$antaeus"
   echo "$antaeus" | grep -q "Antaeus OK" || { echo "Antaeus's ride is broken"; exit 1; }
+  # Cocytus: braziers stand on the ice (unlit), and Lucifer's wings beat across Hell
+  brazier=$(rcon "hellcraft brazier test")
+  echo "$brazier"
+  echo "$brazier" | grep -q "Brazier OK" || { echo "No brazier on the ice of Cocytus"; exit 1; }
+  rcon "hellcraft wingbeat" > /dev/null
   # the Fen's ferry: lighting a watchtower's beacons calls it
   ferry=$(rcon "hellcraft ferry test")
   echo "$ferry"
@@ -539,6 +544,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # the true form is killed with real damage: its death must reach the fight (the event, or the fight's own watch)
   grep -E "Lucifer's true form is (slain|dead)" "$LOG" || { echo "Lucifer's death never reached the fight"; fail=1; }
   grep -q "Antaeus stands in the ice at" "$LOG" || { echo "Antaeus was not placed"; fail=1; }
+  grep -q "Lucifer's wings beat" "$LOG" || { echo "Lucifer's wingbeat never came"; fail=1; }
   for g in minos cerberus plutus phlegyas furies farinata minotaur geryon; do
     grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }

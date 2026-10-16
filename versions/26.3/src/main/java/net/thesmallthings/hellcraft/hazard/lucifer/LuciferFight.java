@@ -197,6 +197,7 @@ public final class LuciferFight {
 		LuciferArena.forceLoad(level, true);
 		discardStrays();
 		LuciferArena.seal(level);
+		LuciferArena.fillHoles(level, floorY);
 		floor = LuciferArena.snapshot(level);
 		for (ServerPlayer p : LuciferDialogue.audience(level, LuciferArena.RADIUS + 4)) {
 			if (!p.isSpectator()) {

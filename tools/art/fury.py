@@ -59,7 +59,7 @@ def tattered(faces):
 
 def build():
     m = Model("fury", texture_width=128)
-    body = m.bone("body", (0, 14, 0), rotation=(15, 0, 0))
+    body = m.bone("body", (0, 14, 0), rotation=(-15, 0, 0))
     body.cube("robe", (-4, 0, -2.5), (8, 14, 5), ROBE, detail=tattered)
     body.cube("hydra_girdle", (-4.5, 12, -3), (9, 2, 6), HYDRA, inflate=0.2)
     torso = body.bone("torso", (0, 14, 0))
@@ -101,23 +101,23 @@ def animations(m):
     flap(idle, 0.8)
     writhe(idle, 0.8)
     idle.pos("body", [(0, ZERO), (0.4, (0, 1.5, 0)), (0.8, ZERO)])
-    idle.rot("right_arm", [(0, (-20, 0, 20)), (0.8, (-20, 0, 20))])
-    idle.rot("left_arm", [(0, (-20, 0, -20)), (0.8, (-20, 0, -20))])
+    idle.rot("right_arm", [(0, (20, 0, 20)), (0.8, (20, 0, 20))])
+    idle.rot("left_arm", [(0, (20, 0, -20)), (0.8, (20, 0, -20))])
 
     # her talons: she draws back, flashes white, and rakes down
     talons = m.animation("talons", 1.4)
     flap(talons, 0.7)
-    talons.rot("right_arm", [(0, (-20, 0, 20)), (0.5, (-170, 0, 30)), (0.9, (-175, 0, 30)), (1.0, (-40, 0, 0)), (1.4, (-20, 0, 20))])
-    talons.rot("left_arm", [(0, (-20, 0, -20)), (0.5, (-170, 0, -30)), (0.9, (-175, 0, -30)), (1.0, (-40, 0, 0)), (1.4, (-20, 0, -20))])
-    talons.rot("body", [(0, ZERO), (0.5, (-20, 0, 0)), (1.0, (40, 0, 0)), (1.4, ZERO)])
+    talons.rot("right_arm", [(0, (20, 0, 20)), (0.5, (170, 0, 30)), (0.9, (175, 0, 30)), (1.0, (40, 0, 0)), (1.4, (20, 0, 20))])
+    talons.rot("left_arm", [(0, (20, 0, -20)), (0.5, (170, 0, -30)), (0.9, (175, 0, -30)), (1.0, (40, 0, 0)), (1.4, (20, 0, -20))])
+    talons.rot("body", [(0, ZERO), (0.5, (20, 0, 0)), (1.0, (-40, 0, 0)), (1.4, ZERO)])
     talons.event(0.5, "flash").event(1.0, "hit")
 
     # the shriek: head back, wings and arms flung wide
     shriek = m.animation("shriek", 1.6)
     writhe(shriek, 0.4)
-    shriek.rot("head", [(0, ZERO), (0.3, (-50, 0, 0)), (1.3, (-50, 0, 0)), (1.6, ZERO)])
-    shriek.rot("right_arm", [(0, (-20, 0, 20)), (0.3, (-20, 0, 110)), (1.3, (-20, 0, 110)), (1.6, (-20, 0, 20))])
-    shriek.rot("left_arm", [(0, (-20, 0, -20)), (0.3, (-20, 0, -110)), (1.3, (-20, 0, -110)), (1.6, (-20, 0, -20))])
+    shriek.rot("head", [(0, ZERO), (0.3, (50, 0, 0)), (1.3, (50, 0, 0)), (1.6, ZERO)])
+    shriek.rot("right_arm", [(0, (20, 0, 20)), (0.3, (20, 0, 110)), (1.3, (20, 0, 110)), (1.6, (20, 0, 20))])
+    shriek.rot("left_arm", [(0, (20, 0, -20)), (0.3, (20, 0, -110)), (1.3, (20, 0, -110)), (1.6, (20, 0, -20))])
     for side, s in (("right", 1), ("left", -1)):
         shriek.rot(f"{side}_wing", [(0, ZERO), (0.3, (0, 0, -50 * s)), (1.3, (0, 0, -50 * s)), (1.6, ZERO)])
     shriek.event(0.4, "scream")
@@ -125,7 +125,7 @@ def animations(m):
     # the lash: she whips her head round and the serpents crack like a scourge
     lash = m.animation("lash", 1.2)
     flap(lash, 0.6)
-    lash.rot("head", [(0, ZERO), (0.4, (0, 70, 0)), (0.6, (20, -80, 0)), (1.2, ZERO)])
+    lash.rot("head", [(0, ZERO), (0.4, (0, 70, 0)), (0.6, (-20, -80, 0)), (1.2, ZERO)])
     lash.rot("torso", [(0, ZERO), (0.4, (0, 30, 0)), (0.6, (0, -40, 0)), (1.2, ZERO)])
     for i in range(6):
         lash.rot(f"snake{i}", [(0, ZERO), (0.4, (0, 0, -40)), (0.6, (60, 0, 50)), (1.2, ZERO)])
@@ -134,14 +134,14 @@ def animations(m):
     # rending their breasts: blood falls round you
     tear = m.animation("tear", 1.6)
     flap(tear, 0.8)
-    tear.rot("right_arm", [(0, (-20, 0, 20)), (0.5, (-80, 40, 0)), (0.8, (-60, -30, 0)), (1.1, (-80, 40, 0)), (1.6, (-20, 0, 20))])
-    tear.rot("left_arm", [(0, (-20, 0, -20)), (0.5, (-80, -40, 0)), (0.8, (-60, 30, 0)), (1.1, (-80, -40, 0)), (1.6, (-20, 0, -20))])
-    tear.rot("head", [(0, ZERO), (0.5, (-30, 0, 0)), (1.3, (-30, 0, 0)), (1.6, ZERO)])
+    tear.rot("right_arm", [(0, (20, 0, 20)), (0.5, (80, 40, 0)), (0.8, (60, -30, 0)), (1.1, (80, 40, 0)), (1.6, (20, 0, 20))])
+    tear.rot("left_arm", [(0, (20, 0, -20)), (0.5, (80, -40, 0)), (0.8, (60, 30, 0)), (1.1, (80, -40, 0)), (1.6, (20, 0, -20))])
+    tear.rot("head", [(0, ZERO), (0.5, (30, 0, 0)), (1.3, (30, 0, 0)), (1.6, ZERO)])
     tear.event(0.8, "tear")
 
     # struck from the air: she tumbles, wings askew
     stagger = m.animation("stagger", 2.2)
-    stagger.rot("body", [(0, ZERO), (0.3, (60, 0, 40)), (1.8, (70, 0, 40)), (2.2, ZERO)])
+    stagger.rot("body", [(0, ZERO), (0.3, (-60, 0, 40)), (1.8, (-70, 0, 40)), (2.2, ZERO)])
     stagger.pos("body", [(0, ZERO), (0.4, (0, -10, 0)), (1.8, (0, -10, 0)), (2.2, ZERO)])
     for side, s in (("right", 1), ("left", -1)):
         stagger.rot(f"{side}_wing", [(0, ZERO), (0.3, (0, 40 * s, 40 * s)), (1.8, (0, 40 * s, 40 * s)), (2.2, ZERO)])
@@ -149,24 +149,24 @@ def animations(m):
     # "Venga Medusa!": they turn to the wall and call her
     phase = m.animation("phase", 2.6)
     flap(phase, 0.65)
-    phase.rot("right_arm", [(0, (-20, 0, 20)), (0.6, (-170, 0, -10)), (2.2, (-170, 0, -10)), (2.6, (-20, 0, 20))])
-    phase.rot("left_arm", [(0, (-20, 0, -20)), (0.6, (-170, 0, 10)), (2.2, (-170, 0, 10)), (2.6, (-20, 0, -20))])
-    phase.rot("head", [(0, ZERO), (0.6, (-45, 0, 0)), (2.2, (-45, 0, 0)), (2.6, ZERO)])
+    phase.rot("right_arm", [(0, (20, 0, 20)), (0.6, (170, 0, -10)), (2.2, (170, 0, -10)), (2.6, (20, 0, 20))])
+    phase.rot("left_arm", [(0, (20, 0, -20)), (0.6, (170, 0, 10)), (2.2, (170, 0, 10)), (2.6, (20, 0, -20))])
+    phase.rot("head", [(0, ZERO), (0.6, (45, 0, 0)), (2.2, (45, 0, 0)), (2.6, ZERO)])
     phase.event(0.8, "call")
 
     # their entrance: up from behind the battlements, shrieking
     intro = m.animation("intro", 4.0)
     flap(intro, 0.5)
     intro.pos("body", [(0, (0, -30, 0)), (1.0, (0, -30, 0)), (2.0, ZERO), (4.0, ZERO)])
-    intro.rot("head", [(0, ZERO), (2.2, (-50, 0, 0)), (3.4, (-50, 0, 0)), (4.0, ZERO)])
+    intro.rot("head", [(0, ZERO), (2.2, (50, 0, 0)), (3.4, (50, 0, 0)), (4.0, ZERO)])
     intro.event(1.0, "rise").event(2.2, "scream")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("body", [(0, ZERO), (0.1, (-20, 0, 10)), (0.3, ZERO)])
+    hurt.rot("body", [(0, ZERO), (0.1, (20, 0, 10)), (0.3, ZERO)])
 
     # she falls out of the air
     death = m.animation("death", 1.6)
-    death.rot("body", [(0, ZERO), (0.6, (80, 0, 60)), (1.6, (90, 0, 80))])
+    death.rot("body", [(0, ZERO), (0.6, (-80, 0, 60)), (1.6, (-90, 0, 80))])
     death.pos("body", [(0, ZERO), (0.8, (0, -10, 0)), (1.6, (0, -13, 0))])
     for side, s in (("right", 1), ("left", -1)):
         death.rot(f"{side}_wing", [(0, ZERO), (0.6, (0, 30 * s, 70 * s)), (1.6, (0, 30 * s, 80 * s))])

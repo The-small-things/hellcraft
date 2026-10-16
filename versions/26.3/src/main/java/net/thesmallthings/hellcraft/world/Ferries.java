@@ -67,7 +67,8 @@ public final class Ferries {
 			int[] t = Fen.tower(k);
 			for (ServerPlayer p : level.players()) {
 				if (p.distanceToSqr(t[0], p.getY(), t[1]) < 64 * 64) {
-					Dialogue.notice(p, Component.literal("Out of the fog a ferry comes gliding toward the tower. Board it (right-click) to cross to the gates of Dis.")
+					Dialogue.notice(p, Component.literal("Out of the fog a ferry comes gliding toward the tower. Board it (right-click): it carries you "
+							+ "across the Styx and sets you down inside the Walls of Dis, and nothing can hurt you aboard.")
 							.withStyle(ChatFormatting.DARK_AQUA));
 				}
 			}
@@ -95,12 +96,13 @@ public final class Ferries {
 			return null;
 		}
 		double a = InfernoGeometry.ROAD_ANGLES[k];
-		// across: on the water beside the road, just short of the Walls of Dis; land: on the road there
+		// across: on the water beside the road, just short of the Walls of Dis; land: on the road inside the gate
 		double wall = InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS);
+		double inside = InfernoGeometry.DIS_WALL_RADIUS - InfernoGeometry.DIS_WALL_HALF_THICKNESS - 10;
 		double sideX = -Math.sin(a) * 7;
 		double sideZ = Math.cos(a) * 7;
 		Vec3 across = new Vec3(Math.cos(a) * (wall + 10) + sideX, water(), Math.sin(a) * (wall + 10) + sideZ);
-		Vec3 land = new Vec3(Math.cos(a) * (wall + 6) + 0.5, 0, Math.sin(a) * (wall + 6) + 0.5);
+		Vec3 land = new Vec3(Math.cos(a) * inside + 0.5, 0, Math.sin(a) * inside + 0.5);
 		ferry.route(from, dock, across, land, WAIT);
 		level.addFreshEntity(ferry);
 		ACTIVE[k] = ferry;

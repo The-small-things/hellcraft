@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * The Minotaur (Inferno XII), the Infamy of Crete, on the shattered slope at the top of the seventh circle. He hunts
+ * The Minotaur (Inferno XII), the Infamy of Crete, in a clearing of the Wood of Suicides, in the seventh circle. He hunts
  * you round his lair, and every blow speaks the danger language (hazard/Danger):
  * <ul>
  *     <li><b>The Horns</b> (a white wedge): he draws his head back, flashes white, and thrusts. Block it as it comes
@@ -95,7 +95,7 @@ final class MinotaurFight extends GuardianFight {
 
 	@Override
 	protected String deathLine() {
-		return "*The Infamy of Crete crashes down on the rocks of the slope.*";
+		return "*The Infamy of Crete crashes down among the dead trees.*";
 	}
 
 	@Override

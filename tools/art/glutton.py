@@ -71,7 +71,7 @@ ZERO = (0, 0, 0)
 def animations(m):
     idle = m.animation("idle", 2.0, loop=True)
     idle.pos("body", [(0, ZERO), (1, (0, -0.6, 0)), (2, ZERO)])
-    idle.rot("head", [(0, ZERO), (1, (8, 0, 0)), (2, ZERO)])
+    idle.rot("head", [(0, ZERO), (1, (-8, 0, 0)), (2, ZERO)])
     idle.rot("right_arm", [(0, (0, 0, 10)), (1, (0, 0, 16)), (2, (0, 0, 10))])
     idle.rot("left_arm", [(0, (0, 0, -10)), (1, (0, 0, -16)), (2, (0, 0, -10))])
 
@@ -82,10 +82,10 @@ def animations(m):
 
     # it throws its whole belly forward
     attack = m.animation("attack", 1.0)
-    attack.rot("body", [(0, ZERO), (0.35, (-18, 0, 0)), (0.5, (25, 0, 0)), (0.75, (20, 0, 0)), (1.0, ZERO)])
+    attack.rot("body", [(0, ZERO), (0.35, (18, 0, 0)), (0.5, (-25, 0, 0)), (0.75, (-20, 0, 0)), (1.0, ZERO)])
     attack.pos("body", [(0, ZERO), (0.35, (0, 0, 2)), (0.5, (0, 0, -4)), (1.0, ZERO)])
-    attack.rot("right_arm", [(0, ZERO), (0.35, (-60, 0, 20)), (0.5, (-80, 0, 10)), (1.0, ZERO)])
-    attack.rot("left_arm", [(0, ZERO), (0.35, (-60, 0, -20)), (0.5, (-80, 0, -10)), (1.0, ZERO)])
+    attack.rot("right_arm", [(0, ZERO), (0.35, (60, 0, 20)), (0.5, (80, 0, 10)), (1.0, ZERO)])
+    attack.rot("left_arm", [(0, ZERO), (0.35, (60, 0, -20)), (0.5, (80, 0, -10)), (1.0, ZERO)])
     attack.event(0.5, "hit")
 
     # heaving itself up out of the mud
@@ -93,17 +93,17 @@ def animations(m):
     emerge.pos("body", [(0, (0, -22, 0)), (0.3, (0, -22, 0)), (1.6, (0, 1, 0)), (2.0, ZERO)])
     emerge.pos("right_leg", [(0, (0, -22, 0)), (0.3, (0, -22, 0)), (1.6, ZERO)])
     emerge.pos("left_leg", [(0, (0, -22, 0)), (0.3, (0, -22, 0)), (1.6, ZERO)])
-    emerge.rot("head", [(0, (30, 0, 0)), (1.6, (-15, 0, 0)), (2.0, ZERO)])
-    emerge.rot("right_arm", [(0, (-150, 0, 20)), (1.0, (-120, 0, 30)), (2.0, ZERO)])
-    emerge.rot("left_arm", [(0, (-150, 0, -20)), (1.0, (-120, 0, -30)), (2.0, ZERO)])
+    emerge.rot("head", [(0, (-30, 0, 0)), (1.6, (15, 0, 0)), (2.0, ZERO)])
+    emerge.rot("right_arm", [(0, (150, 0, 20)), (1.0, (120, 0, 30)), (2.0, ZERO)])
+    emerge.rot("left_arm", [(0, (150, 0, -20)), (1.0, (120, 0, -30)), (2.0, ZERO)])
     emerge.event(0.3, "rise")
 
     hurt = m.animation("hurt", 0.3)
-    hurt.rot("body", [(0, ZERO), (0.1, (-8, 0, 0)), (0.3, ZERO)])
+    hurt.rot("body", [(0, ZERO), (0.1, (8, 0, 0)), (0.3, ZERO)])
 
     # it slumps and splits
     death = m.animation("death", 1.2)
-    death.rot("body", [(0, ZERO), (0.6, (-30, 0, 15)), (1.2, (-40, 0, 20))])
+    death.rot("body", [(0, ZERO), (0.6, (30, 0, 15)), (1.2, (40, 0, 20))])
     death.pos("body", [(0, ZERO), (0.6, (0, -3, 0)), (1.2, (0, -6, 0))])
     death.event(0.6, "burst")
 

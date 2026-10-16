@@ -64,7 +64,7 @@ def build():
     for side, s in (("right", 1), ("left", -1)):
         def x(a, w):
             return a if s == 1 else -(a + w)
-        arm = body.bone(f"{side}_arm", (12 * s, 42, 0), (AT_RIM, 0, 0) if s == 1 else (0, 0, 0))
+        arm = body.bone(f"{side}_arm", (12 * s, 42, 0), (-AT_RIM, 0, 0) if s == 1 else (0, 0, 0))
         arm.cube(f"{side}_arm", (x(10, 7), 18, -3.5), (7, 24, 7), SKIN, mirror=s == -1)
         arm.cube(f"{side}_hand", (x(9, 9), 14, -4.5), (9, 4, 9), SKIN, mirror=s == -1)
     animations(m)
@@ -72,7 +72,9 @@ def build():
 
 
 ZERO = (0, 0, 0)
-# His right arm rests on the rim of the Well (the mesh's own pose, AT_RIM); the animations move it from there.
+# His right arm rests on the rim of the Well (the mesh's own pose, AT_RIM); the animations move it from there. The
+# reach below works in angles with "forward" negative; Blockbench's +X swings a hanging arm forward (and tips a body
+# back), so every X angle is negated on its way into the model (keys and the mesh's pose alike).
 AT_RIM = -110
 # Where his right hand (its centre) goes, in pixels from his hips: (seconds, forward, up). The hand lifts you off the
 # rim, then goes straight down the cleft his arm has worn in the cliff (Antaeus builds it) to the ice. AntaeusEntity moves whoever rides in it along the
@@ -118,8 +120,8 @@ def follow(anim, path, start_bend):
         keys_body.append((round(t, 3), (round(bend, 2), 0, 0)))
         keys_arm.append((round(t, 3), (round(theta - bend - AT_RIM, 2), 0, 0)))
         t += 0.25
-    anim.rot("body", keys_body, interp="linear")
-    anim.rot("right_arm", keys_arm, interp="linear")
+    anim.rot("body", [(t, (-b, y, z)) for t, (b, y, z) in keys_body], interp="linear")
+    anim.rot("right_arm", [(t, (-a, y, z)) for t, (a, y, z) in keys_arm], interp="linear")
 
 
 def animations(m):
@@ -127,23 +129,23 @@ def animations(m):
     idle = m.animation("idle", 5.0, loop=True)
     idle.rot("left_arm", [(0, (0, 0, -8)), (2.5, (0, 0, -10)), (5.0, (0, 0, -8))])
     idle.pos("body", [(0, ZERO), (2.5, (0, 0.6, 0)), (5.0, ZERO)])
-    idle.rot("head", [(0, (-10, 0, 0)), (2.5, (-12, 6, 0)), (5.0, (-10, 0, 0))])
+    idle.rot("head", [(0, (10, 0, 0)), (2.5, (12, 6, 0)), (5.0, (10, 0, 0))])
 
     # carrying you down: the hand lifts you over the brink, he bends, and sets you on the ice
     lower = m.animation("lower", 4.0)
     follow(lower, LOWER_PATH, 0)
-    lower.rot("head", [(0, ZERO), (1.25, (-5, 0, 0)), (3.5, (25, 0, 0)), (4.0, (25, 0, 0))])
+    lower.rot("head", [(0, ZERO), (1.25, (5, 0, 0)), (3.5, (-25, 0, 0)), (4.0, (-25, 0, 0))])
     lower.event(0.5, "take").event(3.5, "set")
 
     # holding his hand down at the ice, for whoever wants to go up
     low = m.animation("low", 2.0, loop=True)
     follow(low, [(0.0, 24.43, -20), (2.0, 24.43, -20)], 60)
-    low.rot("head", [(0, (25, 0, 0)), (2.0, (25, 0, 0))])
+    low.rot("head", [(0, (-25, 0, 0)), (2.0, (-25, 0, 0))])
 
     # and up again, like a mast on a ship
     raise_ = m.animation("raise", 3.0)
     follow(raise_, RAISE_PATH, 60)
-    raise_.rot("head", [(0, (25, 0, 0)), (2.4, (-5, 0, 0)), (2.75, ZERO), (3.0, ZERO)])
+    raise_.rot("head", [(0, (-25, 0, 0)), (2.4, (5, 0, 0)), (2.75, ZERO), (3.0, ZERO)])
     raise_.event(0.25, "take").event(2.75, "set")
 
 
