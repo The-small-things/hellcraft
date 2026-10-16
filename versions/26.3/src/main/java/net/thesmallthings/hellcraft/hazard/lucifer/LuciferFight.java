@@ -767,7 +767,7 @@ public final class LuciferFight {
 		double yaw = Math.toRadians(EMPEROR_FACING);
 		double bx = Math.sin(yaw) * (EmperorEntity.BODY_RADIUS + 3);
 		double bz = -Math.cos(yaw) * (EmperorEntity.BODY_RADIUS + 3);
-		return net.minecraft.core.BlockPos.containing(bx, floorY, bz);
+		return new net.minecraft.core.BlockPos((int) Math.round(bx), floorY, (int) Math.round(bz));
 	}
 
 	private void step(String what, Runnable action) {
