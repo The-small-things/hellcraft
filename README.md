@@ -149,7 +149,7 @@ New players start with 5 bread and 2 **Vigil Candles** (26.3), and chat points t
 - the five guardians, then Lucifer;
 - the climb out to Purgatory, and the Seven P's;
 - the Forge of Dis and Vulcan in the Nether;
-- the Seraph, the Empyrean and Beatrice's Rose in Paradiso.
+- Paradiso's nine spheres, the Seraph, and Beatrice's Rose in the Empyrean.
 
 - **Hearts.** You start with 10 hearts and can hold up to 20.
   - Killing a player steals one of their hearts.
@@ -391,13 +391,13 @@ With two or more champions, the traitors rise from the start. He calls champions
 
 *"Thence we came forth to rebehold the stars."*
 
-When Lucifer falls, the fighters climb straight out (above), and a **burrow** (an end gateway) opens in the ice at his back, for five minutes, for anyone who missed it. Step in and you climb out onto the shore of **Purgatory**, a mountain island floating high above the pit (y 226–290) under the eternal night sky:
+When Lucifer falls, the fighters climb straight out (above), and a **burrow** (an end gateway) opens in the ice at his back, for five minutes, for anyone who missed it. Step in and you climb out onto the shore of **Purgatory**: since Phase 7 its own small world, a mountain island in a starlit sea, in the hour before dawn:
 - **Seven terraces** spiral up the mountain, one for each capital sin, with stairways cut into the cliffs. Each has a sign, and at each new terrace an angel's wing erases a P from your brow.
 - The **Earthly Paradise** on the summit has flowers and trees and two streams:
   - **Lethe** (west) washes away every harmful effect, fire and frost.
   - **Eunoë** (east) gives +2 hearts (up to your cap) and a full heal, once for every victory over Lucifer.
 - The **Gate of Return** in the middle of the garden takes you back to the Gate of Hell.
-- Fall off the mountain and an angel catches you and sets you down on the shore.
+- **The Ascent**, a second gateway on the summit, lifts anyone who has cast Lucifer down into **Paradiso** (below).
 
 `/hellcraft purgatory` takes an op to the shore.
 
@@ -456,31 +456,49 @@ He drops the usual guardian spoils and returns after 30 minutes. `/hellcraft for
 
 Near lava in the Nether, the **forge-heat** makes you hungry. Fire Resistance or water keeps it off.
 
-**Paradiso (the End).** The End is Dante's heaven. The dragon, now **the Seraph**, still guards the Threshold in the middle. Every outer island belongs to a heavenly sphere, ring by ring from the centre, each with its own ground, sky and floating stars:
+These reshape the vanilla Nether by id. New worlds get them, and so do areas of existing worlds that haven't been explored yet. Explored chunks stay as they were.
 
-| Sphere | From | Ground |
+## Paradiso (Phase 7)
+
+*"The love that moves the sun and the other stars."*
+
+Paradiso is its own world, a climb **upward**: nine spheres stacked one above the other, each a cluster of floating islands with its own look, and the **Empyrean** with the **Celestial Rose** on top. The only way in is **the Ascent** on Purgatory's summit (for those who have beaten Lucifer). There are **no strongholds** in an Inferno world, so eyes of ender lead nowhere, and the End is vanilla's again (unreachable there).
+
+In each sphere you arrive on a small isle under a canopy, cross a bridge to its great island, where its **trial** waits, then cross to the **departure isle**, where a **column of light** rises to the next sphere. You can always see the next sphere above you, and the compass points the way (the trial, then the column).
+- **Pass a sphere's trial, then stand in its column of light**: it lifts you to the next sphere. A column you haven't earned is drawn thin and dim; stepping into it tells you what its trial is. **Hold sneak** in a column to sink back down.
+- **Falling can't hurt you in Paradiso.** Fall off a sphere and an angel catches you and sets you down on its arrival isle.
+- The spheres open one at a time: anyone who gets above a sphere they haven't earned (an ender pearl, rockets) is set back down.
+- The gate under the Moon's canopy goes back down to Purgatory's summit; the one on the Empyrean's arrival isle goes home to the Gate of Hell.
+
+| Sphere | Looks | Trial |
 |---|---|---|
-| The Moon | 1000 | calcite and snow |
-| Mercury | 1600 | diorite |
-| Venus | 2200 | grass, cherry groves, pink petals |
-| The Sun | 2800 | yellow terracotta, honeycomb, shroomlight stars |
-| Mars | 3400 | red terracotta and sandstone |
-| Jupiter | 4000 | quartz |
-| Saturn | 4600 | packed ice and snow |
-| The Fixed Stars | 5200 | end stone bricks, sea-lantern stars, chorus |
-| The Primum Mobile | 5800 | prismarine |
-| The Empyrean | 6400 | meadows of pink petals and light |
+| I. The Moon | calcite and snow, pale pillars | gather 5 pale lights on its islands |
+| II. Mercury | diorite and green copper | gather 6 lights within a minute of the first |
+| III. Venus | grass, cherry trees, petals | catch the 4 lights that circle the island |
+| IV. The Sun | sandstone, a ring of 12 pillars | gather the 12 lights in the ring of the wise |
+| V. Mars | red terracotta, a cross of light | stand at the heart of the cross and beat the Angelic Guard (2 waves) |
+| VI. Jupiter | quartz, a golden Eagle in the floor | touch the Eagle's 5 lights in order: tail, left wing, right wing, heart, eye |
+| VII. Saturn | amethyst, Jacob's Ladder | climb the golden ladder to the light at its top |
+| VIII. The Fixed Stars | dark tiles set with stars, star spires | gather the 7 lights on top of the spires (steps wind up each) |
+| IX. The Primum Mobile | prismarine, a crystal arena | face **the Seraph** |
+| The Empyrean | the Celestial Rose | ring Beatrice's bell |
 
-**After the dragon:** chat tells everyone what to do next. Throw an ender pearl into the small gateway portal at the edge of the dragon's island to reach the outer islands, about 1000 blocks out. Every ring, from the Moon to the Primum Mobile, has End cities and chorus plants as vanilla's outer islands do. A title names each ring as you enter it ("Ring 1 of 9") and says how far the Celestial Rose is. The first time you reach the outer islands you get a **Rose Compass** (a lodestone compass that points to the Celestial Rose) and a short explanation in chat.
+The lights only show for players still doing the trial; walk into one to take it. Each trial passed heals you and gives 3 levels and a Blood Fragment. **Saturn's** gives **Seraph Wings** (elytra that never wear out; sneak while gliding for a rush of wind every 10 s).
 
-(Older worlds: islands that were already generated keep what they had; End cities and chorus appear in newly explored chunks.)
+**The Seraph.** On the Primum Mobile's crystal floor the Seraph comes down out of the light (a short cutscene): a burning angel with six wings, two veiling its face, two its feet and two to fly. It is your last examiner, on a real, animated body, in the danger language:
+- **The Wing-blow** (white flash): its great wings sweep forward. Block them as they land and it sinks, reeling.
+- **Fire from Above** (red circles round each of you): fire falls there.
+- **The Live Coal** (a red circle on you): it throws the coal from the altar; it bursts there.
+- **The Gloria** (a red ring round it, everywhere but close beside it): it unveils its face. Run **in**, close to it.
+- **The Angelic Guard:** angels come down to test you. Kill them.
+- **At half its strength** all six wings flare, and from then on the **turning heavens** (a purple ring) sweep a beam round the floor between its blows: jump it as it passes.
 
-- **The trial of the Seraph.** At half its health, and again at a quarter, the dragon calls its **Angelic Guard**: glowing vexes, two for every player. When it falls, everyone on the Threshold receives a **Halo**, a golden helmet that gives Regeneration while you are nearly at full health.
-- **Seraph Wings** hide in end city treasure (1 chest in 4). These elytra never wear out, and sneaking while gliding gives a rush of wind every 10 s.
-- **The Celestial Rose** floats in the Empyrean (x 7000, z 0): tiers of quartz and light with bands of petals. Ring its bell for **Beatrice's Rose** (once each). Right-click the rose to be fully healed and cleansed, once an hour.
-- **The Ascent.** A second gateway on Purgatory's summit lifts anyone who has cast Lucifer down into Paradiso. It leads to the Threshold, or to the Celestial Rose once the Seraph has fallen.
+It doesn't die: beaten, it bows and rises into the light. Everyone who fought it gets a **Halo** (a golden helmet that gives Regeneration while you are nearly at full health) and the guardian spoils, and the column to the Empyrean opens for them. It returns after 30 minutes for anyone else.
 
-These reshape the vanilla Nether and End by id. New worlds get them, and so do areas of existing worlds that haven't been explored yet. Explored chunks stay as they were.
+**The Celestial Rose.** The Empyrean's great island holds a bowl of white tiers, bands of grass and petals and rods of light, with Beatrice's bell in the middle. Ring it for **Beatrice's Rose** (once each): right-click the rose to be fully healed and cleansed, once an hour.
+
+`/hellcraft paradiso go <sphere>` takes an op to a sphere; `/hellcraft paradiso pass <player> <n>` passes the first n trials; `/hellcraft guardian seraph summon` wakes the Seraph.
+
 
 ## Virgil's Rests (26.3)
 
@@ -601,7 +619,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |
-| `/hellcraft paradiso status\|angels\|rose\|ascent` | op | Paradiso's state; call the Angelic Guard; build the Celestial Rose or the Ascent now (26.3) |
+| `/hellcraft paradiso status\|test\|angels\|ascent` | op | Paradiso's state; check every sphere, gate and the bell; call the Angelic Guard; build the Ascent now |
+| `/hellcraft paradiso go <sphere>` / `paradiso pass <player> <n>` | op | Go to a sphere's arrival isle; pass the first n trials for a player (0 resets) |
 | `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
 | `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |
 | `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |

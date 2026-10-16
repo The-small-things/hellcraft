@@ -302,7 +302,15 @@ Slag Sea, crossed on a crust that cracks and melts under you; the Foundry Halls,
 the Chainlands, islands hung on chains with bridges between them; the Ash Wastes; and the Cyclops Quarries, terraced with
 ramps), stairways down the mesa, a column of heat over the Forge, the compass pointing to it, Vulcan on a real body with
 an entrance cutscene and a fight in the danger language, and the Cyclopes, mini-bosses at camps in the Quarries. The Foundry
-Halls' "chain-lifts" are ladders up the pillars for now. Phases 1 to 6 wait on a play session.
+Halls' "chain-lifts" are ladders up the pillars for now. Phase 7 was built the same day: Purgatory became its own world, the
+mountain island in a starlit sea before dawn; Paradiso became its own world too, nine spheres of floating islands stacked one
+above the other (no sphere right over the one below, so you can always see the next), each with its own look, a short trial
+(lights to gather, against the clock on Mercury, circling on Venus, in order on Jupiter's Eagle, at the top of Jacob's Ladder
+on Saturn and of the star spires; the Angelic Guard on Mars) and a column of light that lifts you to the next sphere once
+you've passed it; no falling damage there, and angels catch whoever falls; the Seraph on a real body, with an entrance
+cutscene and a fight in the danger language, in the Primum Mobile; the Celestial Rose atop the Empyrean; Seraph Wings from
+Saturn, the Halo from the Seraph and Beatrice's Rose from the bell; no strongholds in the Inferno, and the End vanilla again;
+the story arc on the Journal's second page. Phases 1 to 7 wait on a play session.
 
 ## 14. The playtest loop
 

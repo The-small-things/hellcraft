@@ -76,6 +76,16 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   stairways), client `layer/HeatColumn` and the compass's Forge mode. Vulcan (`VulcanFight`, `entity/boss/VulcanEntity`) and
   the Cyclops (`entity/boss/CyclopsEntity`, a mini-boss that fights on its own clock) are real bodies from tools/art.
   `NetherTest` films it all (`forge_*`, `vulcan_fight_*`, `cyclops_*`).
+- Purgatory and Paradiso (Phase 7) are their own dimensions in the Inferno preset (`hellcraft:purgatory`, `hellcraft:paradiso`;
+  data from `tools/gen_realms.py`). `world/Purgatory` builds the island in its sea once and runs the terraces, streams, burrow,
+  climb out and gates; `Heaven` holds the Ascent, the Angelic Guard and the Rose's bell. `world/ParadisoGeometry` is Paradiso's
+  one source of shape (nine spheres stacked `STEP` apart, centres round a circle so none sits over the one below, columns of
+  light halfway between), read by `ParadisoBiomeSource` (sphere by height), `feature/ParadisoIslandFeature` (every island,
+  centrepiece and the Rose, chunk by chunk), `Paradiso` (columns lift you, falls caught, spheres open one at a time, gates),
+  `ParadisoTrials` (a trial per sphere, `HellState.Soul.spheres`) and the client (`layer/LightColumns`, the compass's
+  Paradiso mode). The Seraph is a guardian (`Guardian.SERAPH`, `SeraphFight`, `entity/boss/SeraphEntity`, tools/art/seraph.py)
+  whose lair is the Primum Mobile's island. The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
+  films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
@@ -96,7 +106,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - Hint bits (`CircleHazards.hintOnce`, 64 of them in `HellState.Soul.hints`): 0-31 upper Hell, 32-38 lower Hell
   (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat,
   42 the Emperor's open hand, 43 his wingbeat in the fight,
-  44 the Slag Sea's crust, 45-50 the Forge of Dis's regions (ForgeOfDis.TIPS).
+  44 the Slag Sea's crust, 45-50 the Forge of Dis's regions (ForgeOfDis.TIPS), 51-60 Paradiso's spheres (their trials).
 - Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
   (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
   death, nor Lucifer's SNAP, REVEAL and DORMANT). `LuciferFight` has the same clock (`update` per real tick, `step` per
@@ -167,15 +177,17 @@ circle (`hazard/LowerRules`, `world/Tombs`, `hazard/Frauds`, `world/FraudSites`)
 `entity/monster` Heretic, Centaur, Harpy, Mimic, Thief, Malebranche, Malacoda), and the Furies with Medusa, Farinata,
 the Minotaur and Geryon on real bodies. Later bosses use the generic `entity/boss/AnimatedBoss` and
 `client/render/boss/AnimatedBossRenderer` (no per-boss entity or renderer code beyond the fight). Danger marks lie on the
-ground near the mark's own height (`DangerMarks.ground`), not the heightmap (the Nether's roof, Purgatory over the pit). Geryon, beaten, becomes
+ground near the mark's own height (`DangerMarks.ground`), not the heightmap (the Nether's roof, Paradiso's stacked spheres). Geryon, beaten, becomes
 `GeryonCarrier` (rides down the great cliff); `world/AntaeusCleft` places `AntaeusEntity`, whose hand carries riders
 along the same path its animation follows (keep the `LOWER_PATH` and `RAISE_PATH` of `tools/art/antaeus.py` and `AntaeusEntity` in step); riders of
 either can't be hurt (`entity/Carrier`). **Phase 5 (Lucifer) is built** (2026-10-16): Cocytus's cold, braziers and
 wingbeat (`hazard/Wingbeat`, client `layer/WingbeatFx` and the `Colossus` windmill), the ready check, the Fallen Seraph's
 duel and the Emperor on real bodies, three cutscenes (descent, reveal, the climb out with a camera roll), the burrow at
 his back. **Phase 6 (the Nether) is built** (2026-10-16): the Forge of Dis
-(see the code map), Vulcan and the Cyclopes on real bodies. Phases 1 to 6 wait on a play session; next is Phase 7
-(Purgatory and Paradiso) after that feedback.
+(see the code map), Vulcan and the Cyclopes on real bodies. **Phase 7 (Purgatory and Paradiso) is built** (2026-10-16):
+Purgatory's own sea, Paradiso's nine stacked spheres with their columns of light and trials, the Seraph on a real body,
+the Rose on top, no strongholds, the story arc in the Journal. Phases 1 to 7 wait on a play session; Phase 8 (polish and
+the remaining REVAMP items) comes after that feedback.
 Not done in Phase 5: the other bosses' lines about him and a Codex page that fills in as they fall (REVAMP L1). Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships

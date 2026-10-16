@@ -23,8 +23,8 @@ public final class ForgeOfDis {
 					+ "and keep moving: it cracks under you.",
 			"The Foundry Halls: tall halls cut by rivers of lava. The pillars have ladders up to their arms, if you want to look around.",
 			"The Chainlands: islands of rock hung on chains over the lava. Cross on the bridges; it's a long way down.",
-			"The Ash Wastes: dunes of ash under a low roof. Piglins trade here, and there are bastions and fortresses (blaze rods are "
-					+ "the way to Paradiso).",
+			"The Ash Wastes: dunes of ash under a low roof. Piglins trade here, and there are bastions and fortresses (blaze rods "
+					+ "for brewing).",
 			"The Cyclops Quarries: terraces cut in the rock, with ramps winding up them. The Cyclopes keep camps here: leave them by "
 					+ "their fires, or fight them for their gold.",
 	};
