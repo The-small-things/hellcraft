@@ -141,6 +141,7 @@ public class HellcraftMod implements ModInitializer {
 			Villages.tick(server);
 			Paradiso.tick(server);
 			GreatForge.tick(server);
+			net.thesmallthings.hellcraft.world.ForgeOfDis.tick(server);
 			Heaven.tick(server);
 			Relics.tick(server);
 			Ambience.tick(server);

@@ -15,6 +15,38 @@ public final class ForgeOfDis {
 	private ForgeOfDis() {
 	}
 
+	/** What each region is, in one plain tip, the first time you enter it (hint bits 45 to 50). */
+	private static final String[] TIPS = {
+			"The Great Forge: Vulcan's smithy on its mesa. The Hellforge inside upgrades blood gear (a netherite ingot and Blood "
+					+ "Fragments). Vulcan wakes when you go in.",
+			"The Slag Sea: molten slag round the Great Forge. Cross on its crust (the causeways run straight to the Forge's stairs) "
+					+ "and keep moving: it cracks under you.",
+			"The Foundry Halls: tall halls cut by rivers of lava. The pillars have ladders up to their arms, if you want to look around.",
+			"The Chainlands: islands of rock hung on chains over the lava. Cross on the bridges; it's a long way down.",
+			"The Ash Wastes: dunes of ash under a low roof. Piglins trade here, and there are bastions and fortresses (blaze rods are "
+					+ "the way to Paradiso).",
+			"The Cyclops Quarries: terraces cut in the rock, with ramps winding up them. The Cyclopes keep camps here: leave them by "
+					+ "their fires, or fight them for their gold.",
+	};
+	private static int ticks;
+
+	/** Every second: the first time someone enters a region of the Forge, a tip says what it is. */
+	public static void tick(MinecraftServer server) {
+		if (++ticks % 20 != 0 || !HellWorldgen.isInferno(server.overworld())) {
+			return;
+		}
+		ServerLevel nether = server.getLevel(Level.NETHER);
+		if (nether == null) {
+			return;
+		}
+		for (net.minecraft.server.level.ServerPlayer p : nether.players()) {
+			if (!p.isSpectator()) {
+				ForgeGeometry.Region region = ForgeGeometry.regionAt(p.getX(), p.getZ());
+				net.thesmallthings.hellcraft.hazard.CircleHazards.hintOnce(p, 45 + region.ordinal(), TIPS[region.ordinal()]);
+			}
+		}
+	}
+
 	/**
 	 * Each region's biome stands where ForgeGeometry puts it, the causeways wear crust, and (once the Forge is built)
 	 * its stairways come down the mesa.

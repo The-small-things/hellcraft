@@ -279,6 +279,19 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   forge=$(rcon "hellcraft forge test")
   echo "$forge"
   echo "$forge" | grep -q "Forge test OK" || { echo "The Forge of Dis is not laid out as it should be"; exit 1; }
+  # a Cyclops on the mesa beside the Forge, against a dummy: each of his blows
+  out=$(rcon "execute in minecraft:the_nether positioned 0 70 30 run hellcraft cyclops summon")
+  echo "$out"
+  echo "$out" | grep -q "A Cyclops stands" || { echo "No Cyclops could be summoned"; exit 1; }
+  rcon "execute in minecraft:the_nether run summon minecraft:villager 4 70 30 {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
+  for a in smash boulder quake; do
+    out=$(rcon "execute in minecraft:the_nether positioned 0 70 30 run hellcraft cyclops attack $a")
+    echo "$out"
+    echo "$out" | grep -q "The Cyclops uses $a" || { echo "The Cyclops could not use $a"; exit 1; }
+    sleep 4
+  done
+  rcon "execute in minecraft:the_nether run kill @e[type=hellcraft:cyclops]"
+  rcon "execute in minecraft:the_nether run kill @e[tag=smoke_dummy]"
   drop=$(rcon "loot spawn $rx $((ry + 2)) $rz loot hellcraft:chests/forge_ruin" || true)
   echo "$drop" | grep -q "Dropped" || { echo "$drop"; echo "The forge ruin loot table does not work"; exit 1; }
   rcon "kill @e[type=minecraft:item]" > /dev/null || true

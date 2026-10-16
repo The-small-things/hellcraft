@@ -419,13 +419,34 @@ Testing it: `/hellcraft lucifer summon` skips the ready check and starts the fig
 
 ## Beyond the Inferno (26.3)
 
-**The Forge of Dis (the Nether).** The Nether is Hell's workshop, Vulcan's smithy. It has bigger halls, and the wastes and deltas have blackstone, basalt and magma floors. Ruined forges hold anvils, lava cauldrons and chests (iron, gold, netherite scrap, Blood Fragments, sometimes a netherite upgrade template). Heaps of slag lie about, and great chains hang from the vaults. The biomes have new names: the Ash Wastes of Dis, Vulcan's Foundry, the Bleeding Wood, the Cold Forge and the Valley of Slag.
+**The Forge of Dis (the Nether, 3.0).** In an Inferno world the Nether is built from scratch as Hell's workshop, Vulcan's smithy. It's a disc about 440 blocks across (the overworld's border scaled 1:8), laid out round the Great Forge at its centre:
 
-**The Great Forge and Vulcan.** At the Nether's centre (0, 70, 0) a domed hall of blackstone is carved out the first time someone comes near: pillars of basalt, chains from the vault, and the **Hellforge**. **Vulcan**, smith of the gods, wakes when you walk in:
-- **Hammerfall:** a ring of sparks under you, then the hammer and a shockwave. Get out of the ring, then jump the wave.
-- **Molten Rain:** glowing marks, then molten iron pours onto them.
+| Region | Where | What it's like |
+|---|---|---|
+| **The Great Forge** | the middle | A flat-topped mesa in a vast dome, with Vulcan's hall on it. Four stairways come down its sides. |
+| **The Slag Sea** | round the mesa | Molten slag with a cooling crust floating on it. Four causeways of crust run straight to the Forge's stairs, a ring joins them half way out, and floes drift between. |
+| **The Foundry Halls** | north | Tall halls cut by rivers of lava, with great blackstone pillars. Ladders climb to lanterns on the pillars' arms; some pillars have a smith's corner at the foot. |
+| **The Chainlands** | east | An abyss over the lava sea. Islands of rock hang from the roof on giant chains, joined by sagging bridges, and bridges run out to the land at the edges. Nether fortresses span it. |
+| **The Ash Wastes** | south | Dunes of ash under a low roof. Piglins, bastions and fortresses. |
+| **The Cyclops Quarries** | west | Terraces cut seven blocks deep in banded rock, with ramps winding up them and pits sunk into lava pools. The Cyclopes keep camps here. |
+
+- **The crust (the Slag Sea's rule).** Step on the crust and it cracks: three cracks, each glowing brighter with a crack you can hear, then it melts and you drop into the slag. Keep moving and it holds. A melted patch hardens again after half a minute.
+- **Finding the Forge.** A column of heat rises from the Forge's dome to the roof, with embers, and can be seen wherever the rock doesn't hide it. In the Nether the compass at the top of the screen points to the Great Forge, with how far it is, and names the region you're in. Entering each region for the first time, Virgil says in one line what it is.
+- **The Cyclopes.** One-eyed giants, Vulcan's smiths, each by the fire at his camp in the Quarries. Come near and he wakes, and his boss bar shows:
+  - **Smash** (white flash): block his maul and he reels.
+  - **Boulder** (red circle): he hurls a boulder where you stand.
+  - **Quake** (purple ring): jump his stamp.
+
+  At half health he throws two boulders at a time. He drops gold, iron and Blood Fragments, sometimes netherite scrap, and his camp's chest holds more.
+- Ruined forges, slag heaps and hanging chains from 2.0 are still about. Worlds that aren't Inferno worlds keep 2.0's reshaped vanilla Nether.
+
+**The Great Forge and Vulcan.** On the mesa at the Nether's centre (0, 70, 0) a domed hall of blackstone is carved out the first time someone comes near: pillars of basalt, chains from the vault, and the **Hellforge**. **Vulcan**, smith of the gods, wakes when you walk in, bent over his anvil (a short cutscene, skippable once seen). He fights on a real, animated body, in the danger language:
+- **The Strike** (white flash): the hammer comes down in front of him. Block it and he goes down on one knee.
+- **Hammerfall** (red circle, then a purple ring): he leaps and lands on the circle, and a shockwave rolls out. Get out of the circle, then jump the wave.
+- **Molten Rain** (red circles): molten iron pours on the marks round each of you.
+- **The Chains** (red line): his chain flies along it and drags whoever it catches to his feet.
 - **Forge-born:** smiths of Dis (wither skeletons in iron) step out of the fire.
-- **Chains:** he hauls you to his anvil.
+- **At half health** he drives his hammer into the floor, and from then on the floor's seams (red lines through the middle) burst between his blows.
 
 He drops the usual guardian spoils and returns after 30 minutes. `/hellcraft forge` takes an op there.
 
@@ -575,6 +596,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
+| `/hellcraft cyclops summon\|attack <smash\|boulder\|quake>` | op | Test a Cyclops where you stand (3.0) |
+| `/hellcraft forge test` | op | Check the Forge of Dis's layout (3.0) |
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |

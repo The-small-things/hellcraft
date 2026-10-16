@@ -174,7 +174,9 @@ public final class Guide {
 				"",
 				"No monsters spawn on them."));
 		pages.add(page("THE FORGE OF DIS",
-				"The Nether's Great Forge is at 0, 70, 0. Vulcan, a boss, waits there.",
+				"The Nether's Great Forge is at 0, 70, 0, on a mesa in the Slag Sea. The compass points to it. Vulcan, a boss, waits there.",
+				"",
+				"Cross the slag on its crust and keep moving: it cracks and melts if you stand still.",
 				"",
 				"Hellforge: any anvil on a magma block in the Nether. It upgrades blood gear for a netherite ingot + " + c.hellforgeCostFragments + " Blood Fragments."));
 		pages.add(page("PARADISO (THE END)",

@@ -297,7 +297,12 @@ the ready check and the point-of-no-return warning; the Fallen Seraph's descent 
 language and his enrage; his breaking and the reveal of the Emperor (a cutscene), who is hurt only through the hands
 and faces he leaves down and whose wingbeat you hide from behind the pillars; and the climb out down his side with
 the camera rolling over, into Purgatory. Not yet: the other bosses' lines about him, and a Codex page that fills in
-as they fall. Phases 1 to 5 wait on a play session.
+as they fall. Phase 6 was built the same day: the Forge of Dis, a Nether made from scratch round the Great Forge's mesa (the
+Slag Sea, crossed on a crust that cracks and melts under you; the Foundry Halls, with rivers of lava and laddered pillars;
+the Chainlands, islands hung on chains with bridges between them; the Ash Wastes; and the Cyclops Quarries, terraced with
+ramps), stairways down the mesa, a column of heat over the Forge, the compass pointing to it, Vulcan on a real body with
+an entrance cutscene and a fight in the danger language, and the Cyclopes, mini-bosses at camps in the Quarries. The Foundry
+Halls' "chain-lifts" are ladders up the pillars for now. Phases 1 to 6 wait on a play session.
 
 ## 14. The playtest loop
 
