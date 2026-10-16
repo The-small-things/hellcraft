@@ -11,6 +11,9 @@ import net.minecraft.world.entity.MobCategory;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorWeakPoint;
+import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.FarinataEntity;
 import net.thesmallthings.hellcraft.entity.boss.FuryEntity;
 import net.thesmallthings.hellcraft.entity.boss.GeryonCarrier;
@@ -145,6 +148,21 @@ public final class HellEntities {
 	public static final EntityType<AntaeusEntity> ANTAEUS = register("antaeus",
 			EntityType.Builder.of(AntaeusEntity::new, MobCategory.MISC).sized(6.0f, 28.0f).eyeHeight(25.0f).fireImmune().clientTrackingRange(24));
 
+	/** Lucifer as he first shows himself, the Fallen Seraph (LuciferFight's duel). */
+	public static final EntityType<FallenSeraphEntity> FALLEN_SERAPH = register("fallen_seraph",
+			EntityType.Builder.of(FallenSeraphEntity::new, MobCategory.MONSTER).sized(1.4f, 5.0f).eyeHeight(4.3f).fireImmune().clientTrackingRange(16)
+					.updateInterval(1));
+
+	/** Lucifer's true form, the Emperor frozen to the chest in the ice of the pit (LuciferFight). */
+	public static final EntityType<EmperorEntity> EMPEROR = register("emperor",
+			EntityType.Builder.of(EmperorEntity::new, MobCategory.MISC).sized(8.0f, 14.0f).eyeHeight(20.0f).fireImmune().clientTrackingRange(32)
+					.updateInterval(2));
+
+	/** Where the Emperor lays himself open: a hand on the ice, a face down low (EmperorAttacks). */
+	public static final EntityType<EmperorWeakPoint> EMPEROR_WEAK_POINT = register("emperor_weak_point",
+			EntityType.Builder.<EmperorWeakPoint>of(EmperorWeakPoint::new, MobCategory.MISC).sized(7.0f, 7.0f).fireImmune().noSummon()
+					.clientTrackingRange(16).updateInterval(5));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
@@ -170,6 +188,8 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(GERYON, GeryonEntity.attributes());
 		FabricDefaultAttributeRegistry.register(GERYON_CARRIER, GeryonCarrier.attributes());
 		FabricDefaultAttributeRegistry.register(ANTAEUS, AntaeusEntity.attributes());
+		FabricDefaultAttributeRegistry.register(FALLEN_SERAPH, FallenSeraphEntity.attributes());
+		FabricDefaultAttributeRegistry.register(EMPEROR, EmperorEntity.attributes());
 		Carrier.register();
 	}
 

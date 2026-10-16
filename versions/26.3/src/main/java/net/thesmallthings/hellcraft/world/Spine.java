@@ -93,7 +93,7 @@ public final class Spine {
 	/** Where a spine leaves the Well of Giants (distance from the centre). */
 	public static final int START = 450;
 	/** Where it reaches the rim of the pit. */
-	public static final int END = 34;
+	public static final int END = (int) InfernoGeometry.PIT_RADIUS + 4;
 	/** From here inward it is a staircase. */
 	public static final int STAIRS_FROM = 110;
 	/** The walkway over Cocytus, one block above the Well's floor. */

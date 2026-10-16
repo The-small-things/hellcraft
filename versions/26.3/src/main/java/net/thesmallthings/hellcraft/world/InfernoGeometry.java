@@ -53,8 +53,10 @@ public final class InfernoGeometry {
 	public static final int MALEBOLGE_DITCHES = 10;
 	private static final double BRIDGE_HALF_WIDTH = 3.0;
 	private static final double DITCH_DEPTH = 14.0;
-	/** Radius of the pit at the very centre where Lucifer is frozen. */
-	public static final double PIT_RADIUS = 30.0;
+	/** Radius of the pit at the very centre where Lucifer is frozen (its rim). */
+	public static final double PIT_RADIUS = 42.0;
+	/** Its floor is level out to here, then slopes up to the rim: room to fight round the Emperor. */
+	public static final double PIT_FLAT = 34.0;
 	/** Kept above y=-54, below which Minecraft floods open air with lava. */
 	public static final int PIT_FLOOR_Y = -52;
 
@@ -234,7 +236,7 @@ public final class InfernoGeometry {
 		}
 
 		if (b.zone == Zone.JUDECCA && r < PIT_RADIUS) {
-			double s = smoothstep(1.0 - r / PIT_RADIUS);
+			double s = smoothstep(Math.min(1.0, (PIT_RADIUS - r) / (PIT_RADIUS - PIT_FLAT)));
 			h = lerp(h, PIT_FLOOR_Y, s);
 		}
 

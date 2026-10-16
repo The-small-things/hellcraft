@@ -13,12 +13,15 @@ import net.thesmallthings.hellcraft.entity.boss.AnimatedBoss;
 import net.thesmallthings.hellcraft.entity.boss.BossAnim;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
 import net.thesmallthings.hellcraft.entity.boss.gen.AntaeusAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
@@ -97,6 +100,7 @@ public class BossTest implements FabricClientGameTest {
 			world.getServer().runCommand("kill @e[type=hellcraft:phlegyas]");
 			world.getServer().runCommand("kill @e[type=hellcraft:ferry]");
 			lowerBosses(context, world);
+			lucifer(context, world);
 			monsters(context, world);
 			context.runOnClient(client -> {
 				if (client.gui.hud.isHidden()) {
@@ -168,10 +172,43 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(AntaeusAnim.RAISE, 30, n)));
 	}
 
+	/**
+	 * Lucifer's two bodies (screenshots fallen_seraph_* and emperor_*): the Fallen Seraph's duel, and the Emperor
+	 * asleep, waking, slamming, biting, beating his wings, weeping and freezing.
+	 */
+	private static void lucifer(ClientGameTestContext context, TestSingleplayerContext world) {
+		BossEntity.Warning w = BossEntity.Warning.WHITE;
+		BossEntity.Warning p = BossEntity.Warning.PURPLE;
+		BossEntity.Warning n = BossEntity.Warning.NONE;
+		boss(context, world, HellEntities.FALLEN_SERAPH, "fallen_seraph", 9, 2, List.of(
+				new Shot(FallenSeraphAnim.INTRO, FallenSeraphAnim.INTRO.at("speak") + 4, n),
+				new Shot(FallenSeraphAnim.SLASH, FallenSeraphAnim.SLASH.at("flash") + 3, w),
+				new Shot(FallenSeraphAnim.SLASH, FallenSeraphAnim.SLASH.at("hit"), n),
+				new Shot(FallenSeraphAnim.SWEEP, (FallenSeraphAnim.SWEEP.at("sweep") + FallenSeraphAnim.SWEEP.at("swept")) / 2, p),
+				new Shot(FallenSeraphAnim.STARS, FallenSeraphAnim.STARS.at("call"), n),
+				new Shot(FallenSeraphAnim.LUNGE, FallenSeraphAnim.LUNGE.at("go"), n),
+				new Shot(FallenSeraphAnim.STAGGER, 8, n),
+				new Shot(FallenSeraphAnim.SNAP, FallenSeraphAnim.SNAP.at("snap") + 6, n),
+				new Shot(FallenSeraphAnim.DEATH, FallenSeraphAnim.DEATH.at("break") - 2, n)));
+		boss(context, world, HellEntities.EMPEROR, "emperor", 80, 24, List.of(
+				new Shot(EmperorAnim.DORMANT, 30, n),
+				new Shot(EmperorAnim.REVEAL, EmperorAnim.REVEAL.at("open") + 10, n),
+				new Shot(EmperorAnim.SLAM_RIGHT, EmperorAnim.SLAM_RIGHT.at("slam") - 12, n),
+				new Shot(EmperorAnim.SLAM_RIGHT, EmperorAnim.SLAM_RIGHT.at("slam") + 10, n),
+				new Shot(EmperorAnim.BITE, EmperorAnim.BITE.at("flash") + 3, w),
+				new Shot(EmperorAnim.BITE_LEFT, EmperorAnim.BITE_LEFT.at("bite") + 10, n),
+				new Shot(EmperorAnim.WINGBEAT, EmperorAnim.WINGBEAT.at("beat") - 6, p),
+				new Shot(EmperorAnim.WEEP, EmperorAnim.WEEP.at("weep") + 10, n),
+				new Shot(EmperorAnim.DEATH, EmperorAnim.DEATH.ticks - 4, n)));
+	}
+
 	private static <T extends AnimatedBoss> void boss(ClientGameTestContext context, TestSingleplayerContext world, EntityType<T> type, String name,
 													  double far, double eye, List<Shot> shots) {
 		world.getServer().runCommand("execute at Player0 run summon hellcraft:" + name + " ~ ~ ~" + (int) (far + 20) + " {Rotation:[180f,0f],Silent:1b}");
 		world.getConnection().waitForClientboundEntityUpdates(type);
+		// the Emperor with his eyes open (but asleep in his DORMANT shot)
+		world.getServer().runOnServer(server -> server.overworld().getEntities(type, e -> e instanceof EmperorEntity)
+				.forEach(e -> ((EmperorEntity) e).awake(true)));
 		String at = "execute at @e[type=hellcraft:" + name + ",limit=1] run ";
 		world.getServer().runCommand(at + String.format("tp Player0 ~ ~%.1f ~%.1f 0 8", eye, -far));
 		context.waitTicks(30);
@@ -191,6 +228,9 @@ public class BossTest implements FabricClientGameTest {
 		for (Shot shot : shots) {
 			world.getServer().runOnServer(server -> {
 				T b = server.overworld().getEntities(type, e -> true).getFirst();
+				if (b instanceof EmperorEntity e) {
+					e.awake(shot.anim() != EmperorAnim.DORMANT);
+				}
 				b.warn(shot.warning());
 				b.play(shot.anim());
 			});

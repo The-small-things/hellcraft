@@ -50,11 +50,28 @@ public class AnimatedBossModel extends EntityModel<AnimatedBossRenderState> {
 		return this;
 	}
 
+	/** A part hidden while the boss says so (the Emperor's eyes while he sleeps), or null. */
+	@Nullable
+	private ModelPart hideablePart;
+
+	/** Hides the part at this path while the boss's partHidden() is true. */
+	public AnimatedBossModel hideable(String... path) {
+		ModelPart p = root();
+		for (String bone : path) {
+			p = p.getChild(bone);
+		}
+		this.hideablePart = p;
+		return this;
+	}
+
 	@Override
 	public void setupAnim(AnimatedBossRenderState state) {
 		super.setupAnim(state);
 		if (onlyPart != null) {
 			onlyPart.visible = state.states[onlyAnim].isStarted();
+		}
+		if (hideablePart != null) {
+			hideablePart.visible = !state.partHidden;
 		}
 		if (head != null) {
 			head.yRot += state.yRot * gaze * ((float) Math.PI / 180f);

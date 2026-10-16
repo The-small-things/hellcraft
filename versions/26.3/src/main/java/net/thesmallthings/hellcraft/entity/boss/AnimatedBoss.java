@@ -54,6 +54,11 @@ public abstract class AnimatedBoss extends BossEntity {
 		return speedOf(anims[i]);
 	}
 
+	/** Whether its hideable part is hidden now (the Emperor's eyes while he sleeps): AnimatedBossModel.hideable. */
+	public boolean partHidden() {
+		return false;
+	}
+
 	/** The WALK animation's index, or -1 if it has none (it never walks). */
 	public int walkIndex() {
 		return walk;

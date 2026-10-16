@@ -9,6 +9,8 @@ public class AnimatedBossRenderState extends LivingEntityRenderState {
 	public final AnimationState[] states;
 	public BossEntity.Warning warning = BossEntity.Warning.NONE;
 	public boolean acting;
+	/** Its hideable part is hidden (AnimatedBoss.partHidden). */
+	public boolean partHidden;
 	/** How fast each animation plays (BossEntity.speedOf). */
 	public final float[] speeds;
 

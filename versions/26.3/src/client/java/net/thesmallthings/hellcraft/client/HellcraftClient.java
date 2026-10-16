@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
@@ -45,6 +46,10 @@ import net.thesmallthings.hellcraft.client.render.gen.CentaurAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.CentaurMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CerberusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CoinMesh;
+import net.thesmallthings.hellcraft.client.render.gen.EmperorAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.EmperorMesh;
+import net.thesmallthings.hellcraft.client.render.gen.FallenSeraphAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.FallenSeraphMesh;
 import net.thesmallthings.hellcraft.client.render.gen.FarinataAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.FarinataMesh;
 import net.thesmallthings.hellcraft.client.render.gen.FerryMesh;
@@ -87,6 +92,8 @@ import net.thesmallthings.hellcraft.client.render.npc.ShadeModel;
 import net.thesmallthings.hellcraft.client.render.npc.ShadeRenderer;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
+import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
+import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
@@ -235,6 +242,23 @@ public class HellcraftClient implements ClientModInitializer {
 				return super.getBoundingBoxForCulling(entity, partialTicks).inflate(16);
 			}
 		});
+		// Lucifer: the Fallen Seraph, and the Emperor (his eyes shut while he sleeps; seen from far across the pit)
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("fallen_seraph"), FallenSeraphMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.FALLEN_SERAPH, context -> new AnimatedBossRenderer<>(context, "fallen_seraph",
+				FallenSeraphAnimations.all(), -1, FallenSeraphEntity.SCALE, 0.8f, 0.5f, "root", "body", "torso", "head"));
+		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("emperor"), EmperorMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.EMPEROR, context -> {
+			AnimatedBossRenderer<EmperorEntity> r = new AnimatedBossRenderer<>(context, "emperor", EmperorAnimations.all(), -1, EmperorEntity.SCALE,
+					0.0f, 0.0f) {
+				@Override
+				protected AABB getBoundingBoxForCulling(EmperorEntity entity, float partialTicks) {
+					return super.getBoundingBoxForCulling(entity, partialTicks).inflate(40, 50, 40);
+				}
+			};
+			r.getModel().hideable("root", "upper", "neck", "head", "eyes");
+			return r;
+		});
+		EntityRendererRegistry.register(HellEntities.EMPEROR_WEAK_POINT, NoopRenderer::new);
 		// the Malebranche (special: the jeer) and their captain Malacoda (attack: pointing the way; special: his laugh)
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("malebranche"), MalebrancheMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MALEBRANCHE, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("malebranche"),

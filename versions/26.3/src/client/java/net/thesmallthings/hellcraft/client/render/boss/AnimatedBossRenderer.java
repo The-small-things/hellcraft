@@ -63,6 +63,7 @@ public class AnimatedBossRenderer<T extends AnimatedBoss> extends MobRenderer<T,
 		}
 		state.warning = boss.warning();
 		state.acting = boss.acting();
+		state.partHidden = boss.partHidden();
 		state.hasRedOverlay = boss.hurtTime > 0;
 	}
 
