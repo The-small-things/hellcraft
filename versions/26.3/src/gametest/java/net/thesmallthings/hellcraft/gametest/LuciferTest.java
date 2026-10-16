@@ -18,7 +18,7 @@ import java.util.Properties;
 
 /**
  * Lucifer's whole fight in an Inferno world, played by a real (unhurtable) player at the pit (screenshots lucifer_*):
- * the Fallen Seraph's descent, his four blows as their danger marks fill, his enrage, his breaking and the Emperor's
+ * the ready check, the Fallen Seraph's descent, his four blows as their danger marks fill, his enrage, his breaking and the Emperor's
  * reveal, the Emperor's slam with the hand that stays down to be hit, his wingbeat and weeping, and the climb out
  * past his frozen body to Purgatory.
  */
@@ -62,12 +62,15 @@ public class LuciferTest implements FabricClientGameTest {
 		}
 	}
 
-	/** The pit seals and the Seraph comes down (the descent cutscene, its name card). */
+	/**
+	 * Standing on the pit's floor starts the ready check (the countdown, shortened once everyone near is in); then the
+	 * pit seals and the Seraph comes down (the descent cutscene, its name card).
+	 */
 	private static void descent(ClientGameTestContext context, TestDedicatedServerContext server) {
-		String out = server.computeOnServer(s -> LuciferManager.start(s, true));
-		if (!out.contains("descends")) {
-			throw new AssertionError("Lucifer could not be summoned: " + out);
-		}
+		waitForPhase(context, server, "READY", 100);
+		context.waitTicks(30);
+		context.takeScreenshot("lucifer_ready");
+		waitForPhase(context, server, "INTRO", 200);
 		context.waitTicks(FallenSeraphAnim.INTRO.at("land") + 4);
 		context.takeScreenshot("lucifer_descent_land");
 		context.waitTicks(FallenSeraphAnim.INTRO.at("speak") - FallenSeraphAnim.INTRO.at("land") + 10);
@@ -171,6 +174,17 @@ public class LuciferTest implements FabricClientGameTest {
 		if (!used.contains("The Emperor uses")) {
 			throw new AssertionError("the Emperor could not use " + attack + ": " + used);
 		}
+	}
+
+	/** Waits, a tick at a time, until the fight is in this phase. */
+	private static void waitForPhase(ClientGameTestContext context, TestDedicatedServerContext server, String phase, int ticks) {
+		for (int i = 0; i < ticks; i++) {
+			if (server.computeOnServer(s -> LuciferManager.status()).contains("phase=" + phase + " ")) {
+				return;
+			}
+			context.waitTicks(1);
+		}
+		throw new AssertionError("Lucifer's fight never reached " + phase + ": " + server.computeOnServer(s -> LuciferManager.status()));
 	}
 
 	private static void expectPhase(TestDedicatedServerContext server, String phase) {
