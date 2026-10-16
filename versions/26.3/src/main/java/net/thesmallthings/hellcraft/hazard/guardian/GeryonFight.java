@@ -48,7 +48,9 @@ import java.util.UUID;
  * carried Dante and Virgil.
  */
 final class GeryonFight extends GuardianFight {
-	private static final double HEIGHT = 7.0;
+	private static final double HEIGHT = 4.5;
+	/** After each blow he sinks to just above the ground for this long, within sword's reach. */
+	private static final int REST = 50;
 	private static final double SWIM = 7.0;
 	private static final double STING_RADIUS = 2.4;
 	private static final float STING_DAMAGE = 11.0f;
@@ -71,6 +73,8 @@ final class GeryonFight extends GuardianFight {
 	@Nullable
 	private Vec3 goal;
 	private int goalUntil;
+	private int restUntil = -1;
+	private boolean toldRest;
 	private Vec3 diveFrom;
 	private Vec3 diveTo;
 	private int diveStart = -1;
@@ -150,6 +154,16 @@ final class GeryonFight extends GuardianFight {
 		String attack = order[cycle++ % order.length];
 		LivingEntity target = targets.get(level.getRandom().nextInt(targets.size()));
 		int cooldown = perform(attack, body, target);
+		// spent, he sinks low for a while: the time to hit him
+		int rest = Math.max(lockedUntil, tick + 20);
+		schedule(rest - tick, () -> {
+			restUntil = tick + REST;
+			if (!toldRest) {
+				toldRest = true;
+				tip("Geryon sinks low after his attacks: that's your chance to hit him.");
+			}
+		});
+		cooldown = Math.max(cooldown, rest - tick + REST);
 		return enraged ? Math.max(cooldown * 3 / 4, 25) : cooldown;
 	}
 
@@ -172,7 +186,7 @@ final class GeryonFight extends GuardianFight {
 		int flash = GeryonAnim.STING.at("flash");
 		int hit = GeryonAnim.STING.at("hit");
 		lockedUntil = tick + GeryonAnim.STING.ticks;
-		goal = target.position().add(0, 5, 0);
+		goal = target.position().add(0, 3.2, 0);
 		goalUntil = tick + hit;
 		geryon.play(GeryonAnim.STING);
 		say("Be still. It will only sting once.");
@@ -368,6 +382,11 @@ final class GeryonFight extends GuardianFight {
 			want = new Vec3(body.getX(), groundY(body.getX(), body.getZ()) + 0.3, body.getZ());
 		} else if (goal != null && tick < goalUntil) {
 			want = goal;
+		} else if (tick < restUntil) {
+			// resting, low over the ground, drifting toward the nearest soul
+			LivingEntity near = nearest(body, targets());
+			Vec3 to = near == null || near.distanceTo(body) < 4 ? body.position() : body.position().add(near.position().subtract(body.position()).normalize().scale(0.3));
+			want = new Vec3(to.x, groundY(to.x, to.z) + 0.6, to.z);
 		} else {
 			goal = null;
 			// swimming his slow circle over the lair

@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 
 /**
  * Draws Phlegyas: his model at 1.3 times its Blockbench size, his eyes burning like the beacons that call him
@@ -43,6 +44,7 @@ public class PhlegyasRenderer extends MobRenderer<PhlegyasEntity, PhlegyasRender
 		super.extractRenderState(phlegyas, state, partialTick);
 		for (int i = 0; i < state.states.length; i++) {
 			state.states[i].copyFrom(phlegyas.states[i]);
+			state.speeds[i] = phlegyas.speedOf(PhlegyasAnim.values()[i]);
 		}
 		state.warning = phlegyas.warning();
 		state.hasRedOverlay = phlegyas.hurtTime > 0;

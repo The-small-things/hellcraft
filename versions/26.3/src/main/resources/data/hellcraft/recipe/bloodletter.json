@@ -11,51 +11,6 @@
     " F "
   ],
   "result": {
-    "id": "minecraft:iron_sword",
-    "components": {
-      "minecraft:custom_data": {
-        "hellcraft": "weapon",
-        "weapon": "bloodletter"
-      },
-      "minecraft:item_model": "hellcraft:bloodletter",
-      "minecraft:item_name": {
-        "text": "Bloodletter",
-        "color": "dark_red",
-        "bold": true
-      },
-      "minecraft:lore": [
-        {
-          "text": "Full-strength hits make the target bleed and heal you.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Blood Art, Exsanguinate: dash forward, hitting everything",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "in your path (8 damage, deep bleeding, heals you).",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Blood Oath: +10 damage, and every hit heals 1\u2764.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Hits and kills charge it. Fully charged: right-click for its Blood Art.",
-          "color": "red",
-          "italic": false
-        },
-        {
-          "text": "Sneak + right-click: Blood Oath (pay 3\u2764 of health for 30 s of full power).",
-          "color": "red",
-          "italic": false
-        }
-      ],
-      "minecraft:rarity": "rare"
-    }
+    "id": "hellcraft:bloodletter"
   }
 }

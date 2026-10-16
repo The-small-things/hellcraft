@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 
 /**
  * Draws Minos: his model at 1.35 times its Blockbench size, his eyes lit even in the dark (minos_glow.png), a white
@@ -43,6 +44,7 @@ public class MinosRenderer extends MobRenderer<MinosEntity, MinosRenderState, Mi
 		super.extractRenderState(minos, state, partialTick);
 		for (int i = 0; i < state.states.length; i++) {
 			state.states[i].copyFrom(minos.states[i]);
+			state.speeds[i] = minos.speedOf(MinosAnim.values()[i]);
 		}
 		state.warning = minos.warning();
 		state.hasRedOverlay = minos.hurtTime > 0;

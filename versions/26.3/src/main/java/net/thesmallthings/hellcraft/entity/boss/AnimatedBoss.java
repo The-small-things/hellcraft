@@ -49,6 +49,11 @@ public abstract class AnimatedBoss extends BossEntity {
 		playAnimation(anim.ordinal());
 	}
 
+	/** How fast animation i plays (AnimatedBossRenderer). */
+	public float speed(int i) {
+		return speedOf(anims[i]);
+	}
+
 	/** The WALK animation's index, or -1 if it has none (it never walks). */
 	public int walkIndex() {
 		return walk;
@@ -103,7 +108,7 @@ public abstract class AnimatedBoss extends BossEntity {
 		// a finished animation lets go, so the next starts from its resting pose (death holds its last frame)
 		for (BossAnim a : anims) {
 			AnimationState state = states[a.ordinal()];
-			if (!a.looping() && a.ordinal() != death && state.isStarted() && tickCount - startedAt[a.ordinal()] > a.ticks()) {
+			if (!a.looping() && a.ordinal() != death && state.isStarted() && tickCount - startedAt[a.ordinal()] > lengthOf(a)) {
 				state.stop();
 			}
 		}

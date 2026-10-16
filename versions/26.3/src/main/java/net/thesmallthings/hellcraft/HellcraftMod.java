@@ -16,6 +16,7 @@ import net.thesmallthings.hellcraft.blood.GhostPowers;
 import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.blood.Hellforge;
+import net.thesmallthings.hellcraft.blood.LayerEnchants;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.blood.RecipeCheck;
 import net.thesmallthings.hellcraft.blood.Relics;
@@ -89,6 +90,7 @@ public class HellcraftMod implements ModInitializer {
 		Relics.register();
 		Heaven.register();
 		BloodArmour.register();
+		LayerEnchants.register();
 		CircleHazards.register();
 		LuciferManager.register();
 		GuardianManager.register();

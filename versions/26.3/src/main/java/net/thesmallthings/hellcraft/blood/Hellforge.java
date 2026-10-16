@@ -70,10 +70,14 @@ public final class Hellforge {
 			player.sendOverlayMessage(Component.literal("Already infernal: it can't be upgraded further.").withStyle(ChatFormatting.GOLD));
 			return;
 		}
-		Item base = NETHERITE.get(held.getItem());
+		// a real piece of gear becomes its infernal form; one made before 3.0 is forged onto netherite as it was
+		HellWeapons.Weapon realWeapon = HellItems.weaponOf(held.getItem());
+		BloodArmour.Piece realPiece = HellItems.pieceOf(held.getItem());
+		Item base = realWeapon != null ? HellItems.weapon(realWeapon, true) : realPiece != null ? HellItems.armour(realPiece, true) : NETHERITE.get(held.getItem());
 		if (base == null) {
 			return;
 		}
+		boolean real = realWeapon != null || realPiece != null;
 		int fragments = HellConfig.get().hellforgeCostFragments;
 		int ingots = player.getInventory().countItem(Items.NETHERITE_INGOT);
 		if (ingots < 1 || BloodItems.countFragments(player) < fragments) {
@@ -86,11 +90,19 @@ public final class Hellforge {
 
 		ItemStack forged = new ItemStack(base, 1);
 		forged.applyComponents(held.getComponentsPatch());
+		Component name = forged.getHoverName();
+		if (real) {
+			// its enchantments, wear and name came across; the rest is the infernal item's own
+			player.setItemInHand(InteractionHand.MAIN_HAND, forged);
+			finish(player, level, at, name);
+			return;
+		}
 		CompoundTag tag = forged.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putBoolean(HellWeapons.INFERNAL, true);
 		forged.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-		Component name = forged.getOrDefault(DataComponents.ITEM_NAME, Component.empty());
-		forged.set(DataComponents.ITEM_NAME, Component.literal("Infernal ").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD).append(name));
+		Component title = forged.getOrDefault(DataComponents.ITEM_NAME, Component.empty());
+		forged.set(DataComponents.ITEM_NAME, Component.literal("Infernal ").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD).append(title));
+		name = forged.getHoverName();
 		HellWeapons.Weapon weapon = HellWeapons.of(forged);
 		if (weapon != null) {
 			forged.set(DataComponents.LORE, HellWeapons.lore(weapon, true));
@@ -102,7 +114,10 @@ public final class Hellforge {
 			forged.set(DataComponents.LORE, new ItemLore(lore));
 		}
 		player.setItemInHand(InteractionHand.MAIN_HAND, forged);
+		finish(player, level, at, name);
+	}
 
+	private static void finish(ServerPlayer player, ServerLevel level, BlockPos at, Component name) {
 		level.playSound(null, at, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1.2f, 0.6f);
 		level.playSound(null, at, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1.0f, 0.8f);
 		level.sendParticles(ParticleTypes.LAVA, at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5, 20, 0.3, 0.3, 0.3, 0);

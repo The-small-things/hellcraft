@@ -8,6 +8,8 @@ import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 public class PhlegyasRenderState extends LivingEntityRenderState {
 	public final AnimationState[] states = new AnimationState[PhlegyasAnim.values().length];
 	public BossEntity.Warning warning = BossEntity.Warning.NONE;
+	/** How fast each animation plays (BossEntity.speedOf). */
+	public final float[] speeds = new float[states.length];
 
 	public PhlegyasRenderState() {
 		for (int i = 0; i < states.length; i++) {

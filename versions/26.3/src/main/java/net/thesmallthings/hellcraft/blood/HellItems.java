@@ -8,13 +8,21 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Hellcraft's own items. Their look comes from assets/hellcraft/items/&lt;id&gt;.json (tools/gen_models.py);
@@ -58,6 +66,90 @@ public final class HellItems {
 			.component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)
 			.rarity(Rarity.RARE));
 
+	// ------------------------------------------------------------------ blood gear (real items since 3.0)
+
+	/** Blood armour: diamond's protection, its own look (equipment asset hellcraft:blood). */
+	public static final ArmorMaterial BLOOD_ARMOUR = new ArmorMaterial(33, defense(3, 6, 8, 3, 11), 10, SoundEvents.ARMOR_EQUIP_DIAMOND, 2.0f, 0.0f,
+			ItemTags.REPAIRS_DIAMOND_ARMOR, BloodArmour.ASSET);
+	/** Infernal blood armour (the Hellforge): netherite's. */
+	public static final ArmorMaterial INFERNAL_ARMOUR = new ArmorMaterial(37, defense(3, 6, 8, 3, 19), 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0f, 0.1f,
+			ItemTags.REPAIRS_NETHERITE_ARMOR, BloodArmour.ASSET);
+
+	private static final Map<BloodArmour.Piece, Item> ARMOUR = new EnumMap<>(BloodArmour.Piece.class);
+	private static final Map<BloodArmour.Piece, Item> INFERNAL_ARMOUR_ITEMS = new EnumMap<>(BloodArmour.Piece.class);
+	private static final Map<HellWeapons.Weapon, Item> WEAPONS = new EnumMap<>(HellWeapons.Weapon.class);
+	private static final Map<HellWeapons.Weapon, Item> INFERNAL_WEAPONS = new EnumMap<>(HellWeapons.Weapon.class);
+
+	static {
+		for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
+			ARMOUR.put(piece, register(piece.id, new Item.Properties().humanoidArmor(BLOOD_ARMOUR, piece.type)
+					.component(DataComponents.LORE, BloodArmour.lore(false)).rarity(Rarity.EPIC)));
+			INFERNAL_ARMOUR_ITEMS.put(piece, register("infernal_" + piece.id, new Item.Properties().humanoidArmor(INFERNAL_ARMOUR, piece.type)
+					.component(DataComponents.LORE, BloodArmour.lore(true)).rarity(Rarity.EPIC).fireResistant()));
+		}
+		for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
+			WEAPONS.put(weapon, register(weapon.id, weaponProperties(weapon, false)));
+			INFERNAL_WEAPONS.put(weapon, register("infernal_" + weapon.id, weaponProperties(weapon, true).fireResistant()));
+		}
+	}
+
+	private static Item.Properties weaponProperties(HellWeapons.Weapon weapon, boolean infernal) {
+		ToolMaterial diamond = infernal ? ToolMaterial.NETHERITE : ToolMaterial.DIAMOND;
+		Item.Properties props = switch (weapon) {
+			case BLOODLETTER -> new Item.Properties().sword(infernal ? ToolMaterial.NETHERITE : ToolMaterial.IRON, 3.0f, -2.4f);
+			// a scythe, not a garden tool: heavy and slow
+			case REAPER -> new Item.Properties().hoe(diamond, 4.0f, -3.0f);
+			case TITHE_AXE -> new Item.Properties().axe(diamond, 5.0f, -3.0f);
+			case BLOOD_PICKAXE -> new Item.Properties().pickaxe(diamond, 1.0f, -2.8f);
+		};
+		return props.component(DataComponents.LORE, HellWeapons.lore(weapon, infernal)).rarity(infernal ? Rarity.EPIC : weapon.rarity);
+	}
+
+	private static Map<ArmorType, Integer> defense(int boots, int legs, int chest, int helm, int body) {
+		Map<ArmorType, Integer> map = new EnumMap<>(ArmorType.class);
+		map.put(ArmorType.BOOTS, boots);
+		map.put(ArmorType.LEGGINGS, legs);
+		map.put(ArmorType.CHESTPLATE, chest);
+		map.put(ArmorType.HELMET, helm);
+		map.put(ArmorType.BODY, body);
+		return map;
+	}
+
+	public static Item armour(BloodArmour.Piece piece, boolean infernal) {
+		return (infernal ? INFERNAL_ARMOUR_ITEMS : ARMOUR).get(piece);
+	}
+
+	public static Item weapon(HellWeapons.Weapon weapon, boolean infernal) {
+		return (infernal ? INFERNAL_WEAPONS : WEAPONS).get(weapon);
+	}
+
+	/** The piece this item is, if it's blood armour (either form). */
+	@Nullable
+	static BloodArmour.Piece pieceOf(Item item) {
+		for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
+			if (ARMOUR.get(piece) == item || INFERNAL_ARMOUR_ITEMS.get(piece) == item) {
+				return piece;
+			}
+		}
+		return null;
+	}
+
+	/** The weapon this item is, if it's a hell weapon (either form). */
+	@Nullable
+	static HellWeapons.Weapon weaponOf(Item item) {
+		for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
+			if (WEAPONS.get(weapon) == item || INFERNAL_WEAPONS.get(weapon) == item) {
+				return weapon;
+			}
+		}
+		return null;
+	}
+
+	/** Whether this item is the infernal form of a piece of blood gear. */
+	static boolean infernalItem(Item item) {
+		return INFERNAL_ARMOUR_ITEMS.containsValue(item) || INFERNAL_WEAPONS.containsValue(item);
+	}
+
 	/** Loads this class, registering the items, and adds the Hellcraft tab to the creative inventory. */
 	public static void register() {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, HellcraftMod.id("hellcraft"), FabricCreativeModeTab.builder()
@@ -69,6 +161,18 @@ public final class HellItems {
 					output.accept(BloodItems.bane(1));
 					output.accept(BloodItems.vigil(1));
 					output.accept(BloodItems.anchor(1));
+					for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
+						output.accept(new ItemStack(weapon(weapon, false)));
+					}
+					for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
+						output.accept(new ItemStack(armour(piece, false)));
+					}
+					for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
+						output.accept(new ItemStack(weapon(weapon, true)));
+					}
+					for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
+						output.accept(new ItemStack(armour(piece, true)));
+					}
 				})
 				.build());
 	}

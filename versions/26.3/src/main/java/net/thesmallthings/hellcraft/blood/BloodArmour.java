@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -17,12 +16,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.EquipmentAssets;
-import net.minecraft.world.item.equipment.Equippable;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +32,8 @@ import java.util.UUID;
 
 /**
  * Blood armour: diamond armour reforged with blood (recipes in data/hellcraft/recipe, written by
- * tools/gen_models.py). The pieces work as a set:
+ * tools/gen_models.py). Real items since 3.0 (HellItems); pieces made before are vanilla armour marked with custom data,
+ * and still work. The pieces work as a set:
  * <ul>
  *     <li>2 or more: your melee hits heal you 5% of the damage they deal;</li>
  *     <li>all 4: 10%, a <b>Blood Rush</b> (Regeneration II) when you drop below 3 hearts of health, once a
@@ -46,7 +45,7 @@ public final class BloodArmour {
 	}
 
 	public static final String KIND = "armour";
-	private static final ResourceKey<EquipmentAsset> ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("blood"));
+	static final ResourceKey<EquipmentAsset> ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("blood"));
 	private static final int RUSH_COOLDOWN = 60 * 20;
 	private static final List<String> LORE = List.of(
 			"Blood armour: 2 pieces heal you 5% of the damage you deal,",
@@ -54,22 +53,36 @@ public final class BloodArmour {
 			"and Resistance during a Blood Oath.");
 
 	public enum Piece {
-		HELMET("blood_helmet", "Blood Helmet", Items.DIAMOND_HELMET, EquipmentSlot.HEAD),
-		CHESTPLATE("blood_chestplate", "Blood Chestplate", Items.DIAMOND_CHESTPLATE, EquipmentSlot.CHEST),
-		LEGGINGS("blood_leggings", "Blood Leggings", Items.DIAMOND_LEGGINGS, EquipmentSlot.LEGS),
-		BOOTS("blood_boots", "Blood Boots", Items.DIAMOND_BOOTS, EquipmentSlot.FEET);
+		HELMET("blood_helmet", "Blood Helmet", Items.DIAMOND_HELMET, EquipmentSlot.HEAD, ArmorType.HELMET),
+		CHESTPLATE("blood_chestplate", "Blood Chestplate", Items.DIAMOND_CHESTPLATE, EquipmentSlot.CHEST, ArmorType.CHESTPLATE),
+		LEGGINGS("blood_leggings", "Blood Leggings", Items.DIAMOND_LEGGINGS, EquipmentSlot.LEGS, ArmorType.LEGGINGS),
+		BOOTS("blood_boots", "Blood Boots", Items.DIAMOND_BOOTS, EquipmentSlot.FEET, ArmorType.BOOTS);
 
 		public final String id;
 		final String title;
 		final Item base;
 		final EquipmentSlot slot;
+		public final ArmorType type;
 
-		Piece(String id, String title, Item base, EquipmentSlot slot) {
+		Piece(String id, String title, Item base, EquipmentSlot slot, ArmorType type) {
 			this.id = id;
 			this.title = title;
 			this.base = base;
 			this.slot = slot;
+			this.type = type;
 		}
+	}
+
+	/** The pieces' lore (the infernal form says so first). */
+	static ItemLore lore(boolean infernal) {
+		List<Component> lore = new ArrayList<>();
+		if (infernal) {
+			lore.add(Component.literal("Infernal (upgraded at a Hellforge): now netherite.").withStyle(s -> s.withColor(ChatFormatting.GOLD).withItalic(false)));
+		}
+		for (String line : LORE) {
+			lore.add(Component.literal(line).withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)));
+		}
+		return new ItemLore(lore);
 	}
 
 	private static final Map<UUID, Long> RUSH_READY = new HashMap<>();
@@ -78,23 +91,9 @@ public final class BloodArmour {
 		ServerLivingEntityEvents.AFTER_DAMAGE.register(BloodArmour::afterDamage);
 	}
 
-	/** Must match the results in data/hellcraft/recipe/blood_*.json. */
+	/** A new piece (a real item since 3.0; data/hellcraft/recipe/blood_*.json makes the same). */
 	public static ItemStack create(Piece piece) {
-		ItemStack stack = new ItemStack(piece.base);
-		CompoundTag tag = new CompoundTag();
-		tag.putString(BloodItems.KEY, KIND);
-		tag.putString(KIND, piece.id);
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-		stack.set(DataComponents.ITEM_MODEL, HellcraftMod.id(piece.id));
-		stack.set(DataComponents.ITEM_NAME, Component.literal(piece.title).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		List<Component> lore = new ArrayList<>();
-		for (String line : LORE) {
-			lore.add(Component.literal(line).withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(false)));
-		}
-		stack.set(DataComponents.LORE, new ItemLore(lore));
-		stack.set(DataComponents.RARITY, Rarity.EPIC);
-		stack.set(DataComponents.EQUIPPABLE, Equippable.builder(piece.slot).setEquipSound(SoundEvents.ARMOR_EQUIP_DIAMOND).setAsset(ASSET).build());
-		return stack;
+		return new ItemStack(HellItems.armour(piece, false));
 	}
 
 	@Nullable
@@ -102,6 +101,11 @@ public final class BloodArmour {
 		if (stack.isEmpty()) {
 			return null;
 		}
+		Piece real = HellItems.pieceOf(stack.getItem());
+		if (real != null) {
+			return real;
+		}
+		// made before 3.0: vanilla diamond armour marked with custom data
 		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
 		if (data == null) {
 			return null;

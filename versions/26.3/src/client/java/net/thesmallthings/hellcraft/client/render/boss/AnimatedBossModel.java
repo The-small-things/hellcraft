@@ -65,7 +65,7 @@ public class AnimatedBossModel extends EntityModel<AnimatedBossRenderState> {
 		}
 		for (int i = 0; i < animations.length; i++) {
 			if (i != walk) {
-				animations[i].apply(state.states[i], state.ageInTicks);
+				animations[i].apply(state.states[i], state.ageInTicks, state.speeds[i]);
 			}
 		}
 	}

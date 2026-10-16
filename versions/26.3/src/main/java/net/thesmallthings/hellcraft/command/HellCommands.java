@@ -31,6 +31,7 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
+import net.thesmallthings.hellcraft.blood.LayerEnchants;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.TravelMenu;
@@ -363,6 +364,8 @@ public final class HellCommands {
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LayerRules.selfTest() + "; " + Hoarders.selfTest()))))
 				.then(Commands.literal("lower")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LowerRules.selfTest() + "; " + LowerMonsters.selfTest() + "; " + Frauds.selfTest()))))
+				.then(Commands.literal("gear")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LayerEnchants.selfTest(ctx.getSource().getServer())))))
 				.then(Commands.literal("antaeus")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), AntaeusCleft.selfTest(ctx.getSource().getServer().overworld())))))
 				.then(Commands.literal("danger")

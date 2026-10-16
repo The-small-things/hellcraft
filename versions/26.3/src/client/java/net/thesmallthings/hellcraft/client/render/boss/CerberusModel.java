@@ -38,7 +38,7 @@ public class CerberusModel extends EntityModel<CerberusRenderState> {
 		}
 		for (CerberusAnim anim : CerberusAnim.values()) {
 			if (anim != CerberusAnim.WALK) {
-				animations[anim.ordinal()].apply(state.states[anim.ordinal()], state.ageInTicks);
+				animations[anim.ordinal()].apply(state.states[anim.ordinal()], state.ageInTicks, state.speeds[anim.ordinal()]);
 			}
 		}
 	}

@@ -12,51 +12,6 @@
     " F "
   ],
   "result": {
-    "id": "minecraft:diamond_pickaxe",
-    "components": {
-      "minecraft:custom_data": {
-        "hellcraft": "weapon",
-        "weapon": "blood_pickaxe"
-      },
-      "minecraft:item_model": "hellcraft:blood_pickaxe",
-      "minecraft:item_name": {
-        "text": "Blood Pickaxe",
-        "color": "dark_red",
-        "bold": true
-      },
-      "minecraft:lore": [
-        {
-          "text": "Breaking an ore mines the whole vein",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "(sneak to mine just one). Mining ores charges it too.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Blood Art, Excavate: for 20 s it digs 3x3, with Haste II.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Blood Oath: Excavate, Haste III and Night Vision.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Hits and kills charge it. Fully charged: right-click for its Blood Art.",
-          "color": "red",
-          "italic": false
-        },
-        {
-          "text": "Sneak + right-click: Blood Oath (pay 3\u2764 of health for 30 s of full power).",
-          "color": "red",
-          "italic": false
-        }
-      ],
-      "minecraft:rarity": "epic"
-    }
+    "id": "hellcraft:blood_pickaxe"
   }
 }

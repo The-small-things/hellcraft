@@ -68,6 +68,18 @@ def book(weight, lo, hi):
     return item("book", weight, 1, 1, {"levels": uniform(lo, hi), "type": "minecraft:enchant_with_levels"})
 
 
+def circle_book(enchant, weight, lo=1, hi=1):
+    """A book of one of Hellcraft's own enchantments (tools/gen_enchants.py), found only in one circle."""
+    return item("book", weight, 1, 1, {"enchantments": {"hellcraft:" + enchant: uniform(lo, hi) if lo != hi else lo},
+                                       "type": "minecraft:set_enchantments"})
+
+
+def rare_drop(entries, chance):
+    """A pool that drops something now and then, only when a player made the kill."""
+    return {"rolls": 1, "entries": entries, "condition": {"type": "minecraft:all_of", "terms": [
+        {"type": "minecraft:killed_by_player"}, {"type": "minecraft:random_chance", "chance": chance}]}}
+
+
 def potion(weight, effect):
     return item("potion", weight, 1, 1, {"id": "minecraft:" + effect, "type": "minecraft:set_potion"})
 
@@ -149,6 +161,7 @@ TABLES = {
         pool(1, 1, [anchor(1), empty(3)])),
     "chests/heretic_tomb": chest(
         pool(1, 2, [book(1, 15, 30)]),
+        pool(1, 1, [circle_book("steadfast", 1, 1, 3), empty(4)]),
         pool(2, 4, [
             item("paper", 6, 3, 9),
             item("book", 5, 1, 3),
@@ -198,7 +211,8 @@ TABLES = {
             item("clock", 3),
             fragments(5, 1, 3),
         ]),
-        pool(1, 1, [item("golden_apple", 3), item("enchanted_golden_apple", 1), book(2, 20, 30), item("golden_horse_armor", 2), empty(4)])),
+        pool(1, 1, [item("golden_apple", 3), item("enchanted_golden_apple", 1), book(2, 20, 30), item("golden_horse_armor", 2), empty(4)]),
+        pool(1, 1, [circle_book("quickening", 1, 1, 2), empty(3)])),
     "chests/fen_cache": chest(
         pool(3, 6, [
             item("oak_boat", 6),
@@ -211,7 +225,8 @@ TABLES = {
             potion(5, "water_breathing"),
             fragments(6, 1, 3),
         ]),
-        pool(1, 1, [item("trident", 1), book(2, 15, 25), item("turtle_helmet", 1), item("golden_apple", 2), empty(5)])),
+        pool(1, 1, [item("trident", 1), book(2, 15, 25), item("turtle_helmet", 1), item("golden_apple", 2), empty(5)]),
+        pool(1, 1, [circle_book("sidestep", 1, 1, 3), empty(2)])),
     "chests/malebolge_cache": chest(
         pool(3, 6, [
             item("arrow", 8, 6, 16),
@@ -236,6 +251,12 @@ TABLES = {
             fragments(6, 2, 4),
         ]),
         pool(1, 1, [book(4, 25, 30), item("golden_apple", 3), item("enchanted_golden_apple", 1), anchor(2)])]},
+    # Lust: the lovers now and then carry Windstep away from the wind
+    "entities/lovers": {"type": "minecraft:entity", "pools": [rare_drop([circle_book("windstep", 1, 1, 3)], 0.06)]},
+    # Violence: the centaurs, Judgement
+    "entities/centaur": {"type": "minecraft:entity", "pools": [
+        pool(1, 1, [item("arrow", 1, 2, 8)]),
+        rare_drop([circle_book("judgement", 1, 1, 4)], 0.08)]},
     "gameplay/guardian_spoils": {"type": "minecraft:chest", "pools": [
         pool(2, 2, [book(1, 30, 30)]),
         pool(1, 2, [item("diamond", 3, 1, 3), item("golden_apple", 3), item("experience_bottle", 3, 4, 8), vigils(2, 1, 2)]),

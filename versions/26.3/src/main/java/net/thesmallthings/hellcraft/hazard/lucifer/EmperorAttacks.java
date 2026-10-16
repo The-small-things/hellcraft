@@ -95,7 +95,7 @@ final class EmperorAttacks {
 				next = Attack.HATRED;
 			}
 			if (!perform(next, boss)) {
-				cooldown = 20;
+				cooldown = fight.paced(20);
 			}
 		}
 	}
@@ -123,23 +123,23 @@ final class EmperorAttacks {
 		switch (attack) {
 			case HATRED -> {
 				hatred(boss, stage == 3 ? 4 : 3, true);
-				cooldown = (int) (110 * pace);
+				cooldown = fight.paced((int) (110 * pace));
 			}
 			case IMPOTENCE -> {
 				impotence(boss, targets);
-				cooldown = (int) (80 * pace);
+				cooldown = fight.paced((int) (80 * pace));
 			}
 			case IGNORANCE -> {
 				ignorance(boss);
-				cooldown = (int) (110 * pace);
+				cooldown = fight.paced((int) (110 * pace));
 			}
 			case WINGBEAT -> {
 				wingbeat(boss, targets);
-				cooldown = (int) (100 * pace);
+				cooldown = fight.paced((int) (100 * pace));
 			}
 			case MOUTHS -> {
 				mouths(boss, target);
-				cooldown = (int) (120 * pace);
+				cooldown = fight.paced((int) (120 * pace));
 			}
 		}
 		if (stage == 3 && attack != Attack.HATRED && level.getRandom().nextFloat() < 0.5f) {
@@ -156,7 +156,7 @@ final class EmperorAttacks {
 		level.playSound(null, boss.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 4.0f, 0.3f);
 		level.sendParticles(ParticleTypes.SNOWFLAKE, boss.getX(), boss.getY() + 1, boss.getZ(), 300, 4, 1, 4, 0.3);
 		tip("The ice cracks: his mouths are free. Hurt him to make him let go of anyone he grabs.");
-		cooldown = 40;
+		cooldown = fight.paced(40);
 	}
 
 	private void rage(WitherBoss boss) {
@@ -166,7 +166,7 @@ final class EmperorAttacks {
 		level.playSound(null, boss.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 3.0f, 0.6f);
 		level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, boss.getX(), boss.getY() + 2, boss.getZ(), 1, 0, 0, 0, 0);
 		fight.releaseTraitors(boss);
-		cooldown = 60;
+		cooldown = fight.paced(60);
 	}
 
 	// ------------------------------------------------------------------ the red face: hatred
@@ -252,7 +252,7 @@ final class EmperorAttacks {
 				level.sendParticles(ParticleTypes.CLOUD, m.x, m.y + 0.3, m.z, 6, 0.8, 0.1, 0.8, 0.02);
 				for (LivingEntity e : victims(REACH + 10)) {
 					if (e.distanceToSqr(m) <= 2.3 * 2.3) {
-						e.hurt(level.damageSources().freeze(), 6.0f * fight.damageMultiplier() * BossRules.heartScale(e));
+						e.hurt(level.damageSources().freeze(), 6.0f * fight.damageMultiplier() * BossRules.luciferScale(e));
 						e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1));
 						e.setTicksFrozen(Math.min(e.getTicksRequiredToFreeze() + 100, e.getTicksFrozen() + 140));
 					}
@@ -332,7 +332,7 @@ final class EmperorAttacks {
 				level.sendParticles(ParticleTypes.SNOWFLAKE, e.getX() - away.x * 2, e.getY() + 1, e.getZ() - away.z * 2, 6, 0.4, 0.6, 0.4, 0.2);
 			}
 			if (windTicks == 0 && !braced) {
-				e.hurt(level.damageSources().freeze(), 4.0f * fight.damageMultiplier() * BossRules.heartScale(e));
+				e.hurt(level.damageSources().freeze(), 4.0f * fight.damageMultiplier() * BossRules.luciferScale(e));
 			}
 		}
 		if (windTicks % 4 == 0) {

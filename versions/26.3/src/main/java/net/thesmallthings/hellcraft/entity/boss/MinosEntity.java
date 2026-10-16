@@ -71,7 +71,7 @@ public class MinosEntity extends BossEntity {
 		// a finished animation lets go, so the next starts from his resting pose (death holds its last frame)
 		for (MinosAnim anim : MinosAnim.values()) {
 			AnimationState state = states[anim.ordinal()];
-			if (!anim.looping && anim != MinosAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > anim.ticks) {
+			if (!anim.looping && anim != MinosAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > lengthOf(anim)) {
 				state.stop();
 			}
 		}

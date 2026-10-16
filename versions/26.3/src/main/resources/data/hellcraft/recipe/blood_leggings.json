@@ -11,41 +11,6 @@
     " F "
   ],
   "result": {
-    "id": "minecraft:diamond_leggings",
-    "components": {
-      "minecraft:custom_data": {
-        "hellcraft": "armour",
-        "armour": "blood_leggings"
-      },
-      "minecraft:item_model": "hellcraft:blood_leggings",
-      "minecraft:item_name": {
-        "text": "Blood Leggings",
-        "color": "dark_red",
-        "bold": true
-      },
-      "minecraft:lore": [
-        {
-          "text": "Blood armour: 2 pieces heal you 5% of the damage you deal,",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "4 pieces 10%, plus Regeneration when nearly dead",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "and Resistance during a Blood Oath.",
-          "color": "gray",
-          "italic": false
-        }
-      ],
-      "minecraft:rarity": "epic",
-      "minecraft:equippable": {
-        "slot": "legs",
-        "equip_sound": "minecraft:item.armor.equip_diamond",
-        "asset_id": "hellcraft:blood"
-      }
-    }
+    "id": "hellcraft:blood_leggings"
   }
 }

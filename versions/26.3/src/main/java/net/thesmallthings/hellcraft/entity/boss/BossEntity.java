@@ -10,6 +10,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 
+import java.util.Set;
+
 /**
  * A boss with a jointed, keyframe-animated model (client/render; made in Blockbench, see tools/art). The server says
  * which animation to play (one synched number, so players who arrive mid-fight see it too) and what danger the boss
@@ -20,6 +22,9 @@ import net.minecraft.world.level.Level;
 public abstract class BossEntity extends Monster {
 	private static final EntityDataAccessor<Integer> DATA_ANIMATION = SynchedEntityData.defineId(BossEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Byte> DATA_DANGER = SynchedEntityData.defineId(BossEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Float> DATA_TEMPO = SynchedEntityData.defineId(BossEntity.class, EntityDataSerializers.FLOAT);
+	/** The animations a boss's tempo leaves alone: its breathing, walk, flinch, entrance (filmed by its cutscene) and death. */
+	private static final Set<String> UNPACED = Set.of("IDLE", "WALK", "HURT", "INTRO", "DEATH", "CARRY", "LOWER", "LOW", "RAISE");
 
 	/** What a boss is warning of (P6, the danger language). Red marks on the ground are drawn separately (Danger). */
 	public enum Warning {
@@ -42,6 +47,7 @@ public abstract class BossEntity extends Monster {
 		super.defineSynchedData(builder);
 		builder.define(DATA_ANIMATION, -1);
 		builder.define(DATA_DANGER, (byte) 0);
+		builder.define(DATA_TEMPO, 1.0f);
 	}
 
 	/** Starts an animation on every client watching (server side); the same one again restarts it. */
@@ -60,6 +66,28 @@ public abstract class BossEntity extends Monster {
 
 	public void warn(Warning warning) {
 		entityData.set(DATA_DANGER, (byte) warning.ordinal());
+	}
+
+	/**
+	 * How fast its blows play (1: as made; config bossTempo, set by its fight): the fight's clock runs at the same pace
+	 * (GuardianFight), so the model, the danger marks and the blow stay together.
+	 */
+	public void tempo(float tempo) {
+		entityData.set(DATA_TEMPO, tempo);
+	}
+
+	public float tempo() {
+		return entityData.get(DATA_TEMPO);
+	}
+
+	/** How fast this animation plays: blows at the boss's tempo, everything else as made. */
+	public float speedOf(BossAnim anim) {
+		return UNPACED.contains(anim.name()) ? 1.0f : Math.max(0.1f, tempo());
+	}
+
+	/** How many ticks this animation lasts at its speed. */
+	public int lengthOf(BossAnim anim) {
+		return Math.round(anim.ticks() / speedOf(anim));
 	}
 
 	public Warning warning() {

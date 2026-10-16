@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "hellcraft:blood_helmet",
+    "hellcraft:infernal_blood_helmet",
+    "hellcraft:blood_chestplate",
+    "hellcraft:infernal_blood_chestplate",
+    "hellcraft:blood_leggings",
+    "hellcraft:infernal_blood_leggings",
+    "hellcraft:blood_boots",
+    "hellcraft:infernal_blood_boots"
+  ]
+}

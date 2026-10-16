@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 
 /**
  * Draws Plutus: his model at 1.3 times its Blockbench size, his greedy eyes and rubies lit in the dark
@@ -43,6 +44,7 @@ public class PlutusRenderer extends MobRenderer<PlutusEntity, PlutusRenderState,
 		super.extractRenderState(plutus, state, partialTick);
 		for (int i = 0; i < state.states.length; i++) {
 			state.states[i].copyFrom(plutus.states[i]);
+			state.speeds[i] = plutus.speedOf(PlutusAnim.values()[i]);
 		}
 		state.warning = plutus.warning();
 		state.acting = plutus.acting();

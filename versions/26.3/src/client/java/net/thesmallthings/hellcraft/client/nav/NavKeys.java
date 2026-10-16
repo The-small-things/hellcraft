@@ -12,7 +12,7 @@ public final class NavKeys {
 	private NavKeys() {
 	}
 
-	private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(HellcraftMod.id("hellcraft"));
+	public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(HellcraftMod.id("hellcraft"));
 	public static final KeyMapping MAP = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.hellcraft.map", InputConstants.KEY_M, CATEGORY));
 	public static final KeyMapping JOURNAL = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.hellcraft.journal", InputConstants.KEY_J, CATEGORY));
 

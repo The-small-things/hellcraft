@@ -12,51 +12,6 @@
     "F F"
   ],
   "result": {
-    "id": "minecraft:diamond_axe",
-    "components": {
-      "minecraft:custom_data": {
-        "hellcraft": "weapon",
-        "weapon": "tithe_axe"
-      },
-      "minecraft:item_model": "hellcraft:tithe_axe",
-      "minecraft:item_name": {
-        "text": "Tithe Axe",
-        "color": "dark_red",
-        "bold": true
-      },
-      "minecraft:lore": [
-        {
-          "text": "Kills with it drop Blood Fragments twice as often.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Blood Art, Blood Frenzy: Strength II, Speed II and Haste II",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "for 15 s.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Blood Oath: Strength III, Speed II, Resistance, hits heal 1\u2764.",
-          "color": "gray",
-          "italic": false
-        },
-        {
-          "text": "Hits and kills charge it. Fully charged: right-click for its Blood Art.",
-          "color": "red",
-          "italic": false
-        },
-        {
-          "text": "Sneak + right-click: Blood Oath (pay 3\u2764 of health for 30 s of full power).",
-          "color": "red",
-          "italic": false
-        }
-      ],
-      "minecraft:rarity": "epic"
-    }
+    "id": "hellcraft:tithe_axe"
   }
 }

@@ -106,8 +106,24 @@ public final class Danger {
 		return Math.atan2(Math.cos(yaw), -Math.sin(yaw));
 	}
 
+	/** While a boss fight runs on its slowed clock, its marks take longer to fill by the same factor (GuardianFight). */
+	private static double stretch = 1.0;
+
+	/** Runs `action` with every mark it sends stretched by this factor (1 / the boss's tempo). */
+	public static void stretched(double factor, Runnable action) {
+		double before = stretch;
+		stretch = factor;
+		try {
+			action.run();
+		} finally {
+			stretch = before;
+		}
+	}
+
 	private static int send(ServerLevel level, Colour colour, Shape shape, Vec3 at, double size, double width, double angle, int warnTicks,
 							Entity follow, int followTicks) {
+		warnTicks = (int) Math.round(warnTicks * stretch);
+		followTicks = (int) Math.round(followTicks * stretch);
 		int id = nextId++;
 		DangerPayload payload = new DangerPayload(id, colour.ordinal(), shape.ordinal(), at.x, at.y, at.z, (float) size, (float) width, (float) angle,
 				warnTicks, follow == null ? -1 : follow.getId(), followTicks);

@@ -144,6 +144,13 @@ public final class Guide {
 				"The Furies (inside the Walls of Dis), Farinata (Heresy)",
 				"The Minotaur (above the river of blood), Geryon (the edge of the great cliff)",
 				"None blocks the way down. First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
+		pages.add(page("THE CIRCLES' ENCHANTMENTS",
+				"Five enchantments only Hell gives, each found as a book in one circle. Put them on at an anvil.",
+				"Windstep (boots, faster walking): the lovers of Lust drop it.",
+				"Quickening (weapons, faster blows): Greed's vaults.",
+				"Sidestep (leggings): Wrath's watchtower caches. Press Dash (Left Alt) to dash, and dodge a boss's blow.",
+				"Steadfast (chestplate, less boss damage): Heresy's tombs.",
+				"Judgement (weapons, more damage to bosses): the centaurs of Violence drop it."));
 		pages.add(page("RIDES DOWN",
 				"Geryon: beat him, then right-click him at the brink of the great cliff. He flies you down to Malebolge, and back up.",
 				"",

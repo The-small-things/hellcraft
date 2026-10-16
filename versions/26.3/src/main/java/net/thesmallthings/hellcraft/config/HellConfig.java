@@ -16,7 +16,7 @@ public class HellConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static HellConfig instance = new HellConfig();
 	/** Bumped when default balance values change; see {@link #migrate()}. */
-	private static final int CURRENT_VERSION = 2;
+	private static final int CURRENT_VERSION = 3;
 
 	/** Which defaults this file was written with (0: before versioning). Don't edit. */
 	public int configVersion;
@@ -119,9 +119,17 @@ public class HellConfig {
 	public int luciferSpoilsCooldownMinutes = 360;
 	/**
 	 * How much harder the bosses (guardians and Lucifer) hit players with more hearts: 1.0 means a hit takes the
-	 * same share of your health at 40 hearts as at 10 (4x the damage), 0.5 half that, 0 turns it off.
+	 * same share of your health at 40 hearts as at 10 (4x the damage), 0.5 (the default) 2.5x, 0 turns it off.
 	 */
-	public double bossHeartScaling = 1.0;
+	public double bossHeartScaling = 0.5;
+	/**
+	 * How fast the guardians fight, 0.2 to 1.0 (1.0: as made). Lower gives more time to read each blow: every
+	 * wind-up, warning, parry window and pause between attacks lasts 1/bossTempo as long, and their animations slow to
+	 * match. Their walking speed doesn't change.
+	 */
+	public double bossTempo = 0.6;
+	/** The share of their damage Lucifer's forms and attacks do (1.0 = full). */
+	public double luciferDamage = 0.7;
 	/** The share of their damage arrows and other projectiles do to a boss (1.0 = full damage). */
 	public double bossProjectileDamage = 0.4;
 	/** A guardian pulls in a player who shoots it from afar, or who stands high above it. */
@@ -279,6 +287,8 @@ public class HellConfig {
 		hoardersMax = Math.max(0, hoardersMax);
 		sullenGripTicks = Math.max(0, sullenGripTicks);
 		bossHeartScaling = Math.max(0.0, bossHeartScaling);
+		bossTempo = Math.max(0.2, Math.min(1.0, bossTempo));
+		luciferDamage = Math.max(0.0, luciferDamage);
 		bossProjectileDamage = Math.max(0.0, Math.min(1.0, bossProjectileDamage));
 		guardianSpoilsCooldownMinutes = Math.max(0, guardianSpoilsCooldownMinutes);
 		prestigeHeartBonus = Math.max(0, prestigeHeartBonus);
@@ -302,6 +312,10 @@ public class HellConfig {
 			mobHealthPerDepth = moved(mobHealthPerDepth, 0.06, 0.03);
 			fragmentChanceBase = moved(fragmentChanceBase, 0.02, 0.05);
 			fragmentChancePerDepth = moved(fragmentChancePerDepth, 0.011, 0.015);
+		}
+		if (configVersion < 3) {
+			// playtest: 40 hearts gave no edge at all, so boss hits grow half as fast with hearts
+			bossHeartScaling = moved(bossHeartScaling, 1.0, 0.5);
 		}
 		if (configVersion < CURRENT_VERSION) {
 			HellcraftMod.LOGGER.info("Hellcraft config updated from version {} to {}", configVersion, CURRENT_VERSION);

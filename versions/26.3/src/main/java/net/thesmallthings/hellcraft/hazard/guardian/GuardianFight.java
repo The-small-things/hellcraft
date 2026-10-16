@@ -42,6 +42,7 @@ import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
@@ -92,6 +93,7 @@ public abstract class GuardianFight {
 	protected UUID bodyId;
 	protected int tick;
 	private int cooldown = 60;
+	private double clock;
 	private int emptyTicks;
 	private int missingTicks;
 	private boolean done;
@@ -242,7 +244,25 @@ public abstract class GuardianFight {
 		HellcraftMod.LOGGER.info("Guardian awakens: {}", kind.id());
 	}
 
+	/**
+	 * The fight runs on its own clock at the bosses' tempo (config bossTempo): at 0.6, every wind-up, warning, parry
+	 * window and pause between blows takes 1/0.6 as long as it was made, and the model's blows play as slowly
+	 * (BossEntity.tempo), so there is time to read each blow and dodge or block it.
+	 */
 	void tick() {
+		double tempo = tempo();
+		clock += tempo;
+		while (clock >= 1.0 && !done) {
+			clock -= 1.0;
+			Danger.stretched(1.0 / tempo, this::step);
+		}
+	}
+
+	static double tempo() {
+		return Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo));
+	}
+
+	private void step() {
 		tick++;
 		runScheduled();
 		if (done) {
@@ -250,6 +270,15 @@ public abstract class GuardianFight {
 		}
 		if (tick % 100 == 0) {
 			forceLoad(true);
+		}
+		if (tick % 10 == 1) {
+			// its body and whatever else it brought (sisters, Medusa, false copies) blow at the fight's pace
+			float tempo = (float) tempo();
+			for (BossEntity b : level.getEntitiesOfClass(BossEntity.class, new AABB(lair).inflate(64))) {
+				if (b.tempo() != tempo && !(b instanceof net.thesmallthings.hellcraft.entity.Carrier)) {
+					b.tempo(tempo);
+				}
+			}
 		}
 		Mob body = body();
 		if (body == null) {
@@ -305,7 +334,9 @@ public abstract class GuardianFight {
 			return false;
 		}
 		windUp(body);
-		int next = perform(attack, body, targets.get(0));
+		int[] result = new int[1];
+		Danger.stretched(1.0 / tempo(), () -> result[0] = perform(attack, body, targets.get(0)));
+		int next = result[0];
 		if (next > 0) {
 			cooldown = next;
 		}

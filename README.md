@@ -210,7 +210,7 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 ### Hell weapons (26.3)
 
-Four vanilla tools, reforged at a crafting table with Blood Fragments (and, for the stronger ones, Blood Hearts). They're in everyone's recipe book, and swinging them costs nothing:
+Four weapons and tools of their own (3.0: real items, in the creative tab and `/give hellcraft:bloodletter`), forged at a crafting table from a vanilla tool with Blood Fragments (and, for the stronger ones, Blood Hearts). They're in everyone's recipe book, and swinging them costs nothing. Ones made before 3.0 (vanilla tools with the blood marks) keep working:
 - **Passive**: every fully charged hit does something extra (below).
 - **Blood charge**: charged hits on monsters (and players) add 5%, kills add 20%. The action bar shows the meter, and the weapon glows when it's full. **Right-click at 100%** to unleash its **Blood Art**. You lose the charge when you die.
 - **Blood Oath**: sneak and right-click (in the air or at a block) to pay **3 hearts of health** (not max hearts) for a full charge and **30 seconds of full power**. It needs more than 4 hearts of health, and your blood takes 3 minutes to recover before the next oath.
@@ -230,13 +230,25 @@ Excavate's 3×3 only takes blocks the pickaxe can mine and that are no harder th
 
 ### Blood armour (26.3)
 
-Four pieces of diamond armour reforged with blood at a crafting table. They're in everyone's recipe book: each is the diamond piece plus 4 Blood Fragments.
+Four pieces of armour of their own (3.0: real items), forged at a crafting table: each is the diamond piece plus 4 Blood Fragments. They're in everyone's recipe book. At a Hellforge they become **infernal**: netherite's protection, fire-proof.
 
 They protect like diamond, look like crimson plate with bone rivets and burning eye slits (from the resource pack), and work as a set:
 - **2 or more pieces:** your melee hits heal you 5% of the damage they deal.
 - **All 4:** 10%, plus a **Blood Rush** (Regeneration II for 5 s) when you drop below 3 hearts of health, once a minute. A Blood Oath also gives you Resistance while it lasts.
 
 `/hellcraft givearmour <player>` hands out a set for testing.
+
+### The circles' enchantments (3.0)
+
+Five enchantments that no enchanting table, librarian or ordinary chest gives: each is found as a book in one circle only. Put them on at an anvil.
+
+| Enchantment | On | What it does | Found |
+|---|---|---|---|
+| **Windstep** I–III | boots | +8% walking speed per level | Lust: the lovers sometimes drop it |
+| **Quickening** I–II | swords, axes (and the Reaper) | +10% attack speed per level | Greed: the vaults of the Counting House |
+| **Sidestep** I–III | leggings | the **Dash** key (Left Alt; Controls, Hellcraft) throws you a few blocks the way you're moving (back, if you stand still), and a boss's blow passes through you mid-dash. Once every 3 / 2.25 / 1.5 s | Wrath: the caches at the foot of the Fen's watchtowers |
+| **Steadfast** I–IV | chestplate | bosses (the guardians, Lucifer and what they bring) hurt you 7% less per level | Heresy: the tombs |
+| **Judgement** I–V | swords, axes (and the Reaper) | your blows hurt bosses 1.5 more per level | Violence: the centaurs sometimes drop it |
 
 ## The circle guardians (26.3)
 
@@ -259,6 +271,8 @@ Beside the east road in from the Gate of Hell (the +X axis), 40 blocks to its so
 
 **Antaeus (3.0).** The unchained giant stands in the ice of Cocytus at the foot of the Well of Giants, his hand resting on the rim of a cleft worn in the cliff. Wait on the crying obsidian at the brink by his hand: he lifts you, bends, and sets you down on the ice. To go back up, wait on the crying obsidian beside his hand down on the ice. Nobody in his hand can be hurt.
 
+**Time to react (3.0).** The guardians fight at 60% of their old pace (`bossTempo`): every wind-up, warning on the ground, white parry window and pause between blows lasts longer, and their animations slow to match, so there is time to see a blow coming and get out of the way or raise your shield. The flyers come down to be hit: Geryon sinks to just above the ground after each attack, and a Fury lands where her talons strike and stays down a moment. Lucifer's attacks are paced the same way and hit for 70% (`luciferDamage`).
+
 A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
 
 **The danger language (3.0).** The same colours mean the same thing on every boss, and Virgil explains each the first time you see it:
@@ -275,7 +289,7 @@ Marks are drawn block by block on the ground, fill from the middle out, and the 
 **Animated models (Lucifer too).** Each boss's model rises out of the ground and roars when it wakes, breathes while it stands, bobs and leans as it walks, rears back before every attack and lunges into it, squashes down into its stomps, shudders and flashes red when hit, and topples over and sinks when it dies. The server drives it all through the model's display entity. (3.0 replaces these with fully jointed, keyframe-animated models.)
 
 **No cheesing (these rules also apply to Lucifer where it says so):**
-- **Hearts don't make you a tank.** Boss hits grow with your heart capacity, so a hit takes the same share of your health at 40 hearts as at 10. Dodge the telegraphed attacks instead of soaking them. (Lucifer too.)
+- **Hearts help, but don't make you a tank.** Boss hits grow with your heart capacity (3.0: half as fast as before), so 40 hearts takes 2.5 times the damage of 10: more hearts still last longer, but dodging the telegraphed attacks is the way to win. (Lucifer too.)
 - **Arrows do 40% damage** to a guardian, and to Lucifer's Morning Star form. Geryon flies, and Lucifer's true form is the Wither, so arrows do full damage to both.
 - **Shoot from afar and you get pulled in.** Hit a guardian with an arrow from more than 8 blocks away and, a second after a warning, it drags you toward it (at most once every 8 seconds).
 - **You can only hurt a guardian from inside its lair.** Damage from outside the brazier ring does nothing.
@@ -306,7 +320,7 @@ When the boss dies, your **rank is the average of your style over the fight**. C
 - **Again after 3 hours:** 1 Blood Heart, but only for a victory ranked S or better (a lower rank doesn't use up the wait).
 - **Lucifer:** his full reward comes back every 6 hours. A win in between pays twice the fragments, plus a treasure roll for S or better.
 
-Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (1.0 = full scaling, 0 = off), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
+Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (0.5; 1.0 = full scaling, 0 = off), `bossTempo` (0.6; 1.0 = full speed), `luciferDamage` (0.7), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
 
 | Minos | Cerberus | Plutus | The Minotaur | Geryon |
 |---|---|---|---|---|
@@ -592,6 +606,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
+- how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.7)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 

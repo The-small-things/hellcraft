@@ -84,7 +84,7 @@ public class CerberusEntity extends BossEntity {
 		states[CerberusAnim.IDLE.ordinal()].animateWhen(!dying && walkAnimation.speed() < 0.1f, tickCount);
 		for (CerberusAnim anim : CerberusAnim.values()) {
 			AnimationState state = states[anim.ordinal()];
-			if (!anim.looping && anim != CerberusAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > anim.ticks) {
+			if (!anim.looping && anim != CerberusAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > lengthOf(anim)) {
 				state.stop();
 			}
 		}

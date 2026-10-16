@@ -33,7 +33,7 @@ public class PlutusModel extends EntityModel<PlutusRenderState> {
 		}
 		for (PlutusAnim anim : PlutusAnim.values()) {
 			if (anim != PlutusAnim.WALK) {
-				animations[anim.ordinal()].apply(state.states[anim.ordinal()], state.ageInTicks);
+				animations[anim.ordinal()].apply(state.states[anim.ordinal()], state.ageInTicks, state.speeds[anim.ordinal()]);
 			}
 		}
 	}

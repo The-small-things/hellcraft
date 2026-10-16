@@ -17,9 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -28,13 +26,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,8 +45,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Hell weapons: vanilla tools reforged with Blood Fragments (recipes in data/hellcraft/recipe). They cost
- * nothing to swing:
+ * Hell weapons: vanilla tools reforged with Blood Fragments (recipes in data/hellcraft/recipe), real items since 3.0
+ * (HellItems; ones made before are vanilla tools marked with custom data, and still work). They cost nothing to swing:
  * <ul>
  *     <li>a <b>passive</b> on every fully charged hit (bleeding and healing, a cleave, a richer tithe);</li>
  *     <li><b>blood charge</b>: hits and kills fill it, and a right-click at 100% unleashes the weapon's
@@ -100,7 +96,7 @@ public final class HellWeapons {
 		public final String id;
 		final String title;
 		final Item base;
-		final Rarity rarity;
+		public final Rarity rarity;
 		final List<String> lore;
 
 		Weapon(String id, String title, Item base, Rarity rarity, List<String> lore) {
@@ -149,27 +145,9 @@ public final class HellWeapons {
 
 	// ------------------------------------------------------------------ the items
 
-	/** Must match the results in data/hellcraft/recipe/*.json. */
+	/** A new weapon (a real item since 3.0; data/hellcraft/recipe/*.json makes the same). */
 	public static ItemStack create(Weapon weapon) {
-		ItemStack stack = new ItemStack(weapon.base);
-		CompoundTag tag = new CompoundTag();
-		tag.putString(BloodItems.KEY, KIND);
-		tag.putString(KIND, weapon.id);
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-		stack.set(DataComponents.ITEM_MODEL, HellcraftMod.id(weapon.id));
-		stack.set(DataComponents.ITEM_NAME, Component.literal(weapon.title).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		stack.set(DataComponents.LORE, lore(weapon, false));
-		stack.set(DataComponents.RARITY, weapon.rarity);
-		if (weapon == Weapon.REAPER) {
-			// a scythe, not a garden tool: heavy and slow
-			stack.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
-					.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(HellcraftMod.id("reaper_damage"), 7.0, AttributeModifier.Operation.ADD_VALUE),
-							EquipmentSlotGroup.MAINHAND)
-					.add(Attributes.ATTACK_SPEED, new AttributeModifier(HellcraftMod.id("reaper_speed"), -3.0, AttributeModifier.Operation.ADD_VALUE),
-							EquipmentSlotGroup.MAINHAND)
-					.build());
-		}
-		return stack;
+		return new ItemStack(HellItems.weapon(weapon, false));
 	}
 
 	static ItemLore lore(Weapon weapon, boolean infernal) {
@@ -204,6 +182,11 @@ public final class HellWeapons {
 		if (stack.isEmpty()) {
 			return null;
 		}
+		Weapon real = HellItems.weaponOf(stack.getItem());
+		if (real != null) {
+			return real;
+		}
+		// made before 3.0: a vanilla tool marked with custom data
 		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
 		if (data == null) {
 			return null;
@@ -216,6 +199,9 @@ public final class HellWeapons {
 
 	/** Infernal gear was reforged at the Hellforge (Hellforge.java): netherite, and everything stronger. */
 	public static boolean infernal(ItemStack stack) {
+		if (HellItems.infernalItem(stack.getItem())) {
+			return true;
+		}
 		CustomData data = stack.get(DataComponents.CUSTOM_DATA);
 		return data != null && data.copyTag().getBooleanOr(INFERNAL, false);
 	}

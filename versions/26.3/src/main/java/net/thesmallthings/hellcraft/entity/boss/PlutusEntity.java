@@ -84,7 +84,7 @@ public class PlutusEntity extends BossEntity {
 		states[PlutusAnim.IDLE.ordinal()].animateWhen(!dying && walkAnimation.speed() < 0.1f, tickCount);
 		for (PlutusAnim anim : PlutusAnim.values()) {
 			AnimationState state = states[anim.ordinal()];
-			if (!anim.looping && anim != PlutusAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > anim.ticks) {
+			if (!anim.looping && anim != PlutusAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > lengthOf(anim)) {
 				state.stop();
 			}
 		}

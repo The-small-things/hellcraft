@@ -48,7 +48,9 @@ import java.util.UUID;
  */
 final class FuriesFight extends GuardianFight {
 	private static final double ORBIT = 9.0;
-	private static final double HEIGHT = 6.5;
+	private static final double HEIGHT = 4.0;
+	/** After her talons strike, a Fury crouches on the ground this long before she flies up: the time to hit her. */
+	private static final int LANDED = 40;
 	private static final double TALON_RADIUS = 2.4;
 	private static final float TALON_DAMAGE = 10.0f;
 	private static final double SHRIEK_RADIUS = 7.0;
@@ -198,7 +200,7 @@ final class FuriesFight extends GuardianFight {
 		int hit = FuryAnim.TALONS.at("hit");
 		striking = fury.getUUID();
 		strikeUntil = tick + FuryAnim.TALONS.ticks + 10;
-		diveTo = target.position().add(0, 3.5, 0);
+		diveTo = target.position().add(0, 2.5, 0);
 		fury.play(FuryAnim.TALONS);
 		Danger.follow(level, Danger.Colour.WHITE, target, TALON_RADIUS, hit - 6, hit);
 		Vec3[] at = new Vec3[1];
@@ -216,12 +218,15 @@ final class FuriesFight extends GuardianFight {
 				return;
 			}
 			level.playSound(null, fury.blockPosition(), SoundEvents.PHANTOM_BITE, SoundSource.HOSTILE, 2.5f, 0.6f);
+			// she lands where she struck, and stays down a moment
+			diveTo = new Vec3(at[0].x, groundY(at[0].x, at[0].z) + 0.2, at[0].z);
+			strikeUntil = Math.max(strikeUntil, tick + LANDED);
 			for (LivingEntity e : victims(at[0], TALON_RADIUS + 0.3)) {
 				// the blow is the Furies' (the leader's), so a shield can parry it
 				e.hurtServer(level, level.damageSources().mobAttack(body), TALON_DAMAGE);
 			}
 		});
-		return FuryAnim.TALONS.ticks + 20;
+		return FuryAnim.TALONS.ticks + LANDED;
 	}
 
 	/** The Shriek: a purple circle under her. It can't be blocked: get out from under her. */
@@ -231,7 +236,7 @@ final class FuriesFight extends GuardianFight {
 		striking = fury.getUUID();
 		strikeUntil = tick + FuryAnim.SHRIEK.ticks + 10;
 		Vec3 ground = new Vec3(target.getX(), groundY(target.getX(), target.getZ()), target.getZ());
-		diveTo = ground.add(0, 4.5, 0);
+		diveTo = ground.add(0, 3.0, 0);
 		fury.play(FuryAnim.SHRIEK);
 		fury.warn(BossEntity.Warning.PURPLE);
 		tip("A Fury shrieks over the purple circle: get out from under her!");

@@ -30,7 +30,7 @@ public class PhlegyasModel extends EntityModel<PhlegyasRenderState> {
 		head.yRot += state.yRot * 0.6f * ((float) Math.PI / 180f);
 		head.xRot += state.xRot * 0.6f * ((float) Math.PI / 180f);
 		for (PhlegyasAnim anim : PhlegyasAnim.values()) {
-			animations[anim.ordinal()].apply(state.states[anim.ordinal()], state.ageInTicks);
+			animations[anim.ordinal()].apply(state.states[anim.ordinal()], state.ageInTicks, state.speeds[anim.ordinal()]);
 		}
 	}
 }

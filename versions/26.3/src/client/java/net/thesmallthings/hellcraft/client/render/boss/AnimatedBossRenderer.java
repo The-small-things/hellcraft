@@ -59,6 +59,7 @@ public class AnimatedBossRenderer<T extends AnimatedBoss> extends MobRenderer<T,
 		super.extractRenderState(boss, state, partialTick);
 		for (int i = 0; i < state.states.length; i++) {
 			state.states[i].copyFrom(boss.states[i]);
+			state.speeds[i] = boss.speed(i);
 		}
 		state.warning = boss.warning();
 		state.acting = boss.acting();

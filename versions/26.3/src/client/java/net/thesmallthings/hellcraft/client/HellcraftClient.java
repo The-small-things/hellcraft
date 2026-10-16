@@ -130,9 +130,11 @@ public class HellcraftClient implements ClientModInitializer {
 
 		// finding the way: the circle cards, the compass, and the keys for the Map of Hell and the Journal
 		NavKeys.register();
+		DashKey.register();
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			LayerCard.tick(client);
 			NavKeys.tick(client);
+			DashKey.tick(client);
 			DangerMarks.tick(client);
 			CutscenePlayer.tick(client);
 			LayerFx.tick(client);

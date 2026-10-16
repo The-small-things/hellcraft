@@ -362,6 +362,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "$there" | grep -q "Test passed" || { echo "A $m could not be summoned"; exit 1; }
   done
   rcon "kill @e[tag=smoke_monster]" > /dev/null || true
+  # the blood gear is real items, and the circles' own enchantments loaded
+  gear=$(rcon "hellcraft gear test")
+  echo "$gear"
+  echo "$gear" | grep -q "real items=true, old ones count=true; 5 circle enchantments" || { echo "The blood gear or the circle enchantments are broken"; exit 1; }
   # Antaeus stands in the ice below the Well, his hand on the rim, and the cleft below it is open
   antaeus=$(rcon "hellcraft antaeus test")
   echo "$antaeus"

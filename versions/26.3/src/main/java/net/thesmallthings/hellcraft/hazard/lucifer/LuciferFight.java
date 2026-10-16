@@ -170,8 +170,17 @@ public final class LuciferFight {
 		return tier();
 	}
 
+	/** Schedules an action; once he fights, every wind-up and pause lasts 1/bossTempo as long (as the guardians'). */
 	void schedule(int delay, Runnable action) {
-		scheduled.add(new Scheduled(tick + Math.max(0, delay), action));
+		scheduled.add(new Scheduled(tick + Math.max(0, paced(delay)), action));
+	}
+
+	/** A fight delay at the bosses' tempo (the intro keeps its own timing). */
+	int paced(int ticks) {
+		if (phase == Phase.INTRO) {
+			return ticks;
+		}
+		return (int) Math.round(ticks / Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo)));
 	}
 
 	void say(String line) {
@@ -350,7 +359,7 @@ public final class LuciferFight {
 				});
 			}
 			double faster = Math.max(0.6, 1.0 - 0.12 * tier());
-			attackCooldown = (int) Math.round((phase == Phase.ENRAGED ? 50 : 80) * faster);
+			attackCooldown = paced((int) Math.round((phase == Phase.ENRAGED ? 50 : 80) * faster));
 		}
 	}
 
@@ -445,7 +454,7 @@ public final class LuciferFight {
 			bar.setColor(BossEvent.BossBarColor.PURPLE);
 			LuciferDialogue.nameCard(LuciferDialogue.audience(level, AUDIENCE_RADIUS), "ENOUGH!", "The Morning Star unbound", ChatFormatting.RED);
 			model.pose(avatar(), BossModel.Pose.ROAR);
-			attackCooldown = 30;
+			attackCooldown = paced(30);
 			setPhase(Phase.ENRAGED);
 		});
 	}

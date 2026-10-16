@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
+import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 
 /**
  * Draws Cerberus: his model at 1.5 times its Blockbench size, his six red eyes lit in the dark (cerberus_glow.png), a
@@ -42,6 +43,7 @@ public class CerberusRenderer extends MobRenderer<CerberusEntity, CerberusRender
 		super.extractRenderState(cerberus, state, partialTick);
 		for (int i = 0; i < state.states.length; i++) {
 			state.states[i].copyFrom(cerberus.states[i]);
+			state.speeds[i] = cerberus.speedOf(CerberusAnim.values()[i]);
 		}
 		state.warning = cerberus.warning();
 		state.acting = cerberus.acting();

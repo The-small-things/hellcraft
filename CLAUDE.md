@@ -80,7 +80,14 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `hellcraft:judgement` damage type. `GuardianFight` gives real-bodied guardians an intro, a parry window
   (`openParry`, `onParried`) and invulnerable spells (`shield`).
 - Hint bits (`CircleHazards.hintOnce`, 64 of them in `HellState.Soul.hints`): 0-31 upper Hell, 32-38 lower Hell
-  (36 is Malacoda's one-time trick, spent with `spendHint`).
+  (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash.
+- Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
+  (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
+  death). Lucifer's delays go through `LuciferFight.paced`. Time new fights with `schedule` and anim events as usual.
+- Blood gear (3.0): real items in `HellItems` (and `infernal_*` forms the Hellforge makes); `BloodArmour.of` and
+  `HellWeapons.of` also accept pieces made before 3.0 (vanilla items with custom data). The circles' enchantments:
+  `tools/gen_enchants.py` (data), `tools/gen_loot.py` (`circle_book`, where each is found), `blood/LayerEnchants`
+  (Sidestep's dash, Steadfast, Judgement; client `DashKey`).
 - `cutscene/`: `Cutscene` (camera shots in the anchor's frame, captions, shakes, a name card), `Cutscenes` (by id),
   `CutsceneManager` (plays one, keeps the player from harm, remembers it was seen so it can be skipped). Client:
   `client/cutscene/CutscenePlayer` + the `CameraMixin`, `HudMixin`, `KeyboardInputMixin` and `MouseHandlerMixin`.
@@ -95,8 +102,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   the ferry, `entity/Ferry`); set-piece features in `world/feature` (rotting trees, bloated fungus, feast tables, coin
   hills, vaults, scales, reeds, boardwalks, watchtowers); `client/layer/SoulFlocks` (Lust's sky). Cerberus, Plutus
   (with `entity/boss/RollingCoin`) and Phlegyas are real-bodied guardians like Minos.
-- `blood/HellItems`: the registered items (Blood Heart, Fragment, Bane, Vigil Candle, Soul Anchor) and the creative
-  tab. Weapons, armour and relics are still vanilla items marked with custom_data (to convert later).
+- `blood/HellItems`: the registered items (Blood Heart, Fragment, Bane, Vigil Candle, Soul Anchor, the hell weapons and
+  blood armour) and the creative tab. Relics are still vanilla items marked with custom_data (to convert later).
 - Client (`src/client/.../client/`): `HellcraftClient`, `BloodHud` + `mixin/HeartTypeMixin` (blood hearts and rank
   rims, textures in `assets/hellcraft/textures/gui/sprites/hud/heart`), `nav/` (finding the way: `LayerCard` circle
   cards, `CompassHud`, `MapOfHellScreen` on M, `JournalScreen` on J, `NavKeys`; `ClientNav` holds what the server

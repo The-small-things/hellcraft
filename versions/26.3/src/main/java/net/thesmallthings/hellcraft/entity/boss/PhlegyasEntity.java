@@ -72,7 +72,7 @@ public class PhlegyasEntity extends BossEntity {
 		// a finished animation lets go, so the next starts from his resting pose (death holds its last frame)
 		for (PhlegyasAnim anim : PhlegyasAnim.values()) {
 			AnimationState state = states[anim.ordinal()];
-			if (!anim.looping && anim != PhlegyasAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > anim.ticks) {
+			if (!anim.looping && anim != PhlegyasAnim.DEATH && state.isStarted() && tickCount - startedAt[anim.ordinal()] > lengthOf(anim)) {
 				state.stop();
 			}
 		}

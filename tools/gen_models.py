@@ -334,7 +334,7 @@ GUARDIANS = {
 
 
 # ------------------------------------------------------------------------------------ recipes
-# The results must match HellWeapons.create() in the 26.3 sources.
+# Since 3.0 the hell weapons and blood armour are real items (HellItems.java): the recipes only name them.
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3", "src", "main", "resources", "data", "hellcraft")
 # Hellcraft's own items (HellItems.java)
@@ -367,7 +367,6 @@ WEAPONS = [
 ]
 
 
-# The results must match BloodArmour.create() in the 26.3 sources.
 ARMOUR_LORE = [
     "Blood armour: 2 pieces heal you 5% of the damage you deal,",
     "4 pieces 10%, plus Regeneration when nearly dead",
@@ -382,19 +381,12 @@ ARMOUR = [
 
 
 def armour_recipes():
+    # real items since 3.0 (HellItems.java); their names and lore are the items' own
     for aid, title, base, slot, pattern in ARMOUR:
-        components = {
-            "minecraft:custom_data": {"hellcraft": "armour", "armour": aid},
-            "minecraft:item_model": "hellcraft:" + aid,
-            "minecraft:item_name": {"text": title, "color": "dark_red", "bold": True},
-            "minecraft:lore": [{"text": line, "color": "gray", "italic": False} for line in ARMOUR_LORE],
-            "minecraft:rarity": "epic",
-            "minecraft:equippable": {"slot": slot, "equip_sound": "minecraft:item.armor.equip_diamond", "asset_id": "hellcraft:blood"},
-        }
         write(os.path.join(DATA, "recipe", aid + ".json"), {
             "type": "minecraft:crafting_shaped", "category": "equipment",
             "key": {"A": base, "F": FRAGMENT}, "pattern": pattern,
-            "result": {"id": base, "components": components}})
+            "result": {"id": "hellcraft:" + aid}})
     # how the armour looks when worn (textures/entity/equipment/<layer>/blood.png)
     write(os.path.join(ASSETS, "equipment", "blood.json"), {"layers": {
         "humanoid": [{"texture": "hellcraft:blood"}],
@@ -403,20 +395,8 @@ def armour_recipes():
 
 
 def recipes():
+    # real items since 3.0 (HellItems.java); their names, lore and stats are the items' own
     for wid, title, base, rarity, pattern, lore in WEAPONS:
-        components = {
-            "minecraft:custom_data": {"hellcraft": "weapon", "weapon": wid},
-            "minecraft:item_model": "hellcraft:" + wid,
-            "minecraft:item_name": {"text": title, "color": "dark_red", "bold": True},
-            "minecraft:lore": [{"text": line, "color": "gray", "italic": False} for line in lore]
-                              + [{"text": line, "color": "red", "italic": False} for line in WEAPON_FOOTER],
-            "minecraft:rarity": rarity,
-        }
-        if wid == "reaper_of_minos":
-            components["minecraft:attribute_modifiers"] = [
-                {"type": "minecraft:attack_damage", "id": "hellcraft:reaper_damage", "amount": 7.0, "operation": "add_value", "slot": "mainhand"},
-                {"type": "minecraft:attack_speed", "id": "hellcraft:reaper_speed", "amount": -3.0, "operation": "add_value", "slot": "mainhand"},
-            ]
         key = {"S": base}
         if any("H" in row for row in pattern):
             key["H"] = HEART
@@ -424,7 +404,45 @@ def recipes():
             key["F"] = FRAGMENT
         write(os.path.join(DATA, "recipe", wid + ".json"), {
             "type": "minecraft:crafting_shaped", "category": "equipment", "key": key, "pattern": pattern,
-            "result": {"id": base, "components": components}})
+            "result": {"id": "hellcraft:" + wid}})
+
+
+# which vanilla item tags each piece of gear joins (so enchanting tables, anvils and trims treat it as its kind)
+GEAR_TAGS = {
+    "bloodletter": ["swords"],
+    "reaper_of_minos": ["hoes", "enchantable/sharp_weapon", "enchantable/weapon", "enchantable/fire_aspect", "enchantable/sweeping",
+                        "enchantable/melee_weapon"],
+    "tithe_axe": ["axes"],
+    "blood_pickaxe": ["pickaxes"],
+    "blood_helmet": ["head_armor", "trimmable_armor"],
+    "blood_chestplate": ["chest_armor", "trimmable_armor"],
+    "blood_leggings": ["leg_armor", "trimmable_armor"],
+    "blood_boots": ["foot_armor", "trimmable_armor"],
+}
+MC_DATA = os.path.join(DATA, "..", "minecraft")
+
+
+def gear():
+    """Item tags for the blood gear (and its infernal forms), their item definitions, and their names."""
+    tags = {}
+    names = {}
+    titles = {w[0]: w[1] for w in WEAPONS}
+    titles.update({a[0]: a[1] for a in ARMOUR})
+    for gid, joins in GEAR_TAGS.items():
+        for tag in joins:
+            tags.setdefault(tag, []).extend(["hellcraft:" + gid, "hellcraft:infernal_" + gid])
+        # the infernal form looks the same (its name and glint tell it apart)
+        write(os.path.join(ASSETS, "items", "infernal_" + gid + ".json"),
+              {"model": {"type": "minecraft:model", "model": "hellcraft:item/" + gid}})
+        names["item.hellcraft." + gid] = titles[gid]
+        names["item.hellcraft.infernal_" + gid] = "Infernal " + titles[gid]
+    for tag, values in tags.items():
+        write(os.path.join(MC_DATA, "tags", "item", tag + ".json"), {"replace": False, "values": values})
+    lang = os.path.join(ASSETS, "lang", "en_us.json")
+    with open(lang) as f:
+        current = json.load(f)
+    current.update(names)
+    write(lang, current)
 
 
 # Paradiso's relics; must match Relics.java
@@ -450,6 +468,7 @@ def main():
     recipes()
     item_recipes()
     armour_recipes()
+    gear()
     for name, parent in FLAT_ITEMS.items():
         item_definition(name)
         write(os.path.join(ASSETS, "models", "item", name + ".json"), {"parent": parent, "textures": {"layer0": "hellcraft:item/" + name}})

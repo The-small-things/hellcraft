@@ -23,6 +23,11 @@ public class HudTest implements FabricClientGameTest {
 			world.getServer().runCommand("give Player0 hellcraft:lucifers_bane");
 			world.getServer().runCommand("give Player0 hellcraft:vigil_candle 2");
 			world.getServer().runCommand("give Player0 hellcraft:soul_anchor");
+			// the blood gear, real items since 3.0, and an infernal piece
+			for (String gear : new String[]{"bloodletter", "reaper_of_minos", "tithe_axe", "blood_pickaxe", "blood_helmet", "blood_chestplate",
+					"blood_leggings", "blood_boots", "infernal_bloodletter"}) {
+				world.getServer().runCommand("give Player0 hellcraft:" + gear);
+			}
 			context.waitTicks(20);
 			int carried = world.getServer().computeOnServer(server -> {
 				var player = server.getPlayerList().getPlayerByName("Player0");

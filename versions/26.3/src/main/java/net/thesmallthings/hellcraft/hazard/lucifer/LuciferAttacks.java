@@ -123,7 +123,7 @@ final class LuciferAttacks {
 				e.push(away.x * 2.2, 0.7, away.z * 2.2);
 				Feedback.syncMotion(e);
 				e.setTicksFrozen(Math.min(e.getTicksFrozen() + 200, e.getTicksRequiredToFreeze() + 200));
-				e.hurt(level.damageSources().freeze(), (fight.enraged() ? 6.0f : 4.0f) * fight.damageMultiplier() * BossRules.heartScale(e));
+				e.hurt(level.damageSources().freeze(), (fight.enraged() ? 6.0f : 4.0f) * fight.damageMultiplier() * BossRules.luciferScale(e));
 			}
 		});
 	}

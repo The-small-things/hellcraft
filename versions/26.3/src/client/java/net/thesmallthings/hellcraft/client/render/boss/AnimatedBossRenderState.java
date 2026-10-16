@@ -9,9 +9,12 @@ public class AnimatedBossRenderState extends LivingEntityRenderState {
 	public final AnimationState[] states;
 	public BossEntity.Warning warning = BossEntity.Warning.NONE;
 	public boolean acting;
+	/** How fast each animation plays (BossEntity.speedOf). */
+	public final float[] speeds;
 
 	public AnimatedBossRenderState(int animations) {
 		states = new AnimationState[animations];
+		speeds = new float[animations];
 		for (int i = 0; i < states.length; i++) {
 			states[i] = new AnimationState();
 		}

@@ -5,6 +5,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.thesmallthings.hellcraft.blood.LayerEnchants;
 import net.thesmallthings.hellcraft.config.HellConfig;
 
 /**
@@ -40,10 +41,20 @@ public final class BossRules {
 		return (float) Math.max(1.0, 1.0 + scaling * (victim.getMaxHealth() / 20.0 - 1.0));
 	}
 
+	/** For Lucifer's blows that no mob deals (the frost, the wind): the heart scaling and his damage share. */
+	public static float luciferScale(LivingEntity victim) {
+		return heartScale(victim) * (float) HellConfig.get().luciferDamage * LayerEnchants.bossDamageTaken(victim);
+	}
+
 	public static float adjust(LivingEntity victim, DamageSource source, float amount) {
 		Entity attacker = source.getEntity();
 		if (victim instanceof Player && attacker != null && attacker != victim && fromBoss(attacker)) {
-			return amount * heartScale(victim);
+			float lucifer = attacker.entityTags().contains(LUCIFER_TAG) ? (float) HellConfig.get().luciferDamage : 1.0f;
+			return amount * heartScale(victim) * lucifer * LayerEnchants.bossDamageTaken(victim);
+		}
+		if (attacker instanceof Player player && attacker == source.getDirectEntity() && fromBoss(victim)) {
+			// Judgement: melee blows at a boss hit harder
+			amount += LayerEnchants.bossDamageDealt(player);
 		}
 		if (attacker instanceof Player && victim.entityTags().contains(BODY_TAG) && source.is(DamageTypeTags.IS_PROJECTILE)) {
 			return amount * (float) HellConfig.get().bossProjectileDamage;

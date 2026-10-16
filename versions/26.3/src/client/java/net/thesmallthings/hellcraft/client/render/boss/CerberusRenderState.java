@@ -8,6 +8,8 @@ import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 public class CerberusRenderState extends LivingEntityRenderState {
 	public final AnimationState[] states = new AnimationState[CerberusAnim.values().length];
 	public BossEntity.Warning warning = BossEntity.Warning.NONE;
+	/** How fast each animation plays (BossEntity.speedOf). */
+	public final float[] speeds = new float[states.length];
 	public boolean acting;
 
 	public CerberusRenderState() {
