@@ -93,6 +93,7 @@ public class HellcraftMod implements ModInitializer {
 		Hellforge.register();
 		Relics.register();
 		Heaven.register();
+		Paradiso.register();
 		BloodArmour.register();
 		LayerEnchants.register();
 		Wingbeat.register();
@@ -107,7 +108,6 @@ public class HellcraftMod implements ModInitializer {
 		Danger.register();
 		CutsceneManager.register();
 
-		ServerLifecycleEvents.SERVER_STARTING.register(Paradiso::init);
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(HallOfTheDamned::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(Spine::buildOnce);
@@ -142,7 +142,6 @@ public class HellcraftMod implements ModInitializer {
 			Paradiso.tick(server);
 			GreatForge.tick(server);
 			net.thesmallthings.hellcraft.world.ForgeOfDis.tick(server);
-			Heaven.tick(server);
 			Relics.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);
@@ -158,6 +157,7 @@ public class HellcraftMod implements ModInitializer {
 			Spine.forget(handler.getPlayer());
 			Ambience.forget(handler.getPlayer());
 			Purgatory.forget(handler.getPlayer());
+			Paradiso.forget(handler.getPlayer());
 		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> HellCommands.register(dispatcher));
 

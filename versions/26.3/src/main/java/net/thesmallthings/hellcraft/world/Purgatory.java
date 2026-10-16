@@ -3,10 +3,12 @@ package net.thesmallthings.hellcraft.world;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,8 +38,9 @@ import java.util.UUID;
 
 /**
  * The climb out. When Lucifer falls, a "natural burrow" opens at the bottom of his pit for a while;
- * whoever steps into it comes out on the shore of Purgatory, a mountain island floating high above
- * the pit under the stars ("Thence we came forth to rebehold the stars").
+ * whoever steps into it comes out on the shore of Purgatory, a mountain island in a starlit sea, in its own
+ * dimension ({@link #LEVEL}, Phase 7: gen_realms.py), in the hour before dawn ("Thence we came forth to rebehold
+ * the stars").
  *
  * <p>Seven terraces spiral up the mountain, one for each capital sin (an angel erases a P from your
  * brow at each), to the Earthly Paradise on the summit, where two streams run: <b>Lethe</b>, which
@@ -47,8 +51,15 @@ public final class Purgatory {
 	private Purgatory() {
 	}
 
+	/** Purgatory's dimension: the sea and the island mountain. */
+	public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, HellcraftMod.id("purgatory"));
+	/** The sea's surface (its top water block) and its sandy floor (the flat generator's layers, gen_realms.py). */
+	static final int SEA_Y = 62;
+	private static final int SEA_FLOOR = 34;
 	/** The beach, the lowest ledge of the island (its top block). */
-	static final int SHORE_Y = 226;
+	static final int SHORE_Y = 66;
+	/** Past the shore ring the beach runs down into the sea. */
+	private static final int BEACH_RADIUS = 66;
 	private static final int SHORE_RADIUS = 52;
 	private static final int FIRST_TERRACE = 44;
 	private static final double TERRACE_WIDTH = 4.5;
@@ -56,7 +67,6 @@ public final class Purgatory {
 	private static final int TERRACES = 7;
 	/** The summit's top block (the Earthly Paradise). */
 	public static final int SUMMIT_Y = SHORE_Y + TERRACE_RISE * (TERRACES + 1);
-	private static final int BOTTOM_Y = 186;
 	private static final int BURROW_TICKS = 5 * 60 * 20;
 
 	private static final String[] SINS = {"PRIDE", "ENVY", "WRATH", "SLOTH", "AVARICE", "GLUTTONY", "LUST"};
@@ -100,38 +110,52 @@ public final class Purgatory {
 		return k < 0 ? Integer.MIN_VALUE : SHORE_Y + TERRACE_RISE * k;
 	}
 
-	private static int bottomY(double r) {
-		return (int) Math.round(SHORE_Y - 2 - (SHORE_RADIUS - r) * 0.75);
+	/** The beach's sand, from the shore ring down under the sea (or MIN_VALUE where there is none). */
+	private static int beachY(double r) {
+		return r <= SHORE_RADIUS || r > BEACH_RADIUS ? Integer.MIN_VALUE : (int) Math.round(SHORE_Y - (r - SHORE_RADIUS) * 1.35);
+	}
+
+	/** Purgatory's dimension, or null when the world has none (not an Inferno world). */
+	@Nullable
+	public static ServerLevel level(MinecraftServer server) {
+		return server.getLevel(LEVEL);
 	}
 
 	public static void buildOnce(MinecraftServer server) {
-		ServerLevel level = server.overworld();
 		HellState state = HellState.get(server);
-		if (!HellWorldgen.isInferno(level)) {
+		if (!HellWorldgen.isInferno(server.overworld())) {
 			return;
 		}
-		closeLeftoverBurrow(level);
-		if (state.purgatoryBuilt) {
+		closeLeftoverBurrow(server.overworld());
+		ServerLevel level = level(server);
+		if (level == null || state.purgatoryIsland) {
 			return;
 		}
 		HellcraftMod.LOGGER.info("Raising the Mountain of Purgatory...");
 		RandomSource random = RandomSource.create(1300L);
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-		for (int x = -SHORE_RADIUS; x <= SHORE_RADIUS; x++) {
-			for (int z = -SHORE_RADIUS; z <= SHORE_RADIUS; z++) {
+		for (int x = -BEACH_RADIUS; x <= BEACH_RADIUS; x++) {
+			for (int z = -BEACH_RADIUS; z <= BEACH_RADIUS; z++) {
 				double r = Math.sqrt(x * x + z * z);
+				level.getChunk(x >> 4, z >> 4);
+				int beach = beachY(r);
+				if (beach != Integer.MIN_VALUE) {
+					for (int y = SEA_FLOOR; y <= beach; y++) {
+						level.setBlock(pos.set(x, y, z), y >= beach - 1 ? Blocks.SAND.defaultBlockState() : Blocks.SANDSTONE.defaultBlockState(), 2);
+					}
+					continue;
+				}
 				int k = ring(r);
 				if (k < 0) {
 					continue;
 				}
-				level.getChunk(x >> 4, z >> 4);
 				int top = topY(r);
-				int bottom = bottomY(r);
+				int bottom = SEA_FLOOR;
 				// fill solid only where it can be seen: the underside, the surface, and cliff faces
 				int lowestNeighbour = top;
 				for (int[] d : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
 					double rn = Math.sqrt((x + d[0]) * (x + d[0]) + (z + d[1]) * (z + d[1]));
-					lowestNeighbour = Math.min(lowestNeighbour, ring(rn) < 0 ? bottom : topY(rn));
+					lowestNeighbour = Math.min(lowestNeighbour, ring(rn) < 0 ? Math.max(bottom, beachY(rn)) : topY(rn));
 				}
 				for (int y = bottom; y <= top; y++) {
 					boolean visible = y <= bottom + 3 || y >= top - 3 || y >= lowestNeighbour - 1;
@@ -163,9 +187,9 @@ public final class Purgatory {
 				Component.literal("Seven terraces"),
 				Component.literal("to the Earthly"),
 				Component.literal("Paradise")));
-		state.purgatoryBuilt = true;
+		state.purgatoryIsland = true;
 		state.setDirty();
-		HellcraftMod.LOGGER.info("The Mountain of Purgatory rises over the pit, summit at y {}", SUMMIT_Y);
+		HellcraftMod.LOGGER.info("The Mountain of Purgatory rises from the sea, summit at y {}", SUMMIT_Y);
 	}
 
 	private static BlockState material(int k, int y, int top, RandomSource random) {
@@ -309,37 +333,29 @@ public final class Purgatory {
 	// ---------------------------------------------------------------------------------- every tick
 
 	public static void tick(MinecraftServer server) {
-		ServerLevel level = server.overworld();
-		if (!HellWorldgen.isInferno(level)) {
+		ServerLevel overworld = server.overworld();
+		ServerLevel level = level(server);
+		if (!HellWorldgen.isInferno(overworld) || level == null) {
 			return;
 		}
-		long now = level.getGameTime();
-		if (burrow != null && now > burrowUntil) {
-			level.setBlock(burrow, Blocks.AIR.defaultBlockState(), 3);
-			burrow = null;
+		long now = overworld.getGameTime();
+		if (burrow != null) {
+			if (now > burrowUntil) {
+				overworld.setBlock(burrow, Blocks.AIR.defaultBlockState(), 3);
+				burrow = null;
+			} else {
+				for (ServerPlayer player : new ArrayList<>(overworld.players())) {
+					if (!player.isSpectator() && player.distanceToSqr(burrow.getX() + 0.5, burrow.getY() + 0.5, burrow.getZ() + 0.5) < 1.5 * 1.5) {
+						arrive(player);
+					}
+				}
+			}
 		}
 		for (ServerPlayer player : new ArrayList<>(level.players())) {
-			if (player.isSpectator()) {
+			if (player.isSpectator() || player.getY() < SHORE_Y) {
 				continue;
 			}
 			double r = Math.sqrt(player.getX() * player.getX() + player.getZ() * player.getZ());
-			if (burrow != null && player.distanceToSqr(burrow.getX() + 0.5, burrow.getY() + 0.5, burrow.getZ() + 0.5) < 1.5 * 1.5) {
-				arrive(player);
-				continue;
-			}
-			if (r > 60 || player.getY() < BOTTOM_Y - 70) {
-				continue;
-			}
-			// an angel catches anyone who falls off the mountain
-			if (player.getY() < SHORE_Y - 8 && player.getY() > BOTTOM_Y - 70 && player.getDeltaMovement().y < -0.6 && !player.isFallFlying()) {
-				teleport(player, shore());
-				player.resetFallDistance();
-				Dialogue.notice(player, Component.literal("An angel caught you and set you down on the shore.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-				continue;
-			}
-			if (player.getY() < SHORE_Y) {
-				continue;
-			}
 			terrace(player, r);
 			if (now % 10 == 0) {
 				streams(player);
@@ -354,7 +370,11 @@ public final class Purgatory {
 
 	/** Sets a player down on Purgatory's shore, out of Hell (the burrow, or the climb out after Lucifer). */
 	public static void arrive(ServerPlayer player) {
-		teleport(player, shore());
+		ServerLevel level = level(player.level().getServer());
+		if (level == null) {
+			return;
+		}
+		teleport(player, level, shore());
 		Journey.award(player, "journey/purgatory");
 		player.resetFallDistance();
 		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 80, 30));
@@ -427,18 +447,31 @@ public final class Purgatory {
 				.withStyle(ChatFormatting.GOLD));
 	}
 
-	private static void home(ServerPlayer player) {
-		ServerLevel level = player.level();
+	/** Back down from Paradiso (the gate on the Moon's arrival isle) to the summit's garden. */
+	public static void toSummit(ServerPlayer player) {
+		ServerLevel level = level(player.level().getServer());
+		if (level != null) {
+			level.getChunk(0, 0);
+			teleport(player, level, new BlockPos(-4, SUMMIT_Y + 1, 5));
+			player.resetFallDistance();
+			Dialogue.notice(player, Component.literal("You're back on Purgatory's summit. The Ascent beside you leads up to Paradiso again.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		}
+	}
+
+	/** Home to the Gate of Hell (the Gate of Return here, and the one in the Empyrean). */
+	public static void home(ServerPlayer player) {
+		ServerLevel level = player.level().getServer().overworld();
 		int x = InfernoGeometry.gateX() + 24;
 		level.getChunk(x >> 4, 0);
 		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, 0);
-		teleport(player, new BlockPos(x, y, 0));
+		teleport(player, level, new BlockPos(x, y, 0));
 		Dialogue.notice(player, Component.literal("You're back at the Gate of Hell.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 
-	private static void teleport(ServerPlayer player, BlockPos to) {
-		player.teleportTo(player.level(), to.getX() + 0.5, to.getY(), to.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), true);
+	public static void teleport(ServerPlayer player, ServerLevel level, BlockPos to) {
+		player.teleportTo(level, to.getX() + 0.5, to.getY(), to.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), true);
 	}
 
 	public static void forget(ServerPlayer player) {

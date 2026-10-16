@@ -81,6 +81,7 @@ public final class MapSync {
 		List<String> beaten = soul == null ? List.of() : List.copyOf(soul.guardianSpoils.keySet());
 		List<String> codex = soul == null ? List.of() : List.copyOf(soul.codex);
 		boolean inferno = HellWorldgen.isInferno(player.level().getServer().overworld());
-		ServerPlayNetworking.send(player, new MapPayload(inferno, HellConfig.get().circleTitles, visited, beaten, codex));
+		ServerPlayNetworking.send(player, new MapPayload(inferno, HellConfig.get().circleTitles, visited, beaten, codex,
+				soul == null ? 0 : soul.spheres));
 	}
 }

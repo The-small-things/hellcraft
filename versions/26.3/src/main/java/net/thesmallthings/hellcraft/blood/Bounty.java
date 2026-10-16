@@ -91,8 +91,12 @@ public final class Bounty {
 		String place;
 		if (level.dimension() == Level.NETHER) {
 			place = "in the Forge of Dis";
-		} else if (level.dimension() == Level.END) {
+		} else if (level.dimension() == net.thesmallthings.hellcraft.world.Paradiso.LEVEL) {
 			place = "in Paradiso";
+		} else if (level.dimension() == net.thesmallthings.hellcraft.world.Purgatory.LEVEL) {
+			place = "in Purgatory";
+		} else if (level.dimension() == Level.END) {
+			place = "in the End";
 		} else if (HellWorldgen.isInferno(level)) {
 			place = "in " + InfernoGeometry.regionName(p.getX(), p.getZ());
 		} else {

@@ -40,11 +40,11 @@ public class HellState extends SavedData {
 	public boolean spinesBuilt;
 	/** The circle guardians' lairs have been built. */
 	public boolean lairsBuilt;
-	/** The Mountain of Purgatory has been raised over the pit. */
-	public boolean purgatoryBuilt;
+	/** The Mountain of Purgatory has been raised in its sea (its own dimension since Phase 7). */
+	public boolean purgatoryIsland;
 	/** The Great Forge of Dis has been carved into the Nether. */
 	public boolean forgeBuilt;
-	/** The Celestial Rose (the Empyrean) and the Ascent (Purgatory's summit) have been built. */
+	/** The Celestial Rose (atop Paradiso) and the Ascent (Purgatory's summit) have been built. */
 	public boolean roseBuilt;
 	public boolean ascentBuilt;
 	/** Guardian id -> game time it wakes again after being slain. */
@@ -128,8 +128,8 @@ public class HellState extends SavedData {
 		public final Map<String, Integer> bossBest = new HashMap<>();
 		/** Has been given Beatrice's Rose at the Celestial Rose. */
 		public boolean rose;
-		/** Has been given the Rose Compass on first reaching Paradiso's outer islands. */
-		public boolean roseCompass;
+		/** Paradiso's trials this soul has passed: bit k for sphere k (ParadisoGeometry.Sphere), the Seraph's included. */
+		public int spheres;
 		/** The Seven P's: how many have been burned from this soul's brow (0-7), each by an ascent at an altar. */
 		public int prestige;
 		/** For the Hall of the Damned. */
@@ -231,7 +231,7 @@ public class HellState extends SavedData {
 			st.putInt("grace", s.graceTicks);
 			st.putLong("cain", s.cainUntil);
 			st.putBoolean("rose", s.rose);
-			st.putBoolean("roseCompass", s.roseCompass);
+			st.putInt("spheres", s.spheres);
 			st.putInt("prestige", s.prestige);
 			st.putInt("deaths", s.deaths);
 			st.putInt("guardiansSlain", s.guardiansSlain);
@@ -264,10 +264,10 @@ public class HellState extends SavedData {
 		tag.putBoolean("spine", spineBuilt);
 		tag.putBoolean("spines", spinesBuilt);
 		tag.putBoolean("lairs", lairsBuilt);
-		tag.putBoolean("purgatory", purgatoryBuilt);
+		tag.putBoolean("purgatoryIsland", purgatoryIsland);
 		tag.putBoolean("forge", forgeBuilt);
-		tag.putBoolean("rose", roseBuilt);
-		tag.putBoolean("ascent", ascentBuilt);
+		tag.putBoolean("paradisoRose", roseBuilt);
+		tag.putBoolean("purgatoryAscent", ascentBuilt);
 		CompoundTag guardians = new CompoundTag();
 		guardianNext.forEach(guardians::putLong);
 		tag.put("guardianNext", guardians);
@@ -335,7 +335,7 @@ public class HellState extends SavedData {
 			s.graceTicks = st.getIntOr("grace", 0);
 			s.cainUntil = st.getLongOr("cain", 0L);
 			s.rose = st.getBooleanOr("rose", false);
-			s.roseCompass = st.getBooleanOr("roseCompass", false);
+			s.spheres = st.getIntOr("spheres", 0);
 			s.prestige = st.getIntOr("prestige", 0);
 			s.deaths = st.getIntOr("deaths", 0);
 			s.guardiansSlain = st.getIntOr("guardiansSlain", 0);
@@ -360,10 +360,10 @@ public class HellState extends SavedData {
 		state.spineBuilt = tag.getBooleanOr("spine", false);
 		state.spinesBuilt = tag.getBooleanOr("spines", false);
 		state.lairsBuilt = tag.getBooleanOr("lairs", false);
-		state.purgatoryBuilt = tag.getBooleanOr("purgatory", false);
+		state.purgatoryIsland = tag.getBooleanOr("purgatoryIsland", false);
 		state.forgeBuilt = tag.getBooleanOr("forge", false);
-		state.roseBuilt = tag.getBooleanOr("rose", false);
-		state.ascentBuilt = tag.getBooleanOr("ascent", false);
+		state.roseBuilt = tag.getBooleanOr("paradisoRose", false);
+		state.ascentBuilt = tag.getBooleanOr("purgatoryAscent", false);
 		CompoundTag guardians = tag.getCompoundOrEmpty("guardianNext");
 		for (String key : guardians.keySet()) {
 			state.guardianNext.put(key, guardians.getLongOr(key, 0L));

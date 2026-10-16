@@ -1004,10 +1004,15 @@ VILLAGER_SCHEDULE26 = {
 IN_INFERNO26 = {"values": ["hellcraft:villager_schedule", "minecraft:day", "minecraft:moon", "minecraft:early_game"]}
 
 # Biome tags that became environment attributes in 26.x
-TAGS26_DROPPED = {"without_patrol_spawns", "increased_fire_burnout", "snow_golem_melts"}
+TAGS26_DROPPED = {"without_patrol_spawns", "increased_fire_burnout", "snow_golem_melts",
+                  # no strongholds in the Inferno since Phase 7: the only way into Paradiso is from Purgatory's summit
+                  # (vanilla's stronghold tag is #is_overworld, so the circles leave that tag too)
+                  "is_overworld", "has_structure/stronghold", "stronghold_biased_to"}
 
 
 def main26():
+    sys.path.insert(0, os.path.dirname(__file__))
+    import gen_realms
     hc = os.path.join(ROOT26, "hellcraft")
     mc = os.path.join(ROOT26, "minecraft")
     for sub in ["worldgen/biome", "worldgen/feature", "worldgen/placed_feature", "worldgen/noise_settings",
@@ -1036,14 +1041,16 @@ def main26():
         # the Forge of Dis: the Nether built from scratch (gen_realms.py, ForgeGeometry.java)
         "minecraft:the_nether": {"type": "minecraft:the_nether", "generator": {
             "type": "minecraft:noise", "biome_source": {"type": "hellcraft:forge"}, "settings": "hellcraft:forge"}},
+        # Purgatory and Paradiso (Phase 7, gen_realms.py)
+        "hellcraft:purgatory": {"type": "hellcraft:purgatory", "generator": gen_realms.purgatory_generator()},
+        "hellcraft:paradiso": {"type": "hellcraft:paradiso", "generator": gen_realms.paradiso_generator()},
     }})
     write(os.path.join(mc, "tags", "worldgen", "world_preset", "normal.json"), {"replace": False, "values": ["hellcraft:inferno"]})
     for tag, values in TAGS.items():
         if tag not in TAGS26_DROPPED:
             write(os.path.join(mc, "tags", "worldgen", "biome", tag + ".json"), {"replace": False, "values": values})
     print("Generated %d biomes, %d features and %d placed features for 26.3." % (len(BIOMES), len(CONFIGURED), len(PLACED)))
-    # the Nether and the End (their features live in the same folders this function just cleared)
-    import gen_realms
+    # the Nether, Purgatory and Paradiso (their features live in the same folders this function just cleared)
     gen_realms.main()
     import gen_advancements
     gen_advancements.main()

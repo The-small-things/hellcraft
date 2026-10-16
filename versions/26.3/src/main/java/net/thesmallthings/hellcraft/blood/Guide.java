@@ -3,7 +3,6 @@ package net.thesmallthings.hellcraft.blood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.thesmallthings.hellcraft.config.HellConfig;
-import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.Spine;
 
 import java.util.ArrayList;
@@ -36,6 +35,13 @@ public final class Guide {
 				"This world is Dante's Inferno: nine rings, called circles, around a pit. Lucifer waits at the centre (0, 0).",
 				"",
 				"  — Virgil"));
+		pages.add(page("THE JOURNEY",
+				"1. Go down through Hell's nine circles to the pit at the centre.",
+				"2. Defeat Lucifer there.",
+				"3. Climb out to Purgatory and up its mountain.",
+				"4. Rise through Paradiso's nine spheres to the Celestial Rose.",
+				"",
+				"The Nether (the Forge of Dis) is a workshop you can visit at any time."));
 		pages.add(page("HEARTS",
 				"You begin with " + c.startHearts + " hearts and can hold " + c.maxHearts + ".",
 				"",
@@ -179,12 +185,6 @@ public final class Guide {
 				"Cross the slag on its crust and keep moving: it cracks and melts if you stand still.",
 				"",
 				"Hellforge: any anvil on a magma block in the Nether. It upgrades blood gear for a netherite ingot + " + c.hellforgeCostFragments + " Blood Fragments."));
-		pages.add(page("PARADISO (THE END)",
-				"The Ender Dragon is the Seraph: beat it for a Halo.",
-				"",
-				"Then pearl into a gateway portal to the outer islands: nine rings, each with End cities (Seraph Wings) and chorus.",
-				"",
-				"There you get a Rose Compass to the Celestial Rose (x " + ParadisoGeometry.ROSE_X + ")."));
 		pages.add(page("LUCIFER",
 				"The final boss, in the pit at the centre (0, 0). Step onto its floor and the fight starts in 30 s; then the pit seals until it ends.",
 				"",
@@ -196,7 +196,18 @@ public final class Guide {
 		pages.add(page("THE CLIMB OUT",
 				"When Lucifer dies, everyone still in the pit climbs out to Purgatory. A tunnel also opens behind him for 5 minutes.",
 				"",
-				"Purgatory is a mountain of seven ledges with a garden on top."));
+				"Purgatory is a mountain island in a sea, with seven ledges and a garden on top. In the garden: Lethe (removes your "
+						+ "effects), Eunoë (+2 hearts for each win over Lucifer), the Gate of Return home, and the Ascent to Paradiso."));
+		pages.add(page("PARADISO",
+				"Nine spheres stacked one above the other, then the Empyrean with the Celestial Rose. There are no strongholds: "
+						+ "the only way in is the Ascent on Purgatory's summit.",
+				"",
+				"Each sphere has a short trial. Pass it, then stand in its column of light to rise to the next. Hold sneak in a "
+						+ "column to sink back down.",
+				"",
+				"Falling can't hurt you there: an angel catches you.",
+				"",
+				"Rewards: Seraph Wings (Saturn), a Halo (the Seraph, in the ninth sphere), Beatrice's Rose (the bell in the Rose)."));
 		pages.add(page("COMMANDS",
 				"/hearts: your hearts",
 				"/withdraw [n]: turn hearts into Blood Hearts",

@@ -201,12 +201,13 @@ public final class DeathHandler {
 		BloodItems.give(killer, BloodItems.heart(hearts));
 	}
 
-	/** Circle depth of an entity's position: 1-9 in the Inferno, 5 in the Nether, 9 in the End. */
+	/** Circle depth of an entity's position: 1-9 in the Inferno, 5 in the Nether, 9 in the End, Purgatory and Paradiso. */
 	public static int depthAt(ServerLevel level, LivingEntity entity) {
 		if (level.dimension() == Level.NETHER) {
 			return 5;
 		}
-		if (level.dimension() == Level.END) {
+		if (level.dimension() == Level.END || level.dimension() == net.thesmallthings.hellcraft.world.Purgatory.LEVEL
+				|| level.dimension() == net.thesmallthings.hellcraft.world.Paradiso.LEVEL) {
 			return 9;
 		}
 		if (!HellWorldgen.isInferno(level)) {

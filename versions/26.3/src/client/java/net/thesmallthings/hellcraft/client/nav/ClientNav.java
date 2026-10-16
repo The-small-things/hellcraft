@@ -26,6 +26,7 @@ public final class ClientNav {
 	private static volatile Set<String> beaten = Set.of();
 	private static volatile Set<String> codex = Set.of();
 	private static volatile List<Guide.Page> pages = List.of();
+	private static volatile int spheres;
 
 	public static void map(MapPayload payload) {
 		inferno = payload.inferno();
@@ -33,6 +34,7 @@ public final class ClientNav {
 		visited = Set.copyOf(payload.visited());
 		beaten = Set.copyOf(payload.beaten());
 		codex = Set.copyOf(payload.codex());
+		spheres = payload.spheres();
 	}
 
 	public static void journal(JournalPayload payload) {
@@ -54,6 +56,16 @@ public final class ClientNav {
 	}
 
 	/** In the Forge of Dis: the Nether of an Inferno world (Phase 6), where the compass points to the Great Forge. */
+	/** In Paradiso (its own dimension). */
+	public static boolean inParadiso(Minecraft mc) {
+		return mc.level != null && mc.player != null && mc.level.dimension() == net.thesmallthings.hellcraft.world.Paradiso.LEVEL;
+	}
+
+	/** Has this player passed a sphere's trial (MapSync sends them)? */
+	public static boolean passed(net.thesmallthings.hellcraft.world.ParadisoGeometry.Sphere s) {
+		return (spheres >> s.ordinal() & 1) != 0;
+	}
+
 	public static boolean inForge(Minecraft mc) {
 		return inferno && mc.level != null && mc.player != null && mc.level.dimension() == Level.NETHER;
 	}

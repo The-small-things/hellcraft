@@ -60,6 +60,7 @@ import net.thesmallthings.hellcraft.world.Heaven;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Paradiso;
+import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.Purgatory;
 import net.thesmallthings.hellcraft.world.Shades;
 import net.thesmallthings.hellcraft.world.ShrineSites;
@@ -317,11 +318,32 @@ public final class HellCommands {
 							ctx.getSource().sendSuccess(() -> Component.literal(n + " angels descend"), true);
 							return n;
 						}))
-						.then(Commands.literal("rose").executes(ctx -> {
-							Heaven.buildRose(ctx.getSource().getServer());
-							ctx.getSource().sendSuccess(() -> Component.literal("The Celestial Rose blooms at " + Heaven.bell().toShortString() + " in the End"), true);
-							return 1;
-						}))
+						.then(Commands.literal("go")
+								.then(Commands.argument("sphere", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+												Arrays.stream(ParadisoGeometry.SPHERES).map(s -> s.id), builder))
+										.executes(ctx -> {
+											ServerPlayer p = ctx.getSource().getPlayerOrException();
+											String id = StringArgumentType.getString(ctx, "sphere");
+											ParadisoGeometry.Sphere sphere = Arrays.stream(ParadisoGeometry.SPHERES).filter(s -> s.id.equals(id)).findFirst().orElse(null);
+											ServerLevel level = Paradiso.level(ctx.getSource().getServer());
+											if (sphere == null || level == null) {
+												ctx.getSource().sendFailure(Component.literal(level == null ? "No Paradiso in this world" : "moon, mercury, ... empyrean"));
+												return 0;
+											}
+											Paradiso.setDown(p, level, sphere);
+											return reply(ctx.getSource(), "\u2192 " + sphere.title);
+										})))
+						.then(Commands.literal("pass")
+								.then(Commands.argument("player", EntityArgument.player())
+										.then(Commands.argument("spheres", IntegerArgumentType.integer(0, 10))
+												.executes(ctx -> {
+													ServerPlayer p = EntityArgument.getPlayer(ctx, "player");
+													HellState.Soul soul = Hearts.soul(p);
+													soul.spheres = (1 << IntegerArgumentType.getInteger(ctx, "spheres")) - 1;
+													HellState.get(ctx.getSource().getServer()).setDirty();
+													return reply(ctx.getSource(), p.getGameProfile().name() + " may now reach " + Paradiso.reach(soul).title);
+												}))))
 						.then(Commands.literal("ascent").executes(ctx -> {
 							Heaven.buildAscent(ctx.getSource().getServer());
 							ctx.getSource().sendSuccess(() -> Component.literal("The Ascent is at " + Heaven.ascent().toShortString()), true);
@@ -443,9 +465,12 @@ public final class HellCommands {
 												})))))
 				.then(Commands.literal("purgatory").executes(ctx -> {
 					ServerPlayer p = ctx.getSource().getPlayerOrException();
-					BlockPos shore = Purgatory.shore();
-					p.teleportTo(ctx.getSource().getServer().overworld(), shore.getX() + 0.5, shore.getY(), shore.getZ() + 0.5, java.util.Set.of(),
-							p.getYRot(), p.getXRot(), true);
+					ServerLevel level = Purgatory.level(ctx.getSource().getServer());
+					if (level == null) {
+						ctx.getSource().sendFailure(Component.literal("No Purgatory in this world"));
+						return 0;
+					}
+					Purgatory.teleport(p, level, Purgatory.shore());
 					return reply(ctx.getSource(), "\u2192 the shore of Purgatory");
 				}))
 				.then(Commands.literal("spine")

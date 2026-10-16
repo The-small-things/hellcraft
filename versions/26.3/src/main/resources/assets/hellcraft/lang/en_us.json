@@ -34,8 +34,6 @@
   "biome.hellcraft.paradiso_fixed_stars": "Paradiso: The Fixed Stars",
   "biome.hellcraft.paradiso_primum_mobile": "Paradiso: The Primum Mobile",
   "biome.hellcraft.paradiso_empyrean": "Paradiso: The Empyrean",
-  "biome.minecraft.the_end": "Paradiso: The Threshold",
-  "entity.minecraft.ender_dragon": "The Seraph",
   "item.hellcraft.halo": "Halo",
   "key.category.hellcraft.hellcraft": "Hellcraft",
   "key.hellcraft.map": "Map of Hell",
@@ -69,5 +67,6 @@
   "biome.hellcraft.foundry_halls": "The Foundry Halls",
   "biome.hellcraft.chainlands": "The Chainlands",
   "biome.hellcraft.ash_wastes": "The Ash Wastes",
-  "biome.hellcraft.cyclops_quarries": "The Cyclops Quarries"
+  "biome.hellcraft.cyclops_quarries": "The Cyclops Quarries",
+  "biome.hellcraft.purgatory": "Purgatory"
 }

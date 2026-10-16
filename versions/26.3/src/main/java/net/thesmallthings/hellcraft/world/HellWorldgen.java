@@ -30,7 +30,6 @@ import net.thesmallthings.hellcraft.world.feature.RottingTreeFeature;
 import net.thesmallthings.hellcraft.world.feature.SandRockFeature;
 import net.thesmallthings.hellcraft.world.feature.SlagCrustFeature;
 import net.thesmallthings.hellcraft.world.feature.SlagHeapFeature;
-import net.thesmallthings.hellcraft.world.feature.StarClusterFeature;
 import net.thesmallthings.hellcraft.world.feature.VaultFeature;
 import net.thesmallthings.hellcraft.world.feature.WatchtowerFeature;
 
@@ -74,8 +73,9 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("slag_crust"), SlagCrustFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("foundry_pillar"), FoundryPillarFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("chained_island"), ChainedIslandFeature.CODEC);
+		Registry.register(BuiltInRegistries.BIOME_SOURCE, HellcraftMod.id("paradiso"), ParadisoBiomeSource.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("paradiso_islands"), net.thesmallthings.hellcraft.world.feature.ParadisoIslandFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("cyclops_camp"), CyclopsCampFeature.CODEC);
-		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("star_cluster"), StarClusterFeature.CODEC);
 	}
 
 	/** True when this level was generated as the Inferno (so gameplay only applies there). */

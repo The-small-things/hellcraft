@@ -123,11 +123,11 @@ def main():
       icon("minecraft:stick", "hellcraft:guardian_vulcan"), deed(), frame="challenge")
 
     spheres = ["moon", "mercury", "venus", "sun", "mars", "jupiter", "saturn", "fixed_stars", "primum_mobile", "empyrean"]
-    w("paradiso", "purgatory", "Paradiso", "Reach Paradiso's first ring of islands in the End",
+    w("paradiso", "purgatory", "Paradiso", "Rise from Purgatory's summit into Paradiso",
       icon("minecraft:glowstone"), at_biomes(*["hellcraft:paradiso_" + s for s in spheres]), frame="goal")
-    w("seraph", "paradiso", "The Seraph Falls", "Help defeat the Seraph in the End",
+    w("seraph", "paradiso", "The Seraph Falls", "Face the Seraph in the Primum Mobile and win",
       icon("minecraft:stick", "hellcraft:halo"), deed(), frame="challenge")
-    w("empyrean", "paradiso", "The Love That Moves the Sun", "Reach the Empyrean, the farthest ring in the End",
+    w("empyrean", "paradiso", "The Love That Moves the Sun", "Reach the Empyrean, above the ninth sphere",
       icon("minecraft:end_rod"), at_biomes("hellcraft:paradiso_empyrean"))
     w("beatrice", "empyrean", "Beatrice", "Ring the bell at the Celestial Rose",
       icon("minecraft:stick", "hellcraft:beatrices_rose"), deed(), frame="goal")
