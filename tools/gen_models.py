@@ -464,7 +464,18 @@ def item_recipes():
         "result": {"id": "hellcraft:vigil_candle"}})
 
 
+# Hellcraft's blocks (HellBlocks.java): block models and blockstates
+def blocks():
+    for stage in range(5):
+        write(os.path.join(ASSETS, "models", "block", "slag_crust_%d.json" % stage),
+              {"parent": "minecraft:block/cube_all", "textures": {"all": "hellcraft:block/slag_crust_%d" % stage}})
+    write(os.path.join(ASSETS, "blockstates", "slag_crust.json"), {"variants": {
+        "stage=%d" % stage: [{"model": "hellcraft:block/slag_crust_%d" % stage, "y": rot} for rot in (0, 90, 180, 270)]
+        for stage in range(5)}})
+
+
 def main():
+    blocks()
     recipes()
     item_recipes()
     armour_recipes()

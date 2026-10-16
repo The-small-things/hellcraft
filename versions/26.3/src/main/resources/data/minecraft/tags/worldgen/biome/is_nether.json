@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "hellcraft:great_forge",
+    "hellcraft:slag_sea",
+    "hellcraft:foundry_halls",
+    "hellcraft:chainlands",
+    "hellcraft:ash_wastes",
+    "hellcraft:cyclops_quarries"
+  ]
+}

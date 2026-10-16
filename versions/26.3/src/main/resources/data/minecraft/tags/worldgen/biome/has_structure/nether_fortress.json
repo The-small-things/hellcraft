@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "hellcraft:foundry_halls",
+    "hellcraft:chainlands",
+    "hellcraft:ash_wastes",
+    "hellcraft:cyclops_quarries"
+  ]
+}

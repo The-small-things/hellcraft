@@ -687,9 +687,9 @@ def main():
     write(os.path.join(HC, "dimension_type", "inferno.json"), DIMENSION_TYPE)
     write(os.path.join(HC, "worldgen", "world_preset", "inferno.json"), {"dimensions": {
         "minecraft:overworld": {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR},
+        # the Forge of Dis: the Nether built from scratch (gen_realms.py, ForgeGeometry.java)
         "minecraft:the_nether": {"type": "minecraft:the_nether", "generator": {
-            "type": "minecraft:noise", "biome_source": {"type": "minecraft:multi_noise", "preset": "minecraft:nether"},
-            "settings": "minecraft:nether"}},
+            "type": "minecraft:noise", "biome_source": {"type": "hellcraft:forge"}, "settings": "hellcraft:forge"}},
         "minecraft:the_end": {"type": "minecraft:the_end", "generator": {
             "type": "minecraft:noise", "biome_source": {"type": "minecraft:the_end"}, "settings": "minecraft:end"}},
     }})
@@ -1033,9 +1033,9 @@ def main26():
         "minecraft:overworld": {"type": "hellcraft:inferno", "generator": INFERNO_GENERATOR},
         "minecraft:the_end": {"type": "minecraft:the_end", "generator": {
             "type": "minecraft:noise", "biome_source": {"type": "minecraft:the_end"}, "settings": "minecraft:end"}},
+        # the Forge of Dis: the Nether built from scratch (gen_realms.py, ForgeGeometry.java)
         "minecraft:the_nether": {"type": "minecraft:the_nether", "generator": {
-            "type": "minecraft:noise", "biome_source": {"type": "minecraft:multi_noise", "preset": "minecraft:nether"},
-            "settings": "minecraft:nether"}},
+            "type": "minecraft:noise", "biome_source": {"type": "hellcraft:forge"}, "settings": "hellcraft:forge"}},
     }})
     write(os.path.join(mc, "tags", "worldgen", "world_preset", "normal.json"), {"replace": False, "values": ["hellcraft:inferno"]})
     for tag, values in TAGS.items():

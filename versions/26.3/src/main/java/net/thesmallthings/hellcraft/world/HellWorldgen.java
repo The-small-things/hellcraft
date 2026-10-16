@@ -11,10 +11,13 @@ import net.thesmallthings.hellcraft.world.feature.BoulderFeature;
 import net.thesmallthings.hellcraft.world.feature.BrazierFeature;
 import net.thesmallthings.hellcraft.world.feature.BurningTombFeature;
 import net.thesmallthings.hellcraft.world.feature.ChainPillarFeature;
+import net.thesmallthings.hellcraft.world.feature.ChainedIslandFeature;
 import net.thesmallthings.hellcraft.world.feature.CoinHillFeature;
+import net.thesmallthings.hellcraft.world.feature.CyclopsCampFeature;
 import net.thesmallthings.hellcraft.world.feature.DisWallFeature;
 import net.thesmallthings.hellcraft.world.feature.FeastTableFeature;
 import net.thesmallthings.hellcraft.world.feature.ForgeRuinFeature;
+import net.thesmallthings.hellcraft.world.feature.FoundryPillarFeature;
 import net.thesmallthings.hellcraft.world.feature.GateWallFeature;
 import net.thesmallthings.hellcraft.world.feature.GiantScalesFeature;
 import net.thesmallthings.hellcraft.world.feature.MalebolgeCacheFeature;
@@ -25,6 +28,7 @@ import net.thesmallthings.hellcraft.world.feature.ReedBedFeature;
 import net.thesmallthings.hellcraft.world.feature.RingFluidFeature;
 import net.thesmallthings.hellcraft.world.feature.RottingTreeFeature;
 import net.thesmallthings.hellcraft.world.feature.SandRockFeature;
+import net.thesmallthings.hellcraft.world.feature.SlagCrustFeature;
 import net.thesmallthings.hellcraft.world.feature.SlagHeapFeature;
 import net.thesmallthings.hellcraft.world.feature.StarClusterFeature;
 import net.thesmallthings.hellcraft.world.feature.VaultFeature;
@@ -41,6 +45,8 @@ public final class HellWorldgen {
 	public static void register() {
 		Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, HellcraftMod.id("inferno"), InfernoDensity.MAP_CODEC);
 		Registry.register(BuiltInRegistries.BIOME_SOURCE, HellcraftMod.id("circles"), InfernoBiomeSource.CODEC);
+		Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, HellcraftMod.id("forge"), ForgeDensity.MAP_CODEC);
+		Registry.register(BuiltInRegistries.BIOME_SOURCE, HellcraftMod.id("forge"), ForgeBiomeSource.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("ring_fluid"), RingFluidFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("dis_wall"), DisWallFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("gate_wall"), GateWallFeature.CODEC);
@@ -65,6 +71,10 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("forge_ruin"), ForgeRuinFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("chain_pillar"), ChainPillarFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("slag_heap"), SlagHeapFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("slag_crust"), SlagCrustFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("foundry_pillar"), FoundryPillarFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("chained_island"), ChainedIslandFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("cyclops_camp"), CyclopsCampFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("star_cluster"), StarClusterFeature.CODEC);
 	}
 

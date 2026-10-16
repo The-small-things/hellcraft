@@ -63,5 +63,11 @@
   "enchantment.hellcraft.quickening": "Quickening",
   "enchantment.hellcraft.sidestep": "Sidestep",
   "enchantment.hellcraft.steadfast": "Steadfast",
-  "enchantment.hellcraft.judgement": "Judgement"
+  "enchantment.hellcraft.judgement": "Judgement",
+  "biome.hellcraft.great_forge": "The Great Forge",
+  "biome.hellcraft.slag_sea": "The Slag Sea",
+  "biome.hellcraft.foundry_halls": "The Foundry Halls",
+  "biome.hellcraft.chainlands": "The Chainlands",
+  "biome.hellcraft.ash_wastes": "The Ash Wastes",
+  "biome.hellcraft.cyclops_quarries": "The Cyclops Quarries"
 }

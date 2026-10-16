@@ -1,0 +1,11 @@
+{
+  "feature": "hellcraft:chained_island",
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

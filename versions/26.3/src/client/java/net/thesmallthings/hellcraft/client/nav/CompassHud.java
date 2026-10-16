@@ -13,6 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.mixin.BossOverlayAccessor;
 import net.thesmallthings.hellcraft.world.Circle;
+import net.thesmallthings.hellcraft.world.ForgeGeometry;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Navigation;
 import net.thesmallthings.hellcraft.world.ShrineSites;
@@ -39,7 +40,8 @@ public final class CompassHud implements HudElement {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		Minecraft mc = Minecraft.getInstance();
-		if (!ClientNav.inHell(mc) || !((BossOverlayAccessor) mc.gui.hud.getBossOverlay()).hellcraft$events().isEmpty()) {
+		boolean forge = ClientNav.inForge(mc);
+		if (!ClientNav.inHell(mc) && !forge || !((BossOverlayAccessor) mc.gui.hud.getBossOverlay()).hellcraft$events().isEmpty()) {
 			return;
 		}
 		LocalPlayer player = mc.player;
@@ -77,6 +79,10 @@ public final class CompassHud implements HudElement {
 		g.disableScissor();
 		g.fill(cx, TOP + HEIGHT - 2, cx + 1, TOP + HEIGHT, 0xFFFFFFFF);
 
+		if (forge) {
+			forge(g, font, cx, pos, yaw);
+			return;
+		}
 		// the nearest Rest and the way down, above the strip; pinned faintly to its ends when they're behind you
 		ShrineSites.Site rest = ShrineSites.nearest(pos.x, pos.z);
 		boolean found = rest != null && ClientNav.found(rest.id());
@@ -113,6 +119,30 @@ public final class CompassHud implements HudElement {
 			diamond(g, x + 3, y + 4, found ? REST_FOUND : REST_NEW);
 			g.text(font, restText, x + 9, y, 0xFFE8E8E8);
 		}
+	}
+
+	/** In the Forge of Dis: a flame over the strip for the Great Forge, the region's name and how far the Forge is. */
+	private static void forge(GuiGraphicsExtractor g, Font font, int cx, Vec3 pos, float yaw) {
+		float rel = relative(pos, 0.5, 0.5, yaw);
+		flame(g, stripX(cx, rel), TOP - 4, ARGB.multiplyAlpha(FORGE, Math.abs(rel) > 90 ? 0.5f : 1));
+		int y = TOP + HEIGHT + 5;
+		g.centeredText(font, ForgeGeometry.regionAt(pos.x, pos.z).title(), cx, y, FORGE);
+		String text = "The Great Forge " + distance(pos, 0.5, 0.5);
+		int x = cx - (9 + font.width(text)) / 2;
+		y += 11;
+		flame(g, x + 3, y + 1, FORGE);
+		g.text(font, text, x + 9, y, 0xFFE8E8E8);
+	}
+
+	static final int FORGE = 0xFFFF8A30;
+
+	/** A small flame, 5 wide and 6 tall, its base at (x, y + 5). */
+	static void flame(GuiGraphicsExtractor g, int x, int y, int colour) {
+		g.fill(x, y, x + 1, y + 1, colour);
+		g.fill(x - 1, y + 1, x + 2, y + 3, colour);
+		g.fill(x - 2, y + 3, x + 3, y + 5, colour);
+		g.fill(x - 1, y + 5, x + 2, y + 6, colour);
+		g.fill(x, y + 3, x + 1, y + 5, 0xFFFFE070);
 	}
 
 	/** How far a world position is from straight ahead, in degrees (negative: to the left). */

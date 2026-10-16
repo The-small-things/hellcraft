@@ -53,6 +53,11 @@ public final class ClientNav {
 		return inferno && mc.level != null && mc.player != null && mc.level.dimension() == Level.OVERWORLD;
 	}
 
+	/** In the Forge of Dis: the Nether of an Inferno world (Phase 6), where the compass points to the Great Forge. */
+	public static boolean inForge(Minecraft mc) {
+		return inferno && mc.level != null && mc.player != null && mc.level.dimension() == Level.NETHER;
+	}
+
 	public static boolean inferno() {
 		return inferno;
 	}

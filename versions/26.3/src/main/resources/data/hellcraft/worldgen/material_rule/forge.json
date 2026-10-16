@@ -1,0 +1,317 @@
+{
+  "type": "minecraft:sequence",
+  "sequence": [
+    "minecraft:bedrock_floor",
+    "minecraft:bedrock_roof",
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:biome",
+        "biome_is": "hellcraft:great_forge"
+      },
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:on_floor",
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.3,
+                    "noise": "minecraft:patch"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:blackstone"
+                  }
+                },
+                {
+                  "type": "minecraft:block",
+                  "result_state": "minecraft:smooth_basalt"
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:block",
+            "result_state": "minecraft:basalt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:biome",
+        "biome_is": "hellcraft:slag_sea"
+      },
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:on_floor",
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.1,
+                    "noise": "minecraft:nether_state_selector"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:magma_block"
+                  }
+                },
+                {
+                  "type": "minecraft:block",
+                  "result_state": "minecraft:blackstone"
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_floor",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:blackstone"
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_ceiling",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:basalt"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:biome",
+        "biome_is": "hellcraft:foundry_halls"
+      },
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:on_floor",
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.45,
+                    "noise": "minecraft:nether_state_selector"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:magma_block"
+                  }
+                },
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.2,
+                    "noise": "minecraft:patch"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:polished_blackstone"
+                  }
+                },
+                {
+                  "type": "minecraft:block",
+                  "result_state": "minecraft:blackstone"
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_floor",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:blackstone"
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_ceiling",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:blackstone"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:biome",
+        "biome_is": "hellcraft:chainlands"
+      },
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:on_floor",
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.35,
+                    "noise": "minecraft:patch"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:soul_soil"
+                  }
+                },
+                {
+                  "type": "minecraft:block",
+                  "result_state": "minecraft:smooth_basalt"
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_floor",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:basalt"
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_ceiling",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:blackstone"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:biome",
+        "biome_is": "hellcraft:ash_wastes"
+      },
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:on_floor",
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.3,
+                    "noise": "minecraft:nether_state_selector"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:light_gray_concrete_powder"
+                  }
+                },
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "max_threshold": 1.7976931348623157e+308,
+                    "min_threshold": 0.1,
+                    "noise": "minecraft:patch"
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": "minecraft:gravel"
+                  }
+                },
+                {
+                  "type": "minecraft:block",
+                  "result_state": "minecraft:tuff"
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_floor",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:tuff"
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": "minecraft:under_ceiling",
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:basalt"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:biome",
+        "biome_is": "hellcraft:cyclops_quarries"
+      },
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:y_above",
+              "add_stone_depth": false,
+              "anchor": {
+                "absolute": 28
+              },
+              "surface_depth_multiplier": 0
+            },
+            "then_run": {
+              "type": "minecraft:bandlands"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

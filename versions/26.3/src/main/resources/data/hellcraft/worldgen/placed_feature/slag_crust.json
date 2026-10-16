@@ -1,0 +1,11 @@
+{
+  "feature": "hellcraft:slag_crust",
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

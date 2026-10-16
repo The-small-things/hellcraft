@@ -25,10 +25,9 @@
       "generator": {
         "type": "minecraft:noise",
         "biome_source": {
-          "type": "minecraft:multi_noise",
-          "preset": "minecraft:nether"
+          "type": "hellcraft:forge"
         },
-        "settings": "minecraft:nether"
+        "settings": "hellcraft:forge"
       }
     }
   }

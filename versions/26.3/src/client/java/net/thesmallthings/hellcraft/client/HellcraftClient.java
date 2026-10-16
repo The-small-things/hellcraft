@@ -18,6 +18,7 @@ import net.thesmallthings.hellcraft.client.danger.DangerMarks;
 import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
 import net.thesmallthings.hellcraft.client.layer.Colossus;
 import net.thesmallthings.hellcraft.client.layer.GazeOverlay;
+import net.thesmallthings.hellcraft.client.layer.HeatColumn;
 import net.thesmallthings.hellcraft.client.layer.LayerFx;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
@@ -167,6 +168,7 @@ public class HellcraftClient implements ClientModInitializer {
 		LevelRenderEvents.COLLECT_SUBMITS.register(LayerFx::render);
 		LevelRenderEvents.COLLECT_SUBMITS.register(SoulFlocks::render);
 		LevelRenderEvents.COLLECT_SUBMITS.register(Colossus::render);
+		LevelRenderEvents.COLLECT_SUBMITS.register(HeatColumn::render);
 
 		ModelLayerRegistry.registerModelLayer(TestRigModel.LAYER, TestRigModel::createLayer);
 		EntityRendererRegistry.register(HellEntities.TEST_RIG, TestRigRenderer::new);

@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "hellcraft:heresy",
-    "hellcraft:burning_sands"
+    "hellcraft:burning_sands",
+    "hellcraft:foundry_halls",
+    "hellcraft:ash_wastes",
+    "hellcraft:cyclops_quarries"
   ]
 }

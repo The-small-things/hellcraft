@@ -1,0 +1,11 @@
+{
+  "feature": "hellcraft:cyclops_camp",
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

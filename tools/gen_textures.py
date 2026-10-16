@@ -9,6 +9,7 @@ of his models. No image library is needed; PNGs are written directly.
 """
 import os
 import random
+import math
 import struct
 import zlib
 
@@ -716,6 +717,73 @@ for rank, rim in enumerate(RANK_RIMS, start=1):
     heart_sprite(os.path.join(base, "container_blinking.png"), None, rim=("ffffff", "2e0a0e"), crown=crown)
     heart_sprite(os.path.join(base, "container_hardcore.png"), None, rim=(rim, "1e0406"), crown=crown or "d8d0c0")
     heart_sprite(os.path.join(base, "container_hardcore_blinking.png"), None, rim=("ffffff", "1e0406"), crown=crown or "ffffff")
+
+# ------------------------------------------------------------------------------------ blocks
+# The Slag Sea's cooling crust (block/slag_crust_<stage>): dark plates of cooled slag with seams between them that
+# widen and glow as it cracks (stages 1-3), then molten slag (stage 4). The plates are a Voronoi pattern that wraps,
+# so the texture tiles.
+
+def slag_crust_textures():
+    import random
+    rnd = random.Random(1234)
+    seeds = [(rnd.uniform(0, 16), rnd.uniform(0, 16)) for _ in range(7)]
+
+    def nearest_two(x, y):
+        ds = []
+        for sx, sy in seeds:
+            for ox in (-16, 0, 16):
+                for oy in (-16, 0, 16):
+                    ds.append(math.hypot(x + 0.5 - sx - ox, y + 0.5 - sy - oy))
+        ds.sort()
+        return ds[0], ds[1]
+
+    grain = [[rnd.random() for _ in range(16)] for _ in range(16)]
+    seam_width = [0.55, 0.9, 1.3, 1.8]
+    seam_colour = [("4a1408", "6a2010"), ("8a2a0a", "c0400c"), ("d05010", "ff7a18"), ("ff8a20", "ffd040")]
+    plate_colour = [("1e1614", "2e2420", "3a2c26"), ("241816", "34261f", "40302a"), ("2c1a14", "3e281e", "4c3226"),
+                    ("3a1e12", "50301c", "603a22")]
+    for stage in range(4):
+        pixels = []
+        for y in range(16):
+            row = []
+            for x in range(16):
+                d1, d2 = nearest_two(x, y)
+                g = grain[y][x]
+                if d2 - d1 < seam_width[stage]:
+                    hot = 1.0 - (d2 - d1) / seam_width[stage]
+                    c = hexc(seam_colour[stage][1] if hot > 0.5 else seam_colour[stage][0])
+                else:
+                    shade_i = 0 if g < 0.35 else 1 if g < 0.8 else 2
+                    # the plates' raised middles are a touch lighter
+                    if d1 < 1.2 and shade_i < 2:
+                        shade_i += 1
+                    c = hexc(plate_colour[stage][shade_i])
+                row.append(c)
+            pixels.append(row)
+        png(os.path.join(OUT, "block", "slag_crust_%d.png" % stage), pixels)
+    # molten: swirls of orange and yellow with a few dark rafts of crust
+    pixels = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            d1, d2 = nearest_two(x, y)
+            v = math.sin((x + 2 * math.sin(y * 0.7)) * 0.8) + math.cos((y + 2 * math.sin(x * 0.6)) * 0.7) + grain[y][x] * 0.6
+            if d1 < 0.9 and grain[y][x] > 0.75:
+                c = hexc("3a2216")
+            elif v > 1.2:
+                c = hexc("ffe060")
+            elif v > 0.3:
+                c = hexc("ffa020")
+            elif v > -0.6:
+                c = hexc("f06a10")
+            else:
+                c = hexc("c03a08")
+            row.append(c)
+        pixels.append(row)
+    png(os.path.join(OUT, "block", "slag_crust_4.png"), pixels)
+
+
+slag_crust_textures()
 
 if __name__ == "__main__":
     print("Wrote textures to", os.path.normpath(OUT))

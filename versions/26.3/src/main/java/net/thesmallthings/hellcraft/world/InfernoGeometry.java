@@ -698,16 +698,16 @@ public final class InfernoGeometry {
 		return v < lo ? lo : Math.min(v, hi);
 	}
 
-	static double lerp(double a, double b, double t) {
+	public static double lerp(double a, double b, double t) {
 		return a + (b - a) * t;
 	}
 
-	static double smoothstep(double t) {
+	public static double smoothstep(double t) {
 		t = clamp(t, 0.0, 1.0);
 		return t * t * (3.0 - 2.0 * t);
 	}
 
-	static double hash01(int a, int b, int seed) {
+	public static double hash01(int a, int b, int seed) {
 		long h = seed * 0x9E3779B97F4A7C15L;
 		h ^= a * 0xC2B2AE3D27D4EB4FL;
 		h = Long.rotateLeft(h, 31) * 0x165667B19E3779F9L;

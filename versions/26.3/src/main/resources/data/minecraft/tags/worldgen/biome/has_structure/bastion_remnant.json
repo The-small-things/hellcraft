@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "hellcraft:greed"
+    "hellcraft:greed",
+    "hellcraft:ash_wastes",
+    "hellcraft:cyclops_quarries"
   ]
 }

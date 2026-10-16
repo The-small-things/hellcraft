@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
+import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.blood.BloodArmour;
 import net.thesmallthings.hellcraft.blood.BloodEvents;
 import net.thesmallthings.hellcraft.blood.Bounty;
@@ -81,6 +82,7 @@ public class HellcraftMod implements ModInitializer {
 	public void onInitialize() {
 		HellConfig.load();
 		JoinCheck.register();
+		HellBlocks.register();
 		HellItems.register();
 		HellEntities.register();
 		HellWorldgen.register();

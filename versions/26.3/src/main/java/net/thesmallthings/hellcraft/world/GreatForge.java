@@ -2,6 +2,7 @@ package net.thesmallthings.hellcraft.world;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.LanternBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
@@ -75,8 +77,8 @@ public final class GreatForge {
 		if (level == null || state.forgeBuilt) {
 			return;
 		}
-		for (int cx = -3; cx <= 2; cx++) {
-			for (int cz = -3; cz <= 2; cz++) {
+		for (int cx = -6; cx <= 5; cx++) {
+			for (int cz = -6; cz <= 5; cz++) {
 				level.getChunk(cx, cz);
 			}
 		}
@@ -135,6 +137,12 @@ public final class GreatForge {
 				}
 			}
 		}
+		// and on, down the mesa's sides to the Slag Sea's causeways (in a world with the Forge of Dis)
+		if (HellWorldgen.isInferno(server.overworld())) {
+			for (Direction d : Direction.Plane.HORIZONTAL) {
+				stairway(level, d);
+			}
+		}
 		// the Hellforge: an anvil on magma between two cauldrons of lava, and what it does
 		BlockPos forge = hellforge();
 		set(level, forge.getX(), forge.getY() - 1, forge.getZ(), Blocks.MAGMA_BLOCK.defaultBlockState());
@@ -151,6 +159,36 @@ public final class GreatForge {
 		state.forgeBuilt = true;
 		state.setDirty();
 		HellcraftMod.LOGGER.info("The Great Forge of Dis at {}", center().toShortString());
+	}
+
+	/**
+	 * A stairway from a door of the hall down the mesa's side to the crust causeway below it: a path across the mesa's
+	 * top, then a flight of stairs one block down for each block out, on a solid ramp with a curb and a wall each side.
+	 */
+	private static void stairway(ServerLevel level, Direction d) {
+		BlockState bricks = Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
+		BlockState air = Blocks.AIR.defaultBlockState();
+		BlockState wall = Blocks.POLISHED_BLACKSTONE_BRICK_WALL.defaultBlockState();
+		BlockState stair = Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, d.getOpposite());
+		int edge = (int) ForgeGeometry.MESA_RADIUS;
+		int drop = FLOOR_Y - ForgeGeometry.LAVA;
+		for (int step = RADIUS + 15; step <= edge + drop; step++) {
+			int t = Math.max(0, step - edge);
+			int top = FLOOR_Y - 1 - t;
+			for (int w = -2; w <= 2; w++) {
+				int x = d.getStepX() * step + d.getStepZ() * w;
+				int z = d.getStepZ() * step + d.getStepX() * w;
+				boolean side = Math.abs(w) == 2;
+				set(level, x, top, z, side || t == 0 ? bricks : stair);
+				// the ramp under it, down into the slag
+				for (int y = top - 1; y >= ForgeGeometry.LAVA - 6; y--) {
+					set(level, x, y, z, Blocks.BLACKSTONE.defaultBlockState());
+				}
+				for (int y = top + 1; y <= top + 4; y++) {
+					set(level, x, y, z, side && y == top + 1 ? wall : air);
+				}
+			}
+		}
 	}
 
 	/** The floor: blackstone bricks with glowing seams of magma radiating from the middle. */

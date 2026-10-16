@@ -160,6 +160,164 @@ def nether():
     return {"biome.minecraft." + b: v[0] for b, v in NETHER_BIOMES.items()}
 
 
+# ============================================================================================ the Forge of Dis (3.0)
+
+# In an Inferno world the Nether is generated from scratch (ForgeGeometry.java): the Great Forge on its mesa at the
+# centre, the Slag Sea round it, and four regions beyond. Its own biome source (hellcraft:forge) and terrain
+# (hellcraft:forge noise settings, ForgeDensity.java); other worlds keep the reshaped vanilla Nether above.
+# region: (base vanilla biome, title, fog, particle, [(mob, weight, min, max)] monsters, creatures, carvers,
+#          [step 9 features], [vanilla features dropped])
+FORGE_REGIONS = {
+    "great_forge": ("basalt_deltas", "The Great Forge", "#4a2410", ("minecraft:white_ash", 0.01), [], [], False, [],
+                    ["minecraft:delta", "minecraft:small_basalt_columns", "minecraft:large_basalt_columns", "minecraft:basalt_blobs",
+                     "minecraft:blackstone_blobs", "minecraft:spring_delta", "minecraft:patch_fire", "minecraft:patch_soul_fire",
+                     "minecraft:spring_closed_double", "minecraft:brown_mushroom_nether", "minecraft:red_mushroom_nether"]),
+    "slag_sea": ("basalt_deltas", "The Slag Sea", "#7a2a08", ("minecraft:white_ash", 0.03),
+                 [("minecraft:magma_cube", 60, 2, 4), ("minecraft:ghast", 20, 1, 1)], [("minecraft:strider", 60, 1, 2)], False,
+                 ["hellcraft:slag_crust"],
+                 ["minecraft:delta", "minecraft:small_basalt_columns", "minecraft:large_basalt_columns", "minecraft:spring_delta",
+                  "minecraft:spring_closed_double"]),
+    "foundry_halls": ("nether_wastes", "The Foundry Halls", "#3a2420", ("minecraft:lava", 0.0006),
+                      [("minecraft:blaze", 40, 1, 2), ("minecraft:wither_skeleton", 30, 1, 2), ("minecraft:magma_cube", 30, 1, 3),
+                       ("minecraft:zombified_piglin", 50, 2, 4)], [("minecraft:strider", 30, 1, 2)], True,
+                      ["hellcraft:forge_ruin_common", "hellcraft:foundry_pillar"], []),
+    "chainlands": ("nether_wastes", "The Chainlands", "#262c38", ("minecraft:ash", 0.02),
+                   [("minecraft:ghast", 50, 1, 1), ("minecraft:blaze", 20, 1, 2)], [("minecraft:strider", 40, 1, 2)], False,
+                   ["hellcraft:chained_island"], []),
+    "ash_wastes": ("nether_wastes", "The Ash Wastes", "#5a5550", ("minecraft:white_ash", 0.12),
+                   [("minecraft:skeleton", 30, 1, 3), ("minecraft:wither_skeleton", 20, 1, 2), ("minecraft:ghast", 30, 1, 1),
+                    ("minecraft:piglin", 40, 2, 4), ("minecraft:zombified_piglin", 40, 2, 4), ("minecraft:enderman", 5, 1, 2)], [], True,
+                   ["hellcraft:forge_ruin_rare", "hellcraft:slag_heap_rare"], []),
+    "cyclops_quarries": ("nether_wastes", "The Cyclops Quarries", "#5a2a18", ("minecraft:white_ash", 0.02),
+                         [("minecraft:wither_skeleton", 30, 1, 2), ("minecraft:zombified_piglin", 40, 2, 4), ("minecraft:magma_cube", 20, 1, 2)],
+                         [], True, ["hellcraft:cyclops_camp", "hellcraft:slag_heap_rare"], []),
+}
+# one global order for the forge features of step 9
+FORGE_ORDER = ["hellcraft:forge_ruin_common", "hellcraft:forge_ruin_rare", "hellcraft:slag_heap", "hellcraft:chain_pillar",
+               "hellcraft:slag_heap_rare",
+               "hellcraft:slag_crust", "hellcraft:foundry_pillar", "hellcraft:chained_island", "hellcraft:cyclops_camp"]
+FORGE_FEATURE_TYPES = ["slag_crust", "foundry_pillar", "chained_island", "cyclops_camp"]
+FORGE_PLACED = {
+    # once per chunk: each feature finds its own spots in the chunk from ForgeGeometry
+    name: placed("hellcraft:" + name, IN_SQUARE, BIOME) for name in FORGE_FEATURE_TYPES
+}
+FORGE_PLACED["slag_heap_rare"] = placed("hellcraft:slag_heap", rarity(3), IN_SQUARE, height(LAVA_SEA + 2, 110), BIOME)
+# vanilla's structures in the Forge: fortresses (blaze rods: the way to Paradiso) on the bridges of three regions,
+# bastions where the piglins live, fossils in the ash
+FORGE_STRUCTURES = {
+    "has_structure/nether_fortress": ["foundry_halls", "chainlands", "ash_wastes", "cyclops_quarries"],
+    "has_structure/bastion_remnant": ["ash_wastes", "cyclops_quarries"],
+    "has_structure/ruined_portal_nether": ["foundry_halls", "ash_wastes", "cyclops_quarries"],
+    "has_structure/nether_fossil": ["ash_wastes"],
+    "is_nether": list(FORGE_REGIONS),
+}
+
+
+def on(cond_id, rule):
+    return cond("minecraft:" + cond_id, rule)
+
+
+def forge_material_rule():
+    """The Forge's surface rules: bedrock floor and roof, then each region's own rock."""
+    state = "minecraft:nether_state_selector"
+    patch = "minecraft:patch"
+
+    def region(name, *rules):
+        return cond(biome_is("hellcraft:" + name), seq(*rules))
+
+    return seq(
+        "minecraft:bedrock_floor", "minecraft:bedrock_roof",
+        region("great_forge",
+               on("on_floor", seq(cond(noise_at_least(patch, 0.3), block("blackstone")), block("smooth_basalt"))),
+               block("basalt")),
+        region("slag_sea",
+               on("on_floor", seq(cond(noise_at_least(state, 0.1), block("magma_block")), block("blackstone"))),
+               on("under_floor", block("blackstone")),
+               on("under_ceiling", block("basalt"))),
+        region("foundry_halls",
+               on("on_floor", seq(cond(noise_at_least(state, 0.45), block("magma_block")),
+                                  cond(noise_at_least(patch, 0.2), block("polished_blackstone")), block("blackstone"))),
+               on("under_floor", block("blackstone")),
+               on("under_ceiling", block("blackstone"))),
+        region("chainlands",
+               on("on_floor", seq(cond(noise_at_least(patch, 0.35), block("soul_soil")), block("smooth_basalt"))),
+               on("under_floor", block("basalt")),
+               on("under_ceiling", block("blackstone"))),
+        region("ash_wastes",
+               on("on_floor", seq(cond(noise_at_least(state, 0.3), block("light_gray_concrete_powder")),
+                                  cond(noise_at_least(patch, 0.1), block("gravel")), block("tuff"))),
+               on("under_floor", block("tuff")),
+               on("under_ceiling", block("basalt"))),
+        # the quarries' cut faces show the strata
+        region("cyclops_quarries", cond({"type": "minecraft:y_above", "add_stone_depth": False, "anchor": {"absolute": LAVA_SEA - 4},
+                                         "surface_depth_multiplier": 0}, {"type": "minecraft:bandlands"})),
+    )
+
+
+def forge_noise_settings():
+    settings = vanilla("noise_settings__nether")
+    settings.pop("debug_functions", None)
+    settings["material_rule"] = "hellcraft:forge"
+    settings["noise_router"]["final_density"] = {
+        "type": "minecraft:add",
+        "left": {"type": "minecraft:interpolated", "cell_size_xz": 4, "cell_size_y": 8, "input": {
+            "type": "minecraft:add", "left": {"type": "hellcraft:forge", "mode": "shape"},
+            "right": {"type": "minecraft:mul", "left": {"type": "hellcraft:forge", "mode": "roughness"},
+                      "right": "minecraft:nether/base_3d_noise"}}},
+        "right": {"type": "minecraft:beardifier"},
+    }
+    return settings
+
+
+def add_tag(path, values):
+    """Adds to a biome tag the overworld generator may have written already."""
+    current = {"replace": False, "values": []}
+    if os.path.exists(path):
+        with open(path) as f:
+            current = json.load(f)
+    current["values"] = current["values"] + [v for v in values if v not in current["values"]]
+    write(path, current)
+
+
+def forge():
+    names = {}
+    for name, (base, title, fog, particle, monsters, creatures, carvers, added, dropped) in FORGE_REGIONS.items():
+        b = vanilla("biome__" + base)
+        steps = [[f for f in step if f not in dropped] for step in b["features"]]
+        steps = steps + [[] for _ in range(10 - len(steps))]
+        steps[9] = steps[9] + [f for f in FORGE_ORDER if f in added]
+        b["features"] = steps
+        if not carvers:
+            b["carvers"] = []
+        attrs = b["attributes"]
+        attrs["minecraft:visual/fog_color"] = fog
+        attrs["minecraft:visual/ambient_particles"] = {"argument": [{"particle": {"type": particle[0]}, "probability": particle[1]}],
+                                                       "modifier": "append"}
+
+        def spawn(mob, weight, lo, hi):
+            return {"type": mob, "count": lo if lo == hi else {"type": "minecraft:uniform", "min_inclusive": lo, "max_inclusive": hi},
+                    "weight": weight}
+        by_category = {}
+        if monsters:
+            by_category["monster"] = [spawn(*m) for m in monsters]
+        if creatures:
+            by_category["creature"] = [spawn(*c) for c in creatures]
+        attrs["minecraft:gameplay/natural_mob_spawns"] = {"argument": {"spawn_costs": {}, "spawns_by_category": by_category},
+                                                          "modifier": "overlay"}
+        write(os.path.join(HC, "worldgen", "biome", name + ".json"), b)
+        names["biome.hellcraft." + name] = title
+    for name, pf in FORGE_PLACED.items():
+        write(os.path.join(HC, "worldgen", "placed_feature", name + ".json"), pf)
+    for name in FORGE_FEATURE_TYPES:
+        write(os.path.join(HC, "worldgen", "feature", name + ".json"), {"type": "hellcraft:" + name})
+    write(os.path.join(HC, "worldgen", "material_rule", "forge.json"), forge_material_rule())
+    write(os.path.join(HC, "worldgen", "noise_settings", "forge.json"), forge_noise_settings())
+    tags = os.path.join(MC, "tags", "worldgen", "biome")
+    for tag, regions in FORGE_STRUCTURES.items():
+        add_tag(os.path.join(tags, tag + ".json"), ["hellcraft:" + r for r in regions])
+    return names
+
+
 # ============================================================================================ Paradiso
 
 # The End is Dante's heaven. The dragon's island in the middle stays vanilla's the_end (restyled); every outer
@@ -317,9 +475,11 @@ def lang(names):
 def main():
     names = {}
     names.update(nether())
+    names.update(forge())
     names.update(paradiso())
     lang(names)
-    print("Reshaped the Nether (%d biomes) and the End (%d spheres)." % (len(NETHER_BIOMES), len(SPHERES)))
+    print("Reshaped the Nether (%d biomes), built the Forge of Dis (%d regions) and the End (%d spheres)."
+          % (len(NETHER_BIOMES), len(FORGE_REGIONS), len(SPHERES)))
 
 
 if __name__ == "__main__":
