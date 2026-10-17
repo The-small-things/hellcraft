@@ -540,10 +540,6 @@ grep -i 'hellcraft\|inferno\|Gate of Hell\|Lucifer\|Reliquary\|Arena' "$LOG" || 
 fail=0
 grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is the overworld an Inferno world?)"; fail=1; }
 grep -qE 'Gate wall: [1-9][0-9]* blocks' "$LOG" || { echo "The Gate of Hell wall was not generated"; fail=1; }
-# every guardian of Hell has four lairs, each with its ring of braziers
-for g in minos cerberus plutus phlegyas furies farinata minotaur geryon; do
-  grep -q "Lair 4 of $g at" "$LOG" || { echo "$g's fourth lair was not built"; fail=1; }
-done
 for phase in INTRO DUEL ENRAGE_TRANSITION ENRAGED TRUE_FORM_TRANSITION TRUE_FORM DEFEAT DONE; do
   grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
 done
@@ -573,7 +569,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q "Antaeus stands in the ice at" "$LOG" || { echo "Antaeus was not placed"; fail=1; }
   grep -q "Lucifer's wings beat" "$LOG" || { echo "Lucifer's wingbeat never came"; fail=1; }
   for g in minos cerberus plutus phlegyas furies farinata minotaur geryon; do
-    grep -q "Lair of $g at" "$LOG" || { echo "No lair for $g"; fail=1; }
+    # all four of its lairs, each with its ring of braziers
+    for k in 1 2 3 4; do
+      grep -q "Lair $k of $g at" "$LOG" || { echo "$g's lair $k was not built"; fail=1; }
+    done
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }
   done
 fi
