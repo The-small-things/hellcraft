@@ -125,9 +125,9 @@ public final class Guide {
 				"",
 				"Light both (flint and steel) and a ferry comes out of the fog. Right-click it to board: it carries you across the Styx to the gate of Dis.",
 				"",
-				"Phlegyas, the ferryman, waits at his landing south of the east road: walk into his ring of braziers, or light the east tower's beacons, and he rises. Beat him and his ferry is yours."));
+				"Phlegyas, the ferryman, has a landing beside each watchtower: walk into its ring of braziers (or light the east tower's beacons) and he rises. Beat him and his ferry is yours."));
 		pages.add(page("VIRGIL'S RESTS",
-				"A safe camp beside each road in every circle: soul fire, a supply chest and a Blood Altar.",
+				"Eight safe camps in every circle, one beside each road and four between them: soul fire, a supply chest and a Blood Altar. (Malebolge has only the four by the roads: any other Rest there is a trick.)",
 				"",
 				"No hazards or monsters there. Set your respawn at its altar.",
 				"",
@@ -145,10 +145,10 @@ public final class Guide {
 				"",
 				"2 pieces: your hits heal you. 4 pieces: more healing, Regeneration when nearly dead, and Resistance during a Blood Oath."));
 		pages.add(page("THE GUARDIANS",
-				"Eight bosses wait in rings of soul fire, each in its own circle and spread round Hell. The Map of Hell (M) shows where:",
-				"Minos (Lust, south-east), Cerberus (Gluttony, south-west), Plutus (Greed, north-west), Phlegyas (the Fen, by the east tower)",
-				"The Furies (inside the south gate of Dis), Farinata (Heresy, west)",
-				"The Minotaur (the Wood of Suicides, north), Geryon (the edge of the great cliff, north-east)",
+				"Eight bosses wait in rings of soul fire, each in its own circle. Each has four lairs there, one in each quarter of Hell: fight it in whichever is nearest. The Map of Hell (M) shows them all:",
+				"Minos (Lust), Cerberus (Gluttony), Plutus (Greed), Phlegyas (the Fen, a landing by each watchtower)",
+				"The Furies (inside each gate of Dis), Farinata (Heresy)",
+				"The Minotaur (the Wood of Suicides), Geryon (the edge of the great cliff, in the Burning Sands)",
 				"None blocks the way down. First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books.",
 				"Beat one and its lair keeps a lift for you: stand in the soul fire in the middle for 3 seconds to go down to the next circle "
 						+ "(Minos, Cerberus, Plutus, Farinata and the Minotaur).",

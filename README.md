@@ -87,7 +87,7 @@ The world is a disc 7,000 blocks across, with the world border at radius 3,500 (
 At the bottom of the world waits **Lucifer** (see [below](#lucifer)).
 
 **Supplies (26.3).** The Dark Wood is where pilgrims get ready: villages (plains and taiga, with farms, fletchers and librarians) and wandering traders are found there as well as in Limbo. Hell's dusk never ends, so villagers keep a clock of their own: a 10-minute day of work (they take jobs at job-site blocks as usual), a meeting at the bell, then about 3 minutes of idle time, which is when they breed (as in vanilla, they need free beds and enough food: bread, carrots, potatoes or beetroot). Their trades restock every 10 minutes. Oak and dark oak leaves drop apples six times as often as in vanilla. Sugar cane grows by the water in the Dark Wood, the Acheron, Limbo, Gluttony and the Styx, and the Acheron's banks have sand. Loot worth the detour:
-- **Virgil's Rests** ([below](#virgils-rests-263)): a supply chest beside each road a third of the way into every circle
+- **Virgil's Rests** ([below](#virgils-rests-263)): a supply chest beside each road a third of the way into every circle, and four more between the roads
 - **Ruined Blood Altars** (twice as common as before): arrows, books, a Vigil Candle, sometimes an enchanted book
 - **Heretics' tombs**: one in four hides a chest of forbidden books (enchanted books of level 15-30, paper, lapis, bottles o' enchanting)
 - **Circle guardians**: 2 Blood Hearts, fragments, a Soul Anchor, 2 level-30 enchanted books and more
@@ -252,7 +252,7 @@ Five enchantments that no enchanting table, librarian or ordinary chest gives: e
 
 ## The circle guardians (26.3)
 
-Eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each well inside its own circle and spread round the funnel (3.0: they no longer stand in a line by the east road; the Map of Hell (M) shows where), each with a sign by its ring. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas also comes when you light the east watchtower's beacons). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
+Eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each well inside its own circle and spread round the funnel (3.0: they no longer stand in a line by the east road; the Map of Hell (M) shows where), each with a sign by its ring. **Each has four lairs** in its circle, a quarter of the way round Hell from each other (one in each quarter, so one is never far off: Phlegyas has a landing by every watchtower, the Furies wait inside every gate of Dis). Fight it in whichever you like; it's awake in one lair at a time, and beaten, it sleeps in all of them. The table gives the first lair. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas also comes when you light the east watchtower's beacons). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
 **Lifts and lore (Phase 8).** Beat a guardian and its lair keeps a lift for you (REVAMP Q2): a column of soul fire in the middle of the lair. Stand in it for 3 seconds and it takes you down to the next circle: Minos's to Gluttony, Cerberus's to Greed, Plutus's to the Styx (onto the nearest road's causeway), Farinata's to the Wood of the Suicides, the Minotaur's to the Burning Sands. Only those who have beaten that guardian can use it; the roads and ramps stay open for everyone. Phlegyas's ferry, Geryon's flight and Antaeus's hand are the other rides. And every guardian says something about Lucifer as it falls: the Journal's Codex has a page on **the Emperor** that fills in, one piece per guardian you beat.
 
@@ -277,7 +277,7 @@ Eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each wel
 
 **Time to react (3.0).** The guardians fight at 60% of their old pace (`bossTempo`): every wind-up, warning on the ground, white parry window and pause between blows lasts longer, and their animations slow to match, so there is time to see a blow coming and get out of the way or raise your shield. The flyers come down to be hit: Geryon sinks to just above the ground after each attack, and a Fury lands where her talons strike and stays down a moment. Lucifer's attacks are paced the same way and hit for 70% (`luciferDamage`).
 
-A slain guardian sleeps for 30 minutes. If everyone leaves its lair, it goes back to sleep at full health.
+A slain guardian sleeps for 30 minutes (in all four of its lairs). If everyone leaves its lair, it goes back to sleep at full health.
 
 **The danger language (3.0).** The same colours mean the same thing on every boss, and Virgil explains each the first time you see it:
 - **Red** on the ground: get out of it before it fills. A shield won't help.
@@ -504,14 +504,14 @@ It doesn't die: beaten, it bows and rises into the light. Everyone who fought it
 
 ## Virgil's Rests (26.3)
 
-A third of the way into each circle (Limbo, Lust, Gluttony, Greed, the Styx, Heresy, the Wood of Suicides, the Burning Sands and Malebolge) and into the Well of Giants, a **Virgil's Rest** stands beside each of the four roads (on alternate sides from circle to circle), 40 in all:
+A third of the way into each circle (Limbo, Lust, Gluttony, Greed, the Styx, Heresy, the Wood of Suicides, the Burning Sands and Malebolge) and into the Well of Giants, a **Virgil's Rest** stands beside each of the four roads (on alternate sides from circle to circle), and four more stand between the roads, at the foot of the way down a twelfth of the way round from each road: eight to a circle, 76 in all (Malebolge has only its four road Rests: the Rests by its other bridges are Fraud's fakes). Each has:
 - a free **Blood Altar** to bind your respawn to
 - soul campfires, and a **supply chest** with arrows, food, torches, books, paper, sugar cane, Vigil Candles and enchanted books. Deeper Rests hold better loot: diamonds, Fire Resistance, and sometimes a Soul Anchor.
 - a safe ring (20 blocks): no circle torments you there, monsters don't spawn, and any that wander in are thrown back out.
 
 They are built the first time someone comes near. The compass and the Map of Hell show them, and entering a circle, and `/circle`, tell you where the nearest one is.
 
-**Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off).
+**Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off). The places run over pages: the arrows in the bottom row turn them.
 
 ## The torments of the circles
 
@@ -615,8 +615,9 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
-| `/hellcraft loadout [players] [kit]` | op | A kit for testing, armour put on. The journey kits give about what you'd have by then, to test bosses fairly without the grind: `upper` (upper Hell: iron gear, 2 golden apples), `lower` (lower Hell: part diamond, the Bloodletter, a few pearls), `lucifer` (Cocytus, Lucifer and the Forge: enchanted diamond, the hell weapons, a totem), `paradiso` (the Seraph: enchanted blood armour). `full` (the default) and `blood` are everything at once: maxed netherite or blood armour, every weapon, 16 ender pearls, 16 enchanted golden apples, totems. With no player it's yours (single player: turn on cheats) |
-| `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
+| `/hellcraft arena <boss> [lair] [players]` | op | Go to the edge of a boss's arena, facing in, to test it (walk in to wake it): any guardian (its nearest lair, or lair 1 to 4; 0 for the nearest when you name players), `vulcan` (the Great Forge), `seraph` (the Primum Mobile; lets them climb that far into Paradiso) or `lucifer` (the rim of his pit). With no players it's you |
+| `/hellcraft loadout [players] [kit]` | op | A kit for testing, armour put on. The journey kits give about what you'd have by then, to test bosses fairly without the grind: `upper` (upper Hell: iron gear, 2 golden apples), `lower` (lower Hell: part diamond, the Bloodletter, a few pearls), `lucifer` (Cocytus, Lucifer and the Forge: enchanted diamond, the hell weapons, a totem), `paradiso` (the Seraph: enchanted blood armour). A journey kit also sets your hearts to about what you'd have by then (10, 12, 15 and 18), since bosses hit harder the more hearts you have. `full` (the default) and `blood` are everything at once: maxed netherite or blood armour, every weapon, 16 ender pearls, 16 enchanted golden apples, totems. With no player it's yours (single player: turn on cheats) |
+| `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3; summon wakes it in its lair nearest you) |
 | `/hellcraft cyclops summon\|attack <smash\|boulder\|quake>` | op | Test a Cyclops where you stand (3.0) |
 | `/hellcraft forge test` | op | Check the Forge of Dis's layout (3.0) |
 | `/hellcraft lifts test` | op | Check that every guardian's lift lands in the next circle, on dry ground |

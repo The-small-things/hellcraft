@@ -82,6 +82,8 @@ public abstract class GuardianFight {
 	protected final Guardian kind;
 	/** The lair's centre, on the ground. */
 	protected final BlockPos lair;
+	/** Which of the guardian's lairs this is (Guardian.lairColumn(k); 0 for Vulcan and the Seraph). */
+	protected final int lairIndex;
 	private final boolean debug;
 	private final ServerBossEvent bar;
 	protected final BossModel model;
@@ -112,6 +114,7 @@ public abstract class GuardianFight {
 		this.level = ctx.level();
 		this.kind = ctx.kind();
 		this.lair = ctx.lair();
+		this.lairIndex = ctx.lairIndex();
 		this.debug = ctx.debug();
 		this.bar = new ServerBossEvent(UUID.randomUUID(), Component.literal(kind.title.toUpperCase(java.util.Locale.ROOT) + " — " + kind.subtitle)
 				.withStyle(kind.color, ChatFormatting.BOLD), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);

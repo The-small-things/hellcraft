@@ -31,8 +31,8 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
-import net.thesmallthings.hellcraft.blood.Loadout;
 import net.thesmallthings.hellcraft.blood.LayerEnchants;
+import net.thesmallthings.hellcraft.blood.Loadout;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.blood.TravelMenu;
@@ -45,6 +45,7 @@ import net.thesmallthings.hellcraft.hazard.LayerRules;
 import net.thesmallthings.hellcraft.hazard.LowerMonsters;
 import net.thesmallthings.hellcraft.hazard.LowerRules;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
+import net.thesmallthings.hellcraft.hazard.guardian.Arenas;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
@@ -149,7 +150,8 @@ public final class HellCommands {
 				.then(Commands.literal("guardian")
 						.then(Commands.argument("name", StringArgumentType.word())
 								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Guardian.values()).map(Guardian::id), builder))
-								.then(Commands.literal("summon").executes(ctx -> guardian(ctx, g -> GuardianManager.summon(ctx.getSource().getServer(), g))))
+								.then(Commands.literal("summon").executes(ctx -> guardian(ctx, g -> GuardianManager.summon(ctx.getSource().getServer(), g,
+										g.nearestLair(ctx.getSource().getPosition().x, ctx.getSource().getPosition().z)))))
 								.then(Commands.literal("slay").executes(ctx -> guardian(ctx, GuardianManager::slay)))
 								.then(Commands.literal("stop").executes(ctx -> guardian(ctx, GuardianManager::stop)))
 								.then(Commands.literal("status").executes(ctx -> guardian(ctx, GuardianManager::status)))
@@ -206,6 +208,16 @@ public final class HellCommands {
 											}
 											return loadout(ctx.getSource(), EntityArgument.getPlayers(ctx, "players"), kit);
 										}))))
+				.then(Commands.literal("arena")
+						.then(Commands.argument("boss", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arenas.ids(), builder))
+								.executes(ctx -> arena(ctx.getSource(), List.of(ctx.getSource().getPlayerOrException()), StringArgumentType.getString(ctx, "boss"), 0))
+								.then(Commands.argument("lair", IntegerArgumentType.integer(0, InfernoGeometry.LAIRS_EACH))
+										.executes(ctx -> arena(ctx.getSource(), List.of(ctx.getSource().getPlayerOrException()),
+												StringArgumentType.getString(ctx, "boss"), IntegerArgumentType.getInteger(ctx, "lair")))
+										.then(Commands.argument("players", EntityArgument.players())
+												.executes(ctx -> arena(ctx.getSource(), EntityArgument.getPlayers(ctx, "players"),
+														StringArgumentType.getString(ctx, "boss"), IntegerArgumentType.getInteger(ctx, "lair")))))))
 				.then(Commands.literal("giveweapon")
 						.then(Commands.argument("player", EntityArgument.player())
 								.then(Commands.argument("weapon", StringArgumentType.word())
@@ -560,6 +572,19 @@ public final class HellCommands {
 		return circle.depth();
 	}
 
+	/** /hellcraft arena: to the edge of a boss's arena (Arenas). */
+	private static int arena(CommandSourceStack source, java.util.Collection<ServerPlayer> players, String boss, int lair) {
+		if (!Arenas.ids().contains(boss)) {
+			source.sendFailure(Component.literal("Unknown boss \"" + boss + "\". Try: " + String.join(", ", Arenas.ids())));
+			return 0;
+		}
+		for (ServerPlayer p : players) {
+			String out = Arenas.send(p, boss, lair);
+			source.sendSuccess(() -> Component.literal(out), true);
+		}
+		return players.size();
+	}
+
 	/** /hellcraft loadout: a testing kit for each player (Loadout). */
 	private static int loadout(CommandSourceStack source, java.util.Collection<ServerPlayer> players, Loadout.Kit kit) {
 		for (ServerPlayer p : players) {
@@ -567,8 +592,8 @@ public final class HellCommands {
 			p.sendSystemMessage(Component.literal("You were given the " + kit.id() + " kit: " + kit.title + " (" + stacks
 					+ " stacks; armour put on where the slot was empty).").withStyle(ChatFormatting.GOLD));
 			if (kit.journey()) {
-				p.sendSystemMessage(Component.literal("It's about what you'd have by then, for testing the bosses fairly. "
-						+ "Bosses hit harder the more hearts you have, so your hearts count too.").withStyle(ChatFormatting.GRAY));
+				p.sendSystemMessage(Component.literal("It's about what you'd have by then, for testing the bosses fairly: your hearts are now "
+						+ Hearts.soul(p).hearts + " too (bosses hit harder the more hearts you have).").withStyle(ChatFormatting.GRAY));
 			}
 		}
 		String who = players.size() == 1 ? players.iterator().next().getGameProfile().name() : players.size() + " players";

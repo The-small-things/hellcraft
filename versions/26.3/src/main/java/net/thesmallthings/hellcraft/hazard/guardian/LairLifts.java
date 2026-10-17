@@ -26,8 +26,8 @@ import java.util.UUID;
 
 /**
  * The guardians' lifts (REVAMP Q2: beating a boss opens a shortcut down that cliff; the roads and ramps stay open).
- * Once you have beaten a guardian, a column of soul fire in the middle of its lair takes you down to the next circle:
- * stand in it for three seconds. Minos's goes down to Gluttony, Cerberus's to Greed, Plutus's to the Styx (onto the
+ * Once you have beaten a guardian, a column of soul fire in the middle of each of its lairs takes you down to the next
+ * circle: stand in it for three seconds. Minos's goes down to Gluttony, Cerberus's to Greed, Plutus's to the Styx (onto the
  * nearest road's causeway), Farinata's past the river of blood to the Wood of the Suicides, the Minotaur's to the
  * Burning Sands. The others have their own way on (Phlegyas's ferry, Geryon's flight, the Furies keep the gate).
  */
@@ -66,12 +66,12 @@ public final class LairLifts {
 	}
 
 	/**
-	 * The column a lift sets you down on, {x, z}: the middle of the next circle straight in from the lair, or, where that
-	 * is water or lava, the nearest road (its causeways cross the rivers).
+	 * The column lair k's lift sets you down on, {x, z}: the middle of the next circle straight in from the lair, or,
+	 * where that is water or lava, the nearest road (its causeways cross the rivers).
 	 */
-	public static double[] landing(Guardian g) {
+	public static double[] landing(Guardian g, int k) {
 		Zone zone = destination(g);
-		BlockPos lair = g.lairColumn();
+		BlockPos lair = g.lairColumn(k);
 		double angle = Math.atan2(lair.getZ(), lair.getX());
 		double r = (InfernoGeometry.outerRadius(zone) + innerRadius(zone)) / 2;
 		double x = Math.cos(angle) * r;
@@ -126,47 +126,52 @@ public final class LairLifts {
 			return;
 		}
 		for (Guardian g : Guardian.values()) {
-			if (destination(g) == null || GuardianManager.awake(g)) {
-				continue;
-			}
-			BlockPos column = g.lairColumn();
-			double cx = column.getX() + 0.5;
-			double cz = column.getZ() + 0.5;
-			boolean near = false;
-			for (ServerPlayer p : level.players()) {
-				double dx = p.getX() - cx;
-				double dz = p.getZ() - cz;
-				double d2 = dx * dx + dz * dz;
-				if (d2 > 48 * 48 || p.isSpectator()) {
-					continue;
-				}
-				near = true;
-				boolean earned = Hearts.soul(p).guardianSpoils.containsKey(g.id());
-				if (!earned || d2 > 1.4 * 1.4) {
-					STANDING.remove(p.getUUID());
-					continue;
-				}
-				int stood = STANDING.merge(p.getUUID(), 1, Integer::sum);
-				if (stood == 1) {
-					p.sendOverlayMessage(Component.literal("Stay in the soul fire to go down to " + place(destination(g)) + "...")
-							.withStyle(ChatFormatting.AQUA));
-				}
-				if (stood >= STAND * 2) {
-					STANDING.remove(p.getUUID());
-					lift(level, p, g);
-				}
-			}
-			if (near && ticks % 20 == 0) {
-				int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
-				for (int dy = 0; dy < 5; dy++) {
-					level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, cx, y + dy + 0.3, cz, 3, 0.25, 0.3, 0.25, 0.01);
+			for (int k = 0; destination(g) != null && k < g.lairs(); k++) {
+				if (GuardianManager.awakeIn(g) != k) {
+					tick(level, g, k);
 				}
 			}
 		}
 	}
 
-	private static void lift(ServerLevel level, ServerPlayer player, Guardian g) {
-		double[] at = landing(g);
+	private static void tick(ServerLevel level, Guardian g, int k) {
+		BlockPos column = g.lairColumn(k);
+		double cx = column.getX() + 0.5;
+		double cz = column.getZ() + 0.5;
+		boolean near = false;
+		for (ServerPlayer p : level.players()) {
+			double dx = p.getX() - cx;
+			double dz = p.getZ() - cz;
+			double d2 = dx * dx + dz * dz;
+			if (d2 > 48 * 48 || p.isSpectator()) {
+				continue;
+			}
+			near = true;
+			boolean earned = Hearts.soul(p).guardianSpoils.containsKey(g.id());
+			if (!earned || d2 > 1.4 * 1.4) {
+				STANDING.remove(p.getUUID());
+				continue;
+			}
+			int stood = STANDING.merge(p.getUUID(), 1, Integer::sum);
+			if (stood == 1) {
+				p.sendOverlayMessage(Component.literal("Stay in the soul fire to go down to " + place(destination(g)) + "...")
+						.withStyle(ChatFormatting.AQUA));
+			}
+			if (stood >= STAND * 2) {
+				STANDING.remove(p.getUUID());
+				lift(level, p, g, k);
+			}
+		}
+		if (near && ticks % 20 == 0) {
+			int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
+			for (int dy = 0; dy < 5; dy++) {
+				level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, cx, y + dy + 0.3, cz, 3, 0.25, 0.3, 0.25, 0.01);
+			}
+		}
+	}
+
+	private static void lift(ServerLevel level, ServerPlayer player, Guardian g, int k) {
+		double[] at = landing(g, k);
 		int bx = (int) Math.floor(at[0]);
 		int bz = (int) Math.floor(at[1]);
 		level.getChunk(bx >> 4, bz >> 4);
@@ -180,7 +185,7 @@ public final class LairLifts {
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 
-	/** /hellcraft lifts test: every lift lands in its circle, on dry ground. */
+	/** /hellcraft lifts test: every lift (in every lair) lands in its circle, on dry ground. */
 	public static String selfTest() {
 		StringBuilder out = new StringBuilder();
 		boolean ok = true;
@@ -189,11 +194,20 @@ public final class LairLifts {
 			if (zone == null) {
 				continue;
 			}
-			double[] at = landing(g);
-			Zone lands = InfernoGeometry.zoneAt(at[0], at[1]);
-			boolean dry = InfernoGeometry.fluidAt(at[0], at[1]) == InfernoGeometry.Fluid.NONE;
-			ok &= lands == zone && dry;
-			out.append(String.format(Locale.ROOT, " %s->%s%s", g.id(), lands.id(), dry ? "" : "(wet)"));
+			int good = 0;
+			StringBuilder bad = new StringBuilder();
+			for (int k = 0; k < g.lairs(); k++) {
+				double[] at = landing(g, k);
+				Zone lands = InfernoGeometry.zoneAt(at[0], at[1]);
+				boolean dry = InfernoGeometry.fluidAt(at[0], at[1]) == InfernoGeometry.Fluid.NONE;
+				if (lands == zone && dry) {
+					good++;
+				} else {
+					ok = false;
+					bad.append(String.format(Locale.ROOT, " (lair %d lands in %s%s)", k + 1, lands.id(), dry ? "" : ", in water"));
+				}
+			}
+			out.append(String.format(Locale.ROOT, " %s->%s %d/%d%s", g.id(), zone.id(), good, g.lairs(), bad));
 		}
 		return (ok ? "Lifts test OK:" : "Lifts test FAILED:") + out;
 	}

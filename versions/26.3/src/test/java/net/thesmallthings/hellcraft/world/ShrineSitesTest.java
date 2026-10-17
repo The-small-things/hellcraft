@@ -12,9 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShrineSitesTest {
 	@Test
-	void everyCircleHasARestBesideEachRoad() {
+	void everyCircleHasARestBesideEachRoadAndFourBetween() {
 		List<ShrineSites.Site> sites = ShrineSites.all();
-		assertEquals(10 * InfernoGeometry.ROAD_ANGLES.length, sites.size());
+		// eight in every circle but Malebolge, whose bridges off the roads have Fraud's fake Rests instead
+		assertEquals((10 * 2 - 1) * InfernoGeometry.ROAD_ANGLES.length, sites.size());
+		assertEquals(sites.size(), sites.stream().map(ShrineSites.Site::id).distinct().count(), "two Rests share an id");
 		for (ShrineSites.Site s : sites) {
 			assertEquals(s.zone(), InfernoGeometry.zoneAt(s.x(), s.z()), s.id() + " is not in its circle");
 			// beside the road, never on it: the platform (11 x 11) stays off the paving
@@ -22,6 +24,16 @@ class ShrineSitesTest {
 				for (int dz = -5; dz <= 5; dz++) {
 					assertFalse(InfernoGeometry.onRoad(s.x() + dx, s.z() + dz), s.id() + " is on the road");
 				}
+			}
+			if (s.id().endsWith("east") && !s.id().endsWith("_east") || s.id().endsWith("west") && !s.id().endsWith("_west")) {
+				// between the roads: on its way down, well away from the roads
+				double theta = Math.atan2(s.z(), s.x());
+				double toWay = Double.MAX_VALUE;
+				for (int k = 0; k < 12; k++) {
+					toWay = Math.min(toWay, InfernoGeometry.angularDistance(theta, InfernoGeometry.wayDownAngle(k)));
+				}
+				assertTrue(toWay < 0.02, s.id() + " is off its way down");
+				continue;
 			}
 			double nearestRoad = Double.MAX_VALUE;
 			for (double a : InfernoGeometry.ROAD_ANGLES) {
@@ -35,14 +47,19 @@ class ShrineSitesTest {
 	void theRestsKnowWhereTheLairsAre() {
 		int i = 0;
 		for (Guardian g : Guardian.values()) {
-			if (g.offMap()) {
-				continue;
+			for (int k = 0; k < g.lairs(); k++) {
+				BlockPos lair = g.lairColumn(k);
+				assertEquals(lair.getX(), ShrineSites.LAIRS[i][0], g.id());
+				assertEquals(lair.getZ(), ShrineSites.LAIRS[i][1], g.id());
+				for (int dx = -24; dx <= 24; dx += 4) {
+					for (int dz = -24; dz <= 24; dz += 4) {
+						if (dx * dx + dz * dz <= 24 * 24) {
+							assertFalse(InfernoGeometry.onRoad(lair.getX() + dx, lair.getZ() + dz), g.id() + "'s lair " + (k + 1) + " reaches the road");
+						}
+					}
+				}
+				i++;
 			}
-			BlockPos lair = g.lairColumn();
-			assertEquals(lair.getX(), ShrineSites.LAIRS[i][0], g.id());
-			assertEquals(lair.getZ(), ShrineSites.LAIRS[i][1], g.id());
-			assertFalse(InfernoGeometry.onRoad(lair.getX(), lair.getZ() - 24), g.id() + "'s lair reaches the road");
-			i++;
 		}
 		assertEquals(ShrineSites.LAIRS.length, i);
 		for (ShrineSites.Site s : ShrineSites.all()) {

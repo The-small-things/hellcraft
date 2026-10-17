@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * Gluttony's rotting giants (L-III, the Mire): huge dead trees going soft in the endless rain, roots splayed into
@@ -28,6 +29,10 @@ public record RottingTreeFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		// not in a guardian's arena
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+			return false;
+		}
 		BlockState below = level.getBlockState(origin.below());
 		if (!below.isSolid() || !level.getFluidState(origin).isEmpty()) {
 			return false;

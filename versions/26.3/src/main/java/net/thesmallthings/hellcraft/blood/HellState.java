@@ -38,8 +38,10 @@ public class HellState extends SavedData {
 	public boolean spineBuilt;
 	/** The other three spines (north, south, west) have been laid too. */
 	public boolean spinesBuilt;
-	/** The circle guardians' lairs have been built. */
+	/** The circle guardians' first lairs have been built. */
 	public boolean lairsBuilt;
+	/** Their other lairs have been built too (worlds from before there were four each get them later). */
+	public boolean moreLairsBuilt;
 	/** The Mountain of Purgatory has been raised in its sea (its own dimension since Phase 7). */
 	public boolean purgatoryIsland;
 	/** The Great Forge of Dis has been carved into the Nether. */
@@ -264,6 +266,7 @@ public class HellState extends SavedData {
 		tag.putBoolean("spine", spineBuilt);
 		tag.putBoolean("spines", spinesBuilt);
 		tag.putBoolean("lairs", lairsBuilt);
+		tag.putBoolean("moreLairs", moreLairsBuilt);
 		tag.putBoolean("purgatoryIsland", purgatoryIsland);
 		tag.putBoolean("forge", forgeBuilt);
 		tag.putBoolean("paradisoRose", roseBuilt);
@@ -360,6 +363,7 @@ public class HellState extends SavedData {
 		state.spineBuilt = tag.getBooleanOr("spine", false);
 		state.spinesBuilt = tag.getBooleanOr("spines", false);
 		state.lairsBuilt = tag.getBooleanOr("lairs", false);
+		state.moreLairsBuilt = tag.getBooleanOr("moreLairs", false);
 		state.purgatoryIsland = tag.getBooleanOr("purgatoryIsland", false);
 		state.forgeBuilt = tag.getBooleanOr("forge", false);
 		state.roseBuilt = tag.getBooleanOr("paradisoRose", false);

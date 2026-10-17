@@ -77,16 +77,17 @@ public final class Ferries {
 		return ferry;
 	}
 
-	/** Phlegyas is beaten: his ferry waits by the landing. */
-	public static void dockAtLanding(ServerLevel level) {
-		double a = InfernoGeometry.ROAD_ANGLES[0];
-		double x = Fen.LANDING_X + 0.5 - Math.cos(a) * (Fen.LANDING + 4);
-		double z = Fen.LANDING_Z + 0.5 - Math.sin(a) * (Fen.LANDING + 4);
+	/** Phlegyas is beaten at landing k: his ferry waits by it. */
+	public static void dockAtLanding(ServerLevel level, int k) {
+		double a = InfernoGeometry.ROAD_ANGLES[k];
+		int[] c = Fen.landing(k);
+		double x = c[0] + 0.5 - Math.cos(a) * (Fen.LANDING + 4);
+		double z = c[1] + 0.5 - Math.sin(a) * (Fen.LANDING + 4);
 		Vec3 dock = new Vec3(x, water(), z);
-		if (ACTIVE[0] != null && !ACTIVE[0].isRemoved()) {
+		if (ACTIVE[k] != null && !ACTIVE[k].isRemoved()) {
 			return;
 		}
-		spawn(level, 0, dock, dock);
+		spawn(level, k, dock, dock);
 	}
 
 	@Nullable

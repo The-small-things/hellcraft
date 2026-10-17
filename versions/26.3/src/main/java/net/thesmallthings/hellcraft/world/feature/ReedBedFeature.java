@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * The Fen's reed beds (L-V): thick walls of reeds along every bank and tall grass on the islands, so the marsh is a
@@ -31,6 +32,10 @@ public record ReedBedFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		// not in a guardian's arena
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+			return false;
+		}
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		boolean placed = false;
 		for (int dx = -RADIUS; dx <= RADIUS; dx++) {

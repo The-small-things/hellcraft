@@ -112,6 +112,7 @@ public class MapTest implements FabricClientGameTest {
 			});
 			wingbeat(context, server, connection);
 			findingTheWay(context, server, connection);
+			arenaTeleport(context, server, connection);
 			dialogueBox(context, server);
 			nobleCastle(context, server, connection);
 			setPieces(context, server, connection);
@@ -200,8 +201,8 @@ public class MapTest implements FabricClientGameTest {
 						{"hands", "24"},
 				});
 		// his ferry waits at the landing: board it
-		int lx = Fen.LANDING_X;
-		int lz = Fen.LANDING_Z;
+		int lx = Fen.landing(0)[0];
+		int lz = Fen.landing(0)[1];
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d %d %d", lx - 40, lz - 40, lx + 40, lz + 40));
 		context.waitTicks(20);
 		boolean docked = server.computeOnServer(s -> !s.overworld().getEntities(HellEntities.FERRY, f -> true).isEmpty());
@@ -740,6 +741,33 @@ public class MapTest implements FabricClientGameTest {
 		server.runCommand("execute as Player0 run guide");
 		context.waitForScreen(JournalScreen.class);
 		context.setScreen(() -> null);
+	}
+
+	/**
+	 * /hellcraft arena takes you to the edge of a lair, facing in (screenshot arena_minos_3): Minos's third lair, with
+	 * its ring of soul-fire braziers.
+	 */
+	private static void arenaTeleport(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		server.runCommand("hellcraft arena minos 3 Player0");
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		double far = server.computeOnServer(s -> {
+			var p = s.getPlayerList().getPlayerByName("Player0");
+			var lair = Guardian.MINOS.lairColumn(2);
+			return Math.hypot(p.getX() - lair.getX() - 0.5, p.getZ() - lair.getZ() - 0.5);
+		});
+		if (far < 16 || far > 22) {
+			throw new AssertionError("/hellcraft arena set Player0 down " + far + " blocks from Minos's third lair");
+		}
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		context.takeScreenshot("arena_minos_3");
+		context.runOnClient(client -> client.gui.hud.toggle());
 	}
 
 	/**

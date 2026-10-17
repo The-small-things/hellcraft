@@ -87,7 +87,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   whose lair is the Primum Mobile's island. The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
   films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`, `style_panel`).
 - Phase 8 additions: `blood/Loadout` (`/hellcraft loadout [players] [kit]`: journey kits `upper`, `lower`, `lucifer`,
-  `paradiso` with about what a player has by then, for fair boss tests; `full`/`blood`, everything); the style
+  `paradiso` with about what a player has by then, hearts too, for fair boss tests; `full`/`blood`, everything);
+  `hazard/guardian/Arenas` (`/hellcraft arena <boss> [lair] [players]`, to the edge of any boss's arena); four lairs per
+  guardian of Hell (`InfernoGeometry.LAIRS_EACH`, `Guardian.lairColumn(k)`, one fight at a time in whichever is woken,
+  `GuardianManager.awakeIn`; Phlegyas has a landing by every watchtower, `Fen.landing(k)`; set-pieces keep out of
+  arenas with `InfernoGeometry.nearLair`); eight Rests per circle (`ShrineSites`: four between the roads, not in
+  Malebolge); the travel menu has pages; the style
   panel (`StyleMeter` sends `net/StylePayload`, client `StylePanel` draws it; games without the mod keep the boss bar);
   `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
   `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
@@ -171,8 +176,8 @@ Decided first (2026-10-12):
 **Phase 0 (foundations) is done** (2026-10-13): 26.3 stands alone, the client side and join check, real blood
 items, no resource-pack server, the animated test rig, client tests in CI. **Phase 1 (the new map) is built**
 (2026-10-14): the geometry and terrain at radius 3,500, the four Pilgrim Roads (`PilgrimRoadFeature`), a way down
-every 30 degrees on every cliff, 40 Rests beside the roads (a third of the way into each circle), the guardians' lairs (spread round the funnel since
-3.0's playtest: `InfernoGeometry.LAIRS`, each in its own circle, checked by `LairsTest`),
+every 30 degrees on every cliff, Rests beside the roads (a third of the way into each circle; four more between them since Phase 8), the guardians' lairs (spread round the funnel since
+3.0's playtest: `InfernoGeometry.LAIRS`, four per guardian since Phase 8, each in its own circle, checked by `LairsTest`),
 circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a fresh world. **Phase 2 (boss tech,
 proven on Minos) is built** (2026-10-14): the model pipeline (tools/art, tools/gen_bosses.py), Minos's real body
 and fight in the danger language, cutscenes (his entrance), the Codex, level lair arenas; the written guide book is
@@ -195,7 +200,7 @@ his back. **Phase 6 (the Nether) is built** (2026-10-16): the Forge of Dis
 (see the code map), Vulcan and the Cyclopes on real bodies. **Phase 7 (Purgatory and Paradiso) is built** (2026-10-16):
 Purgatory's own sea, Paradiso's nine stacked spheres with their columns of light and trials, the Seraph on a real body,
 the Rose on top, no strongholds, the story arc in the Journal. **Phase 8 (polish) is under way** (2026-10-17): the
-loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts, the relics as real items. Still to come: balance
+loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts, the relics as real items, journey kits, four lairs per guardian and eight Rests per circle, the arena teleport. Still to come: balance
 from the play session, boss music (none sent yet), then the stable 3.0.0 (only when asked). Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships

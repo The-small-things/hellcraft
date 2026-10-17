@@ -312,6 +312,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   lifts=$(rcon "hellcraft lifts test" || true)
   echo "$lifts"
   echo "$lifts" | grep -q "Lifts test OK" || { echo "A guardian's lift lands in the wrong place"; exit 1; }
+  # the arena teleport (an op command: no players here, so it can only fail to find one)
+  arena=$(rcon "hellcraft arena minos 2 @a" || true)
+  echo "$arena"
+  echo "$arena" | grep -qi "unknown or incomplete command\|incorrect argument" && { echo "/hellcraft arena is not registered"; exit 1; }
   # the testing loadout (an op command, for single player with cheats and servers alike)
   kit=$(rcon "hellcraft loadout nobody" || true)
   echo "$kit"
@@ -536,6 +540,10 @@ grep -i 'hellcraft\|inferno\|Gate of Hell\|Lucifer\|Reliquary\|Arena' "$LOG" || 
 fail=0
 grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is the overworld an Inferno world?)"; fail=1; }
 grep -qE 'Gate wall: [1-9][0-9]* blocks' "$LOG" || { echo "The Gate of Hell wall was not generated"; fail=1; }
+# every guardian of Hell has four lairs, each with its ring of braziers
+for g in minos cerberus plutus phlegyas furies farinata minotaur geryon; do
+  grep -q "Lair 4 of $g at" "$LOG" || { echo "$g's fourth lair was not built"; fail=1; }
+done
 for phase in INTRO DUEL ENRAGE_TRANSITION ENRAGED TRUE_FORM_TRANSITION TRUE_FORM DEFEAT DONE; do
   grep -qE "Lucifer phase: ${phase}(\s|\r|$)" "$LOG" || { echo "Lucifer never reached phase $phase"; fail=1; }
 done

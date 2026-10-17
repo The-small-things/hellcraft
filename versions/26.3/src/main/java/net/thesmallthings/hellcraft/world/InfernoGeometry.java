@@ -38,23 +38,32 @@ public final class InfernoGeometry {
 	/** The four Pilgrim Roads: east (the spawn's gate), south, west and north. */
 	public static final double[] ROAD_ANGLES = {0, Math.PI / 2, Math.PI, -Math.PI / 2};
 	/**
-	 * Where the guardians wait, in Guardian's order: distance from the centre, the angle round Hell (degrees from east,
-	 * south = 90), and how far to the side of that line (for the two by a road: Phlegyas at the east watchtower's
-	 * landing, the Furies inside the south gate of Dis). They are spread round the funnel, each well inside its own
-	 * circle, between the ways down.
+	 * Where the guardians wait, in Guardian's order: distance from the centre, the angle round Hell of the first lair
+	 * (degrees from east, south = 90), and how far to the side of that line (for the two by a road: Phlegyas at the
+	 * watchtowers' landings, the Furies inside the gates of Dis). Each guardian of Hell has {@link #LAIRS_EACH} lairs in
+	 * its circle, a quarter of the way round from each other (one in each quarter of Hell, so one is never far), well
+	 * inside the circle and between the ways down.
 	 */
 	private static final double[][] LAIR_PLACES = {
 			{2425, 45, 0}, {2100, 135, 0}, {1800, 225, 0}, {1605, 0, 40}, {1360, 90, 40}, {1260, 195, 0}, {970, 285, 0}, {870, 315, 0}};
-	/** The guardians' lairs (x, z); Guardian and ShrineSites follow them (unit tests check). */
+	/** How many lairs each guardian of Hell has. */
+	public static final int LAIRS_EACH = 4;
+	/**
+	 * Every lair (x, z): guardian i's lair k is {@code LAIRS[i * LAIRS_EACH + k]}, and lair 0 is its first (the one its
+	 * summon command and the tests use). Guardian and ShrineSites follow them (unit tests check).
+	 */
 	public static final int[][] LAIRS = lairs();
 
 	private static int[][] lairs() {
-		int[][] out = new int[LAIR_PLACES.length][];
-		for (int i = 0; i < out.length; i++) {
+		int[][] out = new int[LAIR_PLACES.length * LAIRS_EACH][];
+		for (int i = 0; i < LAIR_PLACES.length; i++) {
 			double r = LAIR_PLACES[i][0];
-			double a = Math.toRadians(LAIR_PLACES[i][1]);
 			double side = LAIR_PLACES[i][2];
-			out[i] = new int[]{(int) Math.round(Math.cos(a) * r - Math.sin(a) * side), (int) Math.round(Math.sin(a) * r + Math.cos(a) * side)};
+			for (int k = 0; k < LAIRS_EACH; k++) {
+				double a = Math.toRadians(LAIR_PLACES[i][1] + k * 360.0 / LAIRS_EACH);
+				out[i * LAIRS_EACH + k] = new int[]{(int) Math.round(Math.cos(a) * r - Math.sin(a) * side),
+						(int) Math.round(Math.sin(a) * r + Math.cos(a) * side)};
+			}
 		}
 		return out;
 	}
@@ -320,6 +329,21 @@ public final class InfernoGeometry {
 
 	public static double jaggedAmplitude(double x, double z) {
 		return roughness(x, z)[2];
+	}
+
+	/** How far set-pieces keep from a lair's centre (its arena is 24 across, its braziers 14 out, its sign 17). */
+	public static final double LAIR_CLEARANCE = 30.0;
+
+	/** True within {@code within} blocks of a lair's centre: set-pieces keep out of the arenas. */
+	public static boolean nearLair(double x, double z, double within) {
+		for (int[] lair : LAIRS) {
+			double dx = x - lair[0];
+			double dz = z - lair[1];
+			if (dx * dx + dz * dz < within * within) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** 1 on a lair's floor, fading to 0 around it: no spires or ridges where a guardian fights. */

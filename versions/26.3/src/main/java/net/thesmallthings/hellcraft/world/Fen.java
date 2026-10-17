@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 
 /**
  * Wrath's Fen of Styx (L-V): where its watchtowers stand and where its plank roads wind, shared by the worldgen
@@ -102,9 +103,15 @@ public final class Fen {
 
 	// ------------------------------------------------------------------ Phlegyas's landing
 
-	/** Phlegyas's landing: a ring of planks on the water round the deep pool he rises from (his lair, Guardian). */
-	public static final int LANDING_X = 1605;
-	public static final int LANDING_Z = 40;
+	/**
+	 * Phlegyas's landings, one beside each watchtower's road (k as the towers): a ring of planks on the water round the
+	 * deep pool he rises from (his lairs, Guardian), with a jetty out from the road.
+	 */
+	public static int[] landing(int k) {
+		BlockPos c = Guardian.PHLEGYAS.lairColumn(k);
+		return new int[]{c.getX(), c.getZ()};
+	}
+
 	public static final double POOL = 3.5;
 	public static final double LANDING = 21;
 
@@ -121,11 +128,30 @@ public final class Fen {
 	}
 
 	public static Landing landingAt(double x, double z) {
-		double d = Math.hypot(x - LANDING_X - 0.5, z - LANDING_Z - 0.5);
+		for (int k = 0; k < towers(); k++) {
+			Landing part = landingAt(k, x, z);
+			if (part != Landing.NONE) {
+				return part;
+			}
+		}
+		return Landing.NONE;
+	}
+
+	/** Which part of landing k this is: measured along its road (u) and out to the side, toward the landing (v). */
+	private static Landing landingAt(int k, double x, double z) {
+		int[] c = landing(k);
+		double a = InfernoGeometry.ROAD_ANGLES[k];
+		double rx = x - c[0] - 0.5;
+		double rz = z - c[1] - 0.5;
+		double u = rx * Math.cos(a) + rz * Math.sin(a);
+		double v = -rx * Math.sin(a) + rz * Math.cos(a);
+		double d = Math.hypot(rx, rz);
 		if (d < POOL) {
 			return Landing.POOL;
 		}
-		boolean jetty = Math.abs(x - LANDING_X - 0.5) <= 2 && z >= 3 && z < LANDING_Z;
+		// the jetty runs from beside the road (3 blocks off its middle) out to the deck
+		double side = -c[0] * Math.sin(a) + c[1] * Math.cos(a);
+		boolean jetty = Math.abs(u) <= 2 && v >= 3 - side - 0.5 && v < -0.5;
 		if (d < LANDING - 1) {
 			return Landing.DECK;
 		}

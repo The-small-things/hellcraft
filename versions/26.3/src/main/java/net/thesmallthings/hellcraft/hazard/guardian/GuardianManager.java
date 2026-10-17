@@ -126,18 +126,22 @@ public final class GuardianManager {
 			if (g.offMap() || FIGHTS.containsKey(g) || level.getGameTime() < state.guardianNext.getOrDefault(g.id(), 0L)) {
 				continue;
 			}
-			// Phlegyas also comes when the east watchtower's twin beacons are lit
+			// Phlegyas also comes to his first landing when the east watchtower's twin beacons are lit
 			if (g.wakesByBeacon() && Fen.beaconsLit(level, 0)) {
-				start(level, g, false);
+				start(level, g, 0, false);
 				continue;
 			}
-			for (ServerPlayer p : level.players()) {
-				BlockPos column = g.lairColumn();
-				double dx = p.getX() - (column.getX() + 0.5);
-				double dz = p.getZ() - (column.getZ() + 0.5);
-				if (!p.isSpectator() && !p.isCreative() && dx * dx + dz * dz < TRIGGER * TRIGGER) {
-					start(level, g, false);
-					break;
+			// it wakes in whichever of its lairs someone walks into (one fight at a time)
+			lairs:
+			for (int k = 0; k < g.lairs(); k++) {
+				BlockPos column = g.lairColumn(k);
+				for (ServerPlayer p : level.players()) {
+					double dx = p.getX() - (column.getX() + 0.5);
+					double dz = p.getZ() - (column.getZ() + 0.5);
+					if (!p.isSpectator() && !p.isCreative() && dx * dx + dz * dz < TRIGGER * TRIGGER) {
+						start(level, g, k, false);
+						break lairs;
+					}
 				}
 			}
 		}
@@ -148,7 +152,7 @@ public final class GuardianManager {
 			BlockPos c = GreatForge.center();
 			for (ServerPlayer p : nether.players()) {
 				if (!p.isSpectator() && !p.isCreative() && p.distanceToSqr(c.getX() + 0.5, c.getY(), c.getZ() + 0.5) < TRIGGER * TRIGGER) {
-					start(nether, Guardian.VULCAN, false);
+					start(nether, Guardian.VULCAN, 0, false);
 					break;
 				}
 			}
@@ -157,17 +161,18 @@ public final class GuardianManager {
 		ServerLevel paradiso = Paradiso.level(server);
 		if (paradiso != null && !FIGHTS.containsKey(Guardian.SERAPH)
 				&& paradiso.getGameTime() >= state.guardianNext.getOrDefault(Guardian.SERAPH.id(), 0L)) {
-			BlockPos c = lair(paradiso, Guardian.SERAPH);
+			BlockPos c = lair(paradiso, Guardian.SERAPH, 0);
 			for (ServerPlayer p : paradiso.players()) {
 				if (!p.isSpectator() && !p.isCreative() && p.distanceToSqr(c.getX() + 0.5, c.getY(), c.getZ() + 0.5) < TRIGGER * TRIGGER) {
-					start(paradiso, Guardian.SERAPH, false);
+					start(paradiso, Guardian.SERAPH, 0, false);
 					break;
 				}
 			}
 		}
 	}
 
-	private static BlockPos lair(ServerLevel level, Guardian g) {
+	/** Lair k's centre, on the ground (Vulcan's is the Great Forge, the Seraph's the Primum Mobile's island). */
+	public static BlockPos lair(ServerLevel level, Guardian g, int k) {
 		if (g.inNether()) {
 			return GreatForge.center();
 		}
@@ -175,20 +180,26 @@ public final class GuardianManager {
 			double[] c = ParadisoGeometry.centre(ParadisoGeometry.Sphere.PRIMUM_MOBILE);
 			return BlockPos.containing(c[0], ParadisoGeometry.topY(ParadisoGeometry.Sphere.PRIMUM_MOBILE) + 1, c[1]);
 		}
-		BlockPos column = g.lairColumn();
+		BlockPos column = g.lairColumn(k);
 		level.getChunk(column.getX() >> 4, column.getZ() >> 4);
 		return new BlockPos(column.getX(), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ()), column.getZ());
 	}
 
-	private static void start(ServerLevel level, Guardian g, boolean debug) {
-		GuardianFight fight = g.factory.apply(new GuardianContext(level, g, lair(level, g), debug));
+	private static void start(ServerLevel level, Guardian g, int k, boolean debug) {
+		GuardianFight fight = g.factory.apply(new GuardianContext(level, g, lair(level, g, k), k, debug));
 		FIGHTS.put(g, fight);
 		fight.start();
 	}
 
 	// ------------------------------------------------------------------ commands
 
+	/** Wakes a guardian in its first lair (for tests). */
 	public static String summon(MinecraftServer server, Guardian g) {
+		return summon(server, g, 0);
+	}
+
+	/** Wakes a guardian in lair k (the nearest to whoever asked, from the command). */
+	public static String summon(MinecraftServer server, Guardian g, int k) {
 		if (FIGHTS.containsKey(g)) {
 			return g.title + " is already awake.";
 		}
@@ -202,18 +213,25 @@ public final class GuardianManager {
 			if (level == null) {
 				return "This world has no Paradiso.";
 			}
-			BlockPos c = lair(level, g);
+			BlockPos c = lair(level, g, 0);
 			level.getChunk(c.getX() >> 4, c.getZ() >> 4);
 		} else if (!HellWorldgen.isInferno(level)) {
 			return "This world is not an Inferno world.";
 		}
-		start(level, g, true);
-		return g.title + " awakens at " + lair(level, g).toShortString() + ".";
+		int lair = g.offMap() ? 0 : Math.max(0, Math.min(g.lairs() - 1, k));
+		start(level, g, lair, true);
+		return g.title + " awakens at " + lair(level, g, lair).toShortString() + ".";
 	}
 
 	/** True while this guardian is awake. */
 	public static boolean awake(Guardian g) {
 		return FIGHTS.containsKey(g);
+	}
+
+	/** The lair this guardian is awake in, or -1. */
+	public static int awakeIn(Guardian g) {
+		GuardianFight f = FIGHTS.get(g);
+		return f == null ? -1 : f.lairIndex;
 	}
 
 	/** True while this guardian sleeps after being beaten (or is otherwise not ready to wake). */
@@ -254,43 +272,48 @@ public final class GuardianManager {
 
 	// ------------------------------------------------------------------ the lairs
 
-	/** A ring of soul-fire braziers, and a sign beside it, once per world. */
+	/** A ring of soul-fire braziers round each lair, and a sign beside it, once per world. */
 	private static void buildLairs(MinecraftServer server) {
 		ServerLevel level = server.overworld();
 		HellState state = HellState.get(server);
-		if (!HellWorldgen.isInferno(level) || state.lairsBuilt) {
+		if (!HellWorldgen.isInferno(level) || (state.lairsBuilt && state.moreLairsBuilt)) {
 			return;
 		}
 		for (Guardian g : Guardian.values()) {
-			if (g.offMap()) {
-				continue;
+			// (a world built when each guardian had one lair gets the others now)
+			for (int k = state.lairsBuilt ? 1 : 0; k < g.lairs(); k++) {
+				buildLair(level, g, k);
 			}
-			BlockPos c = lair(level, g);
-			for (int i = 0; i < 8; i++) {
-				double a = i * Math.PI / 4;
-				int x = c.getX() + (int) Math.round(Math.cos(a) * 14);
-				int z = c.getZ() + (int) Math.round(Math.sin(a) * 14);
-				level.getChunk(x >> 4, z >> 4);
-				int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-				level.setBlock(new BlockPos(x, y, z), Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
-				level.setBlock(new BlockPos(x, y + 1, z), Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
-				level.setBlock(new BlockPos(x, y + 2, z), Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true), 3);
-			}
-			// a sign just outside the ring, on the side facing out of Hell (the way most come from), facing out
-			double out = Math.atan2(c.getZ(), c.getX());
-			int sx = c.getX() + (int) Math.round(Math.cos(out) * 17);
-			int sz = c.getZ() + (int) Math.round(Math.sin(out) * 17);
-			level.getChunk(sx >> 4, sz >> 4);
-			int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
-			int facing = Math.floorMod((int) Math.round(Math.toDegrees(Math.atan2(-Math.cos(out), Math.sin(out))) / 22.5), 16);
-			Signs.place(level, new BlockPos(sx, sy, sz), facing, List.of(
-					Component.literal(g.title.toUpperCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.BOLD),
-					Component.literal(g.subtitle),
-					Component.literal("Step inside the"),
-					Component.literal("fire to wake it.")));
-			HellcraftMod.LOGGER.info("Lair of {} at {}", g.id(), c.toShortString());
 		}
 		state.lairsBuilt = true;
+		state.moreLairsBuilt = true;
 		state.setDirty();
+	}
+
+	private static void buildLair(ServerLevel level, Guardian g, int k) {
+		BlockPos c = lair(level, g, k);
+		for (int i = 0; i < 8; i++) {
+			double a = i * Math.PI / 4;
+			int x = c.getX() + (int) Math.round(Math.cos(a) * 14);
+			int z = c.getZ() + (int) Math.round(Math.sin(a) * 14);
+			level.getChunk(x >> 4, z >> 4);
+			int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+			level.setBlock(new BlockPos(x, y, z), Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
+			level.setBlock(new BlockPos(x, y + 1, z), Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
+			level.setBlock(new BlockPos(x, y + 2, z), Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true), 3);
+		}
+		// a sign just outside the ring, on the side facing out of Hell (the way most come from), facing out
+		double out = Math.atan2(c.getZ(), c.getX());
+		int sx = c.getX() + (int) Math.round(Math.cos(out) * 17);
+		int sz = c.getZ() + (int) Math.round(Math.sin(out) * 17);
+		level.getChunk(sx >> 4, sz >> 4);
+		int sy = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
+		int facing = Math.floorMod((int) Math.round(Math.toDegrees(Math.atan2(-Math.cos(out), Math.sin(out))) / 22.5), 16);
+		Signs.place(level, new BlockPos(sx, sy, sz), facing, List.of(
+				Component.literal(g.title.toUpperCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.BOLD),
+				Component.literal(g.subtitle),
+				Component.literal("Step inside the"),
+				Component.literal("fire to wake it.")));
+		HellcraftMod.LOGGER.info("Lair {} of {} at {}", k + 1, g.id(), c.toShortString());
 	}
 }

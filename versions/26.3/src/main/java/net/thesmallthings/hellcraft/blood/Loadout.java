@@ -28,7 +28,8 @@ import java.util.Locale;
  *     <li>{@code lucifer}, Cocytus, Lucifer and the Forge of Dis: enchanted diamond armour, the three hell weapons, a totem;</li>
  *     <li>{@code paradiso}, Purgatory and Paradiso (the Seraph): enchanted blood armour, more apples and pearls.</li>
  * </ul>
- * {@code full} (the default) and {@code blood} are everything at once, for trying things out rather than testing balance:
+ * A journey kit also sets your hearts to about what you'd have by then (10, 12, 15, 18), since bosses hit harder the
+ * more hearts you have. {@code full} (the default) and {@code blood} are everything at once, for trying things out rather than testing balance:
  * maxed netherite or blood armour, every weapon, 16 ender pearls and 16 enchanted golden apples, totems, potions, blocks.
  * Armour is put on where the slot is empty; the rest goes to the inventory.
  */
@@ -37,17 +38,20 @@ public final class Loadout {
 	}
 
 	public enum Kit {
-		UPPER("upper Hell (Minos to Phlegyas)"),
-		LOWER("lower Hell (the Furies to Geryon)"),
-		LUCIFER("Cocytus, Lucifer and the Forge of Dis"),
-		PARADISO("Purgatory and Paradiso (the Seraph)"),
-		FULL("everything, netherite"),
-		BLOOD("everything, blood armour");
+		UPPER("upper Hell (Minos to Phlegyas)", 10),
+		LOWER("lower Hell (the Furies to Geryon)", 12),
+		LUCIFER("Cocytus, Lucifer and the Forge of Dis", 15),
+		PARADISO("Purgatory and Paradiso (the Seraph)", 18),
+		FULL("everything, netherite", 0),
+		BLOOD("everything, blood armour", 0);
 
 		public final String title;
+		/** The hearts a journey kit sets (about what you'd have by then; never past your cap), or 0 to leave them. */
+		public final int hearts;
 
-		Kit(String title) {
+		Kit(String title, int hearts) {
 			this.title = title;
+			this.hearts = hearts;
 		}
 
 		public String id() {
@@ -94,6 +98,9 @@ public final class Loadout {
 		});
 		for (ItemStack stack : items) {
 			BloodItems.give(player, stack);
+		}
+		if (kit.hearts > 0) {
+			Hearts.set(player, kit.hearts);
 		}
 		player.setHealth(player.getMaxHealth());
 		player.getFoodData().setFoodLevel(20);

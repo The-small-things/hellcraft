@@ -387,9 +387,9 @@ final class PhlegyasFight extends GuardianFight {
 	/** The beacons go out; beaten, his ferry is left at the landing, free to carry pilgrims to Dis. */
 	@Override
 	protected void onEnd(boolean won) {
-		Fen.douse(level, 0);
+		Fen.douse(level, lairIndex);
 		if (won) {
-			Ferries.dockAtLanding(level);
+			Ferries.dockAtLanding(level, lairIndex);
 		}
 	}
 

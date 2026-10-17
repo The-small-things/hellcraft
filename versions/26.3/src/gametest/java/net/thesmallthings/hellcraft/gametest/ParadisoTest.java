@@ -187,17 +187,19 @@ public class ParadisoTest implements FabricClientGameTest {
 			throw new AssertionError("the loadout is wrong: " + kit);
 		}
 		server.runCommand("clear Player0");
-		// a journey kit: about what you'd have by upper Hell, not everything
-		server.runCommand("hellcraft loadout Player0 upper");
-		String upper = server.computeOnServer(s -> {
+		// a journey kit: about what you'd have by Lucifer, not everything, and the hearts to go with it
+		server.runCommand("hellcraft loadout Player0 lucifer");
+		String lucifer = server.computeOnServer(s -> {
 			var p = s.getPlayerList().getPlayerByName("Player0");
 			return p.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).getItem() + " "
 					+ p.getInventory().countItem(net.minecraft.world.item.Items.GOLDEN_APPLE) + " "
-					+ p.getInventory().countItem(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE);
+					+ p.getInventory().countItem(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE) + " "
+					+ net.thesmallthings.hellcraft.blood.Hearts.soul(p).hearts;
 		});
-		if (!upper.contains("iron_chestplate 2 0")) {
-			throw new AssertionError("the upper Hell kit is wrong: " + upper);
+		if (!lucifer.contains("diamond_chestplate 8 1 15")) {
+			throw new AssertionError("the Lucifer kit is wrong: " + lucifer);
 		}
+		server.runCommand("hellcraft sethearts Player0 10");
 		server.runCommand("clear Player0");
 	}
 

@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * Greed's giant scales (L-IV, the Counting House): a balance the height of a tower, its beam tipped forever toward
@@ -26,6 +27,10 @@ public record GiantScalesFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		// not in a guardian's arena
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+			return false;
+		}
 		if (!level.getBlockState(origin.below()).isSolid() || !level.getFluidState(origin).isEmpty()) {
 			return false;
 		}

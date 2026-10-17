@@ -85,14 +85,25 @@ public final class TravelMenu {
 		return Math.max(0, (READY.getOrDefault(player.getUUID(), 0L) - now + 19) / 20);
 	}
 
+	/** Places on a page (five rows); the sixth row turns the pages. */
+	private static final int PAGE = 45;
+	private static final int PREVIOUS = 45;
+	private static final int NEXT = 53;
+
 	public static void open(ServerPlayer player, ServerLevel level, BlockPos altar) {
+		open(player, level, altar, 0);
+	}
+
+	private static void open(ServerPlayer player, ServerLevel level, BlockPos altar, int page) {
 		HellState.Soul soul = Hearts.soul(player);
 		List<Destination> places = destinations(level.getServer(), soul);
-		SimpleContainer container = new SimpleContainer(27);
+		int pages = Math.max(1, (places.size() + PAGE - 1) / PAGE);
+		page = Math.max(0, Math.min(pages - 1, page));
+		SimpleContainer container = new SimpleContainer(54);
 		Map<Integer, Destination> slots = new HashMap<>();
 		long wait = cooldownLeft(player);
-		for (int i = 0; i < Math.min(27, places.size()); i++) {
-			Destination d = places.get(i);
+		for (int i = 0; i < PAGE && page * PAGE + i < places.size(); i++) {
+			Destination d = places.get(page * PAGE + i);
 			BlockPos p = d.altar().pos();
 			int dist = (int) Math.sqrt(p.distSqr(player.blockPosition()));
 			ItemStack icon = new ItemStack(d.id().equals("gate") ? Items.RESPAWN_ANCHOR : Items.LODESTONE);
@@ -104,12 +115,25 @@ public final class TravelMenu {
 			container.setItem(i, icon);
 			slots.put(i, d);
 		}
-		player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new Menu(id, inventory, container, level, altar.immutable(), slots),
-				Component.literal("Travel: places you have found")));
+		if (page > 0) {
+			container.setItem(PREVIOUS, pageButton("◀ Previous page"));
+		}
+		if (page < pages - 1) {
+			container.setItem(NEXT, pageButton("Next page ▶"));
+		}
+		int shown = page;
+		player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new Menu(id, inventory, container, level, altar.immutable(), slots, shown),
+				Component.literal(pages > 1 ? "Travel: places you have found (" + (page + 1) + "/" + pages + ")" : "Travel: places you have found")));
 		if (places.size() <= 1) {
 			player.sendSystemMessage(Component.literal("Find a Virgil's Rest (the safe camp where the ramp comes down into each circle) to unlock teleporting there from any Blood Altar.")
 					.withStyle(ChatFormatting.GRAY));
 		}
+	}
+
+	private static ItemStack pageButton(String text) {
+		ItemStack icon = new ItemStack(Items.ARROW);
+		icon.set(DataComponents.ITEM_NAME, Component.literal(text).withStyle(ChatFormatting.YELLOW));
+		return icon;
 	}
 
 	private static Component line(String text, ChatFormatting color) {
@@ -144,12 +168,14 @@ public final class TravelMenu {
 		private final ServerLevel level;
 		private final BlockPos altar;
 		private final Map<Integer, Destination> slots;
+		private final int page;
 
-		Menu(int id, Inventory inventory, SimpleContainer container, ServerLevel level, BlockPos altar, Map<Integer, Destination> slots) {
-			super(MenuType.GENERIC_9x3, id, inventory, container, 3);
+		Menu(int id, Inventory inventory, SimpleContainer container, ServerLevel level, BlockPos altar, Map<Integer, Destination> slots, int page) {
+			super(MenuType.GENERIC_9x6, id, inventory, container, 6);
 			this.level = level;
 			this.altar = altar;
 			this.slots = slots;
+			this.page = page;
 		}
 
 		@Override
@@ -157,6 +183,10 @@ public final class TravelMenu {
 			// undo whatever the client predicted: nothing here can be taken or moved
 			setCarried(ItemStack.EMPTY);
 			sendAllDataToRemote();
+			if ((slotId == PREVIOUS || slotId == NEXT) && player instanceof ServerPlayer sp && !getSlot(slotId).getItem().isEmpty()) {
+				open(sp, level, altar, page + (slotId == NEXT ? 1 : -1));
+				return;
+			}
 			Destination to = slots.get(slotId);
 			if (to == null || !(player instanceof ServerPlayer sp) || !BloodAltar.isAltar(level, altar)
 					|| sp.distanceToSqr(altar.getX() + 0.5, altar.getY() + 0.5, altar.getZ() + 0.5) > 64) {

@@ -21,6 +21,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * Gluttony's sunken feast tables (L-III, the Mire): long banquet tables sinking end-first into the mud, their
@@ -39,6 +40,10 @@ public record FeastTableFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		// not in a guardian's arena
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+			return false;
+		}
 		if (!level.getBlockState(origin.below()).isSolid() || !level.getFluidState(origin).isEmpty()) {
 			return false;
 		}

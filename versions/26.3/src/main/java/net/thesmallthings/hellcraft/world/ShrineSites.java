@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Where the Virgil's Rests stand: beside each Pilgrim Road, a third of the way into each circle (well inside it, so a
- * Rest is plainly of its circle and not of the cliff above), on the first dry ground from there, {@link #ROAD_OFFSET}
- * blocks to the road's side so they never block it; on alternate sides of the road from circle to circle. Pure geometry (no world access), so the list is the same on every server and can be worked out offline.
+ * Where the Virgil's Rests stand, eight in each circle: beside each Pilgrim Road, a third of the way into each circle
+ * (well inside it, so a Rest is plainly of its circle and not of the cliff above), on the first dry ground from there,
+ * {@link #ROAD_OFFSET} blocks to the road's side so they never block it, on alternate sides of the road from circle to
+ * circle; and between the roads, at the foot of the way down a twelfth of the way round from each road (not in
+ * Malebolge, whose other bridges have Fraud's fake Rests: there only the road Rests are real). Pure geometry
+ * (no world access), so the list is the same on every server and can be worked out offline.
  */
 public final class ShrineSites {
 	private ShrineSites() {
@@ -42,10 +45,14 @@ public final class ShrineSites {
 	public static final int ROAD_OFFSET = 10;
 	/** Rests keep this far from a guardian's lair (they slide inward along the road). */
 	private static final double LAIR_CLEARANCE = 56.0;
-	/** The guardians' lairs beside the east road (x, z). */
+	/** All the guardians' lairs (x, z). */
 	static final int[][] LAIRS = InfernoGeometry.LAIRS;
 	/** The four roads, in the order of ROAD_ANGLES. */
 	private static final String[] ROADS = {"east", "south", "west", "north"};
+	/** The Rests between the roads, a twelfth of the way round from each road (on a way down), named by their quarter. */
+	private static final String[] BETWEEN = {"southeast", "southwest", "northwest", "northeast"};
+	/** How far round from its road a Rest between the roads stands: the next way down. */
+	private static final double BETWEEN_ANGLE = InfernoGeometry.WAY_DOWN_STEP;
 
 	private static List<Site> sites;
 
@@ -65,10 +72,15 @@ public final class ShrineSites {
 			double from = outer - Math.max(10, (outer - inner) / 3);
 			// to the left of the road walking in, in every other circle to the right
 			double side = n % 2 == 0 ? ROAD_OFFSET : -ROAD_OFFSET;
-			for (int k = 0; k < InfernoGeometry.ROAD_ANGLES.length; k++) {
-				double a = InfernoGeometry.ROAD_ANGLES[k];
-				double sideX = Math.sin(a) * side;
-				double sideZ = -Math.cos(a) * side;
+			for (int j = 0; j < InfernoGeometry.ROAD_ANGLES.length * 2; j++) {
+				int k = j % InfernoGeometry.ROAD_ANGLES.length;
+				boolean road = j < InfernoGeometry.ROAD_ANGLES.length;
+				if (!road && e.into == Zone.MALEBOLGE) {
+					continue;
+				}
+				double a = InfernoGeometry.ROAD_ANGLES[k] + (road ? 0 : BETWEEN_ANGLE);
+				double sideX = road ? Math.sin(a) * side : 0;
+				double sideZ = road ? -Math.cos(a) * side : 0;
 				int[] spot = null;
 				// walk in from a third of the way into the circle to the first dry ground, clear of the lairs
 				for (double r = from; r > inner + 12; r -= 3) {
@@ -84,7 +96,7 @@ public final class ShrineSites {
 					double r = from;
 					spot = new int[]{(int) Math.round(Math.cos(a) * r + sideX), (int) Math.round(Math.sin(a) * r + sideZ)};
 				}
-				String id = e.into.name().toLowerCase(Locale.ROOT) + "_" + ROADS[k];
+				String id = e.into.name().toLowerCase(Locale.ROOT) + "_" + (road ? ROADS[k] : BETWEEN[k]);
 				out.add(new Site(id, e.into, e.title, e.tier, spot[0], spot[1], dry));
 			}
 		}

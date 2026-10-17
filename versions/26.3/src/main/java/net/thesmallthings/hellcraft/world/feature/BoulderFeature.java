@@ -8,6 +8,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /** A rough half-buried boulder of any block (the "great weights" of Greed, ice in Cocytus, ...). */
 public record BoulderFeature(BlockState state) implements Feature {
@@ -22,6 +23,10 @@ public record BoulderFeature(BlockState state) implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		// not in a guardian's arena
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+			return false;
+		}
 		BlockPos center = origin.below(1);
 		if (!level.getBlockState(center.below()).isSolid()) {
 			return false;

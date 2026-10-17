@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * A forgotten blood altar: a respawn anchor on crying obsidian (see {@link BloodAltar}) inside a
@@ -32,6 +33,10 @@ public record AltarRuinFeature() implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+		// not in a guardian's arena
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+			return false;
+		}
 		if (!level.getBlockState(origin.below()).isSolid()) {
 			return false;
 		}

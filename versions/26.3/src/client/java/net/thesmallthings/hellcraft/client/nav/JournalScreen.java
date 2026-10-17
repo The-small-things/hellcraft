@@ -283,7 +283,8 @@ public class JournalScreen extends Screen {
 		}
 
 		wrap(out, "GUARDIANS", HEADING);
-		wrap(out, "Each waits in a lair beside the east road. None of them blocks the way down.", DIM);
+		wrap(out, "Each has four lairs in its circle, one in each quarter of Hell: fight it in whichever is nearest (the Map of Hell shows "
+				+ "them). None of them blocks the way down.", DIM);
 		for (Guardian guardian : Guardian.values()) {
 			boolean beaten = ClientNav.beaten(guardian.id());
 			wrap(out, (beaten ? "✔ " : "· ") + guardian.title + ", " + guardian.subtitle + (beaten ? ": beaten" : ""), beaten ? DIM : TEXT);

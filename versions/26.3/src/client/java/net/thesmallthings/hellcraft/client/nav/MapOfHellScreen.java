@@ -190,9 +190,12 @@ public class MapOfHellScreen extends Screen {
 				continue;
 			}
 			boolean beaten = ClientNav.beaten(guardian.id());
-			out.add(new Marker(sx(guardian.lairColumn().getX() + 0.5), sy(guardian.lairColumn().getZ() + 0.5), Shape.LAIR, beaten, List.of(
-					Component.literal(guardian.title + ", " + guardian.subtitle).withStyle(guardian.color),
-					Component.literal(beaten ? "Beaten." : "A guardian's lair, beside the east road. Optional: the road goes on past it.").withColor(DIM))));
+			for (int k = 0; k < guardian.lairs(); k++) {
+				out.add(new Marker(sx(guardian.lairColumn(k).getX() + 0.5), sy(guardian.lairColumn(k).getZ() + 0.5), Shape.LAIR, beaten, List.of(
+						Component.literal(guardian.title + ", " + guardian.subtitle).withStyle(guardian.color),
+						Component.literal(beaten ? "Beaten." : "One of its " + guardian.lairs() + " lairs: fight it in any of them. Optional: the way down "
+								+ "doesn't need it.").withColor(DIM))));
+			}
 		}
 		if (here) {
 			out.add(new Marker(sx(player.getX()), sy(player.getZ()), Shape.NONE, false, List.of(Component.literal("You"),
