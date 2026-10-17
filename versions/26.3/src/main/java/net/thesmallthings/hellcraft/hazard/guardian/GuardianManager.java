@@ -311,7 +311,8 @@ public final class GuardianManager {
 		int facing = Math.floorMod((int) Math.round(Math.toDegrees(Math.atan2(-Math.cos(out), Math.sin(out))) / 22.5), 16);
 		Signs.place(level, new BlockPos(sx, sy, sz), facing, List.of(
 				Component.literal(g.title.toUpperCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.BOLD),
-				Component.literal(g.subtitle),
+				// (the subtitle is too long for a sign: the Map of Hell and the Codex give it)
+				Component.literal("Lair " + (k + 1) + " of " + g.lairs()),
 				Component.literal("Step inside the"),
 				Component.literal("fire to wake it.")));
 		HellcraftMod.LOGGER.info("Lair {} of {} at {}", k + 1, g.id(), c.toShortString());
