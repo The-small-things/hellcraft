@@ -254,6 +254,8 @@ Five enchantments that no enchanting table, librarian or ordinary chest gives: e
 
 Eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each well inside its own circle and spread round the funnel (3.0: they no longer stand in a line by the east road; the Map of Hell (M) shows where), each with a sign by its ring. None of them blocks the way down. Each lair's floor is level ground (3.0), so its fight can be read. Walk into a lair and its guardian wakes (Phlegyas also comes when you light the east watchtower's beacons). It gets a title card, a boss bar and its own model, and each extra player in the lair gives it +50% health. Every attack is telegraphed, and the action bar tells you how to dodge it:
 
+**Lifts and lore (Phase 8).** Beat a guardian and its lair keeps a lift for you (REVAMP Q2): a column of soul fire in the middle of the lair. Stand in it for 3 seconds and it takes you down to the next circle: Minos's to Gluttony, Cerberus's to Greed, Plutus's to the Styx (onto the nearest road's causeway), Farinata's to the Wood of the Suicides, the Minotaur's to the Burning Sands. Only those who have beaten that guardian can use it; the roads and ramps stay open for everyone. Phlegyas's ferry, Geryon's flight and Antaeus's hand are the other rides. And every guardian says something about Lucifer as it falls: the Journal's Codex has a page on **the Emperor** that fills in, one piece per guardian you beat.
+
 | Guardian | Lair | Attacks |
 |---|---|---|
 | **Minos**, Judge of the Damned (3.0: a real, animated body) | Lust, to the south-east | *The Claw* (white): a claw from on high; block it with a shield as it lands and he staggers, armour gone, for two seconds. *Tail of Judgement* (purple): his tail sweeps the ground in a full circle (jump it as it passes). *Sentence* (red): a red circle follows one player, stops, then the hurricane tears up the ground there (keep moving). *Coil* (a red line): his tail lunges along the line and squeezes whoever is still in it, until the others deal him 15 damage. At half health he rears up in fury: every player is sentenced at once and he attacks faster. |
@@ -297,7 +299,7 @@ Marks are drawn block by block on the ground, fill from the middle out, and the 
 - **You can only hurt a guardian from inside its lair.** Damage from outside the brazier ring does nothing.
 - **No building in a lair while its guardian is awake,** and anyone standing more than 6 blocks above the guardian for 3 seconds is dragged down beside it.
 
-**Spoils are personal, and they pay for style, not play time.** In every boss fight (the guardians, Vulcan and Lucifer) each player has a **STYLE** meter in their own boss bar, ranked like ULTRAKILL's:
+**Spoils are personal, and they pay for style, not play time.** In every boss fight (the guardians, Vulcan, the Seraph and Lucifer) each player has a **STYLE** panel on the right of the screen (since Phase 8): the rank as a big letter, a meter to the next rank, and a feed of what just scored or cost ("+ PARRY", "- HIT"). Ranked like ULTRAKILL's:
 
 | Rank | Name | Style needed | Blood Fragments for the win |
 |---|---|---|---|
@@ -617,6 +619,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
 | `/hellcraft cyclops summon\|attack <smash\|boulder\|quake>` | op | Test a Cyclops where you stand (3.0) |
 | `/hellcraft forge test` | op | Check the Forge of Dis's layout (3.0) |
+| `/hellcraft lifts test` | op | Check that every guardian's lift lands in the next circle, on dry ground |
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |

@@ -187,6 +187,9 @@ public final class HellCommands {
 											ctx.getSource().sendSuccess(() -> Component.literal("Gave a " + item + " to " + p.getGameProfile().name()), true);
 											return 1;
 										}))))
+				.then(Commands.literal("lifts")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
+								net.thesmallthings.hellcraft.hazard.guardian.LairLifts.selfTest()))))
 				.then(Commands.literal("loadout")
 						.executes(ctx -> loadout(ctx.getSource(), List.of(ctx.getSource().getPlayerOrException()), Loadout.Armour.NETHERITE))
 						.then(Commands.argument("players", EntityArgument.players())

@@ -508,6 +508,7 @@ public abstract class GuardianFight {
 			HellState.get(level.getServer()).setDirty();
 			Journey.award(p, "journey/guardian_" + kind.id());
 			onVictor(p);
+			LairLifts.announce(p, kind);
 			if (rumour != null) {
 				MapSync.unlockCodex(p, "emperor");
 				MapSync.send(p);

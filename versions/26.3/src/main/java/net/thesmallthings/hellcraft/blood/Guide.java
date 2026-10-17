@@ -149,7 +149,10 @@ public final class Guide {
 				"Minos (Lust, south-east), Cerberus (Gluttony, south-west), Plutus (Greed, north-west), Phlegyas (the Fen, by the east tower)",
 				"The Furies (inside the south gate of Dis), Farinata (Heresy, west)",
 				"The Minotaur (the Wood of Suicides, north), Geryon (the edge of the great cliff, north-east)",
-				"None blocks the way down. First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books."));
+				"None blocks the way down. First win against each: " + c.guardianHearts + " Blood Hearts, a Soul Anchor and enchanted books.",
+				"Beat one and its lair keeps a lift for you: stand in the soul fire in the middle for 3 seconds to go down to the next circle "
+						+ "(Minos, Cerberus, Plutus, Farinata and the Minotaur).",
+				"Each guardian says something about Lucifer as it falls: the Codex's page on the Emperor fills in."));
 		pages.add(page("THE CIRCLES' ENCHANTMENTS",
 				"Five enchantments only Hell gives, each found as a book in one circle. Put them on at an anvil.",
 				"Windstep (boots, faster walking): the lovers of Lust drop it.",
@@ -165,7 +168,7 @@ public final class Guide {
 				"",
 				"Don't sneak while riding: you'd let go."));
 		pages.add(page("STYLE",
-				"Bosses rank your STYLE: D C B A S SS SSS.",
+				"Bosses rank your STYLE: D C B A S SS SSS, shown on the right of the screen during the fight.",
 				"Hits fill the bar. Swap weapons: one used again and again goes stale. Crits, smashes, parries score extra.",
 				"Getting hit or holding back drains it.",
 				"Spoils follow your average rank. First S and first SSS on a boss: a Blood Heart each."));

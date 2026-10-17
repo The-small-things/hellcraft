@@ -308,6 +308,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$angels"
   echo "$angels" | grep -qE "[1-9][0-9]* angels descend" || { echo "No angels came"; exit 1; }
   rcon "execute in hellcraft:paradiso run kill @e[tag=hellcraft_angel]" > /dev/null || true
+  # the guardians' lifts down to the next circle (REVAMP Q2)
+  lifts=$(rcon "hellcraft lifts test" || true)
+  echo "$lifts"
+  echo "$lifts" | grep -q "Lifts test OK" || { echo "A guardian's lift lands in the wrong place"; exit 1; }
   # the testing loadout (an op command, for single player with cheats and servers alike)
   kit=$(rcon "hellcraft loadout nobody" || true)
   echo "$kit"
