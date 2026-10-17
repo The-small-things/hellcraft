@@ -296,6 +296,8 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   rcon "kill @e[type=minecraft:item]" > /dev/null || true
   # Purgatory and Paradiso (Phase 7): their own dimensions; the Ascent on Purgatory's summit, every sphere's island,
   # the gates and Beatrice's bell; the angels; the relics
+  rcon "execute in hellcraft:purgatory run forceload add 0 0 0 8" > /dev/null
+  sleep 2
   gate=$(rcon "execute in hellcraft:purgatory if block 0 131 8 minecraft:end_gateway" || true)
   echo "The Ascent: $gate"
   echo "$gate" | grep -q "Test passed" || { echo "The Ascent is not on Purgatory's summit"; exit 1; }
@@ -504,6 +506,8 @@ rcon "forceload add -16 0" > /dev/null
 burrow=$(rcon "execute if block -16 $floor 0 minecraft:end_gateway" || true)
 echo "Burrow in the pit: $burrow"
 echo "$burrow" | grep -q "Test passed" || { echo "No burrow opened behind Lucifer"; exit 1; }
+rcon "execute in hellcraft:purgatory run forceload add 0 0" > /dev/null
+sleep 2
 summit=$(rcon "execute in hellcraft:purgatory if block 0 131 0 minecraft:end_gateway" || true)
 echo "Gate of Return on the summit: $summit"
 echo "$summit" | grep -q "Test passed" || { echo "The Mountain of Purgatory has no Gate of Return"; exit 1; }
