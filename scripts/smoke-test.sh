@@ -187,10 +187,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$guide"
   echo "$guide" | grep -qi "unknown or incomplete command" && { echo "/guide is not registered"; exit 1; }
 
-  # Virgil's Rests: build Limbo's four (one beside each road), then check the altar, the safe ring and every new loot table
+  # Virgil's Rests: build Limbo's eight (one beside each road, four between), then check the altar, the safe ring and every new loot table
   rests=$(rcon "hellcraft shrine build limbo")
   echo "$rests"
-  echo "$rests" | grep -q "Built 4 Virgil's Rest" || { echo "Limbo's Virgil's Rests were not built"; exit 1; }
+  echo "$rests" | grep -q "Built 8 Virgil's Rest" || { echo "Limbo's Virgil's Rests were not built"; exit 1; }
   read -r _ _ rx ry rz <<< "$(echo "$rests" | grep -oE 'limbo_east at -?[0-9]+ -?[0-9]+ -?[0-9]+')"
   rcon "forceload add $rx $rz" > /dev/null
   altar=$(rcon "execute if block $rx $ry $rz minecraft:respawn_anchor" || true)
