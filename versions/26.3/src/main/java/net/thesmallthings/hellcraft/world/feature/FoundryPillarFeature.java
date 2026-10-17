@@ -6,7 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -16,13 +15,16 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /**
  * The Foundry Halls' pillars (Phase 6): square columns of blackstone brick from floor to roof, a gilded band round
- * the middle, arms near the top with lanterns hung on chains, a ladder up one face to a ledge on the arms, and at the
- * foot of some a smith's corner (a blast furnace, an anvil and a lava cauldron). One to a cell of the grid.
+ * the middle, arms near the top with lanterns hung on chains, a chain-lift up the south face to the top of the south
+ * arm (ForgeOfDis.chainLifts: stand by the chain to rise, sneak to come down), and at the foot of some a smith's corner
+ * (a blast furnace, an anvil and a lava cauldron). One to a cell of the grid.
  */
 public record FoundryPillarFeature() implements Feature {
 	public static final FoundryPillarFeature INSTANCE = new FoundryPillarFeature();
 	public static final MapCodec<FoundryPillarFeature> CODEC = MapCodec.unit(INSTANCE);
 	public static final int CELL = 30;
+	/** The chain-lift's column is this far east of the pillar's middle, on its south face (z + 3); its chain is beside it. */
+	public static final int LIFT_DX = 1;
 
 	@Override
 	public MapCodec<FoundryPillarFeature> codec() {
@@ -114,10 +116,12 @@ public record FoundryPillarFeature() implements Feature {
 			}
 			level.setBlock(pos.set(ex, arm - hang - 1, ez), lantern, 2);
 		}
-		// a ladder up the south face to the arms
-		for (int y = floor; y < arm; y++) {
-			level.setBlock(pos.set(x, y, z + 3), Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH), 2);
+		// the chain-lift up the south face: a chain from the floor to the arm, beside the column you ride (LIFT_DX), and a
+		// plate at its foot to show where to stand
+		for (int y = floor; y <= arm; y++) {
+			level.setBlock(pos.set(x + LIFT_DX + 1, y, z + 3), Blocks.IRON_CHAIN.defaultBlockState(), 2);
 		}
+		level.setBlock(pos.set(x + LIFT_DX, floor, z + 3), Blocks.POLISHED_BLACKSTONE_PRESSURE_PLATE.defaultBlockState(), 2);
 		// a smith's corner at the foot of some
 		if (roll > 0.6) {
 			level.setBlock(pos.set(x + 4, floor, z - 1), Blocks.BLAST_FURNACE.defaultBlockState(), 2);

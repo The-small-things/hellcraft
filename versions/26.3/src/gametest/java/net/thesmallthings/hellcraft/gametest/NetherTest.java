@@ -89,9 +89,58 @@ public class NetherTest implements FabricClientGameTest {
 			connection.waitForChunksRender();
 			context.waitTicks(10);
 			context.takeScreenshot("forge_heat_column");
+			chainLift(context, server, connection);
 			vulcanFight(context, server, connection);
 			cyclopsCamp(context, server, connection);
 		}
+	}
+
+	/**
+	 * A Foundry Halls chain-lift (screenshots forge_chain_lift_*): a player stands on the plate by a pillar's chain, rises
+	 * to the top and steps off onto the arm.
+	 */
+	private static void chainLift(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		for (int i = -4; i <= 4; i++) {
+			for (int j = -10; j <= -6; j++) {
+				int[] site = net.thesmallthings.hellcraft.world.feature.FoundryPillarFeature.site(i, j);
+				if (site == null) {
+					continue;
+				}
+				int px = site[0] + net.thesmallthings.hellcraft.world.feature.FoundryPillarFeature.LIFT_DX;
+				int pz = site[1] + 3;
+				server.runCommand(String.format(Locale.ROOT, "execute in minecraft:the_nether run tp Player0 %d 90 %d", px, pz + 12));
+				context.waitTicks(30);
+				connection.waitForChunksRender();
+				int plate = server.computeOnServer(s -> {
+					ServerLevel nether = s.getLevel(Level.NETHER);
+					for (int y = 110; y > ForgeGeometry.LAVA; y--) {
+						if (nether.getBlockState(new BlockPos(px, y, pz)).is(net.minecraft.world.level.block.Blocks.POLISHED_BLACKSTONE_PRESSURE_PLATE)) {
+							return y;
+						}
+					}
+					return Integer.MIN_VALUE;
+				});
+				if (plate == Integer.MIN_VALUE) {
+					continue;
+				}
+				server.runCommand("gamemode survival Player0");
+				server.runCommand("effect give Player0 minecraft:resistance 60 4 true");
+				server.runCommand(String.format(Locale.ROOT, "execute in minecraft:the_nether run tp Player0 %.1f %d %.1f facing %.1f %d %.1f",
+						px + 0.5, plate, pz + 0.5, px + 0.5, plate + 4, pz + 8.0));
+				context.waitTicks(30);
+				context.takeScreenshot("forge_chain_lift_rising");
+				context.waitTicks(120);
+				double y = server.computeOnServer(s -> s.getPlayerList().getPlayerByName("Player0").getY());
+				context.takeScreenshot("forge_chain_lift_top");
+				server.runCommand("effect clear Player0");
+				server.runCommand("gamemode spectator Player0");
+				if (y < plate + 8) {
+					throw new AssertionError("the chain-lift didn't carry the player up: from " + plate + " to " + y);
+				}
+				return;
+			}
+		}
+		throw new AssertionError("no chain-lift found in the Foundry Halls");
 	}
 
 	/**

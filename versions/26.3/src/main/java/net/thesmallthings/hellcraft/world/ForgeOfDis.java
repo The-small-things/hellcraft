@@ -3,9 +3,12 @@ package net.thesmallthings.hellcraft.world;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.block.HellBlocks;
+import net.thesmallthings.hellcraft.world.feature.FoundryPillarFeature;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,8 @@ public final class ForgeOfDis {
 					+ "Fragments). Vulcan wakes when you go in.",
 			"The Slag Sea: molten slag round the Great Forge. Cross on its crust (the causeways run straight to the Forge's stairs) "
 					+ "and keep moving: it cracks under you.",
-			"The Foundry Halls: tall halls cut by rivers of lava. The pillars have ladders up to their arms, if you want to look around.",
+			"The Foundry Halls: tall halls cut by rivers of lava. The pillars have chain-lifts up to their arms: stand on the plate by the "
+					+ "chain to rise, and sneak to come down.",
 			"The Chainlands: islands of rock hung on chains over the lava. Cross on the bridges; it's a long way down.",
 			"The Ash Wastes: dunes of ash under a low roof. Piglins trade here, and there are bastions and fortresses (blaze rods "
 					+ "for brewing).",
@@ -45,6 +49,59 @@ public final class ForgeOfDis {
 				net.thesmallthings.hellcraft.hazard.CircleHazards.hintOnce(p, 45 + region.ordinal(), TIPS[region.ordinal()]);
 			}
 		}
+	}
+
+	/**
+	 * Every tick: the Foundry Halls' chain-lifts. Whoever stands in a lift's column (by the chain on a pillar's south face,
+	 * FoundryPillarFeature) rises while the chain runs beside them, and steps off onto the top of the arm where it ends;
+	 * sneaking lets them float back down.
+	 */
+	public static void chainLifts(MinecraftServer server) {
+		ServerLevel nether = server.getLevel(Level.NETHER);
+		if (nether == null || nether.players().isEmpty() || !HellWorldgen.isInferno(server.overworld())) {
+			return;
+		}
+		for (net.minecraft.server.level.ServerPlayer p : nether.players()) {
+			if (p.isSpectator()) {
+				continue;
+			}
+			int[] pillar = liftAt(p.getX(), p.getZ());
+			if (pillar == null) {
+				continue;
+			}
+			int chainX = pillar[0] + FoundryPillarFeature.LIFT_DX + 1;
+			int chainZ = pillar[1] + 3;
+			int feet = (int) Math.floor(p.getY());
+			if (p.isShiftKeyDown()) {
+				p.removeEffect(MobEffects.LEVITATION);
+				p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 20, 0, true, false, false));
+			} else if (nether.getBlockState(new BlockPos(chainX, feet, chainZ)).is(Blocks.IRON_CHAIN)) {
+				p.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 5, 5, true, false, false));
+				p.resetFallDistance();
+			} else if (nether.getBlockState(new BlockPos(chainX, feet - 1, chainZ)).is(Blocks.IRON_CHAIN)
+					&& nether.getBlockState(new BlockPos(pillar[0], feet - 1, pillar[1] + 3)).isSolid()) {
+				// the top: step off onto the south arm
+				p.removeEffect(MobEffects.LEVITATION);
+				p.teleportTo(nether, pillar[0] + 0.5, feet, pillar[1] + 3.5, java.util.Set.of(), p.getYRot(), p.getXRot(), true);
+				p.resetFallDistance();
+			}
+		}
+	}
+
+	/** The pillar {x, z} whose lift column a position stands in, or null. */
+	@org.jetbrains.annotations.Nullable
+	static int[] liftAt(double x, double z) {
+		int ci = (int) Math.floor(x / FoundryPillarFeature.CELL);
+		int cj = (int) Math.floor(z / FoundryPillarFeature.CELL);
+		for (int i = ci - 1; i <= ci; i++) {
+			for (int j = cj - 1; j <= cj; j++) {
+				int[] site = FoundryPillarFeature.site(i, j);
+				if (site != null && Math.abs(x - (site[0] + FoundryPillarFeature.LIFT_DX + 0.5)) < 0.65 && Math.abs(z - (site[1] + 3.5)) < 0.65) {
+					return site;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

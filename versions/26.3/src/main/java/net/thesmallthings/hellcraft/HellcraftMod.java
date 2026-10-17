@@ -144,6 +144,7 @@ public class HellcraftMod implements ModInitializer {
 			net.thesmallthings.hellcraft.world.ParadisoTrials.tick(server);
 			GreatForge.tick(server);
 			net.thesmallthings.hellcraft.world.ForgeOfDis.tick(server);
+			net.thesmallthings.hellcraft.world.ForgeOfDis.chainLifts(server);
 			Relics.tick(server);
 			Ambience.tick(server);
 			GhostPowers.tick(server);

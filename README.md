@@ -427,7 +427,7 @@ Testing it: `/hellcraft lucifer summon` skips the ready check and starts the fig
 |---|---|---|
 | **The Great Forge** | the middle | A flat-topped mesa in a vast dome, with Vulcan's hall on it. Four stairways come down its sides. |
 | **The Slag Sea** | round the mesa | Molten slag with a cooling crust floating on it. Four causeways of crust run straight to the Forge's stairs, a ring joins them half way out, and floes drift between. |
-| **The Foundry Halls** | north | Tall halls cut by rivers of lava, with great blackstone pillars. Ladders climb to lanterns on the pillars' arms; some pillars have a smith's corner at the foot. |
+| **The Foundry Halls** | north | Tall halls cut by rivers of lava, with great blackstone pillars. **Chain-lifts** (Phase 8) climb the pillars: stand on the pressure plate by a pillar's chain and you rise to the top of its arm; sneak to float back down. Some pillars have a smith's corner at the foot. |
 | **The Chainlands** | east | An abyss over the lava sea. Islands of rock hang from the roof on giant chains, joined by sagging bridges, and bridges run out to the land at the edges. Nether fortresses span it. |
 | **The Ash Wastes** | south | Dunes of ash under a low roof. Piglins, bastions and fortresses. |
 | **The Cyclops Quarries** | west | Terraces cut seven blocks deep in banded rock, with ramps winding up them and pits sunk into lava pools. The Cyclopes keep camps here. |
