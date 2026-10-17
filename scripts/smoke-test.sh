@@ -308,6 +308,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$angels"
   echo "$angels" | grep -qE "[1-9][0-9]* angels descend" || { echo "No angels came"; exit 1; }
   rcon "execute in hellcraft:paradiso run kill @e[tag=hellcraft_angel]" > /dev/null || true
+  # the testing loadout (an op command, for single player with cheats and servers alike)
+  kit=$(rcon "hellcraft loadout nobody" || true)
+  echo "$kit"
+  echo "$kit" | grep -qi "unknown or incomplete command" && { echo "/hellcraft loadout is not registered"; exit 1; }
   for r in halo seraph_wings beatrices_rose; do
     out=$(rcon "hellcraft giveitem nobody $r" || true)
     echo "$out" | grep -qi "unknown item" && { echo "Relic $r is unknown"; exit 1; }

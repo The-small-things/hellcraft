@@ -181,6 +181,24 @@ public class JournalScreen extends Screen {
 		for (String line : entry.who()) {
 			wrap(out, line, TEXT);
 		}
+		if (entry == Codex.EMPEROR || entry.id().equals(Codex.EMPEROR.id())) {
+			// the Emperor's page fills in, one piece for each guardian beaten (L1)
+			int known = 0;
+			for (Codex.Rumour r : Codex.RUMOURS) {
+				out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+				if (ClientNav.beaten(r.guardian())) {
+					wrap(out, r.piece(), TEXT);
+					known++;
+				} else {
+					wrap(out, "· Beat " + guardianTitle(r.guardian()) + " to learn what they know of him.", DIM);
+				}
+			}
+			out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+			wrap(out, known + " of " + Codex.RUMOURS.size() + " pieces.", DIM);
+			wrap(out, "\"" + entry.quote() + "\"", DIM);
+			wrap(out, "  (" + entry.source() + ")", DIM);
+			return;
+		}
 		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
 		wrap(out, "HOW TO FIGHT", HEADING);
 		for (String line : entry.fight()) {
@@ -189,6 +207,11 @@ public class JournalScreen extends Screen {
 		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
 		wrap(out, "\"" + entry.quote() + "\"", DIM);
 		wrap(out, "  (" + entry.source() + ")", DIM);
+	}
+
+	private static String guardianTitle(String id) {
+		net.thesmallthings.hellcraft.hazard.guardian.Guardian g = net.thesmallthings.hellcraft.hazard.guardian.Guardian.byId(id);
+		return g == null ? id : g.title;
 	}
 
 	private static String capitalised(String title) {

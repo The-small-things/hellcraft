@@ -157,6 +157,52 @@ public final class Codex {
 					+ "feet, and with twain he did fly.",
 			"Isaiah VI");
 
+	/**
+	 * What a guardian lets slip about Lucifer as it falls (L1: every boss mentions him): the line it says, and the piece
+	 * of the Emperor's Codex page it fills in.
+	 */
+	public record Rumour(String guardian, String line, String piece) {
+	}
+
+	public static final List<Rumour> RUMOURS = List.of(
+			new Rumour("minos", "Go down, then. Every sentence I ever passed fell to the one at the bottom.",
+					"Minos: every soul he sentences sinks toward the one who fell first. The judge of the damned is only his clerk."),
+			new Rumour("cerberus", "*All three heads turn toward the centre of Hell, and whimper.*",
+					"Cerberus: even the great worm of the mire fears something below. When the cold wind blows, all three heads turn to the centre."),
+			new Rumour("plutus", "Pape Satàn, pape Satàn aleppe! He will have back all you took from me.",
+					"Plutus cries out to Satan in a tongue no one speaks. The hoarders' gold goes down to him in the end."),
+			new Rumour("phlegyas", "Ferry them to Dis, he said. All of them, to Dis. And who will ferry me?",
+					"Phlegyas: the red city of Dis, whose walls you crossed, is Lucifer's own city, Dite. He is its king."),
+			new Rumour("furies", "Medusa! Come, turn them to stone! ...Then let HIM freeze them, as stone could not.",
+					"The Furies serve the queen of everlasting lament. Her king sits below the ice and does not move."),
+			new Rumour("farinata", "I rose from my tomb to watch you pass. You will not rise from his ice so easily.",
+					"Farinata sees what is far ahead: he has seen the great wings beat, and he has seen them stop."),
+			new Rumour("minotaur", "*The bull-man bellows toward the pit, the way a beast calls to its master.*",
+					"The Minotaur was a king's shame, shut in a labyrinth. Lucifer is heaven's shame, shut in the ice."),
+			new Rumour("geryon", "Fraud carried you this far. Fraud waits at the bottom too, and it wears a lovely face.",
+					"Geryon has an honest face on a serpent's body. Beware the beautiful face the Emperor shows you first: it is not his own."),
+			new Rumour("vulcan", "I forged the chains that hold the giants. The ice that holds HIM, no smith made.",
+					"Vulcan forged the giants' chains in the Well. The ice that holds Lucifer is made by his own wings, beating."));
+
+	/** The line a guardian says about Lucifer as it falls, or null. */
+	@Nullable
+	public static String rumour(String guardian) {
+		for (Rumour r : RUMOURS) {
+			if (r.guardian().equals(guardian)) {
+				return r.line();
+			}
+		}
+		return null;
+	}
+
+	/** The Emperor's page (L1): opened by the first guardian you beat, it fills in, one piece per guardian (the Journal). */
+	public static final Entry EMPEROR = new Entry("emperor", "THE EMPEROR", "What the guardians say of him",
+			List.of("Every guardian of Hell serves someone at the bottom of it. Each one you beat lets something slip about him, "
+					+ "and it is written here."),
+			List.of(),
+			"Lo Dis! and lo the place where it behoves thee to arm thyself with fortitude.",
+			"Inferno XXXIV");
+
 	public static final Entry LUCIFER = new Entry("lucifer", "LUCIFER", "Emperor of the Kingdom Dolorous",
 			List.of("Once the fairest of the angels, he rose against his maker and fell. Where he struck the earth, Hell opened, "
 							+ "and he stands frozen at its bottom to the chest in the ice of Cocytus, the wind of his six wings keeping it frozen.",
@@ -273,7 +319,7 @@ public final class Codex {
 			"Within, the Cyclopes were forging iron in the vast cave, Brontes and Steropes and naked-limbed Pyracmon.",
 			"Aeneid VIII");
 
-	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, VULCAN, SERAPH, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
+	public static final List<Entry> ALL = List.of(MINOS, CERBERUS, PLUTUS, PHLEGYAS, FURIES, FARINATA, MINOTAUR, GERYON, VULCAN, SERAPH, EMPEROR, LUCIFER, HOARDER, LOVERS, GLUTTON, WRATHFUL, HERETIC, CENTAUR, HARPY,
 			MIMIC, THIEF, MALEBRANCHE, CYCLOPS);
 
 	@Nullable

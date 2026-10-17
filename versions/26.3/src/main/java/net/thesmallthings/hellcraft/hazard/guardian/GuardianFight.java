@@ -486,6 +486,10 @@ public abstract class GuardianFight {
 			return;
 		}
 		say(deathLine());
+		String rumour = net.thesmallthings.hellcraft.codex.Codex.rumour(kind.id());
+		if (rumour != null) {
+			say(rumour);
+		}
 		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
 		// the spoils are personal, and follow each fighter's style: see spoils()
 		List<String> names = new ArrayList<>();
@@ -504,6 +508,10 @@ public abstract class GuardianFight {
 			HellState.get(level.getServer()).setDirty();
 			Journey.award(p, "journey/guardian_" + kind.id());
 			onVictor(p);
+			if (rumour != null) {
+				MapSync.unlockCodex(p, "emperor");
+				MapSync.send(p);
+			}
 		}
 		String who = names.isEmpty() ? "Someone" : String.join(", ", names);
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " slew " + kind.title + ", " + kind.subtitle + ".")

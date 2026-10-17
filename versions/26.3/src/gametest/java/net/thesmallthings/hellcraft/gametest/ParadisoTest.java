@@ -30,6 +30,7 @@ public class ParadisoTest implements FabricClientGameTest {
 		try (TestDedicatedServerContext server = context.worldBuilder().adjustSettings(MapTest::inferno).createServer(properties);
 			 TestDedicatedServerConnection connection = server.connect()) {
 			connection.waitForChunksRender();
+			loadout(server);
 			server.runCommand("gamemode spectator Player0");
 			context.runOnClient(client -> {
 				if (!client.gui.hud.isHidden()) {
@@ -117,6 +118,21 @@ public class ParadisoTest implements FabricClientGameTest {
 		context.takeScreenshot("seraph_fight_yield");
 		context.waitTicks(SeraphAnim.DEATH.ticks);
 		server.runCommand("execute in hellcraft:paradiso run kill @e[tag=fight_dummy]");
+	}
+
+	/** /hellcraft loadout puts the armour on and hands over the rest (here, before the camera tour). */
+	private static void loadout(TestDedicatedServerContext server) {
+		server.runCommand("hellcraft loadout Player0");
+		String kit = server.computeOnServer(s -> {
+			var p = s.getPlayerList().getPlayerByName("Player0");
+			return p.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).getItem() + " "
+					+ p.getInventory().countItem(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE) + " "
+					+ p.getInventory().countItem(net.minecraft.world.item.Items.ENDER_PEARL);
+		});
+		if (!kit.contains("netherite_chestplate 16 16")) {
+			throw new AssertionError("the loadout is wrong: " + kit);
+		}
+		server.runCommand("clear Player0");
 	}
 
 	private static void shot(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection,

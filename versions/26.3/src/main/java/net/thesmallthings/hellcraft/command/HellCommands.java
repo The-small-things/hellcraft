@@ -31,6 +31,7 @@ import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
+import net.thesmallthings.hellcraft.blood.Loadout;
 import net.thesmallthings.hellcraft.blood.LayerEnchants;
 import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.blood.Relics;
@@ -185,6 +186,22 @@ public final class HellCommands {
 											BloodItems.give(p, stack);
 											ctx.getSource().sendSuccess(() -> Component.literal("Gave a " + item + " to " + p.getGameProfile().name()), true);
 											return 1;
+										}))))
+				.then(Commands.literal("loadout")
+						.executes(ctx -> loadout(ctx.getSource(), List.of(ctx.getSource().getPlayerOrException()), Loadout.Armour.NETHERITE))
+						.then(Commands.argument("players", EntityArgument.players())
+								.executes(ctx -> loadout(ctx.getSource(), EntityArgument.getPlayers(ctx, "players"), Loadout.Armour.NETHERITE))
+								.then(Commands.argument("armour", StringArgumentType.word())
+										.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+												Arrays.stream(Loadout.Armour.values()).map(Loadout.Armour::id), builder))
+										.executes(ctx -> {
+											String id = StringArgumentType.getString(ctx, "armour");
+											Loadout.Armour armour = Arrays.stream(Loadout.Armour.values()).filter(a -> a.id().equals(id)).findFirst().orElse(null);
+											if (armour == null) {
+												ctx.getSource().sendFailure(Component.literal("Armour is netherite or blood."));
+												return 0;
+											}
+											return loadout(ctx.getSource(), EntityArgument.getPlayers(ctx, "players"), armour);
 										}))))
 				.then(Commands.literal("giveweapon")
 						.then(Commands.argument("player", EntityArgument.player())
@@ -538,6 +555,17 @@ public final class HellCommands {
 			player.sendSystemMessage(rest);
 		}
 		return circle.depth();
+	}
+
+	/** /hellcraft loadout: a full testing kit for each player (Loadout). */
+	private static int loadout(CommandSourceStack source, java.util.Collection<ServerPlayer> players, Loadout.Armour armour) {
+		for (ServerPlayer p : players) {
+			int stacks = Loadout.give(p, armour);
+			p.sendSystemMessage(Component.literal("You were given a full " + armour.id() + " loadout (" + stacks + " stacks; armour put on where "
+					+ "the slot was empty).").withStyle(ChatFormatting.GOLD));
+		}
+		String who = players.size() == 1 ? players.iterator().next().getGameProfile().name() : players.size() + " players";
+		return reply(source, "Gave a " + armour.id() + " loadout to " + who + ".");
 	}
 
 	private static int give(CommandContext<CommandSourceStack> ctx, boolean heart, int count) throws CommandSyntaxException {

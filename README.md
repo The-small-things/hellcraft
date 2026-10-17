@@ -613,6 +613,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
+| `/hellcraft loadout [players] [netherite\|blood]` | op | A full kit for testing: enchanted armour put on (netherite, or blood armour), every weapon (the hell weapons too), 16 ender pearls, 16 enchanted golden apples, totems, food, potions, blocks and some Blood Fragments. With no player it's yours (single player: turn on cheats) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
 | `/hellcraft cyclops summon\|attack <smash\|boulder\|quake>` | op | Test a Cyclops where you stand (3.0) |
 | `/hellcraft forge test` | op | Check the Forge of Dis's layout (3.0) |
