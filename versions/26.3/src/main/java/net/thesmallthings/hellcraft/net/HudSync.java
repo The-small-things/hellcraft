@@ -18,6 +18,7 @@ public final class HudSync {
 
 	public static void register() {
 		PayloadTypeRegistry.clientboundPlay().register(HudPayload.TYPE, HudPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(StylePayload.TYPE, StylePayload.CODEC);
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> send(handler.getPlayer()));
 	}
 

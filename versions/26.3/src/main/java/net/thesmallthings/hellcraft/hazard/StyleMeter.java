@@ -9,7 +9,9 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.thesmallthings.hellcraft.blood.Judgement.Grade;
+import net.thesmallthings.hellcraft.net.StylePayload;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -20,8 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * One fighter's style in one boss fight, after ULTRAKILL: a meter shown in their own boss bar that fills
- * as they fight well and drains when they hold back or get hit. Spoils follow the average style over the
+ * One fighter's style in one boss fight, after ULTRAKILL: a meter on the side of their screen (the style panel,
+ * StylePayload; a boss bar for a game without Hellcraft) that fills as they fight well and drains when they hold
+ * back or get hit. Spoils follow the average style over the
  * fight (Judgement), so they reward fighting well, not grinding.
  * <ul>
  *     <li>Every hit on the boss scores, more for a strong hit than a spammed one.</li>
@@ -59,11 +62,20 @@ public final class StyleMeter {
 	private final Map<String, Integer> uses = new HashMap<>();
 	private String feed = "";
 	private int feedTicks;
+	/** The fighter, and whether their game draws the style panel (else the boss bar shows it). */
+	private final ServerPlayer player;
+	private final boolean panel;
+	private int sentGrade = -1;
+	private float sentProgress = -1;
 
 	public StyleMeter(ServerPlayer player) {
+		this.player = player;
+		this.panel = ServerPlayNetworking.canSend(player, StylePayload.TYPE);
 		bar = new ServerBossEvent(UUID.randomUUID(), Component.literal("STYLE"), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
 		bar.setProgress(0.0f);
-		bar.addPlayer(player);
+		if (!panel) {
+			bar.addPlayer(player);
+		}
 		updateBar();
 	}
 
@@ -138,7 +150,7 @@ public final class StyleMeter {
 			return;
 		}
 		ticks++;
-		if (!bar.getPlayers().contains(player)) {
+		if (!panel && !bar.getPlayers().contains(player)) {
 			bar.addPlayer(player);
 		}
 		if (started) {
@@ -165,6 +177,9 @@ public final class StyleMeter {
 	public void finish() {
 		finished = true;
 		bar.removeAllPlayers();
+		if (panel && player.connection != null) {
+			ServerPlayNetworking.send(player, new StylePayload(false, Grade.of(style).ordinal(), 0, ""));
+		}
 	}
 
 	// ------------------------------------------------------------------ the verdict
@@ -234,13 +249,34 @@ public final class StyleMeter {
 		feed = text;
 		feedTicks = 30;
 		updateBar();
+		send(text);
+	}
+
+	private float progress(Grade grade) {
+		Grade next = grade.next();
+		float top = grade == Grade.SSS ? MAX : next.threshold;
+		return Math.max(0.0f, Math.min(1.0f, (style - grade.threshold) / Math.max(1.0f, top - grade.threshold)));
+	}
+
+	/** Tells the style panel, when the rank or meter moved enough to see, or something scored. */
+	private void send(String event) {
+		if (!panel || finished || player.connection == null) {
+			return;
+		}
+		Grade grade = Grade.of(style);
+		float progress = progress(grade);
+		if (event.isEmpty() && grade.ordinal() == sentGrade && Math.abs(progress - sentProgress) < 0.02f) {
+			return;
+		}
+		sentGrade = grade.ordinal();
+		sentProgress = progress;
+		ServerPlayNetworking.send(player, new StylePayload(true, grade.ordinal(), progress, event));
 	}
 
 	private void updateBar() {
 		Grade grade = Grade.of(style);
-		Grade next = grade.next();
-		float top = grade == Grade.SSS ? MAX : next.threshold;
-		bar.setProgress(Math.max(0.0f, Math.min(1.0f, (style - grade.threshold) / Math.max(1.0f, top - grade.threshold))));
+		bar.setProgress(progress(grade));
+		send("");
 		bar.setColor(grade.barColor);
 		bar.setName(Component.literal("STYLE ").withStyle(ChatFormatting.GRAY)
 				.append(Component.literal(grade.name() + " " + grade.title).withStyle(grade.color, ChatFormatting.BOLD))

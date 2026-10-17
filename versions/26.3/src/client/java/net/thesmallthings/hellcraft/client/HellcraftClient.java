@@ -117,6 +117,7 @@ import net.thesmallthings.hellcraft.net.DialoguePayload;
 import net.thesmallthings.hellcraft.net.HudPayload;
 import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
+import net.thesmallthings.hellcraft.net.StylePayload;
 import net.thesmallthings.hellcraft.net.OpenJournalPayload;
 import net.thesmallthings.hellcraft.net.VersionPayload;
 import net.thesmallthings.hellcraft.net.WingbeatPayload;
@@ -139,6 +140,7 @@ public class HellcraftClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(JournalPayload.TYPE, (payload, context) -> ClientNav.journal(payload));
 		ClientPlayNetworking.registerGlobalReceiver(OpenJournalPayload.TYPE, (payload, context) -> context.client().gui.setScreen(new JournalScreen()));
 		ClientPlayNetworking.registerGlobalReceiver(DangerPayload.TYPE, (payload, context) -> DangerMarks.receive(payload));
+		ClientPlayNetworking.registerGlobalReceiver(StylePayload.TYPE, (payload, context) -> StylePanel.receive(payload));
 		ClientPlayNetworking.registerGlobalReceiver(CutscenePayload.TYPE, (payload, context) -> CutscenePlayer.start(payload));
 		ClientPlayNetworking.registerGlobalReceiver(DialoguePayload.TYPE, (payload, context) -> DialogueHud.receive(payload));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
@@ -162,10 +164,13 @@ public class HellcraftClient implements ClientModInitializer {
 			CutscenePlayer.tick(client);
 			LayerFx.tick(client);
 			DialogueHud.tick(client);
+			StylePanel.tick(client);
 			GazeOverlay.tick(client);
 			WingbeatFx.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
+		// your style rank in a boss fight, on the right of the screen
+		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, StylePanel.ID, new StylePanel());
 		HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, LayerCard.ID, new LayerCard());
 		// what the souls of Hell say, in a box above the hotbar instead of the chat
 		HudElementRegistry.attachElementAfter(VanillaHudElements.OVERLAY_MESSAGE, DialogueHud.ID, new DialogueHud());

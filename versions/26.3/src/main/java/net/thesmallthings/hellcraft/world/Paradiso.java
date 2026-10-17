@@ -160,7 +160,7 @@ public final class Paradiso {
 			player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 25));
 			player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(band.title).withStyle(ChatFormatting.GOLD)));
 			player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(band.tagline).withStyle(ChatFormatting.WHITE)));
-			CircleHazards.hintOnce(player, HINT + band.ordinal(), band.title + ": " + band.trial
+			CircleHazards.hintOnce(player, HINT + band.ordinal(), "Beatrice", ChatFormatting.LIGHT_PURPLE, band.title + ": " + band.trial
 					+ (band.last() ? "" : " Then its column of light lifts you to the next sphere."));
 			if (band.last()) {
 				Journey.award(player, "journey/empyrean");

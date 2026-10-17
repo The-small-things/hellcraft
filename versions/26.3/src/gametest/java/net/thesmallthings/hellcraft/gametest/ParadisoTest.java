@@ -64,6 +64,7 @@ public class ParadisoTest implements FabricClientGameTest {
 					moonCentre[1], light[0], light[1], light[2]);
 			server.runCommand("gamemode spectator Player0");
 			seraphFight(context, server, connection);
+			stylePanel(context, server, connection);
 			// from beside the Moon's departure dais, up its column to Mercury's arrival isle
 			double[] d = ParadisoGeometry.departure(Sphere.MOON);
 			int moonTop = ParadisoGeometry.topY(Sphere.MOON);
@@ -118,6 +119,59 @@ public class ParadisoTest implements FabricClientGameTest {
 		context.takeScreenshot("seraph_fight_yield");
 		context.waitTicks(SeraphAnim.DEATH.ticks);
 		server.runCommand("execute in hellcraft:paradiso run kill @e[tag=fight_dummy]");
+	}
+
+	/**
+	 * The style panel (screenshot style_panel): a player in the Seraph's fight (unhurtable for the test) strikes it a few
+	 * times; their rank, meter and the feed of what scored show on the right of the screen.
+	 */
+	private static void stylePanel(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		double[] c = ParadisoGeometry.centre(Sphere.PRIMUM_MOBILE);
+		int y = ParadisoGeometry.topY(Sphere.PRIMUM_MOBILE) + 1;
+		// (the spheres open one at a time: a survival player must have passed the trials below the Primum Mobile)
+		server.runCommand("hellcraft paradiso pass Player0 8");
+		server.runCommand("gamemode survival Player0");
+		server.runCommand("effect give Player0 minecraft:resistance 600 4 true");
+		server.runCommand("effect give Player0 minecraft:regeneration 600 4 true");
+		server.runCommand(String.format(Locale.ROOT, "execute in hellcraft:paradiso run tp Player0 %.1f %d %.1f facing %.1f %d %.1f",
+				c[0] - 4, y, c[1] - 4, c[0], y + 3, c[1]));
+		context.runOnClient(client -> {
+			if (client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		context.waitTicks(20);
+		String out = server.computeOnServer(s -> GuardianManager.summon(s, Guardian.SERAPH));
+		if (!out.contains("awakens")) {
+			throw new AssertionError("The Seraph could not be summoned again: " + out);
+		}
+		context.waitTicks(SeraphAnim.INTRO.ticks + 20);
+		server.runCommand("item replace entity Player0 weapon.mainhand with minecraft:netherite_sword");
+		for (int i = 0; i < 6; i++) {
+			server.runOnServer(s -> {
+				var p = s.getPlayerList().getPlayerByName("Player0");
+				Paradiso.level(s).getEntities(HellEntities.SERAPH, e -> true).forEach(seraph -> {
+					seraph.setPermanentlyInvulnerable(false);
+					p.resetAttackStrengthTicker();
+					p.attack(seraph);
+				});
+			});
+			context.waitTicks(14);
+		}
+		context.waitTicks(4);
+		String state = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.StylePanel.state());
+		context.takeScreenshot("style_panel");
+		if (state.equals("off")) {
+			throw new AssertionError("the style panel didn't come up in the fight");
+		}
+		server.computeOnServer(s -> GuardianManager.stop(Guardian.SERAPH));
+		server.runCommand("effect clear Player0");
+		server.runCommand("gamemode spectator Player0");
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
 	}
 
 	/** /hellcraft loadout puts the armour on and hands over the rest (here, before the camera tour). */

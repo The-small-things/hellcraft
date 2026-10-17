@@ -229,6 +229,11 @@ public final class CircleHazards {
 	}
 
 	public static void hintOnce(ServerPlayer player, int index, String text) {
+		hintOnce(player, index, "Virgil", ChatFormatting.GOLD, text);
+	}
+
+	/** A one-time hint from another guide (Beatrice, in Paradiso). */
+	public static void hintOnce(ServerPlayer player, int index, String speaker, ChatFormatting colour, String text) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		long bit = 1L << index;
 		if (soul == null || (soul.hints & bit) != 0) {
@@ -236,7 +241,7 @@ public final class CircleHazards {
 		}
 		soul.hints |= bit;
 		HellState.get(player.level().getServer()).setDirty();
-		Dialogue.say(player, "Virgil", ChatFormatting.GOLD, Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+		Dialogue.say(player, speaker, colour, Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 	}
 
 	public static void forget(ServerPlayer player) {
