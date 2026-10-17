@@ -310,7 +310,11 @@ on Saturn and of the star spires; the Angelic Guard on Mars) and a column of lig
 you've passed it; no falling damage there, and angels catch whoever falls; the Seraph on a real body, with an entrance
 cutscene and a fight in the danger language, in the Primum Mobile; the Celestial Rose atop the Empyrean; Seraph Wings from
 Saturn, the Halo from the Seraph and Beatrice's Rose from the bell; no strongholds in the Inferno, and the End vanilla again;
-the story arc on the Journal's second page. Phases 1 to 7 wait on a play session.
+the story arc on the Journal's second page. Phase 8 began on 2026-10-17 with the
+remaining items that don't wait on the play session: an op command that hands out a full testing kit; the style rank in its own panel
+on the screen (section 12); every guardian of Hell saying something about Lucifer as it falls, with a Codex page on the
+Emperor that fills in as they do (L1); a lift down to the next circle in each beaten guardian's lair (Q2); and real
+chain-lifts on the Foundry Halls' pillars. Balance waits on the play session. Phases 1 to 7 wait on a play session.
 
 ## 14. The playtest loop
 

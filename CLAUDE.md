@@ -85,7 +85,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `ParadisoTrials` (a trial per sphere, `HellState.Soul.spheres`) and the client (`layer/LightColumns`, the compass's
   Paradiso mode). The Seraph is a guardian (`Guardian.SERAPH`, `SeraphFight`, `entity/boss/SeraphEntity`, tools/art/seraph.py)
   whose lair is the Primum Mobile's island. The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
-  films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`).
+  films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`, `style_panel`).
+- Phase 8 additions: `blood/Loadout` (`/hellcraft loadout [players] [netherite|blood]`, a full testing kit); the style
+  panel (`StyleMeter` sends `net/StylePayload`, client `StylePanel` draws it; games without the mod keep the boss bar);
+  `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
+  `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
+  `emperor` Codex page fills in, REVAMP L1); `ForgeOfDis.chainLifts` (the Foundry pillars' chain-lifts).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
@@ -186,9 +191,9 @@ duel and the Emperor on real bodies, three cutscenes (descent, reveal, the climb
 his back. **Phase 6 (the Nether) is built** (2026-10-16): the Forge of Dis
 (see the code map), Vulcan and the Cyclopes on real bodies. **Phase 7 (Purgatory and Paradiso) is built** (2026-10-16):
 Purgatory's own sea, Paradiso's nine stacked spheres with their columns of light and trials, the Seraph on a real body,
-the Rose on top, no strongholds, the story arc in the Journal. Phases 1 to 7 wait on a play session; Phase 8 (polish and
-the remaining REVAMP items) comes after that feedback.
-Not done in Phase 5: the other bosses' lines about him and a Codex page that fills in as they fall (REVAMP L1). Each phase ships as a test build for a play session before the next.
+the Rose on top, no strongholds, the story arc in the Journal. **Phase 8 (polish) is under way** (2026-10-17): the
+loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts. Still to come: balance
+from the play session, boss music (none sent yet), relics as registered items, then the stable 3.0.0 (only when asked). Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so
