@@ -46,6 +46,22 @@ public record BrazierFeature() implements Feature {
 		return placed;
 	}
 
+	/**
+	 * True within {@code within} blocks of a brazier: what else is built on the ice (packed-ice boulders, ice spikes)
+	 * keeps clear, since a neighbouring chunk's can be decorated after a brazier's and bury it.
+	 */
+	public static boolean near(int x, int z, int within) {
+		for (int cx = Math.floorDiv(x - within, CELL); cx <= Math.floorDiv(x + within, CELL); cx++) {
+			for (int cz = Math.floorDiv(z - within, CELL); cz <= Math.floorDiv(z + within, CELL); cz++) {
+				int[] at = site(cx, cz);
+				if (at != null && Math.abs(at[0] - x) <= within && Math.abs(at[1] - z) <= within) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/** Where cell (cx, cz)'s brazier stands, or null if it has none (off the ice, by a Spine, at the pit). */
 	public static int[] site(int cx, int cz) {
 		long h = cx * 0x9E3779B97F4A7C15L ^ cz * 0xC2B2AE3D27D4EB4FL;

@@ -12,6 +12,7 @@ import net.thesmallthings.hellcraft.world.feature.BrazierFeature;
 import net.thesmallthings.hellcraft.world.feature.BurningTombFeature;
 import net.thesmallthings.hellcraft.world.feature.ChainPillarFeature;
 import net.thesmallthings.hellcraft.world.feature.ChainedIslandFeature;
+import net.thesmallthings.hellcraft.world.feature.ClearOfBraziersFeature;
 import net.thesmallthings.hellcraft.world.feature.CoinHillFeature;
 import net.thesmallthings.hellcraft.world.feature.CyclopsCampFeature;
 import net.thesmallthings.hellcraft.world.feature.DisWallFeature;
@@ -67,6 +68,7 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("burning_tomb"), BurningTombFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("altar_ruin"), AltarRuinFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("boulder"), BoulderFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("clear_of_braziers"), ClearOfBraziersFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("forge_ruin"), ForgeRuinFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("chain_pillar"), ChainPillarFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("slag_heap"), SlagHeapFeature.CODEC);

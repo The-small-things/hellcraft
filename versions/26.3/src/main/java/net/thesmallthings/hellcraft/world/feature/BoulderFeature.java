@@ -12,6 +12,9 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
 /** A rough half-buried boulder of any block (the "great weights" of Greed, ice in Cocytus, ...). */
 public record BoulderFeature(BlockState state) implements Feature {
+	/** How far a boulder keeps from a brazier: its own reach (up to 3) and the brazier's plinth (1) with room to spare. */
+	static final int BRAZIER_CLEARANCE = 7;
+
 	public static final MapCodec<BoulderFeature> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			BlockState.CODEC.fieldOf("state").forGetter(BoulderFeature::state)
 	).apply(instance, BoulderFeature::new));
@@ -23,8 +26,9 @@ public record BoulderFeature(BlockState state) implements Feature {
 
 	@Override
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
-		// not in a guardian's arena
-		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)) {
+		// not in a guardian's arena, nor on one of Cocytus's braziers
+		if (InfernoGeometry.nearLair(origin.getX(), origin.getZ(), InfernoGeometry.LAIR_CLEARANCE)
+				|| BrazierFeature.near(origin.getX(), origin.getZ(), BRAZIER_CLEARANCE)) {
 			return false;
 		}
 		BlockPos center = origin.below(1);

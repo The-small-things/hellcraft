@@ -63,7 +63,7 @@ CANON = {
         "minecraft:glow_lichen", "minecraft:dark_forest_vegetation", "minecraft:forest_rock", "hellcraft:limbo_birch",
         "hellcraft:dead_tree", "hellcraft:rotting_tree", "hellcraft:bloated_fungus", "hellcraft:coin_hill", "hellcraft:reed_bed", "minecraft:trees_swamp", "minecraft:crimson_fungi_surface_placeholder",
         "hellcraft:crimson_fungus", "hellcraft:boulder_blackstone", "hellcraft:boulder_crying_obsidian",
-        "hellcraft:boulder_packed_ice", "hellcraft:boulder_deepslate", "minecraft:ice_spike",
+        "hellcraft:boulder_packed_ice", "hellcraft:boulder_deepslate", "hellcraft:ice_spike",
         "hellcraft:surface_delta", "hellcraft:surface_basalt_columns", "hellcraft:surface_sculk",
         "hellcraft:surface_fire", "hellcraft:surface_soul_fire", "hellcraft:cobwebs",
         "minecraft:patch_grass_forest", "minecraft:patch_grass_plain", "minecraft:flower_meadow",
@@ -401,7 +401,7 @@ BIOMES = {
         temp=-0.8, rain=True, downfall=0.5,
         colors=dict(fog_color=0x9AB8D0, sky_color=0x5A7A9A, water_color=0x3A5A8A, water_fog_color=0x0A1A2A),
         particle=("minecraft:snowflake", 0.05), sound=CAVE_MOOD, music="music.overworld.frozen_peaks",
-        features=["minecraft:ice_spike", "hellcraft:boulder_packed_ice", "hellcraft:brazier"],
+        features=["hellcraft:ice_spike", "hellcraft:boulder_packed_ice", "hellcraft:brazier"],
         monster=[spawn("stray", 120, 2, 4), spawn("skeleton", 40), spawn("zombie", 40)],
         creature=[spawn("polar_bear", 2, 1, 2)],
     ),
@@ -512,6 +512,8 @@ CONFIGURED = {
     "boulder_blackstone": {"type": "hellcraft:boulder", "config": {"state": block("blackstone")}},
     "boulder_crying_obsidian": {"type": "hellcraft:boulder", "config": {"state": block("crying_obsidian")}},
     "boulder_packed_ice": {"type": "hellcraft:boulder", "config": {"state": block("packed_ice")}},
+    # vanilla's ice spikes, kept off Cocytus's braziers (ClearOfBraziersFeature)
+    "ice_spike": {"type": "hellcraft:clear_of_braziers", "config": {"feature": "minecraft:ice_spike"}},
     "boulder_deepslate": {"type": "hellcraft:boulder", "config": {"state": block("cobbled_deepslate")}},
     "filth_pool": {"type": "minecraft:lake", "config": {
         "fluid": {"type": "minecraft:simple_state_provider", "state": block("water", level=0)},
@@ -565,6 +567,8 @@ PLACED = {
     "boulder_blackstone": placed("hellcraft:boulder_blackstone", count(1), IN_SQUARE, heightmap(), BIOME),
     "boulder_crying_obsidian": placed("hellcraft:boulder_crying_obsidian", rarity(12), IN_SQUARE, heightmap(), BIOME),
     "boulder_packed_ice": placed("hellcraft:boulder_packed_ice", rarity(3), IN_SQUARE, heightmap(), BIOME),
+    # as vanilla places minecraft:ice_spike
+    "ice_spike": placed("hellcraft:ice_spike", count(3), IN_SQUARE, heightmap("MOTION_BLOCKING"), BIOME),
     "boulder_deepslate": placed("hellcraft:boulder_deepslate", rarity(4), IN_SQUARE, heightmap(), BIOME),
     "filth_pool": placed("hellcraft:filth_pool", rarity(6), IN_SQUARE, heightmap(), BIOME),
     "ore_gilded_blackstone": placed("hellcraft:ore_gilded_blackstone", count(10), IN_SQUARE, height_range(30, 120), BIOME),
@@ -873,6 +877,8 @@ def feature26(name, cfg):
         out = {"type": t}
         if "state" in c:
             out["state"] = state26(c["state"])
+        if "feature" in c:
+            out["feature"] = c["feature"]
         return out
     if t == "minecraft:random_patch":
         # random patches are now a simple feature plus placement (see patch26)
