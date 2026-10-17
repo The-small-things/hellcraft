@@ -10,6 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Unit;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -17,6 +19,8 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.minecraft.world.item.equipment.Equippable;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,10 +79,15 @@ public final class HellItems {
 	public static final ArmorMaterial INFERNAL_ARMOUR = new ArmorMaterial(37, defense(3, 6, 8, 3, 19), 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0f, 0.1f,
 			ItemTags.REPAIRS_NETHERITE_ARMOR, BloodArmour.ASSET);
 
+	/** The Halo: worn as a helmet, a gold circlet (equipment asset hellcraft:halo); gold's protection. */
+	public static final ArmorMaterial HALO_MATERIAL = new ArmorMaterial(7, defense(1, 3, 5, 2, 7), 25, SoundEvents.ARMOR_EQUIP_GOLD, 0.0f, 0.0f,
+			ItemTags.REPAIRS_GOLD_ARMOR, ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("halo")));
+
 	private static final Map<BloodArmour.Piece, Item> ARMOUR = new EnumMap<>(BloodArmour.Piece.class);
 	private static final Map<BloodArmour.Piece, Item> INFERNAL_ARMOUR_ITEMS = new EnumMap<>(BloodArmour.Piece.class);
 	private static final Map<HellWeapons.Weapon, Item> WEAPONS = new EnumMap<>(HellWeapons.Weapon.class);
 	private static final Map<HellWeapons.Weapon, Item> INFERNAL_WEAPONS = new EnumMap<>(HellWeapons.Weapon.class);
+	private static final Map<Relics.Relic, Item> RELICS = new EnumMap<>(Relics.Relic.class);
 
 	static {
 		for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
@@ -91,6 +100,27 @@ public final class HellItems {
 			WEAPONS.put(weapon, register(weapon.id, weaponProperties(weapon, false)));
 			INFERNAL_WEAPONS.put(weapon, register("infernal_" + weapon.id, weaponProperties(weapon, true).fireResistant()));
 		}
+		for (Relics.Relic relic : Relics.Relic.values()) {
+			RELICS.put(relic, register(relic.id, relicProperties(relic)));
+		}
+	}
+
+	/** Paradiso's relics (real items since 3.0): what they do is in {@link Relics}. */
+	private static Item.Properties relicProperties(Relics.Relic relic) {
+		Item.Properties props = switch (relic) {
+			case HALO -> new Item.Properties().humanoidArmor(HALO_MATERIAL, ArmorType.HELMET)
+					.component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+			// elytra that never wear out, with their own wings (equipment asset hellcraft:seraph_wings)
+			case SERAPH_WINGS -> new Item.Properties().component(DataComponents.GLIDER, Unit.INSTANCE)
+					.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.CHEST).setEquipSound(SoundEvents.ARMOR_EQUIP_ELYTRA)
+							.setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("seraph_wings"))).setDamageOnHurt(false).build());
+			case BEATRICES_ROSE -> new Item.Properties();
+		};
+		if (relic != Relics.Relic.BEATRICES_ROSE) {
+			props.component(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+		}
+		return props.stacksTo(1).component(DataComponents.ITEM_NAME, Relics.name(relic)).component(DataComponents.LORE, Relics.lore(relic))
+				.rarity(Rarity.EPIC);
 	}
 
 	private static Item.Properties weaponProperties(HellWeapons.Weapon weapon, boolean infernal) {
@@ -121,6 +151,21 @@ public final class HellItems {
 
 	public static Item weapon(HellWeapons.Weapon weapon, boolean infernal) {
 		return (infernal ? INFERNAL_WEAPONS : WEAPONS).get(weapon);
+	}
+
+	public static Item relic(Relics.Relic relic) {
+		return RELICS.get(relic);
+	}
+
+	/** The relic this item is, if it's one. */
+	@Nullable
+	static Relics.Relic relicOf(Item item) {
+		for (Map.Entry<Relics.Relic, Item> e : RELICS.entrySet()) {
+			if (e.getValue() == item) {
+				return e.getKey();
+			}
+		}
+		return null;
 	}
 
 	/** The piece this item is, if it's blood armour (either form). */
@@ -172,6 +217,9 @@ public final class HellItems {
 					}
 					for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
 						output.accept(new ItemStack(armour(piece, true)));
+					}
+					for (Relics.Relic relic : Relics.Relic.values()) {
+						output.accept(new ItemStack(relic(relic)));
 					}
 				})
 				.build());

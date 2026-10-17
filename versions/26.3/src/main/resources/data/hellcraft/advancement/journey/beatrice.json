@@ -7,10 +7,7 @@
   },
   "display": {
     "icon": {
-      "id": "minecraft:stick",
-      "components": {
-        "minecraft:item_model": "hellcraft:beatrices_rose"
-      }
+      "id": "hellcraft:beatrices_rose"
     },
     "title": {
       "text": "Beatrice"

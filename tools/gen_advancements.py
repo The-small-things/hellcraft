@@ -126,11 +126,11 @@ def main():
     w("paradiso", "purgatory", "Paradiso", "Rise from Purgatory's summit into Paradiso",
       icon("minecraft:glowstone"), at_biomes(*["hellcraft:paradiso_" + s for s in spheres]), frame="goal")
     w("seraph", "paradiso", "The Seraph Falls", "Face the Seraph in the Primum Mobile and win",
-      icon("minecraft:stick", "hellcraft:halo"), deed(), frame="challenge")
+      icon("hellcraft:halo"), deed(), frame="challenge")
     w("empyrean", "paradiso", "The Love That Moves the Sun", "Reach the Empyrean, above the ninth sphere",
       icon("minecraft:end_rod"), at_biomes("hellcraft:paradiso_empyrean"))
     w("beatrice", "empyrean", "Beatrice", "Ring the bell at the Celestial Rose",
-      icon("minecraft:stick", "hellcraft:beatrices_rose"), deed(), frame="goal")
+      icon("hellcraft:beatrices_rose"), deed(), frame="goal")
 
     w("hell_is_full", "root", "Hell Is Full", "Lose your last heart and become a ghost",
       icon("minecraft:skeleton_skull"), deed(), hidden=True)

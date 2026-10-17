@@ -316,9 +316,12 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   kit=$(rcon "hellcraft loadout nobody" || true)
   echo "$kit"
   echo "$kit" | grep -qi "unknown or incomplete command" && { echo "/hellcraft loadout is not registered"; exit 1; }
+  # the relics are real items (3.0): an unknown one fails to parse; a known one finds no player to give it to
   for r in halo seraph_wings beatrices_rose; do
     out=$(rcon "hellcraft giveitem nobody $r" || true)
     echo "$out" | grep -qi "unknown item" && { echo "Relic $r is unknown"; exit 1; }
+    out=$(rcon "give @a hellcraft:$r" || true)
+    echo "$out" | grep -qi "unknown item" && { echo "hellcraft:$r is not a registered item"; exit 1; }
   done
   # no strongholds in the Inferno: the only way into Paradiso is from Purgatory's summit
   stronghold=$(rcon "locate structure minecraft:stronghold" || true)

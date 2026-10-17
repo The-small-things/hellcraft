@@ -545,6 +545,63 @@ atlas("lucifer_emperor", [
 armour_layer("humanoid", [(0, 0, 32, 16), (16, 16, 40, 32), (40, 16, 56, 32), (0, 16, 16, 32)], face=(8, 8))
 armour_layer("humanoid_leggings", [(16, 16, 40, 32), (0, 16, 16, 32)])
 
+
+def halo_layer():
+    """The Halo as worn (64x32 humanoid layer, helmet only): a ring of light lying on the crown of the head
+    (the top face, 8..16 x 0..8) and a gold circlet round the brow (the top two rows of the four sides)."""
+    pixels = [[(0, 0, 0, 0)] * 64 for _ in range(32)]
+    light, gold, deep, glint = hexc("ffe68a"), hexc("f0c040"), hexc("a8761a"), hexc("fffbe8")
+    for y in range(8):
+        for x in range(8):
+            d = math.hypot(x - 3.5, y - 3.5)
+            if 2.2 <= d <= 3.75:
+                # lit from the upper left, like the icons
+                pixels[y][8 + x] = light if x + y < 6 else gold if x + y < 10 else deep
+    for x in range(32):
+        pixels[8][x] = light if x % 4 else glint
+        pixels[9][x] = gold
+    for x in (11, 12):
+        pixels[9][x] = glint                                        # a jewel of light at the front
+    pixels[8][11] = pixels[8][12] = glint
+    png(os.path.join(OUT, "entity", "equipment", "humanoid", "halo.png"), pixels)
+
+
+def seraph_wings_layer():
+    """The Seraph Wings as worn (64x32 wings layer: each wing is one 10x20x2 box at 22, 0): white primaries in
+    overlapping rows, each feather lit on its left and shadowed on its right, ragged at the tips, and a gold
+    band along the shoulder."""
+    rng_w = random.Random(7)
+    pixels = [[(0, 0, 0, 0)] * 64 for _ in range(32)]
+    white, pale, shadow, edge, gold = hexc("ffffff"), hexc("e4eaf4"), hexc("aab6cc"), hexc("6a7088"), hexc("ffd24a")
+    # the long faces (front 24..34, back 36..46) and the thin sides and ends
+    for x0, w in ((24, 10), (36, 10), (22, 2), (34, 2)):
+        tips = [16 + rng_w.randint(0, 3) + (2 if (i % 2) else 0) for i in range(w)]
+        for x in range(x0, x0 + w):
+            i = x - x0
+            tip = min(21, tips[i] + (i * 2 // w if x0 >= 24 else 0))
+            for y in range(2, 2 + tip):
+                row = (y - 2) % 6
+                if row == 5:
+                    c = edge if i % 2 else shadow                   # where a row of feathers overlaps the next
+                elif i % 2 == 0:
+                    c = white if row < 3 else pale
+                else:
+                    c = pale if row < 2 else shadow
+                pixels[y][x] = c
+            pixels[2][x] = gold
+            pixels[3][x] = gold if i % 3 else hexc("c89a2a")
+            pixels[2 + tip - 1][x] = edge                           # the feather's tip
+    for x in range(24, 34):
+        pixels[0][x] = pixels[1][x] = gold                         # the top end, at the shoulder
+    for x in range(34, 44):
+        pixels[0][x] = pixels[1][x] = shadow if x % 2 else edge   # the bottom end, the feathers' tips
+    png(os.path.join(OUT, "entity", "equipment", "wings", "seraph_wings.png"), pixels)
+
+
+# Paradiso's relics as worn
+halo_layer()
+seraph_wings_layer()
+
 # ---------------------------------------------------------------------- the circle guardians
 
 

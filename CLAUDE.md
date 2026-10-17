@@ -90,7 +90,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   panel (`StyleMeter` sends `net/StylePayload`, client `StylePanel` draws it; games without the mod keep the boss bar);
   `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
   `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
-  `emperor` Codex page fills in, REVAMP L1); `ForgeOfDis.chainLifts` (the Foundry pillars' chain-lifts).
+  `emperor` Codex page fills in, REVAMP L1); `ForgeOfDis.chainLifts` (the Foundry pillars' chain-lifts); the relics as real items (`HellItems.relic`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
@@ -135,7 +135,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   hills, vaults, scales, reeds, boardwalks, watchtowers); `client/layer/SoulFlocks` (Lust's sky). Cerberus, Plutus
   (with `entity/boss/RollingCoin`) and Phlegyas are real-bodied guardians like Minos.
 - `blood/HellItems`: the registered items (Blood Heart, Fragment, Bane, Vigil Candle, Soul Anchor, the hell weapons and
-  blood armour) and the creative tab. Relics are still vanilla items marked with custom_data (to convert later).
+  blood armour, Paradiso's relics) and the creative tab. The relics (`blood/Relics`: the Halo, Seraph Wings, Beatrice's
+  Rose) are real items since Phase 8, with their own worn looks (equipment assets `halo`, `seraph_wings`); `Relics.of`
+  still accepts relics made before (vanilla items with custom data).
 - Client (`src/client/.../client/`): `HellcraftClient`, `BloodHud` + `mixin/HeartTypeMixin` (blood hearts and rank
   rims, textures in `assets/hellcraft/textures/gui/sprites/hud/heart`), `nav/` (finding the way: `LayerCard` circle
   cards, `CompassHud`, `MapOfHellScreen` on M, `JournalScreen` on J, `NavKeys`; `ClientNav` holds what the server
@@ -192,8 +194,8 @@ his back. **Phase 6 (the Nether) is built** (2026-10-16): the Forge of Dis
 (see the code map), Vulcan and the Cyclopes on real bodies. **Phase 7 (Purgatory and Paradiso) is built** (2026-10-16):
 Purgatory's own sea, Paradiso's nine stacked spheres with their columns of light and trials, the Seraph on a real body,
 the Rose on top, no strongholds, the story arc in the Journal. **Phase 8 (polish) is under way** (2026-10-17): the
-loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts. Still to come: balance
-from the play session, boss music (none sent yet), relics as registered items, then the stable 3.0.0 (only when asked). Each phase ships as a test build for a play session before the next.
+loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts, the relics as real items. Still to come: balance
+from the play session, boss music (none sent yet), then the stable 3.0.0 (only when asked). Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so

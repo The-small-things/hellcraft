@@ -392,6 +392,9 @@ def armour_recipes():
         "humanoid": [{"texture": "hellcraft:blood"}],
         "humanoid_leggings": [{"texture": "hellcraft:blood"}],
     }})
+    # Paradiso's relics as worn (HellItems.relicProperties): the Halo's circlet, the Seraph Wings' feathers
+    write(os.path.join(ASSETS, "equipment", "halo.json"), {"layers": {"humanoid": [{"texture": "hellcraft:halo"}]}})
+    write(os.path.join(ASSETS, "equipment", "seraph_wings.json"), {"layers": {"wings": [{"texture": "hellcraft:seraph_wings"}]}})
 
 
 def recipes():
@@ -443,18 +446,6 @@ def gear():
         current = json.load(f)
     current.update(names)
     write(lang, current)
-
-
-# Paradiso's relics; must match Relics.java
-WINGS = {
-    "minecraft:custom_data": {"hellcraft": "relic", "relic": "seraph_wings"},
-    "minecraft:item_model": "hellcraft:seraph_wings",
-    "minecraft:item_name": {"text": "Seraph Wings", "color": "aqua", "bold": True},
-    "minecraft:lore": [{"text": "Never wear out. While gliding, sneak for a", "color": "gray", "italic": False},
-                       {"text": "rush of the Primum Mobile's wind (every 10 s).", "color": "gray", "italic": False}],
-    "minecraft:rarity": "epic",
-    "minecraft:unbreakable": {},
-}
 
 
 def item_recipes():

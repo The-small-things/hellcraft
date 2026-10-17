@@ -313,8 +313,8 @@ Saturn, the Halo from the Seraph and Beatrice's Rose from the bell; no stronghol
 the story arc on the Journal's second page. Phase 8 began on 2026-10-17 with the
 remaining items that don't wait on the play session: an op command that hands out a full testing kit; the style rank in its own panel
 on the screen (section 12); every guardian of Hell saying something about Lucifer as it falls, with a Codex page on the
-Emperor that fills in as they do (L1); a lift down to the next circle in each beaten guardian's lair (Q2); and real
-chain-lifts on the Foundry Halls' pillars. Balance waits on the play session. Phases 1 to 7 wait on a play session.
+Emperor that fills in as they do (L1); a lift down to the next circle in each beaten guardian's lair (Q2); real
+chain-lifts on the Foundry Halls' pillars; and the relics as real items, with their own looks when worn. Balance waits on the play session. Phases 1 to 7 wait on a play session.
 
 ## 14. The playtest loop
 

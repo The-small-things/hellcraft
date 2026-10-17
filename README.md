@@ -485,7 +485,7 @@ In each sphere you arrive on a small isle under a canopy, cross a bridge to its 
 | IX. The Primum Mobile | prismarine, a crystal arena | face **the Seraph** |
 | The Empyrean | the Celestial Rose | ring Beatrice's bell |
 
-The lights only show for players still doing the trial; walk into one to take it. Each trial passed heals you and gives 3 levels and a Blood Fragment. **Saturn's** gives **Seraph Wings** (elytra that never wear out; sneak while gliding for a rush of wind every 10 s).
+The lights only show for players still doing the trial; walk into one to take it. Each trial passed heals you and gives 3 levels and a Blood Fragment. **Saturn's** gives **Seraph Wings** (white-feathered elytra that never wear out; sneak while gliding for a rush of wind every 10 s).
 
 **The Seraph.** On the Primum Mobile's crystal floor the Seraph comes down out of the light (a short cutscene): a burning angel with six wings, two veiling its face, two its feet and two to fly. It is your last examiner, on a real, animated body, in the danger language:
 - **The Wing-blow** (white flash): its great wings sweep forward. Block them as they land and it sinks, reeling.
@@ -495,7 +495,7 @@ The lights only show for players still doing the trial; walk into one to take it
 - **The Angelic Guard:** angels come down to test you. Kill them.
 - **At half its strength** all six wings flare, and from then on the **turning heavens** (a purple ring) sweep a beam round the floor between its blows: jump it as it passes.
 
-It doesn't die: beaten, it bows and rises into the light. Everyone who fought it gets a **Halo** (a golden helmet that gives Regeneration while you are nearly at full health) and the guardian spoils, and the column to the Empyrean opens for them. It returns after 30 minutes for anyone else.
+It doesn't die: beaten, it bows and rises into the light. Everyone who fought it gets a **Halo** (a gold circlet worn as a helmet: Regeneration while you are nearly at full health) and the guardian spoils, and the column to the Empyrean opens for them. It returns after 30 minutes for anyone else.
 
 **The Celestial Rose.** The Empyrean's great island holds a bowl of white tiers, bands of grass and petals and rods of light, with Beatrice's bell in the middle. Ring it for **Beatrice's Rose** (once each): right-click the rose to be fully healed and cleansed, once an hour.
 
