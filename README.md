@@ -615,7 +615,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft giveweapon <player> <weapon>` | op | Give a hell weapon (26.3) |
 | `/hellcraft giveitem <player> vigil\|anchor\|halo\|seraph_wings\|beatrices_rose` | op | Give a Vigil Candle, Soul Anchor or relic (26.3) |
 | `/hellcraft givearmour <player>` | op | Give a set of blood armour (26.3) |
-| `/hellcraft loadout [players] [netherite\|blood]` | op | A full kit for testing: enchanted armour put on (netherite, or blood armour), every weapon (the hell weapons too), 16 ender pearls, 16 enchanted golden apples, totems, food, potions, blocks and some Blood Fragments. With no player it's yours (single player: turn on cheats) |
+| `/hellcraft loadout [players] [kit]` | op | A kit for testing, armour put on. The journey kits give about what you'd have by then, to test bosses fairly without the grind: `upper` (upper Hell: iron gear, 2 golden apples), `lower` (lower Hell: part diamond, the Bloodletter, a few pearls), `lucifer` (Cocytus, Lucifer and the Forge: enchanted diamond, the hell weapons, a totem), `paradiso` (the Seraph: enchanted blood armour). `full` (the default) and `blood` are everything at once: maxed netherite or blood armour, every weapon, 16 ender pearls, 16 enchanted golden apples, totems. With no player it's yours (single player: turn on cheats) |
 | `/hellcraft guardian <name> summon\|slay\|stop\|status\|attack <a>` | op | Test a circle guardian or Vulcan (26.3) |
 | `/hellcraft cyclops summon\|attack <smash\|boulder\|quake>` | op | Test a Cyclops where you stand (3.0) |
 | `/hellcraft forge test` | op | Check the Forge of Dis's layout (3.0) |

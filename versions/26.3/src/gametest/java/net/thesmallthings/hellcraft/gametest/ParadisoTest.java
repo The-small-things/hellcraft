@@ -174,7 +174,7 @@ public class ParadisoTest implements FabricClientGameTest {
 		});
 	}
 
-	/** /hellcraft loadout puts the armour on and hands over the rest (here, before the camera tour). */
+	/** /hellcraft loadout puts the armour on and hands over the rest, the full kit and a journey kit (here, before the camera tour). */
 	private static void loadout(TestDedicatedServerContext server) {
 		server.runCommand("hellcraft loadout Player0");
 		String kit = server.computeOnServer(s -> {
@@ -185,6 +185,18 @@ public class ParadisoTest implements FabricClientGameTest {
 		});
 		if (!kit.contains("netherite_chestplate 16 16")) {
 			throw new AssertionError("the loadout is wrong: " + kit);
+		}
+		server.runCommand("clear Player0");
+		// a journey kit: about what you'd have by upper Hell, not everything
+		server.runCommand("hellcraft loadout Player0 upper");
+		String upper = server.computeOnServer(s -> {
+			var p = s.getPlayerList().getPlayerByName("Player0");
+			return p.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).getItem() + " "
+					+ p.getInventory().countItem(net.minecraft.world.item.Items.GOLDEN_APPLE) + " "
+					+ p.getInventory().countItem(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE);
+		});
+		if (!upper.contains("iron_chestplate 2 0")) {
+			throw new AssertionError("the upper Hell kit is wrong: " + upper);
 		}
 		server.runCommand("clear Player0");
 	}

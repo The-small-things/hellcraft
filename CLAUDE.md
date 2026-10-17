@@ -86,7 +86,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   Paradiso mode). The Seraph is a guardian (`Guardian.SERAPH`, `SeraphFight`, `entity/boss/SeraphEntity`, tools/art/seraph.py)
   whose lair is the Primum Mobile's island. The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
   films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`, `style_panel`).
-- Phase 8 additions: `blood/Loadout` (`/hellcraft loadout [players] [netherite|blood]`, a full testing kit); the style
+- Phase 8 additions: `blood/Loadout` (`/hellcraft loadout [players] [kit]`: journey kits `upper`, `lower`, `lucifer`,
+  `paradiso` with about what a player has by then, for fair boss tests; `full`/`blood`, everything); the style
   panel (`StyleMeter` sends `net/StylePayload`, client `StylePanel` draws it; games without the mod keep the boss bar);
   `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
   `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
