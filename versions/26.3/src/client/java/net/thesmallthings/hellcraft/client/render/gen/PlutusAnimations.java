@@ -29,9 +29,9 @@ public final class PlutusAnimations {
 					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(-6F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(6F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.5F, KeyframeAnimations.degreeVec(-8F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.5F, KeyframeAnimations.degreeVec(8F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -100,7 +100,7 @@ public final class PlutusAnimations {
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.9F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.9F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -127,8 +127,8 @@ public final class PlutusAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.8F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -208,9 +208,9 @@ public final class PlutusAnimations {
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.8F, KeyframeAnimations.degreeVec(-10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.degreeVec(-55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.degreeVec(60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -239,8 +239,8 @@ public final class PlutusAnimations {
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.15F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -266,8 +266,8 @@ public final class PlutusAnimations {
 					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -320,9 +320,9 @@ public final class PlutusAnimations {
 					new Keyframe(5.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3.2F, KeyframeAnimations.degreeVec(-5F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3.4F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(4.8F, KeyframeAnimations.degreeVec(-55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(5F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.4F, KeyframeAnimations.degreeVec(60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.8F, KeyframeAnimations.degreeVec(55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(5.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-60F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
@@ -374,8 +374,8 @@ public final class PlutusAnimations {
 					new Keyframe(3.6F, KeyframeAnimations.degreeVec(-25F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.degreeVec(-50F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3.6F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(50F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.6F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(30F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM),

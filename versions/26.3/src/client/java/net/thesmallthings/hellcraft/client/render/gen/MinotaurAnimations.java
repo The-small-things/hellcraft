@@ -22,6 +22,12 @@ public final class MinotaurAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(-5F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(8F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(5F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(6F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -14F), AnimationChannel.Interpolations.CATMULLROM),
@@ -87,6 +93,12 @@ public final class MinotaurAnimations {
 					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -3F, 4F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.1F, KeyframeAnimations.posVec(0F, -1F, -6F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(12F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(18F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.1F, KeyframeAnimations.degreeVec(4F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(-40F, 0F, -40F), AnimationChannel.Interpolations.CATMULLROM),
@@ -113,6 +125,10 @@ public final class MinotaurAnimations {
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.8F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(40F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
@@ -149,6 +165,11 @@ public final class MinotaurAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.15F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(8F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.15F, KeyframeAnimations.degreeVec(22F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(-160F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
@@ -188,6 +209,11 @@ public final class MinotaurAnimations {
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0F, 270F, 0F), AnimationChannel.Interpolations.LINEAR),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 360F, 0F), AnimationChannel.Interpolations.LINEAR),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 360F, 0F), AnimationChannel.Interpolations.LINEAR)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(0F, 0F, -85F), AnimationChannel.Interpolations.CATMULLROM),
@@ -212,6 +238,11 @@ public final class MinotaurAnimations {
 					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -9F, 2F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, -9F, 2F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(14F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-40F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
@@ -242,6 +273,16 @@ public final class MinotaurAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(40F, 35F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.9F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.7F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.45F, KeyframeAnimations.degreeVec(25F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(2F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.95F, KeyframeAnimations.degreeVec(22F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.1F, KeyframeAnimations.degreeVec(2F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.9F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.7F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -277,6 +318,16 @@ public final class MinotaurAnimations {
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, -10F, 3F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.8F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(5F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(12F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(12F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.95F, KeyframeAnimations.degreeVec(38F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.2F, KeyframeAnimations.degreeVec(38F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -317,6 +368,10 @@ public final class MinotaurAnimations {
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.12F, KeyframeAnimations.degreeVec(-15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.12F, KeyframeAnimations.degreeVec(15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("torso", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.12F, KeyframeAnimations.degreeVec(-10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -333,6 +388,11 @@ public final class MinotaurAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -18F, -12F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.posVec(0F, -24F, -18F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.8F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.degreeVec(16F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(-150F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),

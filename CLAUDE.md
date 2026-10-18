@@ -56,7 +56,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   client test `BossTest` screenshots every animation (`minos_*`). `LuciferTest` plays Lucifer's whole fight in an Inferno world (`lucifer_*`). Rotations in tools/art follow Blockbench: +X swings a hanging
   arm forward and tips a body or head back (the model faces -Z). `HELLCRAFT_POSE_AUDIT=1 bash tools/dev/clienttest.sh`
   (with only BossTest listed) films every model's key frames from its side, front on the right (`audit_*`): check
-  that blows swing forward.
+  that blows swing forward. `python3 tools/art/render.py <model> [--anim <name> --times 0.4,0.8] [--views front,three,side,back]`
+  renders a .bbmodel offline in a second (versions/26.3/build/art-preview/): use it while building a model, then confirm in game.
 
 ## Code map (`versions/26.3/src/main/java/net/thesmallthings/hellcraft/`; client-only code in `src/client`)
 - `blood/`: hearts and lifesteal (`Hearts`, `DeathHandler`, `HellState` = all saved data), Blood Altars and their
@@ -90,7 +91,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `LivingEntityMixin`); Lust's lovers are stunned by a blocked dive and dive one at a time; Lucifer has his own `luciferTempo`;
   the Fallen Seraph's guard (`SeraphAttacks.guard`: 30% through until a parried slash breaks it, then 160%; trading blows
   draws a riposte); the Emperor's random blows, `BOTH_HANDS`, `DRAG`, `BREATH` (he turns in the ice, `EmperorEntity.turnBy`) and
-  icefall throughout; roads with stairs and blended stone (`PilgrimRoadFeature.lookAt`); danger marks over snow; the art
+  icefall throughout; roads with stairs and blended stone (`PilgrimRoadFeature.lookAt`); danger marks over snow; the Wood of the Suicides as a thicket
+  (`world/feature/SuicideTreeFeature`, which keeps off the roads, and `block/ThornsBlock`, the `hellcraft:thorns` damage type; `LowerRules.woodTest`); the art
   painters in `tools/art/bbmodel.py` (value noise, tufted fur, metal sheen, `edge_shade` on every face).
 - Phase 8 additions: `blood/Loadout` (`/hellcraft loadout [players] [kit]`: journey kits `upper`, `lower`, `lucifer`,
   `paradiso` with about what a player has by then, hearts too, for fair boss tests; `full`/`blood`, everything);

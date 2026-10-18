@@ -365,9 +365,10 @@ def serpent(head, i):
     three bones (root, middle, tip) so it writhes along its length, and a small head with yellow eyes."""
     root, heading, curl, segs = SNAKES[i]
     d = norm(heading)
-    axis = norm(cross(d, (0, 0, 1) if abs(d[2]) < 0.8 else (1, 0, 0)))
-    if abs(d[0]) < 0.2:
-        axis = (1, 0, 0)
+    # it curls in the upright plane it grows in: up and over, then back the other way
+    axis = cross(d, (0, 1, 0))
+    axis = norm(axis) if math.sqrt(sum(v * v for v in axis)) > 0.3 else (1, 0, 0)
+    curl = abs(curl)
     p = root
     bone = head.bone(f"snake{i}", root)
     widths = [(2, -0.3), (2, -0.45), (1, 0.05), (1, -0.1), (1, -0.2)]
@@ -376,7 +377,7 @@ def serpent(head, i):
             bone = bone.bone(f"snake{i}_mid", p)
         if k == segs - 1:
             bone = bone.bone(f"snake{i}_tip", p)
-        q = add(p, mul(d, 1.6 if k < 2 else 1.3))
+        q = add(p, mul(d, 1.4 if k < 2 else 1.2))
         t, inf = widths[min(k, len(widths) - 1)]
         if k == segs - 1:
             stick(bone, f"snake{i}_head", p, add(p, mul(d, 1.7)), 1, SERPENT, depth=1, inflate=0.12, detail=snake_head)
@@ -423,7 +424,7 @@ def build():
     body.cube("underskirt", (-3, 4, -2), (6, 7, 4), ROBE, detail=torn)
     for k, phi in enumerate(range(0, 360, 30)):
         length = (11, 9, 12, 10, 8, 11, 12, 9, 10, 12, 8, 10)[k]
-        skirt_strip(body, f"skirt{k}", phi, length, 3 if k % 3 else 2, 9 + (k * 7) % 8)
+        skirt_strip(body, f"skirt{k}", phi, length, 3 if k % 3 else 2, 6 + (k * 7) % 6)
     hydra(body)
 
     # her legs dangle under the rags: bony shins, and long feet with clawed toes

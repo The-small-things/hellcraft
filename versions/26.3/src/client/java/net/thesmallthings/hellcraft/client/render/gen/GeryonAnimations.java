@@ -115,27 +115,27 @@ public final class GeryonAnimations {
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("seg3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.degreeVec(40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.15F, KeyframeAnimations.degreeVec(58F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(36F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(41F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.15F, KeyframeAnimations.degreeVec(54F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("seg4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(50F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.15F, KeyframeAnimations.degreeVec(66F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(39F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(44F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.15F, KeyframeAnimations.degreeVec(60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("sting", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.degreeVec(60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(70F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.15F, KeyframeAnimations.degreeVec(95F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(50F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.15F, KeyframeAnimations.degreeVec(85F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("tail", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.degreeVec(50F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.15F, KeyframeAnimations.degreeVec(74F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(42F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(47F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.15F, KeyframeAnimations.degreeVec(66F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition FALSEFACE = AnimationDefinition.Builder.withLength(2F)

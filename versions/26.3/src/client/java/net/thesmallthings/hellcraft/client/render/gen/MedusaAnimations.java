@@ -26,41 +26,209 @@ public final class MedusaAnimations {
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake5", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake6", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake7", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-20F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(20F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition GAZE = AnimationDefinition.Builder.withLength(4F)
 			.addAnimation("eyes", new AnimationChannel(AnimationChannel.Targets.SCALE,
@@ -80,41 +248,209 @@ public final class MedusaAnimations {
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake5", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake6", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake7", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-35F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(35F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-35F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.4F)
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -132,41 +468,209 @@ public final class MedusaAnimations {
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake5", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake6", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake7", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-30F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.125F, KeyframeAnimations.degreeVec(30F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition DEATH = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("bust", new AnimationChannel(AnimationChannel.Targets.POSITION,
@@ -177,41 +681,209 @@ public final class MedusaAnimations {
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake0_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake10_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake11_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake12_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake13_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake14_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake15_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake1_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake2", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake2_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake3", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake3_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake4", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake4_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake5", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake5_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake6", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake6_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake7", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake7_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake8_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.125F, KeyframeAnimations.degreeVec(-45F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.375F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_mid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(0F, 0F, 45F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("snake9_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 
 	public static AnimationDefinition of(MedusaAnim anim) {

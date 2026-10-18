@@ -17,6 +17,18 @@ public final class MinosAnimations {
 	}
 
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(4F).looping()
+			.addAnimation("beard", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-2F, 0F, -1.5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.2F, KeyframeAnimations.degreeVec(-1F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(-2F, 0F, 1.5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("beard_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-3F, 0F, -2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.5F, KeyframeAnimations.degreeVec(-1F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.5F, KeyframeAnimations.degreeVec(-3F, 0F, 2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("coils", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, -1.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -37,10 +49,18 @@ public final class MinosAnimations {
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(-2F, 0F, -3F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("left_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 15F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(-2F, 0F, 3F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -15F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, -5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("tail_1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, -2.828F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -113,6 +133,12 @@ public final class MinosAnimations {
 					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition INTRO = AnimationDefinition.Builder.withLength(6F)
+			.addAnimation("beard", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(5F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.1F, KeyframeAnimations.degreeVec(12F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.4F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(5.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("coils", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 10F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -137,6 +163,12 @@ public final class MinosAnimations {
 					new Keyframe(3.1F, KeyframeAnimations.degreeVec(20F, 0F, -75F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4.4F, KeyframeAnimations.degreeVec(20F, 0F, -72F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(5.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("left_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 40F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.1F, KeyframeAnimations.degreeVec(0F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.4F, KeyframeAnimations.degreeVec(0F, 0F, -15F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(5.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.1F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -146,6 +178,12 @@ public final class MinosAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.1F, KeyframeAnimations.degreeVec(20F, 0F, 75F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4.4F, KeyframeAnimations.degreeVec(20F, 0F, 72F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(5.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -40F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.1F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.4F, KeyframeAnimations.degreeVec(0F, 0F, 15F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(5.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -197,6 +235,12 @@ public final class MinosAnimations {
 					new Keyframe(2.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition STRIKE = AnimationDefinition.Builder.withLength(1.6F)
+			.addAnimation("beard", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(6F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.95F, KeyframeAnimations.degreeVec(-10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.3F, KeyframeAnimations.degreeVec(3F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(-10F, 10F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -212,6 +256,12 @@ public final class MinosAnimations {
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(-165F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.95F, KeyframeAnimations.degreeVec(-55F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-50F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(0F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.85F, KeyframeAnimations.degreeVec(0F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.05F, KeyframeAnimations.degreeVec(0F, 0F, -55F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -321,12 +371,25 @@ public final class MinosAnimations {
 					new Keyframe(2.8F, KeyframeAnimations.degreeVec(-170F, 0F, -15F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(-60F, 0F, -10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("left_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.7F, KeyframeAnimations.degreeVec(0F, 0F, 80F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 80F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-90F, 10F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(-90F, 10F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.8F, KeyframeAnimations.degreeVec(-170F, 0F, 15F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(-60F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.7F, KeyframeAnimations.degreeVec(0F, 0F, -80F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, -80F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -355,6 +418,11 @@ public final class MinosAnimations {
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(-60F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-60F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 15F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("tail_1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 40F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -404,6 +472,10 @@ public final class MinosAnimations {
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-60F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-70F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(-60F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -70F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("tail_1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, -150F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, -145F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -440,6 +512,10 @@ public final class MinosAnimations {
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-60F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.degreeVec(0F, 0F, 15F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("tail_1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, -150F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
@@ -463,6 +539,12 @@ public final class MinosAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition STAGGER = AnimationDefinition.Builder.withLength(2F)
+			.addAnimation("beard", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.15F, KeyframeAnimations.degreeVec(15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.degreeVec(5F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.degreeVec(6F, 0F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -479,6 +561,11 @@ public final class MinosAnimations {
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(30F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(20F, 0F, -50F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("left_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.15F, KeyframeAnimations.degreeVec(0F, 0F, -25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, -10F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -487,6 +574,11 @@ public final class MinosAnimations {
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.15F, KeyframeAnimations.degreeVec(30F, 0F, 60F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(20F, 0F, 50F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.15F, KeyframeAnimations.degreeVec(0F, 0F, 25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -524,6 +616,13 @@ public final class MinosAnimations {
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition PHASE = AnimationDefinition.Builder.withLength(3.2F)
+			.addAnimation("beard", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(18F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.degreeVec(14F, 0F, 2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.2F, KeyframeAnimations.degreeVec(16F, 0F, -2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("coils", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -546,6 +645,11 @@ public final class MinosAnimations {
 					new Keyframe(2.2F, KeyframeAnimations.degreeVec(-9F, 0F, -125F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-12F, 0F, -120F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("left_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 0F, -25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -558,6 +662,11 @@ public final class MinosAnimations {
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(-14F, 0F, 118F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.2F, KeyframeAnimations.degreeVec(-9F, 0F, 125F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(-12F, 0F, 120F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 0F, 25F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -624,6 +733,11 @@ public final class MinosAnimations {
 					new Keyframe(0.35F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition DEATH = AnimationDefinition.Builder.withLength(3.5F)
+			.addAnimation("beard", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(15F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.5F, KeyframeAnimations.degreeVec(-25F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("coils", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -643,6 +757,11 @@ public final class MinosAnimations {
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-10F, 0F, -15F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.5F, KeyframeAnimations.degreeVec(-15F, 0F, -10F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("left_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, -25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.5F, KeyframeAnimations.degreeVec(0F, 0F, 35F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -652,6 +771,11 @@ public final class MinosAnimations {
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, 60F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-10F, 0F, 15F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.5F, KeyframeAnimations.degreeVec(-15F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
+			.addAnimation("right_fingers", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, 0F, 25F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.5F, KeyframeAnimations.degreeVec(0F, 0F, -35F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_forearm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

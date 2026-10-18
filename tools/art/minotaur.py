@@ -462,11 +462,12 @@ ZERO = (0, 0, 0)
 
 
 def animations(m):
+    # (Blockbench's rotations: +X tips the torso or head back and swings a hanging limb forward; the jaw opens with -X)
     # breathing hard, snorting, the tail lashing
     idle = m.animation("idle", 3.0, loop=True)
     idle.pos("torso", [(0, ZERO), (1.5, (0, 0.8, 0)), (3.0, ZERO)])
     idle.rot("head", [(0, (-5, 0, 0)), (0.8, (5, 0, 0)), (1.0, (-8, 0, 0)), (3.0, (-5, 0, 0))])
-    idle.rot("jaw", [(0, ZERO), (0.8, ZERO), (1.0, (6, 0, 0)), (1.3, ZERO), (3.0, ZERO)])
+    idle.rot("jaw", [(0, ZERO), (0.8, ZERO), (1.0, (-6, 0, 0)), (1.3, ZERO), (3.0, ZERO)])
     idle.rot("tail", [(0, (20, 0, 0)), (1.0, (20, 20, 0)), (2.0, (20, -20, 0)), (3.0, (20, 0, 0))])
     idle.rot("right_arm", [(0, (0, 0, 10)), (1.5, (0, 0, 14)), (3.0, (0, 0, 10))])
     idle.rot("left_arm", [(0, (0, 0, -10)), (1.5, (0, 0, -14)), (3.0, (0, 0, -10))])
@@ -485,7 +486,7 @@ def animations(m):
     gore = m.animation("gore", 1.6)
     gore.rot("torso", [(0, ZERO), (0.6, (20, 0, 0)), (0.95, (25, 0, 0)), (1.1, (-35, 0, 0)), (1.6, ZERO)])
     gore.rot("head", [(0, ZERO), (0.6, (25, 0, 0)), (1.0, (30, 0, 0)), (1.1, (-40, 0, 0)), (1.25, (30, 0, 0)), (1.6, ZERO)])
-    gore.rot("jaw", [(0, ZERO), (0.6, (12, 0, 0)), (1.0, (18, 0, 0)), (1.1, (4, 0, 0)), (1.6, ZERO)])
+    gore.rot("jaw", [(0, ZERO), (0.6, (-12, 0, 0)), (1.0, (-18, 0, 0)), (1.1, (-4, 0, 0)), (1.6, ZERO)])
     gore.rot("right_arm", [(0, ZERO), (0.6, (40, 0, 40)), (1.1, (-20, 0, 20)), (1.6, ZERO)])
     gore.rot("left_arm", [(0, ZERO), (0.6, (40, 0, -40)), (1.1, (-20, 0, -20)), (1.6, ZERO)])
     gore.pos("hips", [(0, ZERO), (0.6, (0, -3, 4)), (1.1, (0, -1, -6)), (1.6, ZERO)])
@@ -499,7 +500,7 @@ def animations(m):
     charge.rot("left_thigh", [(0, ZERO), (1.0, ZERO), (1.2, (-40, 0, 0)), (1.4, (40, 0, 0)), (1.6, (-40, 0, 0)), (1.8, ZERO)])
     charge.rot("torso", [(0, ZERO), (1.0, (-40, 0, 0)), (1.8, (-40, 0, 0))])
     charge.rot("head", [(0, ZERO), (1.0, (-20, 0, 0)), (1.8, (-20, 0, 0))])
-    charge.rot("jaw", [(0, ZERO), (1.0, (10, 0, 0)), (1.8, (10, 0, 0))])
+    charge.rot("jaw", [(0, ZERO), (1.0, (-10, 0, 0)), (1.8, (-10, 0, 0))])
     charge.rot("right_arm", [(0, ZERO), (1.0, (-40, 0, 30)), (1.8, (-40, 0, 30))])
     charge.rot("left_arm", [(0, ZERO), (1.0, (-40, 0, -30)), (1.8, (-40, 0, -30))])
     charge.pos("hips", [(0, ZERO), (1.0, (0, -4, 0)), (1.8, (0, -4, 0))])
@@ -512,7 +513,7 @@ def animations(m):
     stomp.rot("right_arm", [(0, ZERO), (0.8, (160, 0, 20)), (1.15, (20, 0, 10)), (1.8, ZERO)])
     stomp.rot("left_arm", [(0, ZERO), (0.8, (160, 0, -20)), (1.15, (20, 0, -10)), (1.8, ZERO)])
     stomp.rot("torso", [(0, ZERO), (0.8, (15, 0, 0)), (1.15, (-25, 0, 0)), (1.8, ZERO)])
-    stomp.rot("jaw", [(0, ZERO), (0.8, (8, 0, 0)), (1.15, (22, 0, 0)), (1.8, ZERO)])
+    stomp.rot("jaw", [(0, ZERO), (0.8, (-8, 0, 0)), (1.15, (-22, 0, 0)), (1.8, ZERO)])
     stomp.pos("hips", [(0, ZERO), (0.8, (0, 3, 0)), (1.15, (0, -4, 0)), (1.8, ZERO)])
     stomp.event(1.15, "slam")
 
@@ -523,7 +524,7 @@ def animations(m):
     frenzy.rot("hips", [(0, ZERO), (0.9, (0, -30, 0)), (1.3, (0, -150, 0)), (1.7, (0, -270, 0)), (2.0, (0, -360, 0)), (2.6, (0, -360, 0))],
                interp="linear")
     frenzy.rot("head", [(0, ZERO), (0.6, (20, 0, 0)), (2.0, (20, 0, 0)), (2.6, ZERO)])
-    frenzy.rot("jaw", [(0, ZERO), (0.6, (20, 0, 0)), (2.0, (20, 0, 0)), (2.6, ZERO)])
+    frenzy.rot("jaw", [(0, ZERO), (0.6, (-20, 0, 0)), (2.0, (-20, 0, 0)), (2.6, ZERO)])
     frenzy.event(0.9, "spin").event(2.0, "spun")
 
     # reels after a blocked thrust or a charge into the rock: on one knee, shaking his head
@@ -533,7 +534,7 @@ def animations(m):
     stagger.rot("right_shin", [(0, ZERO), (0.3, (-90, 0, 0)), (2.0, (-90, 0, 0)), (2.4, ZERO)])
     stagger.rot("torso", [(0, ZERO), (0.3, (-30, 0, 0)), (2.0, (-30, 0, 0)), (2.4, ZERO)])
     stagger.rot("head", [(0, ZERO), (0.6, (-20, -25, 0)), (0.9, (-20, 25, 0)), (1.2, (-20, -25, 0)), (1.5, (-20, 25, 0)), (2.4, ZERO)])
-    stagger.rot("jaw", [(0, ZERO), (0.3, (14, 0, 0)), (2.0, (10, 0, 0)), (2.4, ZERO)])
+    stagger.rot("jaw", [(0, ZERO), (0.3, (-14, 0, 0)), (2.0, (-10, 0, 0)), (2.4, ZERO)])
     stagger.rot("right_arm", [(0, ZERO), (0.3, (40, 0, 10)), (2.0, (40, 0, 10)), (2.4, ZERO)])
 
     # his fury at half health: he bites his own arm, then bellows
@@ -542,7 +543,7 @@ def animations(m):
     phase.rot("left_forearm", [(0, ZERO), (0.5, (60, 0, 0)), (1.4, (60, 0, 0)), (1.8, ZERO)])
     phase.rot("head", [(0, ZERO), (0.5, (-30, -30, 0)), (0.8, (-40, -35, 0)), (1.1, (-30, -30, 0)), (1.4, (-40, -35, 0)), (1.9, (45, 0, 0)),
                        (2.7, (45, 0, 0)), (3.0, ZERO)])
-    phase.rot("jaw", [(0, ZERO), (0.45, (25, 0, 0)), (0.6, (2, 0, 0)), (0.95, (22, 0, 0)), (1.1, (2, 0, 0)), (1.6, ZERO), (1.9, (35, 0, 0)),
+    phase.rot("jaw", [(0, ZERO), (0.45, (-25, 0, 0)), (0.6, (-2, 0, 0)), (0.95, (-22, 0, 0)), (1.1, (-2, 0, 0)), (1.6, ZERO), (1.9, (-35, 0, 0)),
                       (2.7, (35, 0, 0)), (3.0, ZERO)])
     phase.rot("torso", [(0, ZERO), (1.9, (20, 0, 0)), (2.7, (20, 0, 0)), (3.0, ZERO)])
     phase.rot("right_arm", [(0, ZERO), (1.9, (30, 0, 70)), (2.7, (30, 0, 70)), (3.0, ZERO)])
@@ -557,7 +558,7 @@ def animations(m):
     intro.rot("left_thigh", [(0, (50, 0, 0)), (2.0, (50, 0, 0)), (2.8, ZERO)])
     intro.rot("left_shin", [(0, (-60, 0, 0)), (2.0, (-60, 0, 0)), (2.8, ZERO)])
     intro.rot("head", [(0, (-20, 0, 0)), (1.0, (-20, 20, 0)), (2.0, (-20, 20, 0)), (2.8, (40, 0, 0)), (4.2, (40, 0, 0)), (5.0, ZERO)])
-    intro.rot("jaw", [(0, ZERO), (0.6, (12, 0, 0)), (0.8, ZERO), (1.3, (12, 0, 0)), (1.5, ZERO), (2.8, ZERO), (2.95, (38, 0, 0)), (4.2, (38, 0, 0)),
+    intro.rot("jaw", [(0, ZERO), (0.6, (-12, 0, 0)), (0.8, ZERO), (1.3, (-12, 0, 0)), (1.5, ZERO), (2.8, ZERO), (2.95, (-38, 0, 0)), (4.2, (-38, 0, 0)),
                       (4.6, ZERO)])
     intro.rot("right_arm", [(0, (60, 0, 0)), (2.0, (60, 0, 0)), (2.8, (20, 0, 80)), (4.2, (20, 0, 80)), (5.0, ZERO)])
     intro.rot("left_arm", [(0, (60, 0, 0)), (2.0, (60, 0, 0)), (2.8, (20, 0, -80)), (4.2, (20, 0, -80)), (5.0, ZERO)])
@@ -566,7 +567,7 @@ def animations(m):
     hurt = m.animation("hurt", 0.4)
     hurt.rot("torso", [(0, ZERO), (0.12, (10, 0, 0)), (0.4, ZERO)])
     hurt.rot("head", [(0, ZERO), (0.12, (15, 0, 0)), (0.4, ZERO)])
-    hurt.rot("jaw", [(0, ZERO), (0.12, (15, 0, 0)), (0.4, ZERO)])
+    hurt.rot("jaw", [(0, ZERO), (0.12, (-15, 0, 0)), (0.4, ZERO)])
 
     # he topples forward onto his horns
     death = m.animation("death", 3.0)
@@ -576,7 +577,7 @@ def animations(m):
     death.rot("left_thigh", [(0, ZERO), (0.8, (60, 0, 0)), (3.0, (75, 0, 0))])
     death.rot("right_arm", [(0, ZERO), (1.8, (150, 0, 20)), (3.0, (160, 0, 20))])
     death.rot("left_arm", [(0, ZERO), (1.8, (150, 0, -20)), (3.0, (160, 0, -20))])
-    death.rot("jaw", [(0, ZERO), (0.8, (20, 0, 0)), (1.8, (10, 0, 0)), (3.0, (16, 0, 0))])
+    death.rot("jaw", [(0, ZERO), (0.8, (-20, 0, 0)), (1.8, (-10, 0, 0)), (3.0, (-16, 0, 0))])
     death.event(1.8, "fall")
 
 
