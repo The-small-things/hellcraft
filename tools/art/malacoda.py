@@ -522,8 +522,13 @@ def animations(m):
     for side, k in (("right", 1.0), ("left", 0.9)):
         death.rot(f"{side}_leg", [(0, ZERO), (0.6, (-40 * k, 0, 0)), (1.4, (-80 * k, 0, 0))])
         death.pos(f"{side}_leg", [(0, ZERO), (0.6, (0, -8, -2)), (1.4, (0, -13, -3))])
-        death.rot(f"{side}_shin", [(0, ZERO), (0.6, (-20, 0, 0)), (1.4, (-5, 0, 0))])
+        death.rot(f"{side}_shin", [(0, ZERO), (0.6, (-20, 0, 0)), (1.4, (-35, 0, 0))])
     death.rot("jaw", [(0, ZERO), (0.6, (-25, 0, 0)), (1.4, (-15, 0, 0))])
+    # the staff falls with him: the arm straightens and the staff lies along it
+    GRIP.carry(death, "left_arm", "left_forearm", "staff",
+               [(0, ZERO), (0.6, (-10, 0, 0)), (1.4, (-20, 0, 0))],
+               [(0, ZERO), (0.6, (-60, 0, 0)), (1.4, (-75, 0, 0))],
+               [(0, ZERO), (0.6, (-60, 0, 0)), (1.4, (-95, 0, 0))])
 
 
 if __name__ == "__main__":

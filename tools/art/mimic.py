@@ -22,7 +22,7 @@ from bbmodel import Model, material, shade, hexc  # noqa: E402
 
 WOOD = material("wood", "flat", base="9c6a2c")
 TRIM = material("trim", "flat", base="5a3a14")
-IRON = material("iron", "metal", base="5a5a5e", high="9a9a9e", low="2e2e32")
+IRON = material("iron", "metal", base="4a4a4e", high="7a7a80", low="26262a")
 GUM = material("gum", "skin", base="6a1a1a", dark="3a0a0a")
 TONGUE = material("tongue", "skin", base="b04a5a", dark="6a2030")
 TOOTH_M = material("tooth", "horn", root="d8ccb0", tip="f4eedc")
@@ -114,7 +114,7 @@ def build():
     body.cube("wall_left", (-7, 1, -6), (1, 9, 12), WOOD, detail=wall("right"))
     body.cube("lower_jaw", (-6, 7.5, -6), (12, 1, 12), GUM, detail=gums)
     for i, (cx, cz) in enumerate(((-7, -7), (5, -7), (-7, 5), (5, 5))):
-        body.cube(f"corner_{i}", (cx, 0, cz), (2, 10, 2), IRON, inflate=0.06)
+        body.cube(f"corner_{i}", (cx, 0, cz), (2, 2, 2), IRON, inflate=0.06)
     for side, s in (("right", 1), ("left", -1)):
         body.cube(f"{side}_handle", (7 * s - 0.5, 6.5, -2), (1, 1, 4), IRON, inflate=-0.1)
     body.cube("hinge_right", (2.5, 8, 6.6), (2, 2, 1), IRON)
@@ -128,18 +128,17 @@ def build():
             body.cube(f"tooth_low_{side}_{i}", (5 * s - 0.5 + (-0.1 * s), 8.5, z), (1, 2, 1), TOOTH_M,
                       rotation=(0, 0, -8 * s), origin=(5 * s, 9.5, z + 0.5))
     tongue = body.bone("tongue", (0, 9, 4))
-    tongue.cube("tongue", (-2, 8.5, -1), (4, 1, 5), TONGUE, detail=tongue_detail)
-    tongue.cube("tongue_mid", (-1.5, 8.6, -5), (3, 1, 4), TONGUE, detail=tongue_detail)
-    tip = tongue.bone("tongue_tip", (0, 9, -5))
-    tip.cube("tongue_tip", (-1, 8.7, -8), (2, 1, 3), TONGUE, detail=tongue_detail)
-    tip.cube("tongue_fork_right", (0.2, 8.8, -9.2), (1, 1, 2), TONGUE, inflate=-0.15)
-    tip.cube("tongue_fork_left", (-1.2, 8.8, -9.2), (1, 1, 2), TONGUE, inflate=-0.15)
+    tongue.cube("tongue", (-2, 8.5, 1), (4, 1, 4), TONGUE, detail=tongue_detail)
+    tongue.cube("tongue_mid", (-1.5, 8.6, -3), (3, 1, 4), TONGUE, detail=tongue_detail)
+    tip = tongue.bone("tongue_tip", (0, 9, -3))
+    tip.cube("tongue_tip", (-1, 8.7, -5), (2, 1, 2), TONGUE, detail=tongue_detail)
+    tip.cube("tongue_fork_right", (0.1, 8.8, -5.8), (1, 1, 1), TONGUE, inflate=-0.1)
+    tip.cube("tongue_fork_left", (-1.1, 8.8, -5.8), (1, 1, 1), TONGUE, inflate=-0.1)
     # the lid, hinged at the back: solid, its underside the roof of the mouth
     lid = body.bone("lid", (0, 10, 7))
     lid.cube("lid", (-7, 10, -7), (14, 5, 14), WOOD, detail=palate)
     for i, (cx, cz) in enumerate(((-7, -7), (5, -7), (-7, 5), (5, 5))):
-        lid.cube(f"lid_corner_{i}", (cx, 10, cz), (2, 5, 2), IRON, inflate=0.06)
-    lid.cube("lid_band", (-1, 10, -7), (2, 5, 14), IRON, inflate=0.04)
+        lid.cube(f"lid_corner_{i}", (cx, 13, cz), (2, 2, 2), IRON, inflate=0.06)
     lid.cube("latch", (-1, 8, -7.8), (2, 4, 1), IRON, detail=keyhole)
     lid.cube("hinge_leaf_right", (2.5, 10, 6.6), (2, 2, 1), IRON)
     lid.cube("hinge_leaf_left", (-4.5, 10, 6.6), (2, 2, 1), IRON)

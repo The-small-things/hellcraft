@@ -514,12 +514,13 @@ def animations(m):
     death.rot("body", [(0, ZERO), (0.5, (60, 0, 10)), (1.2, (80, 0, 10))])
     death.pos("body", [(0, ZERO), (0.5, (0, -6, -2)), (1.2, (0, -10, -3))])
     # it goes down on its back: the legs fold with the hips and kick out in front
-    death.rot("right_leg", [(0, ZERO), (0.5, (40, 0, 0)), (1.2, (75, 0, 0))])
-    death.rot("left_leg", [(0, ZERO), (0.5, (30, 0, 0)), (1.2, (65, 0, 0))])
+    death.rot("right_leg", [(0, ZERO), (0.5, (40, 0, 0)), (1.2, (82, 0, 0))])
+    death.rot("left_leg", [(0, ZERO), (0.5, (30, 0, 0)), (1.2, (74, 0, 0))])
     death.pos("right_leg", [(0, ZERO), (0.5, (0, -6, -2)), (1.2, (0, -10, -3))])
     death.pos("left_leg", [(0, ZERO), (0.5, (0, -6, -2)), (1.2, (0, -10, -3))])
-    death.rot("right_shin", [(0, ZERO), (0.5, (-40, 0, 0)), (1.2, (-20, 0, 0))])
-    death.rot("left_shin", [(0, ZERO), (0.5, (-50, 0, 0)), (1.2, (-35, 0, 0))])
+    death.rot("right_shin", [(0, ZERO), (0.5, (-40, 0, 0)), (1.2, (10, 0, 0))])
+    death.rot("left_shin", [(0, ZERO), (0.5, (-50, 0, 0)), (1.2, (0, 0, 0))])
+    death.rot("tail", [(0, ZERO), (0.5, (35, 0, 0)), (1.2, (70, 25, 0))])
     death.rot("jaw", [(0, ZERO), (0.5, (-30, 0, 0)), (1.2, (-20, 0, 0))])
     for side, s in (("right", 1), ("left", -1)):
         death.rot(f"{side}_wing", [(0, ZERO), (0.5, (0, 20 * s, -20 * s)), (1.2, (0, 30 * s, -40 * s))])

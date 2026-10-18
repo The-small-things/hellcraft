@@ -15,24 +15,44 @@ public final class HereticMesh {
 	private HereticMesh() {
 	}
 
-	public static final int TEXTURE_WIDTH = 64;
+	public static final int TEXTURE_WIDTH = 128;
 	public static final int TEXTURE_HEIGHT = 64;
 
 	public static LayerDefinition createLayer() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition root = mesh.getRoot();
-		PartDefinition p_right_leg = root.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 16).mirror(false).addBox(-1F, 0F, -1.5F, 3F, 12F, 3F),
+		PartDefinition p_right_leg = root.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(80, 0).mirror(false).addBox(-1.3F, -0.5F, -1.5F, 3F, 6F, 3F).texOffs(62, 28).mirror(false).addBox(-0.8F, 4.4F, -1.9F, 2F, 2F, 2F).texOffs(0, 14).mirror(false).addBox(-0.8F, 4.5F, -1F, 2F, 6F, 2F).texOffs(102, 22).mirror(false).addBox(-1.5F, 10F, -1.6F, 3F, 2F, 3F).texOffs(0, 33).mirror(false).addBox(-1.5F, 11F, -2.6F, 3F, 1F, 1F),
 				PartPose.offset(-2F, 12F, 0F));
-		PartDefinition p_left_leg = root.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(36, 0).mirror().addBox(-2F, 0F, -1.5F, 3F, 12F, 3F),
+		PartDefinition p_left_leg = root.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(68, 0).mirror().addBox(-1.7F, -0.5F, -1.5F, 3F, 6F, 3F).texOffs(54, 28).mirror().addBox(-1.2F, 4.4F, -1.9F, 2F, 2F, 2F).texOffs(116, 0).mirror().addBox(-1.2F, 4.5F, -1F, 2F, 6F, 2F).texOffs(90, 22).mirror().addBox(-1.5F, 10F, -1.6F, 3F, 2F, 3F).texOffs(116, 28).mirror().addBox(-1.5F, 11F, -2.6F, 3F, 1F, 1F),
 				PartPose.offset(2F, 12F, 0F));
-		PartDefinition p_body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).mirror(false).addBox(-4F, -12F, -2F, 8F, 12F, 4F).texOffs(0, 31).mirror(false).addBox(-4.5F, -15F, -2.5F, 9F, 4F, 5F),
+		PartDefinition p_body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(8, 14).mirror(false).addBox(-3.5F, -2.5F, -2F, 7F, 3F, 4F).texOffs(100, 14).mirror(false).addBox(-3.5F, -2.5F, -2.3F, 7F, 5F, 1F).texOffs(0, 0).mirror(false).addBox(-3.5F, -8.5F, 1.4F, 7F, 13F, 1F).texOffs(46, 14).mirror(false).addBox(-2.5F, -6F, -1.5F, 5F, 4F, 3F).texOffs(46, 0).mirror(false).addBox(-3.5F, -10.5F, -2F, 7F, 5F, 4F).texOffs(68, 22).mirror(false).addBox(-4F, -11.5F, -1.5F, 8F, 2F, 3F).texOffs(24, 22).mirror(false).addBox(-5.5F, -13.5F, -1.5F, 3F, 3F, 3F).texOffs(24, 28).mirror(false).addBox(-5F, -15.5F, -1F, 2F, 3F, 2F).texOffs(0, 22).mirror(false).addBox(2.5F, -13.5F, -1.5F, 3F, 3F, 3F).texOffs(0, 28).mirror(false).addBox(3F, -15.5F, -1F, 2F, 3F, 2F),
 				PartPose.offsetAndRotation(0F, 12F, 0F, 0.1396F, 0F, 0F));
-		PartDefinition p_head = p_body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(12, 16).mirror(false).addBox(-3.5F, -7F, -3.5F, 7F, 7F, 7F).texOffs(40, 16).mirror(false).addBox(-3F, -12F, -3F, 6F, 5F, 6F),
+		p_body.addOrReplaceChild("sash_r", CubeListBuilder.create().texOffs(40, 0).mirror(false).addBox(-1F, -4.5F, -0.5F, 2F, 9F, 1F),
+				PartPose.offsetAndRotation(2.7F, -7.5F, -1.7F, 0F, 0F, -0.5236F));
+		PartDefinition p_head = p_body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(8, 28).mirror(false).addBox(-1F, -1.5F, -1F, 2F, 3F, 2F).texOffs(16, 0).mirror(false).addBox(-3F, -7F, -3.5F, 6F, 5F, 6F).texOffs(102, 28).mirror(false).addBox(-3F, -6.5F, -3.9F, 6F, 1F, 1F).texOffs(62, 14).mirror(false).addBox(-2.5F, -2.5F, -3.2F, 5F, 1F, 5F).texOffs(32, 28).mirror(false).addBox(-2F, -1.6F, -2.9F, 4F, 1F, 3F).texOffs(92, 0).mirror(false).addBox(-3F, -8.5F, -3.5F, 6F, 2F, 6F).texOffs(30, 14).mirror(false).addBox(-2F, -11F, -2.5F, 4F, 3F, 4F).texOffs(46, 28).mirror(false).addBox(-1F, -12.5F, -1.5F, 2F, 2F, 2F).texOffs(74, 28).mirror(false).addBox(-2.2F, -10.5F, -0.5F, 1F, 2F, 1F).texOffs(70, 28).mirror(false).addBox(1.4F, -11F, -2F, 1F, 3F, 1F),
 				PartPose.offset(0F, -12F, 0F));
-		PartDefinition p_right_arm = p_body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(48, 0).mirror(false).addBox(-1.5F, 0F, -1.5F, 3F, 12F, 3F),
+		PartDefinition p_jaw = p_head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(82, 14).mirror(false).addBox(-2.5F, -0.5F, -3.5F, 5F, 2F, 4F),
+				PartPose.offsetAndRotation(0F, -1.5F, 0F, 0.2094F, 0F, 0F));
+		PartDefinition p_right_arm = p_body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(12, 22).mirror(false).addBox(-1.5F, 0F, -1.5F, 3F, 3F, 3F).texOffs(60, 22).mirror(false).addBox(-1F, 2.5F, -1F, 2F, 4F, 2F),
 				PartPose.offset(-5.5F, -11F, 0F));
-		PartDefinition p_left_arm = p_body.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(24, 0).mirror().addBox(-1.5F, 0F, -1.5F, 3F, 12F, 3F),
+		PartDefinition p_right_forearm = p_right_arm.addOrReplaceChild("right_forearm", CubeListBuilder.create().texOffs(52, 22).mirror(false).addBox(-1F, 0F, -1F, 2F, 4F, 2F, new CubeDeformation(-0.1F)).texOffs(16, 28).mirror(false).addBox(-0.5F, 3.5F, -1.5F, 1F, 2F, 3F, new CubeDeformation(0.1F)),
+				PartPose.offsetAndRotation(0F, 6F, 0F, -0.1745F, 0F, 0F));
+		p_right_forearm.addOrReplaceChild("right_finger0_r", CubeListBuilder.create().texOffs(90, 28).mirror(false).addBox(-0.5F, -0.7F, -0.5F, 1F, 2F, 1F),
+				PartPose.offsetAndRotation(0F, 5.5F, -1F, 0F, 0F, -0.2618F));
+		p_right_forearm.addOrReplaceChild("right_finger1_r", CubeListBuilder.create().texOffs(94, 28).mirror(false).addBox(-0.5F, -0.7F, -0.5F, 1F, 2F, 1F),
+				PartPose.offsetAndRotation(0F, 5.5F, 0F, 0F, 0F, -0.2618F));
+		p_right_forearm.addOrReplaceChild("right_thumb_r", CubeListBuilder.create().texOffs(98, 28).mirror(false).addBox(-0.5F, -0.8F, -0.5F, 1F, 2F, 1F),
+				PartPose.offsetAndRotation(0.6F, 5F, -1.6F, -0.3491F, 0F, 0F));
+		PartDefinition p_left_arm = p_body.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(116, 14).mirror().addBox(-1.5F, 0F, -1.5F, 3F, 3F, 3F).texOffs(44, 22).mirror().addBox(-1F, 2.5F, -1F, 2F, 4F, 2F),
 				PartPose.offset(5.5F, -11F, 0F));
+		PartDefinition p_left_forearm = p_left_arm.addOrReplaceChild("left_forearm", CubeListBuilder.create().texOffs(36, 22).mirror().addBox(-1F, 0F, -1F, 2F, 4F, 2F, new CubeDeformation(-0.1F)).texOffs(114, 22).mirror().addBox(-0.5F, 3.5F, -1.5F, 1F, 2F, 3F, new CubeDeformation(0.1F)),
+				PartPose.offsetAndRotation(0F, 6F, 0F, -0.1745F, 0F, 0F));
+		p_left_forearm.addOrReplaceChild("left_finger0_r", CubeListBuilder.create().texOffs(78, 28).mirror().addBox(-0.5F, -0.7F, -0.5F, 1F, 2F, 1F),
+				PartPose.offsetAndRotation(0F, 5.5F, -1F, 0F, 0F, 0.2618F));
+		p_left_forearm.addOrReplaceChild("left_finger1_r", CubeListBuilder.create().texOffs(82, 28).mirror().addBox(-0.5F, -0.7F, -0.5F, 1F, 2F, 1F),
+				PartPose.offsetAndRotation(0F, 5.5F, 0F, 0F, 0F, 0.2618F));
+		p_left_forearm.addOrReplaceChild("left_thumb_r", CubeListBuilder.create().texOffs(86, 28).mirror().addBox(-0.5F, -0.8F, -0.5F, 1F, 2F, 1F),
+				PartPose.offsetAndRotation(-0.6F, 5F, -1.6F, -0.3491F, 0F, 0F));
 		return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	}
 }
