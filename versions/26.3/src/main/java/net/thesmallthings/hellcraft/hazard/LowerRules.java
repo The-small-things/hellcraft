@@ -12,7 +12,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -35,8 +37,9 @@ import java.util.UUID;
  * <ul>
  *     <li><b>Heresy: the tombs blast fire in turn.</b> Every open tomb (Tombs) warns with a red circle, then blasts a
  *     column of fire for a moment; they go in diagonal waves, so watch the rhythm and cross between blasts.</li>
- *     <li><b>Violence, the Wood of the Suicides: sneak.</b> Pushing through the dead branches without sneaking, or
- *     breaking them, makes noise; too much and the trees scream, and the harpies come.</li>
+ *     <li><b>Violence, the Wood of the Suicides: sneak.</b> The wood is a thicket of gnarled trees and black thorns
+ *     (SuicideTreeFeature, ThornsBlock). Pushing through the branches or thorns without sneaking, or breaking them,
+ *     makes noise; too much and the trees scream, and the harpies come. The thorns also tear whoever doesn't sneak.</li>
  *     <li><b>Violence, the Burning Sands: fire falls in waves.</b> The sky reddens and a countdown warns, then fire
  *     rains on the open sand for a few seconds. Get under one of the rock arches (or into water) until it passes.</li>
  * </ul>
@@ -205,11 +208,12 @@ public final class LowerRules {
 		}
 	}
 
-	/** Dead branches close by: brushing past them is what makes the noise. */
+	/** Dead branches or thorns close by: brushing past them is what makes the noise. */
 	private static boolean amongBranches(ServerLevel level, ServerPlayer p) {
 		BlockPos feet = p.blockPosition();
 		for (BlockPos b : BlockPos.betweenClosed(feet.offset(-1, 0, -1), feet.offset(1, 2, 1))) {
-			if (level.getBlockState(b).is(BlockTags.LOGS)) {
+			BlockState state = level.getBlockState(b);
+			if (state.is(BlockTags.LOGS) || state.is(HellBlocks.THORNS)) {
 				return true;
 			}
 		}
@@ -297,5 +301,34 @@ public final class LowerRules {
 		boolean rhythm = !fireFalling(SANDS_FIRE_AT - 1) && fireFalling(SANDS_FIRE_AT) && !fireFalling(SANDS_PERIOD);
 		return "Lower rules test: " + tombs.size() + " tombs near the east road, in Heresy=" + inHeresy + ", every slot used=" + everySlot
 				+ ", none on the road=" + noneOnRoad + "; sands rhythm=" + rhythm + "; circle " + Circle.HERESY.depth();
+	}
+
+	/**
+	 * For the smoke test: the Wood of the Suicides is a thicket. Counts the trees' logs and the thorns in the chunk the
+	 * smoke test loads beside the east road (x 1440..1455), and checks the road through it is clear.
+	 */
+	public static String woodTest(ServerLevel level) {
+		int logs = 0;
+		int thorns = 0;
+		boolean roadClear = true;
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int x = 1440; x < 1456; x++) {
+			for (int z = 0; z < 16; z++) {
+				boolean road = InfernoGeometry.onRoad(x + 0.5, z + 0.5);
+				int ground = level.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);
+				for (int y = ground - 3; y < ground + 12; y++) {
+					BlockState state = level.getBlockState(pos.set(x, y, z));
+					boolean branch = state.is(BlockTags.LOGS);
+					boolean thorn = state.is(HellBlocks.THORNS);
+					logs += branch ? 1 : 0;
+					thorns += thorn ? 1 : 0;
+					if (road && (branch || thorn) && y <= ground + 3) {
+						roadClear = false;
+					}
+				}
+			}
+		}
+		return "Wood test: " + logs + " logs and " + thorns + " thorns by the east road, thicket=" + (logs >= 40 && thorns >= 4)
+				+ ", road clear=" + roadClear;
 	}
 }

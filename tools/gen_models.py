@@ -463,6 +463,12 @@ def blocks():
     write(os.path.join(ASSETS, "blockstates", "slag_crust.json"), {"variants": {
         "stage=%d" % stage: [{"model": "hellcraft:block/slag_crust_%d" % stage, "y": rot} for rot in (0, 90, 180, 270)]
         for stage in range(5)}})
+    # the Wood of the Suicides' thorns: a crossed tangle, in two shapes, each turned four ways
+    for k in range(2):
+        write(os.path.join(ASSETS, "models", "block", "thorns_%d.json" % k),
+              {"parent": "minecraft:block/cross", "textures": {"cross": "hellcraft:block/thorns_%d" % k}})
+    write(os.path.join(ASSETS, "blockstates", "thorns.json"), {"variants": {
+        "": [{"model": "hellcraft:block/thorns_%d" % k, "y": rot} for k in range(2) for rot in (0, 90, 180, 270)]}})
 
 
 def main():

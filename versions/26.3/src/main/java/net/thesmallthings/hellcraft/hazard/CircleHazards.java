@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.blood.Ghosts;
 import net.thesmallthings.hellcraft.blood.HellState;
@@ -79,8 +80,8 @@ public final class CircleHazards {
 			return torch ? InteractionResult.SUCCESS_SERVER : InteractionResult.PASS;
 		});
 		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
-			if (level instanceof ServerLevel serverLevel && player instanceof ServerPlayer sp && state.is(BlockTags.LOGS)
-					&& HellWorldgen.isInferno(serverLevel)
+			if (level instanceof ServerLevel serverLevel && player instanceof ServerPlayer sp
+					&& (state.is(BlockTags.LOGS) || state.is(HellBlocks.THORNS)) && HellWorldgen.isInferno(serverLevel)
 					&& InfernoGeometry.zoneAt(pos.getX(), pos.getZ()) == Zone.WOOD_OF_SUICIDES && !warded(sp)) {
 				// "Why dost thou rend me?" -- the trees of the suicides bleed when broken, and the noise carries (LowerRules)
 				serverLevel.sendParticles(BloodAltar.BLOOD, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 25, 0.4, 0.4, 0.4, 0.0);

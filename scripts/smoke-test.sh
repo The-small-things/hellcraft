@@ -364,6 +364,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$lower"
   echo "$lower" | grep -q "=false" && { echo "Lower Hell's rules are wrong"; exit 1; }
   echo "$lower" | grep -q "16 centaur posts" || { echo "The fords have no centaur posts"; exit 1; }
+  echo "$lower" | grep -q "thicket=true, road clear=true" || { echo "The Wood of the Suicides is no thicket (or its trees block the road)"; exit 1; }
   echo "$lower" | grep -q "8 fake Rests" || { echo "Malebolge has no fake Rests"; exit 1; }
   for m in lovers glutton wrathful heretic centaur harpy mimic thief malebranche malacoda; do
     rcon "summon hellcraft:$m 3247 200 1875 {NoAI:1b,Tags:[\"smoke_monster\"]}" > /dev/null

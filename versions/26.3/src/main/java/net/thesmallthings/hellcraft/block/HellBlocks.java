@@ -27,6 +27,18 @@ public final class HellBlocks {
 					.pushReaction(PushReaction.IMMOVEABLE)
 					.noLootTable());
 
+	/** The Wood of the Suicides' black thorns: slow anything inside, tear a player who doesn't sneak (ThornsBlock). */
+	public static final Block THORNS = Blocks.register(ResourceKey.create(Registries.BLOCK, HellcraftMod.id("thorns")), ThornsBlock::new,
+			BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLACK)
+					.noCollision()
+					.strength(0.4f)
+					.sound(SoundType.SWEET_BERRY_BUSH)
+					.offsetType(BlockBehaviour.OffsetType.XZ)
+					.ignitedByLava()
+					.pushReaction(PushReaction.POPPED)
+					.noLootTable());
+
 	/** Loads the class (the blocks register as it does). */
 	public static void register() {
 	}

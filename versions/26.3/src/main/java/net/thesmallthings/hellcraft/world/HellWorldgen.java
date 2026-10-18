@@ -28,6 +28,7 @@ import net.thesmallthings.hellcraft.world.feature.PilgrimRoadFeature;
 import net.thesmallthings.hellcraft.world.feature.ReedBedFeature;
 import net.thesmallthings.hellcraft.world.feature.RingFluidFeature;
 import net.thesmallthings.hellcraft.world.feature.RottingTreeFeature;
+import net.thesmallthings.hellcraft.world.feature.SuicideTreeFeature;
 import net.thesmallthings.hellcraft.world.feature.SandRockFeature;
 import net.thesmallthings.hellcraft.world.feature.SlagCrustFeature;
 import net.thesmallthings.hellcraft.world.feature.SlagHeapFeature;
@@ -53,6 +54,7 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("pilgrim_road"), PilgrimRoadFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("noble_castle"), NobleCastleFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("rotting_tree"), RottingTreeFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("suicide_tree"), SuicideTreeFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("bloated_fungus"), BloatedFungusFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("feast_table"), FeastTableFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("coin_hill"), CoinHillFeature.CODEC);

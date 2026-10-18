@@ -614,16 +614,19 @@ public class MapTest implements FabricClientGameTest {
 		context.takeScreenshot("lower_ford_centaur");
 		server.runCommand("kill @e[type=hellcraft:centaur]");
 
-		// the Wood of the Suicides: the trees scream and the harpies come
+		// the Wood of the Suicides: a thicket of gnarled trees and thorns; the trees scream and the harpies come
 		int wx = (int) s(975);
 		int wz = 70;
 		int woodY = server.computeOnServer(s -> {
 			s.overworld().getChunk(wx >> 4, wz >> 4);
-			return s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, wx, wz);
+			return s.overworld().getHeight(Heightmap.Types.OCEAN_FLOOR, wx, wz);
 		});
-		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 90 -25", wx, woodY + 1, wz));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 90 5", wx, woodY + 1, wz));
 		context.waitTicks(10);
 		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("lower_wood_thicket");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 90 -25", wx, woodY + 1, wz));
 		server.runOnServer(s -> LowerMonsters.harpies(s.overworld(), s.getPlayerList().getPlayerByName("Player0"), 3));
 		context.waitTicks(30);
 		context.takeScreenshot("lower_wood_harpies");

@@ -68,5 +68,8 @@
   "biome.hellcraft.chainlands": "The Chainlands",
   "biome.hellcraft.ash_wastes": "The Ash Wastes",
   "biome.hellcraft.cyclops_quarries": "The Cyclops Quarries",
-  "biome.hellcraft.purgatory": "Purgatory"
+  "biome.hellcraft.purgatory": "Purgatory",
+  "block.hellcraft.thorns": "Thorns of the Wood",
+  "death.attack.hellcraft.thorns": "%1$s was torn apart by the thorns of the Wood of the Suicides",
+  "death.attack.hellcraft.thorns.player": "%1$s was torn apart by the thorns while fleeing %2$s"
 }

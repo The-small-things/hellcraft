@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 
@@ -215,6 +216,6 @@ public record PilgrimRoadFeature() implements Feature {
 	private static boolean clearable(BlockState state) {
 		return state.canBeReplaced() || state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || state.is(BlockTags.FLOWERS)
 				|| state.is(Blocks.SNOW) || state.is(Blocks.COBWEB) || state.is(Blocks.BROWN_MUSHROOM_BLOCK) || state.is(Blocks.RED_MUSHROOM_BLOCK)
-				|| state.is(Blocks.MUSHROOM_STEM);
+				|| state.is(Blocks.MUSHROOM_STEM) || state.is(Blocks.MANGROVE_ROOTS) || state.is(HellBlocks.THORNS);
 	}
 }

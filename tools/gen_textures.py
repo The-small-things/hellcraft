@@ -847,5 +847,51 @@ def slag_crust_textures():
 
 slag_crust_textures()
 
+
+# The Wood of the Suicides' thorns (block/thorns_<k>, a cross model): crooked black stems that fork as they climb,
+# each spined with thorns, a few tips wet with blood; the rest transparent. Two tangles, so the undergrowth varies.
+
+def thorns_textures():
+    import random
+    dark, mid, light, thorn, blood, wet = (hexc(c) for c in ("1a100c", "3a2820", "5e4636", "a89880", "7a0e14", "d02c34"))
+    for k in range(2):
+        rnd = random.Random(77 + k)
+        grid = [[None] * 16 for _ in range(16)]
+
+        def put(x, y, c, over=False):
+            if 0 <= x < 16 and 0 <= y < 16 and (over or grid[y][x] is None):
+                grid[y][x] = c
+
+        def stem(x, y, length, lean, depth=0):
+            fx = float(x)
+            for i in range(length):
+                yy = y - i
+                xx = int(round(fx))
+                put(xx, yy, (light if i % 4 == 1 else mid) if depth == 0 else mid, True)
+                if i < 3 and depth == 0:
+                    put(xx + 1, yy, dark)  # the woody base is thicker
+                if i > 1 and rnd.random() < 0.45:  # a thorn, pointing out and up
+                    side = rnd.choice((-1, 1))
+                    put(xx + side, yy - 1, thorn)
+                if depth < 2 and i > 2 and length - i > 3 and rnd.random() < 0.22:  # a fork
+                    stem(xx, yy - 1, max(3, (length - i) // 2 + rnd.randint(0, 2)), rnd.choice((-0.6, 0.6)), depth + 1)
+                fx += lean + rnd.uniform(-0.45, 0.45)
+                fx = min(15.0, max(0.0, fx))
+            tip_x = int(round(fx))
+            tip_y = y - length
+            if rnd.random() < 0.3:
+                put(tip_x, tip_y, wet, True)
+                put(tip_x, tip_y + 1, blood, True)
+            else:
+                put(tip_x, tip_y, thorn, True)
+
+        for base_x, length, lean in ((2, 13, 0.35), (7, 15, -0.15), (13, 12, -0.4), (5, 9, 0.5), (10, 11, 0.2), (15, 7, -0.6)):
+            stem(base_x + rnd.randint(-1, 1), 15, length + rnd.randint(-1, 1), lean)
+        pixels = [[c if c is not None else (0, 0, 0, 0) for c in row] for row in grid]
+        png(os.path.join(OUT, "block", "thorns_%d.png" % k), pixels)
+
+
+thorns_textures()
+
 if __name__ == "__main__":
     print("Wrote textures to", os.path.normpath(OUT))
