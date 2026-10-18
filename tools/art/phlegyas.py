@@ -164,10 +164,14 @@ def animations(m):
     oar.event(0.55, "flash").event(1.05, "hit")
 
     # the oar swept round over the water in a full circle (purple: it can't be blocked, jump it)
+    # the oar held straight out in front at arm's length, level over the deck, and swung right round with him (the purple
+    # ring is its reach); he winds up the other way first
     sweep = m.animation("sweep", 2.6)
     sweep.rot("torso", [(0, ZERO), (1.0, (0, 50, 0)), (1.2, (0, 50, 0)), (2.0, (0, -310, 0)), (2.6, (0, -360, 0))])
-    sweep.rot("right_arm", [(0, ZERO), (1.0, (40, 0, -70)), (2.0, (40, 0, -70)), (2.6, ZERO)])
-    sweep.rot("oar", [(0, (10, 0, 0)), (1.0, (80, 0, 0)), (2.0, (80, 0, 0)), (2.6, (10, 0, 0))])
+    sweep.rot("right_arm", [(0, ZERO), (0.8, (90, 0, 0)), (2.0, (90, 0, 0)), (2.6, ZERO)])
+    sweep.rot("right_forearm", [(0, ZERO), (0.8, (-30, 0, 0)), (2.0, (-30, 0, 0)), (2.6, ZERO)])
+    sweep.rot("oar", [(0, (10, 0, 0)), (0.8, (0, 0, 0)), (2.0, (0, 0, 0)), (2.6, (10, 0, 0))])
+    sweep.rot("left_arm", [(0, ZERO), (0.8, (60, 0, -20)), (2.0, (60, 0, -20)), (2.6, ZERO)])
     sweep.event(1.2, "sweep").event(2.0, "swept")
 
     # the wave: both fists brought down on the water; it rolls out over the landing

@@ -128,6 +128,8 @@ class Material:
 
     def paint(self, face):
         self.painter(face, self)
+        if self.c.get("edges", True):
+            edge_shade(face)
 
 
 def face_light(face):
@@ -135,29 +137,74 @@ def face_light(face):
     return {"top": 1.12, "bottom": 0.72}.get(face.name, 1.0)
 
 
+def value_noise(face, cell=4):
+    """Smooth noise over a face, in [-1, 1]: random values on a coarse grid, blended between (mottling, not static)."""
+    gw = face.w // cell + 2
+    gh = face.h // cell + 2
+    grid = [[face.rng.random() * 2 - 1 for _ in range(gw)] for _ in range(gh)]
+
+    def at(fx, fy):
+        gx, gy = fx / cell, fy / cell
+        x0, y0 = int(gx), int(gy)
+        tx, ty = gx - x0, gy - y0
+        tx, ty = tx * tx * (3 - 2 * tx), ty * ty * (3 - 2 * ty)
+        top = grid[y0][x0] * (1 - tx) + grid[y0][x0 + 1] * tx
+        bottom = grid[y0 + 1][x0] * (1 - tx) + grid[y0 + 1][x0 + 1] * tx
+        return top * (1 - ty) + bottom * ty
+    return at
+
+
 def noisy(face, base, amount=0.08, gradient=0.18):
-    """A base colour with a vertical gradient (darker toward the bottom of side faces) and speckle."""
+    """A base colour with a vertical gradient (darker toward the bottom of side faces), soft mottling and a little
+    fine grain."""
     light = face_light(face)
+    coarse = value_noise(face, 4)
 
     def at(fx, fy):
         g = 1.0
         if face.name not in ("top", "bottom") and face.h > 1:
             g = 1.0 + gradient * (0.5 - fy / (face.h - 1))
-        n = 1.0 + (face.rng.random() - 0.5) * 2 * amount
+        n = 1.0 + coarse(fx, fy) * amount * 1.4 + (face.rng.random() - 0.5) * amount * 0.5
         return shade(base, light * g * n)
 
     face.fill(at)
 
 
+def edge_shade(face, dark=0.8, lit=1.1):
+    """Defines the cube's shape: its faces' rims a little darker (the corners darker still), and the top rim of a side
+    lit, as light catches an edge. Applied to every face after its material."""
+    if face.w < 3 or face.h < 3:
+        return
+    for fy in range(face.h):
+        for fx in range(face.w):
+            rim = fx == 0 or fy == face.h - 1 or fx == face.w - 1 or (fy == 0 and face.name in ("top", "bottom"))
+            top = fy == 0 and face.name not in ("top", "bottom")
+            if not (rim or top):
+                continue
+            c = face.canvas.get(face.x + fx, face.y + fy)
+            if c is None or (len(c) > 3 and c[3] == 0):
+                continue
+            f = lit if top and not (fx == 0 or fx == face.w - 1) else dark
+            if (fx in (0, face.w - 1)) and (fy in (0, face.h - 1)):
+                f = dark * 0.92
+            face.canvas.set(face.x + fx, face.y + fy, shade(tuple(c[:3]), f), c[3] if len(c) > 3 else 255)
+
+
 def paint_skin(face, m):
-    noisy(face, m.c["base"], 0.06, 0.16)
-    # wrinkles and veins: short darker strokes
-    for _ in range(max(1, face.w * face.h // 40)):
+    """Skin: a smooth tone with soft mottling, a little darker in the creases (the face's lower part), and a few pores
+    and blemishes, never the streaks that made it look like stone."""
+    noisy(face, m.c["base"], 0.07, 0.2)
+    lf = face_light(face)
+    blotch = value_noise(face, 6)
+    for fy in range(face.h):
+        for fx in range(face.w):
+            if blotch(fx, fy) > 0.55:
+                c = face.canvas.get(face.x + fx, face.y + fy)
+                if c is not None:
+                    face.px(fx, fy, mix(tuple(c[:3]), shade(m.c["dark"], lf), 0.25))
+    for _ in range(max(1, face.w * face.h // 90)):
         x, y = face.rng.randrange(face.w), face.rng.randrange(face.h)
-        length = face.rng.randint(2, 4)
-        horizontal = face.rng.random() < 0.6
-        for i in range(length):
-            face.px(x + (i if horizontal else 0), y + (0 if horizontal else i), shade(m.c["dark"], face_light(face)))
+        face.px(x, y, mix(shade(m.c["base"], lf), shade(m.c["dark"], lf), 0.55))
 
 
 def paint_robe(face, m):
@@ -217,23 +264,34 @@ def paint_scales(face, m):
 
 
 def paint_hair(face, m):
+    """Fur and hair: a mid tone with soft mottling, covered in short tufts (2-4 pixels, light at the root side, dark at
+    the tip) that overlap row on row, so it reads as fur, not bark."""
     light, dark = m.c["light"], m.c["dark"]
     lf = face_light(face)
-    # strands: each column light or dark for a run, with the odd break
-    streak = [face.rng.choice((0.15, 0.55, 0.9, 1.0)) for _ in range(face.w)]
+    mid = mix(dark, light, 0.5)
+    coarse = value_noise(face, 5)
 
     def at(fx, fy):
-        t = streak[fx]
-        if face.rng.random() < 0.12:
-            t = max(0.0, t - 0.4)
-        return shade(mix(dark, light, t), lf * (1.0 - 0.15 * fy / max(1, face.h)))
+        g = 1.0 - 0.18 * fy / max(1, face.h) if face.name not in ("top", "bottom") else 1.0
+        return shade(mix(dark, mid, 0.6 + 0.4 * coarse(fx, fy)), lf * g)
 
     face.fill(at)
+    for _ in range(max(2, face.w * face.h // 5)):
+        x, y = face.rng.randrange(face.w), face.rng.randrange(face.h)
+        length = face.rng.randint(2, 4)
+        slant = face.rng.choice((-1, 0, 0, 1)) if face.name not in ("top", "bottom") else face.rng.choice((-1, 1))
+        tone = face.rng.choice((0.75, 0.9, 1.0))
+        for i in range(length):
+            t = tone * (1.0 - i / (length + 1))
+            face.px(x + (slant * i) // 2, y + i, shade(mix(dark, light, t), lf * (1.0 - 0.15 * (y + i) / max(1, face.h))))
 
 
 def paint_metal(face, m):
+    """Metal: lit along its top and left rims and dark along the others, with a soft sheen band across it and a little
+    tarnish, so gold and iron read as polished, not speckled."""
     base, high, low = m.c["base"], m.c["high"], m.c["low"]
     lf = face_light(face)
+    tarnish = value_noise(face, 5)
 
     def at(fx, fy):
         if fy == 0 or fx == 0:
@@ -241,7 +299,10 @@ def paint_metal(face, m):
         elif fy == face.h - 1 or fx == face.w - 1:
             c = low
         else:
-            c = base if (fx + fy) % 7 else high
+            # a sheen band running diagonally across the face
+            band = abs(((fx + fy * 0.7) / max(4, face.w + face.h) * 3.0) % 1.0 - 0.5)
+            c = mix(base, high, max(0.0, 0.45 - band) * 1.6)
+            c = mix(c, low, max(0.0, tarnish(fx, fy)) * 0.3)
         return shade(c, lf)
 
     face.fill(at)

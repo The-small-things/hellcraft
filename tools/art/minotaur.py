@@ -128,7 +128,10 @@ def animations(m):
 
     # the charge: he paws the ground, lowers his horns, and goes
     charge = m.animation("charge", 1.8)
-    charge.rot("right_thigh", [(0, ZERO), (0.25, (30, 0, 0)), (0.45, (-10, 0, 0)), (0.7, (30, 0, 0)), (0.9, (-10, 0, 0)), (1.8, ZERO)])
+    # pawing the ground, then running: both legs, in step
+    charge.rot("right_thigh", [(0, ZERO), (0.25, (30, 0, 0)), (0.45, (-10, 0, 0)), (0.7, (30, 0, 0)), (0.9, (-10, 0, 0)), (1.2, (40, 0, 0)),
+                               (1.4, (-40, 0, 0)), (1.6, (40, 0, 0)), (1.8, ZERO)])
+    charge.rot("left_thigh", [(0, ZERO), (1.0, ZERO), (1.2, (-40, 0, 0)), (1.4, (40, 0, 0)), (1.6, (-40, 0, 0)), (1.8, ZERO)])
     charge.rot("torso", [(0, ZERO), (1.0, (-40, 0, 0)), (1.8, (-40, 0, 0))])
     charge.rot("head", [(0, ZERO), (1.0, (-20, 0, 0)), (1.8, (-20, 0, 0))])
     charge.rot("right_arm", [(0, ZERO), (1.0, (-40, 0, 30)), (1.8, (-40, 0, 30))])
