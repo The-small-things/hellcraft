@@ -1,11 +1,14 @@
 package net.thesmallthings.hellcraft.hazard.lucifer;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
@@ -27,8 +30,12 @@ import java.util.List;
  *     <li><b>Stars</b> (red): he calls the stars down; red circles show where they fall.</li>
  *     <li><b>Lunge</b> (red): a red line, then he is at its end.</li>
  * </ul>
- * Once he snaps (half health) he comes faster and often strikes twice. The fight runs on its own clock, so every
- * delay here is in the fight's ticks (LuciferFight.schedule).
+ * Once he snaps (half health) he comes faster and often strikes twice, and the stars keep falling while he fights.
+ * <p>
+ * His wings guard him: until it is broken a blow does only {@link #GUARDED} of its damage, and three blows at his guard
+ * in quick succession draw a riposte, his white slash at once. Block a white slash and his guard breaks: for a few
+ * seconds he takes {@link #BROKEN} times the damage. So he can't be beaten by standing and trading blows.
+ * The fight runs on its own clock, so every delay here is in the fight's ticks (LuciferFight.schedule).
  */
 final class SeraphAttacks {
 	enum Attack {SLASH, SWEEP, STARS, LUNGE}
@@ -43,12 +50,28 @@ final class SeraphAttacks {
 	/** How far from his prey he likes to hover, and how fast he glides (blocks a fight tick). */
 	private static final double KEEP = 3.5;
 	private static final double GLIDE = 0.24;
+	/** The share of a blow that gets through his guard, and how much more a blow does while it's broken. */
+	static final float GUARDED = 0.3f;
+	static final float BROKEN = 1.6f;
+	/** How long his guard stays broken after a parry (fight ticks, after his stagger). */
+	private static final int BROKEN_FOR = 60;
+	/** Blows at his guard within this many fight ticks that draw a riposte. */
+	private static final int RIPOSTE_BLOWS = 3;
+	private static final int RIPOSTE_WINDOW = 50;
+	/** In the snapped half, how often the stars fall while he fights on (fight ticks). */
+	private static final int STARFALL_EVERY = 150;
 
 	private final LuciferFight fight;
 	private final ServerLevel level;
 	private int cooldown = 40;
 	/** Until this fight tick he is busy with a blow (no gliding). */
 	private int busyUntil;
+	/** Until this fight tick his guard is broken. */
+	private int brokenUntil = -1;
+	/** When the latest blows at his guard landed (fight ticks). */
+	private final List<Integer> blows = new ArrayList<>();
+	private int nextStarfall = STARFALL_EVERY;
+	private int guardTips;
 
 	SeraphAttacks(LuciferFight fight) {
 		this.fight = fight;
@@ -63,6 +86,11 @@ final class SeraphAttacks {
 		LivingEntity target = nearest(seraph, targets);
 		if (fight.tick() >= busyUntil) {
 			glide(seraph, target);
+		}
+		if (fight.enraged() && fight.tick() >= nextStarfall) {
+			// unbound, he calls the stars down on his own while he fights on
+			nextStarfall = fight.tick() + STARFALL_EVERY;
+			starfall(seraph);
 		}
 		if (--cooldown > 0 || fight.tick() < busyUntil) {
 			return;
@@ -230,15 +258,71 @@ final class SeraphAttacks {
 		return a.ticks + 6;
 	}
 
-	/** Blocked: he reels, open to blows, and the next attack waits. */
+	/** Blocked: he reels, his guard breaks, and the next attack waits. */
 	void parried(FallenSeraphEntity seraph) {
 		seraph.warn(BossEntity.Warning.NONE);
 		seraph.play(FallenSeraphAnim.STAGGER);
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.PARRIED));
 		level.playSound(null, seraph.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 2.0f, 0.6f);
+		level.playSound(null, seraph.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 2.0f, 0.8f);
 		level.sendParticles(ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 30, 0.5, 0.8, 0.5, 0.2);
 		busyUntil = fight.tick() + FallenSeraphAnim.STAGGER.ticks;
 		cooldown = Math.max(cooldown, FallenSeraphAnim.STAGGER.ticks + 20);
+		brokenUntil = fight.tick() + FallenSeraphAnim.STAGGER.ticks + BROKEN_FOR;
+		blows.clear();
+		fight.tip("Blocked! His guard is broken: hit him NOW, your blows do full damage and more for a few seconds.");
+	}
+
+	/**
+	 * A player's blow: most of it turned aside by his wings, unless his guard is broken. Blows at his guard in quick
+	 * succession draw a riposte.
+	 */
+	float guard(FallenSeraphEntity seraph, Player by, float amount) {
+		if (fight.tick() < brokenUntil) {
+			level.sendParticles(ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 2.5, seraph.getZ(), 8, 0.4, 0.6, 0.4, 0.2);
+			return amount * BROKEN;
+		}
+		level.sendParticles(ParticleTypes.END_ROD, seraph.getX(), seraph.getY() + 2.5, seraph.getZ(), 6, 0.6, 0.6, 0.6, 0.05);
+		level.playSound(null, seraph.blockPosition(), SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.HOSTILE, 1.2f, 1.4f);
+		if (guardTips++ % 12 == 0) {
+			by.sendOverlayMessage(Component.literal("His wings turn your blows aside. Block his WHITE slash to break his guard.")
+					.withStyle(ChatFormatting.WHITE));
+		}
+		blows.removeIf(t -> fight.tick() - t > RIPOSTE_WINDOW);
+		blows.add(fight.tick());
+		if (blows.size() >= RIPOSTE_BLOWS && fight.tick() >= busyUntil) {
+			// he answers at once: the slash, white (block it to break his guard)
+			blows.clear();
+			face(seraph, by);
+			fight.now(() -> cooldown = Math.max(cooldown, slash(seraph) + 10));
+		}
+		return amount * GUARDED;
+	}
+
+	/** In the snapped half, every so often: the stars fall round everyone while he fights on. */
+	private void starfall(FallenSeraphEntity seraph) {
+		level.playSound(null, seraph.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 2.0f, 1.8f);
+		List<Vec3> marks = new ArrayList<>();
+		for (LivingEntity t : fight.targets()) {
+			for (int k = 0; k < 2 + fight.extraMarks(); k++) {
+				double ang = level.getRandom().nextDouble() * Math.PI * 2;
+				double d = level.getRandom().nextDouble() * 6;
+				marks.add(fight.onFloor(t.getX() + Math.cos(ang) * d, t.getZ() + Math.sin(ang) * d));
+			}
+		}
+		int warn = 34;
+		for (Vec3 m : marks) {
+			Danger.circle(level, Danger.Colour.RED, m, 2.0, warn);
+		}
+		fight.schedule(warn, () -> {
+			for (Vec3 m : marks) {
+				level.sendParticles(ParticleTypes.END_ROD, m.x, m.y + 4, m.z, 16, 0.2, 2.0, 0.2, 0.1);
+				level.playSound(null, m.x, m.y, m.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 0.8f, 1.7f);
+				for (LivingEntity e : fight.victims(m, 2.0)) {
+					e.hurtServer(level, Danger.unblockable(level, seraph), STAR_DAMAGE * fight.damageMultiplier());
+				}
+			}
+		});
 	}
 
 	// ------------------------------------------------------------------ moving

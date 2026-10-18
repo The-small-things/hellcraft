@@ -291,9 +291,12 @@ public final class Cutscenes {
 			.shot(80, -15, -2, -8, -2, -8, -6, 20)
 			.shot(120, -15, -5, -8, -2, -12, -6, 180)
 			.shot(179, -15, -4, -8, -2, -1, -6, 180)
-			.caption(6, 60, "Virgil", VIRGIL, "Hold on to me. By such stairs as these we must leave so much evil behind.")
-			.caption(62, 118, "Dante", DANTE, "We climbed down his shaggy side, between the hair and the crusts of ice...")
-			.caption(120, 178, "Dante", DANTE, "...and where the thigh turns, I saw his legs held upward. Thence we came forth to see the stars again.")
+			// in plain words for those who haven't read the Inferno: why down his body, why the world turns over, where to
+			.caption(6, 60, "Virgil", VIRGIL, "He is frozen fast in the ice and can't follow us. Hold on to me: the only way out of Hell is "
+					+ "down his side.")
+			.caption(62, 118, "Virgil", VIRGIL, "His middle is the centre of the Earth. Past it, down becomes up: that's why the world turns over.")
+			.caption(120, 178, "Dante", DANTE, "We climbed up a tunnel to the other side of the world, and came out under the stars, at the foot of "
+					+ "the mountain of Purgatory.")
 			.build();
 
 	private static final List<Cutscene> ALL = List.of(MINOS_INTRO, CERBERUS_INTRO, PLUTUS_INTRO, PHLEGYAS_INTRO, FURIES_INTRO, FARINATA_INTRO,

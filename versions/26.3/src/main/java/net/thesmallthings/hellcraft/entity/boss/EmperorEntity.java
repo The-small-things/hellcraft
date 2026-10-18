@@ -96,6 +96,14 @@ public class EmperorEntity extends AnimatedBoss {
 		setYHeadRot(yaw);
 	}
 
+	/** Turns him round in the ice by so many degrees (his hand dragged across it, his breath sweeping it). */
+	public void turnBy(float degrees) {
+		float yaw = Mth.wrapDegrees(getYRot() + degrees);
+		setYRot(yaw);
+		setYBodyRot(yaw);
+		setYHeadRot(yaw);
+	}
+
 	/** How far (degrees) he has yet to turn to face a point. */
 	public float angleTo(double x, double z) {
 		float want = (float) Math.toDegrees(Math.atan2(z - getZ(), x - getX())) - 90.0f;

@@ -23,8 +23,8 @@ import java.util.Properties;
  * past his frozen body to Purgatory.
  */
 public class LuciferTest implements FabricClientGameTest {
-	/** The fight's own clock runs at bossTempo (0.6 by default): a blow's fight ticks take this many real ticks each. */
-	private static final double SLOW = 1 / 0.6;
+	/** The fight's own clock runs at luciferTempo (0.85 by default): a blow's fight ticks take this many real ticks each. */
+	private static final double SLOW = 1 / 0.85;
 
 	@Override
 	public void runTest(ClientGameTestContext context) {
@@ -155,6 +155,19 @@ public class LuciferTest implements FabricClientGameTest {
 		context.waitTicks(24);
 		context.takeScreenshot("lucifer_weep");
 		context.waitTicks(120);
+		// the blows he gained from the playtest: both hands at once, a hand dragged round, his frozen breath
+		use(server, "both_hands");
+		context.waitTicks((int) (EmperorAnim.SLAM_BOTH.at("slam") * SLOW) + 4);
+		context.takeScreenshot("lucifer_both_hands");
+		context.waitTicks(160);
+		use(server, "drag");
+		context.waitTicks((int) ((EmperorAnim.DRAG_RIGHT.at("down") + 20) * SLOW));
+		context.takeScreenshot("lucifer_drag");
+		context.waitTicks(160);
+		use(server, "breath");
+		context.waitTicks((int) ((EmperorAnim.BREATH.at("breathe") + 16) * SLOW));
+		context.takeScreenshot("lucifer_breath");
+		context.waitTicks(160);
 	}
 
 	/** He freezes, the victors climb down his side (the camera rolls over as they pass his middle) and out to Purgatory. */

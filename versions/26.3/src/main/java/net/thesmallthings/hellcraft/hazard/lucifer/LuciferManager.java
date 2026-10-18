@@ -11,6 +11,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
@@ -48,6 +50,11 @@ public final class LuciferManager {
 	/** Down in Lucifer's pit (overworld of an Inferno world), where no candle or anchor holds. */
 	public static boolean inPit(ServerLevel level, BlockPos pos) {
 		return level.dimension() == Level.OVERWORLD && HellWorldgen.isInferno(level) && LuciferArena.inProtectedArea(pos);
+	}
+
+	/** How much of a player's blow a form of Lucifer takes (the Fallen Seraph's guard, SeraphAttacks.guard). */
+	public static float bossDamageTaken(LivingEntity victim, Player by, float amount) {
+		return fight == null ? amount : fight.damageTaken(victim, by, amount);
 	}
 
 	public static boolean isLucifer(Entity entity) {
@@ -216,7 +223,7 @@ public final class LuciferManager {
 		try {
 			attack = SeraphAttacks.Attack.valueOf(upper);
 		} catch (IllegalArgumentException e) {
-			return "Unknown attack: " + name + " (the Seraph: slash, sweep, stars, lunge; the Emperor: slam, bite, wingbeat, weep)";
+			return "Unknown attack: " + name + " (the Seraph: slash, sweep, stars, lunge; the Emperor: slam, bite, wingbeat, weep, both_hands, drag, breath)";
 		}
 		return fight.forceAttack(attack) ? "The Seraph uses " + attack + "." : "The Seraph isn't fighting now, or there is no target.";
 	}

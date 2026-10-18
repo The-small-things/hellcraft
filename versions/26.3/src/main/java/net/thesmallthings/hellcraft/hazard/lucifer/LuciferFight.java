@@ -79,7 +79,7 @@ import java.util.UUID;
  *
  * The Emperor sleeps in the pit the whole time (the client draws him asleep when there is no fight); the fight brings
  * the real body (EmperorEntity) and wakes it. Like the guardians' fights, this one runs on its own clock at the
- * bosses' tempo (config bossTempo) while anyone is fighting, so every wind-up, warning and pause lasts 1/tempo as long
+ * own tempo (config luciferTempo) while anyone is fighting, so every wind-up, warning and pause lasts 1/tempo as long
  * as it was made and the models' blows slow to match; the cutscenes and transitions keep their own time.
  */
 public final class LuciferFight {
@@ -197,9 +197,14 @@ public final class LuciferFight {
 		scheduled.add(new Scheduled(tick + Math.max(0, delay), action));
 	}
 
-	/** How fast the fight runs: at the bosses' tempo while anyone fights, as made in between. */
+	/** How fast the fight runs: at Lucifer's tempo while anyone fights, as made in between. */
 	private double tempo() {
-		return fighting(phase) ? Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo)) : 1.0;
+		return fighting(phase) ? Math.max(0.2, Math.min(1.0, HellConfig.get().luciferTempo)) : 1.0;
+	}
+
+	/** Runs an action now, outside the fight's own step (a hook): its marks stretched to the fight's tempo like the rest. */
+	void now(Runnable action) {
+		Danger.stretched(1.0 / tempo(), action);
 	}
 
 	/** How many real ticks this many fight ticks take now. */
@@ -779,6 +784,15 @@ public final class LuciferFight {
 	}
 
 	// ------------------------------------------------------------------ hooks (from LuciferManager)
+
+	/** A player's blow at one of Lucifer's forms: the Fallen Seraph's guard turns most of it aside until broken. */
+	float damageTaken(LivingEntity entity, Player by, float amount) {
+		FallenSeraphEntity s = seraph();
+		if (s != null && entity == s && (phase == Phase.DUEL || phase == Phase.ENRAGED)) {
+			return seraphAttacks.guard(s, by, amount);
+		}
+		return amount;
+	}
 
 	boolean allowDamage(LivingEntity entity) {
 		if (entity.getUUID().equals(seraphId)) {

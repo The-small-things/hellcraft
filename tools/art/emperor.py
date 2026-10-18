@@ -167,6 +167,33 @@ def animations(m):
         slam.rot("upper", [(0, ZERO), (1.2, (8, 8 * s, 0)), (1.6, (-12, -6 * s, 0)), (4.2, (-12, -6 * s, 0)), (5.0, ZERO)])
         slam.event(1.6, "slam").event(4.2, "lift")
 
+    # both hands at once: raised high together and brought down either side of him (both lie on the ice after)
+    both = m.animation("slam_both", 5.0)
+    for side, s in (("right", 1), ("left", -1)):
+        both.rot(f"{side}_arm", [(0, ZERO), (1.4, (175 - AT_REST, 0, 14 * s)), (1.8, (SLAM - AT_REST, 0, 0)), (4.2, (SLAM - AT_REST, 0, 0)),
+                                 (5.0, ZERO)], interp="linear")
+    both.rot("upper", [(0, ZERO), (1.4, (12, 0, 0)), (1.8, (-16, 0, 0)), (4.2, (-16, 0, 0)), (5.0, ZERO)])
+    both.event(1.8, "slam").event(4.2, "lift")
+
+    # a hand laid on the ice and dragged across it: the arm comes down low and stays there while he turns in the ice
+    # (the game turns his whole body, so the hand sweeps round with him); "down" when it touches, "lift" at the end
+    for side, s in (("right", 1), ("left", -1)):
+        drag = m.animation(f"drag_{side}", 5.0)
+        drag.rot(f"{side}_arm", [(0, ZERO), (0.8, (100 - AT_REST, 0, 25 * s)), (1.2, (SLAM - AT_REST, 0, 12 * s)),
+                                 (4.0, (SLAM - AT_REST, 0, 12 * s)), (5.0, ZERO)], interp="linear")
+        drag.rot("upper", [(0, ZERO), (1.2, (-10, 10 * s, 0)), (4.0, (-10, 10 * s, 0)), (5.0, ZERO)])
+        drag.event(1.2, "down").event(4.0, "lift")
+
+    # his frozen breath: the head drawn back to inhale, then thrust forward and down with the jaws wide while the cold
+    # pours out (the game turns his whole body, so the breath sweeps across the ice); "breathe" to "end"
+    breath = m.animation("breath", 5.0)
+    breath.rot("head", [(0, ZERO), (0.9, (25, 0, 0)), (1.4, (-30, 0, 0)), (4.0, (-30, 0, 0)), (5.0, ZERO)])
+    breath.rot("upper", [(0, ZERO), (0.9, (8, 0, 0)), (1.4, (-14, 0, 0)), (4.0, (-14, 0, 0)), (5.0, ZERO)])
+    for side, s in (("right", 1), ("left", -1)):
+        for i in range(3):
+            breath.rot(f"{side}_wing{i}", [(0, ZERO), (1.4, (0, -25 * s, 20 * s)), (4.0, (0, -25 * s, 20 * s)), (5.0, ZERO)])
+    breath.event(0.9, "inhale").event(1.4, "breathe").event(4.0, "end")
+
     # a bite: he bends, a face comes down to the ice, flashes, bites, and stays low a moment (a weak point)
     for name, yaw in (("bite", 0), ("bite_right", 90), ("bite_left", -90)):
         bite = m.animation(name, 5.0)

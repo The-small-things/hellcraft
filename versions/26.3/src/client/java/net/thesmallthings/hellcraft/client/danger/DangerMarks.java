@@ -7,12 +7,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.DangerPayload;
 
@@ -173,7 +176,7 @@ public final class DangerMarks {
 					if (alpha <= 0.01f) {
 						continue;
 					}
-					int top = ground(level, bx, m.p.y(), bz);
+					double top = ground(level, bx, m.p.y(), bz);
 					quads.add(new float[]{(float) (bx - camera.x), (float) (top + 0.03 - camera.y), (float) (bz - camera.z), r, g, b, alpha * 255});
 				}
 			}
@@ -190,17 +193,27 @@ public final class DangerMarks {
 
 	/**
 	 * The top of the ground under a mark: the first solid block from just above the mark's own height down to a few
-	 * below (the heightmap would find the roof of the Nether, or Purgatory over Lucifer's pit), else the heightmap's.
+	 * below (the heightmap would find the roof of the Nether, or Purgatory over Lucifer's pit), else the heightmap's;
+	 * lifted over anything thin lying on it (Cocytus's snow, a carpet), so the mark isn't hidden under it.
 	 */
-	private static int ground(ClientLevel level, int x, double y, int z) {
+	private static double ground(ClientLevel level, int x, double y, int z) {
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		int start = (int) Math.floor(y) + 2;
+		int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
 		for (int yy = start; yy > start - 12; yy--) {
 			if (level.getBlockState(pos.set(x, yy, z)).isSolid() && !level.getBlockState(pos.set(x, yy + 1, z)).isSolid()) {
-				return yy + 1;
+				top = yy + 1;
+				break;
 			}
 		}
-		return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+		BlockState on = level.getBlockState(pos.set(x, top, z));
+		if (!on.isAir()) {
+			VoxelShape shape = on.getShape(level, pos);
+			if (!shape.isEmpty() && shape.max(Direction.Axis.Y) <= 0.5) {
+				return top + shape.max(Direction.Axis.Y);
+			}
+		}
+		return top;
 	}
 
 	private static void quad(VertexConsumer buffer, PoseStack.Pose pose, float[] q) {
