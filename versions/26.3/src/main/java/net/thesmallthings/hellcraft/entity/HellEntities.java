@@ -38,6 +38,7 @@ import net.thesmallthings.hellcraft.entity.monster.Malebranche;
 import net.thesmallthings.hellcraft.entity.monster.Mimic;
 import net.thesmallthings.hellcraft.entity.monster.Thief;
 import net.thesmallthings.hellcraft.entity.monster.Wrathful;
+import net.thesmallthings.hellcraft.entity.npc.Angel;
 import net.thesmallthings.hellcraft.entity.npc.Shade;
 
 /** Hellcraft's own mobs. Each has a renderer and a model in the client sources (client/render). */
@@ -92,6 +93,10 @@ public final class HellEntities {
 	/** Wrath's brawlers (LayerMonsters). */
 	public static final EntityType<Wrathful> WRATHFUL = register("wrathful",
 			EntityType.Builder.of(Wrathful::new, MobCategory.MONSTER).sized(0.7f, 1.9f).clientTrackingRange(8));
+
+	/** The angels of Paradiso: the host that wheels round the spheres and the Rose, and the Angelic Guard (Heaven). */
+	public static final EntityType<Angel> ANGEL = register("angel",
+			EntityType.Builder.of(Angel::new, MobCategory.MISC).sized(0.8f, 2.3f).eyeHeight(2.0f).clientTrackingRange(10));
 
 	/** The harpies of the Wood of the Suicides, called by the trees' scream (LowerRules). */
 	public static final EntityType<Harpy> HARPY = register("harpy",
@@ -187,6 +192,7 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(WRATHFUL, Wrathful.attributes());
 		FabricDefaultAttributeRegistry.register(SHADE, Shade.attributes());
 		FabricDefaultAttributeRegistry.register(HARPY, Harpy.attributes());
+		FabricDefaultAttributeRegistry.register(ANGEL, Angel.attributes());
 		FabricDefaultAttributeRegistry.register(CENTAUR, Centaur.attributes());
 		FabricDefaultAttributeRegistry.register(HERETIC, Heretic.attributes());
 		FabricDefaultAttributeRegistry.register(MIMIC, Mimic.attributes());

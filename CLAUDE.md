@@ -85,7 +85,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   centrepiece and the Rose, chunk by chunk), `Paradiso` (columns lift you, falls caught, spheres open one at a time, gates),
   `ParadisoTrials` (a trial per sphere, `HellState.Soul.spheres`) and the client (`layer/LightColumns`, the compass's
   Paradiso mode). The Seraph is a guardian (`Guardian.SERAPH`, `SeraphFight`, `entity/boss/SeraphEntity`, tools/art/seraph.py)
-  whose lair is the Primum Mobile's island. The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
+  whose lair is the Primum Mobile's island. The angels are `entity/npc/Angel` (tools/art/angel.py): the host that `Heaven.host` keeps
+  circling each occupied sphere and swarming the Rose (invulnerable, passes through islands), and the Angelic Guard (`Heaven.angels`). The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
   films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`, `style_panel`).
 - From the 3.0 playtest: a shield raised against a boss's or Hell's monster's blow blocks at once (`BossRules.raisingShieldAgainst`,
   `LivingEntityMixin`); Lust's lovers are stunned by a blocked dive and dive one at a time; Lucifer has his own `luciferTempo`;

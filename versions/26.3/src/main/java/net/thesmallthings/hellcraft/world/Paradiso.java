@@ -122,6 +122,8 @@ public final class Paradiso {
 				continue;
 			}
 			tick(level, player);
+		}		if (ticks % 40 == 0) {
+			Heaven.host(level);
 		}
 	}
 

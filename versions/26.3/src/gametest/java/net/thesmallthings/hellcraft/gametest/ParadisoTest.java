@@ -56,6 +56,18 @@ public class ParadisoTest implements FabricClientGameTest {
 			if (!test.startsWith("Paradiso test OK")) {
 				throw new AssertionError(test);
 			}
+			// the host: angels wheeling round every sphere's island, and the swarm in and out of the Rose
+			server.runCommand("hellcraft paradiso host");
+			int host = server.computeOnServer(s -> Paradiso.level(s).getEntities(net.thesmallthings.hellcraft.entity.HellEntities.ANGEL, a -> !a.isGuard()).size());
+			if (host < net.thesmallthings.hellcraft.world.Heaven.HOST_EACH) {
+				throw new AssertionError("the heavens have no host: " + host + " angels");
+			}
+			double[] mc = ParadisoGeometry.centre(Sphere.MOON);
+			int moonY = ParadisoGeometry.topY(Sphere.MOON);
+			shot(context, server, connection, "hellcraft:paradiso", "paradiso_host", mc[0] + 46, moonY + 22, mc[1] + 10, mc[0], moonY + 12, mc[1]);
+			double[] ec = ParadisoGeometry.centre(Sphere.EMPYREAN);
+			int empY = ParadisoGeometry.topY(Sphere.EMPYREAN);
+			shot(context, server, connection, "hellcraft:paradiso", "paradiso_host_rose", ec[0] + 36, empY + 20, ec[1] + 18, ec[0], empY + 6, ec[1]);
 			// the Moon's trial lights, which only a player still doing the trial sees (not a spectator)
 			double[] moonCentre = ParadisoGeometry.centre(Sphere.MOON);
 			double[] light = ParadisoGeometry.lights(Sphere.MOON).get(0);
@@ -109,7 +121,7 @@ public class ParadisoTest implements FabricClientGameTest {
 			context.takeScreenshot("seraph_fight_" + shot[0]);
 			context.waitTicks(90);
 		}
-		server.runCommand("execute in hellcraft:paradiso run kill @e[type=minecraft:vex]");
+		server.runCommand("execute in hellcraft:paradiso run kill @e[type=hellcraft:angel,tag=hellcraft_angel]");
 		server.runOnServer(s -> Paradiso.level(s).getEntities(HellEntities.SERAPH, e -> true).forEach(v -> v.setHealth(v.getMaxHealth() * 0.45f)));
 		context.waitTicks(SeraphAnim.PHASE.at("flare") + 4);
 		context.takeScreenshot("seraph_fight_flare");

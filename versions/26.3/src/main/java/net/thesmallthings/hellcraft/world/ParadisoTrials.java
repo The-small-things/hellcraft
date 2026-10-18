@@ -202,7 +202,7 @@ public final class ParadisoTrials {
 			endMars(level);
 			return;
 		}
-		boolean clear = level.getEntities(net.minecraft.world.entity.EntityTypes.VEX, e -> e.isAlive() && e.entityTags().contains(MARS_TAG)).isEmpty();
+		boolean clear = level.getEntities(net.thesmallthings.hellcraft.entity.HellEntities.ANGEL, e -> e.isAlive() && e.entityTags().contains(MARS_TAG)).isEmpty();
 		if (!clear) {
 			return;
 		}
@@ -226,7 +226,7 @@ public final class ParadisoTrials {
 	}
 
 	private static void endMars(ServerLevel level) {
-		for (Entity e : level.getEntities(net.minecraft.world.entity.EntityTypes.VEX, e -> e.entityTags().contains(MARS_TAG))) {
+		for (Entity e : level.getEntities(net.thesmallthings.hellcraft.entity.HellEntities.ANGEL, e -> e.entityTags().contains(MARS_TAG))) {
 			e.discard();
 		}
 		marsWave = 0;
@@ -235,7 +235,7 @@ public final class ParadisoTrials {
 
 	/** For /hellcraft paradiso test and the client test: is Mars's bout running, and how many of its angels are alive? */
 	public static String marsStatus(ServerLevel level) {
-		int alive = level.getEntities(net.minecraft.world.entity.EntityTypes.VEX, e -> e.isAlive() && e.entityTags().contains(MARS_TAG)).size();
+		int alive = level.getEntities(net.thesmallthings.hellcraft.entity.HellEntities.ANGEL, e -> e.isAlive() && e.entityTags().contains(MARS_TAG)).size();
 		return marsWave == 0 ? "Mars: no bout" : "Mars: wave " + marsWave + ", " + alive + " angels, " + MARS_FIGHTERS.size() + " fighting";
 	}
 

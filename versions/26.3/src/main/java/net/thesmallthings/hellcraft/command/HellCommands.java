@@ -346,6 +346,11 @@ public final class HellCommands {
 							return 1;
 						}))
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Paradiso.selfTest(ctx.getSource().getServer()))))
+						.then(Commands.literal("host").executes(ctx -> {
+							int n = Heaven.host(Paradiso.level(ctx.getSource().getServer()), java.util.EnumSet.allOf(ParadisoGeometry.Sphere.class), true);
+							ctx.getSource().sendSuccess(() -> Component.literal(n + " angels join the host"), true);
+							return n;
+						}))
 						.then(Commands.literal("angels").executes(ctx -> {
 							int n = Heaven.angels(ctx.getSource().getLevel(), BlockPos.containing(ctx.getSource().getPosition()));
 							ctx.getSource().sendSuccess(() -> Component.literal(n + " angels descend"), true);

@@ -19,8 +19,8 @@ import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
 import net.thesmallthings.hellcraft.client.layer.Colossus;
 import net.thesmallthings.hellcraft.client.layer.GazeOverlay;
 import net.thesmallthings.hellcraft.client.layer.HeatColumn;
-import net.thesmallthings.hellcraft.client.layer.LightColumns;
 import net.thesmallthings.hellcraft.client.layer.LayerFx;
+import net.thesmallthings.hellcraft.client.layer.LightColumns;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
@@ -44,6 +44,8 @@ import net.thesmallthings.hellcraft.client.render.boss.PhlegyasModel;
 import net.thesmallthings.hellcraft.client.render.boss.PhlegyasRenderer;
 import net.thesmallthings.hellcraft.client.render.boss.PlutusModel;
 import net.thesmallthings.hellcraft.client.render.boss.PlutusRenderer;
+import net.thesmallthings.hellcraft.client.render.gen.AngelAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.AngelMesh;
 import net.thesmallthings.hellcraft.client.render.gen.AntaeusAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.AntaeusMesh;
 import net.thesmallthings.hellcraft.client.render.gen.CentaurAnimations;
@@ -85,12 +87,12 @@ import net.thesmallthings.hellcraft.client.render.gen.MinotaurAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.MinotaurMesh;
 import net.thesmallthings.hellcraft.client.render.gen.PhlegyasMesh;
 import net.thesmallthings.hellcraft.client.render.gen.PlutusMesh;
+import net.thesmallthings.hellcraft.client.render.gen.SeraphAnimations;
+import net.thesmallthings.hellcraft.client.render.gen.SeraphMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ShadeMesh;
 import net.thesmallthings.hellcraft.client.render.gen.ThiefAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.ThiefMesh;
 import net.thesmallthings.hellcraft.client.render.gen.VulcanAnimations;
-import net.thesmallthings.hellcraft.client.render.gen.SeraphAnimations;
-import net.thesmallthings.hellcraft.client.render.gen.SeraphMesh;
 import net.thesmallthings.hellcraft.client.render.gen.VulcanMesh;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulAnimations;
 import net.thesmallthings.hellcraft.client.render.gen.WrathfulMesh;
@@ -117,8 +119,8 @@ import net.thesmallthings.hellcraft.net.DialoguePayload;
 import net.thesmallthings.hellcraft.net.HudPayload;
 import net.thesmallthings.hellcraft.net.JournalPayload;
 import net.thesmallthings.hellcraft.net.MapPayload;
-import net.thesmallthings.hellcraft.net.StylePayload;
 import net.thesmallthings.hellcraft.net.OpenJournalPayload;
+import net.thesmallthings.hellcraft.net.StylePayload;
 import net.thesmallthings.hellcraft.net.VersionPayload;
 import net.thesmallthings.hellcraft.net.WingbeatPayload;
 
@@ -223,6 +225,11 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.CENTAUR, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("centaur"),
 				new SoulMonsterModel.Anims(CentaurAnimations.IDLE, CentaurAnimations.WALK, CentaurAnimations.ATTACK, CentaurAnimations.HURT,
 						CentaurAnimations.DEATH, CentaurAnimations.LOOK), "centaur", 1.0f, 255, "horse", "torso", "head"));
+		// Paradiso's angels: the host round the spheres and the Rose, and the Angelic Guard
+		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("angel"), AngelMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.ANGEL, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("angel"),
+				new SoulMonsterModel.Anims(AngelAnimations.IDLE, AngelAnimations.FLY, AngelAnimations.ATTACK, AngelAnimations.HURT,
+						AngelAnimations.DEATH, AngelAnimations.SING), "angel", 0.0f, 255, "root", "body", "chest", "head"));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("harpy"), HarpyMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HARPY, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("harpy"),
 				new SoulMonsterModel.Anims(HarpyAnimations.IDLE, null, HarpyAnimations.ATTACK, HarpyAnimations.HURT, HarpyAnimations.DEATH,

@@ -476,6 +476,7 @@ Paradiso is its own world, a climb **upward**: nine spheres stacked one above th
 In each sphere you arrive on a small isle under a canopy, cross a bridge to its great island, where its **trial** waits, then cross to the **departure isle**, where a **column of light** rises to the next sphere. You can always see the next sphere above you, and the compass points the way (the trial, then the column).
 - **Pass a sphere's trial, then stand in its column of light**: it lifts you to the next sphere. A column you haven't earned is drawn thin and dim; stepping into it tells you what its trial is. **Hold sneak** in a column to sink back down.
 - **Falling can't hurt you in Paradiso.** Fall off a sphere and an angel catches you and sets you down on its arrival isle.
+- **The heavens are full of angels:** wherever you are, the sphere's host wheels round its great island, and round the Celestial Rose a swarm flies in and out of the flower like bees, now and then lifting their arms in song. They can't be hurt and leave you be; only the Angelic Guard (Mars's trial, the Seraph's fight) comes down to fight.
 - The spheres open one at a time: anyone who gets above a sphere they haven't earned (an ender pearl, rockets) is set back down.
 - The gate under the Moon's canopy goes back down to Purgatory's summit; the one on the Empyrean's arrival isle goes home to the Gate of Hell.
 
@@ -631,7 +632,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |
-| `/hellcraft paradiso status\|test\|angels\|ascent` | op | Paradiso's state; check every sphere, gate and the bell; call the Angelic Guard; build the Ascent now |
+| `/hellcraft paradiso status\|test\|angels\|host\|ascent` | op | Paradiso's state; check every sphere, gate and the bell; call the Angelic Guard; fill every sphere's host of angels; build the Ascent now |
 | `/hellcraft paradiso go <sphere>` / `paradiso pass <player> <n>` | op | Go to a sphere's arrival isle; pass the first n trials for a player (0 resets) |
 | `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
 | `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |

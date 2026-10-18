@@ -10,17 +10,23 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Relics;
+import net.thesmallthings.hellcraft.entity.HellEntities;
+import net.thesmallthings.hellcraft.entity.npc.Angel;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.util.Signs;
+import net.thesmallthings.hellcraft.world.ParadisoGeometry.Sphere;
+import net.thesmallthings.hellcraft.world.feature.ParadisoIslandFeature;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Heaven's pieces outside the climb itself (Paradiso):
@@ -64,7 +70,7 @@ public final class Heaven {
 		return angels(level, near, 2, null);
 	}
 
-	/** {@code each} angels for every living soul near a place, tagged (if a tag is given) so a trial can count them. */
+	/** {@code each} angels of the Guard for every living soul near a place, tagged (if a tag is given) so a trial can count them. */
 	public static int angels(ServerLevel level, BlockPos near, int each, String tag) {
 		int n = 0;
 		List<ServerPlayer> players = level.players().stream()
@@ -73,14 +79,13 @@ public final class Heaven {
 		for (int i = 0; i < waves * each; i++) {
 			ServerPlayer target = players.isEmpty() ? null : players.get(i / each);
 			BlockPos at = target != null ? target.blockPosition() : near;
-			var angel = EntityTypes.VEX.create(level, EntitySpawnReason.EVENT);
+			Angel angel = HellEntities.ANGEL.create(level, EntitySpawnReason.EVENT);
 			if (angel == null) {
 				continue;
 			}
 			angel.snapTo(at.getX() + (level.getRandom().nextDouble() - 0.5) * 8, at.getY() + 5, at.getZ() + (level.getRandom().nextDouble() - 0.5) * 8, 0, 0);
+			angel.guard();
 			angel.setCustomName(Component.literal("Angelic Guard").withStyle(ChatFormatting.GOLD));
-			angel.setGlowingTag(true);
-			angel.setLimitedLife(1200);
 			angel.addTag(ANGEL_TAG);
 			if (tag != null) {
 				angel.addTag(tag);
@@ -91,6 +96,65 @@ public final class Heaven {
 			}
 			level.sendParticles(ParticleTypes.END_ROD, angel.getX(), angel.getY(), angel.getZ(), 20, 0.3, 0.3, 0.3, 0.05);
 			n++;
+		}
+		return n;
+	}
+
+	// ------------------------------------------------------------------ the host
+
+	/** Angels wheeling round each sphere's great island, and more round the Celestial Rose, flying in and out of it. */
+	public static final int HOST_EACH = 6;
+	public static final int ROSE_SWARM = 14;
+
+	/**
+	 * Keeps the heavens full of angels: round every sphere a soul is in, its host circles the great island at different
+	 * heights, and in the Empyrean a swarm flies in and out of the Rose. Run every couple of seconds; the angels go when
+	 * nobody is near (they despawn like any mob far from players). Returns how many came.
+	 */
+	public static int host(ServerLevel level) {
+		Set<Sphere> occupied = EnumSet.noneOf(Sphere.class);
+		for (ServerPlayer p : level.players()) {
+			if (!p.isSpectator()) {
+				occupied.add(ParadisoGeometry.sphereAtY(p.getY()));
+			}
+		}
+		return host(level, occupied, false);
+	}
+
+	/** Fills these spheres' hosts (load: load each sphere's middle first, for /hellcraft paradiso host). */
+	public static int host(ServerLevel level, Set<Sphere> spheres, boolean load) {
+		int n = 0;
+		for (Sphere s : spheres) {
+			double[] c = ParadisoGeometry.centre(s);
+			int top = ParadisoGeometry.topY(s);
+			if (load) {
+				level.getChunk((int) Math.floor(c[0]) >> 4, (int) Math.floor(c[1]) >> 4);
+			}
+			if (!level.isLoaded(BlockPos.containing(c[0], top, c[1]))) {
+				continue;
+			}
+			AABB around = new AABB(c[0] - 96, top - 40, c[1] - 96, c[0] + 96, top + 64, c[1] + 96);
+			int there = level.getEntitiesOfClass(Angel.class, around, a -> !a.isGuard()).size();
+			int want = HOST_EACH + (s.last() ? ROSE_SWARM : 0);
+			for (int k = there; k < want; k++) {
+				Angel angel = HellEntities.ANGEL.create(level, EntitySpawnReason.EVENT);
+				if (angel == null) {
+					continue;
+				}
+				var random = level.getRandom();
+				double phase = random.nextDouble() * Math.PI * 2;
+				double dir = random.nextBoolean() ? 1 : -1;
+				if (s.last() && k >= HOST_EACH) {
+					// the swarm, in and out of the Rose like bees
+					angel.circle(c[0], top + 4 + random.nextDouble() * 10, c[1], ParadisoIslandFeature.ROSE_RADIUS - 2, 3,
+							dir * (0.010 + random.nextDouble() * 0.006), phase, true);
+				} else {
+					angel.circle(c[0], top + 6 + random.nextDouble() * 18, c[1], ParadisoGeometry.centreRadius(s) + 6 + random.nextDouble() * 16,
+							2 + random.nextDouble() * 3, dir * (0.004 + random.nextDouble() * 0.004), phase, false);
+				}
+				level.addFreshEntity(angel);
+				n++;
+			}
 		}
 		return n;
 	}
