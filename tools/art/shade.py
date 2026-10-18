@@ -112,11 +112,10 @@ def beard(fs):
     for name in SIDES + ("bottom",):
         f = fs[name]
         for x in range(f.w):
+            mul(f, x, 0, 1.08)
             if x % 2:
                 for y in range(f.h):
-                    mul(f, x, y, 0.88)
-        for x in range(f.w):
-            mul(f, x, f.h - 1, 0.9)
+                    mul(f, x, y, 0.93)
 
 
 def curls(fs):
