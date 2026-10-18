@@ -235,8 +235,7 @@ def snake_head(faces):
     f = faces["front"]
     for x in range(f.w):
         f.px(x, 0, shade(SERPENT.c["edge"], 1.1))
-    if f.w >= 1 and f.h >= 1:
-        f.glow(0, min(1, f.h - 1), hexc("e8d040"))
+    f.px(0, min(1, f.h - 1), hexc("b8a030"))  # a small yellow eye
 
 
 # ----------------------------------------------------------------------------------------------- the wings
@@ -328,12 +327,12 @@ def wing(torso, side, s):
     stick(w, f"{side}_wing_radius", E, W, 1, BONE, inflate=0.05)
     w.cube(f"{side}_wing_elbow", (E[0] - 0.75, E[1] - 0.75, z - 0.75), (2, 2, 2), BONE, inflate=-0.25)
     poly, _, tips = membrane_shape(s)
-    w.cube(f"{side}_wing_membrane", (min(2 * s, 12.2 * s) if s == 1 else -12.2, 9, z - 0.5), (11, 16, 1), MEMBRANE, inflate=-0.4,
+    w.cube(f"{side}_wing_membrane", (1.5 if s == 1 else -12.5, 9, z - 0.5), (11, 16, 1), MEMBRANE, inflate=-0.4,
            detail=membrane(s, "inner"))
     for i, tip in ((2, tips[2]), (3, tips[3])):
         stick(w, f"{side}_wing_finger{i}", W, (tip[0], tip[1], z), 1, BONE, inflate=-0.15 - 0.05 * i)
     tip_bone = w.bone(f"{side}_wing_tip", W)
-    tip_bone.cube(f"{side}_wing_membrane_tip", (10.4 if s == 1 else -17.0, 9, z - 0.5), (7, 16, 1), MEMBRANE, inflate=-0.4,
+    tip_bone.cube(f"{side}_wing_membrane_tip", (10.2 if s == 1 else -17.2, 9, z - 0.5), (7, 16, 1), MEMBRANE, inflate=-0.4,
                   detail=membrane(s, "outer"))
     tip_bone.cube(f"{side}_wing_wrist", (W[0] - 0.75, W[1] - 0.75, z - 0.75), (2, 2, 2), BONE, inflate=-0.2)
     stick(tip_bone, f"{side}_wing_thumb", W, (W[0] + 0.6 * s, W[1] + 1.8, z - 0.4), 1, CLAW)

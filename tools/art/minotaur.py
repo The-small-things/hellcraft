@@ -22,10 +22,10 @@ sys.path.insert(0, os.path.dirname(__file__))
 from bbmodel import Model, material, shade, hexc, mix  # noqa: E402
 
 HIDE = material("hide", "hair", light="5a3a26", dark="2a1a10")
-HEAD = material("head", "hair", light="4a3020", dark="1c120a")
+HEAD = material("head", "hair", light="5e3c26", dark="26180e")
 CURLS = material("curls", "hair", light="3a2618", dark="140c06")
 SKIN = material("skin", "skin", base="8a5a40", dark="5a3424")
-MUZZLE = material("muzzle", "skin", base="3a2a24", dark="1a1210")
+MUZZLE = material("muzzle", "skin", base="5a4640", dark="2a1e1a")
 HORN = material("horn", "horn", root="d8ccb0", tip="2a2420")
 HOOF = material("hoof", "horn", root="3a3430", tip="141210")
 CLOTH = material("cloth", "robe", base="5a2a1a", fold="3a160c")
@@ -128,11 +128,12 @@ def muzzle(faces):
     """A broad wet muzzle: two flared nostrils with a shine above them, and the mouth line under."""
     f = faces["front"]
     w = f.w
-    for nx in (1, w - 3):
-        f.rect(nx, 1, 2, 2, NOSTRIL)
+    for nx, out in ((1, 0), (w - 2, w - 1)):
+        f.px(nx, 1, NOSTRIL)
+        f.px(nx, 2, NOSTRIL)
+        f.px(out, 2, shade(MUZZLE.c["dark"], 0.7))
         f.px(nx, 0, WET)
-        f.px(nx + 1, 0, WET)
-        f.px(nx + 2 if nx == 1 else nx - 1, 2, shade(MUZZLE.c["dark"], 0.7))
+        f.px(out, 1, WET)
     for x in range(w):
         f.px(x, f.h - 1, shade(MUZZLE.c["dark"], 0.6))
     f.px(w // 2, 1, shade(MUZZLE.c["dark"], 0.7))
@@ -352,10 +353,10 @@ def horn_chain(bone, side, start, segments, mat):
         bone.cube(f"{side}_horn_{i}", (x0, py - thick / 2, pz - thick / 2), (length, thick, thick), mat,
                   rotation=(0, yaw * s, lift * s), origin=(px * s, py, pz), mirror=s == -1, detail=horn)
         # the next segment starts a little inside this one's end, so the joint never opens
-        px, py, pz = px + d[0] * (length - 0.6), py + d[1] * (length - 0.6), pz + d[2] * (length - 0.6)
+        px, py, pz = px + d[0] * (length - 1), py + d[1] * (length - 1), pz + d[2] * (length - 1)
 
 
-HORN_SEGMENTS = [(5, 4, -8, 6), (4, 3, 4, 22), (4, 3, 22, 52), (3, 2, 38, 76), (3, 1, 48, 88)]
+HORN_SEGMENTS = [(4, 4, -8, 6), (4, 3, 4, 24), (4, 3, 20, 52), (3, 2, 36, 76), (3, 2, 46, 92)]
 
 
 def build():
