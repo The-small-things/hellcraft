@@ -142,7 +142,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$item"
   echo "$item" | grep -qi "unknown or incomplete command" && { echo "/hellcraft giveitem is not registered"; exit 1; }
   cfg=$(docker exec "$NAME" cat /data/config/hellcraft.json)
-  for want in '"configVersion": 3' '"bossHeartScaling": 0.5' '"monsterCapMultiplier": 1.0' '"mobHealthPerDepth": 0.03' '"fragmentChanceBase": 0.05' '"pveDeathsCostHearts": false' '"bindCostHearts": 0'; do
+  for want in '"configVersion": 4' '"bossHeartScaling": 0.5' '"monsterCapMultiplier": 1.0' '"mobHealthPerDepth": 0.03' '"fragmentChanceBase": 0.05' '"pveDeathsCostHearts": false' '"bindCostHearts": 0'; do
     echo "$cfg" | grep -qF "$want" || { echo "$cfg"; echo "Config was not migrated: missing $want"; exit 1; }
   done
   ghost=$(rcon "ghost" || true)
@@ -495,7 +495,7 @@ done
 echo "Weak point after the slam: $opened"
 echo "$opened" | grep -q "Test passed" || { echo "The Emperor's hand never opened a weak point"; exit 1; }
 sleep 4
-for a in bite wingbeat weep; do
+for a in bite wingbeat weep both_hands drag breath; do
   out=$(rcon "hellcraft lucifer attack $a")
   echo "$out"
   echo "$out" | grep -q "The Emperor uses" || { echo "The Emperor could not use $a"; exit 1; }
