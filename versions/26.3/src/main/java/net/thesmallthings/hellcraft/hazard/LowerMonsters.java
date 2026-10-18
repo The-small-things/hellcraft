@@ -57,12 +57,12 @@ public final class LowerMonsters {
 			double a = InfernoGeometry.wayDownAngle(k);
 			for (boolean outer : new boolean[]{true, false}) {
 				// stand 9 blocks to one side of the ford, at the first dry ground back from the blood
-				double side = 9.0 / 1065.0;
+				double side = 9.0 / InfernoGeometry.scaled(1065.0);
 				double b = a + (outer ? side : -side);
-				double r0 = outer ? 1190 : 960;
+				double r0 = InfernoGeometry.scaled(outer ? 1190 : 960);
 				double step = outer ? -1 : 1;
 				double bank = r0;
-				for (double r = r0; outer ? r > 1000 : r < 1150; r += step) {
+				for (double r = r0; outer ? r > InfernoGeometry.scaled(1000) : r < InfernoGeometry.scaled(1150); r += step) {
 					if (InfernoGeometry.fluidAt(Math.cos(b) * r, Math.sin(b) * r) != InfernoGeometry.Fluid.NONE) {
 						bank = r - step * 3;
 						break;

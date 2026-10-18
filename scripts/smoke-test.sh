@@ -153,11 +153,11 @@ rcon "locate biome hellcraft:judecca"
 rcon "locate biome hellcraft:limbo"
 
 # Force-generate one chunk in every ring along the east road, from the rim down to Lucifer's pit (the Walls of Dis'
-# east gate at 1395), and one off the road (a way down at 30 degrees, in Lust)
-for x in 3450 3300 3080 2980 2770 2425 2100 1800 1530 1395 1240 1065 970 855 640 450 265 55 0; do
+# east gate at 2092; the map is drawn 1.5 times its first size, InfernoGeometry.SCALE), and one off the road (a way down at 30 degrees, in Lust)
+for x in 5175 4950 4620 4470 4155 3637 3150 2700 2295 2092 1860 1597 1455 1282 960 675 397 82 0; do
   rcon "forceload add $x 0"
 done
-rcon "forceload add 2165 1250"
+rcon "forceload add 3247 1875"
 echo "Generating..."
 sleep 60
 rcon "forceload query" || true
@@ -341,19 +341,19 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$fair"
   echo "$fair" | grep -q "dark_wood=true limbo=true lust=false; 10 vs 25 bullying=true, 15 vs 25 bullying=false" || { echo "The fairness rules are wrong"; exit 1; }
   # Limbo's Noble Castle: its walls stand, and its nine shades are home
-  rcon "forceload add 2704 -56 2816 56" > /dev/null
+  rcon "forceload add 4084 -56 4196 56" > /dev/null
   sleep 3
   castle=$(rcon "hellcraft castle test")
   echo "$castle"
   echo "$castle" | grep -q "standing=true; shades=9/9; Shades test: 9 shades, misplaced: none" || { echo "The Noble Castle or its shades are missing"; exit 1; }
-  rcon "forceload remove 2704 -56 2816 56" > /dev/null
+  rcon "forceload remove 4084 -56 4196 56" > /dev/null
   # the upper circles' rules: Lust's wind streams, Gluttony's mud, Greed's hoarders, Wrath's sullen
   layers=$(rcon "hellcraft layers test")
   echo "$layers"
   echo "$layers" | grep -q "mud soft=true roots soft=false stone soft=false; 36 wind streams, in Lust=true; sullen spots on a line across the Styx=true" \
     || { echo "The layer rules are wrong"; exit 1; }
   echo "$layers" | grep -q "4 ingots draw 0, 20 draw 1, a stack of blocks (576) draws 6; a gold block is worth 9 ingots" || { echo "Greed's hoarders are wrong"; exit 1; }
-  rcon "summon hellcraft:hoarder 2165 200 1250 {NoAI:1b,Tags:[\"smoke_hoarder\"]}"
+  rcon "summon hellcraft:hoarder 3247 200 1875 {NoAI:1b,Tags:[\"smoke_hoarder\"]}"
   hoarder=$(rcon "execute if entity @e[type=hellcraft:hoarder,tag=smoke_hoarder]" || true)
   echo "Hoarder: $hoarder"
   echo "$hoarder" | grep -q "Test passed" || { echo "A hoarder could not be summoned"; exit 1; }
@@ -366,7 +366,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$lower" | grep -q "16 centaur posts" || { echo "The fords have no centaur posts"; exit 1; }
   echo "$lower" | grep -q "8 fake Rests" || { echo "Malebolge has no fake Rests"; exit 1; }
   for m in lovers glutton wrathful heretic centaur harpy mimic thief malebranche malacoda; do
-    rcon "summon hellcraft:$m 2165 200 1250 {NoAI:1b,Tags:[\"smoke_monster\"]}" > /dev/null
+    rcon "summon hellcraft:$m 3247 200 1875 {NoAI:1b,Tags:[\"smoke_monster\"]}" > /dev/null
     there=$(rcon "execute if entity @e[type=hellcraft:$m,tag=smoke_monster]" || true)
     echo "$m: $there"
     echo "$there" | grep -q "Test passed" || { echo "A $m could not be summoned"; exit 1; }

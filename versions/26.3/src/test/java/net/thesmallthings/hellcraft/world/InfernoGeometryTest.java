@@ -73,7 +73,7 @@ class InfernoGeometryTest {
 	void riversAreContainedByTheirBanks() {
 		for (int a = 0; a < 720; a++) {
 			double theta = a * 2 * Math.PI / 720;
-			for (int r = 900; r < InfernoGeometry.GATE_WALL_RADIUS; r++) {
+			for (int r = (int) InfernoGeometry.scaled(900); r < InfernoGeometry.GATE_WALL_RADIUS; r++) {
 				double x = Math.cos(theta) * r;
 				double z = Math.sin(theta) * r;
 				if (InfernoGeometry.fluidAt(x, z) != InfernoGeometry.Fluid.NONE) {

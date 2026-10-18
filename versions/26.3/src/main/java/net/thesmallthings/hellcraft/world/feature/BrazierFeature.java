@@ -89,7 +89,7 @@ public record BrazierFeature() implements Feature {
 		int found = 0;
 		int built = 0;
 		String where = "";
-		for (int cx = Math.floorDiv(150, CELL); cx <= Math.floorDiv(380, CELL); cx++) {
+		for (int cx = Math.floorDiv((int) InfernoGeometry.scaled(150), CELL); cx <= Math.floorDiv((int) InfernoGeometry.scaled(380), CELL); cx++) {
 			for (int cz = -2; cz <= 1; cz++) {
 				int[] at = site(cx, cz);
 				if (at == null) {

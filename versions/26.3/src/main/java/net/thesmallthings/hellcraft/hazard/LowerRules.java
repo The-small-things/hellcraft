@@ -288,7 +288,7 @@ public final class LowerRules {
 
 	/** For the smoke test: the tombs and the Sands' rhythm. */
 	public static String selfTest() {
-		List<Tombs.Tomb> tombs = Tombs.within(1150, -150, 1350, 150);
+		List<Tombs.Tomb> tombs = Tombs.within((int) InfernoGeometry.scaled(1150), -150, (int) InfernoGeometry.scaled(1350), 150);
 		boolean inHeresy = !tombs.isEmpty() && tombs.stream().allMatch(t -> InfernoGeometry.zoneAt(t.centreX(), t.centreZ()) == Zone.HERESY);
 		int[] slots = new int[Tombs.SLOTS];
 		tombs.forEach(t -> slots[t.slot()]++);

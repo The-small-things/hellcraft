@@ -21,10 +21,22 @@ public final class InfernoGeometry {
 	private InfernoGeometry() {
 	}
 
+	/**
+	 * How much wider the map is than as first drawn (radius 3,500): every distance across it, the circles' radii, the
+	 * landmarks' places, is drawn at the old size and multiplied by this ({@link #scaled}). The playtest found the circles
+	 * too narrow. Lucifer's pit, the cliffs, ramps, roads and every arena keep their size; heights don't change.
+	 */
+	public static final double SCALE = 1.5;
+
+	/** A distance across the map as first drawn, at today's size. */
+	public static double scaled(double r) {
+		return r * SCALE;
+	}
+
 	/** Radius of the world border; the Dark Wood climbs into mountains just before it. */
-	public static final int BORDER_RADIUS = 3500;
+	public static final int BORDER_RADIUS = (int) Math.round(3500 * SCALE);
 	/** Where the Dark Wood starts climbing into the border mountains. */
-	private static final double MOUNTAINS_FROM = 3400;
+	private static final double MOUNTAINS_FROM = BORDER_RADIUS - 100;
 
 	private static final double WOBBLE_AMPLITUDE = 28.0;
 	private static final double WOBBLE_SCALE = 1.0 / 240.0;
@@ -45,7 +57,8 @@ public final class InfernoGeometry {
 	 * inside the circle and between the ways down.
 	 */
 	private static final double[][] LAIR_PLACES = {
-			{2425, 45, 0}, {2100, 135, 0}, {1800, 225, 0}, {1605, 0, 40}, {1360, 90, 40}, {1260, 195, 0}, {970, 285, 0}, {870, 315, 0}};
+			{2425 * SCALE, 45, 0}, {2100 * SCALE, 135, 0}, {1800 * SCALE, 225, 0}, {1605 * SCALE, 0, 40}, {1360 * SCALE, 90, 40},
+			{1260 * SCALE, 195, 0}, {970 * SCALE, 285, 0}, {870 * SCALE, 315, 0}};
 	/** How many lairs each guardian of Hell has. */
 	public static final int LAIRS_EACH = 4;
 	/**
@@ -88,7 +101,7 @@ public final class InfernoGeometry {
 	/** Kept above y=-54, below which Minecraft floods open air with lava. */
 	public static final int PIT_FLOOR_Y = -52;
 
-	public static final double DIS_WALL_RADIUS = 1395.0;
+	public static final double DIS_WALL_RADIUS = 1395.0 * SCALE;
 	public static final double DIS_WALL_HALF_THICKNESS = 3.5;
 	public static final int DIS_WALL_HEIGHT = 24;
 	public static final int DIS_TOWER_HEIGHT = 34;
@@ -124,23 +137,23 @@ public final class InfernoGeometry {
 	}
 
 	static final Band[] BANDS = {
-			new Band(Zone.DARK_WOOD, 3500, 3150, 172, 164, 7, 0, 0.12, Ways.CLOCK, 12),
-			new Band(Zone.VESTIBULE, 3150, 3010, 150, 142, 3, 0, 0.05, Ways.CLOCK, 12),
-			new Band(Zone.ACHERON, 3010, 2950, 118, 118, 1.5, 0, 0.0, Ways.CLOCK, 10),
-			new Band(Zone.LIMBO, 2950, 2600, 134, 126, 5, 0, 0.08, Ways.CLOCK, 10),
-			new Band(Zone.LUST, 2600, 2250, 108, 100, 4, 16, 0.9, Ways.CLOCK, 10),
-			new Band(Zone.GLUTTONY, 2250, 1950, 88, 84, 2.5, 0, 0.05, Ways.CLOCK, 10),
-			new Band(Zone.GREED, 1950, 1650, 72, 66, 6, 3, 0.15, Ways.CLOCK, 10),
-			new Band(Zone.STYX, 1650, 1410, 53, 52, 4, 0, 0.0, Ways.ROADS, 10),
-			new Band(Zone.WALLS_OF_DIS, 1410, 1380, 58, 58, 1, 0, 0.0, Ways.ROADS, 10),
-			new Band(Zone.HERESY, 1380, 1100, 44, 38, 4, 2, 0.25, Ways.CLOCK, 10),
-			new Band(Zone.PHLEGETHON, 1100, 1030, 18, 18, 1.5, 0, 0.0, Ways.CLOCK, 10),
-			new Band(Zone.WOOD_OF_SUICIDES, 1030, 910, 34, 33, 3, 0, 0.1, Ways.NONE, 30),
-			new Band(Zone.BURNING_SANDS, 910, 800, 33, 30, 6, 0, 0.0, Ways.CLOCK, 10),
-			new Band(Zone.MALEBOLGE, 800, 480, -2, -12, 2, 0, 0.1, Ways.CLOCK, 10),
-			new Band(Zone.WELL_OF_GIANTS, 480, 420, -13, -14, 2, 0, 0.6, Ways.CLOCK, 10),
-			new Band(Zone.COCYTUS, 420, 110, -38, -41, 0.8, 0, 0.0, Ways.NONE, 30),
-			new Band(Zone.JUDECCA, 110, 0, -42, -43, 0.6, 0, 0.0, Ways.NONE, 10),
+			new Band(Zone.DARK_WOOD, 3500 * SCALE, 3150 * SCALE, 172, 164, 7, 0, 0.12, Ways.CLOCK, 12),
+			new Band(Zone.VESTIBULE, 3150 * SCALE, 3010 * SCALE, 150, 142, 3, 0, 0.05, Ways.CLOCK, 12),
+			new Band(Zone.ACHERON, 3010 * SCALE, 2950 * SCALE, 118, 118, 1.5, 0, 0.0, Ways.CLOCK, 10),
+			new Band(Zone.LIMBO, 2950 * SCALE, 2600 * SCALE, 134, 126, 5, 0, 0.08, Ways.CLOCK, 10),
+			new Band(Zone.LUST, 2600 * SCALE, 2250 * SCALE, 108, 100, 4, 16, 0.9, Ways.CLOCK, 10),
+			new Band(Zone.GLUTTONY, 2250 * SCALE, 1950 * SCALE, 88, 84, 2.5, 0, 0.05, Ways.CLOCK, 10),
+			new Band(Zone.GREED, 1950 * SCALE, 1650 * SCALE, 72, 66, 6, 3, 0.15, Ways.CLOCK, 10),
+			new Band(Zone.STYX, 1650 * SCALE, 1410 * SCALE, 53, 52, 4, 0, 0.0, Ways.ROADS, 10),
+			new Band(Zone.WALLS_OF_DIS, 1410 * SCALE, 1380 * SCALE, 58, 58, 1, 0, 0.0, Ways.ROADS, 10),
+			new Band(Zone.HERESY, 1380 * SCALE, 1100 * SCALE, 44, 38, 4, 2, 0.25, Ways.CLOCK, 10),
+			new Band(Zone.PHLEGETHON, 1100 * SCALE, 1030 * SCALE, 18, 18, 1.5, 0, 0.0, Ways.CLOCK, 10),
+			new Band(Zone.WOOD_OF_SUICIDES, 1030 * SCALE, 910 * SCALE, 34, 33, 3, 0, 0.1, Ways.NONE, 30),
+			new Band(Zone.BURNING_SANDS, 910 * SCALE, 800 * SCALE, 33, 30, 6, 0, 0.0, Ways.CLOCK, 10),
+			new Band(Zone.MALEBOLGE, 800 * SCALE, 480 * SCALE, -2, -12, 2, 0, 0.1, Ways.CLOCK, 10),
+			new Band(Zone.WELL_OF_GIANTS, 480 * SCALE, 420 * SCALE, -13, -14, 2, 0, 0.6, Ways.CLOCK, 10),
+			new Band(Zone.COCYTUS, 420 * SCALE, 110 * SCALE, -38, -41, 0.8, 0, 0.0, Ways.NONE, 30),
+			new Band(Zone.JUDECCA, 110 * SCALE, 0 * SCALE, -42, -43, 0.6, 0, 0.0, Ways.NONE, 10),
 	};
 
 	public enum Fluid {NONE, WATER, LAVA}
@@ -154,9 +167,9 @@ public final class InfernoGeometry {
 	}
 
 	private static final River[] RIVERS = {
-			new River(Zone.ACHERON, 125, Fluid.WATER, 100, 40),
-			new River(Zone.STYX, 55, Fluid.WATER, 100, 0),
-			new River(Zone.PHLEGETHON, 26, Fluid.LAVA, 60, 30),
+			new River(Zone.ACHERON, 125, Fluid.WATER, 100 * SCALE, 40 * SCALE),
+			new River(Zone.STYX, 55, Fluid.WATER, 100 * SCALE, 0),
+			new River(Zone.PHLEGETHON, 26, Fluid.LAVA, 60 * SCALE, 30 * SCALE),
 	};
 
 	// ------------------------------------------------------------------ radius & zones
@@ -164,7 +177,7 @@ public final class InfernoGeometry {
 	/** Radius with a gentle noise wobble so the circles look natural rather than compass-drawn. */
 	public static double effectiveRadius(double x, double z) {
 		double r = Math.sqrt(x * x + z * z);
-		double fade = Math.min(1.0, r / 300.0);
+		double fade = Math.min(1.0, r / scaled(300.0));
 		return r + WOBBLE_AMPLITUDE * fade * fbm(x * WOBBLE_SCALE, z * WOBBLE_SCALE, 7717);
 	}
 
@@ -216,7 +229,7 @@ public final class InfernoGeometry {
 			case BURNING_SANDS -> "The Burning Sands";
 			case MALEBOLGE, MALEBOLGE_PITCH, MALEBOLGE_BLIGHT -> "Malebolge — Bolgia " + roman(ditchIndex(re) + 1);
 			case WELL_OF_GIANTS -> "The Well of the Giants";
-			case COCYTUS -> re > 320 ? "Caina" : re > 215 ? "Antenora" : "Ptolomea";
+			case COCYTUS -> re > scaled(320) ? "Caina" : re > scaled(215) ? "Antenora" : "Ptolomea";
 			case JUDECCA -> "Judecca";
 			default -> zone.circle().title();
 		};
@@ -594,7 +607,7 @@ public final class InfernoGeometry {
 	/** The Gate of Hell is a ring wall enclosing the Vestibule and Acheron, pierced by these gates. */
 	public static final int GATE_COUNT = 12;
 	/** Effective radius of the wall: just outside the Dark Wood's cliff and the ramps cut into it. */
-	public static final double GATE_WALL_RADIUS = 3245.0;
+	public static final double GATE_WALL_RADIUS = 3245.0 * SCALE;
 	public static final double GATE_WALL_HALF_THICKNESS = 1.5;
 	public static final int GATE_WALL_HEIGHT = 18;
 	public static final int GATE_TOWER_HEIGHT = 26;
@@ -670,7 +683,7 @@ public final class InfernoGeometry {
 	}
 
 	/** Radius at which the chained giants stand. */
-	public static final double GIANT_RADIUS = 450.0;
+	public static final double GIANT_RADIUS = 450.0 * SCALE;
 
 	// ------------------------------------------------------------------ helpers
 

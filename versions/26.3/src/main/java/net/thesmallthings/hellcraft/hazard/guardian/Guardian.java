@@ -13,37 +13,34 @@ import java.util.function.Function;
  * quarter of Hell, InfernoGeometry.LAIRS), off the roads and the ways down, so none of them blocks the way.
  */
 public enum Guardian {
-	MINOS("Minos", "Judge of the Damned", 2425, ChatFormatting.DARK_PURPLE, 300, 7.0f, MinosFight::new),
-	CERBERUS("Cerberus", "the Great Worm", 2100, ChatFormatting.DARK_GREEN, 350, 5.0f, CerberusFight::new),
-	PLUTUS("Plutus", "the Great Enemy", 1800, ChatFormatting.GOLD, 300, 5.0f, PlutusFight::new),
+	MINOS("Minos", "Judge of the Damned", ChatFormatting.DARK_PURPLE, 300, 7.0f, MinosFight::new),
+	CERBERUS("Cerberus", "the Great Worm", ChatFormatting.DARK_GREEN, 350, 5.0f, CerberusFight::new),
+	PLUTUS("Plutus", "the Great Enemy", ChatFormatting.GOLD, 300, 5.0f, PlutusFight::new),
 	/** In the Fen of Styx, at the landings beside the watchtowers: lighting the east tower's twin beacons calls him (Fen). */
-	PHLEGYAS("Phlegyas", "the Ferryman of the Styx", 1605, ChatFormatting.DARK_AQUA, 320, 7.0f, PhlegyasFight::new),
+	PHLEGYAS("Phlegyas", "the Ferryman of the Styx", ChatFormatting.DARK_AQUA, 320, 7.0f, PhlegyasFight::new),
 	/** Inside the Walls of Dis: the three Furies, who call up Medusa when hard pressed (FuriesFight). */
-	FURIES("The Furies", "the Erinyes of Dis", 1360, ChatFormatting.DARK_RED, 420, 2.5f, FuriesFight::new),
+	FURIES("The Furies", "the Erinyes of Dis", ChatFormatting.DARK_RED, 420, 2.5f, FuriesFight::new),
 	/** In Heresy, standing in his burning tomb (FarinataFight). */
-	FARINATA("Farinata", "the Proud Heretic", 1260, ChatFormatting.GOLD, 360, 3.0f, FarinataFight::new),
+	FARINATA("Farinata", "the Proud Heretic", ChatFormatting.GOLD, 360, 3.0f, FarinataFight::new),
 	/** In a clearing of the Wood of Suicides, in Violence. */
-	MINOTAUR("The Minotaur", "Infamy of Crete", 970, ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
-	GERYON("Geryon", "Image of Fraud", 870, ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
+	MINOTAUR("The Minotaur", "Infamy of Crete", ChatFormatting.RED, 400, 5.5f, MinotaurFight::new),
+	GERYON("Geryon", "Image of Fraud", ChatFormatting.DARK_AQUA, 250, 5.0f, GeryonFight::new),
 	/** Not on the road: at the Great Forge of Dis, in the Nether (GreatForge). */
-	VULCAN("Vulcan", "Smith of the Gods", 0, ChatFormatting.GOLD, 600, 6.5f, VulcanFight::new),
+	VULCAN("Vulcan", "Smith of the Gods", ChatFormatting.GOLD, 600, 6.5f, VulcanFight::new),
 	/** Not in Hell: on the crystal floor of the Primum Mobile, Paradiso's ninth sphere; the last trial (SeraphFight). */
-	SERAPH("The Seraph", "Burning One of the Primum Mobile", 0, ChatFormatting.YELLOW, 700, 6.5f, SeraphFight::new);
+	SERAPH("The Seraph", "Burning One of the Primum Mobile", ChatFormatting.YELLOW, 700, 6.5f, SeraphFight::new);
 
 	public final String title;
 	public final String subtitle;
-	/** Distance of the lair from the centre of Hell. */
-	public final int radius;
 	public final ChatFormatting color;
 	final double health;
 	final float modelHeight;
 	final Function<GuardianContext, GuardianFight> factory;
 
-	Guardian(String title, String subtitle, int radius, ChatFormatting color, double health, float modelHeight,
+	Guardian(String title, String subtitle, ChatFormatting color, double health, float modelHeight,
 			 Function<GuardianContext, GuardianFight> factory) {
 		this.title = title;
 		this.subtitle = subtitle;
-		this.radius = radius;
 		this.color = color;
 		this.health = health;
 		this.modelHeight = modelHeight;

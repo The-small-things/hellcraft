@@ -77,15 +77,15 @@ public class MapTest implements FabricClientGameTest {
 		double way = Math.PI / 6;
 		Shot[] shots = {
 				new Shot("map_gate_of_hell", gate + 45, 205, 6, 90, 22),
-				new Shot("map_road_lust", 2480, 150, 6, 90, 28),
-				new Shot("map_walls_of_dis", 1470, 95, 8, 90, 22),
-				new Shot("map_malebolge_bridge", 700, 45, 6, 90, 30),
-				new Shot("map_way_down_greed", Math.cos(way) * 1740, 112, Math.sin(way) * 1740, 120, 30),
+				new Shot("map_road_lust", s(2480), 150, 6, 90, 28),
+				new Shot("map_walls_of_dis", s(1470), 95, 8, 90, 22),
+				new Shot("map_malebolge_bridge", s(700), 45, 6, 90, 30),
+				new Shot("map_way_down_greed", Math.cos(way) * s(1740), 112, Math.sin(way) * s(1740), 120, 30),
 				// the east Spine over Cocytus, sagging and broken (Spine.bend)
-				new Shot("map_spine", 345, 10, 32, 110, 28),
-				new Shot("map_spine_above", 330, 70, 0, 90, 62),
+				new Shot("map_spine", s(345), 10, 32, 110, 28),
+				new Shot("map_spine_above", s(330), 70, 0, 90, 62),
 				// the Emperor asleep in the pit: far off from the Well of Giants (a dark shape in the fog), then near
-				new Shot("cocytus_windmill", 470, -4, 30, 95, -4),
+				new Shot("cocytus_windmill", s(470), -4, 30, 95, -4),
 				new Shot("cocytus_colossus", 95, -28, 20, 100, -12),
 		};
 		// the test world is made on the client first, so the world type is chosen there, not in server.properties
@@ -125,9 +125,14 @@ public class MapTest implements FabricClientGameTest {
 		}
 	}
 
+	/** A distance across the map as first drawn, at today's size (InfernoGeometry.SCALE). */
+	private static double s(double r) {
+		return InfernoGeometry.scaled(r);
+	}
+
 	/** Lucifer's wingbeat felt on the ice of Cocytus (screenshot cocytus_wingbeat): the frost at the screen's edges. */
 	private static void wingbeat(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
-		server.runCommand("tp Player0 200 -36 14 90 0");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d -36 14 90 0", (int) s(200)));
 		context.waitTicks(10);
 		connection.waitForChunksRender();
 		server.runCommand("hellcraft wingbeat");
@@ -356,10 +361,10 @@ public class MapTest implements FabricClientGameTest {
 				client.gui.hud.toggle();
 			}
 		});
-		piece(context, server, connection, "piece_mire", 2104, 130, new String[][]{
+		piece(context, server, connection, "piece_mire", (int) s(2104), 130, new String[][]{
 				{"rotting_tree", "0", "-14"}, {"rotting_tree", "-14", "6"}, {"rotting_tree", "12", "10"},
 				{"bloated_fungus", "-6", "-4"}, {"bloated_fungus", "8", "-6"}, {"feast_table", "-2", "8"}});
-		piece(context, server, connection, "piece_counting_house", 1800, 150, new String[][]{
+		piece(context, server, connection, "piece_counting_house", (int) s(1800), 150, new String[][]{
 				{"coin_hill", "-10", "-8"}, {"coin_hill", "10", "-12"}, {"vault", "0", "4"}, {"giant_scales", "-14", "12"}});
 		context.runOnClient(client -> {
 			if (client.gui.hud.isHidden()) {
@@ -441,9 +446,9 @@ public class MapTest implements FabricClientGameTest {
 		// the Styx, bubbling where a sullen lurks
 		server.runCommand("gamemode spectator Player0");
 		int[] spot = null;
-		for (int x = 1450; x < 1640 && spot == null; x++) {
+		for (int x = (int) s(1450); x < s(1640) && spot == null; x++) {
 			int[] s = Sullen.spot(x, 60);
-			if (s != null && s[0] > 1460) {
+			if (s != null && s[0] > s(1460)) {
 				spot = s;
 			}
 		}
@@ -451,7 +456,7 @@ public class MapTest implements FabricClientGameTest {
 			throw new AssertionError("no sullen on a line across the Styx");
 		}
 		// one in open water, with no tree over it
-		for (int x = spot[0] + 1; x < 1640; x++) {
+		for (int x = spot[0] + 1; x < s(1640); x++) {
 			int[] s = Sullen.spot(x, 60);
 			if (s != null && server.computeOnServer(sv -> {
 				sv.overworld().getChunk(s[0] >> 4, s[1] >> 4);
@@ -485,7 +490,7 @@ public class MapTest implements FabricClientGameTest {
 		context.waitTicks(20);
 		context.takeScreenshot("layer_fen_dis");
 		// Greed: a purse of gold draws hoarders
-		int gx = 1800;
+		int gx = (int) s(1800);
 		int gz = 60;
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", gx, gz));
 		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, gx, gz));
@@ -539,7 +544,7 @@ public class MapTest implements FabricClientGameTest {
 			}
 		});
 		// Heresy: a tomb by the east road, its red circle filling, then the fire
-		Tombs.Tomb tomb = Tombs.within(1180, 30, 1320, 140).getFirst();
+		Tombs.Tomb tomb = Tombs.within((int) s(1180), 30, (int) s(1320), 140).getFirst();
 		int tx = (int) Math.floor(tomb.centreX());
 		int tz = (int) Math.floor(tomb.centreZ());
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", tx, tz));
@@ -557,7 +562,7 @@ public class MapTest implements FabricClientGameTest {
 		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d", tx, tz));
 
 		// the Burning Sands: the countdown, then the fire falling on the open sand
-		int sx = 850;
+		int sx = (int) s(850);
 		int sz = 70;
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d", sx, sz));
 		int sandY = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz));
@@ -610,7 +615,7 @@ public class MapTest implements FabricClientGameTest {
 		server.runCommand("kill @e[type=hellcraft:centaur]");
 
 		// the Wood of the Suicides: the trees scream and the harpies come
-		int wx = 975;
+		int wx = (int) s(975);
 		int wz = 70;
 		int woodY = server.computeOnServer(s -> {
 			s.overworld().getChunk(wx >> 4, wz >> 4);
@@ -696,7 +701,7 @@ public class MapTest implements FabricClientGameTest {
 			throw new AssertionError("the server never sent the map state and the Guide's pages");
 		}
 		server.runCommand("gamemode creative Player0");
-		double x = 2160;
+		double x = s(2160);
 		double y = InfernoGeometry.baseHeight(x, 6) + 2;
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 90 8", x, y));
 		context.waitTicks(10);
@@ -715,7 +720,7 @@ public class MapTest implements FabricClientGameTest {
 		context.getInput().setCursorPos(2, 2);
 		context.waitTicks(40);
 		context.takeScreenshot("nav_map");
-		context.setScreen(() -> MapOfHellScreen.at(2000, 0, 5));
+		context.setScreen(() -> MapOfHellScreen.at(s(2000), 0, 5));
 		context.getInput().setCursorPos(2, 2);
 		context.waitTicks(10);
 		context.takeScreenshot("nav_map_east_road");

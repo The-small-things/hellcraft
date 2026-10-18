@@ -120,7 +120,8 @@ public final class Ferries {
 
 	/** The ferry floats with its deck at the Styx's surface. */
 	private static double water() {
-		return InfernoGeometry.fluidLevel(1500, 0) - 0.6;
+		// (the Styx's water, on the east road between its shore and the Walls of Dis)
+		return InfernoGeometry.fluidLevel((InfernoGeometry.outerRadius(Zone.STYX) + InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS)) / 2, 0) - 0.6;
 	}
 
 	/** For the smoke test: a ferry is called to the south tower, and its route runs from the Fen to the Walls of Dis. */

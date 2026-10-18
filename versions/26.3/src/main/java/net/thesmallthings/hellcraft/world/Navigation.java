@@ -17,7 +17,7 @@ public final class Navigation {
 	}
 
 	/** The Spines leave the Well of Giants this far from the centre (Spine.START). */
-	private static final double SPINE_START = 450;
+	private static final double SPINE_START = Spine.START;
 
 	/**
 	 * The nearest way down into the next circle: a ramp (one every 30 degrees on most cliffs), a gate (the Gate

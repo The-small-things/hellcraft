@@ -17,8 +17,8 @@ class NavigationTest {
 		// (60 blocks further in), and look again
 		for (int k = 0; k < 24; k++) {
 			double a = k * Math.PI / 12 + 0.05;
-			double x = Math.cos(a) * 3420;
-			double z = Math.sin(a) * 3420;
+			double x = Math.cos(a) * InfernoGeometry.scaled(3420);
+			double z = Math.sin(a) * InfernoGeometry.scaled(3420);
 			int steps = 0;
 			int lastBand = band(x, z);
 			Navigation.Target next;
@@ -58,8 +58,8 @@ class NavigationTest {
 
 	@Test
 	void theCompassPointsAtTheGateFromOutsideTheWall() {
-		Navigation.Target t = Navigation.wayDown(3400, 30);
+		Navigation.Target t = Navigation.wayDown(InfernoGeometry.scaled(3400), 30);
 		assertEquals("Gate of Hell", t.label());
-		assertTrue(t.x() > 3200 && Math.abs(t.z()) < 10, "the east gate, not " + t);
+		assertTrue(t.x() > InfernoGeometry.scaled(3200) && Math.abs(t.z()) < 10, "the east gate, not " + t);
 	}
 }

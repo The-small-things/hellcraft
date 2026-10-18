@@ -11,7 +11,7 @@ import java.util.List;
 class LowerHellTest {
 	@Test
 	void tombsFillTheIronCityButKeepOffTheRoads() {
-		List<Tombs.Tomb> tombs = Tombs.within(1100, -300, 1400, 300);
+		List<Tombs.Tomb> tombs = Tombs.within((int) InfernoGeometry.scaled(1100), -300, (int) InfernoGeometry.scaled(1400), 300);
 		assertTrue(tombs.size() > 100, "only " + tombs.size() + " tombs");
 		int[] slots = new int[Tombs.SLOTS];
 		for (Tombs.Tomb t : tombs) {
@@ -53,7 +53,7 @@ class LowerHellTest {
 		for (int k = 0; k < 12; k++) {
 			double a = InfernoGeometry.wayDownAngle(k);
 			boolean dry = true;
-			for (int r = 1000; r <= 1110; r++) {
+			for (int r = (int) InfernoGeometry.scaled(1000); r <= InfernoGeometry.scaled(1110); r++) {
 				if (InfernoGeometry.fluidAt(Math.cos(a) * r, Math.sin(a) * r) != InfernoGeometry.Fluid.NONE) {
 					dry = false;
 				}
@@ -63,8 +63,8 @@ class LowerHellTest {
 		}
 		// between the ways down, the river is blood all across
 		double between = InfernoGeometry.wayDownAngle(1) + InfernoGeometry.WAY_DOWN_STEP / 2;
-		assertFalse(InfernoGeometry.onFord(Math.cos(between) * 1065, Math.sin(between) * 1065));
-		assertTrue(InfernoGeometry.onFord(Math.cos(InfernoGeometry.wayDownAngle(1)) * 1065, Math.sin(InfernoGeometry.wayDownAngle(1)) * 1065));
+		assertFalse(InfernoGeometry.onFord(Math.cos(between) * InfernoGeometry.scaled(1065), Math.sin(between) * InfernoGeometry.scaled(1065)));
+		assertTrue(InfernoGeometry.onFord(Math.cos(InfernoGeometry.wayDownAngle(1)) * InfernoGeometry.scaled(1065), Math.sin(InfernoGeometry.wayDownAngle(1)) * InfernoGeometry.scaled(1065)));
 		assertNull(Tombs.blastingAt(0, 0, 0));
 	}
 

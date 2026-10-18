@@ -222,7 +222,7 @@ public final class LayerRules {
 		WindStreams.Stream s = WindStreams.all().getFirst();
 		boolean inLust = InfernoGeometry.zoneAt(s.x()[s.size() / 2], s.z()[s.size() / 2]) == Zone.LUST;
 		int sullen = 0;
-		for (int x = 1450; x < 1640; x++) {
+		for (int x = (int) InfernoGeometry.scaled(1450); x < InfernoGeometry.scaled(1640); x++) {
 			if (Sullen.spot(x, 60) != null) {
 				sullen++;
 			}

@@ -91,16 +91,16 @@ public final class Spine {
 	}
 
 	/** Where a spine leaves the Well of Giants (distance from the centre). */
-	public static final int START = 450;
+	public static final int START = (int) Math.round(InfernoGeometry.scaled(450));
 	/** Where it reaches the rim of the pit. */
 	public static final int END = (int) InfernoGeometry.PIT_RADIUS + 4;
 	/** From here inward it is a staircase. */
-	public static final int STAIRS_FROM = 110;
+	public static final int STAIRS_FROM = (int) Math.round(InfernoGeometry.scaled(110));
 	/** The walkway over Cocytus, one block above the Well's floor. */
 	public static final int DECK_Y = -13;
 	/** Monsters never appear this close (blocks) to a spine, nor anywhere in Judecca. */
 	private static final int SANCTUARY_HALF_WIDTH = 40;
-	private static final double JUDECCA_RADIUS = 110.0;
+	private static final double JUDECCA_RADIUS = InfernoGeometry.scaled(110.0);
 
 	private static final List<Entity> EXILED = new ArrayList<>();
 	private static final Map<UUID, Integer> NEXT_WHISPER = new HashMap<>();
@@ -108,7 +108,8 @@ public final class Spine {
 	private static final Set<UUID> HINTED = new HashSet<>();
 
 	/** Lucifer's voice, one line per landmark on the way down (distance from the centre at which it is spoken). */
-	private static final int[] WHISPER_AT = {445, 383, 323, 263, 203, 143, 107, 51};
+	private static final int[] WHISPER_AT = java.util.Arrays.stream(new int[]{445, 383, 323, 263, 203, 143, 107, 51})
+			.map(u -> (int) Math.round(InfernoGeometry.scaled(u))).toArray();
 	private static final String[] WHISPERS = {
 			"Ah. Thou hast found my spine. I broke it when He cast me down. Walk it; it leads to me.",
 			"Nothing will touch thee on this road. Not a demon, not a shade. I forbid it. I want thee WHOLE when thou arrivest.",

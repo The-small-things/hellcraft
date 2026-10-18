@@ -31,6 +31,7 @@ import net.thesmallthings.hellcraft.entity.Carrier;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
 import net.thesmallthings.hellcraft.world.FraudSites;
+import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -95,7 +96,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 		double cz = Math.sin(angle);
 		double lairR = Math.sqrt((double) lair.getX() * lair.getX() + (double) lair.getZ() * lair.getZ());
 		double edge = lairR - 10;
-		for (double r = lairR; r > lairR - 100; r -= 0.5) {
+		for (double r = lairR; r > lairR - InfernoGeometry.scaled(100); r -= 0.5) {
 			if (surface(level, cx * r, cz * r) < lair.getY() - 6) {
 				edge = r;
 				break;

@@ -64,7 +64,7 @@ You need `LEVEL_TYPE=hellcraft:inferno` (`level-type=hellcraft:inferno` in `serv
 
 ## The shape of Hell
 
-The world is a disc 7,000 blocks across, with the world border at radius 3,500 (3.0: a fresh world is needed). You spawn at the rim, in the Dark Wood, just outside the **Gate of Hell**: a black wall that rings the whole Vestibule and Acheron. It is crowned with towers of soul fire and pierced by 12 gates, each bearing Dante's inscription. Every gate opens onto a slope down into the Vestibule. Walking toward 0, 0 always leads down. Each circle sits on a terrace below the last, separated by cliffs.
+The world is a disc 10,500 blocks across, with the world border at radius 5,250 (3.0: a fresh world is needed; widened by half again after the 3.0 playtest found the circles too narrow). You spawn at the rim, in the Dark Wood, just outside the **Gate of Hell**: a black wall that rings the whole Vestibule and Acheron. It is crowned with towers of soul fire and pierced by 12 gates, each bearing Dante's inscription. Every gate opens onto a slope down into the Vestibule. Walking toward 0, 0 always leads down. Each circle sits on a terrace below the last, separated by cliffs.
 
 **You can't get lost (3.0).** Four **Pilgrim Roads** (east, south, west and north) run from the Gate of Hell all the way to the Well of Giants. Each is paved in its circle's own stone and lit by lantern posts, worn like an old ruin (a half step of slab wherever the ground steps, and here and there a sunken stone), causeways over the rivers and a gate through the Walls of Dis. Off the road, every cliff has **a way down every 30 degrees**, like the hours on a clock (12 in all); only the Walls of Dis must be passed through their four gates, on the roads. The Wood of the Suicides and Cocytus have no cliff at all: the ground just slopes down. See [Finding your way](#finding-your-way-30) for the compass, the Map of Hell and the Journal.
 
@@ -275,7 +275,7 @@ Eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each wel
 
 **Antaeus (3.0).** The unchained giant stands in the ice of Cocytus at the foot of the Well of Giants, his hand resting on the rim of a cleft worn in the cliff. Wait on the crying obsidian at the brink by his hand: he lifts you, bends, and sets you down on the ice. To go back up, wait on the crying obsidian beside his hand down on the ice. Nobody in his hand can be hurt.
 
-**Time to react (3.0).** The guardians fight at 60% of their old pace (`bossTempo`): every wind-up, warning on the ground, white parry window and pause between blows lasts longer, and their animations slow to match, so there is time to see a blow coming and get out of the way or raise your shield. The flyers come down to be hit: Geryon sinks to just above the ground after each attack, and a Fury lands where her talons strike and stays down a moment. Lucifer's attacks are paced the same way and hit for 70% (`luciferDamage`).
+**Time to react (3.0).** The guardians fight at 60% of their old pace (`bossTempo`): every wind-up, warning on the ground, white parry window and pause between blows lasts longer, and their animations slow to match, so there is time to see a blow coming and get out of the way or raise your shield. The flyers come down to be hit: Geryon sinks to just above the ground after each attack, and a Fury lands where her talons strike and stays down a moment. Lucifer, the last fight, runs faster (`luciferTempo`, 0.85) and hits for 90% (`luciferDamage`). **Late blocks count (playtest):** against a boss or one of Hell's monsters a shield blocks the moment it's raised (vanilla only counts it a quarter of a second later), so a block timed to the white flash works; it must still face the blow.
 
 A slain guardian sleeps for 30 minutes (in all four of its lairs). If everyone leaves its lair, it goes back to sleep at full health.
 
@@ -324,7 +324,7 @@ When the boss dies, your **rank is the average of your style over the fight**. C
 - **Again after 3 hours:** 1 Blood Heart, but only for a victory ranked S or better (a lower rank doesn't use up the wait).
 - **Lucifer:** his full reward comes back every 6 hours. A win in between pays twice the fragments, plus a treasure roll for S or better.
 
-Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (0.5; 1.0 = full scaling, 0 = off), `bossTempo` (0.6; 1.0 = full speed), `luciferDamage` (0.7), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
+Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (0.5; 1.0 = full scaling, 0 = off), `bossTempo` (0.6; 1.0 = full speed), `luciferDamage` (0.9), `luciferTempo` (0.85), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
 
 | Minos | Cerberus | Plutus | The Minotaur | Geryon |
 |---|---|---|---|---|
@@ -359,12 +359,19 @@ Lucifer's pit is a flat floor of ice about 70 blocks across at the very centre o
    - **Purple ring:** his wings sweep all the way round. It can't be blocked. *Jump as it reaches you, or be out of the ring.*
    - **Red circles:** stars fall there. *Step out.*
    - **Red line:** he lunges along it. *Step aside.*
-2. **The Morning Star.** At half health his kindness snaps ("ENOUGH!"). He glows, moves faster, often strikes twice, and Judas, Brutus and Cassius crawl out of the ice to fight for him.
+   - **His guard (from the playtest).** His wings turn most of your blows aside: only 30% gets through. **Block his white slash** to break his guard, and for a few seconds your blows do 160%. Hit him three times quickly at his guard and he answers at once with the slash, so standing and trading blows doesn't work: block, then strike.
+2. **The Morning Star.** At half health his kindness snaps ("ENOUGH!"). He glows, moves faster, often strikes twice, the stars keep falling round you while he fights, and Judas, Brutus and Cassius crawl out of the ice to fight for him.
 3. **The Three-Faced Emperor.** Break the Seraph and he shatters like glass. Another cutscene: the mountain in the middle of the pit opens its eyes. It was him all along: Dante's Lucifer, frozen to the chest, three faces (red, pale yellow, black) and six bat wings. He can't move, but his reach is the whole pit, and **he can only be hurt where he opens up**:
    - **Red, under a hand:** the hand slams down. *Get out of the red.* Then it stays down on the ice, glowing: **hit the hand** while it lasts.
    - **White flash:** a face bites. *Block it* and the face stays down, glowing, longer, and takes three times the damage; dodge it and it's down for a moment at half that.
    - **Purple ring round the whole pit:** his wingbeat. It can't be blocked or jumped: **get behind an ice pillar** (anywhere his head can't see you) before it comes.
+   - **Red, both hands:** both hands come down at once, either side of him; both stay down to be hit.
+   - **Red circles in an arc:** a hand laid on the ice and dragged round as he turns in the ice. *Get off its path.* It lies still at the end: hit it.
+   - **Red wedge:** his frozen breath, sweeping across the ice as he turns. *Get out of the wedge or behind an ice pillar.* The face hangs low after: hit it.
    - **Red circles, from half health:** he weeps, and his tears fall as ice. *Keep moving.*
+   - **Small red circles round you, all fight long:** icicles shaken from his wings, whatever else he's doing.
+
+   He picks his blows at random (never the same twice running), with little rest between them.
 
    Every attack is told on the ground first, and the first time you see each one a plain tip says what to do.
 
@@ -531,7 +538,7 @@ Each circle torments the living (26.3: each has a counter, and the first time it
 | Treachery | **The cold builds while you're away from fire** (3.0): the frost at the screen's edges creeps in over about 45 seconds at the lake's edge, 25 in Judecca, then the cold hurts. Braziers stand on the ice every 40 blocks or so, all of them out | Light a brazier (a torch or flint and steel): it stays lit for everyone, so lit braziers mark a warm way across. Any lit campfire, fire or lava within 5 blocks warms you; leather armour keeps the cold out. The Spines are sheltered |
 
 **The upper circles' own monsters (3.0)**, each with a real, animated body, come out near pilgrims passing through (`layerMonsters`), and the first meeting opens their Codex page:
-- **Lust: the lovers**, two souls turning round each other on the wind. They circle over you and dive; their blow throws you up and away (mind the cliffs). They fly.
+- **Lust: the lovers**, two souls turning round each other on the wind. They circle over you and dive, one pair at a time; their blow throws you up and away (mind the cliffs). They fly. **Block a dive with your shield** and they fall to the ground, stunned for three seconds: hit them then.
 - **Gluttony: the gluttons**, sunk in the mud until you come within a few blocks, then heaving themselves up. Their belly slam leaves you starving and sick, and they burst into a cloud of filth when they die.
 - **Greed: the hoarders** (see the Greed rule above).
 - **Wrath: the wrathful**, muddy brawlers in packs of three who fight anything near them, each other included. Hurt one and it rages, faster and harder, for a few seconds.
@@ -651,7 +658,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
-- how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.7)
+- how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (0.85)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 

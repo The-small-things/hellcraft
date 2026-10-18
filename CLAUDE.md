@@ -86,6 +86,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   Paradiso mode). The Seraph is a guardian (`Guardian.SERAPH`, `SeraphFight`, `entity/boss/SeraphEntity`, tools/art/seraph.py)
   whose lair is the Primum Mobile's island. The End is vanilla again and the Inferno has no strongholds. `ParadisoTest`
   films it (`purgatory_*`, `paradiso_*`, `seraph_fight_*`, `style_panel`).
+- From the 3.0 playtest: a shield raised against a boss's or Hell's monster's blow blocks at once (`BossRules.raisingShieldAgainst`,
+  `LivingEntityMixin`); Lust's lovers are stunned by a blocked dive and dive one at a time; Lucifer has his own `luciferTempo`;
+  the Fallen Seraph's guard (`SeraphAttacks.guard`: 30% through until a parried slash breaks it, then 160%; trading blows
+  draws a riposte); the Emperor's random blows, `BOTH_HANDS`, `DRAG`, `BREATH` (he turns in the ice, `EmperorEntity.turnBy`) and
+  icefall throughout; roads with stairs and blended stone (`PilgrimRoadFeature.lookAt`); danger marks over snow; the art
+  painters in `tools/art/bbmodel.py` (value noise, tufted fur, metal sheen, `edge_shade` on every face).
 - Phase 8 additions: `blood/Loadout` (`/hellcraft loadout [players] [kit]`: journey kits `upper`, `lower`, `lucifer`,
   `paradiso` with about what a player has by then, hearts too, for fair boss tests; `full`/`blood`, everything);
   `hazard/guardian/Arenas` (`/hellcraft arena <boss> [lair] [players]`, to the edge of any boss's arena); four lairs per
@@ -117,7 +123,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - Hint bits (`CircleHazards.hintOnce`, 64 of them in `HellState.Soul.hints`): 0-31 upper Hell, 32-38 lower Hell
   (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat,
   42 the Emperor's open hand, 43 his wingbeat in the fight,
-  44 the Slag Sea's crust, 45-50 the Forge of Dis's regions (ForgeOfDis.TIPS), 51-60 Paradiso's spheres (their trials).
+  44 the Slag Sea's crust, 45-50 the Forge of Dis's regions (ForgeOfDis.TIPS), 51-60 Paradiso's spheres (their trials),
+  61 the Emperor's frozen breath.
 - Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
   (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
   death, nor Lucifer's SNAP, REVEAL and DORMANT). `LuciferFight` has the same clock (`update` per real tick, `step` per
@@ -169,7 +176,9 @@ Decided first (2026-10-12):
 - Fresh world, so the map is rebuilt from scratch.
 - **A client mod is now required.** The "vanilla client, no blocks, no items" rule is gone: real blocks, items,
   mobs, models, cutscenes and HUD. Bosses use Minecraft's own keyframe animation system (no GeckoLib).
-- Medium world: radius about 3,500.
+- Medium world: radius about 3,500; since the 3.0 playtest every distance across the map is drawn at that size and
+  multiplied by `InfernoGeometry.SCALE` (1.5: radius 5,250) with `InfernoGeometry.scaled(...)`. Lucifer's pit, arenas, cliffs,
+  ramps and roads keep their size; tests and the smoke test use scaled coordinates too.
 - Keep lifesteal and ghosts, blood weapons and armour, style ranks and spoils, and the P's, Hall and Journey.
 - 1.21.1 is dropped for now (done: out of CI, `versions/26.3` self-contained, version 3.0.0).
 

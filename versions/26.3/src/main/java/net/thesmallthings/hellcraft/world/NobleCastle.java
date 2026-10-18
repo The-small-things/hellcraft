@@ -14,7 +14,7 @@ public final class NobleCastle {
 	}
 
 	/** The castle's heart, on the east road in the middle of Limbo. */
-	public static final int X = 2760;
+	public static final int X = (int) Math.round(InfernoGeometry.scaled(2760));
 	public static final int Z = 0;
 	public static final int WALLS = 7;
 	/** Wall k (0 innermost) stands at radius INNER + SPACING * k. */
