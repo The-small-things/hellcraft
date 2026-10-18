@@ -44,27 +44,27 @@ def art(name, palette, rows):
 # ------------------------------------------------------------------------------------ item icons
 # Hand-drawn 16x16 icons, lit from the upper left, with dark coloured outlines (vanilla style).
 
-# the Blood Heart: an anatomical heart, the aortic arch and pulmonary trunk above, the vena cava in blue,
-# the coronary groove running down to the apex
+# the Blood Heart: an anatomical heart lit from the upper left: the vena cava (blue) and the aortic arch with its
+# branches (pink) above, the pulmonary trunk (purple) rising in front, the coronary groove and its fat down to the apex
 art("blood_heart", {"o": "2a0508", "1": "5a0a14", "2": "7e1220", "3": "a31c2a", "4": "c62e38", "5": "e0504f", "6": "f39a86",
-                    "A": "6a1428", "a": "a8344c", "b": "d0647a", "v": "3e3280", "w": "6a5cb0",
-                    "g": "46060f", "f": "d8b25a", "p": "7a2448", "q": "a04068"}, [
-    "......oooo......",
-    ".ooo.obbbbo.....",
-    "ovwvoabaaabo....",
-    "ovwvoaboqqpaoo..",
-    "ovwvoabqqpppAAo.",
-    "ovvvoabqpppoaAo.",
-    "oo45o5apppoo3Ao.",
-    "o4555a54f433321o",
-    "o4566554433g221o",
-    "o456655433g2211o",
-    "o45655433g22v11o",
-    ".o455433g222v1o.",
-    ".o44433g222211o.",
-    "..o433g22211oo..",
-    "...o33g2211o....",
-    "....ooooooo.....",
+                    "A": "8e2038", "a": "c44660", "b": "e47a8e", "c": "fbbcc4", "v": "3e3290", "w": "6a5cc0", "x": "a69ae6",
+                    "g": "46060f", "f": "e0bc64", "F": "a8802c", "p": "5e1a46", "q": "8a3468", "r": "b45c94"}, [
+    "..ooo..o.o.o....",
+    ".oxwvoobobobo...",
+    ".oxwvocbbbbbbo..",
+    ".oxwvobaoooabAo.",
+    ".oxwvoaoqrqoaAo.",
+    ".oxwvoaoqrqpoAo.",
+    ".oxwvoAopqqpoAo.",
+    ".o554444pqqp432o",
+    "o55554444pp4332o",
+    "o56654444gf4332o",
+    "o5654443g333221o",
+    "o4544433gf32211o",
+    ".o44433gF32211o.",
+    "..o4333g32211o..",
+    "...o433g21o.....",
+    "....oooooo......",
 ])
 
 # Blood Fragments: clotted blood crystals, one big faceted shard and two small ones
@@ -255,22 +255,23 @@ art("reaper_of_minos", STEEL, [
     "ooo.............",
 ])
 
-# the Tithe Axe: a broad bearded head, blood on the edge
-art("tithe_axe", STEEL, [
-    "...oooooo...ooo.",
-    "..oWWwwwso.ohHo.",
-    ".oWwwRwwssohHo..",
-    ".oWwRRrwsohHo...",
-    ".oWRRrwsohHo....",
-    ".oWRrwsohHo.....",
-    "..oWRsohHo......",
-    "..oooohHo.......",
-    "....ohHo........",
-    "...ohHo.........",
-    "..ohHo..........",
-    ".ohHo...........",
-    "ohHo............",
-    "oio.............",
+# the Tithe Axe: a broad bearded head of dark steel with a bright honed edge and a fuller, blood down the lower edge
+# and dripping from the beard, a gold collar, a leather-wrapped grip and a gold pommel
+art("tithe_axe", dict(STEEL, S="5a5c6c", k="2a1610", K="6e4630"), [
+    "..ooooooo...ohHo",
+    ".oWwwsssSSSohHo.",
+    "oWwwssssSSohHo..",
+    "oWwsSssSSohHo...",
+    "oWrsSsSSohHo....",
+    "orRsSsoogGo.....",
+    "oRrsSoohHo......",
+    "oRRsoohHo.......",
+    ".oRoohHo........",
+    "..oohHo.........",
+    ".rohHo..........",
+    ".oKko...........",
+    "oKko............",
+    "gGo.............",
     "oo..............",
     "................",
 ])
