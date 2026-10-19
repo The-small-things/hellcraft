@@ -21,9 +21,11 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 - **The Hall of the Damned.** A monument at spawn naming the Inferno's best and most damned.
 - **Dante's Journey.** An advancement tab from the Dark Wood to the Empyrean.
 
+**The title screen (3.1).** Hellcraft has its own: the HELLCRAFT logo burning over a painted view of Hell from the Walls of Dis (Lucifer in the pit with his wings spread, the river of blood, the circles rising behind), embers drifting up, *Lasciate ogne speranza* under the logo and a line of Dante for the splash. Minecraft's buttons are all where they were.
+
 ## Install it
 
-Grab **Hellcraft 3.0.0** (the latest release, not a "test build") from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). Test builds of what comes next are there too, marked "(test build)".
+Grab **Hellcraft 3.0.0** (the latest release) from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). The next version is there too as a **beta** ("Hellcraft 3.1.0 beta"): newer, still being tested. A server and its players need the same version.
 
 - **Modrinth App or Prism Launcher (easiest):** download `Hellcraft-<version>-mc26.3.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you. Use this to play single player **and** to join a Hellcraft server.
 - **Official Minecraft Launcher:** download `hellcraft-<version>-mc26.3-mods.zip` and follow the `INSTALL.txt` inside. In short:
@@ -292,6 +294,8 @@ A slain guardian sleeps for 30 minutes (in all four of its lairs). If everyone l
 - **Purple**: can't be blocked. Jump it, or get out of the way.
 
 Marks are drawn block by block on the ground, fill from the middle out, and the blow lands as they fill. Each colour has its own sound: a low horn for red, a bell for white, a chime for purple.
+
+**Blows you can't miss (3.1).** When a blow lands, its whole mark erupts in its colour: red bursts into fire, smoke and flying earth, white cracks with light and sparks, purple tears open in violet. A circle sends a shockwave out from its edge and a column up from its heart, a line blasts along its length, and if you're standing close the view shakes. The bosses' other effects (splashes, gold, flames, light) are twice as dense and show from across the arena, whatever your particle setting. Ops can try it anywhere with `/hellcraft danger show` (a red circle, a white ring and a purple line in front of you).
 
 **Minos's entrance (3.0).** When Minos wakes, everyone near his lair sees a short cutscene: he rises out of his coils and roars, his name card comes up, and Virgil says how to read the fight. You can't be hurt while it plays, and you can skip it (the jump key) once you've seen it. The fight starts when it ends.
 

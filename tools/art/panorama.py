@@ -51,7 +51,7 @@ COLOURS = np.array([b[2] for b in BANDS], dtype=float)
 CLIFFS = np.array([b[3] for b in BANDS], dtype=float)
 FOG = np.array([110.0, 22.0, 12.0])
 DIS_INNER, DIS_OUTER, DIS_TOP = 432.0, 440.0, 186.0
-LUCIFER = np.array([0.0, 0.0, 0.0])
+LUC_SCALE = 1.25
 
 
 def hash2(x, z, seed=0):
@@ -117,7 +117,7 @@ def tower_at(x, z):
 
 def lucifer_sdf(p):
     """The Emperor in the ice: a body, a head of three faces, six wings. Negative inside."""
-    x, y, z = p[..., 0] / 1.5, p[..., 1] / 1.5, p[..., 2] / 1.5
+    x, y, z = p[..., 0] / LUC_SCALE, p[..., 1] / LUC_SCALE, p[..., 2] / LUC_SCALE
 
     def ellipsoid(c, rad):
         q = np.stack([(x - c[0]) / rad[0], (y - c[1]) / rad[1], (z - c[2]) / rad[2]], -1)
@@ -137,9 +137,11 @@ def lucifer_sdf(p):
             ca, sa = math.cos(a * side), math.sin(a * side)
             ux = u[..., 0] * ca + u[..., 1] * sa
             uy = -u[..., 0] * sa + u[..., 1] * ca
+            # the trailing edge scalloped between the wing's fingers, like a bat's
+            uy = uy + 7 * np.abs(np.sin(ux * 0.07)) * (ux > 0)
             q = np.stack([ux / (105 * spread), uy / 26, u[..., 2] / 3.5], -1)
             d = np.minimum(d, (np.linalg.norm(q, axis=-1) - 1) * 3.5)
-    return d * 1.5
+    return d * LUC_SCALE
 
 
 def sky(dirs, rng):
@@ -185,9 +187,9 @@ def shade(points, dirs, t, idx, r, rng):
     col = np.where(blood[..., None], np.array([200.0, 24.0, 18.0]) * (0.8 + 0.4 * vnoise(x, z, 6.0, 7))[..., None], col)
     cells = hash2(np.floor(x / 8), np.floor(z / 8), 21)
     fx, fz = (x / 8) % 1, (z / 8) % 1
-    tomb = (idx == 7) & (cells > 0.82) & (rr < DIS_INNER - 4) & (np.abs(fx - 0.5) < 0.14) & (np.abs(fz - 0.5) < 0.22)
+    tomb = (idx == 7) & ~steep & (cells > 0.82) & (rr < DIS_INNER - 4) & (np.abs(fx - 0.5) < 0.14) & (np.abs(fz - 0.5) < 0.22)
     col = np.where(tomb[..., None], np.array([255.0, 120.0, 30.0]) * (0.6 + 0.4 * cells[..., None]), col)
-    sands = (idx == 9) & (hash2(np.floor(x / 3), np.floor(z / 3), 9) > 0.93)
+    sands = (idx == 9) & ~steep & (hash2(np.floor(x / 3), np.floor(z / 3), 9) > 0.93)
     col = np.where(sands[..., None], np.array([255.0, 150.0, 50.0]), col)
     on_tower = tower_at(x, z)
     towers = on_tower & (points[..., 1] > DIS_TOP + 24)
@@ -199,9 +201,9 @@ def shade(points, dirs, t, idx, r, rng):
     col = np.where(wall[..., None], np.array([70.0, 22.0, 18.0]) * (0.7 + 0.6 * (hash2(np.floor(points[..., 1] / 2), np.floor(np.arctan2(z, x) * 300), 4) > 0.97))[..., None] + np.array([30.0, 6.0, 4.0]), col)
     # the Styx's dark water catches the red sky
     styx = idx == 6
-    col = np.where(styx[..., None], np.array([30.0, 44.0, 38.0]) + 50 * np.clip(-dirs[..., 1:2] * 0 + 0.4 * vnoise(x, z, 12.0, 8)[..., None], 0, 1), col)
+    col = np.where(styx[..., None], np.array([16.0, 22.0, 20.0]) + np.array([70.0, 18.0, 10.0]) * (0.3 + 0.5 * vnoise(x, z, 12.0, 8))[..., None], col)
     # campfires on the upper circles
-    fires = (idx < 6) & (hash2(np.floor(x / 5), np.floor(z / 5), 31) > 0.985)
+    fires = (idx < 6) & ~steep & (hash2(np.floor(x / 5), np.floor(z / 5), 31) > 0.985)
     col = np.where(fires[..., None], np.array([255.0, 140.0, 40.0]), col)
     return col
 
@@ -270,14 +272,15 @@ def render_face(args):
         if lmask.any():
             # the Emperor: black against the glow, his rims lit red from below, eyes burning
             lp = hp[lmask]
+            mp = lp / LUC_SCALE
             body = np.array([22.0, 14.0, 16.0]) * (0.8 + 0.4 * vnoise(lp[:, 0] * 2, lp[:, 1] * 2, 3.0, 13))[:, None]
             rim = np.clip((lp[:, 1] - 20) / 160, 0, 1)[:, None]
             body = body + np.array([70.0, 12.0, 6.0]) * (1 - rim) * 0.5
-            eyes = (np.abs(lp[:, 1] - 126) < 2.2) & (np.abs(np.abs(lp[:, 0]) - 6) < 2.5) | \
-                   (np.abs(lp[:, 1] - 122) < 1.8) & (np.abs(np.abs(lp[:, 0]) - 18) < 2)
+            eyes = (np.abs(mp[:, 1] - 126) < 2.2) & (np.abs(np.abs(mp[:, 0]) - 6) < 2.5) | \
+                   (np.abs(mp[:, 1] - 121) < 1.8) & (np.abs(np.abs(mp[:, 0]) - 19) < 2.2)
             body = np.where(eyes[:, None], np.array([255.0, 60.0, 20.0]), body)
             c[lmask] = body
-        fog = 1 - np.exp(-t[hit] / 560.0)
+        fog = 1 - np.exp(-t[hit] / 680.0)
         c = c * (1 - fog[:, None]) + FOG * fog[:, None]
         col[hit] = c
     img = np.clip(col.reshape(size, size, 3), 0, 255).astype(np.uint8)

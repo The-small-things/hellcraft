@@ -165,7 +165,6 @@ public final class Impacts {
 	/** A great puff (an explosion's cloud) in the mark's colour. */
 	private static void big(ClientLevel level, int colour, double x, double y, double z, RandomSource random) {
 		add(level, ParticleTypes.EXPLOSION, x, y, z, 0, 0, 0);
-		add(level, ColorParticleOption.create(ParticleTypes.FLASH, DUST[colour][0]), x, y + 0.5, z, 0, 0, 0);
 		for (int k = 0; k < 6; k++) {
 			burst(level, colour, new Vec3(x + random.nextDouble() - 0.5, y - 0.5, z + random.nextDouble() - 0.5), random, 1.6);
 		}

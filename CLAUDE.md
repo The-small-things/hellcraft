@@ -16,7 +16,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - Releases: a commit whose message contains `[release]` publishes a stable GitHub release tagged
   `v<mod_version>`. Bump `mod_version` in `versions/26.3/gradle.properties` and add a "New in x.y.z" block to the
   stable-release body in `.github/workflows/build.yml`. Every other push to the branch refreshes the
-  `v<version>-test` pre-release. Publish stable only when the owner asks.
+  `v<version>-beta` pre-release (the beta; older pre-releases are removed). Publish stable only when the owner asks.
 
 ## Building and testing
 - CI (`.github/workflows/build.yml`) builds 26.3, then boots a real server with
@@ -106,6 +106,13 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
   `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
   `emperor` Codex page fills in, REVAMP L1); `ForgeOfDis.chainLifts` (the Foundry pillars' chain-lifts); the relics as real items (`HellItems.relic`).
+- 3.1 (beta): the title screen (client `title/HellTitle` with `mixin/TitleScreenMixin` (logo, splash, version) and
+  `mixin/ScreenMixin` (red glow and embers over every menu's panorama); the logo is `gen_textures.py` `title_logo`, the
+  panorama of Hell is painted by `tools/art/panorama.py` (a ray-marched heightfield of the funnel, Lucifer in the pit) into
+  `assets/minecraft/textures/gui/title/background`; `TitleTest` screenshots it, `HELLCRAFT_PANORAMA=1` also films in-game
+  panoramas, which came out as fog); boss blows erupt as their mark lands (client `danger/Impacts`, from `DangerMarks.tick`;
+  camera shake via `CameraMixin`) and the fights' particles go through `hazard/BossFx.send` (doubled, forced visible);
+  `/hellcraft danger show` and `ImpactTest` (`impact_*`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the

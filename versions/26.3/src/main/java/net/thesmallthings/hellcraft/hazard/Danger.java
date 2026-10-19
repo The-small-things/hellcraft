@@ -65,6 +65,22 @@ public final class Danger {
 		return "Danger test: judgement bypasses shields: " + source.is(DamageTypeTags.BYPASSES_SHIELD);
 	}
 
+	/**
+	 * For the client test (ImpactTest) and anyone curious: a red circle, a white ring and a purple line in front of a
+	 * player, each landing after `warnTicks`, so their eruption (client/danger/Impacts) can be seen.
+	 */
+	public static String showcase(ServerPlayer player, int warnTicks) {
+		ServerLevel level = (ServerLevel) player.level();
+		double yaw = Math.toRadians(player.getYRot());
+		Vec3 ahead = new Vec3(-Math.sin(yaw), 0, Math.cos(yaw));
+		Vec3 side = new Vec3(-ahead.z, 0, ahead.x);
+		Vec3 at = player.position().add(ahead.scale(14));
+		circle(level, Colour.RED, at.add(side.scale(-9)), 4, warnTicks);
+		ring(level, Colour.WHITE, at, 2, 5, warnTicks);
+		line(level, Colour.PURPLE, at.add(side.scale(6)).add(ahead.scale(-6)), Math.atan2(ahead.z, ahead.x), 14, 1.5, warnTicks);
+		return "Danger showcase: 3 marks land in " + warnTicks + " ticks";
+	}
+
 	/** A filled circle. Returns the mark's id. */
 	public static int circle(ServerLevel level, Colour colour, Vec3 centre, double radius, int warnTicks) {
 		return send(level, colour, Shape.CIRCLE, centre, radius, 0, 0, warnTicks, null, 0);
