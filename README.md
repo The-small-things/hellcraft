@@ -4,9 +4,16 @@
 
 A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
 
-**Hellcraft 3.0 is being rebuilt** (new map, animated bosses, a real reveal for Lucifer, a new Nether and End): see [the revamp plan](docs/REVAMP.md). Test builds change from week to week. Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below); the old 1.21.1 version is frozen and no longer updated.
+**Hellcraft 3.0 is out:** a new, wider map with roads and a compass, every boss and monster on a real animated body, a rule to play with in every circle, Lucifer's two-part fight, the Nether rebuilt as the Forge of Dis, and Purgatory and Paradiso as worlds of their own (the plan was [the revamp](docs/REVAMP.md)). Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below), and 3.0 needs **a new world**. The old 1.21.1 version is frozen and no longer updated.
 
 ![map](docs/inferno_map.png)
+
+**New in 3.0:**
+- **A new map.** Hell is 10,500 blocks across, with four Pilgrim Roads from the Gate to the Well of Giants, a way down every 30 degrees, a compass, the Map of Hell (M) and the Pilgrim's Journal (J).
+- **Real bosses.** Every guardian, Lucifer, Vulcan, the Cyclopes and the Seraph have animated bodies, entrances and fights in the danger language (red: get out, white: block now, purple: jump or keep out), with a style panel and a Codex page each.
+- **Circles to play with.** Lust's wind streams, Gluttony's mud, the sullen of the Styx, the tombs of Heresy, the thicket of the Wood of the Suicides, Malebolge's tricks, the cold of Cocytus and new monsters in every circle.
+- **Lucifer.** The Fallen Seraph's duel, then the Three-Faced Emperor in the ice, and the climb out to Purgatory.
+- **The Forge of Dis and Paradiso.** The Nether rebuilt round Vulcan's Great Forge, Purgatory's island in its own sea, and nine spheres of Paradiso with trials, angels and the Celestial Rose.
 
 **New in 2.0 (26.3):**
 - **The Seven P's.** Heart prestige: ascend at a Blood Altar for more hearts and a virtue each time.
@@ -16,7 +23,7 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 ## Install it
 
-Grab the newest **"Hellcraft … (test build)"** from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases).
+Grab **Hellcraft 3.0.0** (the latest release, not a "test build") from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). Test builds of what comes next are there too, marked "(test build)".
 
 - **Modrinth App or Prism Launcher (easiest):** download `Hellcraft-<version>-mc26.3.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you. Use this to play single player **and** to join a Hellcraft server.
 - **Official Minecraft Launcher:** download `hellcraft-<version>-mc26.3-mods.zip` and follow the `INSTALL.txt` inside. In short:

@@ -213,7 +213,7 @@ his back. **Phase 6 (the Nether) is built** (2026-10-16): the Forge of Dis
 Purgatory's own sea, Paradiso's nine stacked spheres with their columns of light and trials, the Seraph on a real body,
 the Rose on top, no strongholds, the story arc in the Journal. **Phase 8 (polish) is under way** (2026-10-17): the
 loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts, the relics as real items, journey kits, four lairs per guardian and eight Rests per circle, the arena teleport. Still to come: balance
-from the play session, boss music (none sent yet), then the stable 3.0.0 (only when asked). Each phase ships as a test build for a play session before the next.
+from the play session, boss music (none sent yet), in later 3.0 updates. **3.0.0 was released** on 2026-10-19 at the owner's request; later stable releases (3.0.1 and on) bump `mod_version` and add a "New in" block as usual. Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so
