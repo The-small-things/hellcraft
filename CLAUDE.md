@@ -112,7 +112,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `assets/minecraft/textures/gui/title/background`; `TitleTest` screenshots it, `HELLCRAFT_PANORAMA=1` also films in-game
   panoramas, which came out as fog); boss blows erupt as their mark lands (client `danger/Impacts`, from `DangerMarks.tick`;
   camera shake via `CameraMixin`) and the fights' particles go through `hazard/BossFx.send` (doubled, forced visible);
-  `/hellcraft danger show` and `ImpactTest` (`impact_*`).
+  `/hellcraft danger show` and `ImpactTest` (`impact_*`); Limbo without colour (client `layer/LimboGrey` picks one of five
+  `hellcraft:limbo_<n>` post effects from `tools/gen_post.py`, added by `mixin/GameRendererMixin`; `LimboTest`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
