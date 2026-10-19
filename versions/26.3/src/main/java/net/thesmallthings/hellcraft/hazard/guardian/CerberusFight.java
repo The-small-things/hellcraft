@@ -26,6 +26,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 
 import java.util.ArrayList;
@@ -136,7 +137,7 @@ final class CerberusFight extends GuardianFight {
 		BlockParticleOption mud = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState());
 		schedule(CerberusAnim.INTRO.at("rise"), () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 2.0f, 0.6f);
-			level.sendParticles(mud, body.getX(), body.getY() + 0.5, body.getZ(), 200, 2.5, 0.5, 2.5, 0.2);
+			BossFx.send(level, mud, body.getX(), body.getY() + 0.5, body.getZ(), 200, 2.5, 0.5, 2.5, 0.2);
 		});
 		schedule(CerberusAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f));
 		return CerberusAnim.INTRO.ticks;
@@ -259,11 +260,11 @@ final class CerberusFight extends GuardianFight {
 		schedule(CerberusAnim.FILTH.at("spew"), () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.SLIME_SQUISH, SoundSource.HOSTILE, 2.5f, 0.4f);
 			Vec3 mouth = body.position().add(Math.cos(Danger.facing(body)) * 4, 2.5, Math.sin(Danger.facing(body)) * 4);
-			level.sendParticles(FILTH, mouth.x, mouth.y, mouth.z, 60, 0.6, 0.4, 0.6, 0.1);
+			BossFx.send(level, FILTH, mouth.x, mouth.y, mouth.z, 60, 0.6, 0.4, 0.6, 0.1);
 		});
 		schedule(land, () -> {
 			for (Vec3 s : spots) {
-				level.sendParticles(ParticleTypes.ITEM_SLIME, s.x, s.y + 0.5, s.z, 30, 1.2, 0.3, 1.2, 0.1);
+				BossFx.send(level, ParticleTypes.ITEM_SLIME, s.x, s.y + 0.5, s.z, 30, 1.2, 0.3, 1.2, 0.1);
 				level.playSound(null, s.x, s.y, s.z, SoundEvents.MUD_BREAK, SoundSource.HOSTILE, 1.5f, 0.6f);
 				puddles.add(new Puddle(s, tick + PUDDLE_TICKS));
 			}
@@ -355,7 +356,7 @@ final class CerberusFight extends GuardianFight {
 		puddles.removeIf(p -> p.until() < tick);
 		if (tick % 5 == 0) {
 			for (Puddle p : puddles) {
-				level.sendParticles(FILTH, p.at().x, p.at().y + 0.1, p.at().z, 8, PUDDLE_RADIUS * 0.5, 0.05, PUDDLE_RADIUS * 0.5, 0);
+				BossFx.send(level, FILTH, p.at().x, p.at().y + 0.1, p.at().z, 8, PUDDLE_RADIUS * 0.5, 0.05, PUDDLE_RADIUS * 0.5, 0);
 				for (LivingEntity e : victims(p.at(), PUDDLE_RADIUS)) {
 					e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, 2));
 					e.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 80, 0));
@@ -381,7 +382,7 @@ final class CerberusFight extends GuardianFight {
 			}
 		}
 		if (tick % 3 == 0) {
-			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()), cerberus.getX(), cerberus.getY() + 0.2,
+			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()), cerberus.getX(), cerberus.getY() + 0.2,
 					cerberus.getZ(), 20, 1.5, 0.2, 1.5, 0.1);
 		}
 	}
@@ -407,7 +408,7 @@ final class CerberusFight extends GuardianFight {
 		});
 		schedule(slam, () -> {
 			level.playSound(null, cerberus.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.6f);
-			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()), c.x, c.y + 0.3, c.z, 200, SLAM_RADIUS * 0.5, 0.3,
+			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()), c.x, c.y + 0.3, c.z, 200, SLAM_RADIUS * 0.5, 0.3,
 					SLAM_RADIUS * 0.5, 0.2);
 			for (LivingEntity e : victims(c, SLAM_RADIUS + 0.3)) {
 				if (e.hurtServer(level, Danger.unblockable(level, cerberus), SLAM_DAMAGE)) {
@@ -429,7 +430,7 @@ final class CerberusFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(CerberusAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), wolf(WolfSoundVariant.WolfSoundSet::hurtSound), SoundSource.HOSTILE, 2.0f, 0.4f);
-		level.sendParticles(ParticleTypes.CRIT, body.getX(), body.getY() + 3, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 3, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		by.sendOverlayMessage(Component.literal("Parried! Cerberus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 

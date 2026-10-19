@@ -40,6 +40,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.cutscene.Cutscene;
 import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Danger;
@@ -230,7 +231,7 @@ public abstract class GuardianFight {
 			model.pose(body, BossModel.Pose.ROAR);
 		}
 		level.playSound(null, lair, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 2.0f, 1.2f);
-		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, body.getX(), body.getY() + 1, body.getZ(), 120, 1.5, 2, 1.5, 0.05);
+		BossFx.send(level, ParticleTypes.SOUL_FIRE_FLAME, body.getX(), body.getY() + 1, body.getZ(), 120, 1.5, 2, 1.5, 0.05);
 		Cutscene cutscene = animated(body) ? introCutscene() : null;
 		for (ServerPlayer p : audience()) {
 			MapSync.unlockCodex(p, kind.id());
@@ -421,7 +422,7 @@ public abstract class GuardianFight {
 				.withStyle(kind.color, ChatFormatting.BOLD));
 		Feedback.sound(archer, SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 1.0f, 0.6f);
 		for (int t = 0; t < 20; t += 4) {
-			schedule(t, () -> level.sendParticles(ParticleTypes.REVERSE_PORTAL, archer.getX(), archer.getY() + 1, archer.getZ(), 20, 0.4, 0.8, 0.4, 0.05));
+			schedule(t, () -> BossFx.send(level, ParticleTypes.REVERSE_PORTAL, archer.getX(), archer.getY() + 1, archer.getZ(), 20, 0.4, 0.8, 0.4, 0.05));
 		}
 		schedule(20, () -> {
 			Mob body = body();
@@ -463,7 +464,7 @@ public abstract class GuardianFight {
 				side = side.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : side.normalize();
 				double x = body.getX() + side.x * 4.0;
 				double z = body.getZ() + side.z * 4.0;
-				level.sendParticles(ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1, p.getZ(), 40, 0.5, 1, 0.5, 0.1);
+				BossFx.send(level, ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1, p.getZ(), 40, 0.5, 1, 0.5, 0.1);
 				p.teleportTo(x, groundY(x, z), z);
 				p.resetFallDistance();
 				Feedback.sound(p, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 0.5f);
@@ -493,7 +494,7 @@ public abstract class GuardianFight {
 		if (rumour != null) {
 			say(rumour);
 		}
-		level.sendParticles(BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
+		BossFx.send(level, BloodAltar.BLOOD, entity.getX(), entity.getY() + 1, entity.getZ(), 80, 1.0, 1.0, 1.0, 0.0);
 		// the spoils are personal, and follow each fighter's style: see spoils()
 		List<String> names = new ArrayList<>();
 		List<ServerPlayer> fighters = new ArrayList<>();
@@ -798,7 +799,7 @@ public abstract class GuardianFight {
 			double a = i * 2 * Math.PI / points;
 			double x = center.x + Math.cos(a) * radius;
 			double z = center.z + Math.sin(a) * radius;
-			level.sendParticles(particle, x, groundY(x, z) + 0.15, z, 1, 0, 0, 0, 0);
+			BossFx.send(level, particle, x, groundY(x, z) + 0.15, z, 1, 0, 0, 0, 0);
 		}
 	}
 
@@ -859,7 +860,7 @@ public abstract class GuardianFight {
 		double dx = body.getX() - (lair.getX() + 0.5);
 		double dz = body.getZ() - (lair.getZ() + 0.5);
 		if (dx * dx + dz * dz > LEASH * LEASH || body.getY() < lair.getY() - 16 || body.getY() > lair.getY() + 40) {
-			level.sendParticles(ParticleTypes.REVERSE_PORTAL, body.getX(), body.getY() + 1, body.getZ(), 40, 0.5, 1, 0.5, 0.1);
+			BossFx.send(level, ParticleTypes.REVERSE_PORTAL, body.getX(), body.getY() + 1, body.getZ(), 40, 0.5, 1, 0.5, 0.1);
 			body.teleportTo(lair.getX() + 0.5, lair.getY(), lair.getZ() + 0.5);
 		}
 	}

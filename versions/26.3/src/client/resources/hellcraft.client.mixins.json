@@ -9,7 +9,9 @@
 		"HeartTypeMixin",
 		"HudMixin",
 		"KeyboardInputMixin",
-		"MouseHandlerMixin"
+		"MouseHandlerMixin",
+		"ScreenMixin",
+		"TitleScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

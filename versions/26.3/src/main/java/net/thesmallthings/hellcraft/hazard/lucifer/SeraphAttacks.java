@@ -14,6 +14,7 @@ import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.util.Feedback;
 
@@ -168,7 +169,7 @@ final class SeraphAttacks {
 			if (!seraph.isAlive() || fight.seraph() != seraph) {
 				return;
 			}
-			level.sendParticles(ParticleTypes.END_ROD, at.x, at.y + 1.5, at.z, 60, SWEEP_RADIUS / 2, 0.4, SWEEP_RADIUS / 2, 0.05);
+			BossFx.send(level, ParticleTypes.END_ROD, at.x, at.y + 1.5, at.z, 60, SWEEP_RADIUS / 2, 0.4, SWEEP_RADIUS / 2, 0.05);
 			for (LivingEntity e : fight.victims(at, SWEEP_RADIUS)) {
 				// in the air, the wings pass under you
 				if (e.onGround() && e.hurtServer(level, Danger.unblockable(level, seraph), SWEEP_DAMAGE * fight.damageMultiplier())) {
@@ -208,8 +209,8 @@ final class SeraphAttacks {
 			}
 			fight.schedule(warn, () -> {
 				for (Vec3 m : marks) {
-					level.sendParticles(ParticleTypes.END_ROD, m.x, m.y + 4, m.z, 20, 0.2, 2.0, 0.2, 0.1);
-					level.sendParticles(ParticleTypes.EXPLOSION, m.x, m.y + 0.5, m.z, 1, 0, 0, 0, 0);
+					BossFx.send(level, ParticleTypes.END_ROD, m.x, m.y + 4, m.z, 20, 0.2, 2.0, 0.2, 0.1);
+					BossFx.send(level, ParticleTypes.EXPLOSION, m.x, m.y + 0.5, m.z, 1, 0, 0, 0, 0);
 					level.playSound(null, m.x, m.y, m.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.0f, 1.6f);
 					for (LivingEntity e : fight.victims(m, 2.5)) {
 						e.hurtServer(level, Danger.unblockable(level, seraph), STAR_DAMAGE * fight.damageMultiplier());
@@ -244,7 +245,7 @@ final class SeraphAttacks {
 				fight.schedule(i, () -> {
 					Vec3 p = from.add((to.x - from.x) * k, 0, (to.z - from.z) * k);
 					seraph.setPos(p.x, fight.hover(p.x, p.z), p.z);
-					level.sendParticles(ParticleTypes.END_ROD, p.x, p.y + 2, p.z, 6, 0.3, 0.8, 0.3, 0.02);
+					BossFx.send(level, ParticleTypes.END_ROD, p.x, p.y + 2, p.z, 6, 0.3, 0.8, 0.3, 0.02);
 					for (LivingEntity e : fight.victims(p, 2.2)) {
 						if (!hit.contains(e)) {
 							hit.add(e);
@@ -265,7 +266,7 @@ final class SeraphAttacks {
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.PARRIED));
 		level.playSound(null, seraph.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 2.0f, 0.6f);
 		level.playSound(null, seraph.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 2.0f, 0.8f);
-		level.sendParticles(ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 30, 0.5, 0.8, 0.5, 0.2);
+		BossFx.send(level, ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 30, 0.5, 0.8, 0.5, 0.2);
 		busyUntil = fight.tick() + FallenSeraphAnim.STAGGER.ticks;
 		cooldown = Math.max(cooldown, FallenSeraphAnim.STAGGER.ticks + 20);
 		brokenUntil = fight.tick() + FallenSeraphAnim.STAGGER.ticks + BROKEN_FOR;
@@ -279,10 +280,10 @@ final class SeraphAttacks {
 	 */
 	float guard(FallenSeraphEntity seraph, Player by, float amount) {
 		if (fight.tick() < brokenUntil) {
-			level.sendParticles(ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 2.5, seraph.getZ(), 8, 0.4, 0.6, 0.4, 0.2);
+			BossFx.send(level, ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 2.5, seraph.getZ(), 8, 0.4, 0.6, 0.4, 0.2);
 			return amount * BROKEN;
 		}
-		level.sendParticles(ParticleTypes.END_ROD, seraph.getX(), seraph.getY() + 2.5, seraph.getZ(), 6, 0.6, 0.6, 0.6, 0.05);
+		BossFx.send(level, ParticleTypes.END_ROD, seraph.getX(), seraph.getY() + 2.5, seraph.getZ(), 6, 0.6, 0.6, 0.6, 0.05);
 		level.playSound(null, seraph.blockPosition(), SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.HOSTILE, 1.2f, 1.4f);
 		if (guardTips++ % 12 == 0) {
 			by.sendOverlayMessage(Component.literal("His wings turn your blows aside. Block his WHITE slash to break his guard.")
@@ -316,7 +317,7 @@ final class SeraphAttacks {
 		}
 		fight.schedule(warn, () -> {
 			for (Vec3 m : marks) {
-				level.sendParticles(ParticleTypes.END_ROD, m.x, m.y + 4, m.z, 16, 0.2, 2.0, 0.2, 0.1);
+				BossFx.send(level, ParticleTypes.END_ROD, m.x, m.y + 4, m.z, 16, 0.2, 2.0, 0.2, 0.1);
 				level.playSound(null, m.x, m.y, m.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 0.8f, 1.7f);
 				for (LivingEntity e : fight.victims(m, 2.0)) {
 					e.hurtServer(level, Danger.unblockable(level, seraph), STAR_DAMAGE * fight.damageMultiplier());

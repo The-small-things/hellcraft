@@ -26,6 +26,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.VulcanEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ final class VulcanFight extends GuardianFight {
 		for (String clang : new String[]{"clang", "clang2", "clang3"}) {
 			schedule(VulcanAnim.INTRO.at(clang), () -> {
 				level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.HOSTILE, 2.5f, 0.6f);
-				level.sendParticles(ParticleTypes.LAVA, body.getX(), body.getY() + 1.5, body.getZ(), 8, 1.0, 0.3, 1.0, 0.0);
+				BossFx.send(level, ParticleTypes.LAVA, body.getX(), body.getY() + 1.5, body.getZ(), 8, 1.0, 0.3, 1.0, 0.0);
 			});
 		}
 		schedule(VulcanAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
@@ -195,7 +196,7 @@ final class VulcanFight extends GuardianFight {
 			vulcan.warn(BossEntity.Warning.NONE);
 			level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.5f, 0.5f);
 			Vec3 front = c.add(Math.cos(angle) * 3.5, 0, Math.sin(angle) * 3.5);
-			level.sendParticles(ParticleTypes.LAVA, front.x, front.y + 0.3, front.z, 16, 1.2, 0.2, 1.2, 0.0);
+			BossFx.send(level, ParticleTypes.LAVA, front.x, front.y + 0.3, front.z, 16, 1.2, 0.2, 1.2, 0.0);
 			for (LivingEntity e : inWedge(c, angle, STRIKE_REACH, STRIKE_ARC)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), STRIKE_DAMAGE)) {
 					fling(e, c, 0.8, 0.6);
@@ -228,7 +229,7 @@ final class VulcanFight extends GuardianFight {
 			b.teleportTo(mark.x, mark.y, mark.z);
 			level.playSound(null, b.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3.0f, 0.4f);
 			level.playSound(null, b.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.6f);
-			level.sendParticles(ParticleTypes.LAVA, mark.x, mark.y + 0.5, mark.z, 30, 1.5, 0.3, 1.5, 0);
+			BossFx.send(level, ParticleTypes.LAVA, mark.x, mark.y + 0.5, mark.z, 30, 1.5, 0.3, 1.5, 0);
 			for (LivingEntity e : victims(mark, FALL_RADIUS + 0.3)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(b), FALL_DAMAGE)) {
 					fling(e, mark, 1.0, 0.6);
@@ -265,8 +266,8 @@ final class VulcanFight extends GuardianFight {
 		schedule(fall, () -> {
 			Mob b = body();
 			for (Vec3 m : marks) {
-				level.sendParticles(ParticleTypes.FALLING_LAVA, m.x, m.y + 6, m.z, 40, 0.8, 0.5, 0.8, 0);
-				level.sendParticles(ParticleTypes.LAVA, m.x, m.y + 0.3, m.z, 12, 0.8, 0.2, 0.8, 0);
+				BossFx.send(level, ParticleTypes.FALLING_LAVA, m.x, m.y + 6, m.z, 40, 0.8, 0.5, 0.8, 0);
+				BossFx.send(level, ParticleTypes.LAVA, m.x, m.y + 0.3, m.z, 12, 0.8, 0.2, 0.8, 0);
 				for (LivingEntity e : victims(m, RAIN_RADIUS + 0.2)) {
 					if (e.hurtServer(level, b != null ? level.damageSources().mobAttack(b) : level.damageSources().lava(), RAIN_DAMAGE)) {
 						e.igniteForSeconds(4.0f);
@@ -294,7 +295,7 @@ final class VulcanFight extends GuardianFight {
 			level.playSound(null, body.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.HOSTILE, 2.0f, 0.5f);
 			for (int i = 0; i <= 18; i++) {
 				Vec3 p = c.add(Math.cos(angle) * i, 1.2, Math.sin(angle) * i);
-				level.sendParticles(ParticleTypes.SMOKE, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0);
+				BossFx.send(level, ParticleTypes.SMOKE, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0);
 			}
 			for (LivingEntity e : inBand(c, angle, CHAIN_REACH, CHAIN_WIDTH)) {
 				// dragged to his feet, and dazed a moment
@@ -335,7 +336,7 @@ final class VulcanFight extends GuardianFight {
 				smith.addTag(TAG);
 				smith.setCustomName(Component.literal("Smith of Dis").withStyle(ChatFormatting.GOLD));
 				level.addFreshEntity(smith);
-				level.sendParticles(ParticleTypes.FLAME, x, smith.getY() + 1, z, 40, 0.4, 0.8, 0.4, 0.05);
+				BossFx.send(level, ParticleTypes.FLAME, x, smith.getY() + 1, z, 40, 0.4, 0.8, 0.4, 0.05);
 			}
 		});
 		return VulcanAnim.SUMMON.ticks + 40;
@@ -359,8 +360,8 @@ final class VulcanFight extends GuardianFight {
 			for (double a : angles) {
 				for (int i = 1; i <= SEAM_REACH; i += 2) {
 					Vec3 p = c.add(Math.cos(a) * i, 0.2, Math.sin(a) * i);
-					level.sendParticles(ParticleTypes.FLAME, p.x, p.y, p.z, 6, 0.2, 0.6, 0.2, 0.05);
-					level.sendParticles(ParticleTypes.LAVA, p.x, p.y, p.z, 1, 0.1, 0.1, 0.1, 0.0);
+					BossFx.send(level, ParticleTypes.FLAME, p.x, p.y, p.z, 6, 0.2, 0.6, 0.2, 0.05);
+					BossFx.send(level, ParticleTypes.LAVA, p.x, p.y, p.z, 1, 0.1, 0.1, 0.1, 0.0);
 				}
 				for (LivingEntity e : inBand(c, a, SEAM_REACH, SEAM_WIDTH)) {
 					if (e.hurtServer(level, b != null ? Danger.unblockable(level, b) : level.damageSources().lava(), SEAM_DAMAGE)) {
@@ -416,7 +417,7 @@ final class VulcanFight extends GuardianFight {
 		say("ENOUGH! The forge itself will burn you!");
 		schedule(VulcanAnim.PHASE.at("plunge"), () -> {
 			level.playSound(null, vulcan.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3.0f, 0.3f);
-			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MAGMA_BLOCK.defaultBlockState()), vulcan.getX(), vulcan.getY() + 0.3,
+			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MAGMA_BLOCK.defaultBlockState()), vulcan.getX(), vulcan.getY() + 0.3,
 					vulcan.getZ(), 200, 3, 0.3, 3, 0.2);
 		});
 		schedule(VulcanAnim.PHASE.at("roar"), () -> {
@@ -436,7 +437,7 @@ final class VulcanFight extends GuardianFight {
 		setBase(vulcan, Attributes.ARMOR, 0.0);
 		delayNextAttack(VulcanAnim.STAGGER.ticks + 15);
 		vulcan.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, VulcanAnim.STAGGER.ticks, 9, false, false));
-		level.sendParticles(ParticleTypes.CRIT, vulcan.getX(), vulcan.getY() + 3, vulcan.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, vulcan.getX(), vulcan.getY() + 3, vulcan.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		by.sendOverlayMessage(Component.literal("Parried! Vulcan reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 

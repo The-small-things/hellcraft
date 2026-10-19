@@ -47,6 +47,7 @@ import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.FallenSeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.FallenSeraphAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
@@ -624,8 +625,8 @@ public final class LuciferFight {
 			if (s == null) {
 				return;
 			}
-			level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, s.getX(), s.getY() + 2, s.getZ(), 1, 0, 0, 0, 0);
-			level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, s.getX(), s.getY() + 2, s.getZ(), 200, 4, 2, 4, 0.2);
+			BossFx.send(level, ParticleTypes.EXPLOSION_EMITTER, s.getX(), s.getY() + 2, s.getZ(), 1, 0, 0, 0, 0);
+			BossFx.send(level, ParticleTypes.SOUL_FIRE_FLAME, s.getX(), s.getY() + 2, s.getZ(), 200, 4, 2, 4, 0.2);
 			s.addEffect(new MobEffectInstance(MobEffects.GLOWING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
 			raiseTraitors();
 			updateBarName("LUCIFER — The Morning Star");
@@ -660,8 +661,8 @@ public final class LuciferFight {
 		schedule(breakAt, () -> {
 			FallenSeraphEntity s = seraph();
 			if (s != null) {
-				level.sendParticles(ParticleTypes.END_ROD, s.getX(), s.getY() + 2.5, s.getZ(), 300, 1, 1.5, 1, 0.3);
-				level.sendParticles(ParticleTypes.SNOWFLAKE, s.getX(), s.getY() + 2, s.getZ(), 300, 2, 2, 2, 0.4);
+				BossFx.send(level, ParticleTypes.END_ROD, s.getX(), s.getY() + 2.5, s.getZ(), 300, 1, 1.5, 1, 0.3);
+				BossFx.send(level, ParticleTypes.SNOWFLAKE, s.getX(), s.getY() + 2, s.getZ(), 300, 2, 2, 2, 0.4);
 				level.playSound(null, s.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3.0f, 0.4f);
 				s.discard();
 			}
@@ -731,7 +732,7 @@ public final class LuciferFight {
 		schedule(EmperorAnim.DEATH.at("freeze"), () -> {
 			EmperorEntity e = emperor();
 			if (e != null) {
-				level.sendParticles(ParticleTypes.SNOWFLAKE, e.getX(), e.getY() + 15, e.getZ(), 800, 12, 12, 12, 0.1);
+				BossFx.send(level, ParticleTypes.SNOWFLAKE, e.getX(), e.getY() + 15, e.getZ(), 800, 12, 12, 12, 0.1);
 				level.playSound(null, e.blockPosition().above(15), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 4.0f, 0.3f);
 			}
 		});
@@ -1066,7 +1067,7 @@ public final class LuciferFight {
 			traitor.setDropChance(slot, 0.0f);
 		}
 		level.addFreshEntity(traitor);
-		level.sendParticles(ParticleTypes.SOUL, at.x, at.y + 1, at.z, 30, 0.5, 1, 0.5, 0.05);
+		BossFx.send(level, ParticleTypes.SOUL, at.x, at.y + 1, at.z, 30, 0.5, 1, 0.5, 0.05);
 		return traitor;
 	}
 

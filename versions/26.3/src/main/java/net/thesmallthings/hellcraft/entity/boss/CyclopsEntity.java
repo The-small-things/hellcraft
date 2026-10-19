@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.boss.gen.CyclopsAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
@@ -279,7 +280,7 @@ public class CyclopsEntity extends AnimatedBoss {
 				for (Vec3 m : marks) {
 					double f = step / (double) BOULDER_FLIGHT;
 					Vec3 p = from.lerp(m, f).add(0, 6 * 4 * f * (1 - f), 0);
-					level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), p.x, p.y, p.z, 12, 0.4, 0.4,
+					BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), p.x, p.y, p.z, 12, 0.4, 0.4,
 							0.4, 0.05);
 				}
 			});
@@ -287,7 +288,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		schedule(land, () -> {
 			for (Vec3 m : marks) {
 				level.playSound(null, net.minecraft.core.BlockPos.containing(m), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.5f, 0.7f);
-				level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), m.x, m.y + 0.5, m.z, 80, 1.2, 0.4,
+				BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), m.x, m.y + 0.5, m.z, 80, 1.2, 0.4,
 						1.2, 0.2);
 				for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(m, m).inflate(BOULDER_RADIUS + 0.3, 3,
 						BOULDER_RADIUS + 0.3), e -> e != this && e.isAlive())) {
@@ -310,7 +311,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		schedule(stamp, () -> {
 			warn(Warning.NONE);
 			level.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.5f);
-			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), c.x, c.y + 0.2, c.z, 150, 3.5, 0.2,
+			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), c.x, c.y + 0.2, c.z, 150, 3.5, 0.2,
 					3.5, 0.2);
 			for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(QUAKE_OUTER + 0.5), e -> e != this && e.isAlive())) {
 				double r = Math.hypot(e.getX() - c.x, e.getZ() - c.z);
@@ -333,7 +334,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		lockedUntil = staggerUntil;
 		nextAttack = staggerUntil + 15;
 		if (level() instanceof ServerLevel level) {
-			level.sendParticles(ParticleTypes.CRIT, getX(), getY() + 3, getZ(), 30, 1.2, 0.8, 1.2, 0.4);
+			BossFx.send(level, ParticleTypes.CRIT, getX(), getY() + 3, getZ(), 30, 1.2, 0.8, 1.2, 0.4);
 		}
 		by.sendOverlayMessage(Component.literal("Parried! The Cyclops reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

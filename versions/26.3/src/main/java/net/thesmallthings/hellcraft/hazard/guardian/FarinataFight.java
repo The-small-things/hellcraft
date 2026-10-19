@@ -20,6 +20,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.FarinataEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 
 import java.util.ArrayList;
@@ -106,7 +107,7 @@ final class FarinataFight extends GuardianFight {
 		lockedUntil = tick + FarinataAnim.INTRO.ticks;
 		schedule(FarinataAnim.INTRO.at("rise"), () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 2.5f, 0.4f);
-			level.sendParticles(ParticleTypes.FLAME, body.getX(), body.getY() + 1, body.getZ(), 150, 1.2, 1.5, 1.2, 0.05);
+			BossFx.send(level, ParticleTypes.FLAME, body.getX(), body.getY() + 1, body.getZ(), 150, 1.2, 1.5, 1.2, 0.05);
 		});
 		return FarinataAnim.INTRO.ticks;
 	}
@@ -195,7 +196,7 @@ final class FarinataFight extends GuardianFight {
 			farinata.warn(BossEntity.Warning.NONE);
 			level.playSound(null, body.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 2.5f, 0.6f);
 			for (double r = 2; r <= DISDAIN_REACH; r += 1.0) {
-				level.sendParticles(ParticleTypes.FLAME, c.x + Math.cos(angle) * r, c.y + 0.3, c.z + Math.sin(angle) * r, 6, 0.3, 0.2, 0.3, 0.02);
+				BossFx.send(level, ParticleTypes.FLAME, c.x + Math.cos(angle) * r, c.y + 0.3, c.z + Math.sin(angle) * r, 6, 0.3, 0.2, 0.3, 0.02);
 			}
 			for (LivingEntity e : inBand(c, angle, DISDAIN_REACH, DISDAIN_WIDTH)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), DISDAIN_DAMAGE)) {
@@ -297,7 +298,7 @@ final class FarinataFight extends GuardianFight {
 		schedule(blast, () -> {
 			farinata.warn(BossEntity.Warning.NONE);
 			level.playSound(null, body.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.5f, 0.6f);
-			level.sendParticles(ParticleTypes.EXPLOSION, c.x, c.y + 1, c.z, 6, 3, 0.5, 3, 0);
+			BossFx.send(level, ParticleTypes.EXPLOSION, c.x, c.y + 1, c.z, 6, 3, 0.5, 3, 0);
 			for (LivingEntity e : inRing(c, EXILE_INNER, EXILE_OUTER)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), EXILE_DAMAGE)) {
 					fling(e, c, 1.6, 0.6);
@@ -327,7 +328,7 @@ final class FarinataFight extends GuardianFight {
 		}
 		// his tomb's fire flickers round him
 		if (tick % 4 == 0) {
-			level.sendParticles(ParticleTypes.FLAME, body.getX(), body.getY() + 0.3, body.getZ(), 4, 1.0, 0.2, 1.0, 0.01);
+			BossFx.send(level, ParticleTypes.FLAME, body.getX(), body.getY() + 0.3, body.getZ(), 4, 1.0, 0.2, 1.0, 0.01);
 		}
 	}
 
@@ -353,7 +354,7 @@ final class FarinataFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(FarinataAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.5f);
-		level.sendParticles(ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.0, 1.0, 1.0, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.0, 1.0, 1.0, 0.4);
 		say("Hm. Thou art not without breeding.");
 		by.sendOverlayMessage(Component.literal("Parried! Farinata sinks into his tomb: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.SeraphEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.SeraphAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Journey;
@@ -130,7 +131,7 @@ final class SeraphFight extends GuardianFight {
 		lockedUntil = tick + SeraphAnim.INTRO.ticks;
 		schedule(SeraphAnim.INTRO.at("land"), () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 3.0f, 0.8f);
-			level.sendParticles(ParticleTypes.END_ROD, body.getX(), body.getY() + 1, body.getZ(), 80, 3, 0.5, 3, 0.05);
+			BossFx.send(level, ParticleTypes.END_ROD, body.getX(), body.getY() + 1, body.getZ(), 80, 3, 0.5, 3, 0.05);
 		});
 		schedule(SeraphAnim.INTRO.at("cry"), () -> level.playSound(null, body.blockPosition(), SoundEvents.BELL_RESONATE, SoundSource.HOSTILE, 3.0f, 0.6f));
 		return SeraphAnim.INTRO.ticks;
@@ -193,7 +194,7 @@ final class SeraphFight extends GuardianFight {
 			level.playSound(null, body.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 3.0f, 0.8f);
 			for (int i = 2; i <= 7; i++) {
 				Vec3 p = c.add(Math.cos(angle) * i, 1.0, Math.sin(angle) * i);
-				level.sendParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 4, 1.0, 0.4, 1.0, 0.02);
+				BossFx.send(level, ParticleTypes.END_ROD, p.x, p.y, p.z, 4, 1.0, 0.4, 1.0, 0.02);
 			}
 			for (LivingEntity e : inWedge(c, angle, WING_REACH, WING_ARC)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), WING_DAMAGE)) {
@@ -230,8 +231,8 @@ final class SeraphFight extends GuardianFight {
 		schedule(fall, () -> {
 			Mob b = body();
 			for (Vec3 m : marks) {
-				level.sendParticles(ParticleTypes.FLAME, m.x, m.y + 4, m.z, 40, 0.6, 2.0, 0.6, 0.02);
-				level.sendParticles(ParticleTypes.END_ROD, m.x, m.y + 0.3, m.z, 10, 0.8, 0.2, 0.8, 0.05);
+				BossFx.send(level, ParticleTypes.FLAME, m.x, m.y + 4, m.z, 40, 0.6, 2.0, 0.6, 0.02);
+				BossFx.send(level, ParticleTypes.END_ROD, m.x, m.y + 0.3, m.z, 10, 0.8, 0.2, 0.8, 0.05);
 				for (LivingEntity e : victims(m, FIRE_RADIUS + 0.2)) {
 					if (e.hurtServer(level, b != null ? level.damageSources().mobAttack(b) : level.damageSources().inFire(), FIRE_DAMAGE)) {
 						e.igniteForSeconds(3.0f);
@@ -260,15 +261,15 @@ final class SeraphFight extends GuardianFight {
 			for (int i = 0; i <= 10; i++) {
 				double t = i / 10.0;
 				Vec3 p = from.lerp(mark, t).add(0, Math.sin(t * Math.PI) * 3, 0);
-				level.sendParticles(ParticleTypes.FLAME, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0);
+				BossFx.send(level, ParticleTypes.FLAME, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0);
 			}
 			level.playSound(null, body.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 2.5f, 0.6f);
 		});
 		schedule(lands, () -> {
 			Mob b = body();
 			level.playSound(null, BlockPos.containing(mark), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 1.1f);
-			level.sendParticles(ParticleTypes.FLAME, mark.x, mark.y + 0.5, mark.z, 60, 1.5, 0.5, 1.5, 0.1);
-			level.sendParticles(ParticleTypes.LAVA, mark.x, mark.y + 0.5, mark.z, 10, 1.0, 0.2, 1.0, 0);
+			BossFx.send(level, ParticleTypes.FLAME, mark.x, mark.y + 0.5, mark.z, 60, 1.5, 0.5, 1.5, 0.1);
+			BossFx.send(level, ParticleTypes.LAVA, mark.x, mark.y + 0.5, mark.z, 10, 1.0, 0.2, 1.0, 0);
 			for (LivingEntity e : victims(mark, COAL_RADIUS + 0.3)) {
 				if (e.hurtServer(level, b != null ? level.damageSources().mobAttack(b) : level.damageSources().inFire(), COAL_DAMAGE)) {
 					e.igniteForSeconds(4.0f);
@@ -338,7 +339,7 @@ final class SeraphFight extends GuardianFight {
 			double a = start + 2 * Math.PI * (t - turn) / (done - turn);
 			schedule(t, () -> {
 				for (int r = (int) TURN_INNER; r <= TURN_OUTER; r += 2) {
-					level.sendParticles(ParticleTypes.END_ROD, c.x + Math.cos(a) * r, c.y + 0.6, c.z + Math.sin(a) * r, 1, 0.05, 0.1, 0.05, 0);
+					BossFx.send(level, ParticleTypes.END_ROD, c.x + Math.cos(a) * r, c.y + 0.6, c.z + Math.sin(a) * r, 1, 0.05, 0.1, 0.05, 0);
 				}
 			});
 		}
@@ -395,7 +396,7 @@ final class SeraphFight extends GuardianFight {
 		say("You have climbed far. Now see the heavens turn.");
 		schedule(SeraphAnim.PHASE.at("flare"), () -> {
 			level.playSound(null, seraph.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.HOSTILE, 3.0f, 1.4f);
-			level.sendParticles(ParticleTypes.END_ROD, seraph.getX(), seraph.getY() + 4, seraph.getZ(), 200, 4, 3, 4, 0.1);
+			BossFx.send(level, ParticleTypes.END_ROD, seraph.getX(), seraph.getY() + 4, seraph.getZ(), 200, 4, 3, 4, 0.1);
 			tip("From now on the heavens turn between its blows: a beam sweeps the floor. Watch for the purple ring, and jump the beam.");
 		});
 	}
@@ -411,7 +412,7 @@ final class SeraphFight extends GuardianFight {
 		setBase(seraph, Attributes.ARMOR, 0.0);
 		delayNextAttack(SeraphAnim.STAGGER.ticks + 15);
 		seraph.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, SeraphAnim.STAGGER.ticks, 9, false, false));
-		level.sendParticles(ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		by.sendOverlayMessage(Component.literal("Parried! The Seraph reels: hit it now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 

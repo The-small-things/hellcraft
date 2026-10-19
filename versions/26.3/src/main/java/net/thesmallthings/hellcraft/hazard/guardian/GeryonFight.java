@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.GeryonCarrier;
 import net.thesmallthings.hellcraft.entity.boss.GeryonEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import org.jetbrains.annotations.Nullable;
 
@@ -234,7 +235,7 @@ final class GeryonFight extends GuardianFight {
 				copy.addTag(TAG);
 				level.addFreshEntity(copy);
 				falses.add(copy.getUUID());
-				level.sendParticles(ParticleTypes.WITCH, copy.getX(), copy.getY() + 1, copy.getZ(), 40, 1.5, 1, 1.5, 0.1);
+				BossFx.send(level, ParticleTypes.WITCH, copy.getX(), copy.getY() + 1, copy.getZ(), 40, 1.5, 1, 1.5, 0.1);
 			}
 			level.playSound(null, body.blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.HOSTILE, 2.5f, 0.6f);
 		});
@@ -259,7 +260,7 @@ final class GeryonFight extends GuardianFight {
 						e.hurtServer(level, Danger.unblockable(level, body), FALSE_DAMAGE);
 					}
 					for (double r = 1; r <= FALSE_REACH; r += 2) {
-						level.sendParticles(ParticleTypes.WITCH, from.x + Math.cos(angle) * r, from.y + 1, from.z + Math.sin(angle) * r, 4, 0.3, 0.3, 0.3, 0.02);
+						BossFx.send(level, ParticleTypes.WITCH, from.x + Math.cos(angle) * r, from.y + 1, from.z + Math.sin(angle) * r, 4, 0.3, 0.3, 0.3, 0.02);
 					}
 					m.setPos(from.x + Math.cos(angle) * FALSE_REACH * 0.6, m.getY(), from.z + Math.sin(angle) * FALSE_REACH * 0.6);
 				});
@@ -328,7 +329,7 @@ final class GeryonFight extends GuardianFight {
 		}
 		schedule(land, () -> {
 			for (Vec3 s : spots) {
-				level.sendParticles(ParticleTypes.ITEM_SLIME, s.x, s.y + 1.5, s.z, 20, 0.6, 1.0, 0.6, 0.05);
+				BossFx.send(level, ParticleTypes.ITEM_SLIME, s.x, s.y + 1.5, s.z, 20, 0.6, 1.0, 0.6, 0.05);
 				for (LivingEntity e : victims(s, VENOM_RADIUS + 0.3)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), 4.0f)) {
 						e.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));
@@ -341,7 +342,7 @@ final class GeryonFight extends GuardianFight {
 	private void clearFalses() {
 		for (UUID id : falses) {
 			if (level.getEntity(id) instanceof Mob m) {
-				level.sendParticles(ParticleTypes.WITCH, m.getX(), m.getY() + 1, m.getZ(), 30, 1.2, 0.8, 1.2, 0.05);
+				BossFx.send(level, ParticleTypes.WITCH, m.getX(), m.getY() + 1, m.getZ(), 30, 1.2, 0.8, 1.2, 0.05);
 				m.discard();
 			}
 		}
@@ -429,7 +430,7 @@ final class GeryonFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(GeryonAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.5f);
-		level.sendParticles(ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		by.sendOverlayMessage(Component.literal("Parried! Geryon sags to the ground: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 

@@ -16,6 +16,7 @@ import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorWeakPoint;
 import net.thesmallthings.hellcraft.entity.boss.gen.EmperorAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.Wingbeat;
@@ -182,8 +183,8 @@ final class EmperorAttacks {
 			}
 			for (Vec3 g : grounds) {
 				level.playSound(null, g.x, g.y, g.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 3.0f, 0.5f);
-				level.sendParticles(ParticleTypes.EXPLOSION, g.x, g.y + 1, g.z, 6, 2.5, 0.5, 2.5, 0);
-				level.sendParticles(ParticleTypes.SNOWFLAKE, g.x, g.y + 1, g.z, 150, 4, 1, 4, 0.2);
+				BossFx.send(level, ParticleTypes.EXPLOSION, g.x, g.y + 1, g.z, 6, 2.5, 0.5, 2.5, 0);
+				BossFx.send(level, ParticleTypes.SNOWFLAKE, g.x, g.y + 1, g.z, 150, 4, 1, 4, 0.2);
 				for (LivingEntity e : fight.victims(g, SLAM_RADIUS)) {
 					if (e.hurtServer(level, Danger.unblockable(level, emperor), SLAM_DAMAGE * fight.damageMultiplier())) {
 						e.push(0, 0.6, 0);
@@ -229,7 +230,7 @@ final class EmperorAttacks {
 				emperor.turnBy(turn / (lift - down));
 				Vec3 h = fight.onFloor(emperor.slamPoint(right).x, emperor.slamPoint(right).z);
 				if (at % 3 == 0) {
-					level.sendParticles(ParticleTypes.SNOWFLAKE, h.x, h.y + 1, h.z, 30, 2.0, 0.6, 2.0, 0.1);
+					BossFx.send(level, ParticleTypes.SNOWFLAKE, h.x, h.y + 1, h.z, 30, 2.0, 0.6, 2.0, 0.1);
 					level.playSound(null, h.x, h.y, h.z, SoundEvents.GRINDSTONE_USE, SoundSource.HOSTILE, 1.5f, 0.4f);
 				}
 				for (LivingEntity e : fight.victims(h, 4.5)) {
@@ -280,7 +281,7 @@ final class EmperorAttacks {
 				double now = Danger.facing(emperor);
 				if (at % 2 == 0) {
 					for (int k = 3; k < BREATH_REACH; k += 3) {
-						level.sendParticles(ParticleTypes.SNOWFLAKE, centre.x + Math.cos(now) * k, centre.y + 2, centre.z + Math.sin(now) * k,
+						BossFx.send(level, ParticleTypes.SNOWFLAKE, centre.x + Math.cos(now) * k, centre.y + 2, centre.z + Math.sin(now) * k,
 								4, 0.3 + k * 0.08, 0.6, 0.3 + k * 0.08, 0.02);
 					}
 				}
@@ -333,7 +334,7 @@ final class EmperorAttacks {
 				return;
 			}
 			for (Vec3 m : marks) {
-				level.sendParticles(ParticleTypes.SNOWFLAKE, m.x, m.y + 6, m.z, 20, 0.2, 3, 0.2, 0.05);
+				BossFx.send(level, ParticleTypes.SNOWFLAKE, m.x, m.y + 6, m.z, 20, 0.2, 3, 0.2, 0.05);
 				level.playSound(null, m.x, m.y, m.z, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.0f, 1.4f);
 				for (LivingEntity e : fight.victims(m, 2.0)) {
 					e.hurtServer(level, Danger.unblockable(level, emperor), ICICLE_DAMAGE * fight.damageMultiplier());
@@ -361,8 +362,8 @@ final class EmperorAttacks {
 				return;
 			}
 			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 3.0f, 0.5f);
-			level.sendParticles(ParticleTypes.EXPLOSION, ground.x, ground.y + 1, ground.z, 6, 2.5, 0.5, 2.5, 0);
-			level.sendParticles(ParticleTypes.SNOWFLAKE, ground.x, ground.y + 1, ground.z, 200, 4, 1, 4, 0.2);
+			BossFx.send(level, ParticleTypes.EXPLOSION, ground.x, ground.y + 1, ground.z, 6, 2.5, 0.5, 2.5, 0);
+			BossFx.send(level, ParticleTypes.SNOWFLAKE, ground.x, ground.y + 1, ground.z, 200, 4, 1, 4, 0.2);
 			for (LivingEntity e : fight.victims(ground, SLAM_RADIUS)) {
 				if (e.hurtServer(level, Danger.unblockable(level, emperor), SLAM_DAMAGE * fight.damageMultiplier())) {
 					e.push(0, 0.6, 0);
@@ -449,7 +450,7 @@ final class EmperorAttacks {
 				return;
 			}
 			level.playSound(null, emperor.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 5.0f, 0.3f);
-			level.sendParticles(ParticleTypes.SNOWFLAKE, centre.x, centre.y + 2, centre.z, 600, 20, 2, 20, 0.4);
+			BossFx.send(level, ParticleTypes.SNOWFLAKE, centre.x, centre.y + 2, centre.z, 600, 20, 2, 20, 0.4);
 			Vec3 eyes = emperor.position().add(0, 20, 0);
 			for (ServerPlayer p : fight.audience()) {
 				Wingbeat.beat(p, 1.0f);
@@ -502,8 +503,8 @@ final class EmperorAttacks {
 			}
 			fight.schedule(warn, () -> {
 				for (Vec3 m : marks) {
-					level.sendParticles(ParticleTypes.FALLING_DRIPSTONE_LAVA, m.x, m.y + 8, m.z, 10, 0.4, 2, 0.4, 0);
-					level.sendParticles(ParticleTypes.SNOWFLAKE, m.x, m.y + 0.5, m.z, 30, 1.0, 0.2, 1.0, 0.05);
+					BossFx.send(level, ParticleTypes.FALLING_DRIPSTONE_LAVA, m.x, m.y + 8, m.z, 10, 0.4, 2, 0.4, 0);
+					BossFx.send(level, ParticleTypes.SNOWFLAKE, m.x, m.y + 0.5, m.z, 30, 1.0, 0.2, 1.0, 0.05);
 					level.playSound(null, m.x, m.y, m.z, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.2f, 0.6f);
 					for (LivingEntity e : fight.victims(m, 2.5)) {
 						if (e.hurtServer(level, Danger.unblockable(level, emperor), TEAR_DAMAGE * fight.damageMultiplier())) {

@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.Hoarders;
 
@@ -200,19 +201,19 @@ final class PlutusFight extends GuardianFight {
 		}
 		schedule(PlutusAnim.GOLD.at("throw"), () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.ARMOR_EQUIP_GOLD.value(), SoundSource.HOSTILE, 2.5f, 0.5f);
-			level.sendParticles(GOLD, body.getX(), body.getY() + 8, body.getZ(), 80, 2, 2, 2, 0.1);
+			BossFx.send(level, GOLD, body.getX(), body.getY() + 8, body.getZ(), 80, 2, 2, 2, 0.1);
 		});
 		for (int t = rain - 10; t < rain; t += 3) {
 			schedule(t, () -> {
 				for (Vec3 m : marks) {
-					level.sendParticles(GOLD, m.x, m.y + 6, m.z, 6, 0.8, 0.8, 0.8, 0);
+					BossFx.send(level, GOLD, m.x, m.y + 6, m.z, 6, 0.8, 0.8, 0.8, 0);
 				}
 			});
 		}
 		schedule(rain, () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 1.4f);
 			for (Vec3 m : marks) {
-				level.sendParticles(ParticleTypes.CRIT, m.x, m.y + 0.5, m.z, 20, 1, 0.3, 1, 0.2);
+				BossFx.send(level, ParticleTypes.CRIT, m.x, m.y + 0.5, m.z, 20, 1, 0.3, 1, 0.2);
 				for (LivingEntity e : victims(m, RAIN_RADIUS + 0.3)) {
 					int weight = Hoarders.weight(e);
 					if (e.hurtServer(level, Danger.unblockable(level, body), RAIN_DAMAGE + Math.min(8, weight / 12))) {
@@ -253,7 +254,7 @@ final class PlutusFight extends GuardianFight {
 				}
 				Vec3 p = from.add(line.scale(LUNGE_REACH * (s + 1) / (steps + 1)));
 				b.teleportTo(p.x, groundY(p.x, p.z), p.z);
-				level.sendParticles(GOLD, p.x, p.y + 0.5, p.z, 8, 0.6, 0.3, 0.6, 0.02);
+				BossFx.send(level, GOLD, p.x, p.y + 0.5, p.z, 8, 0.6, 0.3, 0.6, 0.02);
 				for (LivingEntity e : victims(p, 2.8)) {
 					if (hit.add(e.getUUID()) && e.hurtServer(level, Danger.unblockable(level, b), LUNGE_DAMAGE)) {
 						fling(e, p, 1.4, 0.5);
@@ -366,7 +367,7 @@ final class PlutusFight extends GuardianFight {
 		schedule(PlutusAnim.PHASE.at("roar"), () -> level.playSound(null, plutus.blockPosition(), SoundEvents.PIGLIN_BRUTE_ANGRY, SoundSource.HOSTILE, 4.0f, 0.3f));
 		schedule(PlutusAnim.PHASE.at("mint"), () -> {
 			level.playSound(null, plutus.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3.0f, 0.3f);
-			level.sendParticles(GOLD, plutus.getX(), plutus.getY() + 3, plutus.getZ(), 200, 4, 3, 4, 0.2);
+			BossFx.send(level, GOLD, plutus.getX(), plutus.getY() + 3, plutus.getZ(), 200, 4, 3, 4, 0.2);
 		});
 	}
 
@@ -382,7 +383,7 @@ final class PlutusFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(PlutusAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.6f);
-		level.sendParticles(ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
 		say("My... my GOLD!");
 		by.sendOverlayMessage(Component.literal("Parried! Plutus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

@@ -26,7 +26,8 @@ import java.util.List;
 /**
  * Draws the danger language's marks on the ground (hazard/Danger): block by block on top of the terrain, the
  * outline bright from the start and the inside filling from the middle out until the blow lands, then a last bright
- * flash. Each colour has its own sound: a low horn for red, a bell for white, a chime for purple.
+ * flash, and the blow's eruption (Impacts). Each colour has its own sound: a low horn for red, a bell for white, a chime
+ * for purple.
  */
 public final class DangerMarks {
 	private DangerMarks() {
@@ -101,6 +102,7 @@ public final class DangerMarks {
 	}
 
 	public static void tick(Minecraft mc) {
+		Impacts.tick();
 		if (mc.level == null) {
 			MARKS.clear();
 			return;
@@ -111,6 +113,9 @@ public final class DangerMarks {
 		for (Iterator<Mark> it = MARKS.iterator(); it.hasNext(); ) {
 			Mark m = it.next();
 			m.age++;
+			if (m.age == Math.max(1, m.p.warnTicks())) {
+				Impacts.land(m.p, m.x, m.z);
+			}
 			if (m.p.follow() >= 0 && m.age <= m.p.followTicks()) {
 				Entity e = mc.level.getEntity(m.p.follow());
 				if (e != null) {
@@ -196,7 +201,7 @@ public final class DangerMarks {
 	 * below (the heightmap would find the roof of the Nether, or Purgatory over Lucifer's pit), else the heightmap's;
 	 * lifted over anything thin lying on it (Cocytus's snow, a carpet), so the mark isn't hidden under it.
 	 */
-	private static double ground(ClientLevel level, int x, double y, int z) {
+	static double ground(ClientLevel level, int x, double y, int z) {
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		int start = (int) Math.floor(y) + 2;
 		int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);

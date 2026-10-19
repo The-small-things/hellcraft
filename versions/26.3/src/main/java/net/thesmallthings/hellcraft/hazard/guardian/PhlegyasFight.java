@@ -19,6 +19,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Fen;
@@ -113,7 +114,7 @@ final class PhlegyasFight extends GuardianFight {
 		lockedUntil = tick + PhlegyasAnim.INTRO.ticks;
 		schedule(PhlegyasAnim.INTRO.at("rise"), () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 2.0f, 0.5f);
-			level.sendParticles(ParticleTypes.SPLASH, body.getX(), body.getY() + 3, body.getZ(), 300, 2.5, 1, 2.5, 0.3);
+			BossFx.send(level, ParticleTypes.SPLASH, body.getX(), body.getY() + 3, body.getZ(), 300, 2.5, 1, 2.5, 0.3);
 		});
 		schedule(PhlegyasAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
 		return PhlegyasAnim.INTRO.ticks;
@@ -170,7 +171,7 @@ final class PhlegyasFight extends GuardianFight {
 				}
 			}
 			for (double r = 4; r <= OAR_REACH; r += 2) {
-				level.sendParticles(ParticleTypes.SPLASH, c.x + Math.cos(angle) * r, c.y + 3, c.z + Math.sin(angle) * r, 20, 0.6, 0.2, 0.6, 0.2);
+				BossFx.send(level, ParticleTypes.SPLASH, c.x + Math.cos(angle) * r, c.y + 3, c.z + Math.sin(angle) * r, 20, 0.6, 0.2, 0.6, 0.2);
 			}
 		});
 		return PhlegyasAnim.OAR.ticks + 25;
@@ -235,7 +236,7 @@ final class PhlegyasFight extends GuardianFight {
 			for (int i = 0; i < 24; i++) {
 				double a = i * Math.PI / 12;
 				double r = (WAVE_INNER + Fen.LANDING) / 2;
-				level.sendParticles(ParticleTypes.SPLASH, c.x + Math.cos(a) * r, c.y + 3, c.z + Math.sin(a) * r, 30, 2, 0.5, 2, 0.3);
+				BossFx.send(level, ParticleTypes.SPLASH, c.x + Math.cos(a) * r, c.y + 3, c.z + Math.sin(a) * r, 30, 2, 0.5, 2, 0.3);
 			}
 			for (LivingEntity e : victims(c, Fen.LANDING + 1.5)) {
 				Vec3 d = e.position().subtract(c);
@@ -318,7 +319,7 @@ final class PhlegyasFight extends GuardianFight {
 		schedule(erupt, () -> {
 			for (Vec3 s : spots) {
 				level.playSound(null, s.x, s.y, s.z, SoundEvents.DROWNED_AMBIENT_WATER, SoundSource.HOSTILE, 1.5f, 0.5f);
-				level.sendParticles(ParticleTypes.BUBBLE_COLUMN_UP, s.x, s.y + 0.5, s.z, 30, 0.6, 0.6, 0.6, 0.1);
+				BossFx.send(level, ParticleTypes.BUBBLE_COLUMN_UP, s.x, s.y + 0.5, s.z, 30, 0.6, 0.6, 0.6, 0.1);
 				for (LivingEntity e : victims(s, HANDS_RADIUS + 0.3)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), HANDS_DAMAGE)) {
 						e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 50, 3));
@@ -348,7 +349,7 @@ final class PhlegyasFight extends GuardianFight {
 			}
 		}
 		if (tick % 20 == 0) {
-			level.sendParticles(ParticleTypes.BUBBLE_POP, body.getX(), lair.getY() + 0.1, body.getZ(), 12, 2, 0, 2, 0);
+			BossFx.send(level, ParticleTypes.BUBBLE_POP, body.getX(), lair.getY() + 0.1, body.getZ(), 12, 2, 0, 2, 0);
 		}
 	}
 
@@ -365,7 +366,7 @@ final class PhlegyasFight extends GuardianFight {
 		schedule(PhlegyasAnim.PHASE.at("roar"), () -> level.playSound(null, phlegyas.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
 		schedule(PhlegyasAnim.PHASE.at("slam"), () -> {
 			level.playSound(null, phlegyas.blockPosition(), SoundEvents.GENERIC_SPLASH, SoundSource.HOSTILE, 3.0f, 0.4f);
-			level.sendParticles(ParticleTypes.SPLASH, phlegyas.getX(), lair.getY() + 1, phlegyas.getZ(), 300, 6, 1, 6, 0.4);
+			BossFx.send(level, ParticleTypes.SPLASH, phlegyas.getX(), lair.getY() + 1, phlegyas.getZ(), 300, 6, 1, 6, 0.4);
 		});
 	}
 
@@ -380,7 +381,7 @@ final class PhlegyasFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(PhlegyasAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.5f);
-		level.sendParticles(ParticleTypes.CRIT, body.getX(), body.getY() + 6, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 6, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
 		say("Ngh... a pilgrim, then?");
 		by.sendOverlayMessage(Component.literal("Parried! Phlegyas reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

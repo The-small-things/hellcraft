@@ -3,6 +3,7 @@ package net.thesmallthings.hellcraft.client.mixin;
 import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
+import net.thesmallthings.hellcraft.client.danger.Impacts;
 import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -62,8 +63,10 @@ public abstract class CameraMixin {
 		}
 		// Lucifer's wingbeat throws the view about for a moment (the player's own aim is untouched)
 		float[] shake = WingbeatFx.shake(partialTicks);
-		if (shake[0] != 0 || shake[1] != 0) {
-			setRotation(yRot() + shake[0], xRot() + shake[1]);
+		// and so does a boss's blow landing close by
+		float[] blow = Impacts.shake(partialTicks);
+		if (shake[0] != 0 || shake[1] != 0 || blow[0] != 0 || blow[1] != 0) {
+			setRotation(yRot() + shake[0] + blow[0], xRot() + shake[1] + blow[1]);
 		}
 	}
 }

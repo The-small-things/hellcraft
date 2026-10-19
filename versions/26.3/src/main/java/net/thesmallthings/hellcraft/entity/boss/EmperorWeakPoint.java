@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -54,7 +55,7 @@ public class EmperorWeakPoint extends Entity {
 		}
 		if (tickCount % 4 == 0) {
 			// it glows: cold light round the hand or face
-			level.sendParticles(ParticleTypes.END_ROD, getX(), getY() + getBbHeight() / 2, getZ(), 6, getBbWidth() / 3, getBbHeight() / 3,
+			BossFx.send(level, ParticleTypes.END_ROD, getX(), getY() + getBbHeight() / 2, getZ(), 6, getBbWidth() / 3, getBbHeight() / 3,
 					getBbWidth() / 3, 0.01);
 		}
 	}
@@ -65,7 +66,7 @@ public class EmperorWeakPoint extends Entity {
 		if (owner == null || isRemoved()) {
 			return false;
 		}
-		level.sendParticles(ParticleTypes.CRIT, getX(), getY() + getBbHeight() / 2, getZ(), 12, 0.6, 0.6, 0.6, 0.3);
+		BossFx.send(level, ParticleTypes.CRIT, getX(), getY() + getBbHeight() / 2, getZ(), 12, 0.6, 0.6, 0.6, 0.3);
 		return owner.hurtThrough(level, source, damage * multiplier);
 	}
 

@@ -20,6 +20,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -228,7 +229,7 @@ final class MinosFight extends GuardianFight {
 				for (double rr = TAIL_INNER; rr <= TAIL_OUTER; rr += 1.5) {
 					double x = c.x + Math.cos(a) * rr;
 					double z = c.z + Math.sin(a) * rr;
-					level.sendParticles(ParticleTypes.SWEEP_ATTACK, x, groundY(x, z) + 0.4, z, 1, 0, 0, 0, 0);
+					BossFx.send(level, ParticleTypes.SWEEP_ATTACK, x, groundY(x, z) + 0.4, z, 1, 0, 0, 0, 0);
 				}
 			});
 		}
@@ -257,7 +258,7 @@ final class MinosFight extends GuardianFight {
 		schedule(hit, () -> {
 			for (Vec3 at : where.values()) {
 				level.playSound(null, at.x, at.y, at.z, SoundEvents.ELYTRA_FLYING, SoundSource.HOSTILE, 3.0f, 0.5f);
-				level.sendParticles(ParticleTypes.CLOUD, at.x, at.y + 1, at.z, 80, 1.2, 2, 1.2, 0.2);
+				BossFx.send(level, ParticleTypes.CLOUD, at.x, at.y + 1, at.z, 80, 1.2, 2, 1.2, 0.2);
 				for (LivingEntity e : victims(at, SENTENCE_RADIUS + 0.3)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), SENTENCE_DAMAGE)) {
 						e.push((level.getRandom().nextDouble() - 0.5) * 1.6, 1.2, (level.getRandom().nextDouble() - 0.5) * 1.6);
@@ -343,7 +344,7 @@ final class MinosFight extends GuardianFight {
 		if (coilTicks % 10 == 0) {
 			victim.hurtServer(level, Danger.unblockable(level, body), 2.0f);
 			victim.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 3));
-			level.sendParticles(JUDGEMENT, victim.getX(), victim.getY() + 1, victim.getZ(), 16, 0.5, 0.6, 0.5, 0);
+			BossFx.send(level, JUDGEMENT, victim.getX(), victim.getY() + 1, victim.getZ(), 16, 0.5, 0.6, 0.5, 0);
 		}
 		if (coilDamage >= COIL_BREAK) {
 			letGo(minos, victim, true);
@@ -376,7 +377,7 @@ final class MinosFight extends GuardianFight {
 		tip("Minos is furious: he sentences everyone at once now, and strikes faster.");
 		schedule(MinosAnim.PHASE.at("roar"), () -> {
 			level.playSound(null, minos.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f);
-			level.sendParticles(JUDGEMENT, minos.getX(), minos.getY() + 4, minos.getZ(), 120, 2.5, 2.5, 2.5, 0.05);
+			BossFx.send(level, JUDGEMENT, minos.getX(), minos.getY() + 4, minos.getZ(), 120, 2.5, 2.5, 2.5, 0.05);
 		});
 	}
 
@@ -391,7 +392,7 @@ final class MinosFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(MinosAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.6f);
-		level.sendParticles(ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.0, 1.5, 1.0, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.0, 1.5, 1.0, 0.4);
 		say("Thou... DARE?!");
 		by.sendOverlayMessage(Component.literal("Parried! Minos is staggered: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

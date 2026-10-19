@@ -893,5 +893,115 @@ def thorns_textures():
 
 thorns_textures()
 
+# The title screen's logo (gui/title/hellcraft.png, 256x64, drawn by client/title/HellTitle like vanilla's 256x44 logo):
+# HELLCRAFT in thick blocky letters of hellstone, dark and cracked at the top and glowing molten at the foot, cut out
+# in black, with a deep red extrusion behind, fire licking up over the letters and blood dripping from them.
+
+LOGO_GLYPHS = {
+    "H": ["##..##", "##..##", "##..##", "######", "######", "##..##", "##..##", "##..##"],
+    "E": ["######", "######", "##....", "#####.", "#####.", "##....", "######", "######"],
+    "L": ["##....", "##....", "##....", "##....", "##....", "##....", "######", "######"],
+    "C": [".#####", "######", "##....", "##....", "##....", "##....", "######", ".#####"],
+    "R": ["#####.", "######", "##..##", "######", "#####.", "##.##.", "##..##", "##..##"],
+    "A": [".####.", "######", "##..##", "##..##", "######", "######", "##..##", "##..##"],
+    "F": ["######", "######", "##....", "#####.", "#####.", "##....", "##....", "##...."],
+    "T": ["######", "######", "..##..", "..##..", "..##..", "..##..", "..##..", "..##.."],
+}
+
+
+def title_logo():
+    rnd = random.Random(666)
+    W, H, S = 256, 64, 4
+    word = "HELLCRAFT"
+    gap = 4
+    width = len(word) * 6 * S + (len(word) - 1) * gap
+    ox, oy = (W - width - 3) // 2, 12
+    solid = [[False] * W for _ in range(H)]
+    for i, ch in enumerate(word):
+        gx = ox + i * (6 * S + gap)
+        for r, row in enumerate(LOGO_GLYPHS[ch]):
+            for c, v in enumerate(row):
+                if v == "#":
+                    for yy in range(S):
+                        for xx in range(S):
+                            solid[oy + r * S + yy][gx + c * S + xx] = True
+    px = [[(0, 0, 0, 0)] * W for _ in range(H)]
+
+    def mix(a, b, t):
+        return tuple(int(a[k] + (b[k] - a[k]) * t) for k in range(3))
+
+    def at(x, y):
+        return 0 <= x < W and 0 <= y < H and solid[y][x]
+
+    top, bottom = oy, oy + 8 * S
+    # fire licking up from the letters' tops (drawn first, behind everything)
+    for x in range(W):
+        for y in range(H - 1):
+            if at(x, y) and not at(x, y - 1) and rnd.random() < 0.8:
+                h = rnd.randint(3, 11)
+                for k in range(h):
+                    yy = y - 1 - k
+                    if yy < 0:
+                        break
+                    t = k / max(1, h - 1)
+                    c = mix((255, 236, 120), (200, 30, 10), t)
+                    a = min(255, int(215 * (1 - t) + 40))
+                    xx = x + (1 if k > h * 0.6 and rnd.random() < 0.4 else 0)
+                    if 0 <= xx < W and px[yy][xx][3] < a:
+                        px[yy][xx] = c + (a,)
+    # the extrusion: a deep red-black block behind each letter, down and to the right
+    for d in (3, 2, 1):
+        for y in range(H):
+            for x in range(W):
+                if at(x - d, y - d) and not at(x, y):
+                    shade_ = 36 + 14 * (3 - d)
+                    px[y][x] = (shade_ + 30, shade_ // 4, shade_ // 5, 255)
+    # the black cut around letters and extrusion
+    body = [[px[y][x][3] == 255 or solid[y][x] for x in range(W)] for y in range(H)]
+    for y in range(H):
+        for x in range(W):
+            if not body[y][x] and any(0 <= x + dx < W and 0 <= y + dy < H and body[y + dy][x + dx]
+                                      for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1))):
+                px[y][x] = (10, 2, 2, 255)
+    # the face of the letters: hellstone blocks, dark and cracked above, glowing molten below
+    for y in range(H):
+        for x in range(W):
+            if not solid[y][x]:
+                continue
+            t = (y - top) / (bottom - top)
+            base = mix((70, 12, 10), (150, 28, 12), min(1, t * 1.4)) if t < 0.62 else mix((190, 50, 14), (255, 170, 40), (t - 0.62) / 0.38)
+            n = 0.82 + 0.3 * rnd.random()
+            c = tuple(min(255, int(v * n)) for v in base)
+            if (x * 7 + y * 13) % 29 == 0 or rnd.random() < 0.05:  # pits in the stone
+                c = tuple(int(v * 0.7) for v in c)
+            if not at(x, y - 1) or not at(x, y - 2):  # a bright rim along every top edge
+                c = tuple(min(255, int(v * 1.3 + 40)) for v in c)
+            elif not at(x - 1, y):
+                c = tuple(min(255, int(v * 1.15 + 15)) for v in c)
+            if not at(x + 1, y) or not at(x, y + 1):
+                c = tuple(int(v * 0.62) for v in c)
+            px[y][x] = c + (255,)
+    # glowing cracks wandering across the upper halves
+    for _ in range(70):
+        x, y = rnd.randrange(W), rnd.randrange(top, top + 5 * S)
+        for _ in range(rnd.randint(2, 6)):
+            if at(x, y) and at(x + 1, y) and at(x, y + 1):
+                px[y][x] = (255, 120 + rnd.randint(0, 80), 30, 255)
+            x += rnd.choice((-1, 0, 1))
+            y += rnd.choice((0, 1))
+    # blood dripping from the letters' feet
+    for x in range(W):
+        y = bottom - 1
+        if at(x, y) and rnd.random() < 0.12:
+            length = rnd.randint(2, 7)
+            for k in range(1, length + 1):
+                yy = y + k + 3
+                if yy < H and not solid[yy][x]:
+                    px[yy][x] = (120 + 20 * (k == length), 6, 10, 255)
+    png(os.path.join(OUT, "gui", "title", "hellcraft.png"), px)
+
+
+title_logo()
+
 if __name__ == "__main__":
     print("Wrote textures to", os.path.normpath(OUT))

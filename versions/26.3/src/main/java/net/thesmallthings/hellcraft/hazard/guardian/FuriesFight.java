@@ -22,6 +22,7 @@ import net.thesmallthings.hellcraft.entity.boss.FuryEntity;
 import net.thesmallthings.hellcraft.entity.boss.MedusaEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
@@ -244,7 +245,7 @@ final class FuriesFight extends GuardianFight {
 		schedule(scream + 14, () -> {
 			fury.warn(BossEntity.Warning.NONE);
 			level.playSound(null, fury.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.HOSTILE, 3.0f, 0.8f);
-			level.sendParticles(ParticleTypes.SONIC_BOOM, ground.x, ground.y + 1, ground.z, 1, 0, 0, 0, 0);
+			BossFx.send(level, ParticleTypes.SONIC_BOOM, ground.x, ground.y + 1, ground.z, 1, 0, 0, 0, 0);
 			for (LivingEntity e : victims(ground, SHRIEK_RADIUS + 0.3)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), SHRIEK_DAMAGE)) {
 					e.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 60, 0));
@@ -265,7 +266,7 @@ final class FuriesFight extends GuardianFight {
 		schedule(lash + 10, () -> {
 			level.playSound(null, fury.blockPosition(), SoundEvents.TRIDENT_RIPTIDE_1.value(), SoundSource.HOSTILE, 2.5f, 0.6f);
 			for (double r = 1; r <= LASH_REACH; r += 1.5) {
-				level.sendParticles(ParticleTypes.ITEM_SLIME, from.x + Math.cos(angle) * r, from.y + 0.5, from.z + Math.sin(angle) * r, 3, 0.2, 0.2, 0.2, 0.05);
+				BossFx.send(level, ParticleTypes.ITEM_SLIME, from.x + Math.cos(angle) * r, from.y + 0.5, from.z + Math.sin(angle) * r, 3, 0.2, 0.2, 0.2, 0.05);
 			}
 			for (LivingEntity e : inBand(from, angle, LASH_REACH, LASH_WIDTH)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), LASH_DAMAGE)) {
@@ -301,7 +302,7 @@ final class FuriesFight extends GuardianFight {
 		}
 		schedule(land, () -> {
 			for (Vec3 s : spots) {
-				level.sendParticles(BloodAltar.BLOOD, s.x, s.y + 2, s.z, 40, 0.8, 1.5, 0.8, 0.0);
+				BossFx.send(level, BloodAltar.BLOOD, s.x, s.y + 2, s.z, 40, 0.8, 1.5, 0.8, 0.0);
 				for (LivingEntity e : victims(s, TEAR_RADIUS + 0.3)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), TEAR_DAMAGE)) {
 						e.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0));
@@ -383,7 +384,7 @@ final class FuriesFight extends GuardianFight {
 				p.hurtServer(level, Danger.unblockable(level, m), 10.0f);
 				p.sendOverlayMessage(Component.literal("You looked at Medusa and turned to stone! Look away while her eyes are open.")
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.BOLD));
-				level.sendParticles(ParticleTypes.CLOUD, p.getX(), p.getY() + 1, p.getZ(), 30, 0.4, 0.8, 0.4, 0.02);
+				BossFx.send(level, ParticleTypes.CLOUD, p.getX(), p.getY() + 1, p.getZ(), 30, 0.4, 0.8, 0.4, 0.02);
 			}
 		}
 	}
@@ -459,7 +460,7 @@ final class FuriesFight extends GuardianFight {
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(FuryAnim.STAGGER.ticks + 10);
 		level.playSound(null, fury.blockPosition(), SoundEvents.PHANTOM_HURT, SoundSource.HOSTILE, 2.0f, 0.5f);
-		level.sendParticles(ParticleTypes.CRIT, fury.getX(), fury.getY() + 1.5, fury.getZ(), 30, 0.8, 0.8, 0.8, 0.3);
+		BossFx.send(level, ParticleTypes.CRIT, fury.getX(), fury.getY() + 1.5, fury.getZ(), 30, 0.8, 0.8, 0.8, 0.3);
 		by.sendOverlayMessage(Component.literal("Parried! The Fury tumbles to the ground: hit her now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
@@ -469,7 +470,7 @@ final class FuriesFight extends GuardianFight {
 		for (UUID id : sisters) {
 			if (level.getEntity(id) instanceof FuryEntity f) {
 				// they scatter into the smoke over Dis
-				level.sendParticles(ParticleTypes.LARGE_SMOKE, f.getX(), f.getY() + 1, f.getZ(), 30, 0.5, 0.8, 0.5, 0.05);
+				BossFx.send(level, ParticleTypes.LARGE_SMOKE, f.getX(), f.getY() + 1, f.getZ(), 30, 0.5, 0.8, 0.5, 0.05);
 				f.discard();
 			}
 		}

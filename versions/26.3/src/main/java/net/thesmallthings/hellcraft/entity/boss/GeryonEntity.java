@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 
 /**
  * Geryon, the Image of Fraud: the body of his fight (GeryonFight), modelled in tools/art/geryon.py. He swims in the
@@ -50,7 +51,7 @@ public class GeryonEntity extends AnimatedBoss {
 	@Override
 	public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
 		if (isFalse()) {
-			level.sendParticles(ParticleTypes.WITCH, getX(), getY() + 1, getZ(), 30, 1.2, 0.8, 1.2, 0.05);
+			BossFx.send(level, ParticleTypes.WITCH, getX(), getY() + 1, getZ(), 30, 1.2, 0.8, 1.2, 0.05);
 			level.playSound(null, blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.HOSTILE, 1.5f, 1.4f);
 			discard();
 			return false;

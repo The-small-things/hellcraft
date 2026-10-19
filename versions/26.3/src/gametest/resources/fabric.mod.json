@@ -8,6 +8,7 @@
 	"environment": "client",
 	"entrypoints": {
 		"fabric-client-gametest": [
+			"net.thesmallthings.hellcraft.gametest.TitleTest",
 			"net.thesmallthings.hellcraft.gametest.JoinTest",
 			"net.thesmallthings.hellcraft.gametest.HudTest",
 			"net.thesmallthings.hellcraft.gametest.RigTest",

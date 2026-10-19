@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
+import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 
 import java.util.HashSet;
@@ -219,7 +220,7 @@ final class MinotaurFight extends GuardianFight {
 		Danger.circle(level, Danger.Colour.RED, c, STOMP_RADIUS, slam);
 		schedule(slam, () -> {
 			level.playSound(null, body.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.5f);
-			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), c.x, c.y + 0.3, c.z, 200,
+			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), c.x, c.y + 0.3, c.z, 200,
 					STOMP_RADIUS * 0.5, 0.3, STOMP_RADIUS * 0.5, 0.2);
 			for (LivingEntity e : victims(c, STOMP_RADIUS + 0.3)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), STOMP_DAMAGE)) {
@@ -292,7 +293,7 @@ final class MinotaurFight extends GuardianFight {
 			}
 		}
 		if (tick % 3 == 0) {
-			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), minotaur.getX(), minotaur.getY() + 0.2,
+			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), minotaur.getX(), minotaur.getY() + 0.2,
 					minotaur.getZ(), 20, 1.2, 0.2, 1.2, 0.1);
 		}
 		// into the rock: he stuns himself
@@ -334,7 +335,7 @@ final class MinotaurFight extends GuardianFight {
 		setBase(minotaur, Attributes.ARMOR, 0.0);
 		delayNextAttack(MinotaurAnim.STAGGER.ticks + 15);
 		minotaur.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, MinotaurAnim.STAGGER.ticks, 9, false, false));
-		level.sendParticles(ParticleTypes.CRIT, minotaur.getX(), minotaur.getY() + 3, minotaur.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
+		BossFx.send(level, ParticleTypes.CRIT, minotaur.getX(), minotaur.getY() + 3, minotaur.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		if (by != null) {
 			by.sendOverlayMessage(Component.literal("Parried! The Minotaur reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 		} else {
