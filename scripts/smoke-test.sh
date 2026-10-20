@@ -399,6 +399,14 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   dialogue=$(rcon "hellcraft dialogue test")
   echo "$dialogue"
   echo "$dialogue" | grep -q "Dialogue OK" || { echo "The dialogue test failed"; exit 1; }
+  # Minos's judgement: made-up souls are judged by what they've done (the enchanter is a Heretic, six turns of the tail)
+  judge=$(rcon "hellcraft judge test")
+  echo "$judge"
+  echo "$judge" | grep -q "Judgement test OK" || { echo "Minos's judgement is wrong"; exit 1; }
+  # the champions of the circles: one of each brought out, its name, affixes, health and glow checked, then taken away
+  champ=$(rcon "hellcraft champion test")
+  echo "$champ"
+  echo "$champ" | grep -q "Champion test OK" || { echo "The champions of the circles are wrong"; exit 1; }
   # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
   danger=$(rcon "hellcraft danger test")
   echo "$danger"

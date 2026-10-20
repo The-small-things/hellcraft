@@ -64,6 +64,12 @@ public final class DialogueHud implements HudElement {
 		return shown;
 	}
 
+	/** The line on screen now ("" for none), for the client test. */
+	public static String showing() {
+		Line line = current;
+		return line == null ? "" : line.text().getString();
+	}
+
 	/** True when nothing is on screen or waiting. */
 	public static boolean idle() {
 		return current == null && WAITING.isEmpty();

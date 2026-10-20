@@ -113,6 +113,14 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   panoramas, which came out as fog); boss blows erupt as their mark lands (client `danger/Impacts`, from `DangerMarks.tick`;
   camera shake via `CameraMixin`) and the fights' particles go through `hazard/BossFx.send` (doubled, forced visible);
   `/hellcraft danger show` and `ImpactTest` (`impact_*`).
+- 3.1 (beta), Minos's judgement: `blood/Sins` works out each soul's worst sin from vanilla statistics (and `HellState.Soul`'s
+  `tamedKilled`, `weakKills`), each count over an ordinary pilgrim's share, Limbo below 1; kept in `Soul.judged`/`judgedFact`.
+  `MinosFight.judge` wraps his tail once per circle (`MinosAnim.JUDGE` from tools/art/minos.py, event `count`) for souls
+  walking in for the first time or judged differently; `Sins.tick` judges walk-ins while he sleeps; the title in the tab
+  list is `mixin/ServerPlayerTabMixin` (`judgementTitles`), the Journal page comes with `MapSync.sendJournal`; `/judge`,
+  `/hellcraft judge [player|test]`. The champions of the circles: `hazard/Champions` (names and monster kinds per circle,
+  `Affix`, state kept in entity tags so it survives restarts, spoils to the top damager; `/hellcraft champion [circle]
+  [affixes] | list | test`). `JudgementTest` films both (`minos_judgement*`, `champion_*`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the

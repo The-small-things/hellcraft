@@ -22,7 +22,8 @@ public enum MinosAnim implements BossAnim {
 	STAGGER(40, false, Map.of()),
 	PHASE(64, false, Map.of("roar", 20)),
 	HURT(7, false, Map.of()),
-	DEATH(70, false, Map.of("fall", 32));
+	DEATH(70, false, Map.of("fall", 32)),
+	JUDGE(12, false, Map.of("count", 9));
 
 	public final int ticks;
 	public final boolean looping;

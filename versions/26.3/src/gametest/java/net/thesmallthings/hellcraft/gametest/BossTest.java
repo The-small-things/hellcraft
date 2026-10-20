@@ -166,6 +166,7 @@ public class BossTest implements FabricClientGameTest {
 					new Pose(MinosAnim.GRAB, MinosAnim.GRAB.ticks, BossEntity.Warning.NONE),
 					new Pose(MinosAnim.STAGGER, 6, BossEntity.Warning.NONE),
 					new Pose(MinosAnim.PHASE, MinosAnim.PHASE.at("roar") + 10, BossEntity.Warning.NONE),
+					new Pose(MinosAnim.JUDGE, 5, BossEntity.Warning.NONE),
 					new Pose(MinosAnim.DEATH, MinosAnim.DEATH.ticks - 4, BossEntity.Warning.NONE));
 			for (Pose pose : poses) {
 				world.getServer().runOnServer(server -> {

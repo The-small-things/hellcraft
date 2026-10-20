@@ -107,6 +107,8 @@ public class HellcraftMod implements ModInitializer {
 		MapSync.register();
 		Danger.register();
 		CutsceneManager.register();
+		net.thesmallthings.hellcraft.blood.Sins.register();
+		net.thesmallthings.hellcraft.hazard.Champions.register();
 
 		ServerLifecycleEvents.SERVER_STARTED.register(Landmarks::buildOnce);
 		ServerLifecycleEvents.SERVER_STARTED.register(HallOfTheDamned::buildOnce);
