@@ -171,6 +171,8 @@ public class HellcraftMod implements ModInitializer {
 		// the secret ways down and the Pilgrimage (each registers its own events, commands and payloads)
 		net.thesmallthings.hellcraft.world.SecretWayLift.register();
 		net.thesmallthings.hellcraft.blood.Pilgrimage.register();
+		// waymarks on the Map of Hell
+		net.thesmallthings.hellcraft.world.Waymarks.register();
 		net.thesmallthings.hellcraft.world.PilgrimStone.register();
 
 		LOGGER.info("Hellcraft loaded. Lasciate ogne speranza, voi ch'intrate.");

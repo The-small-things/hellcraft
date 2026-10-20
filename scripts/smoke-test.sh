@@ -420,6 +420,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   champ=$(rcon "hellcraft champion test")
   echo "$champ"
   echo "$champ" | grep -q "Champion test OK" || { echo "The champions of the circles are wrong"; exit 1; }
+  # waymarks on the Map of Hell: placed, renamed, shared, guarded from others and removed
+  waymarks=$(rcon "hellcraft waymarks test")
+  echo "$waymarks"
+  echo "$waymarks" | grep -q "Waymarks test OK" || { echo "Waymarks don't work"; exit 1; }
   # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
   danger=$(rcon "hellcraft danger test")
   echo "$danger"

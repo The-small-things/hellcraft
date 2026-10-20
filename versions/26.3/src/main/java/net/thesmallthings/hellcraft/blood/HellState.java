@@ -85,6 +85,15 @@ public class HellState extends SavedData {
 	/** Pilgrimages that ended, kept for the Pilgrims' Stone: the fastest done and the deepest fallen. */
 	public final java.util.List<Pilgrim> pilgrims = new java.util.ArrayList<>();
 
+	// ---- waymarks on the Map of Hell (world/Waymarks)
+	/** Every waymark placed on the Map of Hell: each player sees their own and the shared ones. */
+	public final java.util.List<Waymark> waymarks = new java.util.ArrayList<>();
+	public int nextWaymark = 1;
+
+	/** A waymark: who placed it, its name, where (x, z), its colour (0-7) and whether everyone can see it. */
+	public record Waymark(int id, UUID owner, String ownerName, String name, int x, int z, int colour, boolean shared) {
+	}
+
 	/** A pilgrimage that ended: who, how long it took (ticks of play), the deepest circle reached, and whether it was done. */
 	public record Pilgrim(String name, int ticks, int deepest, boolean done, String where) {
 	}
@@ -356,6 +365,21 @@ public class HellState extends SavedData {
 			pilgrimList.add(pt);
 		}
 		tag.put("pilgrims", pilgrimList);
+		ListTag waymarkList = new ListTag();
+		for (Waymark w : waymarks) {
+			CompoundTag wt = new CompoundTag();
+			wt.putInt("id", w.id());
+			wt.store("owner", UUIDUtil.CODEC, w.owner());
+			wt.putString("ownerName", w.ownerName());
+			wt.putString("name", w.name());
+			wt.putInt("x", w.x());
+			wt.putInt("z", w.z());
+			wt.putInt("colour", w.colour());
+			wt.putBoolean("shared", w.shared());
+			waymarkList.add(wt);
+		}
+		tag.put("waymarks", waymarkList);
+		tag.putInt("nextWaymark", nextWaymark);
 		if (starterAltar != null) {
 			tag.put("starterAltar", starterAltar.save());
 		}
@@ -456,6 +480,16 @@ public class HellState extends SavedData {
 			state.pilgrims.add(new Pilgrim(pt.getStringOr("name", ""), pt.getIntOr("ticks", 0), pt.getIntOr("deepest", 0),
 					pt.getBooleanOr("done", false), pt.getStringOr("where", "")));
 		}
+		ListTag waymarkList = tag.getListOrEmpty("waymarks");
+		for (int i = 0; i < waymarkList.size(); i++) {
+			CompoundTag wt = waymarkList.getCompoundOrEmpty(i);
+			Optional<UUID> owner = wt.read("owner", UUIDUtil.CODEC);
+			if (owner.isPresent()) {
+				state.waymarks.add(new Waymark(wt.getIntOr("id", 0), owner.get(), wt.getStringOr("ownerName", ""), wt.getStringOr("name", ""),
+						wt.getIntOr("x", 0), wt.getIntOr("z", 0), wt.getIntOr("colour", 0), wt.getBooleanOr("shared", false)));
+			}
+		}
+		state.nextWaymark = tag.getIntOr("nextWaymark", 1);
 		state.whiteMap = tag.getIntOr("whiteMap", -1);
 		ListTag captiveList = tag.getListOrEmpty("captives");
 		for (int i = 0; i < captiveList.size(); i++) {

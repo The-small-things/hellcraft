@@ -12,6 +12,7 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 - **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
 - **The damned** suffer each circle's punishment around you, and scream.
 - **Limbo has no colour**, except in the Noble Castle's light.
+- **Waymarks** on the Map of Hell (yours, or shared with everyone) that the compass can follow, and **the Journal as a book**.
 - **Minos judges you** by your worst sin; **champions** of the circles walk; **secret ways down** hide off the roads; and an optional **Pilgrimage**: the Gate to Purgatory without dying once.
 
 **New in 3.0:**
@@ -142,8 +143,9 @@ What the souls of Hell say to you no longer fills the chat. The guardians, Lucif
 
 - **The compass**, at the top of the screen while you're in Hell: north, east, south and west, a **red arrow** to the nearest way down into the next circle (a ramp, a Gate of Hell, a gate in the Walls of Dis, a Spine or Lucifer's pit) and a **gold diamond** for the nearest Virgil's Rest (grey until you've found it), with how far each is. Under it, the name of where you stand and a thin **depth bar** that fills as you near the pit. It steps aside while boss bars show.
 - **Circle cards.** Entering a circle shows its name, typed out big ("CIRCLE II: LUST"), one plain line on what it does to you and how to deal with it, and the gear worth having there. `circleTitles: false` turns them off.
-- **The Map of Hell (M):** the whole funnel from above, drawn from the same shapes as the terrain: the roads, rivers and walls, every way down, the Rests (gold once found), the guardians' lairs (grey once beaten) and you. Scroll to zoom, drag to move, and point at anything to see what it is.
-- **The Pilgrim's Journal (J):** where you are, your goal, the next step (which way and how far), the nearest Rest, the guardians you've beaten, and every page of the Pilgrim's Guide with this server's numbers.
+- **The Map of Hell (M):** the whole funnel from above, drawn from the same shapes as the terrain: the roads, rivers and walls, every way down, the Rests (gold once found), the guardians' lairs (grey once beaten), your waymarks and you. Scroll to zoom, drag to move, and point at anything to see what it is.
+- **Waymarks (3.1):** right-click the Map of Hell to place a waymark: name it, pick one of eight colours, and tick "Everyone can see it" to share it with the whole server (shared ones show a white dot). Click a waymark to change or remove it (your own) or to **follow** it: the compass then shows its pin and how far it is, on a line of its own. They're kept with the world, up to 48 each.
+- **The Pilgrim's Journal (J)** (3.1: an open book): the left page is the contents (Here and now, the Codex entries you've opened, the Pilgrim's Guide), a red ribbon marking the open page; the right page shows it. Click a page, or turn them with the arrow keys or Back/Next; the wheel or up/down scrolls. "Where you are" tells you where you are, your goal, the next step (which way and how far), the nearest Rest and the guardians you've beaten; the Guide's pages carry this server's numbers.
 
 The keys can be changed under Options → Controls → Hellcraft.
 
@@ -707,6 +709,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft cyclops summon\|attack <smash\|boulder\|quake>` | op | Test a Cyclops where you stand (3.0) |
 | `/hellcraft forge test` | op | Check the Forge of Dis's layout (3.0) |
 | `/hellcraft lifts test` | op | Check that every guardian's lift lands in the next circle, on dry ground |
+| `/hellcraft waymarks test` | op | Check that waymarks can be placed, renamed, shared and removed, and that nobody else can change yours (3.1) |
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft damned spawn <punishment>` / `damned test` | op | Bring out a group of the damned suffering a punishment near you (it must be shown in the circle you're in: `vestibule`, `limbo`, `lust`, `gluttony`, `greed`, `wrath`, `heresy`, `phlegethon`, `sands`, `malebolge`, `cocytus`); check that none of them can be hurt (3.1) |
 | `/hellcraft judge [player]` / `judge test` | op | Minos's judgement of a player; self-test the judgement on made-up souls (3.1) |

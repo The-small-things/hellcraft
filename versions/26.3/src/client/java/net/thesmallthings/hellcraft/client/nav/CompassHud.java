@@ -12,18 +12,19 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.mixin.BossOverlayAccessor;
+import net.thesmallthings.hellcraft.net.WaymarksPayload;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.ForgeGeometry;
-import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Navigation;
+import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 
 /**
  * The compass strip at the top of the screen, in the Inferno: which way you face, a red arrow to the nearest way
  * down into the next circle and a gold diamond for the nearest Virgil's Rest, with how far each is. Under it, a
- * thin depth bar that fills toward the pit, where you are and how far each marker is (those two lines give way to a
- * circle's card while it shows). It steps aside while boss bars show.
+ * thin depth bar that fills toward the pit, where you are and how far each marker is (those lines give way to a
+ * circle's card while it shows), and the waymark you follow, if any (ClientWaymarks). It steps aside while boss bars show.
  */
 public final class CompassHud implements HudElement {
 	public static final Identifier ID = HellcraftMod.id("compass");
@@ -99,6 +100,12 @@ public final class CompassHud implements HudElement {
 		Navigation.Target down = Navigation.wayDown(pos.x, pos.z);
 		float downRel = relative(pos, down.x(), down.z(), yaw);
 		arrow(g, stripX(cx, downRel), TOP - 5, ARGB.multiplyAlpha(WAY_DOWN, Math.abs(downRel) > 90 ? 0.5f : 1));
+		// the waymark you follow (Map of Hell: click one, then Follow)
+		WaymarksPayload.Entry mark = ClientWaymarks.followed();
+		if (mark != null) {
+			float rel = relative(pos, mark.x() + 0.5, mark.z() + 0.5, yaw);
+			MapOfHellScreen.pin(g, stripX(cx, rel), TOP - 1, ARGB.multiplyAlpha(ClientWaymarks.colour(mark), Math.abs(rel) > 90 ? 0.5f : 1), mark.shared());
+		}
 
 		// the depth bar: the border on the left, the pit on the right
 		Circle circle = InfernoGeometry.circleAt(pos.x, pos.z);
@@ -124,6 +131,14 @@ public final class CompassHud implements HudElement {
 			x += 9 + font.width(downText) + gap;
 			diamond(g, x + 3, y + 4, found ? REST_FOUND : REST_NEW);
 			g.text(font, restText, x + 9, y, 0xFFE8E8E8);
+		}
+		if (mark != null) {
+			// the followed waymark gets a line of its own
+			String markText = font.plainSubstrByWidth(mark.name(), 120) + " " + distance(pos, mark.x() + 0.5, mark.z() + 0.5);
+			int mx = cx - (9 + font.width(markText)) / 2;
+			y += 11;
+			MapOfHellScreen.pin(g, mx + 3, y + 8, ClientWaymarks.colour(mark), mark.shared());
+			g.text(font, markText, mx + 9, y, 0xFFE8E8E8);
 		}
 	}
 
