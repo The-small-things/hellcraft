@@ -69,6 +69,15 @@ public final class HellItems {
 					line("come back where you died, and it breaks.", ChatFormatting.GRAY)))
 			.component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)
 			.rarity(Rarity.RARE));
+	/** The Pilgrimage's reward: given to whoever walks from the Gate of Hell to Purgatory without dying (Pilgrimage). */
+	public static final Item PILGRIM_SHELL = register("pilgrim_shell", new Item.Properties()
+			.component(DataComponents.ITEM_NAME, Component.literal("Pilgrim's Shell").withStyle(ChatFormatting.GOLD))
+			.component(DataComponents.LORE, lore(
+					Component.literal("The pilgrim's scallop.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
+					line("Given for walking from the Gate of Hell", ChatFormatting.GOLD),
+					line("to Purgatory without dying once.", ChatFormatting.GOLD)))
+			.stacksTo(1)
+			.rarity(Rarity.EPIC));
 
 	// ------------------------------------------------------------------ blood gear (real items since 3.0)
 
@@ -206,6 +215,7 @@ public final class HellItems {
 					output.accept(BloodItems.bane(1));
 					output.accept(BloodItems.vigil(1));
 					output.accept(BloodItems.anchor(1));
+					output.accept(new ItemStack(PILGRIM_SHELL));
 					for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
 						output.accept(new ItemStack(weapon(weapon, false)));
 					}

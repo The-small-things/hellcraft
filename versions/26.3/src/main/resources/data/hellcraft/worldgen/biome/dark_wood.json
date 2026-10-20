@@ -227,6 +227,7 @@
     [
       "hellcraft:gate_wall",
       "hellcraft:pilgrim_road",
+      "hellcraft:secret_way",
       "minecraft:freeze_top_layer"
     ]
   ],

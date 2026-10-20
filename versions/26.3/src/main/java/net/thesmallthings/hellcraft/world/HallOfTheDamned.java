@@ -68,6 +68,8 @@ public final class HallOfTheDamned {
 			lines.add(Component.literal(board.title() + ": ").withStyle(board.colour())
 					.append(Component.literal(top.isEmpty() ? "nobody yet" : sb.toString()).withStyle(ChatFormatting.GRAY)));
 		}
+		// the pilgrims' row, on the Pilgrims' Stone across the road
+		lines.addAll(PilgrimStone.describe(server));
 		return lines;
 	}
 

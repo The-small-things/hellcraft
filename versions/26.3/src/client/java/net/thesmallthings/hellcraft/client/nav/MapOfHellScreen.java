@@ -12,6 +12,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Navigation;
 import net.thesmallthings.hellcraft.world.NobleCastle;
+import net.thesmallthings.hellcraft.world.SecretWays;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class MapOfHellScreen extends Screen {
 	private static final int GATE = 0xFFFF4030;
 	private static final int LAIR = 0xFFE04040;
 	private static final int BEATEN = 0xFF808080;
+	private static final int SECRET = 0xFF40D8E8;
 	private static final float MAX_ZOOM = 12;
 
 	private static final List<Navigation.Target> WAYS = Navigation.all();
@@ -126,7 +128,8 @@ public class MapOfHellScreen extends Screen {
 			g.text(font, labels[i], x + 10, y, TEXT);
 			x += widths[i];
 		}
-		g.centeredText(font, "Scroll to zoom, drag to move. " + ClientNav.foundCount() + " of " + ShrineSites.all().size() + " Rests found.",
+		g.centeredText(font, "Scroll to zoom, drag to move. " + ClientNav.foundCount() + " of " + ShrineSites.all().size() + " Rests found"
+				+ (SecretMarks.count() > 0 ? ", " + SecretMarks.count() + " of " + SecretWays.count() + " secret ways." : "."),
 				width / 2, y + 12, DIM);
 	}
 
@@ -197,6 +200,14 @@ public class MapOfHellScreen extends Screen {
 								+ "doesn't need it.").withColor(DIM))));
 			}
 		}
+		// the secret ways this player has found (the others stay secret)
+		for (SecretWays.Site site : SecretWays.all()) {
+			if (SecretMarks.found(site.id())) {
+				out.add(new Marker(sx(site.x() + 0.5), sy(site.z() + 0.5), Shape.SECRET, true, List.of(
+						Component.literal("Secret way: " + site.kind().title).withColor(SECRET),
+						Component.literal("Down to " + site.place() + ". " + site.kind().how).withColor(DIM))));
+			}
+		}
 		if (here) {
 			out.add(new Marker(sx(player.getX()), sy(player.getZ()), Shape.NONE, false, List.of(Component.literal("You"),
 					Component.literal(InfernoGeometry.regionName(player.getX(), player.getZ())).withColor(DIM))));
@@ -204,7 +215,7 @@ public class MapOfHellScreen extends Screen {
 		return out;
 	}
 
-	private enum Shape {RAMP, GATE, PIT, REST, LAIR, NONE}
+	private enum Shape {RAMP, GATE, PIT, REST, LAIR, SECRET, NONE}
 
 	private record Marker(int x, int y, Shape shape, boolean done, List<Component> lines) {
 		void draw(GuiGraphicsExtractor g) {
@@ -230,6 +241,13 @@ public class MapOfHellScreen extends Screen {
 					CompassHud.diamond(g, x, y, done ? CompassHud.REST_FOUND : CompassHud.REST_NEW);
 				}
 				case LAIR -> lair(g, x, y, done ? BEATEN : LAIR, done);
+				case SECRET -> {
+					// a secret way: a dark hole ringed in soul-fire blue
+					g.fill(x - 3, y - 2, x + 4, y + 3, 0xFF000000);
+					g.fill(x - 2, y - 3, x + 3, y + 4, 0xFF000000);
+					g.fill(x - 2, y - 2, x + 3, y + 3, SECRET);
+					g.fill(x - 1, y - 1, x + 2, y + 2, 0xFF061418);
+				}
 				default -> {
 				}
 			}

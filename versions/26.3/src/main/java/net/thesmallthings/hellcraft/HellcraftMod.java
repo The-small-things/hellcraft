@@ -165,6 +165,10 @@ public class HellcraftMod implements ModInitializer {
 			net.thesmallthings.hellcraft.world.ParadisoTrials.forget(handler.getPlayer());
 		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> HellCommands.register(dispatcher));
+		// the secret ways down and the Pilgrimage (each registers its own events, commands and payloads)
+		net.thesmallthings.hellcraft.world.SecretWayLift.register();
+		net.thesmallthings.hellcraft.blood.Pilgrimage.register();
+		net.thesmallthings.hellcraft.world.PilgrimStone.register();
 
 		LOGGER.info("Hellcraft loaded. Lasciate ogne speranza, voi ch'intrate.");
 	}

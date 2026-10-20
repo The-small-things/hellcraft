@@ -317,6 +317,14 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   lifts=$(rcon "hellcraft lifts test" || true)
   echo "$lifts"
   echo "$lifts" | grep -q "Lifts test OK" || { echo "A guardian's lift lands in the wrong place"; exit 1; }
+  # the secret ways down: sites off the roads, lairs and Rests, each landing in the next circle; the first one built
+  secrets=$(rcon "hellcraft secrets test" || true)
+  echo "$secrets"
+  echo "$secrets" | grep -q "Secrets test OK" || { echo "The secret ways down are wrong or not built"; exit 1; }
+  # the Pilgrimage: set out, reach a circle, die (the Stone remembers), set out again and finish; the hardcore rule
+  pilgrim=$(rcon "hellcraft pilgrimage test" || true)
+  echo "$pilgrim"
+  echo "$pilgrim" | grep -q "Pilgrimage test OK" || { echo "The Pilgrimage does not keep its rules"; exit 1; }
   # the arena teleport (an op command: no players here, so it can only fail to find one)
   arena=$(rcon "hellcraft arena minos 2 @a" || true)
   echo "$arena"
@@ -558,6 +566,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   grep -q 'Boss music: ' "$LOG" || { echo "Boss music was not set up"; fail=1; }
   grep -q "The Emperor's Spine runs from" "$LOG" || { echo "The Emperor's Spine was not laid"; fail=1; }
   grep -q "The Hall of the Damned at" "$LOG" || { echo "The Hall of the Damned was never raised"; fail=1; }
+  grep -q "The Pilgrims' Stone at" "$LOG" || { echo "The Pilgrims' Stone was never raised"; fail=1; }
   grep -q "Villager clock running" "$LOG" || { echo "The villagers' own clock is missing, so they would never idle or breed"; fail=1; }
   adv=$(grep -oE 'Hellcraft advancements: [0-9]+' "$LOG" | tail -1 | grep -oE '[0-9]+$' || echo 0)
   [ "${adv:-0}" -ge 25 ] || { echo "Only ${adv:-0} Dante's Journey advancements loaded"; fail=1; }

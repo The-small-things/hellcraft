@@ -149,6 +149,26 @@ art("soul_anchor", {"o": "0a0a12", "I": "3e3e4c", "i": "6a6a7a", "j": "a4a4b4", 
     "..oooooooooooo..",
 ])
 
+# the Pilgrim's Shell: a scallop, the pilgrim's badge, ribbed and sun-bleached, lit from the upper left, a red cross at its hinge
+art("pilgrim_shell", {"o": "4a2a10", "1": "8a5a28", "2": "b8843c", "3": "d8aa60", "4": "f0d090", "5": "fff0c8", "r": "8a1010", "R": "d83030"}, [
+    "................",
+    "......oooo......",
+    "...ooo4455ooo...",
+    "..o5554355332o..",
+    ".o445543553344o.",
+    "o44455335532444o",
+    "o54445335524442o",
+    "o55445535324422o",
+    "o55533535244221o",
+    ".oo55353R2422oo.",
+    "...oo53RRR2oo...",
+    ".....o54R2o.....",
+    ".....o22r22o....",
+    "....o222o222o...",
+    ".....ooo.ooo....",
+    "................",
+])
+
 # the Halo: a ring of light seen from a little above, with a glint either side
 art("halo", {"o": "6a4208", "G": "b8841c", "g": "f0c040", "y": "ffe68a", "w": "fffbe8"}, [
     "................",

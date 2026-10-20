@@ -22,6 +22,7 @@ FLAT_ITEMS = {
     "lucifers_bane": "minecraft:item/generated",
     "vigil_candle": "minecraft:item/generated",
     "soul_anchor": "minecraft:item/generated",
+    "pilgrim_shell": "minecraft:item/generated",
     "halo": "minecraft:item/generated",
     "seraph_wings": "minecraft:item/generated",
     "beatrices_rose": "minecraft:item/generated",
