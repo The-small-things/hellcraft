@@ -7,6 +7,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.world.feature.FoundryPillarFeature;
 
@@ -123,12 +124,21 @@ public final class ForgeOfDis {
 				wrong.add((int) p[0] + "," + (int) p[1] + " is " + biome + " not " + expected.id());
 			}
 		}
+		// past the foot of the east stairway (r 78) the causeway goes on as crust. Each world's own terrain can rise above the
+		// slag here and there near the mesa (its noise follows the seed): that ground is walkable too. What must never be is
+		// open slag on the causeway, where a soul would fall in.
 		int crust = 0;
-		// past the foot of the east stairway (r 78), where the causeway goes on as crust
+		int ground = 0;
+		int open = 0;
 		for (int r = 80; r <= 100; r += 4) {
 			nether.getChunk(r >> 4, 0);
-			if (nether.getBlockState(new BlockPos(r, ForgeGeometry.LAVA - 1, 0)).is(HellBlocks.SLAG_CRUST)) {
+			BlockState at = nether.getBlockState(new BlockPos(r, ForgeGeometry.LAVA - 1, 0));
+			if (at.is(HellBlocks.SLAG_CRUST)) {
 				crust++;
+			} else if (!at.getFluidState().isEmpty() || at.isAir()) {
+				open++;
+			} else {
+				ground++;
 			}
 		}
 		String stairs = "not built yet";
@@ -138,8 +148,8 @@ public final class ForgeOfDis {
 			stairs = nether.getBlockState(new BlockPos(edge + t, GreatForge.FLOOR_Y - 1 - t, 0)).is(Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS)
 					? "down the mesa" : "missing";
 		}
-		boolean ok = wrong.isEmpty() && crust >= 5 && !stairs.equals("missing");
+		boolean ok = wrong.isEmpty() && open == 0 && crust >= 1 && !stairs.equals("missing");
 		return (ok ? "Forge test OK: " : "Forge test FAILED: ") + (wrong.isEmpty() ? "six regions in place" : String.join("; ", wrong))
-				+ ", crust on " + crust + " of 6 causeway spots, stairs " + stairs;
+				+ ", causeway: crust on " + crust + ", ground on " + ground + ", open slag on " + open + " of 6 spots, stairs " + stairs;
 	}
 }
