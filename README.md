@@ -341,6 +341,34 @@ Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guar
 |---|---|---|---|---|
 | ![Minos](docs/guardian_minos.png) | ![Cerberus](docs/guardian_cerberus.png) | ![Plutus](docs/guardian_plutus.png) | ![Minotaur](docs/guardian_minotaur.png) | ![Geryon](docs/guardian_geryon.png) |
 
+## Minos judges you (3.1)
+
+*"He girds himself with his tail as many times as grades he wills the soul be thrust down."* The first time you walk into one of Minos's lairs (Lust), he judges you before he fights: his tail wraps round him once for every circle your worst sin would send you down, and he names it in the dialogue box ("Six times the tail. Heresy."), with a plain line saying what gave you away ("you've enchanted 140 items"). He can't be hurt while he judges. Several players get their own verdicts in one go, each on the turn of their circle.
+
+Your worst sin comes from what you've actually done, read from the game's statistics: animals bred (**Lust**), food eaten and cake (**Gluttony**), gold, emeralds and diamonds picked up and villager trades (**Greed**), monsters killed and damage dealt (**Wrath**), items enchanted and potions brewed (**Heresy**), animals killed (**Violence**), chests and barrels opened and trapped chests sprung (**Fraud**), players, villagers, iron golems and tamed animals killed, and far weaker souls killed under Cain's Mark (**Treachery**). Each is weighed against what an ordinary pilgrim piles up of it, so eating and fighting (which everyone does) don't always win; too little of anything is **Limbo** (newcomers).
+
+It's a title, nothing more: it shows in grey after your name in the player list (Tab), e.g. *Heretic*, and on its own page in the Journal (J). It changes as you play: `/judge` shows your judgement any time, and Minos judges you again each time you walk into his lair (he only speaks up when it has changed, even from his coils while he sleeps). Titles: the Unbaptised (Limbo), the Lustful, the Glutton, the Hoarder, the Wrathful, the Heretic, the Violent, the Fraud, the Traitor. Config: `judgementTitles` (false hides the titles in the player list).
+
+## Champions of the circles (3.1)
+
+Once in a while a **champion** walks: a named, much stronger soul of a circle, for a server to hunt once its bosses are beaten. Roughly one comes to each circle every 15 to 25 minutes that someone spends there, never more than one per circle at a time, and never in a lair, a Rest, Lucifer's pit or near the spawn. The whole server is told in chat when one appears ("A champion walks in Gluttony, near Alice: Ciacco the Swollen (Vampiric)...") and when it falls.
+
+Each is its circle's own monster named for someone Dante meets there (Francesca the Unrepentant over Lust, Ciacco the Swollen in the mud, Plutus's Treasurer in Greed, Filippo Argenti in the Styx, the Epicurean among the tombs, Nessus or Capaneus in Violence, Vanni Fucci or Ulysses' Flame in Malebolge, Count Ugolino on the ice; the Shore and Limbo have theirs too). It glows, shows a boss bar to anyone near, has far more health (more the deeper it walks), hits harder, and carries one to three **affixes** in its name ("Filippo Argenti, Burning and Swift"), more in the deeper circles. The first time you come near one, the dialogue box tells you what its affixes do:
+
+| Affix | What it does | The tell |
+|---|---|---|
+| Swift | moves fast | puffs of cloud at its feet |
+| Hardened | takes less damage | a clank when hit |
+| Burning | its blows set you alight, and it leaves fire behind | flames |
+| Frozen | its blows freeze and slow you | snowflakes |
+| Vampiric | heals when it hits you | blood |
+| Blinking | now and then vanishes and appears behind you | purple sparks for a second first |
+| Warded | arrows do little to it (close in) | enchanting glyphs |
+| Thundering | lightning strikes whoever it hits | electric sparks |
+| Splitting | splits into two weaker shards when it dies | white sparks once it's below half health |
+
+**Spoils** go to whoever dealt it the most damage: Blood Fragments (3, plus one per circle of depth), a chance of its circle's enchanted book (Windstep, Quickening, Sidestep, Steadfast or Judgement; a circle without a book of its own gives any of them) and a heap of experience. Config: `champions`, `championMinMinutes` (15), `championMaxMinutes` (25), `championHealth` (150, plus a tenth per circle deeper), `championDamage` (1.6), `championFragments` (3), `championBookChance` (0.35). Ops: `/hellcraft champion [circle] [affixes...]` brings one out in front of you.
+
 ## Lucifer
 
 *"Another soul crawls to the bottom of the world."*
@@ -623,6 +651,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
 | `/guide` | all | Open the Pilgrim's Journal (the same as J) |
+| `/judge` | all | Minos's judgement of you, read afresh from what you've done (3.1) |
 | `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
 | `/hellcraft sethearts <player> <n>` | op | |
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
@@ -644,6 +673,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft lifts test` | op | Check that every guardian's lift lands in the next circle, on dry ground |
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft damned spawn <punishment>` / `damned test` | op | Bring out a group of the damned suffering a punishment near you (it must be shown in the circle you're in: `vestibule`, `limbo`, `lust`, `gluttony`, `greed`, `wrath`, `heresy`, `phlegethon`, `sands`, `malebolge`, `cocytus`); check that none of them can be hurt (3.1) |
+| `/hellcraft judge [player]` / `judge test` | op | Minos's judgement of a player; self-test the judgement on made-up souls (3.1) |
+| `/hellcraft champion [circle] [affixes...]` / `champion list` / `champion test` | op | Bring out a champion of a circle in front of you (your circle and random affixes by default); list the champions walking; self-test one of each (3.1) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
 | `/hellcraft forge [build]` | op | Go to the Great Forge of Dis in the Nether (building it if needed) (26.3) |
 | `/hellcraft paradiso status\|test\|angels\|host\|ascent` | op | Paradiso's state; check every sphere, gate and the bell; call the Angelic Guard; fill every sphere's host of angels; build the Ascent now |
@@ -676,6 +707,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (0.85)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`
+- Minos's titles in the player list (3.1): `judgementTitles`
+- the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
 ## Development

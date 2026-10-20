@@ -65,9 +65,11 @@ public final class MapSync {
 		}
 	}
 
-	private static void sendJournal(ServerPlayer player) {
+	/** The Guide's pages, with this player's own page of Minos's judgement (Sins). */
+	public static void sendJournal(ServerPlayer player) {
 		if (ServerPlayNetworking.canSend(player, JournalPayload.TYPE)) {
-			ServerPlayNetworking.send(player, new JournalPayload(Guide.pages(player.level().getServer())));
+			ServerPlayNetworking.send(player, new JournalPayload(net.thesmallthings.hellcraft.blood.Sins.withJudgement(player,
+					Guide.pages(player.level().getServer()))));
 		}
 	}
 

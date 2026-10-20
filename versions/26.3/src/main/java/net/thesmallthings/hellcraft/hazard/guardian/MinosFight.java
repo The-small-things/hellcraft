@@ -14,6 +14,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.blood.Hearts;
+import net.thesmallthings.hellcraft.blood.Sins;
 import net.thesmallthings.hellcraft.cutscene.Cutscene;
 import net.thesmallthings.hellcraft.cutscene.Cutscenes;
 import net.thesmallthings.hellcraft.entity.HellEntities;
@@ -22,9 +24,11 @@ import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +50,10 @@ import java.util.UUID;
  *     squeezes until the others hurt him enough to make him let go.</li>
  * </ul>
  * At half his health he rises in fury: every soul in the lair is sentenced at once, and he attacks faster.
+ * <p>
+ * Before he fights he judges (blood/Sins): every soul that walks into his lair for the first time, or whose worst sin
+ * has changed since, watches his tail wrap round him once for every circle and hears its verdict. He can't be hurt
+ * while he judges.
  */
 final class MinosFight extends GuardianFight {
 	private static final DustParticleOptions JUDGEMENT = new DustParticleOptions(0x6A2A9A, 1.6f);
@@ -76,6 +84,11 @@ final class MinosFight extends GuardianFight {
 	private UUID coiled;
 	private int coilTicks;
 	private float coilDamage;
+	/** Souls in the lair now (each walk-in is judged once), and the verdicts still to pronounce, in arrival order. */
+	private final Set<UUID> present = new HashSet<>();
+	private final Map<UUID, Sins.Judged> toPronounce = new java.util.LinkedHashMap<>();
+	/** Marks a soul that has watched the tail go round (kept with the cutscenes it has seen). */
+	private static final String SEEN_JUDGEMENT = "minos_judgement";
 
 	MinosFight(GuardianContext ctx) {
 		super(ctx);
@@ -131,6 +144,12 @@ final class MinosFight extends GuardianFight {
 
 	@Override
 	protected int nextAttack(Mob body, List<LivingEntity> targets) {
+		if (!toPronounce.isEmpty() && coiled == null) {
+			int judging = judge(body);
+			if (judging > 0) {
+				return judging;
+			}
+		}
 		LivingEntity nearest = nearest(body, targets);
 		String[] order = coiled != null ? new String[]{"sentence", "strike"} : new String[]{"strike", "tail", "sentence", "coil"};
 		String attack = order[cycle++ % order.length];
@@ -308,11 +327,92 @@ final class MinosFight extends GuardianFight {
 		return MinosAnim.GRAB.ticks + 40;
 	}
 
+	// ------------------------------------------------------------------ the judgement (Inferno V)
+
+	/** Who has walked in since the last look: judged at once, and queued to hear it if it's news to them. */
+	private void watchArrivals() {
+		Set<UUID> here = new HashSet<>();
+		for (ServerPlayer p : level.players()) {
+			if (p.isSpectator() || !p.isAlive() || !inArena(p)) {
+				continue;
+			}
+			here.add(p.getUUID());
+			if (!present.add(p.getUUID())) {
+				continue;
+			}
+			Sins.Judged j = Sins.rejudge(p);
+			if (j.changed() || !Hearts.soul(p).cutscenes.contains(SEEN_JUDGEMENT)) {
+				toPronounce.put(p.getUUID(), j);
+			}
+		}
+		present.retainAll(here);
+	}
+
+	/**
+	 * He judges everyone waiting at once: the tail goes round once a turn, as many turns as the deepest sentence, and
+	 * each soul hears its verdict on the turn of its circle. Returns how long it takes, or 0 if no one is left to judge.
+	 */
+	private int judge(Mob body) {
+		MinosEntity minos = minos(body);
+		List<ServerPlayer> souls = new ArrayList<>();
+		Map<UUID, Sins.Judged> verdicts = new HashMap<>(toPronounce);
+		for (UUID id : toPronounce.keySet()) {
+			if (level.getServer().getPlayerList().getPlayer(id) instanceof ServerPlayer p && p.level() == level && p.isAlive() && inArena(p)) {
+				souls.add(p);
+			}
+		}
+		toPronounce.clear();
+		if (souls.isEmpty()) {
+			return 0;
+		}
+		int turns = 1;
+		for (ServerPlayer p : souls) {
+			turns = Math.max(turns, verdicts.get(p.getUUID()).verdict().sin().depth());
+		}
+		int turn = MinosAnim.JUDGE.ticks;
+		int count = MinosAnim.JUDGE.at("count");
+		int length = turns * turn;
+		face(body, souls.get(0));
+		lockedUntil = tick + length + 10;
+		minos.warn(BossEntity.Warning.NONE);
+		shield(minos, length + 10);
+		say(souls.size() == 1 ? "Stand, " + souls.get(0).getGameProfile().name() + ". Confess thyself, and be judged." : "Stand, all of you. Be judged.");
+		tip("Minos is judging: his tail wraps round him once for every circle. He can't be hurt until he has spoken.");
+		for (int k = 1; k <= turns; k++) {
+			int number = k;
+			schedule((k - 1) * turn, () -> minos.play(MinosAnim.JUDGE));
+			schedule((k - 1) * turn + count, () -> {
+				level.playSound(null, minos.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 2.0f, 0.5f + 0.04f * number);
+				BossFx.send(level, JUDGEMENT, minos.getX(), minos.getY() + 1.2, minos.getZ(), 30, 2.2, 0.4, 2.2, 0);
+				for (ServerPlayer p : audience()) {
+					p.sendOverlayMessage(Component.literal("The tail goes round: " + number).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+				}
+				for (ServerPlayer p : souls) {
+					Sins.Judged j = verdicts.get(p.getUUID());
+					if (j.verdict().sin().depth() != number || p.isRemoved()) {
+						continue;
+					}
+					Hearts.soul(p).cutscenes.add(SEEN_JUDGEMENT);
+					Sins.pronounce(p, j, true);
+					for (ServerPlayer other : audience()) {
+						if (other != p) {
+							Dialogue.say(other, kind.title, kind.color, p.getGameProfile().name() + "! " + j.verdict().sin().line);
+						}
+					}
+				}
+			});
+		}
+		return length + 30;
+	}
+
 	// ------------------------------------------------------------------ every tick
 
 	@Override
 	protected void everyTick(Mob body) {
 		MinosEntity minos = minos(body);
+		if (tick % 20 == 0) {
+			watchArrivals();
+		}
 		if (!enraged && body.getHealth() <= body.getMaxHealth() / 2) {
 			rage(minos);
 		}

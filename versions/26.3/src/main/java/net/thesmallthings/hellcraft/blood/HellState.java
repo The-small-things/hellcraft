@@ -137,6 +137,12 @@ public class HellState extends SavedData {
 		/** For the Hall of the Damned. */
 		public int deaths;
 		public int guardiansSlain;
+		// Minos's judgement (Sins): the verdict ("heresy", "" before he has judged), what gave it away, and Treachery's
+		// own counts (tamed animals killed, far weaker souls killed)
+		public String judged = "";
+		public String judgedFact = "";
+		public int tamedKilled;
+		public int weakKills;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -237,6 +243,10 @@ public class HellState extends SavedData {
 			st.putInt("prestige", s.prestige);
 			st.putInt("deaths", s.deaths);
 			st.putInt("guardiansSlain", s.guardiansSlain);
+			st.putString("judged", s.judged);
+			st.putString("judgedFact", s.judgedFact);
+			st.putInt("tamedKilled", s.tamedKilled);
+			st.putInt("weakKills", s.weakKills);
 			CompoundTag visited = new CompoundTag();
 			s.visited.forEach(v -> visited.putBoolean(v, true));
 			st.put("visited", visited);
@@ -342,6 +352,10 @@ public class HellState extends SavedData {
 			s.prestige = st.getIntOr("prestige", 0);
 			s.deaths = st.getIntOr("deaths", 0);
 			s.guardiansSlain = st.getIntOr("guardiansSlain", 0);
+			s.judged = st.getStringOr("judged", "");
+			s.judgedFact = st.getStringOr("judgedFact", "");
+			s.tamedKilled = st.getIntOr("tamedKilled", 0);
+			s.weakKills = st.getIntOr("weakKills", 0);
 			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
 			s.cutscenes.addAll(st.getCompoundOrEmpty("cutscenes").keySet());
 			s.codex.addAll(st.getCompoundOrEmpty("codex").keySet());

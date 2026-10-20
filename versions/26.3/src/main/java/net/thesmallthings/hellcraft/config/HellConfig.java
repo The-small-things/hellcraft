@@ -182,6 +182,25 @@ public class HellConfig {
 	public String fallbackMusicEnraged = "minecraft:pigstep";
 	public String fallbackMusicTrueForm = "minecraft:precipice";
 
+	// --- Minos's judgement (Sins)
+	/** Minos's verdict shows after each player's name in the tab list (grey "Heretic"). */
+	public boolean judgementTitles = true;
+
+	// --- Champions of the circles (hazard/Champions)
+	/** Now and then a named champion of a circle walks near the souls passing through. */
+	public boolean champions = true;
+	/** Minutes someone must spend in a circle before its next champion comes, at least and at most. */
+	public int championMinMinutes = 15;
+	public int championMaxMinutes = 25;
+	/** A champion's health in the outermost circles; it grows by a tenth for every circle deeper. */
+	public double championHealth = 150;
+	/** How much harder a champion hits than its kind. */
+	public double championDamage = 1.6;
+	/** Blood Fragments a champion drops in the outermost circles; one more for every circle deeper. */
+	public int championFragments = 3;
+	/** The chance a champion drops its circle's enchanted book. */
+	public double championBookChance = 0.35;
+
 	public static HellConfig get() {
 		return instance;
 	}

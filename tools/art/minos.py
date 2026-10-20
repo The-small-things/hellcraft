@@ -747,6 +747,21 @@ def animations(m):
     death.pos("coils", [(0, ZERO), (1.6, (0, -4, 0)), (3.5, (0, -6, 0))])
     death.event(1.6, "fall")
 
+    # the judgement (Inferno V): one turn of the tail round him, curled tight, and a beat of the claw as he counts it.
+    # MinosFight plays it once for every circle a soul is sent down; "count" is the beat (the tail comes home).
+    judge = m.animation("judge", 0.6)
+    judge.rot("tail_1", [(0, ZERO), (0.15, (0, 90, 0)), (0.3, (0, 180, 0)), (0.45, (0, 270, 0)), (0.6, (0, 360, 0))])
+    for i, bone in enumerate(TAIL[1:]):
+        judge.rot(bone, [(0, ZERO), (0.15, (0, 18 + 2 * i, 0)), (0.45, (0, 22 + 2 * i, 0)), (0.6, ZERO)])
+    judge.rot("coils", [(0, ZERO), (0.3, (0, 6, 0)), (0.6, ZERO)])
+    judge.rot("waist", [(0, ZERO), (0.3, (0, -6, 0)), (0.6, ZERO)])
+    judge.rot("right_arm", [(0, ZERO), (0.3, (70, 0, 12)), (0.45, (35, 0, 8)), (0.6, ZERO)])
+    judge.rot("right_forearm", [(0, ZERO), (0.3, (-20, 0, 0)), (0.45, (10, 0, 0)), (0.6, ZERO)])
+    judge.rot("right_fingers", [(0, ZERO), (0.3, curl(-15)), (0.45, curl(50)), (0.6, ZERO)])
+    judge.rot("head", [(0, ZERO), (0.3, (-10, 0, 0)), (0.45, (-14, 0, 0)), (0.6, ZERO)])
+    judge.rot("jaw", [(0, ZERO), (0.4, (-4, 0, 0)), (0.47, (-18, 0, 0)), (0.6, ZERO)])
+    judge.event(0.45, "count")
+
 
 if __name__ == "__main__":
     build().write()

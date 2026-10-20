@@ -102,6 +102,9 @@ public final class HellCommands {
 		dispatcher.register(Commands.literal("circle").executes(ctx -> circle(ctx.getSource().getPlayerOrException())));
 
 		GhostPowers.register(dispatcher);
+		// Minos's judgement (/judge, /hellcraft judge) and the champions of the circles (/hellcraft champion)
+		net.thesmallthings.hellcraft.blood.Sins.registerCommands(dispatcher);
+		net.thesmallthings.hellcraft.hazard.Champions.registerCommands(dispatcher);
 
 		// the Journal (J) holds the Guide: this opens it, for anyone who'd rather type
 		dispatcher.register(Commands.literal("guide").executes(ctx -> {
