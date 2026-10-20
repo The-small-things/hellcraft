@@ -15,6 +15,7 @@
 			"net.thesmallthings.hellcraft.gametest.RigTest",
 			"net.thesmallthings.hellcraft.gametest.MapTest",
 			"net.thesmallthings.hellcraft.gametest.LimboTest",
+			"net.thesmallthings.hellcraft.gametest.DamnedTest",
 			"net.thesmallthings.hellcraft.gametest.BossTest",
 			"net.thesmallthings.hellcraft.gametest.LuciferTest",
 			"net.thesmallthings.hellcraft.gametest.NetherTest",
