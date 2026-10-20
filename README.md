@@ -8,6 +8,12 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 ![map](docs/inferno_map.png)
 
+**New in 3.1 (beta):**
+- **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
+- **The damned** suffer each circle's punishment around you, and scream.
+- **Limbo has no colour**, except in the Noble Castle's light.
+- **Minos judges you** by your worst sin; **champions** of the circles walk; **secret ways down** hide off the roads; and an optional **Pilgrimage**: the Gate to Purgatory without dying once.
+
 **New in 3.0:**
 - **A new map.** Hell is 10,500 blocks across, with four Pilgrim Roads from the Gate to the Well of Giants, a way down every 30 degrees, a compass, the Map of Hell (M) and the Pilgrim's Journal (J).
 - **Real bosses.** Every guardian, Lucifer, Vulcan, the Cyclopes and the Seraph have animated bodies, entrances and fights in the danger language (red: get out, white: block now, purple: jump or keep out), with a style panel and a Codex page each.
