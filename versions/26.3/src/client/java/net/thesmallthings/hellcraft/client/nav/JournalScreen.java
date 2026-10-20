@@ -282,6 +282,17 @@ public class JournalScreen extends Screen {
 			}
 		}
 
+		String pilgrimage = net.thesmallthings.hellcraft.client.PilgrimHud.summary();
+		if (pilgrimage != null) {
+			wrap(out, "YOUR PILGRIMAGE", HEADING);
+			wrap(out, pilgrimage + ". Reach Purgatory without dying. /pilgrimage abandon gives it up.", TEXT);
+			out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+		}
+		wrap(out, "SECRET WAYS", HEADING);
+		wrap(out, "Secret ways found: " + SecretMarks.count() + " of " + net.thesmallthings.hellcraft.world.SecretWays.count()
+				+ ". Hidden shortcuts off the roads, one circle down each; found ones are on the Map of Hell.", SecretMarks.count() > 0 ? TEXT : DIM);
+		out.add(new Line(FormattedCharSequence.EMPTY, TEXT));
+
 		wrap(out, "GUARDIANS", HEADING);
 		wrap(out, "Each has four lairs in its circle, one in each quarter of Hell: fight it in whichever is nearest (the Map of Hell shows "
 				+ "them). None of them blocks the way down.", DIM);

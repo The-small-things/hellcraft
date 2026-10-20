@@ -130,6 +130,18 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `/hellcraft judge [player|test]`. The champions of the circles: `hazard/Champions` (names and monster kinds per circle,
   `Affix`, state kept in entity tags so it survives restarts, spoils to the top damager; `/hellcraft champion [circle]
   [affixes] | list | test`). `JudgementTest` films both (`minos_judgement*`, `champion_*`).
+- 3.1: secret ways down (`world/SecretWays`: three per circle from Limbo to Malebolge, 27 sites worked out from geometry alone,
+  each a `Kind` of landmark with its mouth and a landing cairn in the next circle at the same angle; the ground round a mouth is
+  levelled in `InfernoGeometry.roughness`, and Heresy's tombs keep clear (`Tombs.allowed`); `feature/SecretWayFeature` builds
+  them chunk by chunk (in every overworld biome, TOP step, after the roads); `world/SecretWayLift` carries whoever drops into a
+  mouth or right-clicks it (a float, then down; no damage), remembers them in `HellState.Soul.secrets` and sends them
+  (`net/SecretsPayload`, client `nav/SecretMarks`: the Map of Hell's cyan rings, the Journal's count); `/hellcraft secrets
+  test|list|goto|find|forget`, `SecretWaysTest`). The Pilgrimage (`blood/Pilgrimage`: an optional one-life run from the Gate to
+  Purgatory, `Soul.pilgrimTicks`/`pilgrimDeepest`, `HellState.pilgrims` records, Blood Altar travel refused, `pilgrimageHardcore`
+  makes a fallen pilgrim a ghost; `/pilgrimage`, `/hellcraft pilgrimage test`; `net/PilgrimPayload`, client `PilgrimHud` at the
+  top left) and `world/PilgrimStone` (the lectern that starts it, across the road from the Hall, with the fastest and the
+  deepest-fallen pilgrims; `HallOfTheDamned.describe` lists them too); the Pilgrim's Shell (`HellItems.PILGRIM_SHELL`).
+  `SecretsTest` films it all (`secret_*`, `pilgrimage_hud`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the

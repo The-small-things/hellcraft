@@ -78,6 +78,17 @@ public class HellState extends SavedData {
 	@Nullable
 	public GlobalSpot hall;
 
+	// ---- the Pilgrimage (Pilgrimage, PilgrimStone)
+	/** Where the Pilgrims' Stone stands (its lectern), once built. */
+	@Nullable
+	public GlobalSpot pilgrimStone;
+	/** Pilgrimages that ended, kept for the Pilgrims' Stone: the fastest done and the deepest fallen. */
+	public final java.util.List<Pilgrim> pilgrims = new java.util.ArrayList<>();
+
+	/** A pilgrimage that ended: who, how long it took (ticks of play), the deepest circle reached, and whether it was done. */
+	public record Pilgrim(String name, int ticks, int deepest, boolean done, String where) {
+	}
+
 	public static HellState get(MinecraftServer server) {
 		return server.overworld().getDataStorage().computeIfAbsent(TYPE);
 	}
@@ -143,6 +154,17 @@ public class HellState extends SavedData {
 		public String judgedFact = "";
 		public int tamedKilled;
 		public int weakKills;
+
+		// ---- secret ways and the Pilgrimage (SecretWayLift, Pilgrimage)
+		/** The secret ways down this soul has found (SecretWays ids). */
+		public final Set<String> secrets = new HashSet<>();
+		/** On a pilgrimage: its ticks of play so far; -1 when not on one. */
+		public int pilgrimTicks = -1;
+		/** The deepest circle (Circle.depth) this pilgrimage has reached. */
+		public int pilgrimDeepest;
+		/** Pilgrimages this soul has finished, and its fastest (ticks; 0 before the first). */
+		public int pilgrimages;
+		public int pilgrimBest;
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -262,6 +284,13 @@ public class HellState extends SavedData {
 			CompoundTag best = new CompoundTag();
 			s.bossBest.forEach(best::putInt);
 			st.put("bossBest", best);
+			CompoundTag secrets = new CompoundTag();
+			s.secrets.forEach(id -> secrets.putBoolean(id, true));
+			st.put("secrets", secrets);
+			st.putInt("pilgrimTicks", s.pilgrimTicks);
+			st.putInt("pilgrimDeepest", s.pilgrimDeepest);
+			st.putInt("pilgrimages", s.pilgrimages);
+			st.putInt("pilgrimBest", s.pilgrimBest);
 			list.add(st);
 		}
 		tag.put("souls", list);
@@ -313,6 +342,20 @@ public class HellState extends SavedData {
 		if (hall != null) {
 			tag.put("hall", hall.save());
 		}
+		if (pilgrimStone != null) {
+			tag.put("pilgrimStone", pilgrimStone.save());
+		}
+		ListTag pilgrimList = new ListTag();
+		for (Pilgrim p : pilgrims) {
+			CompoundTag pt = new CompoundTag();
+			pt.putString("name", p.name());
+			pt.putInt("ticks", p.ticks());
+			pt.putInt("deepest", p.deepest());
+			pt.putBoolean("done", p.done());
+			pt.putString("where", p.where());
+			pilgrimList.add(pt);
+		}
+		tag.put("pilgrims", pilgrimList);
 		if (starterAltar != null) {
 			tag.put("starterAltar", starterAltar.save());
 		}
@@ -367,6 +410,11 @@ public class HellState extends SavedData {
 			for (String key : best.keySet()) {
 				s.bossBest.put(key, best.getIntOr(key, 0));
 			}
+			s.secrets.addAll(st.getCompoundOrEmpty("secrets").keySet());
+			s.pilgrimTicks = st.getIntOr("pilgrimTicks", -1);
+			s.pilgrimDeepest = st.getIntOr("pilgrimDeepest", 0);
+			s.pilgrimages = st.getIntOr("pilgrimages", 0);
+			s.pilgrimBest = st.getIntOr("pilgrimBest", 0);
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
@@ -401,6 +449,13 @@ public class HellState extends SavedData {
 		state.luciferNextSpawn = tag.getLongOr("luciferNext", 0L);
 		state.starterAltar = GlobalSpot.load(tag, "starterAltar");
 		state.hall = GlobalSpot.load(tag, "hall");
+		state.pilgrimStone = GlobalSpot.load(tag, "pilgrimStone");
+		ListTag pilgrimList = tag.getListOrEmpty("pilgrims");
+		for (int i = 0; i < pilgrimList.size(); i++) {
+			CompoundTag pt = pilgrimList.getCompoundOrEmpty(i);
+			state.pilgrims.add(new Pilgrim(pt.getStringOr("name", ""), pt.getIntOr("ticks", 0), pt.getIntOr("deepest", 0),
+					pt.getBooleanOr("done", false), pt.getStringOr("where", "")));
+		}
 		state.whiteMap = tag.getIntOr("whiteMap", -1);
 		ListTag captiveList = tag.getListOrEmpty("captives");
 		for (int i = 0; i < captiveList.size(); i++) {

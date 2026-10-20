@@ -167,6 +167,14 @@ public final class Guide {
 						+ "below to go back up.",
 				"",
 				"Don't sneak while riding: you'd let go."));
+		pages.add(page("SECRET WAYS",
+				"Off the roads, " + net.thesmallthings.hellcraft.world.SecretWays.PER_CIRCLE + " secret ways down hide in each circle from Limbo to "
+						+ "Malebolge (" + net.thesmallthings.hellcraft.world.SecretWays.count() + " in all). Each looks like part of its circle: a ruined well, a ring of "
+						+ "standing stones, a sinkhole, a vault's trapdoor, a whirlpool, an open tomb, a hollow tree, a sand funnel, a giant golden head.",
+				"",
+				"Watch for souls rising from a hole. Drop into it (or right-click it) and you float down to the next circle, unhurt.",
+				"",
+				"Found ones are marked on the Map of Hell (M). They're shortcuts only: the roads and ramps always go down too."));
 		pages.add(page("STYLE",
 				"Bosses rank your STYLE: D C B A S SS SSS, shown on the right of the screen during the fight.",
 				"Hits fill the bar. Swap weapons: one used again and again goes stale. Crits, smashes, parries score extra.",
@@ -211,6 +219,16 @@ public final class Guide {
 				"Falling can't hurt you there: an angel catches you.",
 				"",
 				"Rewards: Seraph Wings (Saturn), a Halo (the Seraph, in the ninth sphere), Beatrice's Rose (the bell in the Rose)."));
+		pages.add(page("THE PILGRIMAGE",
+				"An optional challenge: walk from the Gate of Hell to Purgatory without dying once.",
+				"",
+				"Start it at the Pilgrims' Stone, across the road from the Hall of the Damned: right-click its lectern twice (or /pilgrimage start there).",
+				"",
+				"Your time and deepest circle show at the top left. Blood Altars won't carry you; secret ways, lifts and rides are fine.",
+				"",
+				c.pilgrimageHardcore ? "Die and it ends, and on this server you also become a ghost until revived." : "Die and it ends; you lose nothing more than usual.",
+				"",
+				"Climb out to Purgatory to finish: a Pilgrim's Shell and your name on the Stone. /pilgrimage abandon gives up."));
 		pages.add(page("COMMANDS",
 				"/hearts: your hearts",
 				"/withdraw [n]: turn hearts into Blood Hearts",

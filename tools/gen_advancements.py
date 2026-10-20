@@ -132,6 +132,13 @@ def main():
     w("beatrice", "empyrean", "Beatrice", "Ring the bell at the Celestial Rose",
       icon("hellcraft:beatrices_rose"), deed(), frame="goal")
 
+    # the secret ways down (SecretWays) and the Pilgrimage, awarded from code
+    w("secret_way", "limbo", "Off the Beaten Path", "Find a secret way down to the next circle",
+      icon("minecraft:soul_lantern"), deed())
+    w("secret_ways", "secret_way", "Every Hidden Stair", "Find all the secret ways down",
+      icon("minecraft:recovery_compass"), deed(), frame="challenge")
+    w("pilgrim", "purgatory", "Pilgrim", "Walk from the Gate of Hell to Purgatory without dying once",
+      icon("hellcraft:pilgrim_shell"), deed(), frame="challenge")
     w("hell_is_full", "root", "Hell Is Full", "Lose your last heart and become a ghost",
       icon("minecraft:skeleton_skull"), deed(), hidden=True)
     w("harrowing", "root", "The Harrowing", "Revive a ghost at a Blood Altar",

@@ -146,6 +146,9 @@ public final class TravelMenu {
 		if (soul.ghost) {
 			return "Ghosts can't travel between altars.";
 		}
+		if (Pilgrimage.on(soul)) {
+			return "Pilgrims walk: Blood Altars won't carry you while you're on a pilgrimage (/pilgrimage abandon gives it up).";
+		}
 		long wait = cooldownLeft(player);
 		if (!ignoreCooldown && wait > 0) {
 			return "Travel is on cooldown: you can travel again in " + wait + " s.";

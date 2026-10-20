@@ -102,7 +102,8 @@ public final class Tombs {
 				return false;
 			}
 		}
-		return true;
+		// nor at a secret way's tomb, or where one sets you down
+		return !SecretWays.near(mx, mz, 6);
 	}
 
 	/** Every tomb with a corner in [x0, x1] x [z0, z1]. */

@@ -1,0 +1,25 @@
+{
+  "parent": "hellcraft:journey/purgatory",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "hellcraft:pilgrim_shell"
+    },
+    "title": {
+      "text": "Pilgrim"
+    },
+    "description": {
+      "text": "Walk from the Gate of Hell to Purgatory without dying once"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

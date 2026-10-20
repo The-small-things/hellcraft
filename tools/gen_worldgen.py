@@ -73,7 +73,7 @@ CANON = {
         "minecraft:patch_waterlily", "minecraft:seagrass_swamp", "minecraft:seagrass_river", "hellcraft:sugar_cane",
     ],
     TOP: ["hellcraft:gate_wall", "hellcraft:pilgrim_road", "hellcraft:brazier", "hellcraft:noble_castle", "hellcraft:boardwalk", "hellcraft:watchtower",
-          "hellcraft:phlegyas_landing", "minecraft:freeze_top_layer"],
+          "hellcraft:phlegyas_landing", "hellcraft:secret_way", "minecraft:freeze_top_layer"],
 }
 CANON[VEG].remove("minecraft:crimson_fungi_surface_placeholder")
 
@@ -86,7 +86,7 @@ OVERWORLD_ORES = [
     "minecraft:ore_diamond_medium", "minecraft:ore_diamond_large", "minecraft:ore_diamond_buried",
     "minecraft:ore_lapis", "minecraft:ore_lapis_buried", "minecraft:ore_copper",
 ]
-BASE_FEATURES = ["hellcraft:ring_fluid", "hellcraft:pilgrim_road", "minecraft:lake_lava_underground", "minecraft:monster_room",
+BASE_FEATURES = ["hellcraft:ring_fluid", "hellcraft:pilgrim_road", "hellcraft:secret_way", "minecraft:lake_lava_underground", "minecraft:monster_room",
                  "minecraft:monster_room_deep", "hellcraft:altar_ruin", "minecraft:spring_water",
                  "minecraft:spring_lava", "minecraft:glow_lichen", "minecraft:freeze_top_layer"] + OVERWORLD_ORES
 
@@ -493,6 +493,7 @@ CONFIGURED = {
     "dis_wall": {"type": "hellcraft:dis_wall", "config": {}},
     "gate_wall": {"type": "hellcraft:gate_wall", "config": {}},
     "pilgrim_road": {"type": "hellcraft:pilgrim_road", "config": {}},
+    "secret_way": {"type": "hellcraft:secret_way", "config": {}},
     "noble_castle": {"type": "hellcraft:noble_castle", "config": {}},
     "rotting_tree": {"type": "hellcraft:rotting_tree", "config": {}},
     "suicide_tree": {"type": "hellcraft:suicide_tree", "config": {}},
@@ -533,6 +534,8 @@ PLACED = {
     "dis_wall": placed("hellcraft:dis_wall"),
     "gate_wall": placed("hellcraft:gate_wall"),
     "pilgrim_road": placed("hellcraft:pilgrim_road"),
+    # the secret ways down (SecretWayFeature: each chunk builds what falls in it, from SecretWays)
+    "secret_way": placed("hellcraft:secret_way"),
     "noble_castle": placed("hellcraft:noble_castle"),
     "rotting_tree": placed("hellcraft:rotting_tree", rarity(2), IN_SQUARE, heightmap("OCEAN_FLOOR"), BIOME),
     # the Wood of the Suicides is a thicket: a tree every few blocks, each with thorns at its foot (SuicideTreeFeature)

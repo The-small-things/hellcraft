@@ -177,6 +177,12 @@ public class HellConfig {
 	public boolean heartHud = true;
 	/** The Hall of the Damned: a monument of signs and heads beside the spawn, naming the Inferno's best and most damned. */
 	public boolean hallMonument = true;
+	/** The secret ways down (SecretWays): walking into one carries you to the next circle. Off, they are only landmarks. */
+	public boolean secretWays = true;
+	/** The Pilgrimage: an optional run from the Gate of Hell to Purgatory without dying, started at the Pilgrims' Stone. */
+	public boolean pilgrimage = true;
+	/** A pilgrim who dies loses every heart and becomes a ghost (revived at a Blood Altar as usual). Off: the run just ends. */
+	public boolean pilgrimageHardcore = false;
 	/** Vanilla music discs Lucifer's fight plays when the mod ships no track for a phase (jukebox song ids). */
 	public String fallbackMusicDuel = "minecraft:creator";
 	public String fallbackMusicEnraged = "minecraft:pigstep";

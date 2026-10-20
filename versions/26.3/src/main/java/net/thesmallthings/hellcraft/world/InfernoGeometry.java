@@ -318,11 +318,11 @@ public final class InfernoGeometry {
 			// keep Lucifer's pit clean
 			out[0] *= 0.3;
 		}
-		// the roads, the guardians' arenas, Lust's wind pads and the Noble Castle are level ground
+		// the roads, the guardians' arenas, Lust's wind pads, the Noble Castle and the secret ways are level ground
 		double theta = Math.atan2(z, x);
 		double ford = riverAt(re) != null && riverAt(re).zone == Zone.PHLEGETHON ? fordFactor(theta, r) : 0.0;
 		double flat = (1.0 - roadLevelling(theta, r)) * (1.0 - arenaLevelling(x, z)) * (1.0 - WindStreams.padLevelling(x, z))
-				* (1.0 - NobleCastle.levelling(x, z)) * (1.0 - ford);
+				* (1.0 - NobleCastle.levelling(x, z)) * (1.0 - ford) * (1.0 - SecretWays.levelling(x, z));
 		out[0] *= flat;
 		out[1] *= flat;
 		out[2] *= flat;

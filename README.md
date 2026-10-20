@@ -560,6 +560,36 @@ They are built the first time someone comes near. The compass and the Map of Hel
 
 **Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off). The places run over pages: the arrows in the bottom row turn them.
 
+## Secret ways down (3.1)
+
+The roads and ramps are the easy way down, and they always stay open. Off the roads, each circle from Limbo to Malebolge also hides **three secret ways down** (27 in all), each dressed as part of its circle:
+
+| Circle | The secret | Leads down to |
+|---|---|---|
+| Limbo | a ruined well | Lust |
+| Lust | a ring of standing stones round a hole | Gluttony |
+| Gluttony | a sinkhole in the mud | Greed |
+| Greed | a vault's open trapdoor among heaps of coin | the Marsh of Styx |
+| Wrath (the Styx) | a whirlpool ringed by dead stumps | Heresy, inside the Walls of Dis |
+| Heresy | an open tomb with steps going down | the Wood of the Suicides |
+| The Wood of the Suicides | a hollow tree with a soul lantern on each bough | the Burning Sands |
+| The Burning Sands | a funnel in the sand, ribbed with bones | Malebolge |
+| Malebolge | the old man of Crete's golden head, his mouth open | Cocytus |
+
+They stand well away from the roads, ramps, lairs and Rests: you find them by wandering. Look for a thread of souls rising from a hole. **Drop into its mouth** (or right-click it) and a soul-fire draught lifts you for a moment, then sets you down on a small cairn with a lantern in the circle below, at the same angle round Hell. Nothing can hurt you on the way, and you land softly. The first time, you're told where it took you; every secret you've found is marked on the **Map of Hell** (a cyan ring) and counted in the Journal ("Secret ways found: 4 of 27"). Finding one, and finding all of them, are advancements.
+
+Secret ways are built by world generation, so they appear only in parts of the world generated after the update: on a world from before 3.1, only in chunks nobody has visited yet (the Map still shows where they should be once found). `secretWays: false` turns the shortcuts off (the landmarks stay).
+
+## The Pilgrimage (3.1)
+
+An optional challenge: **walk from the Gate of Hell to Purgatory without dying once.**
+
+- **Start it** at the **Pilgrims' Stone**, across the road from the Hall of the Damned by the spawn: right-click its lectern. It warns you plainly what you're signing up for; right-click again within 30 seconds to begin (or type `/pilgrimage start` twice while at the Gate). You can only set out from the Gate or outside it, and never as a ghost. Nobody is ever put on one.
+- **On the way** your run's time (it only counts while you're online) and the deepest circle you've reached show at the top left of your screen, with a scallop shell. The server hears when you set out, and when you reach Heresy and each circle below it. Blood Altars won't carry you while you walk it; secret ways, guardians' lifts and rides are fine. `/pilgrimage` shows how it's going; `/pilgrimage abandon` gives it up (nothing else changes).
+- **It ends** when you climb out to Purgatory after Lucifer (the climb out, or the tunnel at his back): the server hears your time, you get a **Pilgrim's Shell** to keep, the *Pilgrim* advancement and your name on the Stone. If you die first, it's over: everyone hears where ("Anna's pilgrimage ended in Wrath after 2h 14m"), and **you lose nothing more than any death costs**.
+- **The Pilgrims' Stone** names the three fastest pilgrimages and the three that fell deepest.
+- **Hardcore** (`pilgrimageHardcore: true`, off by default): a pilgrim who dies also loses every heart and becomes a ghost, to be revived at a Blood Altar as usual. `pilgrimage: false` turns pilgrimages off.
+
 ## The torments of the circles
 
 Each circle torments the living (26.3: each has a counter, and the first time it touches you, Virgil tells you what it is). A Blood Ward suspends them all. Since 3.0 the circles' punishments are things to play with rather than debuffs: each is a rule you can use or get round.
@@ -687,6 +717,11 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft prestige <player> [set <n>]` / `prestige test` | op | Show or set a player's burned P's; self-test the Seven P's (26.3) |
 | `/hellcraft whiteroom <player>` / `whiteroom release <player>` / `whiteroom list` | op | Shut a player in the white room: a 21×11×21 cell high above the edge of the world, every surface papered with white maps in invisible glow frames and lit from behind, so it has no depth. They're kept in adventure mode and pulled back if they get out, even after a restart; release puts them back where they were, in their old game mode, and takes the room down (26.3) |
 | `/hellcraft hall [build]` | op | The Hall of the Damned standings; (re)build the monument (26.3) |
+| `/pilgrimage [start\|abandon]` | all | How your pilgrimage is going; start one at the Gate (twice, to confirm); give it up (3.1) |
+| `/hellcraft pilgrimage test\|start <player>\|abandon <player>` | op | Self-test the Pilgrimage's rules; start or end one for a player (3.1) |
+| `/hellcraft secrets test\|list` | op | Check every secret way (off the roads, lairs and Rests, landing in the next circle; the first one built); list them (3.1) |
+| `/hellcraft secrets goto <id> [landing]` | op | Go to a secret way (or where it sets you down) to test it (3.1) |
+| `/hellcraft secrets find <player> <id\|all>` / `secrets forget <player>` | op | Mark secret ways found for a player, or forget them (3.1) |
 | `/hellcraft where` | op | Debug: geometry at your position |
 | `/hellcraft reload` | op | Reload `config/hellcraft.json` |
 
@@ -699,6 +734,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - what binding your respawn costs (`bindCostHearts`, 26.3)
 - travel between altars (`travel`, `travelCooldownSeconds`, 26.3)
 - the Seven P's (`prestige`, `prestigeHeartBonus`, `prestigeResetHearts`), the Blood Heart HUD (`heartHud`) and the Hall of the Damned monument (`hallMonument`) (26.3)
+- the secret ways down (`secretWays`) and the Pilgrimage (`pilgrimage`, `pilgrimageHardcore`: a pilgrim who dies becomes a ghost) (3.1)
 - the mob cap multiplier and mob health per depth
 - the ghost tether radius
 - ward length

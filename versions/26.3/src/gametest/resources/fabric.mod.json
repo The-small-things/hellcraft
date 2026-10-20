@@ -20,7 +20,8 @@
 			"net.thesmallthings.hellcraft.gametest.LuciferTest",
 			"net.thesmallthings.hellcraft.gametest.NetherTest",
 			"net.thesmallthings.hellcraft.gametest.ParadisoTest",
-			"net.thesmallthings.hellcraft.gametest.JudgementTest"
+			"net.thesmallthings.hellcraft.gametest.JudgementTest",
+			"net.thesmallthings.hellcraft.gametest.SecretsTest"
 		]
 	},
 	"depends": {
