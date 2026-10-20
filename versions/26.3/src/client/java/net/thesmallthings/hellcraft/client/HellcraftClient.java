@@ -319,5 +319,9 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.HOARDER, HoarderRenderer::new);
 		ModelLayerRegistry.registerModelLayer(ShadeModel.LAYER, ShadeMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.SHADE, ShadeRenderer::new);
+		// the damned in their torments (Torments)
+		ModelLayerRegistry.registerModelLayer(net.thesmallthings.hellcraft.client.render.npc.DamnedModel.LAYER,
+				net.thesmallthings.hellcraft.client.render.gen.DamnedMesh::createLayer);
+		EntityRendererRegistry.register(HellEntities.DAMNED, net.thesmallthings.hellcraft.client.render.npc.DamnedRenderer::new);
 	}
 }

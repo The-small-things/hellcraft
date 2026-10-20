@@ -446,6 +446,14 @@ public final class HellCommands {
 				.then(Commands.literal("lower")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LowerRules.selfTest() + "; " + LowerRules.woodTest(ctx.getSource().getServer().overworld())
 								+ "; " + LowerMonsters.selfTest() + "; " + Frauds.selfTest()))))
+				.then(Commands.literal("damned")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
+								net.thesmallthings.hellcraft.hazard.Torments.selfTest(ctx.getSource().getServer().overworld()))))
+						.then(Commands.literal("spawn").then(Commands.argument("punishment", StringArgumentType.word())
+								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(java.util.Arrays.stream(
+										net.thesmallthings.hellcraft.entity.npc.Damned.Punishment.values()).map(p -> p.id()), builder))
+								.executes(ctx -> reply(ctx.getSource(), net.thesmallthings.hellcraft.hazard.Torments.spawnCommand(ctx.getSource().getLevel(),
+										ctx.getSource().getPosition(), StringArgumentType.getString(ctx, "punishment")))))))
 				.then(Commands.literal("gear")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), LayerEnchants.selfTest(ctx.getSource().getServer())))))
 				.then(Commands.literal("antaeus")

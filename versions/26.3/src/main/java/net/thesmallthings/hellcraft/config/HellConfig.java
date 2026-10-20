@@ -66,6 +66,8 @@ public class HellConfig {
 	public int hoardersMax = 6;
 	/** Each upper circle's own monster comes out near souls passing through: lovers in Lust, gluttons, the wrathful. */
 	public boolean layerMonsters = true;
+	/** The damned suffer each circle's punishment near the souls passing through, and scream now and then (Torments). */
+	public boolean damnedSouls = true;
 	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
 	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */

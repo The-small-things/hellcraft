@@ -106,6 +106,14 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
   `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
   `emperor` Codex page fills in, REVAMP L1); `ForgeOfDis.chainLifts` (the Foundry pillars' chain-lifts); the relics as real items (`HellItems.relic`).
+- The damned (3.1): `entity/npc/Damned` (`hellcraft:damned`, body `tools/art/damned.py`: invulnerable, unpushable, not
+  pickable, never saved, gone when nobody is within 72 blocks) suffers one `Damned.Punishment` per circle; the server names
+  its looping animation (synched `DATA_BASE`) and plays scream, sigh or flinch over it (`DATA_ACT`); client
+  `render/npc/DamnedModel` shows its props by punishment (Greed's weight, the Vestibule leader's banner, Malebolge's gilded
+  hood and cloak). `hazard/Torments` brings them out near players every 2 s (`site` per punishment: off roads, lairs and
+  Rests), caps cries at one per 3 s per player (`mayCry`, sound events `hellcraft:entity.damned.scream`/`sigh` in
+  `assets/hellcraft/sounds.json`), makes the castle's Shades sigh, and has `/hellcraft damned spawn|test`; config
+  `damnedSouls`. `DamnedTest` films every punishment (`damned_*`).
 - `world/`: worldgen glue and landmarks: Gate of Hell, Virgil's Rests (`Shrines`, sites in `ShrineSites`), the
   Spines, Purgatory, the Great Forge, Paradiso and Heaven, the Hall of the Damned, the white room, villages.
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the

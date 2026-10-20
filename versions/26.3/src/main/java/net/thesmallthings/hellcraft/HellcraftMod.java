@@ -130,6 +130,7 @@ public class HellcraftMod implements ModInitializer {
 			Frauds.tick(server);
 			Hoarders.tick(server);
 			LayerMonsters.tick(server);
+			net.thesmallthings.hellcraft.hazard.Torments.tick(server);
 			Shades.tick(server);
 			Ferries.tick(server);
 			Wingbeat.tick(server);

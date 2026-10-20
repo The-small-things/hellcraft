@@ -8,14 +8,7 @@
 	"environment": "client",
 	"entrypoints": {
 		"fabric-client-gametest": [
-			"net.thesmallthings.hellcraft.gametest.JoinTest",
-			"net.thesmallthings.hellcraft.gametest.HudTest",
-			"net.thesmallthings.hellcraft.gametest.RigTest",
-			"net.thesmallthings.hellcraft.gametest.MapTest",
-			"net.thesmallthings.hellcraft.gametest.BossTest",
-			"net.thesmallthings.hellcraft.gametest.LuciferTest",
-			"net.thesmallthings.hellcraft.gametest.NetherTest",
-			"net.thesmallthings.hellcraft.gametest.ParadisoTest"
+			"net.thesmallthings.hellcraft.gametest.DamnedTest"
 		]
 	},
 	"depends": {

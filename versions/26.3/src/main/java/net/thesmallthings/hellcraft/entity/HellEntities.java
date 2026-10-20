@@ -39,6 +39,7 @@ import net.thesmallthings.hellcraft.entity.monster.Mimic;
 import net.thesmallthings.hellcraft.entity.monster.Thief;
 import net.thesmallthings.hellcraft.entity.monster.Wrathful;
 import net.thesmallthings.hellcraft.entity.npc.Angel;
+import net.thesmallthings.hellcraft.entity.npc.Damned;
 import net.thesmallthings.hellcraft.entity.npc.Shade;
 
 /** Hellcraft's own mobs. Each has a renderer and a model in the client sources (client/render). */
@@ -180,6 +181,11 @@ public final class HellEntities {
 			EntityType.Builder.<EmperorWeakPoint>of(EmperorWeakPoint::new, MobCategory.MISC).sized(7.0f, 7.0f).fireImmune().noSummon()
 					.clientTrackingRange(16).updateInterval(5));
 
+	/** The damned, each suffering its circle's punishment (Torments): they can't be hurt, and they scream. */
+	public static final EntityType<Damned> DAMNED = register("damned",
+			EntityType.Builder.of(Damned::new, MobCategory.MISC).sized(0.6f, 1.9f).eyeHeight(1.75f).fireImmune().clientTrackingRange(6)
+					.updateInterval(2));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
@@ -211,6 +217,8 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(ANTAEUS, AntaeusEntity.attributes());
 		FabricDefaultAttributeRegistry.register(FALLEN_SERAPH, FallenSeraphEntity.attributes());
 		FabricDefaultAttributeRegistry.register(EMPEROR, EmperorEntity.attributes());
+		FabricDefaultAttributeRegistry.register(DAMNED, Damned.attributes());
+		Damned.registerSounds();
 		Carrier.register();
 	}
 
