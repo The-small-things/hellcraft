@@ -1,6 +1,7 @@
 package net.thesmallthings.hellcraft.client.nav;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -71,9 +72,9 @@ public class MapOfHellScreen extends Screen {
 
 	@Override
 	protected void init() {
-		side = Math.max(64, Math.min(height - 54, width - 24));
+		side = Math.max(64, Math.min(height - 62, width - 28));
 		left = (width - side) / 2;
-		top = 18;
+		top = 24;
 		MapTexture.prepare();
 		clampView();
 		if (editing != null) {
@@ -166,9 +167,7 @@ public class MapOfHellScreen extends Screen {
 	}
 
 	private void drawMap(GuiGraphicsExtractor g, int mouseX, int mouseY) {
-		g.centeredText(font, "THE MAP OF HELL", width / 2, 6, TITLE);
-		g.fill(left - 2, top - 2, left + side + 2, top + side + 2, 0xFF4A2E1C);
-		g.fill(left - 1, top - 1, left + side + 1, top + side + 1, 0xFF0C0806);
+		frame(g);
 		Identifier texture = MapTexture.get();
 		if (texture == null) {
 			g.centeredText(font, "Drawing the map...", width / 2, top + side / 2 - 4, DIM);
@@ -218,7 +217,11 @@ public class MapOfHellScreen extends Screen {
 		if (here) {
 			you(g, sx(player.getX()), sy(player.getZ()), player.getYRot());
 		}
+		circleLabels(g);
+		rose(g, left + side - 24, top + 30);
+		scaleBar(g, left + 8, top + side - 12);
 		g.disableScissor();
+		title(g);
 
 		legend(g);
 
@@ -227,6 +230,158 @@ public class MapOfHellScreen extends Screen {
 		} else if (mouseX >= left && mouseX < left + side && mouseY >= top && mouseY < top + side) {
 			g.setComponentTooltipForNextFrame(font, tooltip(markers, mouseX, mouseY, player, here), mouseX, mouseY);
 		}
+	}
+
+	private static final int LEATHER = 0xFF551810;
+	private static final int LEATHER_DARK = 0xFF2A0A06;
+	private static final int GOLD = 0xFFC09040;
+	private static final int INK = 0xFF2A1A10;
+	private static final int RED_INK = 0xFF7E140C;
+
+	/** The map's frame: dark leather with a gold line and gold corners, like the Journal's cover. */
+	private void frame(GuiGraphicsExtractor g) {
+		int x0 = left - 7;
+		int y0 = top - 7;
+		int x1 = left + side + 7;
+		int y1 = top + side + 7;
+		g.fill(x0 - 1, y0 - 1, x1 + 1, y1 + 1, LEATHER_DARK);
+		g.fill(x0, y0, x1, y1, LEATHER);
+		g.outline(x0 + 3, y0 + 3, x1 - x0 - 6, y1 - y0 - 6, 0xFF7A4A20);
+		for (int[] c : new int[][]{{x0 + 1, y0 + 1}, {x1 - 7, y0 + 1}, {x0 + 1, y1 - 7}, {x1 - 7, y1 - 7}}) {
+			g.fill(c[0], c[1], c[0] + 6, c[1] + 6, GOLD);
+			g.fill(c[0] + 1, c[1] + 1, c[0] + 5, c[1] + 5, 0xFF8A6020);
+			g.fill(c[0] + 2, c[1] + 2, c[0] + 4, c[1] + 4, GOLD);
+		}
+		g.fill(left - 1, top - 1, left + side + 1, top + side + 1, 0xFF140C08);
+	}
+
+	/** The title, on a parchment label over the frame's top edge. */
+	private void title(GuiGraphicsExtractor g) {
+		Component title = Component.literal("THE MAP OF HELL").withStyle(net.minecraft.ChatFormatting.BOLD);
+		int w = font.width(title) + 28;
+		int x = (width - w) / 2;
+		int y = top - 18;
+		g.fill(x - 1, y - 1, x + w + 1, y + 15, LEATHER_DARK);
+		g.fill(x, y, x + w, y + 14, 0xFFE6D8B6);
+		g.fill(x + 2, y + 2, x + w - 2, y + 3, 0x608A5A30);
+		g.fill(x + 2, y + 11, x + w - 2, y + 12, 0x608A5A30);
+		CompassHud.diamond(g, x + 7, y + 7, RED_INK);
+		CompassHud.diamond(g, x + w - 8, y + 7, RED_INK);
+		g.text(font, title, x + 14, y + 3, RED_INK, false);
+	}
+
+	/** Where each circle's label sits: the middle of its band along the north-west ray (between the roads and ramps). */
+	private static List<double[]> labels;
+	private static List<String> labelNames;
+
+	private static synchronized void prepareLabels() {
+		if (labels != null) {
+			return;
+		}
+		labels = new ArrayList<>();
+		labelNames = new ArrayList<>();
+		double dx = -Math.sqrt(0.5);
+		double dz = -Math.sqrt(0.5);
+		net.thesmallthings.hellcraft.world.Zone current = null;
+		double start = 0;
+		for (double r = InfernoGeometry.BORDER_RADIUS - 2; r >= -4; r -= 4) {
+			net.thesmallthings.hellcraft.world.Zone z = r < 0 ? null : InfernoGeometry.zoneAt(r * dx, r * dz);
+			if (z != current) {
+				if (current != null) {
+					String name = label(current);
+					if (name != null) {
+						double mid = (start + r) / 2;
+						labels.add(new double[]{mid * dx, mid * dz, start - r});
+						labelNames.add(name);
+					}
+				}
+				current = z;
+				start = r;
+			}
+		}
+	}
+
+	private static String label(net.thesmallthings.hellcraft.world.Zone zone) {
+		return switch (zone) {
+			case DARK_WOOD -> "The Dark Wood";
+			case LIMBO -> "I  Limbo";
+			case LUST -> "II  Lust";
+			case GLUTTONY -> "III  Gluttony";
+			case GREED -> "IV  Greed";
+			case STYX -> "V  The Styx";
+			case HERESY -> "VI  Heresy";
+			case PHLEGETHON -> "VII  Phlegethon";
+			case WOOD_OF_SUICIDES -> "The Wood";
+			case BURNING_SANDS -> "The Sands";
+			case MALEBOLGE -> "VIII  Malebolge";
+			case COCYTUS -> "IX  Cocytus";
+			default -> null;
+		};
+	}
+
+	/** Each circle's name, in the middle of its band (where there's room for it). */
+	private void circleLabels(GuiGraphicsExtractor g) {
+		prepareLabels();
+		for (int i = 0; i < labels.size(); i++) {
+			double[] l = labels.get(i);
+			double bandPixels = l[2] / scale();
+			if (bandPixels < 9) {
+				continue;
+			}
+			String name = labelNames.get(i);
+			int x = sx(l[0]);
+			int y = sy(l[1]);
+			int w = font.width(name);
+			if (x + w / 2 < left || x - w / 2 > left + side || y < top || y > top + side) {
+				continue;
+			}
+			g.fill(x - w / 2 - 3, y - 5, x + w / 2 + 3, y + 6, 0x90140A06);
+			g.text(font, name, x - w / 2, y - 4, 0xFFEDE3C8, false);
+		}
+	}
+
+	/** A compass rose: north (up) in red. */
+	private static void rose(GuiGraphicsExtractor g, int cx, int cy) {
+		int r = 13;
+		for (int k = 0; k <= r; k++) {
+			int half = Math.max(0, (r - k) / 4);
+			// north, south, west, east arms
+			g.fill(cx - half, cy - k, cx + half + 1, cy - k + 1, 0xFFB02418);
+			g.fill(cx - half, cy + k, cx + half + 1, cy + k + 1, 0xFFE6D8B6);
+			g.fill(cx - k, cy - half, cx - k + 1, cy + half + 1, 0xFFE6D8B6);
+			g.fill(cx + k, cy - half, cx + k + 1, cy + half + 1, 0xFFE6D8B6);
+		}
+		for (int k = 0; k <= r * 2 / 3; k++) {
+			g.fill(cx - k, cy - k, cx - k + 1, cy - k + 1, 0xC0E6D8B6);
+			g.fill(cx + k, cy - k, cx + k + 1, cy - k + 1, 0xC0E6D8B6);
+			g.fill(cx - k, cy + k, cx - k + 1, cy + k + 1, 0xC0E6D8B6);
+			g.fill(cx + k, cy + k, cx + k + 1, cy + k + 1, 0xC0E6D8B6);
+		}
+		g.fill(cx - 1, cy - 1, cx + 2, cy + 2, INK);
+		Minecraft mc = Minecraft.getInstance();
+		g.text(mc.font, "N", cx - 2, cy - r - 10, 0xFFFF7060, true);
+	}
+
+	/** A scale bar: a round distance, in alternating dark and light blocks. */
+	private void scaleBar(GuiGraphicsExtractor g, int x, int y) {
+		int[] nice = {25, 50, 100, 250, 500, 1000, 2000};
+		int metres = nice[nice.length - 1];
+		for (int n : nice) {
+			if (n / scale() >= 40) {
+				metres = n;
+				break;
+			}
+		}
+		int length = (int) Math.round(metres / scale());
+		g.fill(x - 3, y - 13, x + length + 4, y + 5, 0x90140A06);
+		for (int i = 0; i < 4; i++) {
+			int a = x + length * i / 4;
+			int b = x + length * (i + 1) / 4;
+			g.fill(a, y, b, y + 3, i % 2 == 0 ? 0xFFE6D8B6 : INK);
+		}
+		g.outline(x - 1, y - 1, length + 2, 5, 0xFFE6D8B6);
+		String text = metres >= 1000 ? metres / 1000 + " km" : metres + " m";
+		g.text(font, text, x, y - 11, 0xFFEDE3C8, false);
 	}
 
 	/** The waymark panel: its title, the colours to pick from, and (drawn by their widgets) the name, sharing and buttons. */

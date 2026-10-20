@@ -1,6 +1,7 @@
 package net.thesmallthings.hellcraft.client.nav;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -8,8 +9,10 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.Guide;
 import net.thesmallthings.hellcraft.codex.Codex;
@@ -26,12 +29,13 @@ import java.util.List;
  * The Pilgrim's Journal (J), drawn as an open book: a leather cover and two parchment pages. The left page is the table of
  * contents ("Here and now", then the Codex entries met so far, then the Pilgrim's Guide with this server's numbers,
  * JournalPayload), a red ribbon marking the open page; the right page is that page, in ink, with a scrollbar and arrows to
- * turn to the next. Left and right turn the pages, up and down (or the wheel) scroll, J closes it.
+ * turn to the next. Every page has an icon in the contents and its pictures, large, under its title (JournalIcons). Left and
+ * right turn the pages, up and down (or the wheel) scroll, J closes it.
  */
 public class JournalScreen extends Screen {
 	// ink on parchment
-	private static final int TITLE = 0xFF8E1C12;
-	private static final int HEADING = 0xFF8E1C12;
+	private static final int TITLE = 0xFF6E0E08;
+	private static final int HEADING = 0xFF6E0E08;
 	private static final int TEXT = 0xFF3A2414;
 	private static final int DIM = 0xFF8A7458;
 	private static final int PARCHMENT = 0xFFEADFC3;
@@ -40,7 +44,7 @@ public class JournalScreen extends Screen {
 	private static final int LEATHER_DARK = 0xFF2A0A06;
 	private static final int GOLD = 0xFFC09040;
 	private static final int RIBBON = 0xFFA82418;
-	private static final int ROW = 11;
+	private static final int ROW = 18;
 	private static final int LINE = 10;
 	private static final String[] DIRECTIONS = {"east", "south-east", "south", "south-west", "west", "north-west", "north", "north-east"};
 
@@ -58,8 +62,8 @@ public class JournalScreen extends Screen {
 	private record Line(FormattedCharSequence text, int colour) {
 	}
 
-	/** A row of the table of contents: a section's heading, or a page (its number in the Journal). */
-	private record Row(String text, int page, boolean heading) {
+	/** A row of the table of contents: a section's heading, or a page (its number in the Journal) with its icon. */
+	private record Row(String text, int page, boolean heading, ItemStack icon) {
 	}
 
 	public JournalScreen() {
@@ -74,11 +78,12 @@ public class JournalScreen extends Screen {
 
 	@Override
 	protected void init() {
-		bookW = Math.min(width - 20, 520);
-		bookH = Math.min(height - 20, 300);
+		bookW = Math.min(width - 12, 760);
+		bookH = Math.min(height - 12, 460);
 		bookX = (width - bookW) / 2;
 		bookY = (height - bookH) / 2;
 		selected = Mth.clamp(selected, 0, pageCount() - 1);
+		reveal();
 	}
 
 	@Override
@@ -93,23 +98,40 @@ public class JournalScreen extends Screen {
 	/** The table of contents, in sections. */
 	private List<Row> index() {
 		List<Row> rows = new ArrayList<>();
-		rows.add(new Row("HERE AND NOW", -1, true));
-		rows.add(new Row("Where you are", 0, false));
+		rows.add(new Row("HERE AND NOW", -1, true, ItemStack.EMPTY));
+		rows.add(new Row("Where you are", 0, false, first(icons(0))));
 		List<Codex.Entry> codex = ClientNav.codex();
 		if (!codex.isEmpty()) {
-			rows.add(new Row("THE CODEX", -1, true));
+			rows.add(new Row("THE CODEX", -1, true, ItemStack.EMPTY));
 			for (int i = 0; i < codex.size(); i++) {
-				rows.add(new Row(capitalised(codex.get(i).title()), 1 + i, false));
+				rows.add(new Row(capitalised(codex.get(i).title()), 1 + i, false, first(icons(1 + i))));
 			}
 		}
 		List<Guide.Page> pages = ClientNav.pages();
 		if (!pages.isEmpty()) {
-			rows.add(new Row("THE PILGRIM'S GUIDE", -1, true));
+			rows.add(new Row("THE PILGRIM'S GUIDE", -1, true, ItemStack.EMPTY));
 			for (int i = 0; i < pages.size(); i++) {
-				rows.add(new Row(capitalised(pages.get(i).title()), 1 + codex.size() + i, false));
+				rows.add(new Row(capitalised(pages.get(i).title()), 1 + codex.size() + i, false, first(icons(1 + codex.size() + i))));
 			}
 		}
 		return rows;
+	}
+
+	/** A page's pictures (JournalIcons): the items it's about, or something to know a Codex entry by. */
+	private static List<ItemStack> icons(int page) {
+		if (page == 0) {
+			return JournalIcons.page("WHERE YOU ARE");
+		}
+		List<Codex.Entry> codex = ClientNav.codex();
+		if (page <= codex.size()) {
+			return JournalIcons.codex(codex.get(page - 1).id());
+		}
+		int guide = page - 1 - codex.size();
+		return guide < ClientNav.pages().size() ? JournalIcons.page(ClientNav.pages().get(guide).title()) : List.of();
+	}
+
+	private static ItemStack first(List<ItemStack> icons) {
+		return icons.isEmpty() ? ItemStack.EMPTY : icons.getFirst();
 	}
 
 	/** The open page's name, for the top of the right-hand page. */
@@ -163,8 +185,15 @@ public class JournalScreen extends Screen {
 		return (pageBottom() - 22 - listTop()) / ROW;
 	}
 
+	/** The plate of pictures under the right-hand page's title. */
+	private int plateTop() {
+		return pageTop() + 27;
+	}
+
+	private static final int PLATE_H = 42;
+
 	private int textTop() {
-		return pageTop() + 30;
+		return pageTop() + 30 + (icons(selected).isEmpty() ? 0 : PLATE_H + 4);
 	}
 
 	private int textRows() {
@@ -179,7 +208,7 @@ public class JournalScreen extends Screen {
 		// the left page: the table of contents
 		int lx = leftPageX();
 		int lw = spine() - 8 - lx;
-		g.centeredText(font, "The Pilgrim's Journal", lx + lw / 2, pageTop() + 8, TITLE);
+		centred(g, Component.literal("The Pilgrim's Journal").withStyle(ChatFormatting.BOLD), lx + lw / 2, pageTop() + 8, TITLE);
 		rule(g, lx + 14, spine() - 22, pageTop() + 20);
 		List<Row> rows = index();
 		int visible = listRows();
@@ -188,31 +217,36 @@ public class JournalScreen extends Screen {
 			Row row = rows.get(listScroll + i);
 			int y = listTop() + i * ROW;
 			if (row.heading) {
-				g.text(font, row.text, lx + 10, y + 1, HEADING, false);
-				g.fill(lx + 10, y + 10, lx + 10 + font.width(row.text), y + 11, 0x408E1C12);
+				Component heading = Component.literal(row.text).withStyle(ChatFormatting.BOLD);
+				g.text(font, heading, lx + 10, y + 6, HEADING, false);
+				g.fill(lx + 10, y + 15, lx + 10 + font.width(heading), y + 16, 0x606E0E08);
 				continue;
 			}
 			boolean open = row.page == selected;
-			boolean hover = mouseX >= lx + 6 && mouseX < spine() - 12 && mouseY >= y - 1 && mouseY < y + ROW - 1;
+			boolean hover = mouseX >= lx + 6 && mouseX < spine() - 12 && mouseY >= y && mouseY < y + ROW;
 			if (open) {
 				// the ribbon: out from the book's edge to the open page's name
-				g.fill(bookX + 2, y - 1, lx + 14, y + ROW - 1, RIBBON);
-				g.fill(bookX + 2, y + 2, bookX + 5, y + ROW - 4, LEATHER_DARK);
-				g.fill(lx + 14, y - 1, spine() - 12, y + ROW - 1, 0x30A82418);
+				g.fill(bookX + 2, y, lx + 14, y + ROW, RIBBON);
+				g.fill(bookX + 2, y + 3, bookX + 5, y + ROW - 3, LEATHER_DARK);
+				g.fill(lx + 14, y, spine() - 12, y + ROW, 0x30A82418);
 			} else if (hover) {
-				g.fill(lx + 14, y - 1, spine() - 12, y + ROW - 1, 0x228A5A30);
+				g.fill(lx + 14, y, spine() - 12, y + ROW, 0x228A5A30);
 			}
-			String text = font.plainSubstrByWidth(row.text, spine() - 30 - (lx + 18));
-			g.text(font, text, lx + 18, y + 1, open ? TITLE : TEXT, false);
+			if (!row.icon.isEmpty()) {
+				g.item(row.icon, lx + 17, y + 1);
+			}
+			String text = font.plainSubstrByWidth(row.text, spine() - 30 - (lx + 38));
+			g.text(font, text, lx + 38, y + 5, open ? TITLE : TEXT, false);
 		}
 		scrollbar(g, spine() - 12, listTop(), visible * ROW, listScroll, visible, rows.size());
-		g.centeredText(font, "← → turn the page   J closes", lx + lw / 2, pageBottom() - 12, DIM);
+		centred(g, Component.literal("← → turn the page   J closes"), lx + lw / 2, pageBottom() - 12, DIM);
 
 		// the right page: the open page
 		int rx = spine() + 8;
 		int rw = rightPageEnd() - rx;
-		g.centeredText(font, font.plainSubstrByWidth(pageTitle(), rw - 20), rx + rw / 2, pageTop() + 8, TITLE);
+		centred(g, Component.literal(font.plainSubstrByWidth(pageTitle(), rw - 30)).withStyle(ChatFormatting.BOLD), rx + rw / 2, pageTop() + 8, TITLE);
 		rule(g, rx + 22, rightPageEnd() - 14, pageTop() + 20);
+		plate(g, icons(selected), rx + rw / 2, mouseX, mouseY);
 		List<Line> lines = lines();
 		int textRows = textRows();
 		textScroll = Mth.clamp(textScroll, 0, Math.max(0, lines.size() - textRows));
@@ -225,7 +259,7 @@ public class JournalScreen extends Screen {
 		// turning the page
 		int fy = pageBottom() - 12;
 		String page = "page " + (selected + 1) + " of " + pageCount();
-		g.centeredText(font, page, rx + rw / 2, fy, DIM);
+		centred(g, Component.literal(page), rx + rw / 2, fy, DIM);
 		if (selected > 0) {
 			boolean over = overPrev(mouseX, mouseY);
 			g.text(font, "‹ Back", textX(), fy, over ? TITLE : TEXT, false);
@@ -287,6 +321,43 @@ public class JournalScreen extends Screen {
 		g.fill(px0, pageBottom() - 1, px1, pageBottom(), PARCHMENT_DARK);
 	}
 
+	/** The page's pictures, drawn large on a darker inset of the page, centred on x; hover one for its tooltip. */
+	private void plate(GuiGraphicsExtractor g, List<ItemStack> icons, int x, int mouseX, int mouseY) {
+		if (icons.isEmpty()) {
+			return;
+		}
+		int step = 40;
+		int w = icons.size() * step + 8;
+		int x0 = x - w / 2;
+		int y0 = plateTop();
+		g.fill(x0, y0, x0 + w, y0 + PLATE_H, 0x40A88A58);
+		g.outline(x0, y0, w, PLATE_H, 0x808E6A40);
+		g.outline(x0 + 2, y0 + 2, w - 4, PLATE_H - 4, 0x408E6A40);
+		ItemStack hovered = null;
+		for (int i = 0; i < icons.size(); i++) {
+			int ix = x0 + 8 + i * step;
+			int iy = y0 + 5;
+			// a faint shadow under each, as if drawn on the page
+			g.fill(ix + 4, iy + 29, ix + 28, iy + 31, 0x206A4A20);
+			g.pose().pushMatrix();
+			g.pose().translate(ix, iy);
+			g.pose().scale(2, 2);
+			g.item(icons.get(i), 0, 0);
+			g.pose().popMatrix();
+			if (mouseX >= ix && mouseX < ix + 32 && mouseY >= iy && mouseY < iy + 32) {
+				hovered = icons.get(i);
+			}
+		}
+		if (hovered != null) {
+			g.setTooltipForNextFrame(font, hovered, mouseX, mouseY);
+		}
+	}
+
+	/** Text centred on x, in ink: no drop shadow, which smudges dark text on parchment. */
+	private void centred(GuiGraphicsExtractor g, Component text, int x, int y, int colour) {
+		g.text(font, text, x - font.width(text) / 2, y, colour, false);
+	}
+
 	/** A thin red rule with a diamond in the middle, under a page's title. */
 	private static void rule(GuiGraphicsExtractor g, int x0, int x1, int y) {
 		int mid = (x0 + x1) / 2;
@@ -323,15 +394,19 @@ public class JournalScreen extends Screen {
 		if (to != selected) {
 			selected = to;
 			textScroll = 0;
-			// keep the open page's row in view
-			List<Row> rows = index();
-			for (int i = 0; i < rows.size(); i++) {
-				if (rows.get(i).page == selected) {
-					if (i < listScroll) {
-						listScroll = i;
-					} else if (i >= listScroll + listRows()) {
-						listScroll = i - listRows() + 1;
-					}
+			reveal();
+		}
+	}
+
+	/** Scrolls the table of contents so the open page's row is in view. */
+	private void reveal() {
+		List<Row> rows = index();
+		for (int i = 0; i < rows.size(); i++) {
+			if (rows.get(i).page == selected) {
+				if (i < listScroll) {
+					listScroll = i;
+				} else if (i >= listScroll + listRows()) {
+					listScroll = i - listRows() + 1;
 				}
 			}
 		}
@@ -414,7 +489,8 @@ public class JournalScreen extends Screen {
 			out.add(new Line(FormattedCharSequence.EMPTY, colour));
 			return;
 		}
-		for (FormattedCharSequence part : font.split(FormattedText.of(text), textWidth())) {
+		Style style = colour == HEADING ? Style.EMPTY.withBold(true) : Style.EMPTY;
+		for (FormattedCharSequence part : font.split(FormattedText.of(text, style), textWidth())) {
 			out.add(new Line(part, colour));
 		}
 	}
@@ -535,8 +611,8 @@ public class JournalScreen extends Screen {
 			turn(selected + 1);
 			return true;
 		}
-		if (event.x() >= leftPageX() && event.x() < spine() - 12 && event.y() >= listTop() - 1) {
-			int row = (int) ((event.y() - listTop() + 1) / ROW);
+		if (event.x() >= leftPageX() && event.x() < spine() - 12 && event.y() >= listTop()) {
+			int row = (int) ((event.y() - listTop()) / ROW);
 			List<Row> rows = index();
 			int index = listScroll + row;
 			if (row < listRows() && index < rows.size() && !rows.get(index).heading) {

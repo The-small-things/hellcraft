@@ -143,7 +143,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   deepest-fallen pilgrims; `HallOfTheDamned.describe` lists them too); the Pilgrim's Shell (`HellItems.PILGRIM_SHELL`).
   `SecretsTest` films it all (`secret_*`, `pilgrimage_hud`).
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
-  open page, the page on the right, Back/Next and arrow keys) and waymarks (`world/Waymarks`: kept in `HellState.waymarks`,
+  open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
+  or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`
+  grain and hillshade, a leather frame, circle names, a compass rose and scale bar) and waymarks (`world/Waymarks`: kept in `HellState.waymarks`,
   each player sent their own and the shared ones, `net/WaymarksPayload`; placed and changed with `net/WaymarkEditPayload`;
   client `nav/ClientWaymarks` holds them and which is followed, `MapOfHellScreen` places them (right-click, a panel with
   widgets drawn over the map) and draws pins, `CompassHud` points to the followed one; `/hellcraft waymarks test`,

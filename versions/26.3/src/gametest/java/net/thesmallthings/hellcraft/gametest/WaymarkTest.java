@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- * The Pilgrim's Journal as a book (journal_*: "Where you are", a Guide page, the Codex) and waymarks on the Map of Hell
+ * The Pilgrim's Journal as a book (journal_*: "Where you are", Guide pages, the Codex) and waymarks on the Map of Hell
  * (waymark_*): the panel that places one, the map with a few placed (one shared), and the compass following one. Also
  * runs the waymarks' own self-test on the server.
  */
@@ -43,17 +43,14 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.getInput().setCursorPos(2, 2);
 			context.waitTicks(10);
 			context.takeScreenshot("journal_where");
-			int guide = context.computeOnClient(client -> {
-				for (int i = 0; i < ClientNav.pages().size(); i++) {
-					if (ClientNav.pages().get(i).title().equals("BLOOD ALTARS")) {
-						return 1 + ClientNav.codex().size() + i;
-					}
-				}
-				return 1 + ClientNav.codex().size();
-			});
+			int guide = guidePage(context, "BLOOD ALTARS");
 			context.setScreen(() -> JournalScreen.at(guide));
 			context.waitTicks(5);
 			context.takeScreenshot("journal_guide");
+			int weapons = guidePage(context, "HELL WEAPONS");
+			context.setScreen(() -> JournalScreen.at(weapons));
+			context.waitTicks(5);
+			context.takeScreenshot("journal_weapons");
 			if (context.computeOnClient(client -> !ClientNav.codex().isEmpty())) {
 				context.setScreen(() -> JournalScreen.at(1));
 				context.waitTicks(5);
@@ -96,10 +93,26 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.getInput().setCursorPos(2, 2);
 			context.waitTicks(10);
 			context.takeScreenshot("waymark_map");
+			context.setScreen(() -> MapOfHellScreen.at(0, 0, 1));
+			context.getInput().setCursorPos(2, 2);
+			context.waitTicks(10);
+			context.takeScreenshot("waymark_map_whole");
 			context.setScreen(() -> null);
 			server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 120 8", x, y));
 			context.waitTicks(20);
 			context.takeScreenshot("waymark_compass");
 		}
+	}
+
+	/** The Journal's page number of a Guide page, by its title. */
+	private static int guidePage(ClientGameTestContext context, String title) {
+		return context.computeOnClient(client -> {
+			for (int i = 0; i < ClientNav.pages().size(); i++) {
+				if (ClientNav.pages().get(i).title().equals(title)) {
+					return 1 + ClientNav.codex().size() + i;
+				}
+			}
+			return 1 + ClientNav.codex().size();
+		});
 	}
 }

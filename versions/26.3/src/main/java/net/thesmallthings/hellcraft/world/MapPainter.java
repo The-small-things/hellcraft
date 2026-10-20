@@ -55,30 +55,70 @@ public final class MapPainter {
 	 * blocks wide: thin things (roads, walls) are widened to at least a pixel so they never break up.
 	 */
 	public static int colour(double x, double z, double scale) {
+		// every colour a little toward old parchment, so the map reads as one drawing
+		return mix(paint(x, z, scale), PARCHMENT, 0.12);
+	}
+
+	/** Old parchment, round the funnel on the Map of Hell. */
+	public static final int PARCHMENT = 0xCBB894;
+
+	/** Blends a colour toward another by t (0: all a, 1: all b). */
+	public static int mix(int a, int b, double t) {
+		int r = (int) Math.round(((a >> 16) & 0xFF) * (1 - t) + ((b >> 16) & 0xFF) * t);
+		int g = (int) Math.round(((a >> 8) & 0xFF) * (1 - t) + ((b >> 8) & 0xFF) * t);
+		int bl = (int) Math.round((a & 0xFF) * (1 - t) + (b & 0xFF) * t);
+		return (r << 16) | (g << 8) | bl;
+	}
+
+	private static int paint(double x, double z, double scale) {
 		double h = InfernoGeometry.baseHeight(x, z);
 		double hx = InfernoGeometry.baseHeight(x + scale, z);
 		double hz = InfernoGeometry.baseHeight(x, z + scale);
 		int c = COLOURS.get(InfernoGeometry.zoneAt(x, z));
 		InfernoGeometry.Fluid fluid = InfernoGeometry.fluidAt(x, z);
-		if (fluid != InfernoGeometry.Fluid.NONE && h < InfernoGeometry.fluidLevel(x, z)) {
+		boolean wet = fluid != InfernoGeometry.Fluid.NONE && h < InfernoGeometry.fluidLevel(x, z);
+		if (wet) {
 			c = fluid == InfernoGeometry.Fluid.WATER ? WATER : LAVA;
 		}
 		double reach = Math.max(0, scale / 2 - 2);
 		double re = InfernoGeometry.effectiveRadius(x, z);
+		boolean built = false;
 		if (Math.abs(re - InfernoGeometry.DIS_WALL_RADIUS) <= InfernoGeometry.DIS_WALL_HALF_THICKNESS + reach) {
 			c = WALL;
+			built = true;
 		}
 		if (Math.abs(re - InfernoGeometry.GATE_WALL_RADIUS) <= InfernoGeometry.GATE_WALL_HALF_THICKNESS + reach) {
 			c = gateNear(x, z, scale) ? GATE : WALL;
+			built = true;
 		}
-		c = castle(x, z, scale, reach, c);
+		int castle = castle(x, z, scale, reach, c);
+		built |= castle != c;
+		c = castle;
 		if (roadNear(x, z, InfernoGeometry.ROAD_HALF_WIDTH + reach)) {
-			c = ROAD;
+			return tint(ROAD, 0.95 + 0.1 * InfernoGeometry.fbm(x / 6, z / 6, 41));
 		}
-		double slope = ((h - hx) + (h - hz)) / scale;
-		double shade = Math.max(0.35, Math.min(1.4, 1.0 + slope * 0.6));
-		double height = 0.75 + (h + 60) / 320.0 * 0.5;
-		return tint(c, shade * height);
+		if (built) {
+			return c;
+		}
+		if (wet) {
+			// water ripples and lava's hot veins
+			double ripple = InfernoGeometry.fbm(x / 9, z / 9, 43);
+			return fluid == InfernoGeometry.Fluid.WATER ? tint(c, 0.9 + 0.25 * ripple) : tint(c, 0.85 + 0.3 * Math.abs(ripple));
+		}
+		// the ground's own grain: broad patches and a finer speckle
+		double grain = 1.0 + 0.09 * InfernoGeometry.fbm(x / 34, z / 34, 37) + 0.05 * InfernoGeometry.fbm(x / 7, z / 7, 39);
+		// light from the north-west, so slopes facing it are lit and the far sides fall into shadow
+		double d = Math.max(scale, 6);
+		double lit = (InfernoGeometry.baseHeight(x - d, z - d) - InfernoGeometry.baseHeight(x + d, z + d)) / (2 * d);
+		double shade = Math.max(0.55, Math.min(1.35, 1.0 + lit * 1.1));
+		double height = 0.82 + (h + 60) / 320.0 * 0.36;
+		int out = tint(c, shade * height * grain);
+		// every cliff edge inked in, like a drawn map's contour
+		double drop = Math.max(Math.abs(h - hx), Math.abs(h - hz));
+		if (drop > Math.max(5, scale * 0.6)) {
+			out = tint(out, 0.42);
+		}
+		return out;
 	}
 
 	/** Limbo's Noble Castle: its green meadow ringed by pale walls (only the outermost when zoomed out) and its stream. */

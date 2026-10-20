@@ -13,15 +13,15 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * The Map of Hell's picture: the whole Inferno painted from the geometry (MapPainter), {@link #SIZE} pixels
- * across. Painting takes a fifth of a second, so it starts in the background as soon as the server says this
- * world is the Inferno, and is uploaded the first time the map is opened.
+ * across, on old parchment with an inked rim round the world's edge. Painting takes about a second, so it starts in the
+ * background as soon as the server says this world is the Inferno, and is uploaded the first time the map is opened.
  */
 public final class MapTexture {
 	private MapTexture() {
 	}
 
 	public static final Identifier ID = HellcraftMod.id("map_of_hell");
-	public static final int SIZE = 512;
+	public static final int SIZE = 1024;
 	/** The picture runs from -EXTENT to +EXTENT on both axes. */
 	public static final double EXTENT = InfernoGeometry.BORDER_RADIUS + 100;
 
@@ -62,6 +62,17 @@ public final class MapTexture {
 		return -EXTENT + pixel * 2 * EXTENT / SIZE;
 	}
 
+	/** Outside the world's edge: parchment, its grain and stains, an inked rim and a shadow cast by the funnel. */
+	private static int parchment(double x, double z, double r, double scale) {
+		double past = r - InfernoGeometry.BORDER_RADIUS;
+		if (past < scale * 1.5) {
+			return 0x2A1A10;
+		}
+		double grain = 1.0 + 0.06 * InfernoGeometry.fbm(x / 60, z / 60, 51) + 0.03 * InfernoGeometry.fbm(x / 9, z / 9, 53);
+		double shadow = Math.min(1, past / (scale * 10));
+		return MapPainter.tint(MapPainter.PARCHMENT, grain * (0.78 + 0.22 * shadow));
+	}
+
 	private static int[] paint() {
 		double scale = 2 * EXTENT / SIZE;
 		int[] pixels = new int[SIZE * SIZE];
@@ -70,8 +81,7 @@ public final class MapTexture {
 				double x = world(px + 0.5);
 				double z = world(py + 0.5);
 				double r = Math.sqrt(x * x + z * z);
-				// outside the border, nothing: the funnel sits on the screen's own dark
-				pixels[py * SIZE + px] = r > InfernoGeometry.BORDER_RADIUS ? 0 : 0xFF000000 | MapPainter.colour(x, z, scale);
+				pixels[py * SIZE + px] = 0xFF000000 | (r > InfernoGeometry.BORDER_RADIUS ? parchment(x, z, r, scale) : MapPainter.colour(x, z, scale));
 			}
 		}
 		return pixels;
