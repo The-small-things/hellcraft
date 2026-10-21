@@ -34,9 +34,9 @@ import java.util.Properties;
  */
 public class ShowcaseTest implements FabricClientGameTest {
 	private static final boolean ON = System.getenv("HELLCRAFT_SHOWCASE") != null;
-	private static final int VIEW = 12;
-	/** How long a far view may take to draw (ticks): the software renderer is slow at this distance. */
-	private static final int SETTLE = 12000;
+	private static final int VIEW = 10;
+	/** How long a far view may take to draw (ticks); past that, take what has drawn (a far edge may never finish). */
+	private static final int SETTLE = 2400;
 
 	private static double s(double r) {
 		return InfernoGeometry.scaled(r);
@@ -52,7 +52,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 		properties.setProperty("simulation-distance", "6");
 		try (TestDedicatedServerContext server = context.worldBuilder().adjustSettings(MapTest::inferno).createServer(properties);
 			 TestDedicatedServerConnection connection = server.connect()) {
-			connection.waitForChunksRender(SETTLE);
+			settle(context, connection);
 			server.runCommand("gamemode spectator Player0");
 			context.runOnClient(client -> {
 				client.options.renderDistance().set(VIEW);
@@ -117,13 +117,23 @@ public class ShowcaseTest implements FabricClientGameTest {
 							 String dimension, String name, double x, double y, double z, double lx, double ly, double lz) {
 		server.runCommand(String.format(Locale.ROOT, "execute in %s run tp Player0 %.1f %.1f %.1f facing %.1f %.1f %.1f", dimension, x, y, z, lx, ly, lz));
 		context.waitTicks(30);
-		connection.waitForChunksRender(SETTLE);
+		settle(context, connection);
 		context.waitTicks(40);
 		snap(context, name);
 	}
 
 	private static void snap(ClientGameTestContext context, String name) {
-		context.takeScreenshot(TestScreenshotOptions.of("showcase_" + name).withSize(1920, 1080));
+		java.nio.file.Path saved = context.takeScreenshot(TestScreenshotOptions.of("showcase_" + name).withSize(1920, 1080));
+		System.out.println("Showcase picture: " + saved.toAbsolutePath());
+	}
+
+	/** Waits for the chunks round the camera to draw, or for SETTLE ticks, whichever comes first. */
+	private static void settle(ClientGameTestContext context, TestDedicatedServerConnection connection) {
+		try {
+			connection.waitForChunksRender(SETTLE);
+		} catch (AssertionError e) {
+			System.out.println("Showcase: not every chunk drew in time; taking the picture anyway");
+		}
 	}
 
 	/** The Noble Castle from the air, then its court with the shades. */
@@ -152,11 +162,11 @@ public class ShowcaseTest implements FabricClientGameTest {
 		double z = z0;
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f 200 %.1f", x, z));
 		context.waitTicks(10);
-		connection.waitForChunksRender(SETTLE);
+		settle(context, connection);
 		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING, (int) x, (int) z));
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f", x, ground + 6, z));
 		context.waitTicks(10);
-		connection.waitForChunksRender(SETTLE);
+		settle(context, connection);
 		List<Integer> ids = server.computeOnServer(s -> Torments.spawnNear(s.overworld(), punishment, x, z, 3, 40, 400).stream()
 				.map(Entity::getId).toList());
 		if (ids.isEmpty()) {
@@ -169,7 +179,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %.2f %.2f facing %.2f %.2f %.2f", at.x + dx / len * far, at.y + up,
 				at.z + dz / len * far, at.x, at.y + 1.2, at.z));
 		context.waitTicks(5);
-		connection.waitForChunksRender(SETTLE);
+		settle(context, connection);
 		context.waitTicks(30);
 		snap(context, "damned_" + punishment.id());
 		server.computeOnServer(s -> {
@@ -212,7 +222,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 		server.runCommand(String.format(Locale.ROOT, "execute in %s run tp Player0 %.1f %.1f %.1f facing %d %d %d", dimension,
 				x + ax * far, ground + up, z + az * far, x, ground + 3, z));
 		context.waitTicks(20);
-		connection.waitForChunksRender(SETTLE);
+		settle(context, connection);
 		String out = server.computeOnServer(s -> GuardianManager.summon(s, guardian));
 		if (!out.contains("awakens")) {
 			throw new AssertionError(guardian.id() + " could not be summoned: " + out);
