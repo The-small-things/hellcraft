@@ -33,10 +33,16 @@ import java.util.Properties;
  * Dis, Purgatory and Paradiso. Without the variable it does nothing, so CI doesn't pay for it.
  */
 public class ShowcaseTest implements FabricClientGameTest {
-	private static final boolean ON = System.getenv("HELLCRAFT_SHOWCASE") != null;
+	/** Which groups to film: "1" or "all" for every one, else a comma list of hell, court, bosses, realms. */
+	private static final String GROUPS = System.getenv("HELLCRAFT_SHOWCASE");
+	private static final boolean ON = GROUPS != null;
+
+	private static boolean wants(String group) {
+		return GROUPS.equals("1") || GROUPS.equals("all") || List.of(GROUPS.split(",")).contains(group);
+	}
 	private static final int VIEW = 10;
 	/** How long a far view may take to draw (ticks); past that, take what has drawn (a far edge may never finish). */
-	private static final int SETTLE = 2400;
+	private static final int SETTLE = 900;
 
 	private static double s(double r) {
 		return InfernoGeometry.scaled(r);
@@ -62,36 +68,41 @@ public class ShowcaseTest implements FabricClientGameTest {
 			});
 			String o = "minecraft:overworld";
 
-			// the way in, and the funnel opening below
-			int gate = InfernoGeometry.gateX();
-			shot(context, server, connection, o, "gate", gate + 70, 215, 30, gate - 20, 175, 0);
-			shot(context, server, connection, o, "funnel", s(2650), 240, s(-420), s(1500), 60, 0);
-			shot(context, server, connection, o, "road_lust", s(2520), 140, 10, s(2300), 110, 0);
-			castle(context, server, connection);
-			damned(context, server, connection, Punishment.LUST, 2425, 30, 10, 2);
-			fen(context, server, connection);
-			shot(context, server, connection, o, "walls_of_dis", s(1500), 100, 40, s(1380), 85, 0);
-			damned(context, server, connection, Punishment.HERESY, 1240, 24, 9, 3.5);
-			shot(context, server, connection, o, "malebolge", s(720), 50, 30, s(600), 20, 0);
-			damned(context, server, connection, Punishment.MALEBOLGE, 640, 24, 11, 2.5);
-			shot(context, server, connection, o, "spine", s(360), 16, 50, s(260), -20, 0);
-			shot(context, server, connection, o, "cocytus", 120, -22, 34, 0, -20, 0);
-
-			// the guardians, each fighting a dummy in its own lair
-			guardian(context, server, connection, Guardian.MINOS, 14, 5, new String[]{"strike", "tail"}, new int[]{16, 20});
-			guardian(context, server, connection, Guardian.CERBERUS, 18, 6, new String[]{"howl", "maws"}, new int[]{22, 16});
-			guardian(context, server, connection, Guardian.PLUTUS, 18, 6, new String[]{"gold", "pape"}, new int[]{18, 22});
-			guardian(context, server, connection, Guardian.PHLEGYAS, 18, 6, new String[]{"wave", "oar"}, new int[]{20, 14});
-			guardian(context, server, connection, Guardian.FURIES, 16, 6, new String[]{"medusa", "shriek"}, new int[]{28, 14});
-			guardian(context, server, connection, Guardian.FARINATA, 14, 5, new String[]{"pyres", "disdain"}, new int[]{24, 16});
-			guardian(context, server, connection, Guardian.MINOTAUR, 16, 5, new String[]{"stomp", "gore"}, new int[]{22, 16});
-			guardian(context, server, connection, Guardian.GERYON, 18, 7, new String[]{"coil", "sting"}, new int[]{26, 16});
+			if (wants("hell")) {
+				// the way in, and down through the circles
+				int gate = InfernoGeometry.gateX();
+				shot(context, server, connection, o, "gate", gate + 70, 215, 30, gate - 20, 175, 0);
+				shot(context, server, connection, o, "road_lust", s(2520), 140, 10, s(2300), 110, 0);
+				castle(context, server, connection, true);
+				fen(context, server, connection);
+				shot(context, server, connection, o, "walls_of_dis", s(1500), 100, 40, s(1380), 85, 0);
+				damned(context, server, connection, Punishment.HERESY, 1240, 24, 9, 3.5);
+				shot(context, server, connection, o, "spine", s(360), 16, 50, s(260), -20, 0);
+				shot(context, server, connection, o, "cocytus", 120, -22, 34, 0, -20, 0);
+			}
+			if (wants("court")) {
+				castle(context, server, connection, false);
+			}
+			if (wants("bosses")) {
+				// the guardians, each fighting a dummy in its own lair
+				guardian(context, server, connection, Guardian.MINOS, 10, 3.5, new String[]{"strike", "tail"}, new int[]{16, 20});
+				guardian(context, server, connection, Guardian.CERBERUS, 13, 4, new String[]{"howl", "maws"}, new int[]{22, 16});
+				guardian(context, server, connection, Guardian.PLUTUS, 12, 4, new String[]{"gold", "pape"}, new int[]{18, 22});
+				guardian(context, server, connection, Guardian.PHLEGYAS, 12, 4, new String[]{"wave", "oar"}, new int[]{20, 14});
+				guardian(context, server, connection, Guardian.FURIES, 11, 4, new String[]{"medusa", "shriek"}, new int[]{28, 14});
+				guardian(context, server, connection, Guardian.FARINATA, 10, 3.5, new String[]{"pyres", "disdain"}, new int[]{24, 16});
+				guardian(context, server, connection, Guardian.MINOTAUR, 11, 3.5, new String[]{"stomp", "gore"}, new int[]{22, 16});
+				guardian(context, server, connection, Guardian.GERYON, 13, 5, new String[]{"coil", "sting"}, new int[]{26, 16});
+			}
+			if (!wants("realms")) {
+				return;
+			}
 
 			// the Forge of Dis, and Vulcan in it
 			String n = "minecraft:the_nether";
-			shot(context, server, connection, n, "forge", 110, 70, 60, 0, 60, 0);
+			shot(context, server, connection, n, "forge", 96, 58, 30, 0, 66, 0);
 			shot(context, server, connection, n, "slag_sea", 100, 50, 20, 40, 32, -10);
-			guardian(context, server, connection, Guardian.VULCAN, 15, 5, new String[]{"hammerfall", "molten"}, new int[]{24, 26});
+			guardian(context, server, connection, Guardian.VULCAN, 11, 4, new String[]{"hammerfall", "molten"}, new int[]{24, 26});
 
 			// Purgatory, Paradiso and the Seraph
 			String p = "hellcraft:purgatory";
@@ -108,7 +119,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 			double[] ec = ParadisoGeometry.centre(Sphere.EMPYREAN);
 			int ey = ParadisoGeometry.topY(Sphere.EMPYREAN);
 			shot(context, server, connection, h, "rose", ec[0] + 44, ey + 16, ec[1] + 26, ec[0], ey + 8, ec[1]);
-			guardian(context, server, connection, Guardian.SERAPH, 16, 5, new String[]{"gloria", "wings"}, new int[]{40, 18});
+			guardian(context, server, connection, Guardian.SERAPH, 12, 4, new String[]{"gloria", "wings"}, new int[]{40, 18});
 		}
 	}
 
@@ -123,6 +134,12 @@ public class ShowcaseTest implements FabricClientGameTest {
 	}
 
 	private static void snap(ClientGameTestContext context, String name) {
+		// Virgil's tips and a boss's name card draw even with the HUD hidden: clear them for the picture
+		context.runOnClient(client -> {
+			net.thesmallthings.hellcraft.client.dialogue.DialogueHud.reset();
+			net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer.reset();
+		});
+		context.waitTicks(1);
 		java.nio.file.Path saved = context.takeScreenshot(TestScreenshotOptions.of("showcase_" + name).withSize(1920, 1080));
 		System.out.println("Showcase picture: " + saved.toAbsolutePath());
 	}
@@ -136,15 +153,19 @@ public class ShowcaseTest implements FabricClientGameTest {
 		}
 	}
 
-	/** The Noble Castle from the air, then its court with the shades. */
-	private static void castle(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+	/** The Noble Castle from the air, or its court with the shades. */
+	private static void castle(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection,
+							   boolean aerial) {
 		int cx = NobleCastle.X;
 		int cz = NobleCastle.Z;
 		server.runCommand(String.format(Locale.ROOT, "forceload add %d %d %d %d", cx - 56, cz - 56, cx + 56, cz + 56));
 		int ground = server.computeOnServer(s -> s.overworld().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, cx + 3, cz - 12));
-		shot(context, server, connection, "minecraft:overworld", "castle", cx + 70, ground + 30, cz + 58, cx, ground + 4, cz);
-		server.computeOnServer(s -> Shades.ensure(s.overworld(), false));
-		shot(context, server, connection, "minecraft:overworld", "castle_court", cx + 6.5, ground + 4, cz - 20.5, cx, ground + 2, cz);
+		if (aerial) {
+			shot(context, server, connection, "minecraft:overworld", "castle", cx + 70, ground + 30, cz + 58, cx, ground + 4, cz);
+		} else {
+			server.computeOnServer(s -> Shades.ensure(s.overworld(), false));
+			shot(context, server, connection, "minecraft:overworld", "castle_court", cx + 4.5, ground + 3, cz - 17.5, cx, ground + 2, cz);
+		}
 		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d %d %d", cx - 56, cz - 56, cx + 56, cz + 56));
 	}
 
@@ -220,7 +241,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 		ax /= len;
 		az /= len;
 		server.runCommand(String.format(Locale.ROOT, "execute in %s run tp Player0 %.1f %.1f %.1f facing %d %d %d", dimension,
-				x + ax * far, ground + up, z + az * far, x, ground + 3, z));
+				x + ax * far, ground + up, z + az * far, x, ground + 4, z));
 		context.waitTicks(20);
 		settle(context, connection);
 		String out = server.computeOnServer(s -> GuardianManager.summon(s, guardian));
