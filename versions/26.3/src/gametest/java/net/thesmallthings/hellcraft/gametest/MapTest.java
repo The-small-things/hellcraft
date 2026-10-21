@@ -707,9 +707,11 @@ public class MapTest implements FabricClientGameTest {
 		double x = s(2160);
 		double y = InfernoGeometry.baseHeight(x, 6) + 2;
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 90 8", x, y));
-		context.waitTicks(10);
+		// crossing into Gluttony shows its card; on a slow machine it may fade before the chunks have drawn, so show it
+		// again for the picture
+		context.waitFor(client -> LayerCard.showing() == Circle.GLUTTONY, 200);
 		connection.waitForChunksRender();
-		context.waitFor(client -> LayerCard.showing() == Circle.GLUTTONY, 100);
+		context.runOnClient(client -> LayerCard.show(Circle.GLUTTONY));
 		context.waitTicks(30);
 		context.takeScreenshot("nav_card_gluttony");
 		// the card fades after about seven seconds, leaving the compass
