@@ -22,7 +22,8 @@
 			"net.thesmallthings.hellcraft.gametest.NetherTest",
 			"net.thesmallthings.hellcraft.gametest.ParadisoTest",
 			"net.thesmallthings.hellcraft.gametest.JudgementTest",
-			"net.thesmallthings.hellcraft.gametest.SecretsTest"
+			"net.thesmallthings.hellcraft.gametest.SecretsTest",
+			"net.thesmallthings.hellcraft.gametest.ShowcaseTest"
 		]
 	},
 	"depends": {

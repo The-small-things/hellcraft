@@ -58,6 +58,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   (with only BossTest listed) films every model's key frames from its side, front on the right (`audit_*`): check
   that blows swing forward. `python3 tools/art/render.py <model> [--anim <name> --times 0.4,0.8] [--views front,three,side,back]`
   renders a .bbmodel offline in a second (versions/26.3/build/art-preview/): use it while building a model, then confirm in game.
+- `HELLCRAFT_SHOWCASE=1 bash tools/dev/clienttest.sh` (best with only ShowcaseTest listed) takes the showcase pictures: no HUD,
+  view distance 12, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without
+  the variable ShowcaseTest does nothing, so CI skips it.
 
 ## Code map (`versions/26.3/src/main/java/net/thesmallthings/hellcraft/`; client-only code in `src/client`)
 - `blood/`: hearts and lifesteal (`Hearts`, `DeathHandler`, `HellState` = all saved data), Blood Altars and their
