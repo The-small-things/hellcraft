@@ -4,7 +4,7 @@
 
 A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
 
-**Hellcraft 3.0 is out:** a new, wider map with roads and a compass, every boss and monster on a real animated body, a rule to play with in every circle, Lucifer's two-part fight, the Nether rebuilt as the Forge of Dis, and Purgatory and Paradiso as worlds of their own (the plan was [the revamp](docs/REVAMP.md)). Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below), and 3.0 needs **a new world**. The old 1.21.1 version is frozen and no longer updated.
+**Hellcraft 3.1 is out:** a title screen of its own, the damned suffering in every circle, Minos's judgement, champions, secret ways down, an optional Pilgrimage, waymarks and a Journal you can read like a book (below). It came after **3.0**: a new, wider map with roads and a compass, every boss and monster on a real animated body, a rule to play with in every circle, Lucifer's two-part fight, the Nether rebuilt as the Forge of Dis, and Purgatory and Paradiso as worlds of their own (the plan was [the revamp](docs/REVAMP.md)). Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below), and 3.0 needed **a new world** (a 3.0 world carries on in 3.1). The old 1.21.1 version is frozen and no longer updated.
 
 ## Screenshots
 
@@ -54,11 +54,11 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 ![map](docs/inferno_map.png)
 
-**New in 3.1 (beta):**
+**New in 3.1:**
 - **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
 - **The damned** suffer each circle's punishment around you, and scream.
 - **Limbo has no colour**, except in the Noble Castle's light.
-- **Waymarks** on the Map of Hell (yours, or shared with everyone) that the compass can follow, and **the Journal as a book**.
+- **Waymarks** on the Map of Hell (yours, or shared with everyone) that the compass can follow, the Map drawn on parchment, and **the Journal as a book** with pictures on every page.
 - **Minos judges you** by your worst sin; **champions** of the circles walk; **secret ways down** hide off the roads; and an optional **Pilgrimage**: the Gate to Purgatory without dying once.
 
 **New in 3.0:**
@@ -78,7 +78,7 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 ## Install it
 
-Grab **Hellcraft 3.0.0** (the latest release) from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). The next version is there too as a **beta** ("Hellcraft 3.1.0 beta"): newer, still being tested. A server and its players need the same version.
+Grab **Hellcraft 3.1.0** (the latest release) from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). When the next version is being tested it's there too as a **beta**: newer, still changing. A server and its players need the same version.
 
 - **Modrinth App or Prism Launcher (easiest):** download `Hellcraft-<version>-mc26.3.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you. Use this to play single player **and** to join a Hellcraft server.
 - **Official Minecraft Launcher:** download `hellcraft-<version>-mc26.3-mods.zip` and follow the `INSTALL.txt` inside. In short:

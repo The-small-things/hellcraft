@@ -109,7 +109,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `hazard/guardian/LairLifts` (a beaten guardian's lair keeps a soul-fire lift to the next circle, REVAMP Q2;
   `/hellcraft lifts test`); `Codex.RUMOURS` (each guardian of Hell says something about Lucifer as it falls, and the
   `emperor` Codex page fills in, REVAMP L1); `ForgeOfDis.chainLifts` (the Foundry pillars' chain-lifts); the relics as real items (`HellItems.relic`).
-- 3.1 (beta): the title screen (client `title/HellTitle` with `mixin/TitleScreenMixin` (logo, splash, version) and
+- 3.1: the title screen (client `title/HellTitle` with `mixin/TitleScreenMixin` (logo, splash, version) and
   `mixin/ScreenMixin` (red glow and embers over every menu's panorama); the logo is `gen_textures.py` `title_logo`, the
   panorama of Hell is painted by `tools/art/panorama.py` (a ray-marched heightfield of the funnel, Lucifer in the pit) into
   `assets/minecraft/textures/gui/title/background`; `TitleTest` screenshots it, `HELLCRAFT_PANORAMA=1` also films in-game
@@ -125,7 +125,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   Rests), caps cries at one per 3 s per player (`mayCry`, sound events `hellcraft:entity.damned.scream`/`sigh` in
   `assets/hellcraft/sounds.json`), makes the castle's Shades sigh, and has `/hellcraft damned spawn|test`; config
   `damnedSouls`. `DamnedTest` films every punishment (`damned_*`).
-- 3.1 (beta), Minos's judgement: `blood/Sins` works out each soul's worst sin from vanilla statistics (and `HellState.Soul`'s
+- 3.1, Minos's judgement: `blood/Sins` works out each soul's worst sin from vanilla statistics (and `HellState.Soul`'s
   `tamedKilled`, `weakKills`), each count over an ordinary pilgrim's share, Limbo below 1; kept in `Soul.judged`/`judgedFact`.
   `MinosFight.judge` wraps his tail once per circle (`MinosAnim.JUDGE` from tools/art/minos.py, event `count`) for souls
   walking in for the first time or judged differently; `Sins.tick` judges walk-ins while he sleeps; the title in the tab
@@ -260,7 +260,7 @@ his back. **Phase 6 (the Nether) is built** (2026-10-16): the Forge of Dis
 Purgatory's own sea, Paradiso's nine stacked spheres with their columns of light and trials, the Seraph on a real body,
 the Rose on top, no strongholds, the story arc in the Journal. **Phase 8 (polish) is under way** (2026-10-17): the
 loadout command, the style panel, the guardians' lifts and lines about Lucifer, the chain-lifts, the relics as real items, journey kits, four lairs per guardian and eight Rests per circle, the arena teleport. Still to come: balance
-from the play session, boss music (none sent yet), in later 3.0 updates. **3.0.0 was released** on 2026-10-19 at the owner's request, and 3.1.0 is in beta (2026-10-20: title screen, boss impacts, the damned, grey Limbo, Minos's judgement, champions, secret ways, the Pilgrimage; ideas from comparing other Inferno mods); later stable releases (3.0.1 and on) bump `mod_version` and add a "New in" block as usual. Each phase ships as a test build for a play session before the next.
+from the play session, boss music (none sent yet), in later 3.0 updates. **3.0.0 was released** on 2026-10-19 at the owner's request, and **3.1.0 was released** on 2026-10-28 at the owner's request (begun 2026-10-20: title screen, boss impacts, the damned, grey Limbo, Minos's judgement, champions, secret ways, the Pilgrimage, ideas from comparing other Inferno mods; then waymarks, the Journal as a book with item pictures, the Map on parchment, and the README's showcase screenshots); later stable releases bump `mod_version` and add a "New in" block as usual. Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
 21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so
