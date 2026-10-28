@@ -6,6 +6,52 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 **Hellcraft 3.0 is out:** a new, wider map with roads and a compass, every boss and monster on a real animated body, a rule to play with in every circle, Lucifer's two-part fight, the Nether rebuilt as the Forge of Dis, and Purgatory and Paradiso as worlds of their own (the plan was [the revamp](docs/REVAMP.md)). Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below), and 3.0 needs **a new world**. The old 1.21.1 version is frozen and no longer updated.
 
+## Screenshots
+
+![The Gate of Hell](docs/showcase/01_gate.jpg)
+
+**The descent:** the Pilgrim Road into Lust, Limbo's Noble Castle and its court, the Fen of Styx, the Walls of Dis, the burning tombs of Heresy, the Spine and Cocytus.
+
+<p align="center">
+  <a href="docs/showcase/02_road_lust.jpg"><img src="docs/showcase/02_road_lust.jpg" width="32%" alt="road lust"></a>
+  <a href="docs/showcase/03_castle.jpg"><img src="docs/showcase/03_castle.jpg" width="32%" alt="castle"></a>
+  <a href="docs/showcase/04_castle_court.jpg"><img src="docs/showcase/04_castle_court.jpg" width="32%" alt="castle court"></a>
+  <a href="docs/showcase/05_fen.jpg"><img src="docs/showcase/05_fen.jpg" width="32%" alt="fen"></a>
+  <a href="docs/showcase/06_walls_of_dis.jpg"><img src="docs/showcase/06_walls_of_dis.jpg" width="32%" alt="walls of dis"></a>
+  <a href="docs/showcase/07_damned_heresy.jpg"><img src="docs/showcase/07_damned_heresy.jpg" width="32%" alt="damned heresy"></a>
+  <a href="docs/showcase/08_spine.jpg"><img src="docs/showcase/08_spine.jpg" width="32%" alt="spine"></a>
+  <a href="docs/showcase/09_cocytus.jpg"><img src="docs/showcase/09_cocytus.jpg" width="32%" alt="cocytus"></a>
+</p>
+
+**The guardians,** each fighting in its own lair, its danger marks on the ground: Minos, Cerberus, Plutus, Phlegyas, the Furies, Farinata, Geryon and Vulcan.
+
+<p align="center">
+  <a href="docs/showcase/10_minos_tail.jpg"><img src="docs/showcase/10_minos_tail.jpg" width="32%" alt="minos tail"></a>
+  <a href="docs/showcase/11_cerberus_howl.jpg"><img src="docs/showcase/11_cerberus_howl.jpg" width="32%" alt="cerberus howl"></a>
+  <a href="docs/showcase/12_plutus_pape.jpg"><img src="docs/showcase/12_plutus_pape.jpg" width="32%" alt="plutus pape"></a>
+  <a href="docs/showcase/13_phlegyas_wave.jpg"><img src="docs/showcase/13_phlegyas_wave.jpg" width="32%" alt="phlegyas wave"></a>
+  <a href="docs/showcase/14_furies_shriek.jpg"><img src="docs/showcase/14_furies_shriek.jpg" width="32%" alt="furies shriek"></a>
+  <a href="docs/showcase/15_farinata_pyres.jpg"><img src="docs/showcase/15_farinata_pyres.jpg" width="32%" alt="farinata pyres"></a>
+  <a href="docs/showcase/16_geryon_sting.jpg"><img src="docs/showcase/16_geryon_sting.jpg" width="32%" alt="geryon sting"></a>
+  <a href="docs/showcase/17_vulcan_hammerfall.jpg"><img src="docs/showcase/17_vulcan_hammerfall.jpg" width="32%" alt="vulcan hammerfall"></a>
+  <a href="docs/showcase/18_vulcan_molten.jpg"><img src="docs/showcase/18_vulcan_molten.jpg" width="32%" alt="vulcan molten"></a>
+</p>
+
+**Beyond Hell:** the Earthly Paradise on top of Purgatory, the stacked spheres of Paradiso, the Rose and the Seraph.
+
+<p align="center">
+  <a href="docs/showcase/19_earthly_paradise.jpg"><img src="docs/showcase/19_earthly_paradise.jpg" width="32%" alt="earthly paradise"></a>
+  <a href="docs/showcase/20_paradiso_sun.jpg"><img src="docs/showcase/20_paradiso_sun.jpg" width="32%" alt="paradiso sun"></a>
+  <a href="docs/showcase/21_paradiso_mars.jpg"><img src="docs/showcase/21_paradiso_mars.jpg" width="32%" alt="paradiso mars"></a>
+  <a href="docs/showcase/22_paradiso_fixed_stars.jpg"><img src="docs/showcase/22_paradiso_fixed_stars.jpg" width="32%" alt="paradiso fixed stars"></a>
+  <a href="docs/showcase/23_rose.jpg"><img src="docs/showcase/23_rose.jpg" width="32%" alt="rose"></a>
+  <a href="docs/showcase/24_seraph_gloria.jpg"><img src="docs/showcase/24_seraph_gloria.jpg" width="32%" alt="seraph gloria"></a>
+</p>
+
+*Taken in game by the client test `ShowcaseTest`, with no HUD and no shaders. Click a picture for the full size.*
+
+### The Map of Hell
+
 ![map](docs/inferno_map.png)
 
 **New in 3.1 (beta):**
