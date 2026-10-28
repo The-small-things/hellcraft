@@ -248,4 +248,4 @@ jobs:
             - **Official Minecraft Launcher:** download `hellcraft-${{ steps.ver.outputs.ver }}-mc26.3-mods.zip` and follow `INSTALL.txt`.
             - **Single player:** Create New World, World tab, World Type: **Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
 
-            **Servers:** use `hellcraft-${{ steps.ver.outputs.ver }}-mc26.3.jar` with the Docker setup in the README (`itzg/minecraft-server:java25`, `VERSION` 26.3) and **a new world**. Only port 25565 is needed: all the art ships in the mod. Players without the matching Hellcraft are told what to install.
+            **Servers:** use `hellcraft-${{ steps.ver.outputs.ver }}-mc26.3.jar` with the Docker setup in the README (`itzg/minecraft-server:java25`, `VERSION` 26.3); a world made with 3.0 carries on, an older one needs replacing. Only port 25565 is needed: all the art ships in the mod. Players without the matching Hellcraft are told what to install.
