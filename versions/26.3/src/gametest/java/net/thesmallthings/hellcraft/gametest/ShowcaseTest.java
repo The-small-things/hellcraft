@@ -40,9 +40,9 @@ public class ShowcaseTest implements FabricClientGameTest {
 	private static boolean wants(String group) {
 		return GROUPS.equals("1") || GROUPS.equals("all") || List.of(GROUPS.split(",")).contains(group);
 	}
-	private static final int VIEW = 10;
+	private static final int VIEW = 16;
 	/** How long a far view may take to draw (ticks); past that, take what has drawn (a far edge may never finish). */
-	private static final int SETTLE = 900;
+	private static final int SETTLE = 3600;
 
 	private static double s(double r) {
 		return InfernoGeometry.scaled(r);

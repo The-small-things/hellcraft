@@ -822,7 +822,7 @@ Hellcraft is written by **Claude Code**, Anthropic's AI coding agent, working fo
   - unit tests of the geometry and rules;
   - a **smoke test** (`scripts/smoke-test.sh`) that boots a real server in Docker (`itzg/minecraft-server`), generates every circle, drives it over RCON to run each feature's self-test command, and fails on any error in the log;
   - **client game tests** (`versions/26.3/src/gametest`, Fabric's client game test API): a real Minecraft client runs headless (Xvfb and Mesa's software renderer), joins a server and single-player worlds, fights the bosses, opens the Map and the Journal, and takes hundreds of screenshots. Claude looks at the screenshots to check every model, animation, effect and screen, and they're kept as a CI download.
-- **Showcase pictures.** The screenshots at the top come from one more client test, `ShowcaseTest`: no HUD, full HD, the bosses fighting in their own lairs. Run it with `HELLCRAFT_SHOWCASE=all bash tools/dev/clienttest.sh`.
+- **Showcase pictures.** The screenshots at the top come from one more client test, `ShowcaseTest`: no HUD, full HD, the bosses fighting in their own lairs. Run it with `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh`.
 - **Packaging and releases.** `scripts/package-singleplayer.sh` builds the Modrinth modpack (`.mrpack`) and the mods zip; CI publishes them as the beta on every push and as a stable release on a commit marked `[release]`.
 
 ## Development
