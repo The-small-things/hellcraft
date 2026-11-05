@@ -6,6 +6,7 @@
 	"client": [
 		"BossOverlayAccessor",
 		"CameraMixin",
+		"EntityRendererMixin",
 		"GameRendererMixin",
 		"HeartTypeMixin",
 		"HudMixin",
