@@ -68,6 +68,10 @@ public class HellConfig {
 	public boolean layerMonsters = true;
 	/** The damned suffer each circle's punishment near the souls passing through, and scream now and then (Torments). */
 	public boolean damnedSouls = true;
+	/** Now and then a shade stands far off and stares at a player, then fades as they come near (Onlookers). */
+	public boolean onlookers = true;
+	/** About how many minutes pass, for each player, between one onlooker and the next. */
+	public int onlookerMinutes = 5;
 	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
 	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */

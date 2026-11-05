@@ -424,6 +424,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   waymarks=$(rcon "hellcraft waymarks test")
   echo "$waymarks"
   echo "$waymarks" | grep -q "Waymarks test OK" || { echo "Waymarks don't work"; exit 1; }
+  # the onlookers: a shade in a soul's skin stands still, can't be hurt, fades, and a stray from before a restart is cleared
+  onlooker=$(rcon "hellcraft onlooker test")
+  echo "$onlooker"
+  echo "$onlooker" | grep -q "Onlookers test OK" || { echo "The onlookers are broken"; exit 1; }
   # the danger language: red and purple blows can't be blocked (hellcraft:judgement is in minecraft:bypasses_shield)
   danger=$(rcon "hellcraft danger test")
   echo "$danger"

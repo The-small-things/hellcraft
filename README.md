@@ -54,6 +54,9 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 ![map](docs/inferno_map.png)
 
+**New in 3.2 (beta):**
+- **Onlookers:** now and then a shade stands far off and stares at you, the living, wearing the skin of someone who has walked this Hell before; walk up to it and it fades away.
+
 **New in 3.1:**
 - **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
 - **The damned** suffer each circle's punishment around you, and scream.
@@ -677,6 +680,8 @@ The monsters are tougher the deeper you go (+3% health per circle on 26.3). On 2
 
 **The damned (3.1).** Every circle now shows its own punishment, as Dante saw it, in the souls around you: in the Vestibule a ragged line runs after a white banner, stung as it goes; in Limbo a few souls only sigh (the Noble Castle's great shades too); in Lust they tumble through the air on the storm; in Gluttony they wallow half-sunk in the mud; in Greed pairs roll great weights of gold at each other, crash, turn round and roll them back; in the Styx they fight each other in the shallows; in Heresy they writhe in the burning tombs; in the river of blood they are sunk to the waist, the chest or the eyes; on the Burning Sands they run and lie under the fire; in Malebolge the hypocrites walk slowly by in gilded cloaks of lead; and in Cocytus they are frozen in the ice up to the neck. (The Wood of the Suicides' souls are its trees.) The damned are scenery, not monsters: they can't be hurt, won't block your way or attack you, drop nothing, and are never in a guardian's arena, on a road or in a Rest. Now and then one screams (at most one cry every few seconds near you; the subtitles say so). Turn them off with `damnedSouls`.
 
+**Onlookers (3.2).** In Dante the dead keep stopping to stare at the living man walking among them, and here they do too. Now and then (about every five minutes) a shade stands far off, 40 to 64 blocks away on open ground where you can see it, and watches you: it turns to follow you, crouches, lifts an arm. It wears the skin of a player who has walked this Hell before but isn't online now (most often one who has fallen and lost hearts), or a stranger's. Come within 20 blocks and it fades away with a sigh; it also fades by itself after a minute or two. Onlookers can't be hurt, don't move and do no harm. They come in Hell's circles (not the Dark Wood, Judecca or near a guardian's lair) and on Purgatory's island. Turn them off with `onlookers`, or make them rarer with `onlookerMinutes`.
+
 ## Hell is full
 
 When you lose your last heart you are not banned. *There is no more room in hell*:
@@ -758,6 +763,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft waymarks test` | op | Check that waymarks can be placed, renamed, shared and removed, and that nobody else can change yours (3.1) |
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft damned spawn <punishment>` / `damned test` | op | Bring out a group of the damned suffering a punishment near you (it must be shown in the circle you're in: `vestibule`, `limbo`, `lust`, `gluttony`, `greed`, `wrath`, `heresy`, `phlegethon`, `sands`, `malebolge`, `cocytus`); check that none of them can be hurt (3.1) |
+| `/hellcraft onlooker spawn [player]` / `onlooker test` | op | Put an onlooker 40 to 64 blocks from a player, where they can see it; self-test one (3.2) |
 | `/hellcraft judge [player]` / `judge test` | op | Minos's judgement of a player; self-test the judgement on made-up souls (3.1) |
 | `/hellcraft champion [circle] [affixes...]` / `champion list` / `champion test` | op | Bring out a champion of a circle in front of you (your circle and random affixes by default); list the champions walking; self-test one of each (3.1) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
@@ -798,6 +804,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (0.85)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`
+- onlookers, the shades that stare from afar (3.2): `onlookers`, `onlookerMinutes` (about how many minutes between one and the next, for each player)
 - Minos's titles in the player list (3.1): `judgementTitles`
 - the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)

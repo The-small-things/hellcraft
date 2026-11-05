@@ -146,6 +146,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   top left) and `world/PilgrimStone` (the lectern that starts it, across the road from the Hall, with the fastest and the
   deepest-fallen pilgrims; `HallOfTheDamned.describe` lists them too); the Pilgrim's Shell (`HellItems.PILGRIM_SHELL`).
   `SecretsTest` films it all (`secret_*`, `pilgrimage_hud`).
+- 3.2 (beta): onlookers (`hazard/Onlookers`, after the Distant Friends mod: a vanilla mannequin wearing the skin of a soul
+  not online, its skin kept in `HellState.Soul.skin`/`skinSignature` on join; it stands 40 to 64 blocks off where the player can
+  see it, turns to them, crouches and swings, fades within 20 blocks or after a minute or two; private setters through
+  `mixin/MannequinAccess`; tagged `hellcraft_onlooker`, kept only in memory, strays removed on load; hint bit 62; config
+  `onlookers`, `onlookerMinutes`; `/hellcraft onlooker spawn|test`; `DamnedTest` films one, `onlooker_*`).
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`
@@ -175,7 +180,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat,
   42 the Emperor's open hand, 43 his wingbeat in the fight,
   44 the Slag Sea's crust, 45-50 the Forge of Dis's regions (ForgeOfDis.TIPS), 51-60 Paradiso's spheres (their trials),
-  61 the Emperor's frozen breath.
+  61 the Emperor's frozen breath, 62 the first onlooker walked up to.
 - Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
   (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
   death, nor Lucifer's SNAP, REVEAL and DORMANT). `LuciferFight` has the same clock (`update` per real tick, `step` per

@@ -174,6 +174,9 @@ public class HellState extends SavedData {
 		/** Pilgrimages this soul has finished, and its fastest (ticks; 0 before the first). */
 		public int pilgrimages;
 		public int pilgrimBest;
+		/** The skin this soul last joined with (its signed textures property), so onlookers can wear it; empty if unknown. */
+		public String skin = "";
+		public String skinSignature = "";
 	}
 
 	public record GlobalSpot(ResourceKey<Level> dimension, BlockPos pos) {
@@ -300,6 +303,8 @@ public class HellState extends SavedData {
 			st.putInt("pilgrimDeepest", s.pilgrimDeepest);
 			st.putInt("pilgrimages", s.pilgrimages);
 			st.putInt("pilgrimBest", s.pilgrimBest);
+			st.putString("skin", s.skin);
+			st.putString("skinSignature", s.skinSignature);
 			list.add(st);
 		}
 		tag.put("souls", list);
@@ -439,6 +444,8 @@ public class HellState extends SavedData {
 			s.pilgrimDeepest = st.getIntOr("pilgrimDeepest", 0);
 			s.pilgrimages = st.getIntOr("pilgrimages", 0);
 			s.pilgrimBest = st.getIntOr("pilgrimBest", 0);
+			s.skin = st.getStringOr("skin", "");
+			s.skinSignature = st.getStringOr("skinSignature", "");
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);

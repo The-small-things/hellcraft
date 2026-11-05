@@ -133,6 +133,7 @@ public class HellcraftMod implements ModInitializer {
 			Hoarders.tick(server);
 			LayerMonsters.tick(server);
 			net.thesmallthings.hellcraft.hazard.Torments.tick(server);
+			net.thesmallthings.hellcraft.hazard.Onlookers.tick(server);
 			Shades.tick(server);
 			Ferries.tick(server);
 			Wingbeat.tick(server);
@@ -173,6 +174,7 @@ public class HellcraftMod implements ModInitializer {
 		net.thesmallthings.hellcraft.blood.Pilgrimage.register();
 		// waymarks on the Map of Hell
 		net.thesmallthings.hellcraft.world.Waymarks.register();
+		net.thesmallthings.hellcraft.hazard.Onlookers.register();
 		net.thesmallthings.hellcraft.world.PilgrimStone.register();
 
 		LOGGER.info("Hellcraft loaded. Lasciate ogne speranza, voi ch'intrate.");

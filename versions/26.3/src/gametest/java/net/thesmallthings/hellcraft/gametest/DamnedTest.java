@@ -5,10 +5,12 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerConnection;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerContext;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.npc.Damned.Punishment;
 import net.thesmallthings.hellcraft.entity.npc.Damned;
+import net.thesmallthings.hellcraft.hazard.Onlookers;
 import net.thesmallthings.hellcraft.hazard.Torments;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
@@ -21,7 +23,7 @@ import java.util.Properties;
  * brought out near the east road and filmed from a few blocks off (screenshots damned_*): the Vestibule's line after
  * the banner, Limbo's longing, Lust's storm, Gluttony's mud, Greed's weights, Wrath's brawl in the Styx, Heresy's
  * tombs, the river of blood, the Burning Sands, Malebolge's gilded procession and the ice of Cocytus. Then a player
- * in Lust must find souls brought out round them on their own, and none of them hurt.
+ * in Lust must find souls brought out round them on their own, and none of them hurt; then an onlooker (onlooker_*).
  */
 public class DamnedTest implements FabricClientGameTest {
 	/** Where to look for each punishment: a radius along the east road (as first drawn) and how far off the road. */
@@ -62,7 +64,57 @@ public class DamnedTest implements FabricClientGameTest {
 				film(context, server, connection, stop);
 			}
 			ambient(context, server, connection);
+			onlooker(context, server, connection);
 		}
+	}
+
+	/**
+	 * An onlooker (hazard/Onlookers): a shade stands far off on open ground in Lust and stares at a player (onlooker_far,
+	 * then onlooker_near from 28 blocks), and fades when they walk up to it (onlooker_faded).
+	 */
+	private static void onlooker(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		double x = InfernoGeometry.scaled(2425);
+		double z = 30;
+		server.runCommand("gamemode creative Player0");
+		Vec3 at = null;
+		for (int yaw = 0; yaw < 360 && at == null; yaw += 45) {
+			server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f 200 %.1f %d 0", x, z, yaw));
+			context.waitTicks(5);
+			int ground = server.computeOnServer(s -> s.overworld().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, (int) x, (int) z));
+			server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f %d 0", x, ground + 1, z, yaw));
+			context.waitTicks(10);
+			connection.waitForChunksRender();
+			at = server.computeOnServer(s -> {
+				Mannequin m = Onlookers.spawnFor(s.getPlayerList().getPlayerByName("Player0"));
+				return m == null ? null : m.position();
+			});
+		}
+		if (at == null) {
+			throw new AssertionError("no spot for an onlooker anywhere round the player");
+		}
+		Vec3 shade = at;
+		server.runCommand(String.format(Locale.ROOT, "execute as Player0 at @s run tp @s ~ ~ ~ facing %.1f %.1f %.1f", shade.x, shade.y + 1.5, shade.z));
+		context.waitTicks(40);
+		context.takeScreenshot("onlooker_far");
+		Vec3 player = server.computeOnServer(s -> s.getPlayerList().getPlayerByName("Player0").position());
+		Vec3 toward = player.subtract(shade).multiply(1, 0, 1).normalize();
+		Vec3 near = shade.add(toward.scale(28));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f %.1f facing %.1f %.1f %.1f", near.x, shade.y + 4, near.z, shade.x, shade.y + 1.5, shade.z));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("onlooker_near");
+		if (server.computeOnServer(s -> s.overworld().getEntities(net.minecraft.world.entity.EntityTypes.MANNEQUIN, e -> e.entityTags().contains(Onlookers.TAG)).isEmpty())) {
+			throw new AssertionError("the onlooker faded before the player came near");
+		}
+		Vec3 close = shade.add(toward.scale(8));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f %.1f facing %.1f %.1f %.1f", close.x, shade.y + 1, close.z, shade.x, shade.y + 1.5, shade.z));
+		context.waitTicks(10);
+		context.takeScreenshot("onlooker_faded");
+		if (!server.computeOnServer(s -> s.overworld().getEntities(net.minecraft.world.entity.EntityTypes.MANNEQUIN, e -> e.entityTags().contains(Onlookers.TAG)).isEmpty())) {
+			throw new AssertionError("the onlooker didn't fade when the player came near");
+		}
+		server.runCommand("gamemode spectator Player0");
 	}
 
 	private static void film(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection, Stop stop) {
