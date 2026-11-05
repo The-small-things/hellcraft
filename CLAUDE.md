@@ -152,6 +152,18 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `net/OnlookersPayload` tells clients their ids, client `layer/OnlookerGlow` + `mixin/EntityRendererMixin` raise their block
   light to 9; private setters through `mixin/MannequinAccess`; tagged `hellcraft_onlooker`, kept only in memory, strays removed on load; config
   `onlookers`, `onlookerMinutes`; `/hellcraft onlooker spawn|test`; `DamnedTest` films one, `onlooker_*`).
+- 3.2 (beta): circle soundscapes (client `layer/Soundscape`: a bed for circles without a Nether loop, detail sounds for all,
+  `hellcraft:ambient.<circle>.bed|detail` in `sounds.json` made from vanilla events, `LimboTest` checks them); the Unbound
+  (`GuardianFight.unbound`: for souls who `slewLucifer`, health x1.5, `pace()` x1.25, `BossRules.UNBOUND_TAG` damage x1.3,
+  better spoils; `summon unbound` for tests; config `unboundGuardians`); the Keys of Peter (`blood/KeysOfPeter`: one set,
+  `HellState.keys*`, serial in the stack's custom data, old copies crumble; `mixin/SlotMixin` and the item's
+  `canFitInsideContainerItems` keep it out of storage; +2 hearts, `TravelMenu` to any Rest; given at Purgatory's seventh
+  terrace; `hazard/Glow` + `net/GlowPayload` + client `layer/Glow`: the faint glow of onlookers and the holder); client
+  `layer/CameraSway` (Lust's rock, rides lean, via `CameraMixin`, off with View Bobbing); `world/Labyrinth` (a maze beside
+  each Minotaur lair, built on approach, `HellState.labyrinths`; Ariadne's spool, a lodestone by the arena door, gives
+  `HellItems.ARIADNES_THREAD`; `MinotaurFight` stuns him after every charge while a fighter carries it, +20% damage in
+  `BossRules`; hint bit 62; `WaymarkTest` films it, `labyrinth_*`); Distant Horizons: `LodTest` (opt-in, `HELLCRAFT_LOD=1`)
+  run by `.github/workflows/lod.yml` (by hand, or a commit message with `[lod]`), which downloads it from Modrinth.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`
@@ -181,7 +193,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   (36 is Malacoda's one-time trick, spent with `spendHint`), 39 the Dash, 40 an unlit brazier, 41 the wingbeat,
   42 the Emperor's open hand, 43 his wingbeat in the fight,
   44 the Slag Sea's crust, 45-50 the Forge of Dis's regions (ForgeOfDis.TIPS), 51-60 Paradiso's spheres (their trials),
-  61 the Emperor's frozen breath.
+  61 the Emperor's frozen breath, 62 the first look at a Labyrinth.
 - Boss pacing: `GuardianFight` runs each fight on its own clock at `bossTempo`, stretching its `Danger` marks to match
   (`Danger.stretched`), and `BossEntity.tempo` slows the model's blows (`speedOf`: not its idle, walk, flinch, intro or
   death, nor Lucifer's SNAP, REVEAL and DORMANT). `LuciferFight` has the same clock (`update` per real tick, `step` per

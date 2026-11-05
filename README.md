@@ -56,6 +56,11 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 **New in 3.2 (beta):**
 - **Onlookers:** now and then a shade stands far off and stares at you, the living, wearing the skin of someone who has walked this Hell before; walk up to it and it's gone.
+- **Every circle sounds like itself:** Lust's storm, Gluttony's rain, gold clinking in Greed, creaking trees in the Wood, ice cracking on Cocytus and a vast heart beating under Judecca.
+- **The Labyrinth of Crete** beside each of the Minotaur's lairs: walk the maze for **Ariadne's Thread**, and his charges end with him stunned.
+- **The Unbound:** once you've beaten Lucifer, the guardians wake stronger, and pay better.
+- **The Keys of Peter:** one set on the whole server, from the angel at Purgatory's gate. Two more hearts and travel to any Rest, but everyone knows who has them, and they fall when you die.
+- **A camera that feels the ride:** the view rocks in Lust's storm and leans into the turns on Geryon's back.
 
 **New in 3.1:**
 - **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
@@ -426,6 +431,10 @@ Each is its circle's own monster named for someone Dante meets there (Francesca 
 
 **Spoils** go to whoever dealt it the most damage: Blood Fragments (3, plus one per circle of depth), a chance of its circle's enchanted book (Windstep, Quickening, Sidestep, Steadfast or Judgement; a circle without a book of its own gives any of them) and a heap of experience. Config: `champions`, `championMinMinutes` (15), `championMaxMinutes` (25), `championHealth` (150, plus a tenth per circle deeper), `championDamage` (1.6), `championFragments` (3), `championBookChance` (0.35). Ops: `/hellcraft champion [circle] [affixes...]` brings one out in front of you.
 
+**The Labyrinth of Crete (3.2).** Beside each of the Minotaur's lairs, in the Wood of the Suicides, stands a ruined maze of mossy, cracked stone, its walls topped with the Wood's thorns (climb over and they tear you). Its far end opens straight into his arena, and beside that door lies **Ariadne's spool**: right-click it for **Ariadne's Thread** (once each half hour). Carry the thread into his fight and every charge of his ends with him stunned, as if he'd run into the wall, and your blows hit him a fifth harder. The thread is used up when he falls. You never have to walk the maze: his arena is open on every other side. Each maze is built the first time someone comes near that lair.
+
+**The Unbound (3.2).** Once you've beaten Lucifer, the guardians of Hell (and Vulcan) wake **Unbound** when you walk into their lairs: half as much health again, a quarter faster, harder blows and a dark red name. They pay better: twice the Blood Fragments, always a treasure roll, and a Blood Heart the first time you beat each one Unbound. Anyone fighting beside you faces it Unbound too. Turn it off with `unboundGuardians`.
+
 ## Lucifer
 
 *"Another soul crawls to the bottom of the world."*
@@ -521,6 +530,10 @@ He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mock
 His lines appear in the dialogue box, each with a low voice cue.
 
 Testing it: `/hellcraft lucifer summon` skips the ready check and starts the fight now (stand in the pit). `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, `/hellcraft lucifer attack <slash|sweep|stars|lunge|slam|bite|wingbeat|weep>` forces a blow, and `/hellcraft lucifer stop` ends the fight.
+
+## The Keys of Peter (3.2)
+
+The angel at Purgatory's gate keeps two keys, one of gold and one of silver, and gives them to the first soul to reach the seventh terrace. **There is only ever one set on the server.** While you carry them you have **two more hearts**, and a **Blood Altar takes you to any Virgil's Rest**, even ones you haven't found. But they can't be put away (not in a chest, an ender chest, a bundle or a shulker box), you glow faintly, the whole server is told who has them and, every quarter hour, roughly where, and **if you die they fall**: whoever picks them up has them now. Lose them in the void, or stay offline with them for three days (`keysReturnHours`), and they go back to the angel for the next soul to climb that far; any old copy crumbles to dust. Turn them off with `keysOfPeter`.
 
 ## Beyond the Inferno (26.3)
 
@@ -682,6 +695,10 @@ The monsters are tougher the deeper you go (+3% health per circle on 26.3). On 2
 
 **Onlookers (3.2).** In Dante the dead keep stopping to stare at the living man walking among them, and here they do too. Now and then (about every five minutes) a shade stands far off, 40 to 64 blocks away on open ground where you can see it, and watches you: it turns to follow you, crouches, lifts an arm. It wears the skin of a player who has walked this Hell before but isn't online now (most often one who has fallen and lost hearts), or a stranger's. They have a faint glow of their own, so you can make them out against the dark. Come within 20 blocks and it's simply gone; it also goes by itself after a minute or two. Onlookers can't be hurt, don't move and do no harm. They come in Hell's circles (not the Dark Wood, Judecca or near a guardian's lair) and on Purgatory's island. Turn them off with `onlookers`, or make them rarer with `onlookerMinutes`.
 
+**The sound of each circle (3.2).** Every circle has its own sound under the rest: a wailing wind at the Vestibule, Limbo's hush, Lust's howling storm, Gluttony's endless cold rain, the Styx's murk and the wind over Cocytus. Now and then something sounds off to one side: insects swarming in the Vestibule, a soul's sigh in Limbo, wings in Lust's storm, mud in Gluttony, gold clinking and weights crashing in Greed, the marsh bubbling, tombs burning, the river of blood seething, the trees of the Wood creaking, fire hissing on the Sands, chains in Malebolge, a giant's heartbeat at the Well, ice cracking on Cocytus and, under Judecca, a vast slow heart in the ice. The Forge of Dis rings with a far-off hammer and Paradiso chimes. It all follows the Ambient/Environment volume slider.
+
+**A camera that feels the ride (3.2).** In Lust the view rocks gently in the storm, and harder while a wind stream carries you; on Geryon's back or in Antaeus's hand it leans into each turn. Only the view tilts, never your aim, and it's off when View Bobbing is off (Accessibility settings).
+
 ## Hell is full
 
 When you lose your last heart you are not banned. *There is no more room in hell*:
@@ -764,6 +781,9 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft danger test` | op | Check that red and purple boss blows can't be blocked by shields (3.0) |
 | `/hellcraft damned spawn <punishment>` / `damned test` | op | Bring out a group of the damned suffering a punishment near you (it must be shown in the circle you're in: `vestibule`, `limbo`, `lust`, `gluttony`, `greed`, `wrath`, `heresy`, `phlegethon`, `sands`, `malebolge`, `cocytus`); check that none of them can be hurt (3.1) |
 | `/hellcraft onlooker spawn [player]` / `onlooker test` | op | Put an onlooker 40 to 64 blocks from a player, where they can see it; self-test one (3.2) |
+| `/hellcraft guardian <name> summon unbound` | op | Wake a guardian Unbound, as if a soul who has beaten Lucifer had walked in (3.2) |
+| `/hellcraft keys [give <player> \| return \| test]` | op | Where the Keys of Peter are; give them to a player; send them back to the angel; self-test (3.2) |
+| `/hellcraft labyrinth build` / `labyrinth test` | op | Build the Labyrinth beside the nearest of the Minotaur's lairs; check every maze has a way through (3.2) |
 | `/hellcraft judge [player]` / `judge test` | op | Minos's judgement of a player; self-test the judgement on made-up souls (3.1) |
 | `/hellcraft champion [circle] [affixes...]` / `champion list` / `champion test` | op | Bring out a champion of a circle in front of you (your circle and random affixes by default); list the champions walking; self-test one of each (3.1) |
 | `/hellcraft purgatory` | op | Go to the shore of Purgatory (26.3) |
@@ -805,6 +825,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`
 - onlookers, the shades that stare from afar (3.2): `onlookers`, `onlookerMinutes` (about how many minutes between one and the next, for each player)
+- the Unbound guardians (3.2): `unboundGuardians`
+- the Keys of Peter (3.2): `keysOfPeter`, `keysReturnHours` (how long their holder may stay offline before they go back to the angel)
 - Minos's titles in the player list (3.1): `judgementTitles`
 - the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)

@@ -1,0 +1,46 @@
+name: lod-26.3
+
+# Hellcraft with Distant Horizons (far terrain): started by hand from the Actions tab, or by a push whose commit message
+# contains [lod]. Downloads Distant Horizons for 26.3 into the test client's mods folder and runs LodTest (an Inferno
+# world, a view over the funnel filmed at once and after four minutes). The log says how much of the view above the
+# horizon is land in each; the screenshots are kept as an artifact.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['**']
+
+jobs:
+  lod-26:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[lod]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install a virtual display and software graphics
+        run: sudo apt-get update && sudo apt-get install -y xvfb mesa-vulkan-drivers libvulkan1 jq
+      - name: Download Distant Horizons for 26.3
+        run: |
+          mkdir -p versions/26.3/build/run/clientGameTest/mods
+          url=$(curl -sS 'https://api.modrinth.com/v2/project/distanthorizons/version?game_versions=%5B%2226.3%22%5D&loaders=%5B%22fabric%22%5D' \
+            | jq -r '.[0].files[] | select(.primary) | .url' | head -1)
+          echo "Distant Horizons: $url"
+          test -n "$url" && test "$url" != null
+          curl -sSL -o versions/26.3/build/run/clientGameTest/mods/distanthorizons.jar "$url"
+          ls -la versions/26.3/build/run/clientGameTest/mods
+      - name: LOD test
+        run: HELLCRAFT_LOD=1 HELLCRAFT_TESTS=LodTest bash tools/dev/clienttest.sh 2>&1 | tee lod.log; test ${PIPESTATUS[0]} -eq 0
+      - name: What it saw
+        if: always()
+        run: grep -h "LOD test" lod.log || true
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lod-screenshots-26.3
+          path: versions/26.3/build/run/clientGameTest/screenshots
+          if-no-files-found: warn
