@@ -98,6 +98,8 @@ Grab **Hellcraft 3.1.0** (the latest release) from the repo's [Releases page](ht
 
 **Joining a server:** your Hellcraft must be the same version as the server's. If it isn't, or you don't have it, the server tells you which version to install.
 
+**Distant Horizons (3.2):** Hellcraft works with [Distant Horizons](https://modrinth.com/mod/distanthorizons) for 26.3 (Fabric), which draws the far terrain beyond your view distance. Put its jar in your mods folder beside Hellcraft's; the server doesn't need it. The first time you look out over the funnel it takes a few minutes to build the distant circles, then you can see Hell to the horizon. Tested in CI (`lod-26.3`: a client at view distance 8 above Lust sees the funnel to the horizon after four minutes). Voxy hasn't been tried.
+
 **Single player:** go to **Singleplayer → Create New World → World tab** and click **World Type** until it says **Inferno**. On the **Game** tab, turn on **Allow Commands** if you want the test commands below.
 
 ### Testing solo

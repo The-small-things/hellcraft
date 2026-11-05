@@ -166,7 +166,10 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   gives `HellItems.ARIADNES_THREAD`, whose holder sees a red trail out (`trails`); `MinotaurFight` stuns him after every charge
   while a fighter carries it, +20% damage in
   `BossRules`; hint bit 62; `WaymarkTest` films it, `labyrinth_*`); `blood/Lessons` (first steps: Virgil's one-at-a-time tips, each with a `due` check polled once a second, queued and spaced by `lessonSeconds`, kept in `HellState.Soul.lessons`/`playSeconds`; souls from before skip all but `feature` lessons; `/lessons`, `/hellcraft lessons reset|give|test`; config `lessons`); `world/Gatehouses` (two round towers per gate of the Gate of Hell and Dis, built on approach, `HellState.gatehouses`: a spiral stair round the inside, its pitch and start chosen in `tower` so it clears the ground door and the wall-walk door, a furnished room per floor (`furnish`); `/hellcraft gatehouse build|test`, `WaymarkTest` films it, `gatehouse_*`); Distant Horizons: `LodTest` (opt-in, `HELLCRAFT_LOD=1`)
-  run by `.github/workflows/lod.yml` (by hand, or a commit message with `[lod]`), which downloads it from Modrinth.
+  run by `.github/workflows/lod.yml` (by hand, or a commit message with `[lod]`), which downloads it from Modrinth and passes it in
+  `HELLCRAFT_EXTRA_MODS` (`-Dfabric.addMods`, since Loom clears the run folder); it works (far terrain to the horizon after four
+  minutes); DH hangs closing its databases when the headless game exits, so `LodTest` halts the game after two minutes; the
+  pictures go into the log as base64 (`LOD picture` lines; the artifact can't be fetched from here).
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`
