@@ -42,7 +42,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 	}
 	private static final int VIEW = 16;
 	/** How long a far view may take to draw (ticks); past that, take what has drawn (a far edge may never finish). */
-	private static final int SETTLE = 6000;
+	private static final int SETTLE = 3000;
 
 	private static double s(double r) {
 		return InfernoGeometry.scaled(r);
