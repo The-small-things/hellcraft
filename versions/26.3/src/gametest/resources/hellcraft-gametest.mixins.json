@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "net.thesmallthings.hellcraft.gametest.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"ChunkBatchSizeCalculatorMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

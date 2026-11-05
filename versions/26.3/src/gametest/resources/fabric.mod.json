@@ -26,6 +26,9 @@
 			"net.thesmallthings.hellcraft.gametest.ShowcaseTest"
 		]
 	},
+	"mixins": [
+		"hellcraft-gametest.mixins.json"
+	],
 	"depends": {
 		"hellcraft": "*",
 		"fabric-client-gametest-api-v1": "*"

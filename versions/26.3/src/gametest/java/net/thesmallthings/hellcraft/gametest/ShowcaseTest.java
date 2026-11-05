@@ -62,7 +62,6 @@ public class ShowcaseTest implements FabricClientGameTest {
 			server.runCommand("gamemode spectator Player0");
 			context.runOnClient(client -> {
 				client.options.renderDistance().set(VIEW);
-				client.options.framerateLimit().set(10);
 				if (!client.gui.hud.isHidden()) {
 					client.gui.hud.toggle();
 				}
@@ -147,8 +146,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 
 	/**
 	 * Waits for the chunks round the camera to arrive from the server and then to draw, each for up to SETTLE ticks, and
-	 * says how long each took. (The client draws at a few frames a second meanwhile, so the software renderer leaves the
-	 * server the CPU it needs to generate Hell's terrain.)
+	 * says how long each took. (The chunks come at full speed: gametest/mixin/ChunkBatchSizeCalculatorMixin.)
 	 */
 	private static void settle(ClientGameTestContext context, TestDedicatedServerConnection connection) {
 		long start = System.currentTimeMillis();
