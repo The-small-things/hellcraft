@@ -97,6 +97,11 @@ public final class BossRules {
 		if (attacker instanceof Player player && attacker == source.getDirectEntity() && fromBoss(victim)) {
 			// Judgement: melee blows at a boss hit harder
 			amount += LayerEnchants.bossDamageDealt(player);
+			// Ariadne's Thread: a fifth harder at the Minotaur (world/Labyrinth)
+			if (victim instanceof net.thesmallthings.hellcraft.entity.boss.MinotaurEntity
+					&& player.getInventory().contains(new net.minecraft.world.item.ItemStack(net.thesmallthings.hellcraft.blood.HellItems.ARIADNES_THREAD))) {
+				amount *= 1.2f;
+			}
 		}
 		if (attacker instanceof Player player) {
 			// the Fallen Seraph's guard (LuciferFight)

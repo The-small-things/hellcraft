@@ -135,6 +135,7 @@ public class HellcraftMod implements ModInitializer {
 			net.thesmallthings.hellcraft.hazard.Torments.tick(server);
 			net.thesmallthings.hellcraft.hazard.Onlookers.tick(server);
 			net.thesmallthings.hellcraft.blood.KeysOfPeter.tick(server);
+			net.thesmallthings.hellcraft.world.Labyrinth.tick(server);
 			Shades.tick(server);
 			Ferries.tick(server);
 			Wingbeat.tick(server);
@@ -177,6 +178,7 @@ public class HellcraftMod implements ModInitializer {
 		net.thesmallthings.hellcraft.world.Waymarks.register();
 		net.thesmallthings.hellcraft.hazard.Onlookers.register();
 		net.thesmallthings.hellcraft.blood.KeysOfPeter.register();
+		net.thesmallthings.hellcraft.world.Labyrinth.register();
 		net.thesmallthings.hellcraft.hazard.Glow.register();
 		net.thesmallthings.hellcraft.world.PilgrimStone.register();
 

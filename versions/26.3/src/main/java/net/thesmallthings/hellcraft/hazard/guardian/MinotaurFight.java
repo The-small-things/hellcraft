@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
+import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 
@@ -284,6 +285,11 @@ final class MinotaurFight extends GuardianFight {
 		if (tick >= chargeUntil) {
 			chargeUntil = -1;
 			minotaur.setDeltaMovement(Vec3.ZERO);
+			if (threaded()) {
+				// Ariadne's Thread: he loses his way and runs himself dizzy, as if he'd hit the wall
+				level.playSound(null, minotaur.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.0f, 0.4f);
+				stagger(minotaur, null);
+			}
 			return;
 		}
 		minotaur.setDeltaMovement(chargeDir.x * 1.1, minotaur.getDeltaMovement().y, chargeDir.z * 1.1);
@@ -302,6 +308,28 @@ final class MinotaurFight extends GuardianFight {
 			minotaur.setDeltaMovement(Vec3.ZERO);
 			level.playSound(null, minotaur.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.0f, 0.4f);
 			stagger(minotaur, null);
+		}
+	}
+
+	/** Whether anyone fighting him carries Ariadne's Thread (from the Labyrinth beside his lair). */
+	private boolean threaded() {
+		for (ServerPlayer p : audience()) {
+			if (inArena(p) && p.getInventory().contains(new net.minecraft.world.item.ItemStack(HellItems.ARIADNES_THREAD))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** Beaten: each victor's thread is spent. */
+	@Override
+	protected void onVictor(ServerPlayer player) {
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			if (player.getInventory().getItem(i).is(HellItems.ARIADNES_THREAD)) {
+				player.getInventory().removeItem(i, 1);
+				player.sendOverlayMessage(Component.literal("Ariadne's Thread is spent.").withStyle(ChatFormatting.RED));
+				return;
+			}
 		}
 	}
 

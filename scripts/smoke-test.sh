@@ -424,6 +424,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   waymarks=$(rcon "hellcraft waymarks test")
   echo "$waymarks"
   echo "$waymarks" | grep -q "Waymarks test OK" || { echo "Waymarks don't work"; exit 1; }
+  # the Labyrinths beside the Minotaur's lairs: one way through each maze, to his arena
+  maze=$(rcon "hellcraft labyrinth test")
+  echo "$maze"
+  echo "$maze" | grep -q "Labyrinth test OK" || { echo "The Labyrinth is broken"; exit 1; }
   # the Keys of Peter: one real set, old copies crumble, fireproof
   keys=$(rcon "hellcraft keys test")
   echo "$keys"

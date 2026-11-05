@@ -229,6 +229,14 @@ public final class Guide {
 				c.pilgrimageHardcore ? "Die and it ends, and on this server you also become a ghost until revived." : "Die and it ends; you lose nothing more than usual.",
 				"",
 				"Climb out to Purgatory to finish: a Pilgrim's Shell and your name on the Stone. /pilgrimage abandon gives up."));
+		pages.add(page("THE LABYRINTH",
+				"Beside each of the Minotaur's lairs, in the Wood of the Suicides, stands the Labyrinth of Crete: a ruined maze, its walls topped with thorns.",
+				"",
+				"Its far end opens straight into the Minotaur's arena. Beside that door lies Ariadne's spool: right-click it for Ariadne's Thread (once each half hour).",
+				"",
+				"Carry the thread into his fight: every charge of his ends with him stunned, as if he'd hit the wall, and your blows hit him a fifth harder.",
+				"",
+				"The thread is used up when he falls. You never have to walk the maze: his arena is open on every other side."));
 		if (c.keysOfPeter) {
 			pages.add(page("THE KEYS OF PETER",
 					"There is only one set on the server. The angel at Purgatory's gate gives it to the first soul to reach the seventh terrace.",

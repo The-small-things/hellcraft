@@ -101,6 +101,7 @@ public class WaymarkTest implements FabricClientGameTest {
 			server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 120 8", x, y));
 			context.waitTicks(20);
 			context.takeScreenshot("waymark_compass");
+			labyrinth(context, server, connection);
 		}
 	}
 
@@ -114,5 +115,35 @@ public class WaymarkTest implements FabricClientGameTest {
 			}
 			return 1 + ClientNav.codex().size();
 		});
+	}
+
+	/**
+	 * The Labyrinth beside the Minotaur's first lair (world/Labyrinth): built, seen from above (labyrinth_aerial) and from its
+	 * far door looking in (labyrinth_inside); its spool must stand by the door into his arena.
+	 */
+	private static void labyrinth(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		net.minecraft.core.BlockPos c = server.computeOnServer(s -> {
+			net.thesmallthings.hellcraft.world.Labyrinth.build(s.overworld(), 0);
+			return net.thesmallthings.hellcraft.world.Labyrinth.centre(s.overworld(), 0);
+		});
+		boolean spool = server.computeOnServer(s -> s.overworld().getBlockState(net.thesmallthings.hellcraft.world.Labyrinth.spool(s.overworld(), 0))
+				.is(net.minecraft.world.level.block.Blocks.LODESTONE));
+		if (!spool) {
+			throw new AssertionError("the Labyrinth has no spool by its door");
+		}
+		net.minecraft.core.Direction out = net.thesmallthings.hellcraft.world.Labyrinth.side(0);
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", c.getX() + out.getStepX() * 22 + 8, c.getY() + 26,
+				c.getZ() + out.getStepZ() * 22 + 8, c.getX(), c.getY(), c.getZ()));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("labyrinth_aerial");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", c.getX() + out.getStepX() * 13 + 0.5, c.getY() + 1,
+				c.getZ() + out.getStepZ() * 13 + 0.5, c.getX(), c.getY() + 1, c.getZ()));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("labyrinth_inside");
 	}
 }
