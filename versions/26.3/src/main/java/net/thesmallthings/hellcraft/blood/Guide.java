@@ -230,13 +230,15 @@ public final class Guide {
 				"",
 				"Climb out to Purgatory to finish: a Pilgrim's Shell and your name on the Stone. /pilgrimage abandon gives up."));
 		pages.add(page("THE LABYRINTH",
-				"Beside each of the Minotaur's lairs, in the Wood of the Suicides, stands the Labyrinth of Crete: a ruined maze, its walls topped with thorns.",
+				"Beside each of the Minotaur's lairs, in the Wood of the Suicides, stands the Labyrinth of Crete: a roofed maze with one door on its far side and one onto his arena.",
 				"",
-				"Its far end opens straight into the Minotaur's arena. Beside that door lies Ariadne's spool: right-click it for Ariadne's Thread (once each half hour).",
+				"Its walls, roof and floor can't be broken, so the only way in is to walk it. Torches and blocks you bring can mark your way.",
 				"",
-				"Carry the thread into his fight: every charge of his ends with him stunned, as if he'd hit the wall, and your blows hit him a fifth harder.",
+				"At its heart lies Ariadne's spool: right-click it for Ariadne's Thread (once each half hour). While you carry it in the maze, a red thread on the floor shows the way out to the Minotaur's door.",
 				"",
-				"The thread is used up when he falls. You never have to walk the maze: his arena is open on every other side."));
+				"Carry the thread into his fight: every charge of his ends with him stunned, as if he'd hit the wall, and your blows hit him a fifth harder. It's used up when he falls.",
+				"",
+				"You never have to walk the maze to fight him: his arena is open on every other side."));
 		if (c.keysOfPeter) {
 			pages.add(page("THE KEYS OF PETER",
 					"There is only one set on the server. The angel at Purgatory's gate gives it to the first soul to reach the seventh terrace.",

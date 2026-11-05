@@ -118,8 +118,9 @@ public class WaymarkTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * The Labyrinth beside the Minotaur's first lair (world/Labyrinth): built, seen from above (labyrinth_aerial) and from its
-	 * far door looking in (labyrinth_inside); its spool must stand by the door into his arena.
+	 * The Labyrinth beside the Minotaur's first lair (world/Labyrinth): built, seen from above (labyrinth_aerial), from its far
+	 * door looking in (labyrinth_inside) and in its heart with the thread in hand, its red trail leading out (labyrinth_heart);
+	 * its spool must lie at the heart, and its walls must stand to the roof.
 	 */
 	private static void labyrinth(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		server.runCommand("gamemode spectator Player0");
@@ -130,20 +131,41 @@ public class WaymarkTest implements FabricClientGameTest {
 		boolean spool = server.computeOnServer(s -> s.overworld().getBlockState(net.thesmallthings.hellcraft.world.Labyrinth.spool(s.overworld(), 0))
 				.is(net.minecraft.world.level.block.Blocks.LODESTONE));
 		if (!spool) {
-			throw new AssertionError("the Labyrinth has no spool by its door");
+			throw new AssertionError("the Labyrinth has no spool at its heart");
 		}
 		net.minecraft.core.Direction out = net.thesmallthings.hellcraft.world.Labyrinth.side(0);
-		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", c.getX() + out.getStepX() * 22 + 8, c.getY() + 26,
-				c.getZ() + out.getStepZ() * 22 + 8, c.getX(), c.getY(), c.getZ()));
+		// the outer wall beside the far door stands from the floor to the roof
+		boolean walled = server.computeOnServer(s -> {
+			for (int h = 0; h <= 7; h++) {
+				if (s.overworld().getBlockState(c.offset(out.getStepX() * 22, h, out.getStepZ() * 22).relative(out.getClockWise(), 3)).isAir()) {
+					return false;
+				}
+			}
+			return true;
+		});
+		if (!walled) {
+			throw new AssertionError("the Labyrinth's outer wall has a gap");
+		}
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", c.getX() + out.getStepX() * 50 + 16, c.getY() + 34,
+				c.getZ() + out.getStepZ() * 50 + 16, c.getX(), c.getY(), c.getZ()));
 		context.waitTicks(20);
 		connection.waitForChunksRender();
 		context.waitTicks(20);
 		context.takeScreenshot("labyrinth_aerial");
-		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", c.getX() + out.getStepX() * 13 + 0.5, c.getY() + 1,
-				c.getZ() + out.getStepZ() * 13 + 0.5, c.getX(), c.getY() + 1, c.getZ()));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", c.getX() + out.getStepX() * 22 + 0.5, c.getY() + 1,
+				c.getZ() + out.getStepZ() * 22 + 0.5, c.getX(), c.getY() + 1, c.getZ()));
 		context.waitTicks(20);
 		connection.waitForChunksRender();
 		context.waitTicks(10);
 		context.takeScreenshot("labyrinth_inside");
+		// in the heart, with the thread: the red trail runs from here towards the arena door
+		server.runCommand("give Player0 hellcraft:ariadnes_thread");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", c.getX() + out.getStepX() * 3 + 0.5, c.getY() + 2,
+				c.getZ() + out.getStepZ() * 3 + 0.5, c.getX() - out.getStepX() * 4, c.getY(), c.getZ() - out.getStepZ() * 4));
+		context.waitTicks(30);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("labyrinth_heart");
+		server.runCommand("clear Player0 hellcraft:ariadnes_thread");
 	}
 }

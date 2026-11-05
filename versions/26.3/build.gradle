@@ -41,6 +41,15 @@ fabricApi {
 	}
 }
 
+// Extra mods for the test client (HELLCRAFT_EXTRA_MODS, a folder or jars, e.g. Distant Horizons in the lod workflow):
+// Loom clears build/run/clientGameTest before each run, so they can't simply be dropped into its mods folder.
+tasks.matching { it.name == 'runClientGameTest' }.configureEach {
+	def extra = System.getenv('HELLCRAFT_EXTRA_MODS')
+	if (extra) {
+		jvmArgs "-Dfabric.addMods=${extra}"
+	}
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"

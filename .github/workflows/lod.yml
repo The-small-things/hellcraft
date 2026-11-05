@@ -1,7 +1,7 @@
 name: lod-26.3
 
 # Hellcraft with Distant Horizons (far terrain): started by hand from the Actions tab, or by a push whose commit message
-# contains [lod]. Downloads Distant Horizons for 26.3 into the test client's mods folder and runs LodTest (an Inferno
+# contains [lod]. Downloads Distant Horizons for 26.3 and hands it to the test client (HELLCRAFT_EXTRA_MODS) and runs LodTest (an Inferno
 # world, a view over the funnel filmed at once and after four minutes). The log says how much of the view above the
 # horizon is land in each; the screenshots are kept as an artifact.
 on:
@@ -25,15 +25,15 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb mesa-vulkan-drivers libvulkan1 jq
       - name: Download Distant Horizons for 26.3
         run: |
-          mkdir -p versions/26.3/build/run/clientGameTest/mods
+          mkdir -p versions/26.3/build/extra-mods
           url=$(curl -sS 'https://api.modrinth.com/v2/project/distanthorizons/version?game_versions=%5B%2226.3%22%5D&loaders=%5B%22fabric%22%5D' \
             | jq -r '.[0].files[] | select(.primary) | .url' | head -1)
           echo "Distant Horizons: $url"
           test -n "$url" && test "$url" != null
-          curl -sSL -o versions/26.3/build/run/clientGameTest/mods/distanthorizons.jar "$url"
-          ls -la versions/26.3/build/run/clientGameTest/mods
+          curl -sSL -o versions/26.3/build/extra-mods/distanthorizons.jar "$url"
+          ls -la versions/26.3/build/extra-mods
       - name: LOD test
-        run: HELLCRAFT_LOD=1 HELLCRAFT_TESTS=LodTest bash tools/dev/clienttest.sh 2>&1 | tee lod.log; test ${PIPESTATUS[0]} -eq 0
+        run: HELLCRAFT_EXTRA_MODS=$PWD/versions/26.3/build/extra-mods HELLCRAFT_LOD=1 HELLCRAFT_TESTS=LodTest bash tools/dev/clienttest.sh 2>&1 | tee lod.log; test ${PIPESTATUS[0]} -eq 0
       - name: What it saw
         if: always()
         run: grep -h "LOD test" lod.log || true

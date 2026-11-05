@@ -14,8 +14,8 @@ import java.nio.file.Path;
 import java.util.Locale;
 
 /**
- * Hellcraft with a far-terrain mod (Distant Horizons), run only when HELLCRAFT_LOD=1 (the lod workflow puts the mod in the
- * test client's mods folder): an Inferno single-player world, a view from high over Lust out across the funnel, filmed
+ * Hellcraft with a far-terrain mod (Distant Horizons), run only when HELLCRAFT_LOD=1 (the lod workflow hands the mod to the
+ * test client through HELLCRAFT_EXTRA_MODS): an Inferno single-player world, a view from high over Lust out across the funnel, filmed
  * at once and again after the far terrain has had time to draw (lod_*). It fails if the far-terrain mod isn't loaded or
  * the game falls over; it says how much of the band above the horizon is land in each picture, so the two can be compared.
  */
@@ -30,7 +30,7 @@ public class LodTest implements FabricClientGameTest {
 		boolean dh = FabricLoader.getInstance().isModLoaded("distanthorizons");
 		System.out.println("LOD test: Distant Horizons loaded = " + dh);
 		if (!dh) {
-			throw new AssertionError("Distant Horizons isn't loaded: the lod workflow should have put it in the mods folder");
+			throw new AssertionError("Distant Horizons isn't loaded: the lod workflow should have passed it in HELLCRAFT_EXTRA_MODS");
 		}
 		try (TestSingleplayerContext world = context.worldBuilder().adjustSettings(MapTest::inferno).create()) {
 			world.getConnection().waitForChunksRender();
