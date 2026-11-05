@@ -37,6 +37,9 @@ jobs:
       - name: What it saw
         if: always()
         run: grep -h "LOD test" lod.log || true
+      - name: The pictures, small, as base64 (LOD picture lines)
+        if: always()
+        run: grep -h "LOD picture" lod.log | sed 's/^.*LOD picture/LOD picture/' || true
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

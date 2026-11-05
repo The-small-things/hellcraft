@@ -47,8 +47,8 @@ import java.util.function.Supplier;
  * boss waking, a gatehouse). Lessons queue and come no closer together than {@code lessonSeconds}, never during a
  * cutscene and (but for the boss lesson) never mid-fight.
  *
- * Souls from before the lessons existed are taken to know the basics: their first load marks every lesson learned but the
- * ones about newer features. {@code /lessons} shows how far a soul has got and turns them off or on; config {@code lessons}
+ * Souls from before the lessons existed (half an hour of play or more) are taken to know the basics: their first load marks
+ * every lesson learned but the ones about newer features. {@code /lessons} shows how far a soul has got and turns them off or on; config {@code lessons}
  * turns them off for everyone.
  */
 public final class Lessons {
@@ -158,14 +158,18 @@ public final class Lessons {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> commands(dispatcher));
 	}
 
-	/** On join: a soul from before the lessons is taken to know all but the newer features'. */
+	/** On join: a soul from before the lessons (half an hour or more of play) is taken to know all but the newer features'. */
 	public static void onJoin(ServerPlayer player, boolean firstJoin) {
 		HellState state = HellState.get(player.level().getServer());
 		HellState.Soul soul = Hearts.soul(player);
 		JOINED.put(player.getUUID(), player.level().getGameTime());
 		if (!soul.lessonsStarted) {
 			soul.lessonsStarted = true;
-			if (!firstJoin) {
+			// a soul with real play time behind it (by the game's own statistics: other join handlers may have made its record
+			// already) knows the basics
+			boolean veteran = player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) > 20 * 60 * 30 || soul.deaths > 0
+					|| soul.guardiansSlain > 0 || soul.visited.size() > 1;
+			if (veteran) {
 				for (Lesson l : LESSONS) {
 					if (!l.feature()) {
 						soul.lessons.add(l.id());

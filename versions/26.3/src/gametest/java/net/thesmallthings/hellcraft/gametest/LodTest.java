@@ -50,6 +50,42 @@ public class LodTest implements FabricClientGameTest {
 			context.waitTicks(20 * 240);
 			Path far = context.takeScreenshot(TestScreenshotOptions.of("lod_after").withSize(1280, 720));
 			System.out.printf(Locale.ROOT, "LOD test: land above the horizon after four minutes: %.2f%n", land(far));
+			print("lod_at_once", near);
+			print("lod_after", far);
+			// Distant Horizons can hang closing its databases as a headless game shuts down: once the pictures are taken,
+			// stop the game ourselves if it hasn't gone in two minutes
+			Thread watchdog = new Thread(() -> {
+				try {
+					Thread.sleep(120_000);
+				} catch (InterruptedException e) {
+					return;
+				}
+				System.out.println("LOD test: the game didn't close in two minutes (Distant Horizons closing its databases); stopping it");
+				Runtime.getRuntime().halt(0);
+			}, "lod-watchdog");
+			watchdog.setDaemon(true);
+			watchdog.start();
+		}
+	}
+
+	/** Prints a small JPEG of a picture into the log as base64 lines ("LOD picture name i/n: ..."), to be read without the artifact. */
+	private static void print(String name, Path picture) {
+		try {
+			BufferedImage image = ImageIO.read(picture.toFile());
+			BufferedImage small = new BufferedImage(480, 270, BufferedImage.TYPE_INT_RGB);
+			java.awt.Graphics2D g = small.createGraphics();
+			g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g.drawImage(image, 0, 0, 480, 270, null);
+			g.dispose();
+			java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+			ImageIO.write(small, "jpg", bytes);
+			String b64 = java.util.Base64.getEncoder().encodeToString(bytes.toByteArray());
+			int n = (b64.length() + 3999) / 4000;
+			for (int i = 0; i < n; i++) {
+				System.out.println("LOD picture " + name + " " + (i + 1) + "/" + n + ": " + b64.substring(i * 4000, Math.min(b64.length(), (i + 1) * 4000)));
+			}
+		} catch (IOException e) {
+			System.out.println("LOD test: couldn't print " + name + ": " + e);
 		}
 	}
 
