@@ -81,7 +81,7 @@ public final class Lessons {
 		Key journal = new Key("key.hellcraft.journal");
 		Key map = new Key("key.hellcraft.map");
 		// with play time: how to find your way
-		lesson("journal", (p, s) -> s.playSeconds >= 15,
+		lesson("journal", (p, s) -> s.playSeconds >= 3,
 				"Lost already? Press ", journal, " for your Pilgrim's Journal. Its first page says where you are and where to go next, "
 						+ "and the rest explains everything down here.");
 		lesson("compass", (p, s) -> s.playSeconds >= 120,
