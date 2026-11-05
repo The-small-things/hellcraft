@@ -56,6 +56,8 @@ public class ShowcaseTest implements FabricClientGameTest {
 		Properties properties = new Properties();
 		properties.setProperty("view-distance", String.valueOf(VIEW));
 		properties.setProperty("simulation-distance", "6");
+		// a far view takes the server a long time to send, and the test pauses it meanwhile: no watchdog
+		properties.setProperty("max-tick-time", "-1");
 		try (TestDedicatedServerContext server = context.worldBuilder().adjustSettings(MapTest::inferno).createServer(properties);
 			 TestDedicatedServerConnection connection = server.connect()) {
 			settle(context, connection);
