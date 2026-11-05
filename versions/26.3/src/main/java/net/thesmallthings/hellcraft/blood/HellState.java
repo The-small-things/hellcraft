@@ -59,6 +59,8 @@ public class HellState extends SavedData {
 	public final Set<String> fraudSpent = new HashSet<>();
 	/** The Labyrinths built beside the Minotaur's lairs (world/Labyrinth). */
 	public final Set<String> labyrinths = new HashSet<>();
+	/** The gates whose gatehouse towers have been built (world/Gatehouses). */
+	public final Set<String> gatehouses = new HashSet<>();
 	/** The ice ring around Lucifer's pit is standing (so a crash mid-fight can be cleaned up). */
 	public boolean arenaSealed;
 	public int luciferDefeats;
@@ -348,6 +350,9 @@ public class HellState extends SavedData {
 		CompoundTag mazes = new CompoundTag();
 		labyrinths.forEach(id -> mazes.putBoolean(id, true));
 		tag.put("labyrinths", mazes);
+		CompoundTag gatehouseTag = new CompoundTag();
+		gatehouses.forEach(id -> gatehouseTag.putBoolean(id, true));
+		tag.put("gatehouses", gatehouseTag);
 		tag.putBoolean("arenaSealed", arenaSealed);
 		tag.putInt("luciferDefeats", luciferDefeats);
 		if (luciferId != null) {
@@ -494,6 +499,7 @@ public class HellState extends SavedData {
 		}
 		state.fraudSpent.addAll(tag.getCompoundOrEmpty("fraudSpent").keySet());
 		state.labyrinths.addAll(tag.getCompoundOrEmpty("labyrinths").keySet());
+		state.gatehouses.addAll(tag.getCompoundOrEmpty("gatehouses").keySet());
 		state.arenaSealed = tag.getBooleanOr("arenaSealed", false);
 		state.luciferDefeats = tag.getIntOr("luciferDefeats", 0);
 		state.luciferId = tag.read("lucifer", UUIDUtil.CODEC).orElse(null);

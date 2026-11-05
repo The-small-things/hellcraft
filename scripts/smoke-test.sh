@@ -428,6 +428,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   maze=$(rcon "hellcraft labyrinth test")
   echo "$maze"
   echo "$maze" | grep -q "Labyrinth test OK" || { echo "The Labyrinth is broken"; exit 1; }
+  # the gatehouses: a stair that can be walked from the ground to the roof of every tower, clear of its doors
+  gatehouse=$(rcon "hellcraft gatehouse test")
+  echo "$gatehouse"
+  echo "$gatehouse" | grep -q "Gatehouse test OK" || { echo "The gatehouses are broken"; exit 1; }
   # the Keys of Peter: one real set, old copies crumble, fireproof
   keys=$(rcon "hellcraft keys test")
   echo "$keys"

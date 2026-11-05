@@ -102,7 +102,70 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.waitTicks(20);
 			context.takeScreenshot("waymark_compass");
 			labyrinth(context, server, connection);
+			gatehouses(context, server, connection);
 		}
+	}
+
+	/**
+	 * The gatehouse towers (world/Gatehouses) at the spawn gate of the Gate of Hell and at a gate of Dis: from outside
+	 * (gatehouse_outside), the guard room (gatehouse_guard), the stair climbing past a floor (gatehouse_stair), the walk over
+	 * the gate (gatehouse_walk) and a room in Dis (gatehouse_dis).
+	 */
+	private static void gatehouses(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		net.thesmallthings.hellcraft.world.Gatehouses.Tower t = server.computeOnServer(s -> {
+			net.thesmallthings.hellcraft.world.Gatehouses.build(s.overworld(), "gate_0");
+			return net.thesmallthings.hellcraft.world.Gatehouses.tower(s.overworld(), "gate_0", 1);
+		});
+		boolean furnished = server.computeOnServer(s -> s.overworld().getBlockState(t.centre())
+				.is(net.minecraft.world.level.block.Blocks.DARK_OAK_FENCE));
+		if (!furnished) {
+			throw new AssertionError("the gatehouse's guard room has no table");
+		}
+		double ca = Math.cos(t.doorAngle());
+		double sa = Math.sin(t.doorAngle());
+		// outside: out from the wall, looking back at the gate between its towers
+		double gx = t.cx() + ca * 11;
+		double gz = t.cz() + sa * 11;
+		double rx = gx / Math.hypot(gx, gz);
+		double rz = gz / Math.hypot(gx, gz);
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %.1f %d %.1f", gx + rx * 30, t.ground() + 10, gz + rz * 30, gx,
+				t.ground() + 10, gz));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("gatehouse_outside");
+		// the guard room, from the far side of the aisle, looking at the table and the door
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %d %.2f", t.cx() - ca * 3.0, t.ground() + 1, t.cz() - sa * 3.0,
+				t.cx() + ca * 4, t.ground(), t.cz() + sa * 4));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("gatehouse_guard");
+		// the stair, from the middle of the first floor up, looking round at it
+		int f1 = t.floors()[1];
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %d %.2f", t.cx() + sa * 1.5, f1 + 1, t.cz() - ca * 1.5,
+				t.cx() - sa * 5, f1 + 2, t.cz() + ca * 5));
+		context.waitTicks(20);
+		context.takeScreenshot("gatehouse_stair");
+		// the walk over the gate, looking at the tower's door
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %d %.2f", gx, t.walk() + 1, gz, t.cx(), t.walk() + 1, t.cz()));
+		context.waitTicks(20);
+		context.takeScreenshot("gatehouse_walk");
+		// a room in Dis
+		net.thesmallthings.hellcraft.world.Gatehouses.Tower d = server.computeOnServer(s -> {
+			net.thesmallthings.hellcraft.world.Gatehouses.build(s.overworld(), "dis_0");
+			return net.thesmallthings.hellcraft.world.Gatehouses.tower(s.overworld(), "dis_0", -1);
+		});
+		int f2 = d.floors()[Math.min(2, d.floors().length - 2)];
+		double da = Math.cos(d.doorAngle());
+		double db = Math.sin(d.doorAngle());
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %d %.2f", d.cx() - da * 3.0, f2 + 1, d.cz() - db * 3.0, d.cx(),
+				f2, d.cz()));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("gatehouse_dis");
 	}
 
 	/** The Journal's page number of a Guide page, by its title. */
