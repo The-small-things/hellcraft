@@ -48,7 +48,7 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
   <a href="docs/showcase/24_seraph_gloria.jpg"><img src="docs/showcase/24_seraph_gloria.jpg" width="32%" alt="seraph gloria"></a>
 </p>
 
-*Taken in game by the client test `ShowcaseTest`, with no HUD and no shaders. Click a picture for the full size.*
+*Taken in game by the client test `ShowcaseTest`, with no HUD and no shaders. Click a picture for the full size. How the mod and these pictures were made: [How Hellcraft was made](#how-hellcraft-was-made).*
 
 ### The Map of Hell
 
@@ -801,6 +801,29 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - Minos's titles in the player list (3.1): `judgementTitles`
 - the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
+
+## How Hellcraft was made
+
+Hellcraft is written by **Claude Code**, Anthropic's AI coding agent, working for the mod's owner: the owner says what the mod should be, plays the test builds with friends and says what to change, and Claude writes the code, makes the art, tests it and ships it. Everything is in this repository, and nearly everything is made by code you can run again.
+
+**The process**
+1. **A plan first.** The 3.0 rebuild started as a written plan, [docs/REVAMP.md](docs/REVAMP.md), split into phases (the map, boss tech, upper Hell, lower Hell, Lucifer, the Nether, Purgatory and Paradiso, polish). The owner read and marked it up in a shared, commentable copy, and answered its open questions before any code was written.
+2. **One phase at a time.** Each phase was built, tested and pushed as a **test build** (the beta on the Releases page) for a play session. What the owner found in play (a boss too easy, a road too flat, a circle too dark) became the next round of fixes.
+3. **Tested by machines before people.** Every push is built and checked automatically (below), and a release only goes out if every check passes.
+4. **Released when the owner says so.** A stable release (3.0.0, 3.1.0) is published only on the owner's word, with notes saying what's new.
+
+**The tools**
+- **The mod:** Java 25 on [Fabric](https://fabricmc.net/) (Fabric Loader, Fabric API and the Loom Gradle plugin) for Minecraft 26.3, whose code ships unobfuscated, so the mod uses Mojang's own names. When something about the game wasn't clear, Claude decompiled Minecraft and read the real code, or asked CI to print it (the `probe` workflow).
+- **The world is maths.** The whole funnel of Hell (its circles, cliffs, roads, ramps, rivers and walls) comes from one pure-Java file, `InfernoGeometry`, which the terrain, the biomes, the compass and the Map of Hell all read. The Forge of Dis and Paradiso have their own (`ForgeGeometry`, `ParadisoGeometry`). Offline renderers (`tools/RenderMap.java`, `tools/RenderForge.java`) draw them as pictures, like the map above, without starting Minecraft.
+- **Data from scripts.** Biomes, features, dimensions, advancements, enchantments, loot tables and post-processing effects are JSON that Python scripts write (`tools/gen_*.py`), so a change is made once in the script, not in hundreds of files.
+- **Art as code.** No image editor was used. Every item icon, block, armour layer, HUD sprite, the title logo and the Map's parchment are pixel art drawn by Python (`tools/gen_textures.py`). The painted panorama behind the title screen is a small ray-marcher (`tools/art/panorama.py`) that flies a camera over a heightfield of the funnel.
+- **Bosses and monsters as code.** Each body is built in Python, cube by cube, with its texture painted by small "painters" (fur, metal, feathers, cloth) and its animations as keyframes (`tools/art/<name>.py`). The scripts write a [Blockbench](https://www.blockbench.net/) project (`versions/26.3/art/*.bbmodel`) you can open and play, and `tools/gen_bosses.py` turns each one into Minecraft's own keyframe animation code, so there's no animation library. An offline renderer (`tools/art/render.py`) shows a model from any side in a second while it's being built.
+- **Automatic testing on every push** ([GitHub Actions](.github/workflows/build.yml)):
+  - unit tests of the geometry and rules;
+  - a **smoke test** (`scripts/smoke-test.sh`) that boots a real server in Docker (`itzg/minecraft-server`), generates every circle, drives it over RCON to run each feature's self-test command, and fails on any error in the log;
+  - **client game tests** (`versions/26.3/src/gametest`, Fabric's client game test API): a real Minecraft client runs headless (Xvfb and Mesa's software renderer), joins a server and single-player worlds, fights the bosses, opens the Map and the Journal, and takes hundreds of screenshots. Claude looks at the screenshots to check every model, animation, effect and screen, and they're kept as a CI download.
+- **Showcase pictures.** The screenshots at the top come from one more client test, `ShowcaseTest`: no HUD, full HD, the bosses fighting in their own lairs. Run it with `HELLCRAFT_SHOWCASE=all bash tools/dev/clienttest.sh`.
+- **Packaging and releases.** `scripts/package-singleplayer.sh` builds the Modrinth modpack (`.mrpack`) and the mods zip; CI publishes them as the beta on every push and as a stable release on a commit marked `[release]`.
 
 ## Development
 
