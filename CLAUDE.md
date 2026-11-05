@@ -159,9 +159,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `HellState.keys*`, serial in the stack's custom data, old copies crumble; `mixin/SlotMixin` and the item's
   `canFitInsideContainerItems` keep it out of storage; +2 hearts, `TravelMenu` to any Rest; given at Purgatory's seventh
   terrace; `hazard/Glow` + `net/GlowPayload` + client `layer/Glow`: the faint glow of onlookers and the holder); client
-  `layer/CameraSway` (Lust's rock, rides lean, via `CameraMixin`, off with View Bobbing); `world/Labyrinth` (a roofed 15x15 maze beside
-  each Minotaur lair, built on approach, walls/roof/floor unbreakable and mended (`protectedBlock`, `mend`), floor y kept as `labyrinth_k:y`; Ariadne's spool, a lodestone at its heart, gives
-  `HellItems.ARIADNES_THREAD`, whose holder sees a red trail out (`trails`); `MinotaurFight` stuns him after every charge while a fighter carries it, +20% damage in
+  `layer/CameraSway` (Lust's rock, rides lean, via `CameraMixin`, off with View Bobbing); `world/Labyrinth` (per Minotaur lair, built on approach: an arch on the
+  surface `ARCH` out from the arena, which teleports whoever walks through it down to a sealed 15x15 maze near the bedrock
+  (`DEPTH`), walls/roof/floor/arch unbreakable and mended (`protectedBlock`, `mend`); pads on its landings lift you to the arena
+  or back to the arch (`passages`); `HellState.labyrinths` keeps `labyrinth_arch_k:y`; Ariadne's spool, a lodestone at its heart,
+  gives `HellItems.ARIADNES_THREAD`, whose holder sees a red trail out (`trails`); `MinotaurFight` stuns him after every charge
+  while a fighter carries it, +20% damage in
   `BossRules`; hint bit 62; `WaymarkTest` films it, `labyrinth_*`); Distant Horizons: `LodTest` (opt-in, `HELLCRAFT_LOD=1`)
   run by `.github/workflows/lod.yml` (by hand, or a commit message with `[lod]`), which downloads it from Modrinth.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the

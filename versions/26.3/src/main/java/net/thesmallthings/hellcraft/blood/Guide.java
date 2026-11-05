@@ -230,15 +230,15 @@ public final class Guide {
 				"",
 				"Climb out to Purgatory to finish: a Pilgrim's Shell and your name on the Stone. /pilgrimage abandon gives up."));
 		pages.add(page("THE LABYRINTH",
-				"Beside each of the Minotaur's lairs, in the Wood of the Suicides, stands the Labyrinth of Crete: a roofed maze with one door on its far side and one onto his arena.",
+				"Ten blocks out from each of the Minotaur's arenas, in the Wood of the Suicides, stands an old stone arch with darkness in it. Walk through it and you're taken down into the Labyrinth of Crete, a sealed maze deep underground.",
 				"",
-				"Its walls, roof and floor can't be broken, so the only way in is to walk it. Torches and blocks you bring can mark your way.",
+				"Its walls, roof and floor can't be broken, so the only way to its heart is to walk it. Torches and blocks you bring can mark your way. The pad behind where you came in takes you back up to the arch.",
 				"",
-				"At its heart lies Ariadne's spool: right-click it for Ariadne's Thread (once each half hour). While you carry it in the maze, a red thread on the floor shows the way out to the Minotaur's door.",
+				"At its heart lies Ariadne's spool: right-click it for Ariadne's Thread (once each half hour). While you carry it in the maze, a red thread on the floor shows the way to the Minotaur's door. The pad past that door takes you up to the edge of his arena.",
 				"",
 				"Carry the thread into his fight: every charge of his ends with him stunned, as if he'd hit the wall, and your blows hit him a fifth harder. It's used up when he falls.",
 				"",
-				"You never have to walk the maze to fight him: his arena is open on every other side."));
+				"You never need the Labyrinth to fight him."));
 		if (c.keysOfPeter) {
 			pages.add(page("THE KEYS OF PETER",
 					"There is only one set on the server. The angel at Purgatory's gate gives it to the first soul to reach the seventh terrace.",

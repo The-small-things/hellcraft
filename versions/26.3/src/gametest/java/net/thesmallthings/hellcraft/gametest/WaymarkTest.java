@@ -118,47 +118,59 @@ public class WaymarkTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * The Labyrinth beside the Minotaur's first lair (world/Labyrinth): built, seen from above (labyrinth_aerial), from its far
-	 * door looking in (labyrinth_inside) and in its heart with the thread in hand, its red trail leading out (labyrinth_heart);
-	 * its spool must lie at the heart, and its walls must stand to the roof.
+	 * The Labyrinth of the Minotaur's first lair (world/Labyrinth): built, its arch on the surface (labyrinth_arch); walking
+	 * through the arch must take the player down into the vault (labyrinth_inside, the entrance landing looking in); the spool
+	 * must lie at the heart and the vault be sealed; in the heart with the thread in hand, its red trail leads out
+	 * (labyrinth_heart).
 	 */
 	private static void labyrinth(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		server.runCommand("gamemode spectator Player0");
-		net.minecraft.core.BlockPos c = server.computeOnServer(s -> {
+		net.minecraft.core.BlockPos[] at = server.computeOnServer(s -> {
 			net.thesmallthings.hellcraft.world.Labyrinth.build(s.overworld(), 0);
-			return net.thesmallthings.hellcraft.world.Labyrinth.centre(s.overworld(), 0);
+			return new net.minecraft.core.BlockPos[]{net.thesmallthings.hellcraft.world.Labyrinth.centre(s.overworld(), 0),
+					net.thesmallthings.hellcraft.world.Labyrinth.arch(s.overworld(), 0)};
 		});
+		net.minecraft.core.BlockPos c = at[0];
+		net.minecraft.core.BlockPos arch = at[1];
 		boolean spool = server.computeOnServer(s -> s.overworld().getBlockState(net.thesmallthings.hellcraft.world.Labyrinth.spool(s.overworld(), 0))
 				.is(net.minecraft.world.level.block.Blocks.LODESTONE));
 		if (!spool) {
 			throw new AssertionError("the Labyrinth has no spool at its heart");
 		}
 		net.minecraft.core.Direction out = net.thesmallthings.hellcraft.world.Labyrinth.side(0);
-		// the outer wall beside the far door stands from the floor to the roof
-		boolean walled = server.computeOnServer(s -> {
+		// sealed: the outer wall beside the entrance door stands from the floor to the roof, and the roof is solid over the heart
+		boolean sealed = server.computeOnServer(s -> {
 			for (int h = 0; h <= 7; h++) {
 				if (s.overworld().getBlockState(c.offset(out.getStepX() * 22, h, out.getStepZ() * 22).relative(out.getClockWise(), 3)).isAir()) {
 					return false;
 				}
 			}
-			return true;
+			return !s.overworld().getBlockState(c.above(7)).isAir() && !s.overworld().getBlockState(c.above(8)).isAir();
 		});
-		if (!walled) {
-			throw new AssertionError("the Labyrinth's outer wall has a gap");
+		if (!sealed) {
+			throw new AssertionError("the Labyrinth's vault isn't sealed");
 		}
-		server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d facing %d %d %d", c.getX() + out.getStepX() * 50 + 16, c.getY() + 34,
-				c.getZ() + out.getStepZ() * 50 + 16, c.getX(), c.getY(), c.getZ()));
+		// the arch, seen from outside
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", arch.getX() + out.getStepX() * 9 + 3.5, arch.getY() + 3,
+				arch.getZ() + out.getStepZ() * 9 + 3.5, arch.getX(), arch.getY() + 2, arch.getZ()));
 		context.waitTicks(20);
 		connection.waitForChunksRender();
 		context.waitTicks(20);
-		context.takeScreenshot("labyrinth_aerial");
-		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", c.getX() + out.getStepX() * 22 + 0.5, c.getY() + 1,
-				c.getZ() + out.getStepZ() * 22 + 0.5, c.getX(), c.getY() + 1, c.getZ()));
+		context.takeScreenshot("labyrinth_arch");
+		// walk through it: down into the vault
+		server.runCommand("gamemode adventure Player0");
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f", arch.getX() + 0.5, arch.getY(), arch.getZ() + 0.5));
 		context.waitTicks(20);
+		double y = server.computeOnServer(s -> s.getPlayerList().getPlayerByName("Player0").getY());
+		if (y > c.getY() + 1) {
+			throw new AssertionError("walking through the Labyrinth's arch didn't take the player down (y " + y + ")");
+		}
+		context.waitTicks(40);
 		connection.waitForChunksRender();
 		context.waitTicks(10);
 		context.takeScreenshot("labyrinth_inside");
-		// in the heart, with the thread: the red trail runs from here towards the arena door
+		// in the heart, with the thread: the red trail runs from here towards the Minotaur's door
+		server.runCommand("gamemode spectator Player0");
 		server.runCommand("give Player0 hellcraft:ariadnes_thread");
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %d %d %d", c.getX() + out.getStepX() * 3 + 0.5, c.getY() + 2,
 				c.getZ() + out.getStepZ() * 3 + 0.5, c.getX() - out.getStepX() * 4, c.getY(), c.getZ() - out.getStepZ() * 4));
