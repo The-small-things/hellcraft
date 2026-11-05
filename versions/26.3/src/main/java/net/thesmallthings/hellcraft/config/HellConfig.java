@@ -76,6 +76,10 @@ public class HellConfig {
 	public boolean keysOfPeter = true;
 	/** How long the keys' holder may stay offline before the keys go back to the angel (hours). */
 	public int keysReturnHours = 72;
+	/** First steps: Virgil teaches new souls the mod a little at a time as they play (Lessons). */
+	public boolean lessons = true;
+	/** The least time between two of Virgil's lessons, in seconds. */
+	public int lessonSeconds = 60;
 	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
 	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */

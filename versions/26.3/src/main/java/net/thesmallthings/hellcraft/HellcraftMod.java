@@ -137,6 +137,7 @@ public class HellcraftMod implements ModInitializer {
 			net.thesmallthings.hellcraft.blood.KeysOfPeter.tick(server);
 			net.thesmallthings.hellcraft.world.Labyrinth.tick(server);
 			net.thesmallthings.hellcraft.world.Gatehouses.tick(server);
+			net.thesmallthings.hellcraft.blood.Lessons.tick(server);
 			Shades.tick(server);
 			Ferries.tick(server);
 			Wingbeat.tick(server);
@@ -164,6 +165,7 @@ public class HellcraftMod implements ModInitializer {
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			CircleHazards.forget(handler.getPlayer());
+			net.thesmallthings.hellcraft.blood.Lessons.forget(handler.getPlayer());
 			Spine.forget(handler.getPlayer());
 			Ambience.forget(handler.getPlayer());
 			Purgatory.forget(handler.getPlayer());
@@ -181,6 +183,7 @@ public class HellcraftMod implements ModInitializer {
 		net.thesmallthings.hellcraft.blood.KeysOfPeter.register();
 		net.thesmallthings.hellcraft.world.Labyrinth.register();
 		net.thesmallthings.hellcraft.world.Gatehouses.register();
+		net.thesmallthings.hellcraft.blood.Lessons.register();
 		net.thesmallthings.hellcraft.hazard.Glow.register();
 		net.thesmallthings.hellcraft.world.PilgrimStone.register();
 

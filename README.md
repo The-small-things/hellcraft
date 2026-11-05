@@ -57,6 +57,7 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 **New in 3.2 (beta):**
 - **Onlookers:** now and then a shade stands far off and stares at you, the living, wearing the skin of someone who has walked this Hell before; walk up to it and it's gone.
 - **Every circle sounds like itself:** Lust's storm, Gluttony's rain, gold clinking in Greed, creaking trees in the Wood, ice cracking on Cocytus and a vast heart beating under Judecca.
+- **Virgil teaches as you go:** new souls get one short tip at a time (the Journal, the compass, Blood Fragments, altars, hearts, bosses...) as they first meet each thing, at most one a minute. `/lessons` shows how far you've got, `/lessons off` stops them.
 - **Gatehouses:** climb the towers beside every gate of the Gate of Hell and Dis: a spiral stair up through carpeted rooms (guard room, library, mess hall, armoury, shrine, war room) to the walk over the gate and the roof.
 - **The Labyrinth of Crete**: step through an old arch beside the Minotaur's arena and into a sealed maze deep underground. Find **Ariadne's Thread** at its heart; it shows you the way out to him, and in his fight his charges end with him stunned.
 - **The Unbound:** once you've beaten Lucifer, the guardians wake stronger, and pay better.
@@ -694,6 +695,8 @@ The monsters are tougher the deeper you go (+3% health per circle on 26.3). On 2
 
 **The damned (3.1).** Every circle now shows its own punishment, as Dante saw it, in the souls around you: in the Vestibule a ragged line runs after a white banner, stung as it goes; in Limbo a few souls only sigh (the Noble Castle's great shades too); in Lust they tumble through the air on the storm; in Gluttony they wallow half-sunk in the mud; in Greed pairs roll great weights of gold at each other, crash, turn round and roll them back; in the Styx they fight each other in the shallows; in Heresy they writhe in the burning tombs; in the river of blood they are sunk to the waist, the chest or the eyes; on the Burning Sands they run and lie under the fire; in Malebolge the hypocrites walk slowly by in gilded cloaks of lead; and in Cocytus they are frozen in the ice up to the neck. (The Wood of the Suicides' souls are its trees.) The damned are scenery, not monsters: they can't be hurt, won't block your way or attack you, drop nothing, and are never in a guardian's arena, on a road or in a Rest. Now and then one screams (at most one cry every few seconds near you; the subtitles say so). Turn them off with `damnedSouls`.
 
+**Virgil teaches as you go (3.2).** A new soul isn't handed everything at once. Virgil gives one short, plain tip at a time, each pointing to the Journal page with more: the Journal's key soon after you arrive, the compass after a couple of minutes, the Map of Hell after five, then each thing as you first meet it: your first Blood Fragment or Blood Heart, a Blood Altar, the Gate of Hell, the first circle, your first Rest, losing half your health, your first fall, a bed (they don't work here), a boss waking (what its marks mean), your first boss beaten (style and spoils), taking a heart from a player, reaching full hearts (prestige), and a gatehouse. Lessons wait their turn: at most one a minute (`lessonSeconds`), none during a cutscene, and none mid-fight except the boss's. `/lessons` shows how far you've got, `/lessons off` stops them and `/lessons again` repeats the last. Players from before 3.2 skip the basics and only hear about new things.
+
 **Onlookers (3.2).** In Dante the dead keep stopping to stare at the living man walking among them, and here they do too. Now and then (about every five minutes) a shade stands far off, 40 to 64 blocks away on open ground where you can see it, and watches you: it turns to follow you, crouches, lifts an arm. It wears the skin of a player who has walked this Hell before but isn't online now (most often one who has fallen and lost hearts), or a stranger's. They have a faint glow of their own, so you can make them out against the dark. Come within 20 blocks and it's simply gone; it also goes by itself after a minute or two. Onlookers can't be hurt, don't move and do no harm. They come in Hell's circles (not the Dark Wood, Judecca or near a guardian's lair) and on Purgatory's island. Turn them off with `onlookers`, or make them rarer with `onlookerMinutes`.
 
 **The sound of each circle (3.2).** Every circle has its own sound under the rest: a wailing wind at the Vestibule, Limbo's hush, Lust's howling storm, Gluttony's endless cold rain, the Styx's murk and the wind over Cocytus. Now and then something sounds off to one side: insects swarming in the Vestibule, a soul's sigh in Limbo, wings in Lust's storm, mud in Gluttony, gold clinking and weights crashing in Greed, the marsh bubbling, tombs burning, the river of blood seething, the trees of the Wood creaking, fire hissing on the Sands, chains in Malebolge, a giant's heartbeat at the Well, ice cracking on Cocytus and, under Judecca, a vast slow heart in the ice. The Forge of Dis rings with a far-off hammer and Paradiso chimes. It all follows the Ambient/Environment volume slider.
@@ -758,6 +761,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
 | `/guide` | all | Open the Pilgrim's Journal (the same as J) |
+| `/lessons [off\|on\|again]` | all | How many of Virgil's first-steps lessons you've had; turn them off or on; hear the last one again (3.2) |
 | `/judge` | all | Minos's judgement of you, read afresh from what you've done (3.1) |
 | `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
 | `/hellcraft sethearts <player> <n>` | op | |
@@ -784,6 +788,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft onlooker spawn [player]` / `onlooker test` | op | Put an onlooker 40 to 64 blocks from a player, where they can see it; self-test one (3.2) |
 | `/hellcraft guardian <name> summon unbound` | op | Wake a guardian Unbound, as if a soul who has beaten Lucifer had walked in (3.2) |
 | `/hellcraft keys [give <player> \| return \| test]` | op | Where the Keys of Peter are; give them to a player; send them back to the angel; self-test (3.2) |
+| `/hellcraft lessons reset <player>` / `lessons give <player> <id>` / `lessons test` | op | Start a soul's lessons over; give one now; check them (3.2) |
 | `/hellcraft gatehouse build` / `gatehouse test` | op | Build the gatehouse towers of the nearest gate (Gate of Hell or Dis); check every tower's stair reaches its roof clear of its doors (3.2) |
 | `/hellcraft labyrinth build` / `labyrinth test` | op | Build the Labyrinth (its arch and vault) of the nearest of the Minotaur's lairs; check every maze has a way to its heart and out (3.2) |
 | `/hellcraft judge [player]` / `judge test` | op | Minos's judgement of a player; self-test the judgement on made-up souls (3.1) |
@@ -827,6 +832,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`
 - onlookers, the shades that stare from afar (3.2): `onlookers`, `onlookerMinutes` (about how many minutes between one and the next, for each player)
+- first steps, Virgil's lessons for new souls (3.2): `lessons`, `lessonSeconds` (the least time between two)
 - the Unbound guardians (3.2): `unboundGuardians`
 - the Keys of Peter (3.2): `keysOfPeter`, `keysReturnHours` (how long their holder may stay offline before they go back to the angel)
 - Minos's titles in the player list (3.1): `judgementTitles`

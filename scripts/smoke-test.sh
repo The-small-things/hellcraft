@@ -432,6 +432,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   gatehouse=$(rcon "hellcraft gatehouse test")
   echo "$gatehouse"
   echo "$gatehouse" | grep -q "Gatehouse test OK" || { echo "The gatehouses are broken"; exit 1; }
+  # first steps: Virgil's lessons for new souls
+  lessons=$(rcon "hellcraft lessons test")
+  echo "$lessons"
+  echo "$lessons" | grep -q "Lessons test OK" || { echo "Virgil's lessons are broken"; exit 1; }
   # the Keys of Peter: one real set, old copies crumble, fireproof
   keys=$(rcon "hellcraft keys test")
   echo "$keys"

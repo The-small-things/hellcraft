@@ -178,6 +178,11 @@ public class HellState extends SavedData {
 		// ---- secret ways and the Pilgrimage (SecretWayLift, Pilgrimage)
 		/** The secret ways down this soul has found (SecretWays ids). */
 		public final Set<String> secrets = new HashSet<>();
+		/** First steps (Lessons): the lessons Virgil has given, whether they've begun (old souls skip the basics), turned off, and online seconds. */
+		public final Set<String> lessons = new HashSet<>();
+		public boolean lessonsStarted;
+		public boolean lessonsOff;
+		public int playSeconds;
 		/** On a pilgrimage: its ticks of play so far; -1 when not on one. */
 		public int pilgrimTicks = -1;
 		/** The deepest circle (Circle.depth) this pilgrimage has reached. */
@@ -310,6 +315,12 @@ public class HellState extends SavedData {
 			CompoundTag secrets = new CompoundTag();
 			s.secrets.forEach(id -> secrets.putBoolean(id, true));
 			st.put("secrets", secrets);
+			CompoundTag lessons = new CompoundTag();
+			s.lessons.forEach(id -> lessons.putBoolean(id, true));
+			st.put("lessons", lessons);
+			st.putBoolean("lessonsStarted", s.lessonsStarted);
+			st.putBoolean("lessonsOff", s.lessonsOff);
+			st.putInt("playSeconds", s.playSeconds);
 			st.putInt("pilgrimTicks", s.pilgrimTicks);
 			st.putInt("pilgrimDeepest", s.pilgrimDeepest);
 			st.putInt("pilgrimages", s.pilgrimages);
@@ -464,6 +475,10 @@ public class HellState extends SavedData {
 				s.bossBest.put(key, best.getIntOr(key, 0));
 			}
 			s.secrets.addAll(st.getCompoundOrEmpty("secrets").keySet());
+			s.lessons.addAll(st.getCompoundOrEmpty("lessons").keySet());
+			s.lessonsStarted = st.getBooleanOr("lessonsStarted", false);
+			s.lessonsOff = st.getBooleanOr("lessonsOff", false);
+			s.playSeconds = st.getIntOr("playSeconds", 0);
 			s.pilgrimTicks = st.getIntOr("pilgrimTicks", -1);
 			s.pilgrimDeepest = st.getIntOr("pilgrimDeepest", 0);
 			s.pilgrimages = st.getIntOr("pilgrimages", 0);

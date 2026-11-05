@@ -138,16 +138,15 @@ public final class BloodEvents {
 		HellState.Soul soul = Hearts.soul(player);
 		Hearts.apply(player);
 		BloodItems.refresh(player);
+		Lessons.onJoin(player, firstJoin);
 		if (firstJoin) {
 			// something to eat on the long walk down, and where to read up
 			BloodItems.give(player, new ItemStack(Items.BREAD, 5));
 			Fairness.welcome(player, soul);
-			player.sendSystemMessage(Component.literal("Welcome to Hell. Press ").withStyle(ChatFormatting.GOLD)
+			// the rest Virgil teaches as the soul plays (Lessons); the Journal's key is in the chat for anyone who wants it now
+			player.sendSystemMessage(Component.literal("Welcome to Hell. Virgil will show you the way as you go; press ").withStyle(ChatFormatting.GOLD)
 					.append(Component.keybind("key.hellcraft.journal").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
-					.append(Component.literal(" for the Pilgrim's Journal: where you are, where to go next, and how everything works. ")
-							.withStyle(ChatFormatting.GOLD))
-					.append(Component.keybind("key.hellcraft.map").withStyle(ChatFormatting.YELLOW, ChatFormatting.BOLD))
-					.append(Component.literal(" opens the Map of Hell.").withStyle(ChatFormatting.GOLD)));
+					.append(Component.literal(" for the Pilgrim's Journal at any time.").withStyle(ChatFormatting.GOLD)));
 		}
 		if (soul.kit < 1 && !soul.ghost) {
 			// a way back for the first falls (players from older versions get theirs once, too)

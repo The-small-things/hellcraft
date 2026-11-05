@@ -230,6 +230,22 @@ public final class Gatehouses {
 		return pos.getY() + 1;
 	}
 
+	/** True within {@code within} blocks of a gate whose towers have been built. */
+	public static boolean nearBuilt(net.minecraft.world.level.Level level, double x, double z, double within) {
+		if (!(level instanceof ServerLevel server) || server.dimension() != net.minecraft.world.level.Level.OVERWORLD) {
+			return false;
+		}
+		HellState state = HellState.get(server.getServer());
+		for (Site s : sites()) {
+			double dx = x - s.x();
+			double dz = z - s.z();
+			if (dx * dx + dz * dz < within * within && state.gatehouses.contains(s.id())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> commands(dispatcher));
 	}

@@ -103,6 +103,10 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.takeScreenshot("waymark_compass");
 			labyrinth(context, server, connection);
 			gatehouses(context, server, connection);
+			// first steps: what Virgil has taught Player0 by now (a new soul here)
+			String taught = server.computeOnServer(s -> String.join(",", net.thesmallthings.hellcraft.blood.HellState.get(s)
+					.existing(s.getPlayerList().getPlayerByName("Player0").getUUID()).lessons));
+			System.out.println("Lessons taught to Player0: " + taught);
 		}
 	}
 
