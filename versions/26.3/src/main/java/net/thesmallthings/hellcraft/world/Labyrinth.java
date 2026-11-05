@@ -493,6 +493,12 @@ public final class Labyrinth {
 					level.setBlock(pos.set(x, y + WALL - 1, z), Blocks.SOUL_LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true), 2);
 					continue;
 				}
+				if ((v == -2 || v == SIZE + 1) && (u == DOOR_A - 1 || u == DOOR_B + 1)) {
+					// lanterns on chains in each landing, so you can see where you've arrived
+					level.setBlock(pos.set(x, y + WALL - 1, z), Blocks.IRON_CHAIN.defaultBlockState(), 2);
+					level.setBlock(pos.set(x, y + WALL - 2, z), Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true), 2);
+					continue;
+				}
 				boolean cell = u % PERIOD == 1 && v % PERIOD == 1 && v >= 0 && v < SIZE;
 				boolean heart = heartCell(u / PERIOD, v / PERIOD);
 				if (cell && !heart) {
