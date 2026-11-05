@@ -42,7 +42,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 	}
 	private static final int VIEW = 16;
 	/** How long a far view may take to draw (ticks); past that, take what has drawn (a far edge may never finish). */
-	private static final int SETTLE = 3600;
+	private static final int SETTLE = 6000;
 
 	private static double s(double r) {
 		return InfernoGeometry.scaled(r);
@@ -62,6 +62,7 @@ public class ShowcaseTest implements FabricClientGameTest {
 			server.runCommand("gamemode spectator Player0");
 			context.runOnClient(client -> {
 				client.options.renderDistance().set(VIEW);
+				client.options.framerateLimit().set(10);
 				if (!client.gui.hud.isHidden()) {
 					client.gui.hud.toggle();
 				}
@@ -144,13 +145,25 @@ public class ShowcaseTest implements FabricClientGameTest {
 		System.out.println("Showcase picture: " + saved.toAbsolutePath());
 	}
 
-	/** Waits for the chunks round the camera to draw, or for SETTLE ticks, whichever comes first. */
+	/**
+	 * Waits for the chunks round the camera to arrive from the server and then to draw, each for up to SETTLE ticks, and
+	 * says how long each took. (The client draws at a few frames a second meanwhile, so the software renderer leaves the
+	 * server the CPU it needs to generate Hell's terrain.)
+	 */
 	private static void settle(ClientGameTestContext context, TestDedicatedServerConnection connection) {
+		long start = System.currentTimeMillis();
+		try {
+			connection.waitForChunksDownload(SETTLE);
+		} catch (AssertionError e) {
+			System.out.println("Showcase: not every chunk arrived in time");
+		}
+		long arrived = System.currentTimeMillis();
 		try {
 			connection.waitForChunksRender(SETTLE);
 		} catch (AssertionError e) {
 			System.out.println("Showcase: not every chunk drew in time; taking the picture anyway");
 		}
+		System.out.printf("Showcase: chunks arrived in %d s, drew in %d s%n", (arrived - start) / 1000, (System.currentTimeMillis() - arrived) / 1000);
 	}
 
 	/** The Noble Castle from the air, or its court with the shades. */
