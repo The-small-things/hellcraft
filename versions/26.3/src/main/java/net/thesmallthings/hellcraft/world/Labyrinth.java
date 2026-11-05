@@ -78,8 +78,8 @@ public final class Labyrinth {
 	/** How often a player may take a thread from the spool (ticks). */
 	private static final long THREAD_GAP = 20L * 60 * 30;
 	/** How many blocks of the way out the thread shows ahead of you. */
-	private static final int TRAIL = 32;
-	private static final DustParticleOptions THREAD = new DustParticleOptions(0xC0141C, 0.9f);
+	private static final int TRAIL = 40;
+	private static final DustParticleOptions THREAD = new DustParticleOptions(0xE01E28, 1.4f);
 	private static final Map<UUID, Long> TAKEN = new HashMap<>();
 	/** Hint bit for the first time a soul comes to a maze (CircleHazards.hintOnce). */
 	private static final int HINT = 62;
@@ -388,12 +388,12 @@ public final class Labyrinth {
 				boolean heart = heartCell(u / PERIOD, v / PERIOD);
 				if (!grid[u][v] && cell && !heart) {
 					float d = random.nextFloat();
-					if (d < 0.3f) {
+					if (d < 0.45f) {
 						// soul lanterns hung from the roof, so the way can be seen
 						level.setBlock(pos.set(x, y + WALL - 1, z), Blocks.SOUL_LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true), 2);
-					} else if (d < 0.38f) {
+					} else if (d < 0.52f) {
 						level.setBlock(pos.set(x, y + WALL - 1, z), Blocks.COBWEB.defaultBlockState(), 2);
-					} else if (d < 0.43f) {
+					} else if (d < 0.57f) {
 						level.setBlock(pos.set(x, y, z), Blocks.BONE_BLOCK.defaultBlockState(), 2);
 					}
 				}
@@ -490,7 +490,7 @@ public final class Labyrinth {
 				List<int[]> path = wayOut(grid(k), at);
 				for (int i = 0; i < Math.min(TRAIL, path.size()); i++) {
 					int[] xz = world(centre, k, path.get(i)[0], path.get(i)[1]);
-					level.sendParticles(p, THREAD, true, true, xz[0] + 0.5, y + 0.12, xz[1] + 0.5, 2, 0.12, 0.0, 0.12, 0);
+					level.sendParticles(p, THREAD, true, true, xz[0] + 0.5, y + 0.15, xz[1] + 0.5, 4, 0.15, 0.02, 0.15, 0);
 				}
 				break;
 			}
