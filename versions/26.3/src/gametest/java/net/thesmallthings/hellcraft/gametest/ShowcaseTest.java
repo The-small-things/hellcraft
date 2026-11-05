@@ -62,6 +62,8 @@ public class ShowcaseTest implements FabricClientGameTest {
 			server.runCommand("gamemode spectator Player0");
 			context.runOnClient(client -> {
 				client.options.renderDistance().set(VIEW);
+				// the server sends chunks by the view distance the client reported when it joined: report the new one
+				client.options.broadcastOptions();
 				if (!client.gui.hud.isHidden()) {
 					client.gui.hud.toggle();
 				}
