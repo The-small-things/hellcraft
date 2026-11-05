@@ -398,6 +398,10 @@ public final class Purgatory {
 			return;
 		}
 		TERRACE_REACHED.put(player.getUUID(), k);
+		if (k == TERRACES) {
+			// the angel at the gate keeps the Keys of Peter for whoever comes this far, if no-one has them
+			net.thesmallthings.hellcraft.blood.KeysOfPeter.offer(player);
+		}
 		player.sendOverlayMessage(Component.literal("Terrace of " + SINS[k - 1].charAt(0) + SINS[k - 1].substring(1).toLowerCase(java.util.Locale.ROOT)
 				+ " reached (" + k + "/7)").withStyle(ChatFormatting.AQUA));
 		Feedback.sound(player, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.MASTER, 1.0f, 1.2f);

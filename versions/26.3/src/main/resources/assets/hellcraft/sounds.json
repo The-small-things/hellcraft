@@ -2,29 +2,533 @@
   "entity.damned.scream": {
     "subtitle": "subtitles.hellcraft.entity.damned.scream",
     "sounds": [
-      {"name": "minecraft:mob/ghast/scream1", "pitch": 1.3, "volume": 0.55},
-      {"name": "minecraft:mob/ghast/scream2", "pitch": 1.25, "volume": 0.55},
-      {"name": "minecraft:mob/ghast/scream3", "pitch": 1.4, "volume": 0.5},
-      {"name": "minecraft:mob/ghast/scream4", "pitch": 1.2, "volume": 0.55},
-      {"name": "minecraft:mob/ghast/scream5", "pitch": 1.35, "volume": 0.5},
-      {"name": "minecraft:mob/ghast/moan3", "pitch": 1.5, "volume": 0.6},
-      {"name": "minecraft:mob/ghast/moan6", "pitch": 1.45, "volume": 0.6},
-      {"name": "minecraft:mob/endermen/scream1", "pitch": 0.75, "volume": 0.45},
-      {"name": "minecraft:mob/endermen/scream3", "pitch": 0.8, "volume": 0.45},
-      {"name": "minecraft:mob/zombie_villager/hurt1", "pitch": 0.7, "volume": 0.6},
-      {"name": "minecraft:mob/zombie_villager/hurt2", "pitch": 0.65, "volume": 0.6}
+      {
+        "name": "minecraft:mob/ghast/scream1",
+        "pitch": 1.3,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/ghast/scream2",
+        "pitch": 1.25,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/ghast/scream3",
+        "pitch": 1.4,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/ghast/scream4",
+        "pitch": 1.2,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/ghast/scream5",
+        "pitch": 1.35,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/ghast/moan3",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/ghast/moan6",
+        "pitch": 1.45,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/endermen/scream1",
+        "pitch": 0.75,
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/endermen/scream3",
+        "pitch": 0.8,
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/zombie_villager/hurt1",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/zombie_villager/hurt2",
+        "pitch": 0.65,
+        "volume": 0.6
+      }
     ]
   },
   "entity.damned.sigh": {
     "subtitle": "subtitles.hellcraft.entity.damned.sigh",
     "sounds": [
-      {"name": "minecraft:mob/ghast/moan1", "pitch": 1.8, "volume": 0.3},
-      {"name": "minecraft:mob/ghast/moan2", "pitch": 1.75, "volume": 0.3},
-      {"name": "minecraft:mob/ghast/moan4", "pitch": 1.85, "volume": 0.3},
-      {"name": "minecraft:mob/ghast/moan5", "pitch": 1.8, "volume": 0.3},
-      {"name": "minecraft:mob/ghast/moan7", "pitch": 1.7, "volume": 0.3},
-      {"name": "minecraft:mob/allay/idle_without_item1", "pitch": 0.6, "volume": 0.35},
-      {"name": "minecraft:mob/allay/idle_without_item3", "pitch": 0.55, "volume": 0.35}
+      {
+        "name": "minecraft:mob/ghast/moan1",
+        "pitch": 1.8,
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/ghast/moan2",
+        "pitch": 1.75,
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/ghast/moan4",
+        "pitch": 1.85,
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/ghast/moan5",
+        "pitch": 1.8,
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/ghast/moan7",
+        "pitch": 1.7,
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/allay/idle_without_item1",
+        "pitch": 0.6,
+        "volume": 0.35
+      },
+      {
+        "name": "minecraft:mob/allay/idle_without_item3",
+        "pitch": 0.55,
+        "volume": 0.35
+      }
+    ]
+  },
+  "ambient.vestibule.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:ambient.soul_sand_valley.loop",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 0.9
+      }
+    ]
+  },
+  "ambient.limbo.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:ambient.warped_forest.loop",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.75
+      }
+    ]
+  },
+  "ambient.lust.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:item.elytra.flying",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "ambient.gluttony.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:weather.rain",
+        "type": "event",
+        "volume": 0.45,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "ambient.styx.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:ambient.underwater.loop",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "ambient.cocytus.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:item.elytra.flying",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.45
+      }
+    ]
+  },
+  "ambient.judecca.bed": {
+    "sounds": [
+      {
+        "name": "minecraft:item.elytra.flying",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.4
+      }
+    ]
+  },
+  "ambient.vestibule.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.vestibule",
+    "sounds": [
+      {
+        "name": "minecraft:entity.bee.loop_aggressive",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 0.8,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.beehive.work",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.7
+      },
+      {
+        "name": "minecraft:entity.allay.ambient_without_item",
+        "type": "event",
+        "volume": 0.25,
+        "pitch": 0.5
+      }
+    ]
+  },
+  "ambient.limbo.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.limbo",
+    "sounds": [
+      {
+        "name": "minecraft:ambient.soul_sand_valley.additions",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.9,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.allay.ambient_without_item",
+        "type": "event",
+        "volume": 0.2,
+        "pitch": 0.55
+      },
+      {
+        "name": "minecraft:block.amethyst_block.chime",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.5
+      }
+    ]
+  },
+  "ambient.lust.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.lust",
+    "sounds": [
+      {
+        "name": "minecraft:entity.phantom.flap",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 0.7,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.breeze.wind_burst",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.6,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.lightning_bolt.thunder",
+        "type": "event",
+        "volume": 0.12,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "ambient.gluttony.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.gluttony",
+    "sounds": [
+      {
+        "name": "minecraft:block.mud.step",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 0.6,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.slime.squish",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 0.5,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:weather.rain.above",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "ambient.greed.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.greed",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.step",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.8,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.anvil.land",
+        "type": "event",
+        "volume": 0.12,
+        "pitch": 0.5
+      },
+      {
+        "name": "minecraft:block.amethyst_block.chime",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.6,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.chain.fall",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "ambient.styx.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.styx",
+    "sounds": [
+      {
+        "name": "minecraft:block.bubble_column.upwards_ambient",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.7,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.frog.ambient",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:block.pointed_dripstone.drip_water",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "ambient.heresy.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.heresy",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.ambient",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 0.8,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:ambient.soul_sand_valley.additions",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "ambient.phlegethon.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.phlegethon",
+    "sounds": [
+      {
+        "name": "minecraft:block.lava.pop",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 0.7,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.lava.ambient",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "ambient.suicides.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.suicides",
+    "sounds": [
+      {
+        "name": "minecraft:block.creaking_heart.idle",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.7,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.creaking.ambient",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "ambient.sands.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.sands",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.ambient",
+        "type": "event",
+        "volume": 0.7,
+        "pitch": 0.7,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:item.bucket.empty_lava",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:block.dry_grass.ambient",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "ambient.malebolge.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.malebolge",
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.step",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.6,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:entity.zombified_piglin.ambient",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.7
+      },
+      {
+        "name": "minecraft:ambient.cave",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "ambient.pitch.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.pitch",
+    "sounds": [
+      {
+        "name": "minecraft:block.lava.pop",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 0.5,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.honey_block.slide",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.5
+      }
+    ]
+  },
+  "ambient.giants.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.giants",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.heartbeat",
+        "type": "event",
+        "volume": 0.7,
+        "pitch": 0.5
+      }
+    ]
+  },
+  "ambient.cocytus.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.cocytus",
+    "sounds": [
+      {
+        "name": "minecraft:block.glass.hit",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 0.5,
+        "weight": 3
+      },
+      {
+        "name": "minecraft:block.glass.break",
+        "type": "event",
+        "volume": 0.15,
+        "pitch": 0.4
+      },
+      {
+        "name": "minecraft:block.powder_snow.step",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "ambient.judecca.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.judecca",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.heartbeat",
+        "type": "event",
+        "volume": 0.9,
+        "pitch": 0.35,
+        "weight": 3
+      },
+      {
+        "name": "minecraft:block.glass.hit",
+        "type": "event",
+        "volume": 0.3,
+        "pitch": 0.45
+      }
+    ]
+  },
+  "ambient.forge.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.forge",
+    "sounds": [
+      {
+        "name": "minecraft:block.anvil.land",
+        "type": "event",
+        "volume": 0.12,
+        "pitch": 0.8,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.anvil.use",
+        "type": "event",
+        "volume": 0.2,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "ambient.paradiso.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.paradiso",
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.chime",
+        "type": "event",
+        "volume": 0.5,
+        "pitch": 1.2,
+        "weight": 2
+      },
+      {
+        "name": "minecraft:block.amethyst_block.resonate",
+        "type": "event",
+        "volume": 0.4,
+        "pitch": 1.1
+      }
     ]
   }
 }

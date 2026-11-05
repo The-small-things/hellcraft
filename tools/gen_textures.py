@@ -231,6 +231,75 @@ art("beatrices_rose", {"o": "3a0a1a", "P": "ff8ab8", "p": "ffc6dc", "R": "d0406e
     "........o.......",
 ])
 
+# the Keys of Peter: the angel's two keys at Purgatory's gate, gold and silver, crossed, their bows below and their bits
+# above; drawn as two diagonal keys over each other, each outlined, lit from the upper left
+def keys_of_peter():
+    grid = [["."] * 16 for _ in range(16)]
+
+    def put(r, c, ch):
+        if 0 <= r < 16 and 0 <= c < 16:
+            grid[r][c] = ch
+
+    def key(flip, light, mid, dark):
+        col = (lambda c: 15 - c) if flip else (lambda c: c)
+        # the shaft, from the bit (upper) down to the bow
+        for r in range(2, 11):
+            put(r, col(r), mid)
+            put(r, col(r + 1), dark)
+        # the bit: two teeth off the top of the shaft
+        put(2, col(4), mid)
+        put(3, col(5), dark)
+        put(4, col(2), light)
+        put(5, col(3), mid)
+        # the bow: a ring round (12, 12)
+        for r, c, ch in ((10, 11, light), (10, 12, light), (10, 13, mid), (11, 10, light), (11, 14, mid), (12, 10, mid),
+                         (12, 14, dark), (13, 10, mid), (13, 14, dark), (14, 11, dark), (14, 12, dark), (14, 13, dark)):
+            put(r, col(c), ch)
+
+    key(True, "l", "s", "S")
+    key(False, "y", "g", "G")
+    # dark outline round everything drawn
+    out = [row[:] for row in grid]
+    for r in range(16):
+        for c in range(16):
+            if grid[r][c] == ".":
+                if any(0 <= r + dr < 16 and 0 <= c + dc < 16 and grid[r + dr][c + dc] != "." for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                    out[r][c] = "o"
+    return ["".join(row) for row in out]
+
+
+art("keys_of_peter", {"o": "2e2410", "G": "8a6418", "g": "d0a634", "y": "fbe27a", "S": "5c6474", "s": "a8b0c0", "l": "eef2f8"},
+    keys_of_peter())
+
+
+# Ariadne's Thread: a ball of red wool wound round and round, a loose end trailing off to the lower right
+def ariadnes_thread():
+    import math
+    rows = []
+    for r in range(16):
+        row = ""
+        for c in range(16):
+            dx, dy = c - 6.5, r - 6.5
+            d = math.hypot(dx, dy)
+            if d < 5.6:
+                # the winding: bands across the ball, lighter towards the upper left
+                band = int((dx * 0.8 + dy * 1.3) * 0.9 + 20) % 3
+                lit = (-dx - dy) / 8.0
+                row += "5" if lit > 0.55 and band == 0 else "4" if lit > 0.1 + band * 0.1 else "3" if band != 2 else "2"
+            elif d < 6.5:
+                row += "o"
+            else:
+                row += "."
+        rows.append(row)
+    # the loose end
+    for r, c in ((11, 11), (12, 12), (12, 13), (13, 14), (14, 14), (15, 13)):
+        rows[r] = rows[r][:c] + "3" + rows[r][c + 1:]
+    return rows
+
+
+art("ariadnes_thread", {"o": "3a0a0a", "2": "7a1414", "3": "b02424", "4": "d84040", "5": "f88a7a"}, ariadnes_thread())
+
+
 STEEL = {"o": "1a0e10", "W": "f4f4f8", "w": "c4c6d0", "s": "7c7e8e", "R": "a01818", "r": "e03a3a",
          "G": "7a5a1c", "g": "d4a93c", "y": "f5d77a", "H": "3a1e10", "h": "7a4424", "i": "8a8c9a",
          "B": "ece2cc", "b": "bdae8e", "d": "857458"}

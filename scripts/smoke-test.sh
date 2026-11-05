@@ -424,6 +424,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   waymarks=$(rcon "hellcraft waymarks test")
   echo "$waymarks"
   echo "$waymarks" | grep -q "Waymarks test OK" || { echo "Waymarks don't work"; exit 1; }
+  # the Keys of Peter: one real set, old copies crumble, fireproof
+  keys=$(rcon "hellcraft keys test")
+  echo "$keys"
+  echo "$keys" | grep -q "Keys test OK" || { echo "The Keys of Peter are broken"; exit 1; }
   # the onlookers: a shade in a soul's skin stands still, can't be hurt, fades, and a stray from before a restart is cleared
   onlooker=$(rcon "hellcraft onlooker test")
   echo "$onlooker"
@@ -437,6 +441,16 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
                       [furies]="talons shriek lash tear medusa" [farinata]="disdain pyres exile" [minotaur]="gore charge stomp frenzy" \
                       [geryon]="sting falseface coil dive" [vulcan]="strike hammerfall molten chains forgeborn seams" \
                       [seraph]="wings fire coal gloria host turning")
+  # a guardian woken Unbound (as for a soul who has beaten Lucifer): its name, its tag, then it's put back to sleep
+  out=$(rcon "hellcraft guardian minos summon unbound")
+  echo "$out"
+  echo "$out" | grep -q "Minos Unbound awakens" || { echo "Minos could not be woken Unbound"; exit 1; }
+  sleep 3
+  unb=$(rcon "execute if entity @e[tag=hellcraft_unbound,tag=hellcraft_guardian_body]" || true)
+  echo "Unbound body: $unb"
+  echo "$unb" | grep -q "Test passed" || { echo "The Unbound guardian has no Unbound body"; exit 1; }
+  rcon "hellcraft guardian minos stop"
+  sleep 3
   for g in minos cerberus plutus phlegyas furies farinata minotaur geryon vulcan seraph; do
     out=$(rcon "hellcraft guardian $g summon")
     echo "$out"

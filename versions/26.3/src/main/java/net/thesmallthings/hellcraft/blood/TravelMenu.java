@@ -56,7 +56,7 @@ public final class TravelMenu {
 		}
 		for (ShrineSites.Site site : ShrineSites.all()) {
 			Integer floor = Shrines.floor(server, site);
-			if (floor != null && soul.visited.contains(site.id())) {
+			if (floor != null && (soul.visited.contains(site.id()) || KeysOfPeter.carrying(server, soul))) {
 				out.add(new Destination(site.id(), "Virgil's Rest: " + site.title(),
 						new HellState.GlobalSpot(server.overworld().dimension(), new BlockPos(site.x(), floor, site.z()))));
 			}

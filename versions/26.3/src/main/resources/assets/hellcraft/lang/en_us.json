@@ -74,5 +74,22 @@
   "biome.hellcraft.purgatory": "Purgatory",
   "block.hellcraft.thorns": "Thorns of the Wood",
   "death.attack.hellcraft.thorns": "%1$s was torn apart by the thorns of the Wood of the Suicides",
-  "death.attack.hellcraft.thorns.player": "%1$s was torn apart by the thorns while fleeing %2$s"
+  "death.attack.hellcraft.thorns.player": "%1$s was torn apart by the thorns while fleeing %2$s",
+  "subtitles.hellcraft.ambient.vestibule": "Insects swarm",
+  "subtitles.hellcraft.ambient.limbo": "A soul longs",
+  "subtitles.hellcraft.ambient.lust": "The storm tears past",
+  "subtitles.hellcraft.ambient.gluttony": "Mud squelches",
+  "subtitles.hellcraft.ambient.greed": "Gold clinks",
+  "subtitles.hellcraft.ambient.styx": "The marsh bubbles",
+  "subtitles.hellcraft.ambient.heresy": "A tomb burns",
+  "subtitles.hellcraft.ambient.phlegethon": "The river of blood seethes",
+  "subtitles.hellcraft.ambient.suicides": "A tree creaks",
+  "subtitles.hellcraft.ambient.sands": "Fire hisses on the sand",
+  "subtitles.hellcraft.ambient.malebolge": "Something rattles in the ditches",
+  "subtitles.hellcraft.ambient.pitch": "The pitch boils",
+  "subtitles.hellcraft.ambient.giants": "A giant's heart beats",
+  "subtitles.hellcraft.ambient.cocytus": "Ice cracks",
+  "subtitles.hellcraft.ambient.judecca": "A vast heart beats in the ice",
+  "subtitles.hellcraft.ambient.forge": "A hammer rings far off",
+  "subtitles.hellcraft.ambient.paradiso": "Heaven chimes"
 }

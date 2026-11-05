@@ -32,6 +32,9 @@ public final class BossRules {
 	public static final String BODY_TAG = "hellcraft_boss";
 	private static final String GUARDIAN_TAG = "hellcraft_guardian";
 	private static final String LUCIFER_TAG = "hellcraft_lucifer";
+	/** On the body of a guardian woken Unbound (GuardianFight): its blows land harder. */
+	public static final String UNBOUND_TAG = "hellcraft_unbound";
+	public static final float UNBOUND_DAMAGE = 1.3f;
 
 	/** A boss, or one of the monsters it brought. */
 	public static boolean fromBoss(Entity entity) {
@@ -88,7 +91,8 @@ public final class BossRules {
 		Entity attacker = source.getEntity();
 		if (victim instanceof Player && attacker != null && attacker != victim && fromBoss(attacker)) {
 			float lucifer = attacker.entityTags().contains(LUCIFER_TAG) ? (float) HellConfig.get().luciferDamage : 1.0f;
-			return amount * heartScale(victim) * lucifer * LayerEnchants.bossDamageTaken(victim);
+			float unbound = attacker.entityTags().contains(UNBOUND_TAG) ? UNBOUND_DAMAGE : 1.0f;
+			return amount * heartScale(victim) * lucifer * unbound * LayerEnchants.bossDamageTaken(victim);
 		}
 		if (attacker instanceof Player player && attacker == source.getDirectEntity() && fromBoss(victim)) {
 			// Judgement: melee blows at a boss hit harder

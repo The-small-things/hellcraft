@@ -4,6 +4,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.danger.Impacts;
+import net.thesmallthings.hellcraft.client.layer.CameraSway;
 import net.thesmallthings.hellcraft.client.layer.WingbeatFx;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -14,7 +15,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** During a cutscene the camera follows its path (CutscenePlayer), seeing the player from outside; a wingbeat shakes it. */
+/**
+ * During a cutscene the camera follows its path (CutscenePlayer), seeing the player from outside; a wingbeat shakes it, and
+ * Lust's storm and the rides tilt it (CameraSway).
+ */
 @Mixin(Camera.class)
 public abstract class CameraMixin {
 	@Shadow
@@ -67,6 +71,13 @@ public abstract class CameraMixin {
 		float[] blow = Impacts.shake(partialTicks);
 		if (shake[0] != 0 || shake[1] != 0 || blow[0] != 0 || blow[1] != 0) {
 			setRotation(yRot() + shake[0] + blow[0], xRot() + shake[1] + blow[1]);
+		}
+		// Lust's storm rocks the view, and a ride leans into its turns (CameraSway)
+		float roll = CameraSway.roll(partialTicks);
+		if (roll != 0) {
+			rotation().rotateZ((float) Math.toRadians(roll));
+			new Vector3f(0, 1, 0).rotate(rotation(), up);
+			new Vector3f(-1, 0, 0).rotate(rotation(), left);
 		}
 	}
 }

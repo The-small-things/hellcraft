@@ -154,7 +154,9 @@ public final class HellCommands {
 						.then(Commands.argument("name", StringArgumentType.word())
 								.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Guardian.values()).map(Guardian::id), builder))
 								.then(Commands.literal("summon").executes(ctx -> guardian(ctx, g -> GuardianManager.summon(ctx.getSource().getServer(), g,
-										g.nearestLair(ctx.getSource().getPosition().x, ctx.getSource().getPosition().z)))))
+												g.nearestLair(ctx.getSource().getPosition().x, ctx.getSource().getPosition().z))))
+										.then(Commands.literal("unbound").executes(ctx -> guardian(ctx, g -> GuardianManager.summon(ctx.getSource().getServer(), g,
+												g.nearestLair(ctx.getSource().getPosition().x, ctx.getSource().getPosition().z), true)))))
 								.then(Commands.literal("slay").executes(ctx -> guardian(ctx, GuardianManager::slay)))
 								.then(Commands.literal("stop").executes(ctx -> guardian(ctx, GuardianManager::stop)))
 								.then(Commands.literal("status").executes(ctx -> guardian(ctx, GuardianManager::status)))

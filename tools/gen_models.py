@@ -26,6 +26,8 @@ FLAT_ITEMS = {
     "halo": "minecraft:item/generated",
     "seraph_wings": "minecraft:item/generated",
     "beatrices_rose": "minecraft:item/generated",
+    "keys_of_peter": "minecraft:item/generated",
+    "ariadnes_thread": "minecraft:item/generated",
     "bloodletter": "minecraft:item/handheld",
     "reaper_of_minos": "minecraft:item/handheld",
     "tithe_axe": "minecraft:item/handheld",

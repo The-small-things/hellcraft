@@ -69,6 +69,9 @@ import java.util.function.Consumer;
  */
 public abstract class GuardianFight {
 	static final String TAG = "hellcraft_guardian";
+	/** An Unbound guardian's health, and how much faster its fight runs (with BossRules.UNBOUND_DAMAGE on its blows). */
+	static final double UNBOUND_HEALTH = 1.5;
+	static final double UNBOUND_PACE = 1.25;
 	/** Players inside this radius of the lair are in the fight. */
 	static final double ARENA = 24.0;
 	private static final double LEASH = 26.0;
@@ -103,6 +106,10 @@ public abstract class GuardianFight {
 	private int nextPull;
 	/** Until this tick, a shield block of the body's blow staggers it (the white flash). */
 	private int parryUntil = -1;
+	/** Woken Unbound: someone in the lair has beaten Lucifer (config unboundGuardians). Stronger, faster, pays more. */
+	protected boolean unbound;
+	/** Set before start() to wake it Unbound whoever is in the lair (the summon command, for tests). */
+	boolean forceUnbound;
 	/** player -> ticks spent perched high above the guardian */
 	private final Map<UUID, Integer> perched = new HashMap<>();
 	/** player -> tick before which they aren't told again that they're out of reach */
@@ -201,6 +208,8 @@ public abstract class GuardianFight {
 	void start() {
 		forceLoad(true);
 		int players = Math.max(1, (int) level.players().stream().filter(p -> inArena(p) && !p.isSpectator()).count());
+		unbound = forceUnbound || HellConfig.get().unboundGuardians && kind != Guardian.SERAPH && level.players().stream()
+				.filter(p -> inArena(p) && !p.isSpectator()).anyMatch(p -> Hearts.soul(p).slewLucifer);
 		Mob body = createBody();
 		body.snapTo(lair.getX() + 0.5, lair.getY(), lair.getZ() + 0.5, 90.0f, 0.0f);
 		body.addTag(TAG);
@@ -208,10 +217,13 @@ public abstract class GuardianFight {
 		if (!flies()) {
 			body.addTag(BossRules.BODY_TAG);
 		}
-		body.setCustomName(Component.literal(kind.title).withStyle(kind.color, ChatFormatting.BOLD));
+		body.setCustomName(Component.literal(unbound ? kind.title + " Unbound" : kind.title).withStyle(unbound ? ChatFormatting.DARK_RED : kind.color, ChatFormatting.BOLD));
+		if (unbound) {
+			body.addTag(BossRules.UNBOUND_TAG);
+		}
 		body.setCustomNameVisible(true);
 		body.setPersistenceRequired();
-		setBase(body, Attributes.MAX_HEALTH, kind.health * HellConfig.get().guardianHealthMultiplier * (1.0 + 0.5 * (players - 1)));
+		setBase(body, Attributes.MAX_HEALTH, kind.health * HellConfig.get().guardianHealthMultiplier * (1.0 + 0.5 * (players - 1)) * (unbound ? UNBOUND_HEALTH : 1.0));
 		setBase(body, Attributes.FOLLOW_RANGE, 48.0);
 		setBase(body, Attributes.KNOCKBACK_RESISTANCE, 0.8);
 		body.setHealth(body.getMaxHealth());
@@ -245,7 +257,15 @@ public abstract class GuardianFight {
 			p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(kind.subtitle).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 		}
 		say(introLine());
-		HellcraftMod.LOGGER.info("Guardian awakens: {}", kind.id());
+		if (unbound) {
+			BossFx.send(level, ParticleTypes.CRIMSON_SPORE, body.getX(), body.getY() + 1, body.getZ(), 200, 2, 2, 2, 0.02);
+			bar.setName(Component.literal(kind.title.toUpperCase(java.util.Locale.ROOT) + " UNBOUND — " + kind.subtitle).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+			for (ServerPlayer p : audience()) {
+				Dialogue.notice(p, Component.literal(kind.title + " wakes Unbound, for a soul who has beaten Lucifer: more health, faster and harder blows, "
+						+ "and better spoils (a Blood Heart the first time, and always a treasure roll).").withStyle(ChatFormatting.DARK_RED));
+			}
+		}
+		HellcraftMod.LOGGER.info("Guardian awakens: {}{}", kind.id(), unbound ? " (unbound)" : "");
 	}
 
 	/**
@@ -254,7 +274,7 @@ public abstract class GuardianFight {
 	 * (BossEntity.tempo), so there is time to read each blow and dodge or block it.
 	 */
 	void tick() {
-		double tempo = tempo();
+		double tempo = pace();
 		clock += tempo;
 		while (clock >= 1.0 && !done) {
 			clock -= 1.0;
@@ -264,6 +284,11 @@ public abstract class GuardianFight {
 
 	static double tempo() {
 		return Math.max(0.2, Math.min(1.0, HellConfig.get().bossTempo));
+	}
+
+	/** This fight's pace: the bosses' tempo, a quarter faster for an Unbound guardian (never past full speed). */
+	protected double pace() {
+		return unbound ? Math.min(1.0, tempo() * UNBOUND_PACE) : tempo();
 	}
 
 	private void step() {
@@ -277,7 +302,7 @@ public abstract class GuardianFight {
 		}
 		if (tick % 10 == 1) {
 			// its body and whatever else it brought (sisters, Medusa, false copies) blow at the fight's pace
-			float tempo = (float) tempo();
+			float tempo = (float) pace();
 			for (BossEntity b : level.getEntitiesOfClass(BossEntity.class, new AABB(lair).inflate(64))) {
 				if (b.tempo() != tempo && !(b instanceof net.thesmallthings.hellcraft.entity.Carrier)) {
 					b.tempo(tempo);
@@ -327,7 +352,8 @@ public abstract class GuardianFight {
 		List<LivingEntity> targets = targets();
 		if (--cooldown <= 0 && !targets.isEmpty()) {
 			windUp(body);
-			cooldown = Math.max(20, nextAttack(body, targets));
+			int next = nextAttack(body, targets);
+			cooldown = Math.max(20, unbound ? (int) (next * 0.8) : next);
 		}
 	}
 
@@ -339,7 +365,7 @@ public abstract class GuardianFight {
 		}
 		windUp(body);
 		int[] result = new int[1];
-		Danger.stretched(1.0 / tempo(), () -> result[0] = perform(attack, body, targets.get(0)));
+		Danger.stretched(1.0 / pace(), () -> result[0] = perform(attack, body, targets.get(0)));
 		int next = result[0];
 		if (next > 0) {
 			cooldown = next;
@@ -519,7 +545,7 @@ public abstract class GuardianFight {
 			}
 		}
 		String who = names.isEmpty() ? "Someone" : String.join(", ", names);
-		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " slew " + kind.title + ", " + kind.subtitle + ".")
+		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(who + " slew " + kind.title + (unbound ? " Unbound" : "") + ", " + kind.subtitle + ".")
 				.withStyle(kind.color, ChatFormatting.BOLD), false);
 		HellcraftMod.LOGGER.info("Guardian slain: {}", kind.id());
 		end(true);
@@ -563,7 +589,18 @@ public abstract class GuardianFight {
 		}
 		BloodItems.give(player, BloodItems.fragment(fragments));
 		got.add(0, fragments + " Blood Fragments");
-		if (grade.atLeast(Judgement.Grade.S) || claim == BossSpoils.Claim.FIRST) {
+		if (unbound) {
+			// the Unbound pay more: twice the fragments, a Blood Heart for the first victory over each, and always a treasure
+			String id = kind.id() + "_unbound";
+			if (BossSpoils.peek(player, id, config.guardianSpoilsCooldownMinutes) == BossSpoils.Claim.FIRST) {
+				BossSpoils.record(player, id);
+				BloodItems.give(player, BloodItems.heart(1));
+				got.add(Judgement.hearts(1, "your first victory over " + kind.title + " Unbound"));
+			}
+			BloodItems.give(player, BloodItems.fragment(fragments));
+			got.set(0, fragments * 2 + " Blood Fragments");
+		}
+		if (unbound || grade.atLeast(Judgement.Grade.S) || claim == BossSpoils.Claim.FIRST) {
 			Judgement.treasure(player);
 			got.add(1, "a treasure roll");
 		}

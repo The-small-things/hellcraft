@@ -79,6 +79,37 @@ public final class HellItems {
 			.stacksTo(1)
 			.rarity(Rarity.EPIC));
 
+	/** The Keys of Peter: one set on the server, from the angel at Purgatory's gate (KeysOfPeter). */
+	public static final Item KEYS_OF_PETER = register("keys_of_peter", props -> new Item(props) {
+		// never inside a bundle or a shulker box (and mixin/SlotMixin keeps them out of every chest and furnace)
+		@Override
+		public boolean canFitInsideContainerItems() {
+			return false;
+		}
+	}, new Item.Properties()
+			.component(DataComponents.ITEM_NAME, Component.literal("The Keys of Peter").withStyle(ChatFormatting.GOLD))
+			.component(DataComponents.LORE, lore(
+					Component.literal("One of gold and one of silver.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
+					line("There is only one set on the server.", ChatFormatting.GOLD),
+					line("While you carry them: 2 more hearts, and a", ChatFormatting.YELLOW),
+					line("Blood Altar takes you to any Virgil's Rest.", ChatFormatting.YELLOW),
+					line("They can't be put away, and everyone is told", ChatFormatting.GRAY),
+					line("who carries them. Die, and they fall.", ChatFormatting.GRAY)))
+			.stacksTo(1)
+			.fireResistant()
+			.rarity(Rarity.EPIC));
+
+	/** Ariadne's Thread: found at the heart of the Minotaur's Labyrinth (world/Labyrinth). */
+	public static final Item ARIADNES_THREAD = register("ariadnes_thread", new Item.Properties()
+			.component(DataComponents.ITEM_NAME, Component.literal("Ariadne's Thread").withStyle(ChatFormatting.RED))
+			.component(DataComponents.LORE, lore(
+					Component.literal("It led Theseus out of the Labyrinth.").withStyle(s -> s.withColor(ChatFormatting.GRAY).withItalic(true)),
+					line("Carry it into the Minotaur's fight: his charges", ChatFormatting.RED),
+					line("end with him stunned against the wall, and", ChatFormatting.RED),
+					line("your blows hit him harder. Used up when he falls.", ChatFormatting.RED)))
+			.stacksTo(1)
+			.rarity(Rarity.RARE));
+
 	// ------------------------------------------------------------------ blood gear (real items since 3.0)
 
 	/** Blood armour: diamond's protection, its own look (equipment asset hellcraft:blood). */
@@ -216,6 +247,7 @@ public final class HellItems {
 					output.accept(BloodItems.vigil(1));
 					output.accept(BloodItems.anchor(1));
 					output.accept(new ItemStack(PILGRIM_SHELL));
+					output.accept(new ItemStack(ARIADNES_THREAD));
 					for (HellWeapons.Weapon weapon : HellWeapons.Weapon.values()) {
 						output.accept(new ItemStack(weapon(weapon, false)));
 					}
@@ -236,8 +268,12 @@ public final class HellItems {
 	}
 
 	private static Item register(String name, Item.Properties properties) {
+		return register(name, Item::new, properties);
+	}
+
+	private static Item register(String name, java.util.function.Function<Item.Properties, Item> factory, Item.Properties properties) {
 		ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, HellcraftMod.id(name));
-		return Registry.register(BuiltInRegistries.ITEM, key, new Item(properties.setId(key)));
+		return Registry.register(BuiltInRegistries.ITEM, key, factory.apply(properties.setId(key)));
 	}
 
 	private static Component line(String text, ChatFormatting colour) {

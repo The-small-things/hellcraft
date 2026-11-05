@@ -89,6 +89,13 @@ public class HellState extends SavedData {
 	/** Every waymark placed on the Map of Hell: each player sees their own and the shared ones. */
 	public final java.util.List<Waymark> waymarks = new java.util.ArrayList<>();
 	public int nextWaymark = 1;
+	/** The Keys of Peter (KeysOfPeter): which set is the real one now, who has it, and when they were last seen with it. */
+	public int keysSerial = 1;
+	public boolean keysClaimed;
+	@Nullable
+	public UUID keysHolder;
+	public String keysHolderName = "";
+	public long keysSeen;
 
 	/** A waymark: who placed it, its name, where (x, z), its colour (0-7) and whether everyone can see it. */
 	public record Waymark(int id, UUID owner, String ownerName, String name, int x, int z, int colour, boolean shared) {
@@ -385,6 +392,13 @@ public class HellState extends SavedData {
 		}
 		tag.put("waymarks", waymarkList);
 		tag.putInt("nextWaymark", nextWaymark);
+		tag.putInt("keysSerial", keysSerial);
+		tag.putBoolean("keysClaimed", keysClaimed);
+		if (keysHolder != null) {
+			tag.putString("keysHolder", keysHolder.toString());
+		}
+		tag.putString("keysHolderName", keysHolderName);
+		tag.putLong("keysSeen", keysSeen);
 		if (starterAltar != null) {
 			tag.put("starterAltar", starterAltar.save());
 		}
@@ -497,6 +511,12 @@ public class HellState extends SavedData {
 			}
 		}
 		state.nextWaymark = tag.getIntOr("nextWaymark", 1);
+		state.keysSerial = tag.getIntOr("keysSerial", 1);
+		state.keysClaimed = tag.getBooleanOr("keysClaimed", false);
+		String holder = tag.getStringOr("keysHolder", "");
+		state.keysHolder = holder.isEmpty() ? null : UUID.fromString(holder);
+		state.keysHolderName = tag.getStringOr("keysHolderName", "");
+		state.keysSeen = tag.getLongOr("keysSeen", 0L);
 		state.whiteMap = tag.getIntOr("whiteMap", -1);
 		ListTag captiveList = tag.getListOrEmpty("captives");
 		for (int i = 0; i < captiveList.size(); i++) {

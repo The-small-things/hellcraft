@@ -7,9 +7,7 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -36,7 +34,6 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.mixin.MannequinAccess;
-import net.thesmallthings.hellcraft.net.OnlookersPayload;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Purgatory;
@@ -55,8 +52,7 @@ import java.util.UUID;
  * The onlookers: in Dante the dead keep stopping to stare at the living man walking among them. Now and then (about
  * every onlookerMinutes for each player) a shade stands far off, 40 to 64 blocks away on open ground where the player
  * can see it, and stares at them: it turns to follow them, crouches, lifts an arm. Come within 20 blocks and it is
- * simply gone; it goes by itself after a minute or two. It is lit by a faint glow of its own (the client draws it
- * brighter than the dark around it: layer/OnlookerGlow, told which entities are onlookers by OnlookersPayload). It wears the skin of a soul who has walked this Hell
+ * simply gone; it goes by itself after a minute or two. It is lit by a faint glow of its own (hazard/Glow). It wears the skin of a soul who has walked this Hell
  * before (one not online now, the fallen first), or a stranger's.
  *
  * An onlooker is a vanilla mannequin (it renders a player's skin), still, silent and unhurtable, tagged
@@ -88,15 +84,9 @@ public final class Onlookers {
 	}
 
 	private static final Map<UUID, Watch> LIVE = new HashMap<>();
-	/** The onlookers' entity ids (what the client knows them by). */
-	private static final Map<UUID, Integer> IDS = new HashMap<>();
 
 	public static void register() {
-		PayloadTypeRegistry.clientboundPlay().register(OnlookersPayload.TYPE, OnlookersPayload.CODEC);
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			remember(handler.getPlayer());
-			send(handler.getPlayer());
-		});
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> remember(handler.getPlayer()));
 		ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> onLoad(entity));
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> commands(dispatcher));
 	}
@@ -105,19 +95,6 @@ public final class Onlookers {
 	static void onLoad(Entity entity) {
 		if (entity.entityTags().contains(TAG) && !LIVE.containsKey(entity.getUUID())) {
 			entity.discard();
-		}
-	}
-
-	/** Tells a player which entities are onlookers, for their faint glow. */
-	static void send(ServerPlayer player) {
-		if (ServerPlayNetworking.canSend(player, OnlookersPayload.TYPE)) {
-			ServerPlayNetworking.send(player, new OnlookersPayload(List.copyOf(IDS.values())));
-		}
-	}
-
-	private static void broadcast(MinecraftServer server) {
-		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-			send(player);
 		}
 	}
 
@@ -256,8 +233,7 @@ public final class Onlookers {
 		RandomSource random = level.getRandom();
 		LIVE.put(m.getUUID(), new Watch(viewer == null ? new UUID(0, 0) : viewer.getUUID(), now + 1200 + random.nextInt(1200), now + 40 + random.nextInt(60)));
 		level.addFreshEntity(m);
-		IDS.put(m.getUUID(), m.getId());
-		broadcast(level.getServer());
+		Glow.add(level.getServer(), m);
 		return m;
 	}
 
@@ -267,7 +243,6 @@ public final class Onlookers {
 
 	/** Every other tick: each onlooker turns to its player, now and then crouches or lifts an arm, and fades when it should. */
 	private static void watch(MinecraftServer server, long now) {
-		int before = IDS.size();
 		Iterator<Map.Entry<UUID, Watch>> it = LIVE.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<UUID, Watch> e = it.next();
@@ -275,7 +250,7 @@ public final class Onlookers {
 			Entity entity = find(server, e.getKey());
 			if (!(entity instanceof Mannequin m) || entity.isRemoved()) {
 				it.remove();
-				IDS.remove(e.getKey());
+				Glow.remove(server, e.getKey());
 				continue;
 			}
 			ServerLevel level = (ServerLevel) m.level();
@@ -316,9 +291,6 @@ public final class Onlookers {
 				w.nextAct = now + 40 + random.nextInt(100);
 			}
 		}
-		if (IDS.size() != before) {
-			broadcast(server);
-		}
 	}
 
 	@Nullable
@@ -334,7 +306,7 @@ public final class Onlookers {
 
 	/** Simply gone: no sound, no smoke. */
 	static void fade(Mannequin m) {
-		IDS.remove(m.getUUID());
+		Glow.remove(m.level().getServer(), m.getUUID());
 		m.discard();
 	}
 
@@ -367,7 +339,7 @@ public final class Onlookers {
 		}
 		Mannequin left = spawnAt(level, new Vec3(x + 2, ground, z), skinned(soul, "Farinata", "e30=", ""), null);
 		LIVE.remove(left.getUUID());
-		IDS.remove(left.getUUID());
+		Glow.remove(server, left.getUUID());
 		onLoad(left);
 		if (!left.isRemoved()) {
 			left.discard();

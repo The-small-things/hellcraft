@@ -38,6 +38,30 @@ public class LimboTest implements FabricClientGameTest {
 				throw new AssertionError("Limbo's grey is not on in the middle of Limbo: " + effects);
 			}
 			context.takeScreenshot("limbo_grey");
+			// Limbo's soundscape (layer/Soundscape), and every circle's sounds known to the sound manager
+			String scape = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.layer.Soundscape.where(client));
+			if (!"limbo".equals(scape)) {
+				throw new AssertionError("the soundscape in Limbo is " + scape);
+			}
+			List<String> missing = context.computeOnClient(client -> {
+				java.util.Collection<Identifier> known = client.getSoundManager().getAvailableSounds();
+				List<String> out = new java.util.ArrayList<>();
+				for (String k : List.of("vestibule", "limbo", "lust", "gluttony", "greed", "styx", "heresy", "phlegethon", "suicides", "sands",
+						"malebolge", "pitch", "giants", "cocytus", "judecca", "forge", "paradiso")) {
+					if (!known.contains(Identifier.fromNamespaceAndPath("hellcraft", "ambient." + k + ".detail"))) {
+						out.add(k + ".detail");
+					}
+				}
+				for (String k : net.thesmallthings.hellcraft.client.layer.Soundscape.BEDS) {
+					if (!known.contains(Identifier.fromNamespaceAndPath("hellcraft", "ambient." + k + ".bed"))) {
+						out.add(k + ".bed");
+					}
+				}
+				return out;
+			});
+			if (!missing.isEmpty()) {
+				throw new AssertionError("circle sounds missing from sounds.json: " + missing);
+			}
 			server.runCommand(String.format(Locale.ROOT, "tp Player0 %d %d %d 90 15", NobleCastle.X + 30, 150, NobleCastle.Z));
 			context.waitTicks(20);
 			connection.waitForChunksRender();

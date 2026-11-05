@@ -186,7 +186,12 @@ public final class GuardianManager {
 	}
 
 	private static void start(ServerLevel level, Guardian g, int k, boolean debug) {
+		start(level, g, k, debug, false);
+	}
+
+	private static void start(ServerLevel level, Guardian g, int k, boolean debug, boolean unbound) {
 		GuardianFight fight = g.factory.apply(new GuardianContext(level, g, lair(level, g, k), k, debug));
+		fight.forceUnbound = unbound;
 		FIGHTS.put(g, fight);
 		fight.start();
 	}
@@ -200,6 +205,11 @@ public final class GuardianManager {
 
 	/** Wakes a guardian in lair k (the nearest to whoever asked, from the command). */
 	public static String summon(MinecraftServer server, Guardian g, int k) {
+		return summon(server, g, k, false);
+	}
+
+	/** Wakes a guardian in lair k, Unbound if asked (as if a soul who has beaten Lucifer had walked in). */
+	public static String summon(MinecraftServer server, Guardian g, int k, boolean unbound) {
 		if (FIGHTS.containsKey(g)) {
 			return g.title + " is already awake.";
 		}
@@ -219,8 +229,8 @@ public final class GuardianManager {
 			return "This world is not an Inferno world.";
 		}
 		int lair = g.offMap() ? 0 : Math.max(0, Math.min(g.lairs() - 1, k));
-		start(level, g, lair, true);
-		return g.title + " awakens at " + lair(level, g, lair).toShortString() + ".";
+		start(level, g, lair, true, unbound);
+		return g.title + (unbound ? " Unbound" : "") + " awakens at " + lair(level, g, lair).toShortString() + ".";
 	}
 
 	/** True while this guardian is awake. */

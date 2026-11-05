@@ -229,6 +229,27 @@ public final class Guide {
 				c.pilgrimageHardcore ? "Die and it ends, and on this server you also become a ghost until revived." : "Die and it ends; you lose nothing more than usual.",
 				"",
 				"Climb out to Purgatory to finish: a Pilgrim's Shell and your name on the Stone. /pilgrimage abandon gives up."));
+		if (c.keysOfPeter) {
+			pages.add(page("THE KEYS OF PETER",
+					"There is only one set on the server. The angel at Purgatory's gate gives it to the first soul to reach the seventh terrace.",
+					"",
+					"While you carry them: two more hearts, and a Blood Altar takes you to any Virgil's Rest, even ones you haven't found.",
+					"",
+					"They can't be put in a chest, an ender chest, a bundle or a shulker box. Their holder glows faintly, and the whole server is told who has them and, now and then, roughly where.",
+					"",
+					"Die and they fall: whoever picks them up has them. Lose them in the void, or stay away " + c.keysReturnHours
+							+ " hours with them, and they go back to the angel. Any old copy crumbles."));
+		}
+		if (c.unboundGuardians) {
+			pages.add(page("THE UNBOUND",
+					"Once you have beaten Lucifer, the guardians wake Unbound when you walk into their lairs.",
+					"",
+					"An Unbound guardian has half as much health again, fights a quarter faster and hits harder.",
+					"",
+					"It pays more: twice the Blood Fragments, always a treasure roll, and a Blood Heart the first time you beat each one Unbound.",
+					"",
+					"Anyone in the lair with you faces it Unbound too."));
+		}
 		pages.add(page("COMMANDS",
 				"/hearts: your hearts",
 				"/withdraw [n]: turn hearts into Blood Hearts",

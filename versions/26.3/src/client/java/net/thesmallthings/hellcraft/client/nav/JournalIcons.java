@@ -56,6 +56,9 @@ final class JournalIcons {
 		put("THE SPINES", Items.BONE, Items.BONE_BLOCK);
 		put("VIRGIL'S RESTS", Items.CAMPFIRE, Items.LANTERN);
 		put("MINOS'S JUDGEMENT", Items.WRITABLE_BOOK, Items.NAME_TAG);
+		put("THE KEYS OF PETER", HellItems.KEYS_OF_PETER);
+		put("THE UNBOUND", Items.WITHER_SKELETON_SKULL, Items.CRIMSON_FUNGUS);
+		put("THE LABYRINTH", HellItems.ARIADNES_THREAD, Items.MOSSY_STONE_BRICKS);
 		List<ItemLike> armour = new ArrayList<>();
 		for (BloodArmour.Piece piece : BloodArmour.Piece.values()) {
 			armour.add(HellItems.armour(piece, false));

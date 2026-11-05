@@ -173,7 +173,9 @@ public class HellcraftClient implements ClientModInitializer {
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
 		// the secret ways found (Map of Hell, Journal) and the pilgrim's mark at the top left
 		net.thesmallthings.hellcraft.client.nav.SecretMarks.register();
-		net.thesmallthings.hellcraft.client.layer.OnlookerGlow.register();
+		net.thesmallthings.hellcraft.client.layer.Glow.register();
+		net.thesmallthings.hellcraft.client.layer.Soundscape.register();
+		net.thesmallthings.hellcraft.client.layer.CameraSway.register();
 		net.thesmallthings.hellcraft.client.nav.ClientWaymarks.register();
 		PilgrimHud.register();
 		// your style rank in a boss fight, on the right of the screen

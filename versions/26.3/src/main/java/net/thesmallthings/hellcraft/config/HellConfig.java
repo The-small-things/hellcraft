@@ -72,6 +72,10 @@ public class HellConfig {
 	public boolean onlookers = true;
 	/** About how many minutes pass, for each player, between one onlooker and the next. */
 	public int onlookerMinutes = 5;
+	/** The Keys of Peter: one set on the server, given by the angel at Purgatory's gate (KeysOfPeter). */
+	public boolean keysOfPeter = true;
+	/** How long the keys' holder may stay offline before the keys go back to the angel (hours). */
+	public int keysReturnHours = 72;
 	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
 	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */
@@ -113,6 +117,8 @@ public class HellConfig {
 	public int guardianRespawnMinutes = 30;
 	/** Scales every guardian's health (each extra player in the lair adds half again). */
 	public double guardianHealthMultiplier = 1.0;
+	/** Guardians wake Unbound (more health, faster and harder blows, better spoils) for souls who have beaten Lucifer. */
+	public boolean unboundGuardians = true;
 	/** Blood Hearts a guardian gives each player who slays it for the first time (plus 3-6 Blood Fragments and a Soul Anchor). */
 	public int guardianHearts = 2;
 	/** Blood Hearts for slaying a guardian again, once its spoils have returned for you. */
