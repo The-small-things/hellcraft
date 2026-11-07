@@ -174,48 +174,90 @@ public class WaymarkTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * A bay in the Gate of Hell's wall, a watch tower among them (world/WallRooms): built, then seen from outside (wall_outside),
-	 * from its door (wall_door), in a ground-floor room (wall_room) and in the top room (wall_top).
+	 * A stretch of the Gate of Hell's wall lived in (world/WallRooms): seven bays round a watch tower, built; the tower from Hell's
+	 * side (wall_outside), the walk along the wall's top (wall_walk), the tower's stair (wall_stair) and its open top
+	 * (wall_tower_top), a room at the foot of the wall (wall_room) and one above it (wall_room_upper). The tower must have its
+	 * stair, and the walk must be clear.
 	 */
 	private static void wallRooms(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		server.runCommand("gamemode spectator Player0");
-		net.thesmallthings.hellcraft.world.WallRooms.Bay bay = net.thesmallthings.hellcraft.world.WallRooms.bay(
-				net.thesmallthings.hellcraft.world.WallRooms.Wall.GATE, 320);
-		int[] built = server.computeOnServer(s -> {
-			int[] r = net.thesmallthings.hellcraft.world.WallRooms.build(s.overworld(), bay);
-			return r == null ? new int[0] : r;
+		net.thesmallthings.hellcraft.world.WallRooms.Wall gate = net.thesmallthings.hellcraft.world.WallRooms.Wall.GATE;
+		net.thesmallthings.hellcraft.world.WallRooms.Bay tower = net.thesmallthings.hellcraft.world.WallRooms.bay(gate, 320);
+		net.thesmallthings.hellcraft.world.WallRooms.Bay walk = net.thesmallthings.hellcraft.world.WallRooms.bay(gate, 321);
+		net.thesmallthings.hellcraft.world.WallRooms.Bay room = net.thesmallthings.hellcraft.world.WallRooms.bay(gate, 322);
+		net.thesmallthings.hellcraft.world.WallRooms.Built[] built = server.computeOnServer(s -> {
+			net.thesmallthings.hellcraft.world.WallRooms.Built[] out = new net.thesmallthings.hellcraft.world.WallRooms.Built[7];
+			for (int k = 317; k <= 323; k++) {
+				out[k - 317] = net.thesmallthings.hellcraft.world.WallRooms.build(s.overworld(), net.thesmallthings.hellcraft.world.WallRooms.bay(gate, k));
+			}
+			return out;
 		});
-		if (built.length == 0) {
-			throw new AssertionError("the wall room at bay 320 of the Gate of Hell wasn't built");
+		net.thesmallthings.hellcraft.world.WallRooms.Built t = built[3];
+		net.thesmallthings.hellcraft.world.WallRooms.Built r = built[5];
+		if (t == null || r == null) {
+			throw new AssertionError("the watch tower or the wall room beside it wasn't built");
 		}
-		int ground = built[0];
-		int top = built[1];
-		int last = built[2];
-		net.thesmallthings.hellcraft.world.Rooms.Frame f = bay.frame();
-		// outside, looking at the bay (a watch tower stands up from it)
-		stand(server, f.at(ground + 4, 0, 18), f.at(ground + (top - ground) / 2, 0, 0));
+		System.out.println("Wall rooms: tower floors " + java.util.Arrays.toString(t.floors()) + ", room floors " + java.util.Arrays.toString(r.floors()));
+		net.thesmallthings.hellcraft.world.Rooms.Frame tf = tower.frame();
+		boolean stairs = server.computeOnServer(s -> {
+			int found = 0;
+			for (int a = 1; a <= 4; a++) {
+				for (int b = 1; b <= 4; b++) {
+					for (int y = t.ground(); y < t.ground() + 8; y++) {
+						found += s.overworld().getBlockState(tf.at(y, a, b)).getBlock() instanceof net.minecraft.world.level.block.StairBlock ? 1 : 0;
+					}
+				}
+			}
+			return found >= 4;
+		});
+		if (!stairs) {
+			throw new AssertionError("the watch tower has no stair");
+		}
+		net.thesmallthings.hellcraft.world.Rooms.Frame wf = walk.frame();
+		boolean clear = server.computeOnServer(s -> s.overworld().getBlockState(wf.at(built[4] == null ? 0 : built[4].roof() + 1, 0, 0)).isAir());
+		if (built[4] != null && !clear) {
+			throw new AssertionError("the walk on the wall's top isn't clear");
+		}
+		// the tower, from Hell's side
+		stand(server, tf.at(t.ground() + 6, 0, -26), tf.at(t.roof() + 2, 0, 0));
 		context.waitTicks(20);
 		connection.waitForChunksRender();
 		context.waitTicks(20);
 		context.takeScreenshot("wall_outside");
-		// at its door, from outside, looking in
-		stand(server, f.at(ground + 1, 0, -7), f.at(ground + 1, 0, -3));
+		// along the walk, toward the tower
+		if (built[4] != null) {
+			stand(server, wf.at(built[4].roof() + 1, 3, 0), tf.at(t.roof() + 3, 0, 0));
+			context.waitTicks(20);
+			connection.waitForChunksRender();
+			context.waitTicks(10);
+			context.takeScreenshot("wall_walk");
+		}
+		// the tower's stair, from its door
+		stand(server, tf.at(t.ground() + 1, -2, -3), tf.at(t.ground() + 3, 3, 3));
 		context.waitTicks(20);
 		connection.waitForChunksRender();
 		context.waitTicks(10);
-		context.takeScreenshot("wall_door");
-		// a ground-floor room, from its far side
-		stand(server, f.at(ground + 1, -3, 0), f.at(ground + 2, 0, 0));
+		context.takeScreenshot("wall_stair");
+		// its open top, looking out over Hell
+		int platform = t.floors()[t.floors().length - 1];
+		stand(server, tf.at(platform + 1, 3, 2), tf.at(platform, -4, -4));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("wall_tower_top");
+		// a room at the foot of the wall, from the end by its stair, and one above
+		net.thesmallthings.hellcraft.world.Rooms.Frame rf = room.frame();
+		int far = -2 * room.side();
+		stand(server, rf.at(r.ground() + 1, -far, -2), rf.at(r.ground() + 1, far, 1));
 		context.waitTicks(20);
 		connection.waitForChunksRender();
 		context.waitTicks(10);
 		context.takeScreenshot("wall_room");
-		// the top room, looking up at its roof
-		stand(server, f.at(last + 1, -3, 0), f.at(top, 0, 0));
-		context.waitTicks(20);
-		connection.waitForChunksRender();
-		context.waitTicks(10);
-		context.takeScreenshot("wall_top");
+		if (r.floors().length > 1) {
+			stand(server, rf.at(r.floors()[1] + 1, -far, -2), rf.at(r.floors()[1] + 1, far, 1));
+			context.waitTicks(20);
+			context.takeScreenshot("wall_room_upper");
+		}
 	}
 
 	/** Teleports Player0 to stand at a block, facing another. */

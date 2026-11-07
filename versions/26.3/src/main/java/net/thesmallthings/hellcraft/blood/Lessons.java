@@ -152,6 +152,11 @@ public final class Lessons {
 		LESSONS.add(new Lesson("gatehouse", true, false, (p, s) -> Gatehouses.nearBuilt(p.level(), p.getX(), p.getZ(), 16), new Object[]{
 				"The gate's towers stand open: go in by the door off the passage. A stair climbs through guard rooms and libraries to "
 						+ "the walk over the gate, and on to the roof."}));
+		LESSONS.add(new Lesson("walls", true, false, (p, s) -> p.level() instanceof net.minecraft.server.level.ServerLevel level
+				&& net.thesmallthings.hellcraft.world.WallRooms.nearBuilt(level, p.getX(), p.getZ(), 12), new Object[]{
+				"This wall is lived in: every few steps a door at its foot leads into rooms built into it, a stair winding up through "
+						+ "them. The rarer ones hold an anvil, brewing stands, an enchanting table or a treasury. The tall towers along "
+						+ "it climb to the walk on top of the wall."}));
 	}
 
 	public static void register() {

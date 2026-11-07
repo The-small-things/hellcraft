@@ -202,7 +202,7 @@ public final class Gatehouses {
 	 */
 	private static double[] doorWindow(double pitch) {
 		double w = (DOOR_HALF / ((ROOM + STAIR) / 2)) / (2 * Math.PI) * pitch;
-		return new double[]{DOOR_HEIGHT + 0.5 + w, pitch - 3.0 - w};
+		return new double[]{DOOR_HEIGHT + 0.5 + w, pitch - 4.0 - w};
 	}
 
 	/** The floor of a gate's passage: down through the wall over it, then through the opening, to the paving. */
@@ -222,6 +222,11 @@ public final class Gatehouses {
 		return pos.getY() + 1;
 	}
 
+	/** A gate's key in HellState.gatehouses: "v2" since the stairs' holes were widened (older towers are built again). */
+	private static String stateKey(String id) {
+		return "v2:" + id;
+	}
+
 	/** True within {@code within} blocks of a gate whose towers have been built. */
 	public static boolean nearBuilt(net.minecraft.world.level.Level level, double x, double z, double within) {
 		if (!(level instanceof ServerLevel server) || server.dimension() != net.minecraft.world.level.Level.OVERWORLD) {
@@ -231,7 +236,7 @@ public final class Gatehouses {
 		for (Site s : sites()) {
 			double dx = x - s.x();
 			double dz = z - s.z();
-			if (dx * dx + dz * dz < within * within && state.gatehouses.contains(s.id())) {
+			if (dx * dx + dz * dz < within * within && state.gatehouses.contains(stateKey(s.id()))) {
 				return true;
 			}
 		}
@@ -252,7 +257,7 @@ public final class Gatehouses {
 		}
 		HellState state = HellState.get(server);
 		for (Site s : sites()) {
-			if (state.gatehouses.contains(s.id())) {
+			if (state.gatehouses.contains(stateKey(s.id()))) {
 				continue;
 			}
 			for (ServerPlayer p : level.players()) {
@@ -269,7 +274,7 @@ public final class Gatehouses {
 	/** Builds both towers of a gate. */
 	public static void build(ServerLevel level, String id) {
 		HellState state = HellState.get(level.getServer());
-		state.gatehouses.add(id);
+		state.gatehouses.add(stateKey(id));
 		state.setDirty();
 		for (int side = -1; side <= 1; side += 2) {
 			Tower t = tower(level, id, side);
@@ -393,11 +398,12 @@ public final class Gatehouses {
 					} else if (y >= t.roof()) {
 						state = Blocks.AIR.defaultBlockState();
 					} else if (floorLevels.contains(y + 1)) {
-						// a floor (the roof's too): holes where the stair climbs through it
+						// a floor (the roof's too): open where the stair climbs within four blocks below it, so no head meets its edge
 						long here = BlockPos.asLong(x, y, z);
 						if (spiral.containsKey(here)) {
 							state = spiral.get(here);
-						} else if (spiral.containsKey(BlockPos.asLong(x, y - 1, z)) || spiral.containsKey(BlockPos.asLong(x, y - 2, z))) {
+						} else if (spiral.containsKey(BlockPos.asLong(x, y - 1, z)) || spiral.containsKey(BlockPos.asLong(x, y - 2, z))
+								|| spiral.containsKey(BlockPos.asLong(x, y - 3, z))) {
 							state = Blocks.AIR.defaultBlockState();
 						} else {
 							state = y + 1 == t.roof() ? stone(t, random) : planks;
@@ -493,12 +499,18 @@ public final class Gatehouses {
 	private static void furnishAll(ServerLevel level, Tower t, RandomSource random) {
 		int n = t.floors().length - 1;
 		boolean dis = t.style() == Style.DIS;
+		Rooms.Frame room = Rooms.Frame.axes(t.cx(), t.cz());
+		// each room's plan has its back to the doors, its way in toward them
+		Direction back = Rooms.cardinal(-Math.cos(t.doorAngle()), -Math.sin(t.doorAngle()));
+		Rooms.Frame plan = new Rooms.Frame(t.cx(), t.cz(), -back.getStepZ(), back.getStepX(), back.getStepX(), back.getStepZ());
 		Rooms.Kind prev = null;
 		for (int i = 0; i < n; i++) {
 			Rooms.Kind kind = i == 0 ? Rooms.Kind.GUARD : i == n - 1 ? Rooms.Kind.WAR : Rooms.pick(dis, random, prev);
 			prev = kind;
-			Rooms.furnish(level, Rooms.Frame.axes(t.cx(), t.cz()), kind, t.floors()[i], t.floors()[i + 1] - 1, Rooms.Shape.round(ROOM),
-					(a, b) -> false, dis, random);
+			int floor = t.floors()[i];
+			Rooms.carpet(level, room, Rooms.Shape.round(ROOM), floor, dis);
+			Rooms.lantern(level, room, 0, 0, floor, t.floors()[i + 1] - 1);
+			Rooms.furnish(level, plan, kind, floor, dis, random, p -> dist(t, p.getX(), p.getZ()) <= ROOM);
 		}
 	}
 
@@ -587,7 +599,7 @@ public final class Gatehouses {
 			int z = BlockPos.getZ(e.getKey());
 			if (inDoorway(t, x, z, t.doorAngle())) {
 				boolean ground = y >= t.ground() && y < t.ground() + DOOR_HEIGHT;
-				boolean walk = t.walkDoor() && y >= t.walk() - 3 && y < t.walk() + DOOR_HEIGHT;
+				boolean walk = t.walkDoor() && y >= t.walk() - 4 && y < t.walk() + DOOR_HEIGHT;
 				if (ground || walk) {
 					return "a step stands in a doorway at height " + (y - t.ground());
 				}
