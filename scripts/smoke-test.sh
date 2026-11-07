@@ -432,6 +432,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   gatehouse=$(rcon "hellcraft gatehouse test")
   echo "$gatehouse"
   echo "$gatehouse" | grep -q "Gatehouse test OK" || { echo "The gatehouses are broken"; exit 1; }
+  # the walls: rooms built into the Gate of Hell's wall and the Walls of Dis, each inside its wall
+  walls=$(rcon "hellcraft wallrooms test")
+  echo "$walls"
+  echo "$walls" | grep -q "Wall rooms test OK" || { echo "The wall rooms are broken"; exit 1; }
   # first steps: Virgil's lessons for new souls
   lessons=$(rcon "hellcraft lessons test")
   echo "$lessons"

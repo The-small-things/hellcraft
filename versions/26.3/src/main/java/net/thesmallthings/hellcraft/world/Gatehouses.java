@@ -11,18 +11,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
-import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.LecternBlock;
-import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
@@ -39,9 +31,9 @@ import java.util.Set;
 /**
  * The gatehouses: two great round towers beside every gate of the Gate of Hell (12) and of the Walls of Dis (4), with
  * rooms inside. A door on the ground opens off the gate's passage; a spiral stair runs up round the inside of the tower,
- * through a floor every six or seven blocks, to a door at the top of the wall (onto the walk over the gate) and on up to
- * the roof. Each floor is a furnished, carpeted room: a guard room on the ground, then a library, a mess hall, an armoury
- * and a shrine, and a war room at the top. The Gate of Hell's are black and grey, of dark oak; Dis's are red and black,
+ * through a floor every seven or eight blocks, to a door at the top of the wall (onto the walk over the gate) and on up to
+ * the roof. Each floor is a furnished, carpeted room (see {@link Rooms}): a guard room on the ground, a war room at the top,
+ * and between them rooms chosen by weight. The Gate of Hell's are black and grey, of dark oak; Dis's are red and black,
  * of crimson, the fallen angels' city.
  *
  * Built once, the first time a player comes within {@link #NEAR} blocks of the gate (HellState.gatehouses), so worlds made
@@ -106,7 +98,7 @@ public final class Gatehouses {
 	}
 
 	/** How far out along angle a the wall of (effective) radius target stands: it follows the ring's wobble. */
-	private static double crossing(double a, double target) {
+	static double crossing(double a, double target) {
 		double lo = target - 200;
 		double hi = target + 200;
 		for (int i = 0; i < 40; i++) {
@@ -158,12 +150,12 @@ public final class Gatehouses {
 			walk = ground;
 			roof = Math.max(roof, ground + 13);
 		}
-		// floors: the ground, about six and a half blocks apart up to the wall-walk, and the roof
+		// floors: the ground, about seven and a half blocks apart up to the wall-walk, and the roof
 		List<Integer> floors = new ArrayList<>();
 		floors.add(ground);
 		int rise = walk - ground;
 		if (rise > 0) {
-			int n = Math.max(1, (int) Math.round(rise / 6.5));
+			int n = Math.max(1, (int) Math.round(rise / Rooms.FLOOR_SPACING));
 			for (int i = 1; i <= n; i++) {
 				floors.add(ground + (int) Math.round(i * rise / (double) n));
 			}
@@ -419,9 +411,7 @@ public final class Gatehouses {
 		}
 		doors(level, t);
 		slits(level, t);
-		for (int i = 0; i < t.floors().length - 1; i++) {
-			furnish(level, t, i, random);
-		}
+		furnishAll(level, t, random);
 		// a fire on the roof, as the old towers had
 		level.setBlock(pos.set(x0, t.roof(), z0), (t.style() == Style.GATE ? Blocks.SOUL_CAMPFIRE : Blocks.CAMPFIRE).defaultBlockState(), 3);
 	}
@@ -499,131 +489,17 @@ public final class Gatehouses {
 		}
 	}
 
-	private enum Room {GUARD, LIBRARY, MESS, ARMOURY, SHRINE, WAR}
-
-	/** Room i: a guard room on the ground, a war room at the wall-walk, the rest in turn. */
-	private static Room room(Tower t, int i) {
-		if (i == 0) {
-			return Room.GUARD;
+	/** The rooms of the tower's floors (the ground one a guard room, the top one the war room, the rest by weight), furnished. */
+	private static void furnishAll(ServerLevel level, Tower t, RandomSource random) {
+		int n = t.floors().length - 1;
+		boolean dis = t.style() == Style.DIS;
+		Rooms.Kind prev = null;
+		for (int i = 0; i < n; i++) {
+			Rooms.Kind kind = i == 0 ? Rooms.Kind.GUARD : i == n - 1 ? Rooms.Kind.WAR : Rooms.pick(dis, random, prev);
+			prev = kind;
+			Rooms.furnish(level, Rooms.Frame.axes(t.cx(), t.cz()), kind, t.floors()[i], t.floors()[i + 1] - 1, Rooms.Shape.round(ROOM),
+					(a, b) -> false, dis, random);
 		}
-		if (t.walkDoor() && t.floors()[i] == t.walk()) {
-			return Room.WAR;
-		}
-		Room[] middle = {Room.LIBRARY, Room.MESS, Room.ARMOURY, Room.SHRINE};
-		return middle[(i - 1) % middle.length];
-	}
-
-	/** Furnishes floor i: its room's furniture in the middle, carpet round it, a lantern hung from the ceiling. */
-	private static void furnish(ServerLevel level, Tower t, int i, RandomSource random) {
-		int f = t.floors()[i];
-		int ceiling = t.floors()[i + 1] - 1;
-		int x0 = (int) Math.floor(t.cx());
-		int z0 = (int) Math.floor(t.cz());
-		boolean gate = t.style() == Style.GATE;
-		Direction forward = horizontal(Math.cos(t.doorAngle()), Math.sin(t.doorAngle()));
-		Map<Long, BlockState> put = new HashMap<>();
-		Block fence = gate ? Blocks.DARK_OAK_FENCE : Blocks.CRIMSON_FENCE;
-		Block plate = gate ? Blocks.DARK_OAK_PRESSURE_PLATE : Blocks.CRIMSON_PRESSURE_PLATE;
-		Block chair = gate ? Blocks.DARK_OAK_STAIRS : Blocks.CRIMSON_STAIRS;
-		switch (room(t, i)) {
-			case GUARD -> {
-				table(put, x0, f, z0, fence, plate);
-				chairs(put, x0, f, z0, chair);
-				put.put(BlockPos.asLong(x0 + 2, f, z0 + 1), barrel());
-				put.put(BlockPos.asLong(x0 - 2, f, z0 - 1), barrel());
-				put.put(BlockPos.asLong(x0 + 1, f, z0 - 2), Blocks.GRINDSTONE.defaultBlockState().setValue(FaceAttachedHorizontalDirectionalBlock.FACE, AttachFace.FLOOR));
-				put.put(BlockPos.asLong(x0 - 1, f, z0 + 2), Blocks.CHIPPED_ANVIL.defaultBlockState());
-			}
-			case LIBRARY -> {
-				put.put(BlockPos.asLong(x0, f, z0), Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, forward));
-				for (int[] o : new int[][]{{2, 0}, {-2, 0}, {0, 2}, {0, -2}}) {
-					put.put(BlockPos.asLong(x0 + o[0], f, z0 + o[1]), Blocks.BOOKSHELF.defaultBlockState());
-					put.put(BlockPos.asLong(x0 + o[0], f + 1, z0 + o[1]), Blocks.BOOKSHELF.defaultBlockState());
-					put.put(BlockPos.asLong(x0 + o[0], f + 2, z0 + o[1]), candle(1 + random.nextInt(3)));
-				}
-				put.put(BlockPos.asLong(x0 + 1, f, z0 + 1), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH));
-				put.put(BlockPos.asLong(x0 - 1, f, z0 - 1), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH));
-			}
-			case MESS -> {
-				for (int k = -1; k <= 1; k++) {
-					table(put, x0 + k, f, z0, fence, plate);
-					put.put(BlockPos.asLong(x0 + k, f, z0 + 1), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH));
-					put.put(BlockPos.asLong(x0 + k, f, z0 - 1), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH));
-				}
-				put.put(BlockPos.asLong(x0 + 2, f, z0), barrel());
-				put.put(BlockPos.asLong(x0 - 2, f, z0), barrel());
-				put.put(BlockPos.asLong(x0 + 2, f + 1, z0), candle(3));
-			}
-			case ARMOURY -> {
-				put.put(BlockPos.asLong(x0, f, z0), Blocks.SMITHING_TABLE.defaultBlockState());
-				put.put(BlockPos.asLong(x0 + 2, f, z0), barrel());
-				put.put(BlockPos.asLong(x0 - 2, f, z0), barrel());
-				put.put(BlockPos.asLong(x0, f, z0 + 2), Blocks.GRINDSTONE.defaultBlockState().setValue(FaceAttachedHorizontalDirectionalBlock.FACE, AttachFace.FLOOR));
-				put.put(BlockPos.asLong(x0, f, z0 - 2), Blocks.ANVIL.defaultBlockState());
-				put.put(BlockPos.asLong(x0 + 1, f, z0 + 1), Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3));
-				put.put(BlockPos.asLong(x0 - 1, f, z0 - 1), barrel());
-			}
-			case SHRINE -> {
-				put.put(BlockPos.asLong(x0, f, z0), (gate ? Blocks.SOUL_CAMPFIRE : Blocks.CAMPFIRE).defaultBlockState());
-				int rot = 0;
-				for (int[] o : new int[][]{{2, 0}, {0, 2}, {-2, 0}, {0, -2}}) {
-					put.put(BlockPos.asLong(x0 + o[0], f, z0 + o[1]), (gate ? Blocks.SKELETON_SKULL : Blocks.WITHER_SKELETON_SKULL).defaultBlockState()
-							.setValue(SkullBlock.ROTATION, (rot += 4) % 16));
-				}
-				for (int[] o : new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}) {
-					put.put(BlockPos.asLong(x0 + o[0], f, z0 + o[1]), candle(2 + random.nextInt(3)));
-				}
-			}
-			case WAR -> {
-				put.put(BlockPos.asLong(x0, f, z0), Blocks.CARTOGRAPHY_TABLE.defaultBlockState());
-				chairs(put, x0, f, z0, chair);
-				put.put(BlockPos.asLong(x0 + 2, f, z0 - 1), barrel());
-				put.put(BlockPos.asLong(x0 - 2, f, z0 + 1), barrel());
-				put.put(BlockPos.asLong(x0 + 2, f + 1, z0 - 1), candle(4));
-			}
-		}
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-		for (Map.Entry<Long, BlockState> e : put.entrySet()) {
-			level.setBlock(pos.set(BlockPos.getX(e.getKey()), BlockPos.getY(e.getKey()), BlockPos.getZ(e.getKey())), e.getValue(), 3);
-		}
-		// carpet over the rest of the room: one colour in the middle, another round it
-		BlockState inner = (gate ? Blocks.CARPET.black() : Blocks.CARPET.red()).defaultBlockState();
-		BlockState aisle = (gate ? Blocks.CARPET.gray() : Blocks.CARPET.black()).defaultBlockState();
-		for (int dx = -4; dx <= 4; dx++) {
-			for (int dz = -4; dz <= 4; dz++) {
-				double d = dist(t, x0 + dx, z0 + dz);
-				pos.set(x0 + dx, f, z0 + dz);
-				if (d <= ROOM && level.getBlockState(pos).isAir() && !level.getBlockState(pos.below()).isAir()) {
-					level.setBlock(pos, d < 2.4 ? inner : aisle, 3);
-				}
-			}
-		}
-		// a lantern on a chain over the middle
-		if (ceiling - f >= 4) {
-			level.setBlock(pos.set(x0, ceiling - 1, z0), Blocks.IRON_CHAIN.defaultBlockState(), 3);
-			level.setBlock(pos.set(x0, ceiling - 2, z0), (gate ? Blocks.SOUL_LANTERN : Blocks.LANTERN).defaultBlockState().setValue(LanternBlock.HANGING, true), 3);
-		}
-	}
-
-	private static void table(Map<Long, BlockState> put, int x, int y, int z, Block fence, Block plate) {
-		put.put(BlockPos.asLong(x, y, z), fence.defaultBlockState());
-		put.put(BlockPos.asLong(x, y + 1, z), plate.defaultBlockState());
-	}
-
-	/** Four chairs round a table, their backs to the room. */
-	private static void chairs(Map<Long, BlockState> put, int x, int y, int z, Block chair) {
-		put.put(BlockPos.asLong(x + 1, y, z), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.EAST));
-		put.put(BlockPos.asLong(x - 1, y, z), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.WEST));
-		put.put(BlockPos.asLong(x, y, z + 1), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.SOUTH));
-		put.put(BlockPos.asLong(x, y, z - 1), chair.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH));
-	}
-
-	private static BlockState barrel() {
-		return Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP);
-	}
-
-	private static BlockState candle(int n) {
-		return Blocks.CANDLE.defaultBlockState().setValue(CandleBlock.CANDLES, n).setValue(CandleBlock.LIT, true);
 	}
 
 	private static BlockState stone(Tower t, RandomSource random) {

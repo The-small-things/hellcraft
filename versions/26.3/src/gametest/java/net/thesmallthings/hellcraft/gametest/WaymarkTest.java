@@ -103,6 +103,7 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.takeScreenshot("waymark_compass");
 			labyrinth(context, server, connection);
 			gatehouses(context, server, connection);
+			wallRooms(context, server, connection);
 			// first steps: what Virgil has taught Player0 by now (a new soul here)
 			String taught = server.computeOnServer(s -> String.join(",", net.thesmallthings.hellcraft.blood.HellState.get(s)
 					.existing(s.getPlayerList().getPlayerByName("Player0").getUUID()).lessons));
@@ -170,6 +171,57 @@ public class WaymarkTest implements FabricClientGameTest {
 		connection.waitForChunksRender();
 		context.waitTicks(10);
 		context.takeScreenshot("gatehouse_dis");
+	}
+
+	/**
+	 * A bay in the Gate of Hell's wall, a watch tower among them (world/WallRooms): built, then seen from outside (wall_outside),
+	 * from its door (wall_door), in a ground-floor room (wall_room) and in the top room (wall_top).
+	 */
+	private static void wallRooms(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		net.thesmallthings.hellcraft.world.WallRooms.Bay bay = net.thesmallthings.hellcraft.world.WallRooms.bay(
+				net.thesmallthings.hellcraft.world.WallRooms.Wall.GATE, 320);
+		int[] built = server.computeOnServer(s -> {
+			int[] r = net.thesmallthings.hellcraft.world.WallRooms.build(s.overworld(), bay);
+			return r == null ? new int[0] : r;
+		});
+		if (built.length == 0) {
+			throw new AssertionError("the wall room at bay 320 of the Gate of Hell wasn't built");
+		}
+		int ground = built[0];
+		int top = built[1];
+		int last = built[2];
+		net.thesmallthings.hellcraft.world.Rooms.Frame f = bay.frame();
+		// outside, looking at the bay (a watch tower stands up from it)
+		stand(server, f.at(ground + 4, 0, 18), f.at(ground + (top - ground) / 2, 0, 0));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(20);
+		context.takeScreenshot("wall_outside");
+		// at its door, from outside, looking in
+		stand(server, f.at(ground + 1, 0, -7), f.at(ground + 1, 0, -3));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("wall_door");
+		// a ground-floor room, from its far side
+		stand(server, f.at(ground + 1, -3, 0), f.at(ground + 2, 0, 0));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("wall_room");
+		// the top room, looking up at its roof
+		stand(server, f.at(last + 1, -3, 0), f.at(top, 0, 0));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("wall_top");
+	}
+
+	/** Teleports Player0 to stand at a block, facing another. */
+	private static void stand(TestDedicatedServerContext server, net.minecraft.core.BlockPos at, net.minecraft.core.BlockPos toward) {
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %.2f %.2f", at.getX() + 0.5, at.getY(), at.getZ() + 0.5,
+				toward.getX() + 0.5, toward.getY() + 0.5, toward.getZ() + 0.5));
 	}
 
 	/** The Journal's page number of a Guide page, by its title. */

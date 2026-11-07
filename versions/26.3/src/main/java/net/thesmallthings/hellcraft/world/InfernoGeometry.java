@@ -608,7 +608,7 @@ public final class InfernoGeometry {
 	public static final int GATE_COUNT = 12;
 	/** Effective radius of the wall: just outside the Dark Wood's cliff and the ramps cut into it. */
 	public static final double GATE_WALL_RADIUS = 3245.0 * SCALE;
-	public static final double GATE_WALL_HALF_THICKNESS = 1.5;
+	public static final double GATE_WALL_HALF_THICKNESS = 3.5;
 	public static final int GATE_WALL_HEIGHT = 18;
 	public static final int GATE_TOWER_HEIGHT = 26;
 	public static final int GATE_OPENING_HEIGHT = 10;

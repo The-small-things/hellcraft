@@ -18,7 +18,7 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
 public record DisWallFeature() implements Feature {
 	public static final DisWallFeature INSTANCE = new DisWallFeature();
 	public static final MapCodec<DisWallFeature> CODEC = MapCodec.unit(INSTANCE);
-	private static final int BASE_Y = 58;
+	public static final int BASE_Y = 58;
 
 	@Override
 	public MapCodec<DisWallFeature> codec() {
