@@ -201,7 +201,8 @@ public final class Gatehouses {
 	 * to clear the doorway, or (that much less a turn) low enough that no hole opens in the floor in front of it.
 	 */
 	private static double[] doorWindow(double pitch) {
-		double w = (DOOR_HALF / ((ROOM + STAIR) / 2)) / (2 * Math.PI) * pitch;
+		// how much of a turn a doorway spans, seen from the stair's inner edge (where it looks widest)
+		double w = (DOOR_HALF / ROOM) / (2 * Math.PI) * pitch;
 		return new double[]{DOOR_HEIGHT + 0.5 + w, pitch - 4.0 - w};
 	}
 
@@ -354,7 +355,7 @@ public final class Gatehouses {
 	}
 
 	/** True in the way through a door at angle a: ahead of the centre, within the door's half-width either side. */
-	private static boolean inDoorway(Tower t, int x, int z, double a) {
+	static boolean inDoorway(Tower t, int x, int z, double a) {
 		double dx = x + 0.5 - t.cx();
 		double dz = z + 0.5 - t.cz();
 		double along = dx * Math.cos(a) + dz * Math.sin(a);
