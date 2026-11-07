@@ -104,6 +104,7 @@ public class WaymarkTest implements FabricClientGameTest {
 			labyrinth(context, server, connection);
 			gatehouses(context, server, connection);
 			wallRooms(context, server, connection);
+			roomKinds(context, server, connection);
 			// first steps: what Virgil has taught Player0 by now (a new soul here)
 			String taught = server.computeOnServer(s -> String.join(",", net.thesmallthings.hellcraft.blood.HellState.get(s)
 					.existing(s.getPlayerList().getPlayerByName("Player0").getUUID()).lessons));
@@ -258,6 +259,68 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.waitTicks(20);
 			context.takeScreenshot("wall_room_upper");
 		}
+	}
+
+	/**
+	 * One room of every kind (world/Rooms), side by side high in the air with their fronts open and lit from above, filmed from
+	 * the front with the HUD hidden (room_<kind>). In the Gate of Hell's dark oak; Dis's rooms are the same in crimson.
+	 */
+	private static void roomKinds(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode spectator Player0");
+		net.thesmallthings.hellcraft.world.Rooms.Kind[] kinds = net.thesmallthings.hellcraft.world.Rooms.Kind.values();
+		int y = 230;
+		int z = 1000;
+		int x0 = 1000;
+		server.computeOnServer(s -> {
+			net.minecraft.server.level.ServerLevel level = s.overworld();
+			net.minecraft.world.level.block.state.BlockState wall = net.minecraft.world.level.block.Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
+			net.minecraft.world.level.block.state.BlockState air = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+			for (int i = 0; i < kinds.length; i++) {
+				int cx = x0 + i * 12;
+				for (int dx = -4; dx <= 4; dx++) {
+					for (int dz = -3; dz <= 4; dz++) {
+						boolean edge = Math.abs(dx) == 4 || dz == -3 || dz == 4;
+						level.setBlock(new net.minecraft.core.BlockPos(cx + dx, y - 1, z + dz), edge ? wall
+								: net.minecraft.world.level.block.Blocks.DARK_OAK_PLANKS.defaultBlockState(), 2);
+						for (int h = 0; h <= 5; h++) {
+							level.setBlock(new net.minecraft.core.BlockPos(cx + dx, y + h, z + dz), air, 2);
+						}
+						if (edge && dz != -3) {
+							// a low wall round the back and sides; the front stays open to the camera
+							level.setBlock(new net.minecraft.core.BlockPos(cx + dx, y, z + dz), wall, 2);
+						}
+						level.setBlock(new net.minecraft.core.BlockPos(cx + dx, y + 5, z + dz), net.minecraft.world.level.block.Blocks.LIGHT.defaultBlockState(), 2);
+					}
+				}
+				net.thesmallthings.hellcraft.world.Rooms.Frame f = net.thesmallthings.hellcraft.world.Rooms.Frame.axes(cx + 0.5, z + 0.5);
+				net.thesmallthings.hellcraft.world.Rooms.carpet(level, f, net.thesmallthings.hellcraft.world.Rooms.Shape.square(3, 2), y, false);
+				net.thesmallthings.hellcraft.world.Rooms.furnish(level, f, kinds[i], y, false, net.minecraft.util.RandomSource.create(i), p -> true);
+			}
+			return true;
+		});
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		for (int i = 0; i < kinds.length; i++) {
+			int cx = x0 + i * 12;
+			server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f facing %.1f %.1f %.1f", cx + 0.5, y + 4, z - 5.5, cx + 0.5, y + 0.5,
+					z + 1.0));
+			context.waitTicks(15);
+			connection.waitForChunksRender();
+			context.runOnClient(client -> {
+				net.thesmallthings.hellcraft.client.dialogue.DialogueHud.reset();
+				net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer.reset();
+			});
+			context.waitTicks(5);
+			context.takeScreenshot("room_" + kinds[i].name().toLowerCase(Locale.ROOT));
+		}
+		context.runOnClient(client -> {
+			if (client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
 	}
 
 	/** Teleports Player0 to stand at a block, facing another. */
