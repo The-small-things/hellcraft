@@ -191,8 +191,20 @@ jobs:
             - Lucifer at the bottom of the world: the Fallen Seraph's duel, then the Three-Faced Emperor in the ice.
             - Then the Forge of Dis (the Nether), Purgatory's island and the nine spheres of Paradiso up to the Celestial Rose.
 
-            **Every player installs Hellcraft** (single player too), the same version as the server. A world made with 3.0 carries on in 3.1; a world from before 3.0 needs replacing.
+            **Every player installs Hellcraft** (single player too), the same version as the server. A world made with 3.0 or 3.1 carries on in 3.2; a world from before 3.0 needs replacing.
 
+            - **New in 3.2.0 (26.3):**
+              - **The walls are lived in, all the way round:** the Gate of Hell's wall and the Walls of Dis are rooms from end to end: a door every ten blocks, a stone stair winding up through furnished rooms, and every eighty blocks a watch tower with doors onto the walk along the wall's top and a watch fire on its open top. Fourteen kinds of room (guard rooms, libraries, kitchens, prisons, chapels...); the good ones (a brewery, an armoury, an enchanting room, a treasury with loot) are rare on the Gate and common on Dis. Floors are 8 blocks apart and every stair has room overhead.
+              - **Gatehouses:** two towers beside every gate of the Gate of Hell and the Walls of Dis, with a spiral stair up through furnished rooms to the walk over the gate and the roof.
+              - **The Labyrinth of Crete:** an old arch beside each of the Minotaur's arenas takes you down into a sealed maze deep underground; at its heart Ariadne's spool gives Ariadne's Thread, which shows you the way out to him, and with it his charges end with him stunned and your blows hit harder.
+              - **Onlookers:** now and then a shade stands far off and stares at you. It wears the skin of a player who has walked this Hell before but isn't online. It can't be hurt and does no harm, and it is gone when you walk up to it (`onlookers` turns them off).
+              - **Every circle sounds like itself:** Lust's storm, Gluttony's rain, gold clinking in Greed, creaking trees in the Wood, ice cracking on Cocytus, a vast heart beating under Judecca (the Ambient/Environment slider).
+              - **Virgil teaches as you go:** a new soul gets one short tip at a time as they first meet each thing, at most one a minute; `/lessons off` stops them, and players from before 3.2 only hear about the new features.
+              - **The Unbound:** once you've beaten Lucifer, the guardians wake stronger and faster and pay better (`unboundGuardians`).
+              - **The Keys of Peter:** one set on the server, from the angel at Purgatory's seventh terrace: two more hearts and Blood Altar travel to any Rest, but they can't be put away, everyone is told who has them, and they fall when you die (`keysOfPeter`).
+              - **Works with Distant Horizons:** see the far circles of the funnel to the horizon (client only).
+              - **A camera that feels the ride:** the view rocks in Lust's storm and leans into Geryon's turns (off with View Bobbing).
+              - **A 3.1 world carries on:** the wall rooms, gatehouses and Labyrinths are built the first time someone comes near them.
             - **New in 3.1.0 (26.3):**
               - **A Hellcraft title screen:** the logo burning over a painted view of Hell from the Walls of Dis, embers rising, and a line of Dante for the splash.
               - **Boss blows hit hard:** every danger mark erupts in its colour as its blow lands (red in fire and flying earth, white in light and sparks, purple in violet), with a shockwave and a shake of the view up close; the bosses' other effects are twice as dense and show from across the arena.

@@ -102,16 +102,20 @@ public class SecretsTest implements FabricClientGameTest {
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f %.1f 30", x, well.y() + 2, z, yaw));
 		context.waitTicks(22);
 		context.takeScreenshot("secret_float");
-		context.waitTicks(50);
+		// a slow CI server can fall seconds behind: wait for the landing (up to 20 s) rather than a fixed time
+		boolean found = false;
+		for (int waited = 0; waited < 400 && !found; waited += 10) {
+			context.waitTicks(10);
+			found = server.computeOnServer(s -> {
+				ServerPlayer p = s.getPlayerList().getPlayerByName("Player0");
+				HellState.Soul soul = HellState.get(s).existing(p.getUUID());
+				double d = Math.hypot(p.getX() - well.landX() - 0.5, p.getZ() - well.landZ() - 0.5);
+				return soul != null && soul.secrets.contains("limbo_1") && d < 4 && p.onGround();
+			});
+		}
 		connection.waitForChunksRender();
 		context.waitTicks(20);
 		context.takeScreenshot("secret_landing");
-		boolean found = server.computeOnServer(s -> {
-			ServerPlayer p = s.getPlayerList().getPlayerByName("Player0");
-			HellState.Soul soul = HellState.get(s).existing(p.getUUID());
-			double d = Math.hypot(p.getX() - well.landX() - 0.5, p.getZ() - well.landZ() - 0.5);
-			return soul != null && soul.secrets.contains("limbo_1") && d < 4;
-		});
 		if (!found) {
 			throw new AssertionError("The well in Limbo did not carry Player0 down to its landing in Lust");
 		}
