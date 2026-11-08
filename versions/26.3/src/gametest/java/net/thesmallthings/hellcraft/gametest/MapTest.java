@@ -193,7 +193,7 @@ public class MapTest implements FabricClientGameTest {
 	 * Phlegyas's fight on his landing in the Fen (screenshots phlegyas_fight_*): his rise from the pool, the oar (a
 	 * white line), the sweep (a purple ring), the wave (a red ring) and the grab (a red circle), his fury and the
 	 * sullen's hands. Beaten, he leaves his ferry at the landing: ride it to the Walls of Dis (ferry_*), which must set
-	 * the player down on the east road inside the gate.
+	 * the player down just inside the Walls of Dis.
 	 */
 	private static void phlegyasFight(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		guardianFight(context, server, connection, Guardian.PHLEGYAS, "phlegyas_fight_", PhlegyasAnim.INTRO.at("roar"), PhlegyasAnim.INTRO.ticks,
@@ -226,9 +226,9 @@ public class MapTest implements FabricClientGameTest {
 		context.waitTicks(200);
 		connection.waitForChunksRender();
 		context.takeScreenshot("ferry_ride");
-		// set down on the road inside the gate of Dis
-		double inside = InfernoGeometry.DIS_WALL_RADIUS - InfernoGeometry.DIS_WALL_HALF_THICKNESS - 10;
-		context.waitFor(client -> !client.player.isPassenger() && Math.hypot(client.player.getX() - inside, client.player.getZ()) < 6, 900);
+		// set down just inside the Walls of Dis, across from the landing
+		net.minecraft.world.phys.Vec3 land = net.thesmallthings.hellcraft.world.Ferries.landingLand(0);
+		context.waitFor(client -> !client.player.isPassenger() && Math.hypot(client.player.getX() - land.x, client.player.getZ() - land.z) < 6, 1200);
 		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
 		server.runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 90 5");
 		context.waitTicks(10);

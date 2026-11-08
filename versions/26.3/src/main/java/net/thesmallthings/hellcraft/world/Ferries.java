@@ -61,7 +61,7 @@ public final class Ferries {
 		Vec3 dock = dock(level, k);
 		double a = InfernoGeometry.ROAD_ANGLES[k];
 		Vec3 from = dock.add(-Math.cos(a) * 40, 0, -Math.sin(a) * 40);
-		Ferry ferry = spawn(level, k, from, dock);
+		Ferry ferry = spawn(level, k, from, dock, roadAcross(k), roadLand(k));
 		Fen.douse(level, k);
 		if (ferry != null) {
 			int[] t = Fen.tower(k);
@@ -77,33 +77,56 @@ public final class Ferries {
 		return ferry;
 	}
 
-	/** Phlegyas is beaten at landing k: his ferry waits by it. */
+	/**
+	 * Phlegyas is beaten at landing k: his ferry waits by its deck, on the side toward Dis. It crosses straight in from
+	 * there (the landings stand on the diagonals, far from the roads' gates) and sets its riders down just inside the
+	 * Walls of Dis, a little to one side of the Furies' lair on the same diagonal.
+	 */
 	public static void dockAtLanding(ServerLevel level, int k) {
-		double a = InfernoGeometry.ROAD_ANGLES[k];
 		int[] c = Fen.landing(k);
+		double a = Math.atan2(c[1], c[0]);
 		double x = c[0] + 0.5 - Math.cos(a) * (Fen.LANDING + 4);
 		double z = c[1] + 0.5 - Math.sin(a) * (Fen.LANDING + 4);
 		Vec3 dock = new Vec3(x, water(), z);
 		if (ACTIVE[k] != null && !ACTIVE[k].isRemoved()) {
 			return;
 		}
-		spawn(level, k, dock, dock);
+		double wall = InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS);
+		Vec3 across = new Vec3(Math.cos(a) * (wall + 10), water(), Math.sin(a) * (wall + 10));
+		spawn(level, k, dock, dock, across, landingLand(k));
+	}
+
+	/** Where the ferry from Phlegyas's landing k sets its riders down: inside the Walls of Dis, off the Furies' lair. */
+	public static Vec3 landingLand(int k) {
+		int[] c = Fen.landing(k);
+		double a = Math.atan2(c[1], c[0]) + LAND_TURN;
+		double inside = InfernoGeometry.DIS_WALL_RADIUS - InfernoGeometry.DIS_WALL_HALF_THICKNESS - 10;
+		return new Vec3(Math.cos(a) * inside + 0.5, 0, Math.sin(a) * inside + 0.5);
+	}
+
+	/** How far round from the landing's diagonal the riders are set down (radians): well clear of the Furies' lair. */
+	private static final double LAND_TURN = 0.06;
+
+	/** On the water beside road k, just short of the Walls of Dis. */
+	private static Vec3 roadAcross(int k) {
+		double a = InfernoGeometry.ROAD_ANGLES[k];
+		double wall = InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS);
+		return new Vec3(Math.cos(a) * (wall + 10) - Math.sin(a) * 7, water(), Math.sin(a) * (wall + 10) + Math.cos(a) * 7);
+	}
+
+	/** On road k inside its gate of Dis. */
+	private static Vec3 roadLand(int k) {
+		double a = InfernoGeometry.ROAD_ANGLES[k];
+		double inside = InfernoGeometry.DIS_WALL_RADIUS - InfernoGeometry.DIS_WALL_HALF_THICKNESS - 10;
+		return new Vec3(Math.cos(a) * inside + 0.5, 0, Math.sin(a) * inside + 0.5);
 	}
 
 	@Nullable
-	private static Ferry spawn(ServerLevel level, int k, Vec3 from, Vec3 dock) {
+	private static Ferry spawn(ServerLevel level, int k, Vec3 from, Vec3 dock, Vec3 across, Vec3 land) {
 		Ferry ferry = HellEntities.FERRY.create(level, EntitySpawnReason.EVENT);
 		if (ferry == null) {
 			return null;
 		}
-		double a = InfernoGeometry.ROAD_ANGLES[k];
-		// across: on the water beside the road, just short of the Walls of Dis; land: on the road inside the gate
-		double wall = InfernoGeometry.outerRadius(Zone.WALLS_OF_DIS);
-		double inside = InfernoGeometry.DIS_WALL_RADIUS - InfernoGeometry.DIS_WALL_HALF_THICKNESS - 10;
-		double sideX = -Math.sin(a) * 7;
-		double sideZ = Math.cos(a) * 7;
-		Vec3 across = new Vec3(Math.cos(a) * (wall + 10) + sideX, water(), Math.sin(a) * (wall + 10) + sideZ);
-		Vec3 land = new Vec3(Math.cos(a) * inside + 0.5, 0, Math.sin(a) * inside + 0.5);
 		ferry.route(from, dock, across, land, WAIT);
 		level.addFreshEntity(ferry);
 		ACTIVE[k] = ferry;
