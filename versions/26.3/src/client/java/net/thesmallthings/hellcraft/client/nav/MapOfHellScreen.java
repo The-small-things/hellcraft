@@ -299,7 +299,10 @@ public class MapOfHellScreen extends Screen {
 		g.text(font, title, x + 14, y + 3, RED_INK, false);
 	}
 
-	/** Where each circle's label sits: the middle of its band along the north-west ray (between the roads and ramps). */
+	/**
+	 * Where each circle's label sits: the middle of its band along a ray just west of north, between the north road and
+	 * the next way down (the diagonals hold the lairs).
+	 */
 	private static List<double[]> labels;
 	private static List<String> labelNames;
 
@@ -309,8 +312,8 @@ public class MapOfHellScreen extends Screen {
 		}
 		labels = new ArrayList<>();
 		labelNames = new ArrayList<>();
-		double dx = -Math.sqrt(0.5);
-		double dz = -Math.sqrt(0.5);
+		double dx = Math.cos(Math.toRadians(-105));
+		double dz = Math.sin(Math.toRadians(-105));
 		net.thesmallthings.hellcraft.world.Zone current = null;
 		double start = 0;
 		for (double r = InfernoGeometry.BORDER_RADIUS - 2; r >= -4; r -= 4) {
@@ -351,6 +354,7 @@ public class MapOfHellScreen extends Screen {
 	/** Each circle's name, in the middle of its band (where there's room for it). */
 	private void circleLabels(GuiGraphicsExtractor g) {
 		prepareLabels();
+		int lastY = Integer.MIN_VALUE;
 		for (int i = 0; i < labels.size(); i++) {
 			double[] l = labels.get(i);
 			double bandPixels = l[2] / scale();
@@ -361,9 +365,10 @@ public class MapOfHellScreen extends Screen {
 			int x = sx(l[0]);
 			int y = sy(l[1]);
 			int w = font.width(name);
-			if (x + w / 2 < left || x - w / 2 > left + mapW || y < top || y > top + mapH) {
+			if (x + w / 2 < left || x - w / 2 > left + mapW || y < top || y > top + mapH || Math.abs(y - lastY) < 12) {
 				continue;
 			}
+			lastY = y;
 			g.fill(x - w / 2 - 3, y - 5, x + w / 2 + 3, y + 6, 0x90140A06);
 			g.text(font, name, x - w / 2, y - 4, 0xFFEDE3C8, false);
 		}
@@ -458,7 +463,7 @@ public class MapOfHellScreen extends Screen {
 		g.fill(x, y - 3, x + 1, y + 1, 0xFF000000);
 	}
 
-	private static final String[] LEGEND = {"Way down", "Rest found", "Rest not found", "Guardian", "Beaten", "Secret way", "Waymark", "You", "Ground you've seen"};
+	private static final String[] LEGEND = {"Way down", "Rest found", "Rest not found", "Guardian", "Beaten", "Secret way", "Waymark", "You", "Ground seen"};
 
 	private void legendMark(GuiGraphicsExtractor g, int i, int mx, int y) {
 		switch (i) {
