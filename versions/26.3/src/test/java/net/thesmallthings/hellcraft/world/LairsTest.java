@@ -50,6 +50,12 @@ class LairsTest {
 					double arc = InfernoGeometry.angularDistance(theta, InfernoGeometry.wayDownAngle(k)) * r;
 					assertTrue(arc > 34, lair + " is on a way down");
 				}
+				// every lair stands on a diagonal between the roads, far from any road
+				double diagonal = Math.abs(Math.IEEEremainder(theta - Math.PI / 4, Math.PI / 2));
+				assertTrue(diagonal < 1e-3, lair + " is off the diagonals");
+				for (double road : InfernoGeometry.ROAD_ANGLES) {
+					assertTrue(InfernoGeometry.angularDistance(theta, road) * r > 60, lair + " is beside a road");
+				}
 				for (double[] pad : WindStreams.pads()) {
 					assertTrue(Math.hypot(pad[0] - c.getX(), pad[1] - c.getZ()) > 40, lair + " is on a wind pad");
 				}

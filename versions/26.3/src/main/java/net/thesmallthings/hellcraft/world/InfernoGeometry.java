@@ -51,14 +51,14 @@ public final class InfernoGeometry {
 	public static final double[] ROAD_ANGLES = {0, Math.PI / 2, Math.PI, -Math.PI / 2};
 	/**
 	 * Where the guardians wait, in Guardian's order: distance from the centre, the angle round Hell of the first lair
-	 * (degrees from east, south = 90), and how far to the side of that line (for the two by a road: Phlegyas at the
-	 * watchtowers' landings, the Furies inside the gates of Dis). Each guardian of Hell has {@link #LAIRS_EACH} lairs in
-	 * its circle, a quarter of the way round from each other (one in each quarter of Hell, so one is never far), well
-	 * inside the circle and between the ways down.
+	 * (degrees from east, south = 90), and how far to the side of that line. Each guardian of Hell has {@link #LAIRS_EACH}
+	 * lairs in its circle, a quarter of the way round from each other, and every one of them stands on a diagonal between
+	 * the roads (45, 135, 225, 315 degrees): four tidy lines of lairs running in to the pit, as far from the roads as a
+	 * lair can be and clear of the ways down (every 30 degrees) and the Rests between the roads (30 degrees past a road).
 	 */
 	private static final double[][] LAIR_PLACES = {
-			{2425 * SCALE, 45, 0}, {2100 * SCALE, 135, 0}, {1800 * SCALE, 225, 0}, {1605 * SCALE, 0, 40}, {1360 * SCALE, 90, 40},
-			{1260 * SCALE, 195, 0}, {970 * SCALE, 285, 0}, {870 * SCALE, 315, 0}};
+			{2425 * SCALE, 45, 0}, {2100 * SCALE, 45, 0}, {1800 * SCALE, 45, 0}, {1605 * SCALE, 45, 0}, {1360 * SCALE, 45, 0},
+			{1260 * SCALE, 45, 0}, {970 * SCALE, 45, 0}, {870 * SCALE, 45, 0}};
 	/** How many lairs each guardian of Hell has. */
 	public static final int LAIRS_EACH = 4;
 	/**

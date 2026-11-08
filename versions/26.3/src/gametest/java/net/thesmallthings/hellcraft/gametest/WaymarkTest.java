@@ -89,6 +89,17 @@ public class WaymarkTest implements FabricClientGameTest {
 			if (context.computeOnClient(client -> ClientWaymarks.followed() == null || !ClientWaymarks.followed().shared())) {
 				throw new AssertionError("the shared waymark was not saved, or can't be followed");
 			}
+			// the ground seen round Player0 is drawn in its real blocks (MapTiles)
+			context.waitFor(client -> net.thesmallthings.hellcraft.client.nav.MapTiles.seen((int) x, 6), 400);
+			context.waitTicks(100);
+			context.setScreen(() -> MapOfHellScreen.at(x, 6, 30));
+			context.getInput().setCursorPos(2, 2);
+			context.waitTicks(10);
+			context.takeScreenshot("map_explored");
+			context.setScreen(() -> MapOfHellScreen.at(x, 6, 10));
+			context.getInput().setCursorPos(2, 2);
+			context.waitTicks(10);
+			context.takeScreenshot("map_explored_far");
 			context.setScreen(() -> MapOfHellScreen.at(x - 150, 0, 4));
 			context.getInput().setCursorPos(2, 2);
 			context.waitTicks(10);

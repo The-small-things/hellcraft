@@ -103,7 +103,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `paradiso` with about what a player has by then, hearts too, for fair boss tests; `full`/`blood`, everything);
   `hazard/guardian/Arenas` (`/hellcraft arena <boss> [lair] [players]`, to the edge of any boss's arena); four lairs per
   guardian of Hell (`InfernoGeometry.LAIRS_EACH`, `Guardian.lairColumn(k)`, one fight at a time in whichever is woken,
-  `GuardianManager.awakeIn`; Phlegyas has a landing by every watchtower, `Fen.landing(k)`; set-pieces keep out of
+  `GuardianManager.awakeIn`; Phlegyas has a landing on every diagonal, out on the water, `Fen.landing(k)`; set-pieces keep out of
   arenas with `InfernoGeometry.nearLair`); eight Rests per circle (`ShrineSites`: four between the roads, not in
   Malebolge); the travel menu has pages; the style
   panel (`StyleMeter` sends `net/StylePayload`, client `StylePanel` draws it; games without the mod keep the boss bar);
@@ -170,6 +170,13 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `HELLCRAFT_EXTRA_MODS` (`-Dfabric.addMods`, since Loom clears the run folder); it works (far terrain to the horizon after four
   minutes); DH hangs closing its databases when the headless game exits, so `LodTest` halts the game after two minutes; the
   pictures go into the log as base64 (`LOD picture` lines; the artifact can't be fetched from here).
+- 3.3 (beta): the Map of Hell shows explored ground (client `nav/MapTiles`: every loaded overworld chunk of an Inferno world scanned
+  (a few a tick, nearest first, the player's 3x3 again every second), each column's vanilla map colour shaded by slope or depth,
+  in 256-block tiles saved gzipped under `<game dir>/hellcraft/maps/<world key>/r.<tx>.<tz>.bin`; a full texture and an 8x smaller
+  copy per tile; `MapOfHellScreen` draws them over the painted `MapTexture`, faded with `UNSEEN_FADE`); the map fills the screen
+  (a rectangle, `scale()` blocks per pixel, `halfX`/`halfZ`, the key in a sidebar `SIDEBAR` wide on screens 420+ wide, `MAX_ZOOM` 48);
+  every lair on the diagonals (`InfernoGeometry.LAIR_PLACES` all at 45 degrees; `LairsTest` checks; Phlegyas's jetty runs outward,
+  `Fen.JETTY`). `WaymarkTest` films it (`map_explored*`).
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

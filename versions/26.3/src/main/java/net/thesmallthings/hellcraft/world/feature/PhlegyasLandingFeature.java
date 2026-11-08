@@ -32,11 +32,11 @@ public record PhlegyasLandingFeature() implements Feature {
 	public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
 		int x0 = origin.getX() & ~15;
 		int z0 = origin.getZ() & ~15;
-		// the landing (and its jetty back to the road) this chunk may hold
+		// the landing (and its jetty out to the shore) this chunk may hold
 		int[] landing = null;
 		for (int k = 0; k < Fen.towers() && landing == null; k++) {
 			int[] c = Fen.landing(k);
-			double reach = Fen.LANDING + 48;
+			double reach = Fen.LANDING + Fen.JETTY + 4;
 			if (x0 + 15 >= c[0] - reach && x0 <= c[0] + reach && z0 + 15 >= c[1] - reach && z0 <= c[1] + reach) {
 				landing = c;
 			}

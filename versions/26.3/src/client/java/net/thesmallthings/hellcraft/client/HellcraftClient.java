@@ -177,6 +177,8 @@ public class HellcraftClient implements ClientModInitializer {
 		net.thesmallthings.hellcraft.client.layer.Soundscape.register();
 		net.thesmallthings.hellcraft.client.layer.CameraSway.register();
 		net.thesmallthings.hellcraft.client.nav.ClientWaymarks.register();
+		// the ground you've seen, for the Map of Hell
+		net.thesmallthings.hellcraft.client.nav.MapTiles.register();
 		PilgrimHud.register();
 		// your style rank in a boss fight, on the right of the screen
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, StylePanel.ID, new StylePanel());

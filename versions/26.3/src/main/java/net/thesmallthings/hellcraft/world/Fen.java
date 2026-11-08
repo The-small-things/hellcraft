@@ -104,8 +104,9 @@ public final class Fen {
 	// ------------------------------------------------------------------ Phlegyas's landing
 
 	/**
-	 * Phlegyas's landings, one beside each watchtower's road (k as the towers): a ring of planks on the water round the
-	 * deep pool he rises from (his lairs, Guardian), with a jetty out from the road.
+	 * Phlegyas's landings, one on each diagonal between the roads (his lairs, Guardian; k as the towers, landing k a
+	 * quarter turn on from tower k): a ring of planks on the water round the deep pool he rises from, with a jetty
+	 * running straight out toward the Fen's outer shore.
 	 */
 	public static int[] landing(int k) {
 		BlockPos c = Guardian.PHLEGYAS.lairColumn(k);
@@ -114,6 +115,8 @@ public final class Fen {
 
 	public static final double POOL = 3.5;
 	public static final double LANDING = 21;
+	/** How far the jetty runs on past the deck's rail, outward (it stops being built where the ground rises dry). */
+	public static final double JETTY = 44;
 
 	public enum Landing {
 		NONE,
@@ -123,7 +126,7 @@ public final class Fen {
 		DECK,
 		/** The rail round the deck's edge (posts with lanterns here and there). */
 		RAIL,
-		/** The jetty out from the east road. */
+		/** The jetty out toward the outer shore. */
 		JETTY
 	}
 
@@ -137,21 +140,20 @@ public final class Fen {
 		return Landing.NONE;
 	}
 
-	/** Which part of landing k this is: measured along its road (u) and out to the side, toward the landing (v). */
+	/** Which part of landing k this is: measured across its radius (u) and outward from the pit (v). */
 	private static Landing landingAt(int k, double x, double z) {
 		int[] c = landing(k);
-		double a = InfernoGeometry.ROAD_ANGLES[k];
+		double a = Math.atan2(c[1], c[0]);
 		double rx = x - c[0] - 0.5;
 		double rz = z - c[1] - 0.5;
-		double u = rx * Math.cos(a) + rz * Math.sin(a);
-		double v = -rx * Math.sin(a) + rz * Math.cos(a);
+		double v = rx * Math.cos(a) + rz * Math.sin(a);
+		double u = -rx * Math.sin(a) + rz * Math.cos(a);
 		double d = Math.hypot(rx, rz);
 		if (d < POOL) {
 			return Landing.POOL;
 		}
-		// the jetty runs from beside the road (3 blocks off its middle) out to the deck
-		double side = -c[0] * Math.sin(a) + c[1] * Math.cos(a);
-		boolean jetty = Math.abs(u) <= 2 && v >= 3 - side - 0.5 && v < -0.5;
+		// the jetty runs from the deck straight outward, toward the circle's outer shore
+		boolean jetty = Math.abs(u) <= 2 && v > 0 && v < LANDING + JETTY;
 		if (d < LANDING - 1) {
 			return Landing.DECK;
 		}

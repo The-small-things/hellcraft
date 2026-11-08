@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Map of Hell (M): the funnel from above, drawn from the same geometry as the terrain, with every way down,
+ * The Map of Hell (M): the funnel from above, the ground you've seen in its real blocks (MapTiles) over a faded
+ * painting of the rest drawn from the same geometry as the terrain, with every way down,
  * the Virgil's Rests (gold once found), the guardians' lairs (grey once beaten), your waymarks and you. Scroll to zoom,
  * drag to move, and point at anything to see what it is. Right-click to place a waymark (world/Waymarks): name it, pick
  * its colour, share it with everyone if you like, and follow it on the compass; click one to change it.
@@ -39,7 +40,9 @@ public class MapOfHellScreen extends Screen {
 	private static final int LAIR = 0xFFE04040;
 	private static final int BEATEN = 0xFF808080;
 	private static final int SECRET = 0xFF40D8E8;
-	private static final float MAX_ZOOM = 12;
+	/** Laid over the painted map, so the ground you've seen stands out from what you haven't. */
+	private static final int UNSEEN_FADE = 0x58CBB894;
+	private static final float MAX_ZOOM = 48;
 
 	private static final List<Navigation.Target> WAYS = Navigation.all();
 
@@ -48,9 +51,14 @@ public class MapOfHellScreen extends Screen {
 	private static double viewX;
 	private static double viewZ;
 
-	private int side;
+	/** The map's rectangle on screen. */
 	private int left;
 	private int top;
+	private int mapW;
+	private int mapH;
+	/** The legend's column on the right (0: none, the legend goes under the map on narrow screens). */
+	private int sidebar;
+	private static final int SIDEBAR = 124;
 
 	/** The waymark being placed or looked at (null: none). id 0 is a new one. */
 	private Editing editing;
@@ -72,9 +80,11 @@ public class MapOfHellScreen extends Screen {
 
 	@Override
 	protected void init() {
-		side = Math.max(64, Math.min(height - 62, width - 28));
-		left = (width - side) / 2;
-		top = 24;
+		sidebar = width >= 420 ? SIDEBAR : 0;
+		left = 12;
+		top = 26;
+		mapW = Math.max(64, width - 24 - sidebar);
+		mapH = Math.max(64, height - top - 12 - (sidebar == 0 ? 26 : 0));
 		MapTexture.prepare();
 		clampView();
 		if (editing != null) {
@@ -83,11 +93,11 @@ public class MapOfHellScreen extends Screen {
 	}
 
 	private int panelX() {
-		return (width - PANEL_W) / 2;
+		return left + mapW / 2 - PANEL_W / 2;
 	}
 
 	private int panelY() {
-		return top + side - PANEL_H - 8;
+		return top + mapH - PANEL_H - 8;
 	}
 
 	/** The waymark panel's widgets: its name (your own only), whether everyone sees it, and the buttons. */
@@ -170,19 +180,33 @@ public class MapOfHellScreen extends Screen {
 		frame(g);
 		Identifier texture = MapTexture.get();
 		if (texture == null) {
-			g.centeredText(font, "Drawing the map...", width / 2, top + side / 2 - 4, DIM);
+			g.centeredText(font, "Drawing the map...", left + mapW / 2, top + mapH / 2 - 4, DIM);
 			return;
 		}
-		double half = half();
-		double span = 2 * MapTexture.EXTENT;
-		g.blit(texture, left, top, left + side, top + side,
-				(float) ((viewX - half + MapTexture.EXTENT) / span), (float) ((viewX + half + MapTexture.EXTENT) / span),
-				(float) ((viewZ - half + MapTexture.EXTENT) / span), (float) ((viewZ + half + MapTexture.EXTENT) / span));
+		g.enableScissor(left, top, left + mapW, top + mapH);
+		// the painted map (where nobody has looked yet it's all there is), on parchment past its edges
+		g.fill(left, top, left + mapW, top + mapH, 0xFF000000 | net.thesmallthings.hellcraft.world.MapPainter.tint(net.thesmallthings.hellcraft.world.MapPainter.PARCHMENT, 0.8));
+		double e = MapTexture.EXTENT;
+		double x0 = Math.max(-e, viewX - halfX());
+		double x1 = Math.min(e, viewX + halfX());
+		double z0 = Math.max(-e, viewZ - halfZ());
+		double z1 = Math.min(e, viewZ + halfZ());
+		g.blit(texture, sx(x0), sy(z0), sx(x1), sy(z1),
+				(float) ((x0 + e) / (2 * e)), (float) ((x1 + e) / (2 * e)), (float) ((z0 + e) / (2 * e)), (float) ((z1 + e) / (2 * e)));
+		// faded, so the ground you've seen (drawn over it from MapTiles, its real blocks) stands out
+		g.fill(left, top, left + mapW, top + mapH, UNSEEN_FADE);
+		boolean small = scale() > 3;
+		for (MapTiles.Tile t : MapTiles.tilesIn(viewX - halfX(), viewZ - halfZ(), viewX + halfX(), viewZ + halfZ())) {
+			g.blit(MapTiles.texture(t, small), sx(t.minX()), sy(t.minZ()), sx(t.minX() + MapTiles.SIZE), sy(t.minZ() + MapTiles.SIZE), 0, 1, 0, 1);
+		}
+		g.disableScissor();
 
 		LocalPlayer player = minecraft.player;
 		boolean here = ClientNav.inHell(minecraft);
 		List<Marker> markers = markers(player, here);
-		g.enableScissor(left, top, left + side, top + side);
+		g.enableScissor(left, top, left + mapW, top + mapH);
+		int youX = here ? sx(player.getX()) : Integer.MIN_VALUE;
+		int youY = here ? sy(player.getZ()) : Integer.MIN_VALUE;
 		if (here) {
 			// the way down the compass points to, ringed
 			Navigation.Target next = Navigation.wayDown(player.getX(), player.getZ());
@@ -206,8 +230,13 @@ public class MapOfHellScreen extends Screen {
 			if (zoom >= 3 || followed) {
 				String label = font.plainSubstrByWidth(w.name(), 90);
 				int lw = font.width(label);
-				g.fill(px - lw / 2 - 2, py + 2, px + lw / 2 + 2, py + 12, 0xA0000000);
-				g.centeredText(font, label, px, py + 3, ClientWaymarks.colour(w));
+				// under the pin, or over it if that would hide your arrow
+				int ly = py + 2;
+				if (Math.abs(youX - px) <= lw / 2 + 7 && youY >= ly - 6 && youY <= ly + 16) {
+					ly = py - 22;
+				}
+				g.fill(px - lw / 2 - 2, ly, px + lw / 2 + 2, ly + 10, 0xA0000000);
+				g.centeredText(font, label, px, ly + 1, ClientWaymarks.colour(w));
 			}
 		}
 		if (editing != null) {
@@ -218,8 +247,8 @@ public class MapOfHellScreen extends Screen {
 			you(g, sx(player.getX()), sy(player.getZ()), player.getYRot());
 		}
 		circleLabels(g);
-		rose(g, left + side - 24, top + 30);
-		scaleBar(g, left + 8, top + side - 12);
+		rose(g, left + mapW - 24, top + 30);
+		scaleBar(g, left + 8, top + mapH - 12);
 		g.disableScissor();
 		title(g);
 
@@ -227,7 +256,7 @@ public class MapOfHellScreen extends Screen {
 
 		if (editing != null) {
 			editorPanel(g, mouseX, mouseY);
-		} else if (mouseX >= left && mouseX < left + side && mouseY >= top && mouseY < top + side) {
+		} else if (onMap(mouseX, mouseY)) {
 			g.setComponentTooltipForNextFrame(font, tooltip(markers, mouseX, mouseY, player, here), mouseX, mouseY);
 		}
 	}
@@ -242,8 +271,8 @@ public class MapOfHellScreen extends Screen {
 	private void frame(GuiGraphicsExtractor g) {
 		int x0 = left - 7;
 		int y0 = top - 7;
-		int x1 = left + side + 7;
-		int y1 = top + side + 7;
+		int x1 = left + mapW + 7;
+		int y1 = top + mapH + 7;
 		g.fill(x0 - 1, y0 - 1, x1 + 1, y1 + 1, LEATHER_DARK);
 		g.fill(x0, y0, x1, y1, LEATHER);
 		g.outline(x0 + 3, y0 + 3, x1 - x0 - 6, y1 - y0 - 6, 0xFF7A4A20);
@@ -252,14 +281,14 @@ public class MapOfHellScreen extends Screen {
 			g.fill(c[0] + 1, c[1] + 1, c[0] + 5, c[1] + 5, 0xFF8A6020);
 			g.fill(c[0] + 2, c[1] + 2, c[0] + 4, c[1] + 4, GOLD);
 		}
-		g.fill(left - 1, top - 1, left + side + 1, top + side + 1, 0xFF140C08);
+		g.fill(left - 1, top - 1, left + mapW + 1, top + mapH + 1, 0xFF140C08);
 	}
 
 	/** The title, on a parchment label over the frame's top edge. */
 	private void title(GuiGraphicsExtractor g) {
 		Component title = Component.literal("THE MAP OF HELL").withStyle(net.minecraft.ChatFormatting.BOLD);
 		int w = font.width(title) + 28;
-		int x = (width - w) / 2;
+		int x = left + mapW / 2 - w / 2;
 		int y = top - 18;
 		g.fill(x - 1, y - 1, x + w + 1, y + 15, LEATHER_DARK);
 		g.fill(x, y, x + w, y + 14, 0xFFE6D8B6);
@@ -332,7 +361,7 @@ public class MapOfHellScreen extends Screen {
 			int x = sx(l[0]);
 			int y = sy(l[1]);
 			int w = font.width(name);
-			if (x + w / 2 < left || x - w / 2 > left + side || y < top || y > top + side) {
+			if (x + w / 2 < left || x - w / 2 > left + mapW || y < top || y > top + mapH) {
 				continue;
 			}
 			g.fill(x - w / 2 - 3, y - 5, x + w / 2 + 3, y + 6, 0x90140A06);
@@ -429,32 +458,87 @@ public class MapOfHellScreen extends Screen {
 		g.fill(x, y - 3, x + 1, y + 1, 0xFF000000);
 	}
 
-	private void legend(GuiGraphicsExtractor g) {
-		int y = top + side + 6;
-		String[] labels = {"Way down", "Rest found", "Rest not found", "Guardian", "Waymark", "You"};
-		int[] widths = new int[labels.length];
-		int total = 0;
-		for (int i = 0; i < labels.length; i++) {
-			widths[i] = 10 + font.width(labels[i]) + 10;
-			total += widths[i];
-		}
-		int x = (width - total) / 2;
-		for (int i = 0; i < labels.length; i++) {
-			int mx = x + 3;
-			switch (i) {
-				case 0 -> CompassHud.arrow(g, mx, y, GATE);
-				case 1 -> CompassHud.diamond(g, mx, y + 4, CompassHud.REST_FOUND);
-				case 2 -> CompassHud.diamond(g, mx, y + 4, CompassHud.REST_NEW);
-				case 3 -> lair(g, mx, y + 4, LAIR, false);
-				case 4 -> pin(g, mx, y + 8, ClientWaymarks.COLOURS[0], false);
-				default -> g.fill(mx - 2, y + 2, mx + 3, y + 7, 0xFFFFFFFF);
+	private static final String[] LEGEND = {"Way down", "Rest found", "Rest not found", "Guardian", "Beaten", "Secret way", "Waymark", "You", "Ground you've seen"};
+
+	private void legendMark(GuiGraphicsExtractor g, int i, int mx, int y) {
+		switch (i) {
+			case 0 -> CompassHud.arrow(g, mx, y, GATE);
+			case 1 -> CompassHud.diamond(g, mx, y + 4, CompassHud.REST_FOUND);
+			case 2 -> CompassHud.diamond(g, mx, y + 4, CompassHud.REST_NEW);
+			case 3 -> lair(g, mx, y + 4, LAIR, false);
+			case 4 -> lair(g, mx, y + 4, BEATEN, true);
+			case 5 -> {
+				g.fill(mx - 3, y + 1, mx + 4, y + 8, 0xFF000000);
+				g.fill(mx - 2, y + 2, mx + 3, y + 7, SECRET);
+				g.fill(mx - 1, y + 3, mx + 2, y + 6, 0xFF061418);
 			}
-			g.text(font, labels[i], x + 10, y, TEXT);
-			x += widths[i];
+			case 6 -> pin(g, mx, y + 8, ClientWaymarks.COLOURS[0], false);
+			case 7 -> g.fill(mx - 2, y + 2, mx + 3, y + 7, 0xFFFFFFFF);
+			default -> {
+				// a patch of real ground: grass, a path, water
+				g.fill(mx - 3, y + 1, mx + 4, y + 8, 0xFF000000);
+				g.fill(mx - 2, y + 2, mx + 1, y + 7, 0xFF7FB238);
+				g.fill(mx + 1, y + 2, mx + 3, y + 7, 0xFF4040FF);
+			}
 		}
-		g.centeredText(font, "Scroll to zoom, drag to move, right-click to place a waymark. " + ClientNav.foundCount() + " of " + ShrineSites.all().size() + " Rests found"
-				+ (SecretMarks.count() > 0 ? ", " + SecretMarks.count() + " of " + SecretWays.count() + " secret ways." : "."),
-				width / 2, y + 12, DIM);
+	}
+
+	private String found() {
+		return ClientNav.foundCount() + " of " + ShrineSites.all().size() + " Rests found"
+				+ (SecretMarks.count() > 0 ? ", " + SecretMarks.count() + " of " + SecretWays.count() + " secret ways." : ".");
+	}
+
+	private void legend(GuiGraphicsExtractor g) {
+		if (sidebar == 0) {
+			// narrow screens: one line of marks under the map, and the hint
+			int y = top + mapH + 9;
+			int total = 0;
+			int shown = 6;
+			int[] widths = new int[shown];
+			for (int i = 0; i < shown; i++) {
+				widths[i] = 10 + font.width(LEGEND[i]) + 8;
+				total += widths[i];
+			}
+			int x = left + mapW / 2 - total / 2;
+			for (int i = 0; i < shown; i++) {
+				legendMark(g, i, x + 3, y);
+				g.text(font, LEGEND[i], x + 10, y, TEXT);
+				x += widths[i];
+			}
+			g.centeredText(font, found(), left + mapW / 2, y + 11, DIM);
+			return;
+		}
+		// the column on the right: a leather panel with the key, what you've found and how to use the map
+		int x0 = left + mapW + 12;
+		int x1 = width - 6;
+		int y0 = top - 7;
+		int y1 = top + mapH + 7;
+		g.fill(x0 - 1, y0 - 1, x1 + 1, y1 + 1, LEATHER_DARK);
+		g.fill(x0, y0, x1, y1, LEATHER);
+		g.outline(x0 + 3, y0 + 3, x1 - x0 - 6, y1 - y0 - 6, 0xFF7A4A20);
+		int x = x0 + 9;
+		int y = y0 + 10;
+		g.text(font, "Key", x, y, 0xFFE6D8B6);
+		y += 14;
+		for (int i = 0; i < LEGEND.length; i++) {
+			legendMark(g, i, x + 3, y);
+			g.text(font, font.plainSubstrByWidth(LEGEND[i], x1 - x - 18), x + 12, y, TEXT);
+			y += 12;
+		}
+		y += 8;
+		for (var line : font.split(Component.literal(found()), x1 - x - 8)) {
+			g.text(font, line, x, y, 0xFFE6D8B6);
+			y += 10;
+		}
+		y += 8;
+		for (String hint : new String[]{"Scroll to zoom.", "Drag to move.", "Right-click to place a waymark.", "Point at anything to see what it is."}) {
+			for (var line : font.split(Component.literal(hint), x1 - x - 8)) {
+				if (y < y1 - 14) {
+					g.text(font, line, x, y, DIM);
+				}
+				y += 10;
+			}
+		}
 	}
 
 	private List<Component> tooltip(List<Marker> markers, int mouseX, int mouseY, LocalPlayer player, boolean here) {
@@ -622,36 +706,45 @@ public class MapOfHellScreen extends Screen {
 
 	// ------------------------------------------------------------------ the view
 
-	/** Half the width of the world shown, in blocks. */
-	private double half() {
-		return MapTexture.EXTENT / zoom;
+	/** Blocks per screen pixel: at zoom 1 the whole world fits the map's shorter side. */
+	private double scale() {
+		return 2 * MapTexture.EXTENT / (zoom * Math.min(mapW, mapH));
 	}
 
-	/** Blocks per screen pixel. */
-	private double scale() {
-		return 2 * half() / side;
+	/** Half the width (and height) of the world shown, in blocks. */
+	private double halfX() {
+		return scale() * mapW / 2;
+	}
+
+	private double halfZ() {
+		return scale() * mapH / 2;
+	}
+
+	private boolean onMap(double x, double y) {
+		return x >= left && x < left + mapW && y >= top && y < top + mapH;
 	}
 
 	private int sx(double x) {
-		return (int) Math.floor(left + side / 2.0 + (x - viewX) / scale());
+		return (int) Math.floor(left + mapW / 2.0 + (x - viewX) / scale());
 	}
 
 	private int sy(double z) {
-		return (int) Math.floor(top + side / 2.0 + (z - viewZ) / scale());
+		return (int) Math.floor(top + mapH / 2.0 + (z - viewZ) / scale());
 	}
 
 	private double wx(double mouseX) {
-		return viewX + (mouseX - left - side / 2.0) * scale();
+		return viewX + (mouseX - left - mapW / 2.0) * scale();
 	}
 
 	private double wz(double mouseY) {
-		return viewZ + (mouseY - top - side / 2.0) * scale();
+		return viewZ + (mouseY - top - mapH / 2.0) * scale();
 	}
 
 	private void clampView() {
-		double limit = MapTexture.EXTENT - half();
-		viewX = Mth.clamp(viewX, -limit, limit);
-		viewZ = Mth.clamp(viewZ, -limit, limit);
+		double limitX = Math.max(0, MapTexture.EXTENT - halfX());
+		double limitZ = Math.max(0, MapTexture.EXTENT - halfZ());
+		viewX = Mth.clamp(viewX, -limitX, limitX);
+		viewZ = Mth.clamp(viewZ, -limitZ, limitZ);
 	}
 
 	@Override
@@ -660,11 +753,13 @@ public class MapOfHellScreen extends Screen {
 			return false;
 		}
 		// zoom about the point under the mouse
-		double x = wx(Mth.clamp(mouseX, left, left + side));
-		double z = wz(Mth.clamp(mouseY, top, top + side));
+		double mx = Mth.clamp(mouseX, left, left + mapW);
+		double my = Mth.clamp(mouseY, top, top + mapH);
+		double x = wx(mx);
+		double z = wz(my);
 		zoom = Mth.clamp(zoom * (float) Math.pow(1.25, scrollY), 1, MAX_ZOOM);
-		viewX = x - (Mth.clamp(mouseX, left, left + side) - left - side / 2.0) * scale();
-		viewZ = z - (Mth.clamp(mouseY, top, top + side) - top - side / 2.0) * scale();
+		viewX = x - (mx - left - mapW / 2.0) * scale();
+		viewZ = z - (my - top - mapH / 2.0) * scale();
 		clampView();
 		return true;
 	}
@@ -703,8 +798,7 @@ public class MapOfHellScreen extends Screen {
 			}
 			return true;
 		}
-		boolean onMap = event.x() >= left && event.x() < left + side && event.y() >= top && event.y() < top + side;
-		if (!onMap || !ClientNav.inferno()) {
+		if (!onMap(event.x(), event.y()) || !ClientNav.inferno()) {
 			return false;
 		}
 		WaymarksPayload.Entry w = waymarkAt(event.x(), event.y());
