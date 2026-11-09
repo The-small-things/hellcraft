@@ -70,6 +70,7 @@ public class MapTest implements FabricClientGameTest {
 			int[] counts = server.computeOnServer(s -> {
 				int water = 0;
 				int lava = 0;
+				int gaps = 0;
 				int[] first = null;
 				net.minecraft.core.BlockPos.MutableBlockPos pos = new net.minecraft.core.BlockPos.MutableBlockPos();
 				for (int x = from - 200; x <= from; x++) {
@@ -80,20 +81,42 @@ public class MapTest implements FabricClientGameTest {
 					for (int z = -2; z <= 2; z++) {
 						for (int y = ground - 6; y <= ground + 6; y++) {
 							net.minecraft.world.level.block.state.BlockState state = s.overworld().getBlockState(pos.set(x, y, z));
-							if (state.is(net.minecraft.world.level.block.Blocks.LAVA)) {
+							boolean isLava = state.is(net.minecraft.world.level.block.Blocks.LAVA);
+							boolean isWater = !isLava && wetBlock(state);
+							if (isLava) {
 								lava++;
-								first = first == null ? new int[]{x, y, z} : first;
-							} else if (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
-									&& state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)) {
+							} else if (isWater) {
 								water++;
+							}
+							if (isLava || isWater) {
 								first = first == null ? new int[]{x, y, z} : first;
+								// nothing beside it may leave a gap: a whole block, the same liquid, or a stair with its back to it
+								for (net.minecraft.core.Direction d : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+									net.minecraft.core.BlockPos n = new net.minecraft.core.BlockPos(x, y, z).relative(d);
+									net.minecraft.world.level.block.state.BlockState ns = s.overworld().getBlockState(n);
+									boolean ok = ns.isCollisionShapeFullBlock(s.overworld(), n)
+											|| (isLava ? ns.is(net.minecraft.world.level.block.Blocks.LAVA) : wetBlock(ns))
+											|| ns.getBlock() instanceof net.minecraft.world.level.block.StairBlock
+											&& ns.getValue(net.minecraft.world.level.block.StairBlock.FACING) == d.getOpposite()
+											&& ns.getValue(net.minecraft.world.level.block.StairBlock.SHAPE) == net.minecraft.world.level.block.state.properties.StairsShape.STRAIGHT;
+									if (!ok) {
+										gaps++;
+										HellcraftMod.LOGGER.info("Road gap beside {} at {}: {}", isLava ? "lava" : "water", n, ns);
+									}
+								}
 							}
 						}
 					}
 				}
+				if (gaps > 0) {
+					return new int[]{water, lava, -gaps};
+				}
 				return first == null ? new int[]{water, lava} : new int[]{water, lava, first[0], first[1], first[2]};
 			});
 			HellcraftMod.LOGGER.info("Road dents in {}: {} waterlogged, {} lava", zone, counts[0], counts[1]);
+			if (counts.length == 3) {
+				throw new AssertionError(-counts[2] + " gaps beside the road's water or lava in " + zone);
+			}
 			boolean right = switch (zone) {
 				case GLUTTONY -> counts[0] > 0 && counts[1] == 0;
 				case BURNING_SANDS -> counts[1] > 0 && counts[0] == 0;
@@ -112,6 +135,12 @@ public class MapTest implements FabricClientGameTest {
 				context.takeScreenshot("road_dent_" + zone.name().toLowerCase(Locale.ROOT));
 			}
 		}
+	}
+
+	private static boolean wetBlock(net.minecraft.world.level.block.state.BlockState state) {
+		return state.is(net.minecraft.world.level.block.Blocks.WATER)
+				|| state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
+				&& state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED);
 	}
 
 	/** Somewhere well inside a circle on the east road: 40 blocks in from its outer edge. */

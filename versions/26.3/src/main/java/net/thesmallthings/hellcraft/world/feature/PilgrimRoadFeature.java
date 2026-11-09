@@ -24,8 +24,9 @@ import net.thesmallthings.hellcraft.world.Zone;
  * The four Pilgrim Roads (see {@link InfernoGeometry#ROAD_ANGLES}): paving in each circle's own stone over the
  * levelled ground, worn like a ruin: where the ground steps up, the top of the step breaks into a ragged band of
  * stairs and slabs in every turn and shape (most rising away from the lower ground), so it's walked without jumping;
- * on the flat, dents worn in the paving (stairs, slabs and the odd wall stub at every angle: holding water in
- * Gluttony's rain, and on the Burning Sands a pool of lava instead),
+ * on the flat, dents worn in the paving (stairs, slabs and the odd wall stub at every angle). In Gluttony's rain every
+ * such broken stone holds water, and on the Burning Sands the dents are pools of lava; nothing beside water or lava
+ * leaves a gap (a stair there turns its back to it), and none stands by a drop,
  * a stone here and there sunk to a slab, cracked stones and broken edges. Where one circle's stone gives way to the next the two are mixed over a dozen blocks, never a
  * straight seam. Plants and trees are cleared off, and a lantern post stands every {@link #LAMP_EVERY} blocks on
  * alternating sides. Runs late, after trees and the walls.
@@ -100,13 +101,14 @@ public record PilgrimRoadFeature() implements Feature {
 			return false;
 		}
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		Road road = new Road(level);
 		boolean placed = false;
 		for (int dx = 0; dx < 16; dx++) {
 			for (int dz = 0; dz < 16; dz++) {
 				int x = x0 + dx;
 				int z = z0 + dz;
 				if (InfernoGeometry.onRoad(x + 0.5, z + 0.5)) {
-					placed |= pave(level, pos, x, z);
+					placed |= pave(level, road, pos, x, z);
 				} else if (lampHere(x, z)) {
 					placed |= lamp(level, pos, x, z);
 				}
@@ -115,19 +117,77 @@ public record PilgrimRoadFeature() implements Feature {
 		return placed;
 	}
 
-	private static boolean pave(WorldGenLevel level, BlockPos.MutableBlockPos pos, int x, int z) {
-		int y = ground(level, pos, x, z);
-		if (y == Integer.MIN_VALUE) {
+	/** What a column of road is topped with, before the water and lava are settled. */
+	private enum Kind {PAVING, WORN, STAIR, SLAB, STUB}
+
+	private record Piece(Kind kind, Direction facing, StairsShape shape, boolean dent) {
+		boolean shaped() {
+			return kind == Kind.STAIR || kind == Kind.SLAB || kind == Kind.STUB;
+		}
+	}
+
+	/**
+	 * The road round the chunk being paved: the ground's height and each column's piece, worked out once and kept, since
+	 * every column looks at its neighbours (and they at theirs) to settle where water and lava can lie.
+	 */
+	private static final class Road {
+		final WorldGenLevel level;
+		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		final java.util.Map<Long, Integer> heights = new java.util.HashMap<>();
+		final java.util.Map<Long, Piece> pieces = new java.util.HashMap<>();
+
+		Road(WorldGenLevel level) {
+			this.level = level;
+		}
+
+		int ground(int x, int z) {
+			return heights.computeIfAbsent(BlockPos.asLong(x, 0, z), k -> PilgrimRoadFeature.ground(level, pos, x, z));
+		}
+
+		/** The column's piece (null off the road). */
+		Piece piece(int x, int z) {
+			if (!InfernoGeometry.onRoad(x + 0.5, z + 0.5)) {
+				return null;
+			}
+			Long k = BlockPos.asLong(x, 0, z);
+			Piece p = pieces.get(k);
+			if (p == null) {
+				p = basePiece(this, x, z);
+				pieces.put(k, p);
+			}
+			return p;
+		}
+
+		/** True if any side of the column drops away (lower ground beside it, or none found): water or lava there would show. */
+		boolean drop(int x, int z) {
+			int y = ground(x, z);
+			for (Direction d : FACINGS) {
+				int g = ground(x + d.getStepX(), z + d.getStepZ());
+				if (g == Integer.MIN_VALUE || g < y) {
+					return true;
+				}
+			}
 			return false;
 		}
-		Look look = lookAt(x, z);
+
+		/** True if the column ends up holding water: every shaped piece in Gluttony that doesn't stand by a drop. */
+		boolean wet(int x, int z) {
+			Piece p = piece(x, z);
+			return p != null && p.shaped() && liquid(x, z) == Liquid.WATER && !drop(x, z);
+		}
+
+		/** True if the column is a pool of lava: a dent on the Burning Sands that doesn't stand by a drop. */
+		boolean lava(int x, int z) {
+			Piece p = piece(x, z);
+			return p != null && p.dent() && liquid(x, z) == Liquid.LAVA && !drop(x, z);
+		}
+	}
+
+	/** Each column's own piece, from the lie of the ground and its hash alone. */
+	private static Piece basePiece(Road road, int x, int z) {
+		int y = road.ground(x, z);
 		Direction out = outward(x, z);
 		long h = hash(x, z);
-		// the ground along the road, up to three blocks either way (0 here: the column itself)
-		int[] along = new int[2 * STEP_REACH + 1];
-		for (int d = -STEP_REACH; d <= STEP_REACH; d++) {
-			along[d + STEP_REACH] = d == 0 ? y : ground(level, pos, x + out.getStepX() * d, z + out.getStepZ() * d);
-		}
 		// how far to the nearest lower stretch of road (along it or across it), and which way up the step climbs
 		int lowerAt = 0;
 		Direction upFromLower = null;
@@ -135,8 +195,7 @@ public record PilgrimRoadFeature() implements Feature {
 			for (Direction dir : FACINGS) {
 				int nx = x + dir.getStepX() * d;
 				int nz = z + dir.getStepZ() * d;
-				int g = dir == out ? along[STEP_REACH + d] : dir == out.getOpposite() ? along[STEP_REACH - d]
-						: InfernoGeometry.onRoad(nx + 0.5, nz + 0.5) ? ground(level, pos, nx, nz) : Integer.MIN_VALUE;
+				int g = InfernoGeometry.onRoad(nx + 0.5, nz + 0.5) ? road.ground(nx, nz) : Integer.MIN_VALUE;
 				if (g != Integer.MIN_VALUE && g < y) {
 					lowerAt = d;
 					// the lower road lies that way: the step climbs the other way
@@ -145,41 +204,74 @@ public record PilgrimRoadFeature() implements Feature {
 				}
 			}
 		}
-		int nextOut = along[STEP_REACH + 1];
-		int nextIn = along[STEP_REACH - 1];
-		boolean flat = nextOut == y && nextIn == y;
+		boolean flat = road.ground(x + out.getStepX(), z + out.getStepZ()) == y && road.ground(x - out.getStepX(), z - out.getStepZ()) == y;
 		boolean wetGround = InfernoGeometry.fluidAt(x, z) != InfernoGeometry.Fluid.NONE;
 		// (the roads run along the axes: the distance from the road's middle is the other coordinate)
 		double side = Math.abs((out.getStepX() != 0 ? z : x) + 0.5);
 		boolean edge = side > InfernoGeometry.ROAD_HALF_WIDTH - 1.0;
-		boolean cracked = Math.floorMod(h >>> 4, edge ? 3 : 9) == 0;
-
-		BlockState top;
-		if (lowerAt > 0 && roll(x, z, 1, 100) < BAND_CHANCE[lowerAt - 1]) {
+		Direction randomFacing = FACINGS[roll(x, z, 7, 4)];
+		StairsShape randomShape = SHAPES[roll(x, z, 8, SHAPES.length)];
+		if (y != Integer.MIN_VALUE && lowerAt > 0 && roll(x, z, 1, 100) < BAND_CHANCE[lowerAt - 1]) {
 			// the top of a step: its own stones broken into a ragged band of half steps, stairs and slabs every which way
 			// (most still rise away from the lower ground), so it's walked without jumping, like an old worn stair
-			boolean slab = roll(x, z, 2, 3) == 0;
-			top = slab ? slab(look) : stair(look, x, z, roll(x, z, 3, 5) < 2 ? upFromLower : null);
-			if (roll(x, z, 4, 10) == 0 && liquid(x, z) == Liquid.WATER && mayHoldWater(level, pos, x, z, y)) {
-				top = top.setValue(BlockStateProperties.WATERLOGGED, true);
+			if (roll(x, z, 2, 3) == 0) {
+				return new Piece(Kind.SLAB, null, null, false);
 			}
-		} else if (flat && !edge && !wetGround && roll(x, z, 5, DENT_EVERY) == 0
-				&& (liquid(x, z) == Liquid.NONE || mayHoldWater(level, pos, x, z, y))) {
-			// a dent worn in the paving: in Gluttony's endless rain it holds water, on the Burning Sands it is a pool of
-			// lava (a source block flush with the stones), and everywhere else it is a dry broken stone
+			return new Piece(Kind.STAIR, roll(x, z, 3, 5) < 2 ? upFromLower : randomFacing, randomShape, false);
+		}
+		if (flat && !edge && !wetGround && roll(x, z, 5, DENT_EVERY) == 0) {
+			// a dent worn in the paving (water in Gluttony, lava on the Burning Sands, dry elsewhere)
 			int kind = roll(x, z, 6, 16);
-			top = kind < 2 ? slab(look) : kind == 2 && look.post instanceof WallBlock ? stub(look) : stair(look, x, z, null);
-			switch (liquid(x, z)) {
-				case WATER -> top = top.setValue(BlockStateProperties.WATERLOGGED, true);
-				case LAVA -> top = Blocks.LAVA.defaultBlockState();
-				default -> {
+			Kind k = kind < 2 ? Kind.SLAB : kind == 2 && lookAt(x, z).post instanceof WallBlock ? Kind.STUB : Kind.STAIR;
+			return new Piece(k, randomFacing, randomShape, true);
+		}
+		if (flat && !wetGround && Math.floorMod(h, SUNK_EVERY) == 0) {
+			// a stone sunk to half its height
+			return new Piece(Kind.SLAB, null, null, false);
+		}
+		return new Piece(Math.floorMod(h >>> 4, edge ? 3 : 9) == 0 ? Kind.WORN : Kind.PAVING, null, null, false);
+	}
+
+	private static boolean pave(WorldGenLevel level, Road road, BlockPos.MutableBlockPos pos, int x, int z) {
+		int y = road.ground(x, z);
+		if (y == Integer.MIN_VALUE) {
+			return false;
+		}
+		Look look = lookAt(x, z);
+		Direction out = outward(x, z);
+		Piece piece = road.piece(x, z);
+		BlockState top;
+		if (road.lava(x, z)) {
+			// a pool of lava flush with the stones
+			top = Blocks.LAVA.defaultBlockState();
+		} else {
+			boolean wet = road.wet(x, z);
+			// next to water or lava nothing may leave a gap: a dry broken stone there becomes a stair with its back to it
+			// (still half a step up from the front), or a whole stone if water or lava lies on more than one side
+			java.util.List<Direction> liquidSides = new java.util.ArrayList<>();
+			if (!wet && piece.shaped()) {
+				for (Direction d : FACINGS) {
+					if (road.wet(x + d.getStepX(), z + d.getStepZ()) || road.lava(x + d.getStepX(), z + d.getStepZ())) {
+						liquidSides.add(d);
+					}
 				}
 			}
-		} else if (flat && !wetGround && Math.floorMod(h, SUNK_EVERY) == 0) {
-			// a stone sunk to half its height
-			top = slab(look);
-		} else {
-			top = (cracked ? look.worn : look.paving).defaultBlockState();
+			if (!liquidSides.isEmpty()) {
+				top = liquidSides.size() == 1
+						? look.stair.defaultBlockState().setValue(StairBlock.FACING, liquidSides.getFirst()).setValue(StairBlock.SHAPE, StairsShape.STRAIGHT)
+						: look.paving.defaultBlockState();
+			} else {
+				top = switch (piece.kind()) {
+					case STAIR -> look.stair.defaultBlockState().setValue(StairBlock.FACING, piece.facing()).setValue(StairBlock.SHAPE, piece.shape());
+					case SLAB -> slab(look);
+					case STUB -> stub(look);
+					case WORN -> look.worn.defaultBlockState();
+					default -> look.paving.defaultBlockState();
+				};
+				if (wet && top.hasProperty(BlockStateProperties.WATERLOGGED)) {
+					top = top.setValue(BlockStateProperties.WATERLOGGED, true);
+				}
+			}
 		}
 		level.setBlock(pos.set(x, y, z), top, 2);
 		for (int above = 1; above <= 4; above++) {
@@ -189,7 +281,9 @@ public record PilgrimRoadFeature() implements Feature {
 			}
 		}
 		// a step two blocks tall (rare on the levelled roads) still gets a stair below it, so it can be climbed
-		Direction tall = nextOut >= y + 2 && nextOut != Integer.MIN_VALUE ? out : nextIn >= y + 2 && nextIn != Integer.MIN_VALUE ? out.getOpposite() : null;
+		int nextOut = road.ground(x + out.getStepX(), z + out.getStepZ());
+		int nextIn = road.ground(x - out.getStepX(), z - out.getStepZ());
+		Direction tall = nextOut != Integer.MIN_VALUE && nextOut >= y + 2 ? out : nextIn != Integer.MIN_VALUE && nextIn >= y + 2 ? out.getOpposite() : null;
 		if (tall != null) {
 			level.setBlock(pos.set(x, y + 1, z), look.stair.defaultBlockState().setValue(StairBlock.FACING, tall), 2);
 		}
@@ -211,12 +305,6 @@ public record PilgrimRoadFeature() implements Feature {
 		return (int) Math.floorMod(hash(x * 31 + salt * 7919, z * 17 - salt * 104729) >>> 7, (long) n);
 	}
 
-	/** The circle's stair at a random turn and shape (or facing {@code lean}, if given). */
-	private static BlockState stair(Look look, int x, int z, Direction lean) {
-		Direction facing = lean != null ? lean : FACINGS[roll(x, z, 7, 4)];
-		return look.stair.defaultBlockState().setValue(StairBlock.FACING, facing).setValue(StairBlock.SHAPE, SHAPES[roll(x, z, 8, SHAPES.length)]);
-	}
-
 	private static BlockState slab(Look look) {
 		return look.slab.defaultBlockState();
 	}
@@ -229,32 +317,16 @@ public record PilgrimRoadFeature() implements Feature {
 
 	private enum Liquid {NONE, WATER, LAVA}
 
-	/** What the road's dents hold here: rainwater in Gluttony, lava on the Burning Sands (violence against God), else nothing. */
+	/**
+	 * What the road holds here: in Gluttony's rain every broken stone (stair, slab, wall stub) is waterlogged, on the
+	 * Burning Sands (violence against God) the dents are pools of lava, elsewhere nothing.
+	 */
 	private static Liquid liquid(int x, int z) {
 		return switch (InfernoGeometry.zoneAt(x, z)) {
 			case GLUTTONY -> Liquid.WATER;
 			case BURNING_SANDS -> Liquid.LAVA;
 			default -> Liquid.NONE;
 		};
-	}
-
-	/**
-	 * True if water set in at (x, y, z) stays put: on the road, every block round it at that height is ground or road
-	 * (never air it could spill into).
-	 */
-	private static boolean mayHoldWater(WorldGenLevel level, BlockPos.MutableBlockPos pos, int x, int z, int y) {
-		for (Direction d : FACINGS) {
-			int nx = x + d.getStepX();
-			int nz = z + d.getStepZ();
-			if (!InfernoGeometry.onRoad(nx + 0.5, nz + 0.5)) {
-				return false;
-			}
-			int g = ground(level, pos, nx, nz);
-			if (g == Integer.MIN_VALUE || g < y) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/** A hash of a column (the same on every server), for the worn stones and the mixing. */
