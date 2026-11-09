@@ -329,7 +329,8 @@ def purgatory():
     write(os.path.join(HC, "worldgen", "feature", "purgatory_island.json"), {"type": "hellcraft:purgatory_island"})
     write(os.path.join(HC, "worldgen", "placed_feature", "purgatory_island.json"), placed("hellcraft:purgatory_island"))
     steps = [[] for _ in range(10)]
-    steps[3] = ["hellcraft:purgatory_island"]
+    # (local modifications: the flat generator skips the structure steps, 3 and 4)
+    steps[2] = ["hellcraft:purgatory_island"]
     write(os.path.join(HC, "worldgen", "biome", "purgatory.json"), {
         "attributes": {
             "minecraft:visual/sky_color": "#1c2a5c",
