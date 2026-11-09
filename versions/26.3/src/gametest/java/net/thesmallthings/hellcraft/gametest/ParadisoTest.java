@@ -42,9 +42,19 @@ public class ParadisoTest implements FabricClientGameTest {
 				throw new AssertionError(status);
 			}
 			// the island from the sea, the Great Stair climbing its southern face from the beach, and a terrace running round
-			shot(context, server, connection, "hellcraft:purgatory", "purgatory_island", 30, 125, 190, 0, 95, 0);
+			shot(context, server, connection, "hellcraft:purgatory", "purgatory_island", 25, 120, 150, 0, 95, 0);
 			shot(context, server, connection, "hellcraft:purgatory", "purgatory_shore", 9, Purgatory.SUMMIT_Y - 58, 112, 0, Purgatory.SUMMIT_Y - 40, 60);
 			shot(context, server, connection, "hellcraft:purgatory", "purgatory_terrace", 43, Purgatory.SUMMIT_Y - 37, 43, 62, Purgatory.SUMMIT_Y - 40, -4);
+			// each terrace dressed for its sin, seen from its outer edge looking along it (clear of the ways up)
+			for (int k = 1; k <= Purgatory.TERRACES; k++) {
+				double from = Purgatory.cliff(k) + 8.5;
+				double to = Purgatory.cliff(k) + 2;
+				int top = Purgatory.topY(Purgatory.cliff(k) + 5);
+				double a = Math.toRadians(78);
+				double b = Math.toRadians(40);
+				shot(context, server, connection, "hellcraft:purgatory", "purgatory_terrace_" + k, Math.cos(a) * from, top + 3.2, Math.sin(a) * from,
+						Math.cos(b) * to, top + 1, Math.sin(b) * to);
+			}
 			shot(context, server, connection, "hellcraft:purgatory", "purgatory_summit", 10, Purgatory.SUMMIT_Y + 6, 14, 0, Purgatory.SUMMIT_Y, 0);
 			for (Sphere s : ParadisoGeometry.SPHERES) {
 				double[] a = ParadisoGeometry.arrival(s);

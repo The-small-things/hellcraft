@@ -62,13 +62,13 @@ public final class Purgatory {
 	/** Past the shore ring the beach runs down into the sea. */
 	public static final int BEACH_RADIUS = 117;
 	private static final int SHORE_RADIUS = 103;
-	private static final int FIRST_TERRACE = 89;
+	public static final int FIRST_TERRACE = 89;
 	/** Each terrace is this deep: wide enough to walk round, and to hold a flight of the Great Stair and its landing. */
-	private static final double TERRACE_WIDTH = 11;
+	public static final double TERRACE_WIDTH = 11;
 	/** The Great Stair runs straight up the southern face, this many blocks either side of its middle. */
-	private static final int STAIR_HALF = 2;
-	private static final int TERRACE_RISE = 8;
-	private static final int TERRACES = 7;
+	public static final int STAIR_HALF = 2;
+	public static final int TERRACE_RISE = 8;
+	public static final int TERRACES = 7;
 	/** The summit's top block (the Earthly Paradise). */
 	public static final int SUMMIT_Y = SHORE_Y + TERRACE_RISE * (TERRACES + 1);
 	private static final int BURROW_TICKS = 5 * 60 * 20;
@@ -180,6 +180,38 @@ public final class Purgatory {
 		return random.nextFloat() < 0.2f ? Blocks.ANDESITE.defaultBlockState() : Blocks.STONE.defaultBlockState();
 	}
 
+	/** The radius of the cliff between terrace k and k + 1 (k = 0: between the shore and the first terrace). */
+	public static double cliff(int k) {
+		return FIRST_TERRACE - k * TERRACE_WIDTH;
+	}
+
+	/**
+	 * True if (x, z) lies on or by a way up that terrace k's decorations must keep clear of: the Great Stair, or the
+	 * side stairs from terrace k up and from the terrace below up to k.
+	 */
+	public static boolean onAWayUp(int x, int z, int k) {
+		if (Math.abs(x) <= STAIR_HALF + 3 && z > 0) {
+			return true;
+		}
+		double a = Math.atan2(z, x);
+		double r = Math.sqrt((double) x * x + (double) z * z);
+		for (int j : new int[]{k - 1, k}) {
+			if (j < 0 || j >= TERRACES) {
+				continue;
+			}
+			double from = stairAngle(j) - 0.05;
+			double to = stairAngle(j) + (TERRACE_RISE + 3) / Math.max(8, r);
+			double d = Math.IEEEremainder(a - from, 2 * Math.PI);
+			if (d < 0) {
+				d += 2 * Math.PI;
+			}
+			if (d <= to - from) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private static double stairAngle(int k) {
 		// the side stairways spiral round the mountain, starting just west of the Great Stair on the southern face
 		return Math.PI / 2 + Math.PI / 8 + k * 2 * Math.PI / 8;
@@ -208,10 +240,20 @@ public final class Purgatory {
 				}
 			}
 		}
-		// the way onto the terrace above is clear
-		for (int x = -STAIR_HALF; x <= STAIR_HALF; x++) {
-			for (int y = base + TERRACE_RISE + 1; y <= base + TERRACE_RISE + 3; y++) {
-				level.setBlock(pos.set(x, y, cliff), Blocks.AIR.defaultBlockState(), 2);
+		// a solid landing from the top step onto the terrace above (where the cliff curves away, its edge would leave a gap)
+		// and the way onto it clear
+		for (int x = -STAIR_HALF - 1; x <= STAIR_HALF + 1; x++) {
+			for (int z = cliff - 2; z <= cliff; z++) {
+				for (int y = base + 1; y <= base + TERRACE_RISE; y++) {
+					if (!level.getBlockState(pos.set(x, y, z)).isSolid()) {
+						level.setBlock(pos, y == base + TERRACE_RISE ? Blocks.STONE_BRICKS.defaultBlockState() : Blocks.STONE.defaultBlockState(), 2);
+					}
+				}
+				for (int y = base + TERRACE_RISE + 1; y <= base + TERRACE_RISE + 3; y++) {
+					if (Math.abs(x) <= STAIR_HALF) {
+						level.setBlock(pos.set(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+					}
+				}
 			}
 		}
 		// lanterns on posts either side of the foot of the flight
