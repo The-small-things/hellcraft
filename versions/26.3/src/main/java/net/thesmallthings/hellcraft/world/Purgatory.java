@@ -56,11 +56,11 @@ public final class Purgatory {
 	public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, HellcraftMod.id("purgatory"));
 	/** The sea's surface (its top water block) and its sandy floor (the flat generator's layers, gen_realms.py). */
 	static final int SEA_Y = 62;
-	private static final int SEA_FLOOR = 34;
+	public static final int SEA_FLOOR = 34;
 	/** The beach, the lowest ledge of the island (its top block). */
 	static final int SHORE_Y = 66;
 	/** Past the shore ring the beach runs down into the sea. */
-	private static final int BEACH_RADIUS = 117;
+	public static final int BEACH_RADIUS = 117;
 	private static final int SHORE_RADIUS = 103;
 	private static final int FIRST_TERRACE = 89;
 	/** Each terrace is this deep: wide enough to walk round, and to hold a flight of the Great Stair and its landing. */
@@ -98,7 +98,7 @@ public final class Purgatory {
 	// ---------------------------------------------------------------------------------- the mountain
 
 	/** Terrace index at a distance from the axis: 0 the shore, 1..7 the terraces, 8 the summit, -1 outside. */
-	static int ring(double r) {
+	public static int ring(double r) {
 		if (r > SHORE_RADIUS) {
 			return -1;
 		}
@@ -109,13 +109,13 @@ public final class Purgatory {
 		return Math.min(k, TERRACES + 1);
 	}
 
-	static int topY(double r) {
+	public static int topY(double r) {
 		int k = ring(r);
 		return k < 0 ? Integer.MIN_VALUE : SHORE_Y + TERRACE_RISE * k;
 	}
 
 	/** The beach's sand, from the shore ring down under the sea (or MIN_VALUE where there is none). */
-	private static int beachY(double r) {
+	public static int beachY(double r) {
 		return r <= SHORE_RADIUS || r > BEACH_RADIUS ? Integer.MIN_VALUE : (int) Math.round(SHORE_Y - (r - SHORE_RADIUS) * 1.35);
 	}
 
@@ -136,42 +136,9 @@ public final class Purgatory {
 			return;
 		}
 		HellcraftMod.LOGGER.info("Raising the Mountain of Purgatory...");
+		// (the beach and the mountain themselves are generated with the dimension's chunks, lit as they are made:
+		// world/feature/PurgatoryIslandFeature; only the stairs, the signs and the garden are added here)
 		RandomSource random = RandomSource.create(1300L);
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-		for (int x = -BEACH_RADIUS; x <= BEACH_RADIUS; x++) {
-			for (int z = -BEACH_RADIUS; z <= BEACH_RADIUS; z++) {
-				double r = Math.sqrt(x * x + z * z);
-				level.getChunk(x >> 4, z >> 4);
-				int beach = beachY(r);
-				if (beach != Integer.MIN_VALUE) {
-					for (int y = SEA_FLOOR; y <= beach; y++) {
-						level.setBlock(pos.set(x, y, z), y >= beach - 1 ? Blocks.SAND.defaultBlockState() : Blocks.SANDSTONE.defaultBlockState(), 2);
-					}
-					continue;
-				}
-				int k = ring(r);
-				if (k < 0) {
-					continue;
-				}
-				int top = topY(r);
-				int bottom = SEA_FLOOR;
-				// fill solid only where it can be seen: the underside, the surface, and cliff faces
-				int lowestNeighbour = top;
-				for (int[] d : new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
-					double rn = Math.sqrt((x + d[0]) * (x + d[0]) + (z + d[1]) * (z + d[1]));
-					lowestNeighbour = Math.min(lowestNeighbour, ring(rn) < 0 ? Math.max(bottom, beachY(rn)) : topY(rn));
-				}
-				for (int y = bottom; y <= top; y++) {
-					// (solid a full terrace deep under every surface, so the side stairs cut into the cliffs show no hollows)
-					boolean visible = y <= bottom + 3 || y >= top - TERRACE_RISE - 2 || y >= lowestNeighbour - 1;
-					if (!visible) {
-						continue;
-					}
-					pos.set(x, y, z);
-					level.setBlock(pos, material(k, y, top, random), 2);
-				}
-			}
-		}
 		// the side ways up: narrow steps cut into the cliffs round the mountain, for those who explore the terraces
 		// (none on the southern face, where the Great Stair runs, and none into the garden: the Great Stair reaches it)
 		for (int k = 0; k < TERRACES; k++) {
@@ -192,7 +159,7 @@ public final class Purgatory {
 		HellcraftMod.LOGGER.info("The Mountain of Purgatory rises from the sea, summit at y {}", SUMMIT_Y);
 	}
 
-	private static BlockState material(int k, int y, int top, RandomSource random) {
+	public static BlockState material(int k, int y, int top, RandomSource random) {
 		if (y == top) {
 			if (k == 0) {
 				return Blocks.SAND.defaultBlockState();

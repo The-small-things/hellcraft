@@ -80,6 +80,7 @@ public final class HellWorldgen {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("chained_island"), ChainedIslandFeature.CODEC);
 		Registry.register(BuiltInRegistries.BIOME_SOURCE, HellcraftMod.id("paradiso"), ParadisoBiomeSource.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("paradiso_islands"), net.thesmallthings.hellcraft.world.feature.ParadisoIslandFeature.CODEC);
+		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("purgatory_island"), net.thesmallthings.hellcraft.world.feature.PurgatoryIslandFeature.CODEC);
 		Registry.register(BuiltInRegistries.FEATURE_TYPE, HellcraftMod.id("cyclops_camp"), CyclopsCampFeature.CODEC);
 	}
 

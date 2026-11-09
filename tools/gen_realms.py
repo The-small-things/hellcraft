@@ -321,10 +321,15 @@ def forge():
 # ============================================================================================ Purgatory
 
 # Purgatory (Phase 7): its own small dimension, a starlit sea before dawn. The flat generator lays the sea; the
-# mountain is built once by Purgatory.java.
+# mountain's rock and beach are a feature (PurgatoryIslandFeature, chunk by chunk, so they're lit as they're made), and
+# Purgatory.java adds its stairs, signs and garden once.
 PURGATORY_SEA = 62
 
 def purgatory():
+    write(os.path.join(HC, "worldgen", "feature", "purgatory_island.json"), {"type": "hellcraft:purgatory_island"})
+    write(os.path.join(HC, "worldgen", "placed_feature", "purgatory_island.json"), placed("hellcraft:purgatory_island"))
+    steps = [[] for _ in range(10)]
+    steps[3] = ["hellcraft:purgatory_island"]
     write(os.path.join(HC, "worldgen", "biome", "purgatory.json"), {
         "attributes": {
             "minecraft:visual/sky_color": "#1c2a5c",
@@ -342,7 +347,7 @@ def purgatory():
         "carvers": [],
         "downfall": 0.4,
         "effects": {"water_color": "#2a5aa8", "grass_color": "#6fbf5a", "foliage_color": "#5aa848"},
-        "features": [[] for _ in range(10)],
+        "features": steps,
         "has_precipitation": False,
         "temperature": 0.7,
     })
@@ -383,7 +388,7 @@ def purgatory():
 def purgatory_generator():
     """The preset's Purgatory: a flat sea floor under the starlit sea (Purgatory.java builds the mountain)."""
     return {"type": "minecraft:flat", "settings": {
-        "biome": "hellcraft:purgatory", "features": False, "lakes": False, "structure_overrides": [],
+        "biome": "hellcraft:purgatory", "features": True, "lakes": False, "structure_overrides": [],
         "layers": [{"block": "minecraft:bedrock", "height": 1}, {"block": "minecraft:stone", "height": 30},
                    {"block": "minecraft:sand", "height": 4}, {"block": "minecraft:water", "height": PURGATORY_SEA - 34}]}}
 
