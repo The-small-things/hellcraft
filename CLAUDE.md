@@ -82,7 +82,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   the Cyclops (`entity/boss/CyclopsEntity`, a mini-boss that fights on its own clock) are real bodies from tools/art.
   `NetherTest` films it all (`forge_*`, `vulcan_fight_*`, `cyclops_*`).
 - Purgatory and Paradiso (Phase 7) are their own dimensions in the Inferno preset (`hellcraft:purgatory`, `hellcraft:paradiso`;
-  data from `tools/gen_realms.py`). `world/Purgatory` builds the island in its sea once and runs the terraces, streams, burrow,
+  data from `tools/gen_realms.py`). `world/Purgatory` builds the island in its sea once (3.3: seven terraces `TERRACE_WIDTH` 11 deep stepping up
+  like a staircase, `greatStair` a flight per terrace straight up the southern face, side `stairway`s round the mountain) and runs the terraces, streams, burrow,
   climb out and gates; `Heaven` holds the Ascent, the Angelic Guard and the Rose's bell. `world/ParadisoGeometry` is Paradiso's
   one source of shape (nine spheres stacked `STEP` apart, centres round a circle so none sits over the one below, columns of
   light halfway between), read by `ParadisoBiomeSource` (sphere by height), `feature/ParadisoIslandFeature` (every island,
