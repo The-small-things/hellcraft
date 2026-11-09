@@ -59,6 +59,16 @@ import java.util.Properties;
  */
 public class MapTest implements FabricClientGameTest {
 	/** A camera position: where, and which way it looks (Minecraft yaw: 0 south, 90 west, 180 north, -90 east). */
+	/** The first place out along the east road (in Limbo and Lust) where the levelled ground steps a block. */
+	private static double roadStep() {
+		for (int x = (int) s(2400); x < (int) s(3200); x++) {
+			if (Math.round(InfernoGeometry.baseHeight(x, 0)) != Math.round(InfernoGeometry.baseHeight(x + 1, 0))) {
+				return x;
+			}
+		}
+		return s(2600);
+	}
+
 	private record Shot(String name, double x, double y, double z, float yaw, float pitch) {
 	}
 
@@ -78,6 +88,9 @@ public class MapTest implements FabricClientGameTest {
 		Shot[] shots = {
 				new Shot("map_gate_of_hell", gate + 45, 205, 6, 90, 22),
 				new Shot("map_road_lust", s(2480), 150, 6, 90, 28),
+				// close over the road: where it steps up (a ragged band of stairs and slabs) and its flat paving (dents of water)
+				new Shot("road_step", roadStep() + 5, InfernoGeometry.baseHeight(roadStep(), 0) + 3.5, -3.5, 60, 38),
+				new Shot("road_paving", s(2550) + 6, InfernoGeometry.baseHeight(s(2550), 0) + 3.5, -3.5, 60, 42),
 				new Shot("map_walls_of_dis", s(1470), 95, 8, 90, 22),
 				new Shot("map_malebolge_bridge", s(700), 45, 6, 90, 30),
 				new Shot("map_way_down_greed", Math.cos(way) * s(1740), 112, Math.sin(way) * s(1740), 120, 30),

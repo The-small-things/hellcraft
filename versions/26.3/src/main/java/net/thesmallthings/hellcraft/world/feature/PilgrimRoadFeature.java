@@ -9,6 +9,10 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -18,9 +22,10 @@ import net.thesmallthings.hellcraft.world.Zone;
 
 /**
  * The four Pilgrim Roads (see {@link InfernoGeometry#ROAD_ANGLES}): paving in each circle's own stone over the
- * levelled ground, worn like a ruin: a stair where the ground steps up (most face up the slope, some lie askew, as
- * if the road had settled), so it is walked without jumping; here and there a stone sunk to a slab, cracked stones
- * and broken edges. Where one circle's stone gives way to the next the two are mixed over a dozen blocks, never a
+ * levelled ground, worn like a ruin: where the ground steps up, the top of the step breaks into a ragged band of
+ * stairs and slabs in every turn and shape (most rising away from the lower ground), so it's walked without jumping;
+ * on the flat, dents of rainwater (waterlogged stairs, slabs and the odd wall stub; dry rubble where Hell is too hot),
+ * a stone here and there sunk to a slab, cracked stones and broken edges. Where one circle's stone gives way to the next the two are mixed over a dozen blocks, never a
  * straight seam. Plants and trees are cleared off, and a lantern post stands every {@link #LAMP_EVERY} blocks on
  * alternating sides. Runs late, after trees and the walls.
  */
@@ -117,30 +122,125 @@ public record PilgrimRoadFeature() implements Feature {
 		Look look = lookAt(x, z);
 		Direction out = outward(x, z);
 		long h = hash(x, z);
-		// where the road climbs a block, a stair on the lower stone, so it can be walked without jumping: most face up
-		// the slope, but one in three has settled askew (still half a step on one side)
-		int higherOut = ground(level, pos, x + out.getStepX(), z + out.getStepZ());
-		int higherIn = ground(level, pos, x - out.getStepX(), z - out.getStepZ());
-		Direction up = higherOut == y + 1 ? out : higherIn == y + 1 ? out.getOpposite() : null;
-		// worn like a ruin: a stone here and there sunk to half its height, others cracked, and the edges broken
-		boolean wet = InfernoGeometry.fluidAt(x, z) != InfernoGeometry.Fluid.NONE;
-		boolean sunk = up == null && !wet && Math.floorMod(h, 14) == 0;
+		// the ground along the road, up to three blocks either way (0 here: the column itself)
+		int[] along = new int[2 * STEP_REACH + 1];
+		for (int d = -STEP_REACH; d <= STEP_REACH; d++) {
+			along[d + STEP_REACH] = d == 0 ? y : ground(level, pos, x + out.getStepX() * d, z + out.getStepZ() * d);
+		}
+		// how far (along the road) to the nearest lower ground, and which way up the step climbs
+		int lowerAt = 0;
+		Direction upFromLower = null;
+		for (int d = 1; d <= STEP_REACH && lowerAt == 0; d++) {
+			for (int sign : new int[]{1, -1}) {
+				int g = along[sign * d + STEP_REACH];
+				if (g != Integer.MIN_VALUE && g < y && lowerAt == 0) {
+					lowerAt = d;
+					// the lower ground lies that way: the step climbs the other way
+					upFromLower = sign > 0 ? out.getOpposite() : out;
+				}
+			}
+		}
+		int nextOut = along[STEP_REACH + 1];
+		int nextIn = along[STEP_REACH - 1];
+		boolean flat = nextOut == y && nextIn == y;
+		boolean wetGround = InfernoGeometry.fluidAt(x, z) != InfernoGeometry.Fluid.NONE;
 		// (the roads run along the axes: the distance from the road's middle is the other coordinate)
 		double side = Math.abs((out.getStepX() != 0 ? z : x) + 0.5);
 		boolean edge = side > InfernoGeometry.ROAD_HALF_WIDTH - 1.0;
 		boolean cracked = Math.floorMod(h >>> 4, edge ? 3 : 9) == 0;
-		BlockState paving = sunk ? look.slab.defaultBlockState() : (cracked ? look.worn : look.paving).defaultBlockState();
-		level.setBlock(pos.set(x, y, z), paving, 2);
+
+		BlockState top;
+		if (lowerAt > 0 && roll(x, z, 1, 100) < BAND_CHANCE[lowerAt - 1]) {
+			// the top of a step: its own stones broken into a ragged band of half steps, stairs and slabs every which way
+			// (most still rise away from the lower ground), so it's walked without jumping, like an old worn stair
+			boolean slab = roll(x, z, 2, 3) == 0;
+			top = slab ? slab(look) : stair(look, x, z, roll(x, z, 3, 5) < 2 ? upFromLower : null);
+			if (roll(x, z, 4, 10) == 0 && !hot(x, z) && mayHoldWater(level, pos, x, z, y)) {
+				top = top.setValue(BlockStateProperties.WATERLOGGED, true);
+			}
+		} else if (flat && !edge && !wetGround && roll(x, z, 5, WATER_EVERY) == 0 && mayHoldWater(level, pos, x, z, y)) {
+			// a dent worn in the paving, holding rainwater (or, where Hell is too hot for water, rubble)
+			int kind = roll(x, z, 6, 16);
+			top = kind < 2 ? slab(look) : kind == 2 && look.post instanceof WallBlock ? stub(look) : stair(look, x, z, null);
+			if (!hot(x, z)) {
+				top = top.setValue(BlockStateProperties.WATERLOGGED, true);
+			}
+		} else if (flat && !wetGround && Math.floorMod(h, SUNK_EVERY) == 0) {
+			// a stone sunk to half its height
+			top = slab(look);
+		} else {
+			top = (cracked ? look.worn : look.paving).defaultBlockState();
+		}
+		level.setBlock(pos.set(x, y, z), top, 2);
 		for (int above = 1; above <= 4; above++) {
 			pos.set(x, y + above, z);
 			if (clearable(level.getBlockState(pos))) {
 				level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 			}
 		}
-		if (up != null) {
-			int skew = Math.floorMod(h >>> 12, 6);
-			Direction facing = skew == 0 ? up.getClockWise() : skew == 1 ? up.getCounterClockWise() : up;
-			level.setBlock(pos.set(x, y + 1, z), look.stair.defaultBlockState().setValue(StairBlock.FACING, facing), 2);
+		// a step two blocks tall (rare on the levelled roads) still gets a stair below it, so it can be climbed
+		Direction tall = nextOut >= y + 2 && nextOut != Integer.MIN_VALUE ? out : nextIn >= y + 2 && nextIn != Integer.MIN_VALUE ? out.getOpposite() : null;
+		if (tall != null) {
+			level.setBlock(pos.set(x, y + 1, z), look.stair.defaultBlockState().setValue(StairBlock.FACING, tall), 2);
+		}
+		return true;
+	}
+
+	/** How far back from a step's edge its top may break up into half steps, and how likely at each distance (%). */
+	private static final int STEP_REACH = 3;
+	private static final int[] BAND_CHANCE = {100, 55, 25};
+	/** One flat stone in so many holds a dent of water. */
+	private static final int WATER_EVERY = 20;
+	/** One flat stone in so many has sunk to a slab. */
+	private static final int SUNK_EVERY = 30;
+	private static final StairsShape[] SHAPES = StairsShape.values();
+	private static final Direction[] FACINGS = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+
+	/** A number in [0, n) for this column and purpose, the same on every server. */
+	private static int roll(int x, int z, int salt, int n) {
+		return (int) Math.floorMod(hash(x * 31 + salt * 7919, z * 17 - salt * 104729) >>> 7, (long) n);
+	}
+
+	/** The circle's stair at a random turn and shape (or facing {@code lean}, if given). */
+	private static BlockState stair(Look look, int x, int z, Direction lean) {
+		Direction facing = lean != null ? lean : FACINGS[roll(x, z, 7, 4)];
+		return look.stair.defaultBlockState().setValue(StairBlock.FACING, facing).setValue(StairBlock.SHAPE, SHAPES[roll(x, z, 8, SHAPES.length)]);
+	}
+
+	private static BlockState slab(Look look) {
+		return look.slab.defaultBlockState();
+	}
+
+	/** A broken stub of the circle's wall, as in a gutter. */
+	private static BlockState stub(Look look) {
+		return look.post.defaultBlockState().setValue(WallBlock.UP, false).setValue(WallBlock.EAST, WallSide.TALL)
+				.setValue(WallBlock.WEST, WallSide.TALL).setValue(WallBlock.NORTH, WallSide.TALL).setValue(WallBlock.SOUTH, WallSide.NONE);
+	}
+
+	/** Where water would make no sense: the Burning Sands and the river of boiling blood. */
+	private static boolean hot(int x, int z) {
+		Zone zone = InfernoGeometry.zoneAt(x, z);
+		return zone == Zone.BURNING_SANDS || zone == Zone.PHLEGETHON;
+	}
+
+	/**
+	 * True if water set in at (x, y, z) stays put: on the road, every block round it at that height is ground or road
+	 * (never air it could spill into).
+	 */
+	private static boolean mayHoldWater(WorldGenLevel level, BlockPos.MutableBlockPos pos, int x, int z, int y) {
+		if (hot(x, z)) {
+			return true;
+		}
+		for (Direction d : FACINGS) {
+			int nx = x + d.getStepX();
+			int nz = z + d.getStepZ();
+			if (!InfernoGeometry.onRoad(nx + 0.5, nz + 0.5)) {
+				return false;
+			}
+			int g = ground(level, pos, nx, nz);
+			if (g == Integer.MIN_VALUE || g < y) {
+				return false;
+			}
 		}
 		return true;
 	}
