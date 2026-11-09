@@ -24,7 +24,8 @@ import net.thesmallthings.hellcraft.world.Zone;
  * The four Pilgrim Roads (see {@link InfernoGeometry#ROAD_ANGLES}): paving in each circle's own stone over the
  * levelled ground, worn like a ruin: where the ground steps up, the top of the step breaks into a ragged band of
  * stairs and slabs in every turn and shape (most rising away from the lower ground), so it's walked without jumping;
- * on the flat, dents of rainwater (waterlogged stairs, slabs and the odd wall stub; dry rubble where Hell is too hot),
+ * on the flat, dents worn in the paving (stairs, slabs and the odd wall stub at every angle: holding water in
+ * Gluttony's rain, and on the Burning Sands a pool of lava instead),
  * a stone here and there sunk to a slab, cracked stones and broken edges. Where one circle's stone gives way to the next the two are mixed over a dozen blocks, never a
  * straight seam. Plants and trees are cleared off, and a lantern post stands every {@link #LAMP_EVERY} blocks on
  * alternating sides. Runs late, after trees and the walls.
@@ -159,15 +160,20 @@ public record PilgrimRoadFeature() implements Feature {
 			// (most still rise away from the lower ground), so it's walked without jumping, like an old worn stair
 			boolean slab = roll(x, z, 2, 3) == 0;
 			top = slab ? slab(look) : stair(look, x, z, roll(x, z, 3, 5) < 2 ? upFromLower : null);
-			if (roll(x, z, 4, 10) == 0 && !hot(x, z) && mayHoldWater(level, pos, x, z, y)) {
+			if (roll(x, z, 4, 10) == 0 && liquid(x, z) == Liquid.WATER && mayHoldWater(level, pos, x, z, y)) {
 				top = top.setValue(BlockStateProperties.WATERLOGGED, true);
 			}
-		} else if (flat && !edge && !wetGround && roll(x, z, 5, WATER_EVERY) == 0 && mayHoldWater(level, pos, x, z, y)) {
-			// a dent worn in the paving, holding rainwater (or, where Hell is too hot for water, rubble)
+		} else if (flat && !edge && !wetGround && roll(x, z, 5, DENT_EVERY) == 0
+				&& (liquid(x, z) == Liquid.NONE || mayHoldWater(level, pos, x, z, y))) {
+			// a dent worn in the paving: in Gluttony's endless rain it holds water, on the Burning Sands it is a pool of
+			// lava (a source block flush with the stones), and everywhere else it is a dry broken stone
 			int kind = roll(x, z, 6, 16);
 			top = kind < 2 ? slab(look) : kind == 2 && look.post instanceof WallBlock ? stub(look) : stair(look, x, z, null);
-			if (!hot(x, z)) {
-				top = top.setValue(BlockStateProperties.WATERLOGGED, true);
+			switch (liquid(x, z)) {
+				case WATER -> top = top.setValue(BlockStateProperties.WATERLOGGED, true);
+				case LAVA -> top = Blocks.LAVA.defaultBlockState();
+				default -> {
+				}
 			}
 		} else if (flat && !wetGround && Math.floorMod(h, SUNK_EVERY) == 0) {
 			// a stone sunk to half its height
@@ -193,8 +199,8 @@ public record PilgrimRoadFeature() implements Feature {
 	/** How far back from a step's edge its top may break up into half steps, and how likely at each distance (%). */
 	private static final int STEP_REACH = 3;
 	private static final int[] BAND_CHANCE = {100, 55, 25};
-	/** One flat stone in so many holds a dent of water. */
-	private static final int WATER_EVERY = 20;
+	/** One flat stone in so many is a dent (of water in Gluttony, lava on the Burning Sands, dry elsewhere). */
+	private static final int DENT_EVERY = 20;
 	/** One flat stone in so many has sunk to a slab. */
 	private static final int SUNK_EVERY = 30;
 	private static final StairsShape[] SHAPES = StairsShape.values();
@@ -221,10 +227,15 @@ public record PilgrimRoadFeature() implements Feature {
 				.setValue(WallBlock.WEST, WallSide.TALL).setValue(WallBlock.NORTH, WallSide.TALL).setValue(WallBlock.SOUTH, WallSide.NONE);
 	}
 
-	/** Where water would make no sense: the Burning Sands and the river of boiling blood. */
-	private static boolean hot(int x, int z) {
-		Zone zone = InfernoGeometry.zoneAt(x, z);
-		return zone == Zone.BURNING_SANDS || zone == Zone.PHLEGETHON;
+	private enum Liquid {NONE, WATER, LAVA}
+
+	/** What the road's dents hold here: rainwater in Gluttony, lava on the Burning Sands (violence against God), else nothing. */
+	private static Liquid liquid(int x, int z) {
+		return switch (InfernoGeometry.zoneAt(x, z)) {
+			case GLUTTONY -> Liquid.WATER;
+			case BURNING_SANDS -> Liquid.LAVA;
+			default -> Liquid.NONE;
+		};
 	}
 
 	/**
@@ -232,9 +243,6 @@ public record PilgrimRoadFeature() implements Feature {
 	 * (never air it could spill into).
 	 */
 	private static boolean mayHoldWater(WorldGenLevel level, BlockPos.MutableBlockPos pos, int x, int z, int y) {
-		if (hot(x, z)) {
-			return true;
-		}
 		for (Direction d : FACINGS) {
 			int nx = x + d.getStepX();
 			int nz = z + d.getStepZ();

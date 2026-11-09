@@ -59,6 +59,16 @@ import java.util.Properties;
  */
 public class MapTest implements FabricClientGameTest {
 	/** A camera position: where, and which way it looks (Minecraft yaw: 0 south, 90 west, 180 north, -90 east). */
+	/** Somewhere well inside a circle on the east road: 40 blocks in from its outer edge. */
+	private static double roadIn(net.thesmallthings.hellcraft.world.Zone zone) {
+		for (int x = InfernoGeometry.BORDER_RADIUS; x > 0; x -= 2) {
+			if (InfernoGeometry.zoneAt(x, 0) == zone) {
+				return x - 40;
+			}
+		}
+		return s(2000);
+	}
+
 	/** The first place out along the east road (in Limbo and Lust) where the levelled ground steps a block. */
 	private static double roadStep() {
 		for (int x = (int) s(2400); x < (int) s(3200); x++) {
@@ -91,6 +101,11 @@ public class MapTest implements FabricClientGameTest {
 				// close over the road: where it steps up (a ragged band of stairs and slabs) and its flat paving (dents of water)
 				new Shot("road_step", roadStep() + 4, InfernoGeometry.baseHeight(roadStep(), 0) + 2.8, 2.5, 115, 34),
 				new Shot("road_paving", s(2550) + 6, InfernoGeometry.baseHeight(s(2550), 0) + 3.5, -3.5, 60, 42),
+				// the dents hold water in Gluttony and lava on the Burning Sands
+				new Shot("road_gluttony", roadIn(net.thesmallthings.hellcraft.world.Zone.GLUTTONY) + 6,
+						InfernoGeometry.baseHeight(roadIn(net.thesmallthings.hellcraft.world.Zone.GLUTTONY), 0) + 3.5, -3.5, 60, 42),
+				new Shot("road_sands", roadIn(net.thesmallthings.hellcraft.world.Zone.BURNING_SANDS) + 6,
+						InfernoGeometry.baseHeight(roadIn(net.thesmallthings.hellcraft.world.Zone.BURNING_SANDS), 0) + 3.5, -3.5, 60, 42),
 				new Shot("map_walls_of_dis", s(1470), 95, 8, 90, 22),
 				new Shot("map_malebolge_bridge", s(700), 45, 6, 90, 30),
 				new Shot("map_way_down_greed", Math.cos(way) * s(1740), 112, Math.sin(way) * s(1740), 120, 30),
