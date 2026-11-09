@@ -392,12 +392,20 @@ public record PilgrimRoadFeature() implements Feature {
 			// (the road's own waterlogged stones and lava pools count as ground: a chunk paved before this one may have set them)
 			boolean ours = state.hasProperty(BlockStateProperties.WATERLOGGED) && !state.is(Blocks.WATER)
 					|| state.is(Blocks.LAVA) && liquid(x, z) == Liquid.LAVA && InfernoGeometry.onRoad(x + 0.5, z + 0.5);
+			// (nor does the stair set on top of the paving where the road climbs two blocks: the ground is the paving under it)
+			if (state.getBlock() instanceof StairBlock && PAVING.contains(level.getBlockState(pos.set(x, y - 1, z)).getBlock())) {
+				continue;
+			}
 			if (!state.isAir() && !clearable(state) && (state.getFluidState().isEmpty() || ours) || state.is(Blocks.LAVA) && ours) {
 				return y;
 			}
 		}
 		return Integer.MIN_VALUE;
 	}
+
+	/** Every circle's paving and worn stone. */
+	private static final java.util.Set<Block> PAVING = java.util.Arrays.stream(Zone.values()).map(PilgrimRoadFeature::look)
+			.flatMap(l -> java.util.stream.Stream.of(l.paving, l.worn)).collect(java.util.stream.Collectors.toSet());
 
 	/** Plants, leaves, logs and snow on the road are cleared away; anything built stays. */
 	private static boolean clearable(BlockState state) {
