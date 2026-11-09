@@ -516,7 +516,7 @@ With two or more champions, the traitors rise from the start. He calls champions
 *"Thence we came forth to rebehold the stars."*
 
 When Lucifer falls, the fighters climb straight out (above), and a **burrow** (an end gateway) opens in the ice at his back, for five minutes, for anyone who missed it. Step in and you climb out onto the shore of **Purgatory**: since Phase 7 its own small world, a mountain island in a starlit sea, in the hour before dawn:
-- **Seven terraces** spiral up the mountain, one for each capital sin, with stairways cut into the cliffs. Each has a sign, and at each new terrace an angel's wing erases a P from your brow.
+- **Seven terraces** step up the mountain like a staircase, one for each capital sin, each wide enough to walk all the way round. **The Great Stair** (3.3) climbs straight up the southern face from where you land on the beach, a flight to each terrace (each landing has a sign and lanterns) and the last to the garden on top; narrower steps cut into the cliffs round the mountain are the side ways up, for those who explore the terraces.
 - The **Earthly Paradise** on the summit has flowers and trees and two streams:
   - **Lethe** (west) washes away every harmful effect, fire and frost.
   - **Eunoë** (east) gives +2 hearts (up to your cap) and a full heal, once for every victory over Lucifer.

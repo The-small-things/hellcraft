@@ -41,8 +41,10 @@ public class ParadisoTest implements FabricClientGameTest {
 			if (!status.contains("stands")) {
 				throw new AssertionError(status);
 			}
-			shot(context, server, connection, "hellcraft:purgatory", "purgatory_island", 0, 80, 110, 0, 90, 0);
-			shot(context, server, connection, "hellcraft:purgatory", "purgatory_shore", 12, Purgatory.SUMMIT_Y - 50, 62, 0, Purgatory.SUMMIT_Y - 50, 0);
+			// the island from the sea, the Great Stair climbing its southern face from the beach, and a terrace running round
+			shot(context, server, connection, "hellcraft:purgatory", "purgatory_island", 30, 125, 190, 0, 95, 0);
+			shot(context, server, connection, "hellcraft:purgatory", "purgatory_shore", 9, Purgatory.SUMMIT_Y - 58, 112, 0, Purgatory.SUMMIT_Y - 40, 60);
+			shot(context, server, connection, "hellcraft:purgatory", "purgatory_terrace", 43, Purgatory.SUMMIT_Y - 37, 43, 62, Purgatory.SUMMIT_Y - 40, -4);
 			shot(context, server, connection, "hellcraft:purgatory", "purgatory_summit", 10, Purgatory.SUMMIT_Y + 6, 14, 0, Purgatory.SUMMIT_Y, 0);
 			for (Sphere s : ParadisoGeometry.SPHERES) {
 				double[] a = ParadisoGeometry.arrival(s);

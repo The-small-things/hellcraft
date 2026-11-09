@@ -42,8 +42,9 @@ import java.util.UUID;
  * dimension ({@link #LEVEL}, Phase 7: gen_realms.py), in the hour before dawn ("Thence we came forth to rebehold
  * the stars").
  *
- * <p>Seven terraces spiral up the mountain, one for each capital sin (an angel erases a P from your
- * brow at each), to the Earthly Paradise on the summit, where two streams run: <b>Lethe</b>, which
+ * <p>Seven terraces step up the mountain like a staircase, one for each capital sin, each wide enough to walk round.
+ * The Great Stair climbs straight up the southern face from the shore, a flight to each terrace, to the Earthly Paradise
+ * on the summit; narrower steps round the mountain are the side ways up. On the summit two streams run: <b>Lethe</b>, which
  * washes away every affliction, and <b>Eunoë</b>, which restores two hearts once for every victory
  * over Lucifer. The Gate of Return in the middle of the garden leads back to the Gate of Hell.
  */
@@ -59,10 +60,13 @@ public final class Purgatory {
 	/** The beach, the lowest ledge of the island (its top block). */
 	static final int SHORE_Y = 66;
 	/** Past the shore ring the beach runs down into the sea. */
-	private static final int BEACH_RADIUS = 66;
-	private static final int SHORE_RADIUS = 52;
-	private static final int FIRST_TERRACE = 44;
-	private static final double TERRACE_WIDTH = 4.5;
+	private static final int BEACH_RADIUS = 117;
+	private static final int SHORE_RADIUS = 103;
+	private static final int FIRST_TERRACE = 89;
+	/** Each terrace is this deep: wide enough to walk round, and to hold a flight of the Great Stair and its landing. */
+	private static final double TERRACE_WIDTH = 11;
+	/** The Great Stair runs straight up the southern face, this many blocks either side of its middle. */
+	private static final int STAIR_HALF = 2;
 	private static final int TERRACE_RISE = 8;
 	private static final int TERRACES = 7;
 	/** The summit's top block (the Earthly Paradise). */
@@ -80,9 +84,9 @@ public final class Purgatory {
 			"Walking through fire",
 	};
 
-	/** Where you arrive: the southern shore. */
+	/** Where you arrive: the southern shore, at the foot of the Great Stair. */
 	public static BlockPos shore() {
-		return new BlockPos(0, SHORE_Y + 1, 48);
+		return new BlockPos(0, SHORE_Y + 1, FIRST_TERRACE + TERRACE_RISE + 4);
 	}
 
 	@Nullable
@@ -158,7 +162,8 @@ public final class Purgatory {
 					lowestNeighbour = Math.min(lowestNeighbour, ring(rn) < 0 ? Math.max(bottom, beachY(rn)) : topY(rn));
 				}
 				for (int y = bottom; y <= top; y++) {
-					boolean visible = y <= bottom + 3 || y >= top - 3 || y >= lowestNeighbour - 1;
+					// (solid a full terrace deep under every surface, so the side stairs cut into the cliffs show no hollows)
+					boolean visible = y <= bottom + 3 || y >= top - TERRACE_RISE - 2 || y >= lowestNeighbour - 1;
 					if (!visible) {
 						continue;
 					}
@@ -167,26 +172,21 @@ public final class Purgatory {
 				}
 			}
 		}
-		for (int k = 0; k <= TERRACES; k++) {
+		// the side ways up: narrow steps cut into the cliffs round the mountain, for those who explore the terraces
+		// (none on the southern face, where the Great Stair runs, and none into the garden: the Great Stair reaches it)
+		for (int k = 0; k < TERRACES; k++) {
 			stairway(level, k);
 		}
-		for (int k = 1; k <= TERRACES; k++) {
-			double r = FIRST_TERRACE - (k - 0.5) * TERRACE_WIDTH;
-			double a = stairAngle(k) - 0.35;
-			int x = (int) Math.round(Math.cos(a) * r);
-			int z = (int) Math.round(Math.sin(a) * r);
-			Signs.place(level, new BlockPos(x, SHORE_Y + TERRACE_RISE * k + 1, z), 0, List.of(
-					Component.literal("TERRACE " + k).withStyle(ChatFormatting.BOLD),
-					Component.literal(SINS[k - 1]),
-					Component.literal(SIN_LINES[k - 1]),
-					Component.literal("")));
+		// the straight way up: the Great Stair, one flight to each terrace and the last to the garden
+		for (int k = 0; k <= TERRACES; k++) {
+			greatStair(level, k);
 		}
 		paradise(level, random);
-		Signs.place(level, shore().offset(2, 0, 0), 8, List.of(
+		Signs.place(level, new BlockPos(STAIR_HALF + 2, SHORE_Y + 1, FIRST_TERRACE + TERRACE_RISE + 2), 0, List.of(
 				Component.literal("PURGATORY").withStyle(ChatFormatting.BOLD),
-				Component.literal("Seven terraces"),
-				Component.literal("to the Earthly"),
-				Component.literal("Paradise")));
+				Component.literal("The Great Stair"),
+				Component.literal("climbs to the"),
+				Component.literal("garden on top")));
 		state.purgatoryIsland = true;
 		state.setDirty();
 		HellcraftMod.LOGGER.info("The Mountain of Purgatory rises from the sea, summit at y {}", SUMMIT_Y);
@@ -214,8 +214,51 @@ public final class Purgatory {
 	}
 
 	private static double stairAngle(int k) {
-		// the stairways spiral around the mountain, starting from the southern shore
-		return Math.PI / 2 + k * 2 * Math.PI / 8;
+		// the side stairways spiral round the mountain, starting just west of the Great Stair on the southern face
+		return Math.PI / 2 + Math.PI / 8 + k * 2 * Math.PI / 8;
+	}
+
+	/**
+	 * The flight of the Great Stair from level k (0 the shore) up to level k + 1: stone steps {@link #STAIR_HALF} * 2 + 1
+	 * wide, built on terrace k against the cliff and climbing north to its top, with a lantern either side of the foot and,
+	 * on the landing at the top, a sign naming the terrace (each runs on round the mountain to either side).
+	 */
+	private static void greatStair(ServerLevel level, int k) {
+		int base = SHORE_Y + TERRACE_RISE * k;
+		int cliff = FIRST_TERRACE - (int) Math.round(k * TERRACE_WIDTH);
+		BlockState step = Blocks.STONE_BRICK_STAIRS.defaultBlockState().setValue(net.minecraft.world.level.block.StairBlock.FACING, net.minecraft.core.Direction.NORTH);
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int s = 1; s <= TERRACE_RISE; s++) {
+			// step s stands s blocks up, the top one against the cliff
+			int z = cliff + TERRACE_RISE + 1 - s;
+			for (int x = -STAIR_HALF; x <= STAIR_HALF; x++) {
+				for (int y = base + 1; y < base + s; y++) {
+					level.setBlock(pos.set(x, y, z), Blocks.STONE_BRICKS.defaultBlockState(), 2);
+				}
+				level.setBlock(pos.set(x, base + s, z), step, 2);
+				for (int y = base + s + 1; y <= base + s + 3; y++) {
+					level.setBlock(pos.set(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+				}
+			}
+		}
+		// the way onto the terrace above is clear
+		for (int x = -STAIR_HALF; x <= STAIR_HALF; x++) {
+			for (int y = base + TERRACE_RISE + 1; y <= base + TERRACE_RISE + 3; y++) {
+				level.setBlock(pos.set(x, y, cliff), Blocks.AIR.defaultBlockState(), 2);
+			}
+		}
+		// lanterns on posts either side of the foot of the flight
+		for (int x : new int[]{-STAIR_HALF - 1, STAIR_HALF + 1}) {
+			level.setBlock(pos.set(x, base + 1, cliff + TERRACE_RISE + 1), Blocks.STONE_BRICK_WALL.defaultBlockState(), 2);
+			level.setBlock(pos.set(x, base + 2, cliff + TERRACE_RISE + 1), Blocks.LANTERN.defaultBlockState(), 2);
+		}
+		if (k < TERRACES) {
+			Signs.place(level, new BlockPos(STAIR_HALF + 2, base + TERRACE_RISE + 1, cliff - 1), 0, List.of(
+					Component.literal("TERRACE " + (k + 1)).withStyle(ChatFormatting.BOLD),
+					Component.literal(SINS[k]),
+					Component.literal(SIN_LINES[k]),
+					Component.literal("Stair goes on up")));
+		}
 	}
 
 	/** Steps cut into the cliff from level k up to level k + 1, running around the mountain. */
@@ -382,8 +425,9 @@ public final class Purgatory {
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("Thence we came forth to rebehold the stars.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.4f);
-		Dialogue.notice(player, Component.literal("You climbed out to Purgatory. Climb its seven ledges to the garden at the top, with "
-				+ "its two streams (Lethe and Eunoë) and the Gate of Return home.").withStyle(ChatFormatting.AQUA));
+		Dialogue.notice(player, Component.literal("You climbed out to Purgatory. The Great Stair ahead climbs straight up the mountain to the "
+				+ "garden on top, with its two streams (Lethe and Eunoë), the Gate of Return home and the Ascent to Paradiso. Each of its seven "
+				+ "landings is a terrace you can follow round the mountain.").withStyle(ChatFormatting.AQUA));
 		TERRACE_REACHED.put(player.getUUID(), 0);
 	}
 

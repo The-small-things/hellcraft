@@ -591,6 +591,12 @@ sleep 2
 summit=$(rcon "execute in hellcraft:purgatory if block 0 131 0 minecraft:end_gateway" || true)
 echo "Gate of Return on the summit: $summit"
 echo "$summit" | grep -q "Test passed" || { echo "The Mountain of Purgatory has no Gate of Return"; exit 1; }
+# the Great Stair: its first step on the shore, at the foot of the southern face
+rcon "execute in hellcraft:purgatory run forceload add 0 96 0 98" > /dev/null
+sleep 2
+stair=$(rcon "execute in hellcraft:purgatory if block 0 67 97 minecraft:stone_brick_stairs" || true)
+echo "Great Stair's first step: $stair"
+echo "$stair" | grep -q "Test passed" || { echo "Purgatory has no Great Stair"; exit 1; }
 purgatory=$(rcon "hellcraft purgatory" || true)
 echo "$purgatory"
 echo "$purgatory" | grep -qi "unknown or incomplete command" && { echo "/hellcraft purgatory is not registered"; exit 1; }
