@@ -196,7 +196,8 @@ public final class Purgatory {
 		double a = Math.atan2(z, x);
 		double r = Math.sqrt((double) x * x + (double) z * z);
 		for (int j : new int[]{k - 1, k}) {
-			if (j < 0 || j >= TERRACES) {
+			// (a side stair only cuts the ring round its own cliff: elsewhere the terrace is free)
+			if (j < 0 || j >= TERRACES || Math.abs(r - (cliff(j) - 1.5)) > 3.5) {
 				continue;
 			}
 			double from = stairAngle(j) - 0.05;
