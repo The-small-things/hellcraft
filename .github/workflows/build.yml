@@ -191,8 +191,16 @@ jobs:
             - Lucifer at the bottom of the world: the Fallen Seraph's duel, then the Three-Faced Emperor in the ice.
             - Then the Forge of Dis (the Nether), Purgatory's island and the nine spheres of Paradiso up to the Celestial Rose.
 
-            **Every player installs Hellcraft** (single player too), the same version as the server. A world made with 3.0 or 3.1 carries on in 3.2; a world from before 3.0 needs replacing.
+            **Every player installs Hellcraft** (single player too), the same version as the server. **3.3 needs a new world:** the guardians' lairs, the Pilgrim Roads and Purgatory are rebuilt.
 
+            - **New in 3.3.0 (26.3):**
+              - **The Map of Hell shows the real ground:** wherever you've been, the map draws every block's own colour, shaded by the slope like a vanilla map (buildings and paths and all, a block a pixel zoomed right in); what you haven't seen yet is a faded painting of the funnel, so you can still plan the way down. It's saved on your own computer for each world or server.
+              - **A roomier map:** it fills the screen, with the key in a column on the right, and waymark and circle names keep clear of your arrow and the lairs.
+              - **Tidier lairs:** every guardian's four lairs stand on the four diagonals between the roads, four neat lines into the pit, well away from the paths. Phlegyas's landings are out on the Fen's water with a jetty to the shore, and his ferry crosses straight in to just inside the Walls of Dis; the Furies wait just inside the walls.
+              - **Worn Pilgrim Roads:** wherever a road steps up, the top of the step breaks into a ragged band of stairs and slabs at every angle, walked half a step at a time; dents worn in the paving hold water in Gluttony and lava on the Burning Sands (mind your step), with no gaps beside them; each circle keeps its own stone.
+              - **Purgatory you can climb:** seven wide terraces step up the mountain like a staircase, each wide enough to walk round, and **the Great Stair** climbs straight up the southern face from the beach to the garden on top, a flight and a signed landing for each terrace; the narrow side stairs are still there for explorers. Each terrace is laid in its own stone and shows its sin: boulders and carved reliefs on Pride, grey seats and chains on Envy, smoke on Wrath, a running track on Sloth, dust on Avarice, trees with their fruit out of reach on Gluttony, a wall of fire on Lust.
+              - **Prestige made plain:** the Blood Altar's button is called Prestige, lists all seven bonuses (yours ticked) and says exactly what clicking does; the Journal explains it step by step, and where the name "the Seven P's" comes from.
+              - **Make a new world** for 3.3.
             - **New in 3.2.0 (26.3):**
               - **The walls are lived in, all the way round:** the Gate of Hell's wall and the Walls of Dis are rooms from end to end: a door every ten blocks, a stone stair winding up through furnished rooms, and every eighty blocks a watch tower with doors onto the walk along the wall's top and a watch fire on its open top. Fourteen kinds of room (guard rooms, libraries, kitchens, prisons, chapels...); the good ones (a brewery, an armoury, an enchanting room, a treasury with loot) are rare on the Gate and common on Dis. Floors are 8 blocks apart and every stair has room overhead.
               - **Gatehouses:** two towers beside every gate of the Gate of Hell and the Walls of Dis, with a spiral stair up through furnished rooms to the walk over the gate and the roof.
@@ -260,4 +268,4 @@ jobs:
             - **Official Minecraft Launcher:** download `hellcraft-${{ steps.ver.outputs.ver }}-mc26.3-mods.zip` and follow `INSTALL.txt`.
             - **Single player:** Create New World, World tab, World Type: **Inferno** (turn on *Allow Commands* for `/hellcraft goto <zone>`).
 
-            **Servers:** use `hellcraft-${{ steps.ver.outputs.ver }}-mc26.3.jar` with the Docker setup in the README (`itzg/minecraft-server:java25`, `VERSION` 26.3); a world made with 3.0 carries on, an older one needs replacing. Only port 25565 is needed: all the art ships in the mod. Players without the matching Hellcraft are told what to install.
+            **Servers:** use `hellcraft-${{ steps.ver.outputs.ver }}-mc26.3.jar` with the Docker setup in the README (`itzg/minecraft-server:java25`, `VERSION` 26.3); 3.3 needs a new world. Only port 25565 is needed: all the art ships in the mod. Players without the matching Hellcraft are told what to install.
