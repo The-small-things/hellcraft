@@ -180,6 +180,79 @@ public final class Purgatory {
 		return random.nextFloat() < 0.2f ? Blocks.ANDESITE.defaultBlockState() : Blocks.STONE.defaultBlockState();
 	}
 
+	/** A terrace's floor: the band at its edges (and the cliff's lip), the stones of its middle, and the accent laid across it. */
+	private record Floor(BlockState border, BlockState[] main, BlockState accent) {
+	}
+
+	private static final Floor[] FLOORS = {
+			// Pride: a pale carved pavement (in Dante it is carved with examples of humility)
+			new Floor(Blocks.SMOOTH_STONE.defaultBlockState(), new BlockState[]{Blocks.STONE_BRICKS.defaultBlockState(), Blocks.POLISHED_ANDESITE.defaultBlockState(),
+					Blocks.STONE_BRICKS.defaultBlockState(), Blocks.CRACKED_STONE_BRICKS.defaultBlockState()}, Blocks.CHISELED_STONE_BRICKS.defaultBlockState()),
+			// Envy: livid grey stone
+			new Floor(Blocks.POLISHED_TUFF.defaultBlockState(), new BlockState[]{Blocks.TUFF_BRICKS.defaultBlockState(), Blocks.TUFF.defaultBlockState(),
+					Blocks.TUFF_BRICKS.defaultBlockState(), Blocks.CHISELED_TUFF.defaultBlockState()}, Blocks.CHISELED_TUFF_BRICKS.defaultBlockState()),
+			// Wrath: stone darkened by the smoke
+			new Floor(Blocks.POLISHED_DEEPSLATE.defaultBlockState(), new BlockState[]{Blocks.DEEPSLATE_TILES.defaultBlockState(), Blocks.COBBLED_DEEPSLATE.defaultBlockState(),
+					Blocks.DEEPSLATE_BRICKS.defaultBlockState(), Blocks.CRACKED_DEEPSLATE_TILES.defaultBlockState()}, Blocks.CHISELED_DEEPSLATE.defaultBlockState()),
+			// Sloth: neglected, gone to moss
+			new Floor(Blocks.STONE_BRICKS.defaultBlockState(), new BlockState[]{Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.MOSSY_COBBLESTONE.defaultBlockState(),
+					Blocks.STONE_BRICKS.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()}, Blocks.CRACKED_STONE_BRICKS.defaultBlockState()),
+			// Avarice: dust, on sandstone
+			new Floor(Blocks.SMOOTH_SANDSTONE.defaultBlockState(), new BlockState[]{Blocks.CUT_SANDSTONE.defaultBlockState(), Blocks.SANDSTONE.defaultBlockState(),
+					Blocks.SMOOTH_SANDSTONE.defaultBlockState(), Blocks.SAND.defaultBlockState()}, Blocks.CHISELED_SANDSTONE.defaultBlockState()),
+			// Gluttony: the garden of its trees, moss and grass between the bricks
+			new Floor(Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), new BlockState[]{Blocks.MOSS_BLOCK.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(),
+					Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState()}, Blocks.MUD_BRICKS.defaultBlockState()),
+			// Lust: fire-red brick and granite
+			new Floor(Blocks.POLISHED_GRANITE.defaultBlockState(), new BlockState[]{Blocks.BRICKS.defaultBlockState(), Blocks.GRANITE.defaultBlockState(),
+					Blocks.BRICKS.defaultBlockState(), Blocks.RED_SANDSTONE.defaultBlockState()}, Blocks.CHISELED_RED_SANDSTONE.defaultBlockState()),
+	};
+
+	/**
+	 * The stone at the top of terrace k's column (x, z): its floor at {@code top}, and the cliff's lip a block below where
+	 * the terrace meets the drop (null where the rock's own stone stays). A band of the border stone runs along the foot of
+	 * the cliff and the outer edge; the middle is laid in patches three blocks across, with an accent line across the
+	 * terrace every few blocks round.
+	 */
+	@Nullable
+	public static BlockState floor(int k, int x, int z, double r, int y, int top) {
+		if (k < 1 || k > TERRACES) {
+			return null;
+		}
+		Floor f = FLOORS[k - 1];
+		double d = r - cliff(k);
+		boolean edge = d >= TERRACE_WIDTH - 1.5;
+		if (y == top - 1) {
+			return edge ? f.border : null;
+		}
+		if (y != top) {
+			return null;
+		}
+		if (edge || d < 1) {
+			return f.border;
+		}
+		// an accent line across the terrace every nine blocks round
+		long along = Math.round(Math.atan2(z, x) * cliff(k));
+		if (Math.floorMod(along, 9) == 0 && d >= 2 && d < TERRACE_WIDTH - 2.5) {
+			return f.accent;
+		}
+		// patches three blocks across, each of one of the middle's stones, and here and there a single other stone
+		long cell = hash(Math.floorDiv(x, 3), Math.floorDiv(z, 3), k);
+		int pick = (int) Math.floorMod(cell, (long) f.main.length);
+		if (Math.floorMod(hash(x, z, k + 31), 7L) == 0) {
+			pick = (pick + 1) % f.main.length;
+		}
+		return f.main[pick];
+	}
+
+	private static long hash(int x, int z, int salt) {
+		long h = x * 0x9E3779B97F4A7C15L ^ z * 0xC2B2AE3D27D4EB4FL ^ salt * 0x632BE59BD9B4E019L;
+		h ^= h >>> 31;
+		h *= 0xBF58476D1CE4E5B9L;
+		h ^= h >>> 29;
+		return h;
+	}
+
 	/** The radius of the cliff between terrace k and k + 1 (k = 0: between the shore and the first terrace). */
 	public static double cliff(int k) {
 		return FIRST_TERRACE - k * TERRACE_WIDTH;

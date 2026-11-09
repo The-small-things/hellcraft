@@ -182,7 +182,9 @@ public record PurgatoryIslandFeature() implements Feature {
 				// the same stones on every server: each column's own random
 				RandomSource random = RandomSource.create(BlockPos.asLong(x, 0, z) * 0x9E3779B97F4A7C15L + 1300L);
 				for (int y = Purgatory.SEA_FLOOR; y <= top; y++) {
-					level.setBlock(pos.set(x, y, z), Purgatory.material(k, y, top, random), 2);
+					// (each terrace's own floor and the lip of its cliff; elsewhere the rock's stone)
+					net.minecraft.world.level.block.state.BlockState floor = Purgatory.floor(k, x, z, r, y, top);
+					level.setBlock(pos.set(x, y, z), floor != null ? floor : Purgatory.material(k, y, top, random), 2);
 				}
 				placed = true;
 			}
