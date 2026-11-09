@@ -82,7 +82,8 @@ public class MapTest implements FabricClientGameTest {
 						for (int y = ground - 6; y <= ground + 6; y++) {
 							net.minecraft.world.level.block.state.BlockState state = s.overworld().getBlockState(pos.set(x, y, z));
 							boolean isLava = state.is(net.minecraft.world.level.block.Blocks.LAVA);
-							boolean isWater = !isLava && wetBlock(state);
+							// (the road's own water: waterlogged stairs, slabs and stubs, not Gluttony's pools)
+							boolean isWater = !isLava && !state.is(net.minecraft.world.level.block.Blocks.WATER) && wetBlock(state);
 							if (isLava) {
 								lava++;
 							} else if (isWater) {
@@ -94,7 +95,7 @@ public class MapTest implements FabricClientGameTest {
 								for (net.minecraft.core.Direction d : net.minecraft.core.Direction.Plane.HORIZONTAL) {
 									net.minecraft.core.BlockPos n = new net.minecraft.core.BlockPos(x, y, z).relative(d);
 									net.minecraft.world.level.block.state.BlockState ns = s.overworld().getBlockState(n);
-									boolean ok = ns.isCollisionShapeFullBlock(s.overworld(), n)
+									boolean ok = ns.isSolidRender()
 											|| (isLava ? ns.is(net.minecraft.world.level.block.Blocks.LAVA) : wetBlock(ns))
 											|| ns.getBlock() instanceof net.minecraft.world.level.block.StairBlock
 											&& ns.getValue(net.minecraft.world.level.block.StairBlock.FACING) == d.getOpposite()
