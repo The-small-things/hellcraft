@@ -59,6 +59,49 @@ import java.util.Properties;
  */
 public class MapTest implements FabricClientGameTest {
 	/** A camera position: where, and which way it looks (Minecraft yaw: 0 south, 90 west, 180 north, -90 east). */
+	/**
+	 * The dents in the road's paving hold water only in Gluttony and lava only on the Burning Sands: counts both over 200
+	 * blocks of the east road in each, and in Lust, and fails if they're wrong.
+	 */
+	private static void roadDents(TestDedicatedServerContext server) {
+		for (net.thesmallthings.hellcraft.world.Zone zone : new net.thesmallthings.hellcraft.world.Zone[]{net.thesmallthings.hellcraft.world.Zone.GLUTTONY,
+				net.thesmallthings.hellcraft.world.Zone.BURNING_SANDS, net.thesmallthings.hellcraft.world.Zone.LUST}) {
+			int from = (int) roadIn(zone) + 30;
+			int[] counts = server.computeOnServer(s -> {
+				int water = 0;
+				int lava = 0;
+				net.minecraft.core.BlockPos.MutableBlockPos pos = new net.minecraft.core.BlockPos.MutableBlockPos();
+				for (int x = from - 200; x <= from; x++) {
+					if (InfernoGeometry.zoneAt(x, 0) != zone) {
+						continue;
+					}
+					int ground = (int) Math.round(InfernoGeometry.baseHeight(x, 0));
+					for (int z = -2; z <= 2; z++) {
+						for (int y = ground - 6; y <= ground + 6; y++) {
+							net.minecraft.world.level.block.state.BlockState state = s.overworld().getBlockState(pos.set(x, y, z));
+							if (state.is(net.minecraft.world.level.block.Blocks.LAVA)) {
+								lava++;
+							} else if (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
+									&& state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)) {
+								water++;
+							}
+						}
+					}
+				}
+				return new int[]{water, lava};
+			});
+			HellcraftMod.LOGGER.info("Road dents in {}: {} waterlogged, {} lava", zone, counts[0], counts[1]);
+			boolean right = switch (zone) {
+				case GLUTTONY -> counts[0] > 0 && counts[1] == 0;
+				case BURNING_SANDS -> counts[1] > 0 && counts[0] == 0;
+				default -> counts[0] == 0 && counts[1] == 0;
+			};
+			if (!right) {
+				throw new AssertionError("the road's dents in " + zone + " hold " + counts[0] + " water and " + counts[1] + " lava");
+			}
+		}
+	}
+
 	/** Somewhere well inside a circle on the east road: 40 blocks in from its outer edge. */
 	private static double roadIn(net.thesmallthings.hellcraft.world.Zone zone) {
 		for (int x = InfernoGeometry.BORDER_RADIUS; x > 0; x -= 2) {
@@ -133,6 +176,7 @@ public class MapTest implements FabricClientGameTest {
 				context.waitTicks(20);
 				context.takeScreenshot(shot.name());
 			}
+			roadDents(server);
 			context.runOnClient(client -> {
 				if (client.gui.hud.isHidden()) {
 					client.gui.hud.toggle();
@@ -737,7 +781,10 @@ public class MapTest implements FabricClientGameTest {
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 90 8", x, y));
 		// crossing into Gluttony shows its card; on a slow machine it may fade before the chunks have drawn, so show it
 		// again for the picture
-		context.waitFor(client -> LayerCard.showing() == Circle.GLUTTONY, 200);
+		// (if an earlier shot already took Player0 into Gluttony its card was seen then, and is simply shown again below)
+		for (int waited = 0; waited < 200 && !context.computeOnClient(client -> LayerCard.showing() == Circle.GLUTTONY); waited += 10) {
+			context.waitTicks(10);
+		}
 		connection.waitForChunksRender();
 		context.runOnClient(client -> LayerCard.show(Circle.GLUTTONY));
 		context.waitTicks(30);
