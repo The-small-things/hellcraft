@@ -63,13 +63,14 @@ public class MapTest implements FabricClientGameTest {
 	 * The dents in the road's paving hold water only in Gluttony and lava only on the Burning Sands: counts both over 200
 	 * blocks of the east road in each, and in Lust, and fails if they're wrong.
 	 */
-	private static void roadDents(TestDedicatedServerContext server) {
+	private static void roadDents(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		for (net.thesmallthings.hellcraft.world.Zone zone : new net.thesmallthings.hellcraft.world.Zone[]{net.thesmallthings.hellcraft.world.Zone.GLUTTONY,
 				net.thesmallthings.hellcraft.world.Zone.BURNING_SANDS, net.thesmallthings.hellcraft.world.Zone.LUST}) {
 			int from = (int) roadIn(zone) + 30;
 			int[] counts = server.computeOnServer(s -> {
 				int water = 0;
 				int lava = 0;
+				int[] first = null;
 				net.minecraft.core.BlockPos.MutableBlockPos pos = new net.minecraft.core.BlockPos.MutableBlockPos();
 				for (int x = from - 200; x <= from; x++) {
 					if (InfernoGeometry.zoneAt(x, 0) != zone) {
@@ -81,14 +82,16 @@ public class MapTest implements FabricClientGameTest {
 							net.minecraft.world.level.block.state.BlockState state = s.overworld().getBlockState(pos.set(x, y, z));
 							if (state.is(net.minecraft.world.level.block.Blocks.LAVA)) {
 								lava++;
+								first = first == null ? new int[]{x, y, z} : first;
 							} else if (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
 									&& state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)) {
 								water++;
+								first = first == null ? new int[]{x, y, z} : first;
 							}
 						}
 					}
 				}
-				return new int[]{water, lava};
+				return first == null ? new int[]{water, lava} : new int[]{water, lava, first[0], first[1], first[2]};
 			});
 			HellcraftMod.LOGGER.info("Road dents in {}: {} waterlogged, {} lava", zone, counts[0], counts[1]);
 			boolean right = switch (zone) {
@@ -98,6 +101,15 @@ public class MapTest implements FabricClientGameTest {
 			};
 			if (!right) {
 				throw new AssertionError("the road's dents in " + zone + " hold " + counts[0] + " water and " + counts[1] + " lava");
+			}
+			if (counts.length == 5) {
+				// a close look at one of them
+				server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f %.1f facing %.1f %.1f %.1f", counts[2] + 3.5, counts[3] + 3.2, counts[4] + 3.5,
+						counts[2] + 0.5, counts[3] + 0.5, counts[4] + 0.5));
+				context.waitTicks(10);
+				connection.waitForChunksRender();
+				context.waitTicks(20);
+				context.takeScreenshot("road_dent_" + zone.name().toLowerCase(Locale.ROOT));
 			}
 		}
 	}
@@ -176,7 +188,7 @@ public class MapTest implements FabricClientGameTest {
 				context.waitTicks(20);
 				context.takeScreenshot(shot.name());
 			}
-			roadDents(server);
+			roadDents(context, server, connection);
 			context.runOnClient(client -> {
 				if (client.gui.hud.isHidden()) {
 					client.gui.hud.toggle();
