@@ -389,7 +389,10 @@ public record PilgrimRoadFeature() implements Feature {
 		int top = (int) Math.round(InfernoGeometry.baseHeight(x, z)) + 2;
 		for (int y = top; y > top - 10; y--) {
 			BlockState state = level.getBlockState(pos.set(x, y, z));
-			if (!state.isAir() && !clearable(state) && state.getFluidState().isEmpty()) {
+			// (the road's own waterlogged stones and lava pools count as ground: a chunk paved before this one may have set them)
+			boolean ours = state.hasProperty(BlockStateProperties.WATERLOGGED) && !state.is(Blocks.WATER)
+					|| state.is(Blocks.LAVA) && liquid(x, z) == Liquid.LAVA && InfernoGeometry.onRoad(x + 0.5, z + 0.5);
+			if (!state.isAir() && !clearable(state) && (state.getFluidState().isEmpty() || ours) || state.is(Blocks.LAVA) && ours) {
 				return y;
 			}
 		}
