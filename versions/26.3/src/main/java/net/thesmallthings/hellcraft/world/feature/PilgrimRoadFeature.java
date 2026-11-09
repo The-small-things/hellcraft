@@ -241,17 +241,22 @@ public record PilgrimRoadFeature() implements Feature {
 		Direction out = outward(x, z);
 		Piece piece = road.piece(x, z);
 		BlockState top;
-		if (road.lava(x, z)) {
+		// water or lava goes in only if what already stands beside it (a neighbour paved before this column, perhaps in
+		// another chunk) closes it in; neighbours paved after it see it there and turn their backs to it
+		boolean lava = road.lava(x, z) && closedIn(level, pos, x, y, z);
+		boolean wet = !lava && road.wet(x, z) && closedIn(level, pos, x, y, z);
+		if (lava) {
 			// a pool of lava flush with the stones
 			top = Blocks.LAVA.defaultBlockState();
 		} else {
-			boolean wet = road.wet(x, z);
 			// next to water or lava nothing may leave a gap: a dry broken stone there becomes a stair with its back to it
 			// (still half a step up from the front), or a whole stone if water or lava lies on more than one side
 			java.util.List<Direction> liquidSides = new java.util.ArrayList<>();
 			if (!wet && piece.shaped()) {
 				for (Direction d : FACINGS) {
-					if (road.wet(x + d.getStepX(), z + d.getStepZ()) || road.lava(x + d.getStepX(), z + d.getStepZ())) {
+					int nx = x + d.getStepX();
+					int nz = z + d.getStepZ();
+					if (road.wet(nx, nz) || road.lava(nx, nz) || ourLiquid(level.getBlockState(pos.set(nx, y, nz)), nx, nz)) {
 						liquidSides.add(d);
 					}
 				}
@@ -286,6 +291,30 @@ public record PilgrimRoadFeature() implements Feature {
 		Direction tall = nextOut != Integer.MIN_VALUE && nextOut >= y + 2 ? out : nextIn != Integer.MIN_VALUE && nextIn >= y + 2 ? out.getOpposite() : null;
 		if (tall != null) {
 			level.setBlock(pos.set(x, y + 1, z), look.stair.defaultBlockState().setValue(StairBlock.FACING, tall), 2);
+		}
+		return true;
+	}
+
+	/** True if the road's own water or lava stands here (a waterlogged stone, or a lava pool on the Burning Sands' road). */
+	private static boolean ourLiquid(BlockState state, int x, int z) {
+		return state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)
+				|| state.is(Blocks.LAVA) && liquid(x, z) == Liquid.LAVA && InfernoGeometry.onRoad(x + 0.5, z + 0.5);
+	}
+
+	/**
+	 * True if every block beside (x, y, z) as it stands now leaves no gap for water or lava there: a whole block, the
+	 * road's own water or lava, or a stair with its back to it.
+	 */
+	private static boolean closedIn(WorldGenLevel level, BlockPos.MutableBlockPos pos, int x, int y, int z) {
+		for (Direction d : FACINGS) {
+			int nx = x + d.getStepX();
+			int nz = z + d.getStepZ();
+			BlockState n = level.getBlockState(pos.set(nx, y, nz));
+			boolean backTurned = n.getBlock() instanceof StairBlock && n.getValue(StairBlock.FACING) == d.getOpposite()
+					&& n.getValue(StairBlock.SHAPE) == StairsShape.STRAIGHT && n.getValue(StairBlock.HALF) == net.minecraft.world.level.block.state.properties.Half.BOTTOM;
+			if (!n.isSolidRender() && !ourLiquid(n, nx, nz) && !backTurned) {
+				return false;
+			}
 		}
 		return true;
 	}

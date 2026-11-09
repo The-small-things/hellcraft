@@ -102,7 +102,21 @@ public class MapTest implements FabricClientGameTest {
 											&& ns.getValue(net.minecraft.world.level.block.StairBlock.SHAPE) == net.minecraft.world.level.block.state.properties.StairsShape.STRAIGHT;
 									if (!ok) {
 										gaps++;
-										HellcraftMod.LOGGER.info("Road gap beside {} at {}: {}", isLava ? "lava" : "water", n, ns);
+										HellcraftMod.LOGGER.info("Road gap beside {} at {} (from {} {} {}): {}", isLava ? "lava" : "water", n, x, y, z, ns);
+										// what lies round it, a layer at a time
+										for (int dy = -1; dy <= 1; dy++) {
+											StringBuilder rows = new StringBuilder();
+											for (int dz = -2; dz <= 2; dz++) {
+												for (int dx = -2; dx <= 2; dx++) {
+													net.minecraft.world.level.block.state.BlockState b = s.overworld().getBlockState(n.offset(dx, dy, dz));
+													String name = b.getBlock().getDescriptionId().replace("block.minecraft.", "");
+													rows.append(String.format("%-14.14s", name + (b.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
+															&& b.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED) ? "~" : ""))).append(' ');
+												}
+												rows.append(" | ");
+											}
+											HellcraftMod.LOGGER.info("  y{}: {}", dy, rows);
+										}
 									}
 								}
 							}
