@@ -126,8 +126,8 @@ public final class Lessons {
 				"You took a heart from another soul. Kill someone with less than half your hearts and you take nothing but Cain's "
 						+ "Mark: you glow, and whoever kills you is paid for it. No fighting in the Dark Wood, on the Shore or in Limbo. (Journal: FAIR PLAY)");
 		lesson("prestige", (p, s) -> HellConfig.get().prestige && s.hearts >= HellConfig.get().maxHearts,
-				"You hold all the hearts you can. At a Blood Altar you can Ascend: your hearts drop, but your most goes up for good, "
-						+ "and each of the Seven P's gives a lasting bonus. (Journal: PRESTIGE)");
+				"You hold all the hearts you can. At a Blood Altar you can Prestige: your hearts drop to " + HellConfig.get().prestigeResetHearts
+						+ ", but your max goes up for good and you get a bonus you keep. Point at the altar's feather to see them all. (Journal: PRESTIGE)");
 		// the way down
 		lesson("gate", (p, s) -> nearGate(p),
 				"The Gate of Hell. Through it, the Vestibule and the river Acheron, then Limbo, the first circle. Each circle lies on a "

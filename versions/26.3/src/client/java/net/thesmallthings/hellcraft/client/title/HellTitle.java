@@ -48,7 +48,7 @@ public final class HellTitle {
 			"There is no greater sorrow...",
 			"Virgil is waiting at the Rest!",
 			"Mind the Slag Sea!",
-			"Seven P's to burn!",
+			"Seven terraces to climb!",
 			"Lucifer is listening!",
 			"The stars, again!");
 

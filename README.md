@@ -80,7 +80,7 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 - **The Forge of Dis and Paradiso.** The Nether rebuilt round Vulcan's Great Forge, Purgatory's island in its own sea, and nine spheres of Paradiso with trials, angels and the Celestial Rose.
 
 **New in 2.0 (26.3):**
-- **The Seven P's.** Heart prestige: ascend at a Blood Altar for more hearts and a virtue each time.
+- **Prestige (the Seven P's).** At max hearts, trade them in at a Blood Altar for a higher max and a bonus you keep.
 - **The Blood Heart HUD.** Bleeding hearts in the health bar, rimmed bronze to white by your rank.
 - **The Hall of the Damned.** A monument at spawn naming the Inferno's best and most damned.
 - **Dante's Journey.** An advancement tab from the Dark Wood to the Empyrean.
@@ -245,30 +245,29 @@ New players start with 5 bread and 2 **Vigil Candles** (26.3), and chat points t
   - Neither works in Lucifer's pit. On respawn the anchor goes first, then the candle, then a bound altar.
 - **Boss rewards.** The Wither gives 1 Blood Heart, the Warden gives 1 and the Ender Dragon gives 2. Lucifer has his own rewards (below).
 
-### The Seven P's (26.3)
+### Prestige (the Seven P's)
 
-At the gate of Purgatory an angel carves seven P's on every brow, one for each deadly sin, and each terrace of the mountain burns one away. In Hellcraft, **a soul whose veins are full can ascend**. Open a Blood Altar's menu and click **Ascend** (the feather).
-- Your hearts fall back to 10 (`prestigeResetHearts`).
-- One P is burned away.
-- You can hold **2 more hearts for good** (`prestigeHeartBonus`).
-- You keep that terrace's **virtue**.
+**Prestige trades your hearts for a higher max and a bonus you keep.** There are seven ranks.
 
-Seven ascents take the cap from 20 to 34 hearts, not counting Lucifer's Bane.
+1. Fill up to your max hearts (20 at first).
+2. At a Blood Altar, click **Prestige** (the feather). Point at it first: it lists all seven bonuses, ticks the ones you have and shows what happens if you click.
+3. Your hearts drop to 10 (`prestigeResetHearts`), your max goes up by 2 for good (`prestigeHeartBonus`), and you get the next bonus.
 
-| P | Terrace | Virtue |
-|---|---|---|
-| I | Pride | **Humility**: 30% less fall damage |
-| II | Envy | **Kindness**: monsters drop Blood Fragments 10% more often |
-| III | Wrath | **Meekness**: +25% knockback resistance |
-| IV | Sloth | **Zeal**: +5% walking speed |
-| V | Greed | **Liberality**: +1 luck (better loot) |
-| VI | Gluttony | **Temperance**: hunger gnaws more slowly |
-| VII | Lust | **Purity**: the circles' torments no longer touch you |
+Dropping to 10 hearts makes you easier to kill until you fill up again; that's the price. Seven ranks take your max from 20 to 34 hearts, not counting Lucifer's Bane.
 
-**How your rank shows:**
-- A coloured cross (`✝I` to `✝VII`, bronze through gold to white) appears before your name in the player list and above your head.
-- The rims of your hearts take the same colour.
-- Every ascent is announced to the server.
+| Rank | Bonus (you keep every one) |
+|---|---|
+| I | 30% less fall damage |
+| II | Monsters drop Blood Fragments 10% more often |
+| III | 25% less knockback |
+| IV | 5% faster walking |
+| V | +1 luck (better loot) |
+| VI | Hunger drains more slowly |
+| VII | The circles' hazards (Lust's wind, Gluttony's mud and the like) can't touch you |
+
+**How your rank shows:** a coloured cross (`✝I` to `✝VII`, bronze through gold to white) before your name in the player list and above your head, the same colour on the rims of your hearts, and an announcement to the server each time.
+
+**Why "the Seven P's":** in Dante, an angel carves seven P's (for *peccata*, sins) on every brow at the gate of Purgatory, and each terrace of the mountain burns one away. Each prestige rank is one of them.
 
 `/hellcraft prestige <player> [set <n>]` shows or sets a rank. Turn the whole system off with `prestige`.
 

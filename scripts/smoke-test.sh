@@ -228,7 +228,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$sign" | grep -q "Test passed" || { echo "The Hall of the Damned has no signs"; exit 1; }
   board=$(rcon "hellcraft hall" || true)
   echo "$board"
-  for heading in "MOST HEARTS" "P'S BURNED" "LUCIFER SLAIN" "GUARDIANS SLAIN" "MOST DAMNED"; do
+  for heading in "MOST HEARTS" "TOP PRESTIGE" "LUCIFER SLAIN" "GUARDIANS SLAIN" "MOST DAMNED"; do
     echo "$board" | grep -q "$heading" || { echo "The Hall has no $heading board"; exit 1; }
   done
   # keeping the mighty in check: boss spoils once per cooldown, live settings, the bounty

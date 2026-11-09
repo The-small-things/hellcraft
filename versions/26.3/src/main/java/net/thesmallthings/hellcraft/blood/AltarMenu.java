@@ -74,19 +74,25 @@ public final class AltarMenu {
 		if (config.prestige) {
 			HellState.Soul soul = Hearts.soul(player);
 			int cap = Hearts.cap(soul);
-			if (soul.prestige >= Prestige.MAX) {
-				container.setItem(ASCEND_SLOT, button(Items.NETHER_STAR, "Max prestige", ChatFormatting.WHITE,
-						"You have all 7 prestige ranks.",
-						"Circle hazards can't touch you."));
-			} else {
-				Prestige.Terrace next = Prestige.Terrace.values()[soul.prestige];
-				container.setItem(ASCEND_SLOT, button(Items.FEATHER, "Ascend (prestige " + (soul.prestige + 1) + " of " + Prestige.MAX + ")", ChatFormatting.GOLD,
-						"Prestige rank: " + soul.prestige + " of " + Prestige.MAX,
-						"Your hearts drop to " + Math.min(config.prestigeResetHearts, cap + config.prestigeHeartBonus)
-								+ ", your max goes up to " + Math.min(config.heartCeiling, cap + config.prestigeHeartBonus),
-						"Bonus: " + next.perk,
-						soul.hearts >= cap ? "▶ Click to ascend" : "✖ You need max hearts (" + soul.hearts + " / " + cap + ")"));
+			List<String> lines = new ArrayList<>();
+			lines.add("Your prestige rank: " + soul.prestige + " of " + Prestige.MAX);
+			if (soul.prestige < Prestige.MAX) {
+				lines.add("At max hearts, prestige to trade them in:");
+				lines.add("  your hearts drop to " + Math.min(config.prestigeResetHearts, cap + config.prestigeHeartBonus) + ",");
+				lines.add("  your max goes up to " + Math.min(config.heartCeiling, cap + config.prestigeHeartBonus) + " for good,");
+				lines.add("  and you get the next bonus below.");
 			}
+			lines.add("");
+			lines.addAll(Prestige.bonusList(soul));
+			lines.add("");
+			if (soul.prestige >= Prestige.MAX) {
+				lines.add("You have every rank and every bonus.");
+			} else {
+				lines.add(soul.hearts >= cap ? "▶ Click to prestige" : "✖ You need max hearts (" + soul.hearts + " / " + cap + ")");
+			}
+			container.setItem(ASCEND_SLOT, button(soul.prestige >= Prestige.MAX ? Items.NETHER_STAR : Items.FEATHER,
+					soul.prestige >= Prestige.MAX ? "Prestige (max: 7 of 7)" : "Prestige (rank " + (soul.prestige + 1) + " of " + Prestige.MAX + ")",
+					soul.prestige >= Prestige.MAX ? ChatFormatting.WHITE : ChatFormatting.GOLD, lines.toArray(String[]::new)));
 		}
 
 		List<Map.Entry<UUID, HellState.Soul>> ghosts = new ArrayList<>();
@@ -122,7 +128,9 @@ public final class AltarMenu {
 		stack.set(DataComponents.ITEM_NAME, Component.literal(name).withStyle(color, ChatFormatting.BOLD));
 		List<Component> lore = new ArrayList<>();
 		for (String line : lines) {
-			ChatFormatting style = line.startsWith("▶") ? ChatFormatting.YELLOW : line.startsWith("✖") ? ChatFormatting.RED : ChatFormatting.GRAY;
+			ChatFormatting style = line.startsWith("▶") ? ChatFormatting.YELLOW : line.startsWith("✖") ? ChatFormatting.RED
+					: line.startsWith("✔") ? ChatFormatting.GREEN : line.startsWith("➜") ? ChatFormatting.GOLD : line.startsWith("·") ? ChatFormatting.DARK_GRAY
+					: ChatFormatting.GRAY;
 			lore.add(Component.literal(line).withStyle(s -> s.withColor(style).withItalic(false)));
 		}
 		stack.set(DataComponents.LORE, new ItemLore(lore));

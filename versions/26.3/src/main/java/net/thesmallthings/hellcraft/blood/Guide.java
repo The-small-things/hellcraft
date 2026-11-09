@@ -77,20 +77,26 @@ public final class Guide {
 						+ (c.bindCostHearts == 0 ? " (free)." : " (" + c.bindCostHearts + " Blood Hearts).")));
 		if (c.prestige) {
 			pages.add(page("PRESTIGE",
-					"There are 7 prestige ranks, called the Seven P's.",
+					"Prestige trades your hearts for a higher max and a bonus you keep. There are 7 ranks.",
 					"",
-					"At max hearts, press Ascend at a Blood Altar. Your hearts drop to " + c.prestigeResetHearts
-							+ ", but your max goes up by " + c.prestigeHeartBonus + " for good.",
+					"1. Fill up to your max hearts (" + c.maxHearts + " at first).",
+					"2. At a Blood Altar, click Prestige (the feather).",
+					"3. Your hearts drop to " + c.prestigeResetHearts + ", your max goes up by " + c.prestigeHeartBonus
+							+ " for good, and you get the next bonus.",
 					"",
-					"Each rank also gives a bonus that lasts."));
+					"Mind: dropping to " + c.prestigeResetHearts + " hearts makes you easier to kill until you fill up again.",
+					"",
+					"Your rank shows as a cross before your name (I to VII). It's also called the Seven P's: in Dante, an angel "
+							+ "carves seven P's (for sins) on every brow at Purgatory, and each terrace burns one away."));
 			pages.add(page("PRESTIGE BONUSES",
-					"1: less fall damage",
-					"2: more Blood Fragments",
-					"3: less knockback",
-					"4: faster walking",
-					"5: better loot (luck)",
-					"6: slower hunger",
-					"7: immune to circle hazards"));
+					"You keep every bonus you earn:",
+					"1: 30% less fall damage",
+					"2: monsters drop Blood Fragments 10% more often",
+					"3: 25% less knockback",
+					"4: 5% faster walking",
+					"5: +1 luck (better loot)",
+					"6: hunger drains more slowly",
+					"7: the circles' hazards (wind, mud and the like) can't touch you"));
 		}
 		pages.add(page("COMING BACK",
 				"Vigil Candle (craft: torch, bone, string): right-click to light it where you stand. Next time you die, you respawn there.",

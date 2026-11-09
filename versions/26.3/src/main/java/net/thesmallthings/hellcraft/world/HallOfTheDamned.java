@@ -33,7 +33,7 @@ public final class HallOfTheDamned {
 
 	public static final List<Board> BOARDS = List.of(
 			new Board("MOST HEARTS", ChatFormatting.DARK_RED, s -> s.ghost ? 0 : s.hearts),
-			new Board("P'S BURNED", ChatFormatting.GOLD, s -> s.prestige),
+			new Board("TOP PRESTIGE", ChatFormatting.GOLD, s -> s.prestige),
 			new Board("LUCIFER SLAIN", ChatFormatting.RED, s -> s.luciferKills),
 			new Board("GUARDIANS SLAIN", ChatFormatting.DARK_PURPLE, s -> s.guardiansSlain),
 			new Board("MOST DAMNED", ChatFormatting.DARK_GRAY, s -> s.deaths));

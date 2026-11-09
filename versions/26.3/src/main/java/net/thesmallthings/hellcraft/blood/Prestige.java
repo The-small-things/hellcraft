@@ -70,7 +70,22 @@ public final class Prestige {
 		return NUMERALS[Math.max(0, Math.min(MAX, prestige))];
 	}
 
-	/** Heart capacity the burned P's add. */
+	/**
+	 * Every rank's bonus, one per line, for the altar's Prestige button and the Journal: a tick for those this soul has,
+	 * an arrow for the next, a dot for the rest. You keep every bonus you earn.
+	 */
+	public static java.util.List<String> bonusList(HellState.Soul soul) {
+		java.util.List<String> lines = new java.util.ArrayList<>();
+		lines.add("Bonuses (you keep every one you earn):");
+		for (Terrace t : Terrace.values()) {
+			int rank = t.ordinal() + 1;
+			String mark = soul.prestige >= rank ? "✔ " : soul.prestige == t.ordinal() ? "➜ " : "· ";
+			lines.add(mark + rank + ": " + t.perk);
+		}
+		return lines;
+	}
+
+	/** Heart capacity the prestige ranks add. */
 	public static int capBonus(HellState.Soul soul) {
 		return Math.max(0, Math.min(MAX, soul.prestige)) * HellConfig.get().prestigeHeartBonus;
 	}
@@ -244,10 +259,10 @@ public final class Prestige {
 
 	/** A description for /hellcraft prestige and the guide. */
 	public static String describe(HellState.Soul soul) {
-		StringBuilder sb = new StringBuilder(soul.name + ": " + soul.prestige + " of 7 P's burned, cap " + Hearts.cap(soul) + " hearts");
+		StringBuilder sb = new StringBuilder(soul.name + ": prestige " + soul.prestige + " of 7, max " + Hearts.cap(soul) + " hearts");
 		for (Terrace t : Terrace.values()) {
 			if (soul.prestige > t.ordinal()) {
-				sb.append("; ").append(t.virtue);
+				sb.append("; ").append(t.perk);
 			}
 		}
 		return sb.toString();

@@ -25,9 +25,9 @@ public final class Admin {
 		List<Component> lines = new ArrayList<>();
 		lines.add(Component.literal("☠ " + player.getGameProfile().name()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		lines.add(line("Hearts", soul.hearts + " / " + Hearts.cap(soul) + (soul.ghost ? " (a ghost)" : "")
-				+ "  [base " + c.maxHearts + " + Bane " + soul.maxBonus + " + P's " + Prestige.capBonus(soul)
+				+ "  [base " + c.maxHearts + " + Bane " + soul.maxBonus + " + prestige " + Prestige.capBonus(soul)
 				+ (raw > c.heartCeiling ? ", held to the ceiling of " + c.heartCeiling : "") + "]"));
-		lines.add(line("Seven P's", soul.prestige + " burned"));
+		lines.add(line("Prestige", soul.prestige + " of " + Prestige.MAX));
 		lines.add(line("Deeds", "Lucifer slain " + soul.luciferKills + ", guardians slain " + soul.guardiansSlain + ", deaths " + soul.deaths));
 		lines.add(line("Boss spoils", BossSpoils.describe(soul, now, Map.of(
 				"lucifer", c.luciferSpoilsCooldownMinutes, "wither", c.bossSpoilsCooldownMinutes,
