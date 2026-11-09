@@ -648,7 +648,9 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     grep -q "Guardian slain: $g" "$LOG" || { echo "Guardian $g was never slain"; fail=1; }
   done
 fi
-if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON' ; then
+# (vanilla's own dungeons sometimes overlap, and the second one's spawner lands on the first one's chest: vanilla logs
+# "Failed to fetch mob spawner entity", nothing of Hellcraft's; the server's seed is random, so it comes and goes)
+if grep -nE 'ERROR\]|Exception|Caused by|Feature order cycle' "$LOG" | grep -vE 'rcon|RCON|Failed to fetch mob spawner entity' ; then
   echo "Errors found in server log"; fail=1
 fi
 exit $fail
