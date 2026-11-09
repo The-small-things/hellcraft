@@ -127,16 +127,20 @@ public record PilgrimRoadFeature() implements Feature {
 		for (int d = -STEP_REACH; d <= STEP_REACH; d++) {
 			along[d + STEP_REACH] = d == 0 ? y : ground(level, pos, x + out.getStepX() * d, z + out.getStepZ() * d);
 		}
-		// how far (along the road) to the nearest lower ground, and which way up the step climbs
+		// how far to the nearest lower stretch of road (along it or across it), and which way up the step climbs
 		int lowerAt = 0;
 		Direction upFromLower = null;
 		for (int d = 1; d <= STEP_REACH && lowerAt == 0; d++) {
-			for (int sign : new int[]{1, -1}) {
-				int g = along[sign * d + STEP_REACH];
-				if (g != Integer.MIN_VALUE && g < y && lowerAt == 0) {
+			for (Direction dir : FACINGS) {
+				int nx = x + dir.getStepX() * d;
+				int nz = z + dir.getStepZ() * d;
+				int g = dir == out ? along[STEP_REACH + d] : dir == out.getOpposite() ? along[STEP_REACH - d]
+						: InfernoGeometry.onRoad(nx + 0.5, nz + 0.5) ? ground(level, pos, nx, nz) : Integer.MIN_VALUE;
+				if (g != Integer.MIN_VALUE && g < y) {
 					lowerAt = d;
-					// the lower ground lies that way: the step climbs the other way
-					upFromLower = sign > 0 ? out.getOpposite() : out;
+					// the lower road lies that way: the step climbs the other way
+					upFromLower = dir.getOpposite();
+					break;
 				}
 			}
 		}

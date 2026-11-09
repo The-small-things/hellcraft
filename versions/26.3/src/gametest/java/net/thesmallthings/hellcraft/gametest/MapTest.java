@@ -89,7 +89,7 @@ public class MapTest implements FabricClientGameTest {
 				new Shot("map_gate_of_hell", gate + 45, 205, 6, 90, 22),
 				new Shot("map_road_lust", s(2480), 150, 6, 90, 28),
 				// close over the road: where it steps up (a ragged band of stairs and slabs) and its flat paving (dents of water)
-				new Shot("road_step", roadStep() + 5, InfernoGeometry.baseHeight(roadStep(), 0) + 3.5, -3.5, 60, 38),
+				new Shot("road_step", roadStep() + 4, InfernoGeometry.baseHeight(roadStep(), 0) + 2.8, 2.5, 115, 34),
 				new Shot("road_paving", s(2550) + 6, InfernoGeometry.baseHeight(s(2550), 0) + 3.5, -3.5, 60, 42),
 				new Shot("map_walls_of_dis", s(1470), 95, 8, 90, 22),
 				new Shot("map_malebolge_bridge", s(700), 45, 6, 90, 30),
