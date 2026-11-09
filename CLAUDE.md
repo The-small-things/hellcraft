@@ -84,7 +84,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - Purgatory and Paradiso (Phase 7) are their own dimensions in the Inferno preset (`hellcraft:purgatory`, `hellcraft:paradiso`;
   data from `tools/gen_realms.py`). `world/Purgatory` builds the island in its sea once (its rock and beach are `feature/PurgatoryIslandFeature`, chunk by chunk, so the
   game lights them as they're made; buildOnce adds the stairs, signs and garden) (3.3: seven terraces `TERRACE_WIDTH` 11 deep stepping up
-  like a staircase, `greatStair` a flight per terrace straight up the southern face, side `stairway`s round the mountain) and runs the terraces, streams, burrow,
+  like a staircase, `greatStair` a flight per terrace straight up the southern face, side `stairway`s round the mountain; each terrace's floor
+  `Purgatory.floor` and its sin's dressing `PurgatoryIslandFeature.decorate`, kept off the ways up by `onAWayUp`; `ParadisoTest` films each, `purgatory_terrace_<k>`) and runs the terraces, streams, burrow,
   climb out and gates; `Heaven` holds the Ascent, the Angelic Guard and the Rose's bell. `world/ParadisoGeometry` is Paradiso's
   one source of shape (nine spheres stacked `STEP` apart, centres round a circle so none sits over the one below, columns of
   light halfway between), read by `ParadisoBiomeSource` (sphere by height), `feature/ParadisoIslandFeature` (every island,
