@@ -382,8 +382,9 @@ public class WaymarkTest implements FabricClientGameTest {
 		context.runOnClient(client -> MapTiles.pretendExplored(-10, -10, 9, 9));
 		context.waitTicks(10);
 		int[] counts = context.computeOnClient(client -> new int[]{MapTiles.explored(), MapTiles.loaded(), MapTiles.cap()});
-		if (counts[0] < before + 400 || counts[1] > counts[2]) {
-			throw new AssertionError("after exploring 400 more tiles: " + counts[0] + " explored (from " + before + "), " + counts[1]
+		// (the 400 tiles of the square are all explored now, some of them perhaps already by the tests before)
+		if (counts[0] < Math.max(before, 400) || counts[1] > counts[2]) {
+			throw new AssertionError("after exploring a square of 400 tiles: " + counts[0] + " explored (from " + before + "), " + counts[1]
 					+ " in memory, cap " + counts[2]);
 		}
 		context.setScreen(() -> MapOfHellScreen.at(0, 0, 1));
