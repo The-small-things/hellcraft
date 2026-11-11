@@ -402,6 +402,10 @@ public class WaymarkTest implements FabricClientGameTest {
 			throw new AssertionError("with the map zoomed in: " + counts[1] + " tiles in memory, cap " + counts[2]);
 		}
 		HellcraftMod.LOGGER.info("Map memory: {} tiles explored, {} in memory (cap {})", counts[0], counts[1], counts[2]);
+		// the made-up ground goes again, so it isn't on the map in the tests after
+		context.setScreen(() -> null);
+		context.runOnClient(MapTiles::forgetAll);
+		context.waitFor(client -> MapTiles.isOpen() && MapTiles.explored() < 100, 400);
 	}
 
 	private static void stand(TestDedicatedServerContext server, net.minecraft.core.BlockPos at, net.minecraft.core.BlockPos toward) {

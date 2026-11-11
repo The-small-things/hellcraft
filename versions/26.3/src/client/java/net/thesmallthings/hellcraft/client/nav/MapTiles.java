@@ -415,10 +415,45 @@ public final class MapTiles {
 	}
 
 	/** How many detail tiles this world has on disk or in memory (for the tests). */
+	/** Whether a world's explored map is open (false between worlds, and while forgetAll starts it afresh). */
+	public static boolean isOpen() {
+		return folder != null;
+	}
+
 	public static int explored() {
 		Set<Long> all = new HashSet<>(ON_DISK);
 		all.addAll(TILES.keySet());
 		return all.size();
+	}
+
+	/**
+	 * For the tests: forgets everything explored in this world (memory and files) and starts its map afresh, so made-up
+	 * ground (pretendExplored) doesn't stay on the map for the tests after. The files go once what is being written is done.
+	 */
+	public static void forgetAll(Minecraft mc) {
+		Path dir = folder;
+		if (dir == null) {
+			return;
+		}
+		close();
+		IO.execute(() -> {
+			try (var files = Files.list(dir)) {
+				files.forEach(f -> {
+					try {
+						Files.deleteIfExists(f);
+					} catch (IOException ignored) {
+						// left for next time
+					}
+				});
+			} catch (IOException ignored) {
+				// nothing there
+			}
+		});
+		IO.execute(() -> mc.execute(() -> {
+			if (folder == null && mc.level != null) {
+				open(mc);
+			}
+		}));
 	}
 
 	/**
