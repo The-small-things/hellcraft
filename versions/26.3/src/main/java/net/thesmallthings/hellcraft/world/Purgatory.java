@@ -197,9 +197,9 @@ public final class Purgatory {
 			// Sloth: neglected, gone to moss
 			new Floor(Blocks.STONE_BRICKS.defaultBlockState(), new BlockState[]{Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.MOSSY_COBBLESTONE.defaultBlockState(),
 					Blocks.STONE_BRICKS.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()}, Blocks.CRACKED_STONE_BRICKS.defaultBlockState()),
-			// Avarice: the dust they lie in, trodden earth between worn sandstone (not pale sand, which read as snow)
-			new Floor(Blocks.PACKED_MUD.defaultBlockState(), new BlockState[]{Blocks.COARSE_DIRT.defaultBlockState(), Blocks.SANDSTONE.defaultBlockState(),
-					Blocks.PACKED_MUD.defaultBlockState(), Blocks.CUT_SANDSTONE.defaultBlockState()}, Blocks.CHISELED_SANDSTONE.defaultBlockState()),
+			// Avarice: the dust they lie in, trodden earth and old mud brick (not pale sand or sandstone, which read as snow at dawn)
+			new Floor(Blocks.PACKED_MUD.defaultBlockState(), new BlockState[]{Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MUD_BRICKS.defaultBlockState(),
+					Blocks.PACKED_MUD.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState()}, Blocks.SMOOTH_RED_SANDSTONE.defaultBlockState()),
 			// Gluttony: the garden of its trees, moss and grass between the bricks
 			new Floor(Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), new BlockState[]{Blocks.MOSS_BLOCK.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(),
 					Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState()}, Blocks.MUD_BRICKS.defaultBlockState()),

@@ -13,6 +13,7 @@ import net.thesmallthings.hellcraft.world.ParadisoGeometry;
 import net.thesmallthings.hellcraft.world.ParadisoGeometry.Sphere;
 import net.thesmallthings.hellcraft.world.Purgatory;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -57,19 +58,38 @@ public class ParadisoTest implements FabricClientGameTest {
 						Math.sin(a) * from));
 				context.waitTicks(20);
 				int terrace = k;
-				int penitents = server.computeOnServer(s -> {
-					int made = 0;
+				List<Integer> penitents = server.computeOnServer(s -> {
+					List<Integer> made = new java.util.ArrayList<>();
 					for (int i = 0; i < 4; i++) {
-						made += Purgatory.bringOut(Purgatory.level(s), terrace, Math.toRadians(56), 0, 16, 40) != null ? 1 : 0;
+						net.thesmallthings.hellcraft.entity.npc.Damned d = Purgatory.bringOut(Purgatory.level(s), terrace, Math.toRadians(56), 0, 16, 40);
+						if (d != null) {
+							made.add(d.getId());
+						}
 					}
 					return made;
 				});
-				System.out.println("Purgatory terrace " + k + ": " + penitents + " penitents brought out");
-				if (penitents < 2) {
-					throw new AssertionError("terrace " + k + " has room for only " + penitents + " penitents");
+				System.out.println("Purgatory terrace " + k + ": " + penitents.size() + " penitents brought out");
+				if (penitents.size() < 2) {
+					throw new AssertionError("terrace " + k + " has room for only " + penitents.size() + " penitents");
 				}
 				shot(context, server, connection, "hellcraft:purgatory", "purgatory_terrace_" + k, Math.cos(a) * from, top + 3.2, Math.sin(a) * from,
 						Math.cos(b) * to, top + 1, Math.sin(b) * to);
+				// and one of them close to (purgatory_penitent_<k>), from the outer side, a little to one side
+				int id = penitents.getFirst();
+				double[] at = server.computeOnServer(s -> {
+					net.minecraft.world.entity.Entity e = Purgatory.level(s).getEntity(id);
+					return e == null ? null : new double[]{e.getX(), e.getY(), e.getZ()};
+				});
+				if (at == null) {
+					throw new AssertionError("the penitent of terrace " + k + " is gone");
+				}
+				double r = Math.hypot(at[0], at[2]);
+				double ox = at[0] / r;
+				double oz = at[2] / r;
+				server.runCommand(String.format(Locale.ROOT, "execute in hellcraft:purgatory run tp Player0 %.2f %.2f %.2f facing %.2f %.2f %.2f",
+						at[0] + ox * 3.6 - oz * 1.6, at[1] + 1.7, at[2] + oz * 3.6 + ox * 1.6, at[0], at[1] + 0.7, at[2]));
+				context.waitTicks(10);
+				context.takeScreenshot("purgatory_penitent_" + k);
 			}
 			shot(context, server, connection, "hellcraft:purgatory", "purgatory_summit", 10, Purgatory.SUMMIT_Y + 6, 14, 0, Purgatory.SUMMIT_Y, 0);
 			for (Sphere s : ParadisoGeometry.SPHERES) {

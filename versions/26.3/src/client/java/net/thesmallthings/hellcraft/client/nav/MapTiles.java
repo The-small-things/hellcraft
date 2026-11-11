@@ -356,6 +356,8 @@ public final class MapTiles {
 	public static List<Tile> detailIn(double minX, double minZ, double maxX, double maxZ) {
 		arrivals();
 		cap = Math.max(MIN_CAP, inView(minX, minZ, maxX, maxZ) + SPARE);
+		// (tiles just arrived, or a narrower view: back under the cap now, not at the end of the next tick)
+		evict();
 		List<Tile> out = new ArrayList<>();
 		int tx0 = Math.floorDiv((int) Math.floor(minX), SIZE);
 		int tz0 = Math.floorDiv((int) Math.floor(minZ), SIZE);
