@@ -68,12 +68,19 @@ public final class Gatehouses {
 	/**
 	 * One tower: its centre (a block's centre), the ground at its door, the walk at the top of the wall, its roof, its floors
 	 * (walking heights, from the ground up, the wall-walk among them), the spiral's rise per turn and starting angle, and the
-	 * direction of its doors (toward its gate). {@code walkDoor} is false where the wall's top is too near the ground for one.
+	 * direction of its ground door (toward its gate). {@code walkDoor} is false where the wall's top is too near the ground
+	 * for a door onto it; {@code walkDoorAngle} is which way that door faces: toward the gate too (onto the walk over it)
+	 * where the stair leaves it clear, else the other way, onto the wall running away from the gate.
 	 */
 	public record Tower(String site, Style style, double cx, double cz, int ground, int walk, int roof, int[] floors, double pitch, double start,
-			double doorAngle, boolean walkDoor) {
+			double doorAngle, boolean walkDoor, double walkDoorAngle) {
 		public BlockPos centre() {
 			return BlockPos.containing(cx, ground, cz);
+		}
+
+		/** True if the door onto the wall faces away from the gate. */
+		public boolean farDoor() {
+			return walkDoor && Math.cos(walkDoorAngle - doorAngle) < 0;
 		}
 	}
 
@@ -170,22 +177,28 @@ public final class Gatehouses {
 		double doorAngle = Math.atan2(s.z() - cz, s.x() - cx);
 		double pitch = 12.0;
 		double f = -1;
-		for (int i = 0; i <= 100 && f < 0; i++) {
-			double p = 11.0 + (i % 2 == 0 ? 1 : -1) * (i / 2) * 0.05;
-			if (p < 8.0 || p > 13.0) {
-				continue;
-			}
-			double[] window = doorWindow(p);
-			for (double g = window[0]; g <= window[1] && f < 0; g += 0.05) {
-				double atWalk = ((g - rise) % p + p) % p;
-				if (!walkDoor || (atWalk >= window[0] && atWalk <= window[1])) {
-					pitch = p;
-					f = g;
+		double walkDoorAngle = doorAngle;
+		// first with the wall's door toward the gate, over the ground door; if the stair can't leave both clear, with
+		// the wall's door on the other side of the tower, where the stair passes half a turn later
+		for (int far = 0; far <= (walkDoor ? 1 : 0) && f < 0; far++) {
+			for (int i = 0; i <= 100 && f < 0; i++) {
+				double p = 11.0 + (i % 2 == 0 ? 1 : -1) * (i / 2) * 0.05;
+				if (p < 8.0 || p > 13.0) {
+					continue;
+				}
+				double[] window = doorWindow(p);
+				for (double g = window[0]; g <= window[1] && f < 0; g += 0.05) {
+					double atWalk = ((g + far * p / 2 - rise) % p + p) % p;
+					if (!walkDoor || (atWalk >= window[0] && atWalk <= window[1])) {
+						pitch = p;
+						f = g;
+						walkDoorAngle = doorAngle + far * Math.PI;
+					}
 				}
 			}
 		}
 		if (f < 0) {
-			// no pitch suits both doors: keep the ground door clear and leave out the one onto the wall
+			// no pitch suits a door onto the wall on either side: keep the ground door clear and leave it out
 			walkDoor = false;
 			pitch = 12.0;
 			double[] window = doorWindow(pitch);
@@ -193,7 +206,7 @@ public final class Gatehouses {
 		}
 		double start = doorAngle - f / pitch * 2 * Math.PI;
 		int[] fl = floors.stream().mapToInt(Integer::intValue).toArray();
-		return new Tower(s.id(), s.style(), cx, cz, ground, walk, roof, fl, pitch, start, doorAngle, walkDoor);
+		return new Tower(s.id(), s.style(), cx, cz, ground, walk, roof, fl, pitch, start, doorAngle, walkDoor, walkDoorAngle);
 	}
 
 	/**
@@ -223,9 +236,12 @@ public final class Gatehouses {
 		return pos.getY() + 1;
 	}
 
-	/** A gate's key in HellState.gatehouses: "v2" since the stairs' holes were widened (older towers are built again). */
+	/**
+	 * A gate's key in HellState.gatehouses: "v3" since every tower has a door onto the wall ("v2" since the stairs'
+	 * holes were widened); older towers are built again.
+	 */
 	private static String stateKey(String id) {
-		return "v2:" + id;
+		return "v3:" + id;
 	}
 
 	/** True within {@code within} blocks of a gate whose towers have been built. */
@@ -280,7 +296,8 @@ public final class Gatehouses {
 		for (int side = -1; side <= 1; side += 2) {
 			Tower t = tower(level, id, side);
 			buildTower(level, t);
-			HellcraftMod.LOGGER.info("Gatehouse tower built at {} ({}, floors {})", t.centre().toShortString(), id, java.util.Arrays.toString(t.floors()));
+			HellcraftMod.LOGGER.info("Gatehouse tower built at {} ({}, floors {}, wall door {})", t.centre().toShortString(), id,
+					java.util.Arrays.toString(t.floors()), !t.walkDoor() ? "none" : t.farDoor() ? "away from the gate" : "toward the gate");
 		}
 	}
 
@@ -423,13 +440,21 @@ public final class Gatehouses {
 		level.setBlock(pos.set(x0, t.roof(), z0), (t.style() == Style.GATE ? Blocks.SOUL_CAMPFIRE : Blocks.CAMPFIRE).defaultBlockState(), 3);
 	}
 
-	/** The ground door, onto the gate's passage, and the door at the wall-walk, onto the walk over the gate. */
+	/**
+	 * The ground door, onto the gate's passage, and the door at the wall-walk: onto the walk over the gate, or (where the
+	 * stair is in the way of that) on the far side, onto the wall itself, with a walk levelled along its top.
+	 */
 	private static void doors(ServerLevel level, Tower t) {
-		List<Integer> levels = new ArrayList<>();
-		levels.add(t.ground());
+		door(level, t, t.ground(), t.doorAngle());
 		if (t.walkDoor()) {
-			levels.add(t.walk());
+			door(level, t, t.walk(), t.walkDoorAngle());
+			if (t.farDoor()) {
+				wallWalk(level, t);
+			}
 		}
+	}
+
+	private static void door(ServerLevel level, Tower t, int floor, double angle) {
 		int x0 = (int) Math.floor(t.cx());
 		int z0 = (int) Math.floor(t.cz());
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -439,24 +464,66 @@ public final class Gatehouses {
 				int x = x0 + dx;
 				int z = z0 + dz;
 				double d = dist(t, x, z);
-				if (d <= ROOM || d > OUTER + 1.5 || !inDoorway(t, x, z, t.doorAngle())) {
+				if (d <= ROOM || d > OUTER + 1.5 || !inDoorway(t, x, z, angle)) {
 					continue;
 				}
-				for (int l : levels) {
-					for (int h = 0; h < DOOR_HEIGHT; h++) {
-						pos.set(x, l + h, z);
-						if (!level.getBlockState(pos).isAir()) {
-							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-						}
+				for (int h = 0; h < DOOR_HEIGHT; h++) {
+					pos.set(x, floor + h, z);
+					if (!level.getBlockState(pos).isAir()) {
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
-					if (d > STAIR) {
-						if (d <= OUTER) {
-							level.setBlock(pos.set(x, l + DOOR_HEIGHT, z), arch, 3);
-						}
-						pos.set(x, l - 1, z);
-						if (level.getBlockState(pos).canBeReplaced()) {
-							level.setBlock(pos, Blocks.POLISHED_BLACKSTONE.defaultBlockState(), 3);
-						}
+				}
+				if (d > STAIR) {
+					if (d <= OUTER) {
+						level.setBlock(pos.set(x, floor + DOOR_HEIGHT, z), arch, 3);
+					}
+					pos.set(x, floor - 1, z);
+					if (level.getBlockState(pos).canBeReplaced()) {
+						level.setBlock(pos, Blocks.POLISHED_BLACKSTONE.defaultBlockState(), 3);
+					}
+				}
+			}
+		}
+	}
+
+	/** How far from a tower's far door the walk along the wall's top is levelled: to where the wall rooms' own walk has begun. */
+	private static final double WALK_REACH = 19;
+
+	/**
+	 * From a far door, a walk three blocks wide along the top of the wall: its battlements cleared out of the way and any
+	 * dip filled, as far as the wall rooms' walk (WallRooms) or to where the wall's top rises or falls away.
+	 */
+	private static void wallWalk(ServerLevel level, Tower t) {
+		double a = t.walkDoorAngle();
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		Set<Long> done = new HashSet<>();
+		for (double along = OUTER + 0.5; along <= WALK_REACH; along += 0.5) {
+			List<int[]> row = new ArrayList<>();
+			boolean wall = false;
+			for (double lat = -1.0; lat <= 1.0; lat += 0.5) {
+				int x = (int) Math.floor(t.cx() + Math.cos(a) * along - Math.sin(a) * lat);
+				int z = (int) Math.floor(t.cz() + Math.sin(a) * along + Math.cos(a) * lat);
+				row.add(new int[]{x, z});
+				// (solid a few blocks under the walk: this is still the wall, not the air past its end or a step in the ground)
+				wall |= level.getBlockState(pos.set(x, t.walk() - 3, z)).isSolid();
+			}
+			// the wall climbs above the walk here (the ground has risen): the walk ends
+			int[] mid = row.get(row.size() / 2);
+			if (!wall || level.getBlockState(pos.set(mid[0], t.walk() + 2, mid[1])).isSolid() && level.getBlockState(pos.set(mid[0], t.walk() + 3, mid[1])).isSolid()) {
+				break;
+			}
+			for (int[] c : row) {
+				if (!done.add(BlockPos.asLong(c[0], 0, c[1]))) {
+					continue;
+				}
+				for (int y = t.walk() - 2; y < t.walk(); y++) {
+					if (!level.getBlockState(pos.set(c[0], y, c[1])).isSolid()) {
+						level.setBlock(pos, Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(), 3);
+					}
+				}
+				for (int y = t.walk(); y < t.walk() + DOOR_HEIGHT; y++) {
+					if (!level.getBlockState(pos.set(c[0], y, c[1])).isAir()) {
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 					}
 				}
 			}
@@ -504,6 +571,8 @@ public final class Gatehouses {
 		// each room's plan has its back to the doors, its way in toward them
 		Direction back = Rooms.cardinal(-Math.cos(t.doorAngle()), -Math.sin(t.doorAngle()));
 		Rooms.Frame plan = new Rooms.Frame(t.cx(), t.cz(), -back.getStepZ(), back.getStepX(), back.getStepX(), back.getStepZ());
+		// (on the wall's floor, where the door is on the far side, the room is turned round to keep its way in clear)
+		Rooms.Frame turned = new Rooms.Frame(t.cx(), t.cz(), back.getStepZ(), -back.getStepX(), -back.getStepX(), -back.getStepZ());
 		Rooms.Kind prev = null;
 		for (int i = 0; i < n; i++) {
 			Rooms.Kind kind = i == 0 ? Rooms.Kind.GUARD : i == n - 1 ? Rooms.Kind.WAR : Rooms.pick(dis, random, prev);
@@ -511,7 +580,7 @@ public final class Gatehouses {
 			int floor = t.floors()[i];
 			Rooms.carpet(level, room, Rooms.Shape.round(ROOM), floor, dis);
 			Rooms.lantern(level, room, 0, 0, floor, t.floors()[i + 1] - 1);
-			Rooms.furnish(level, plan, kind, floor, dis, random, p -> dist(t, p.getX(), p.getZ()) <= ROOM);
+			Rooms.furnish(level, t.farDoor() && floor == t.walk() ? turned : plan, kind, floor, dis, random, p -> dist(t, p.getX(), p.getZ()) <= ROOM);
 		}
 	}
 
@@ -534,12 +603,25 @@ public final class Gatehouses {
 	public static String selfTest() {
 		List<String> wrong = new ArrayList<>();
 		int towers = 0;
+		int wallDoors = 0;
+		int far = 0;
+		int wanted = 0;
 		for (Site s : sites()) {
 			int[] grounds = s.style() == Style.GATE ? new int[]{60} : new int[]{40, 50, 58, 66, 74, 80};
 			for (int g : grounds) {
 				for (int side = -1; side <= 1; side += 2) {
 					Tower t = tower(s, side, g);
 					towers++;
+					// (where the ground is nearly up to the wall's top there is no door onto it, and none is wanted)
+					int walkLevel = s.style() == Style.GATE ? g + InfernoGeometry.GATE_WALL_HEIGHT + 1 : DIS_BASE + InfernoGeometry.DIS_WALL_HEIGHT + 1;
+					if (walkLevel - g >= 6) {
+						wanted++;
+						if (!t.walkDoor()) {
+							wrong.add(s.id() + (side < 0 ? "a" : "b") + "@" + g + ": no door onto the wall");
+						}
+					}
+					wallDoors += t.walkDoor() ? 1 : 0;
+					far += t.farDoor() ? 1 : 0;
 					String why = check(t);
 					if (why != null) {
 						wrong.add(s.id() + (side < 0 ? "a" : "b") + "@" + g + ": " + why);
@@ -547,7 +629,8 @@ public final class Gatehouses {
 				}
 			}
 		}
-		return wrong.isEmpty() ? "Gatehouse test OK: " + towers + " towers, each with a stair from the ground to the roof"
+		return wrong.isEmpty() ? "Gatehouse test OK: " + towers + " towers, each with a stair from the ground to the roof; " + wallDoors + " of the "
+				+ wanted + " whose wall stands clear of the ground have a door onto it (" + far + " on the far side from the gate)"
 				: "Gatehouse test FAILED: " + String.join("; ", wrong.subList(0, Math.min(6, wrong.size())));
 	}
 
@@ -598,12 +681,10 @@ public final class Gatehouses {
 			int x = BlockPos.getX(e.getKey());
 			int y = BlockPos.getY(e.getKey());
 			int z = BlockPos.getZ(e.getKey());
-			if (inDoorway(t, x, z, t.doorAngle())) {
-				boolean ground = y >= t.ground() && y < t.ground() + DOOR_HEIGHT;
-				boolean walk = t.walkDoor() && y >= t.walk() - 4 && y < t.walk() + DOOR_HEIGHT;
-				if (ground || walk) {
-					return "a step stands in a doorway at height " + (y - t.ground());
-				}
+			boolean ground = inDoorway(t, x, z, t.doorAngle()) && y >= t.ground() && y < t.ground() + DOOR_HEIGHT;
+			boolean walk = t.walkDoor() && inDoorway(t, x, z, t.walkDoorAngle()) && y >= t.walk() - 4 && y < t.walk() + DOOR_HEIGHT;
+			if (ground || walk) {
+				return "a step stands in a doorway at height " + (y - t.ground());
 			}
 		}
 		return null;
