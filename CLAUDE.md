@@ -180,6 +180,16 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   (a rectangle, `scale()` blocks per pixel, `halfX`/`halfZ`, the key in a sidebar `SIDEBAR` wide on screens 420+ wide, `MAX_ZOOM` 48);
   every lair on the diagonals (`InfernoGeometry.LAIR_PLACES` all at 45 degrees; `LairsTest` checks; Phlegyas's jetty runs outward,
   `Fen.JETTY`). `WaymarkTest` films it (`map_explored*`).
+- 3.4 (beta): the Map of Hell kept light (client `nav/MapTiles`: an overview, one cell per 4x4 columns in 1024-block regions
+  `o.<rx>.<rz>.bin`, all in memory; detail tiles `r.<tx>.<tz>.bin` read on one background thread and dropped least-recently-used past
+  `cap()` (`MIN_CAP` 96, more while the map is open), colours only, file version 2 still reads 3.3's; saved on exit), and sharp zoomed
+  in (`nav/MapCloseUp`: the painted map in view repainted at screen resolution in the background once the view settles);
+  `WaymarkTest.mapMemory` (`map_unexplored_zoom`, `map_overview`, `map_detail`). Gatehouse towers whose stair blocks the door toward the
+  gate get it on the far side (`Gatehouses.Tower.walkDoorAngle`, `farDoor()`, `wallWalk` levels a walk along the wall top; keys `v3:`;
+  `gatehouse_far_door`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
+  `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
+  terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
+  `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`
