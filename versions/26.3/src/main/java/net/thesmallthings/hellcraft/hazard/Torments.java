@@ -292,6 +292,8 @@ public final class Torments {
 			case SANDS -> zone == Zone.BURNING_SANDS && dry && level.canSeeSky(feet) && sand(below) ? new Vec3(cx, ground, cz) : null;
 			case MALEBOLGE -> zone == Zone.MALEBOLGE_BLIGHT && dry ? new Vec3(cx, ground, cz) : null;
 			case COCYTUS -> zone == Zone.COCYTUS && !Spine.onSpine(cx, cz, 8) ? ice(level, x, ground, z) : null;
+			// Purgatory's penitents are brought out on its terraces (Purgatory.penitents), never in Hell
+			default -> null;
 		};
 	}
 
@@ -404,6 +406,9 @@ public final class Torments {
 		Punishment punishment = Punishment.byId(id);
 		if (punishment == null) {
 			return "No such punishment. Try: " + String.join(", ", java.util.Arrays.stream(Punishment.values()).map(Punishment::id).toList());
+		}
+		if (punishment.penitent()) {
+			return net.thesmallthings.hellcraft.world.Purgatory.spawnCommand(level, at, punishment);
 		}
 		List<Damned> group = spawnNear(level, punishment, at.x, at.z, 4, 24, 200);
 		if (group.isEmpty()) {

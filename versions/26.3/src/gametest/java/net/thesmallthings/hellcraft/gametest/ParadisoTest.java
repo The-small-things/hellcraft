@@ -52,6 +52,22 @@ public class ParadisoTest implements FabricClientGameTest {
 				int top = Purgatory.topY(Purgatory.cliff(k) + 5);
 				double a = Math.toRadians(78);
 				double b = Math.toRadians(40);
+				// the terrace's penitents (Purgatory.penitents), a few brought out in view
+				server.runCommand(String.format(Locale.ROOT, "execute in hellcraft:purgatory run tp Player0 %.1f %.1f %.1f", Math.cos(a) * from, top + 3.2,
+						Math.sin(a) * from));
+				context.waitTicks(20);
+				int terrace = k;
+				int penitents = server.computeOnServer(s -> {
+					int made = 0;
+					for (int i = 0; i < 4; i++) {
+						made += Purgatory.bringOut(Purgatory.level(s), terrace, Math.toRadians(56), 0, 16, 40) != null ? 1 : 0;
+					}
+					return made;
+				});
+				System.out.println("Purgatory terrace " + k + ": " + penitents + " penitents brought out");
+				if (penitents < 2) {
+					throw new AssertionError("terrace " + k + " has room for only " + penitents + " penitents");
+				}
 				shot(context, server, connection, "hellcraft:purgatory", "purgatory_terrace_" + k, Math.cos(a) * from, top + 3.2, Math.sin(a) * from,
 						Math.cos(b) * to, top + 1, Math.sin(b) * to);
 			}

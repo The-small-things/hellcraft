@@ -23,6 +23,7 @@ public enum DamnedAnim implements BossAnim {
 	BOB(48, true, Map.of()),
 	SHIVER(10, true, Map.of()),
 	MARCH(48, true, Map.of()),
+	BEAR(64, true, Map.of()),
 	SCREAM(32, false, Map.of("scream", 2)),
 	SIGH(48, false, Map.of("sigh", 4)),
 	FLINCH(10, false, Map.of());

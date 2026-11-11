@@ -46,7 +46,8 @@ import java.util.Locale;
  * suffers and which looping animation that is (Punishment.base), and plays the scream, the sigh or a flinch over it;
  * now and then it screams (Torments keeps that to one cry every few seconds near anyone). Its body is
  * tools/art/damned.py; the client draws it pale and see-through (client/render/npc/DamnedRenderer), with the weight,
- * the banner or the gilded cloak its punishment calls for.
+ * the banner, the gilded cloak or the stone its punishment calls for. The same body serves Purgatory's penitents (the
+ * PENANCE_ punishments, one per terrace, brought out by world/Purgatory.penitents): they sigh rather than scream.
  */
 public class Damned extends PathfinderMob {
 	public static final SoundEvent SCREAM = sound("entity.damned.scream");
@@ -84,16 +85,53 @@ public class Damned extends PathfinderMob {
 		/** Fraud: the hypocrites' slow procession in gilded cloaks of lead (Inferno XXIII). */
 		MALEBOLGE(DamnedAnim.MARCH, true, false),
 		/** Treachery: frozen in the ice to the neck (Inferno XXXII). */
-		COCYTUS(DamnedAnim.SHIVER, false, false);
+		COCYTUS(DamnedAnim.SHIVER, false, false),
+		// the penitents of Purgatory's seven terraces (world/Purgatory.penitents): not damned, only waiting, so they sigh
+		/** Pride: bowed double under great stones, walking slowly round the first terrace (Purgatorio X-XI). */
+		PENANCE_PRIDE(DamnedAnim.BEAR, true, false, 1),
+		/** Envy: huddled against the cliff, shivering in their haircloth, eyes sewn shut (Purgatorio XIII). */
+		PENANCE_ENVY(DamnedAnim.SHIVER, false, false, 2),
+		/** Wrath: walking slowly in a blinding smoke (Purgatorio XVI). */
+		PENANCE_WRATH(DamnedAnim.MARCH, true, false, 3),
+		/** Sloth: running round the terrace without rest (Purgatorio XVIII). */
+		PENANCE_SLOTH(DamnedAnim.RUN, true, false, 4),
+		/** Avarice: lying face to the dust, unable to rise (Purgatorio XIX). */
+		PENANCE_AVARICE(DamnedAnim.WALLOW, false, false, 5),
+		/** Gluttony: standing gaunt beneath the trees whose fruit they may not reach (Purgatorio XXII-XXIV). */
+		PENANCE_GLUTTONY(DamnedAnim.IDLE, false, false, 6),
+		/** Lust: walking through the wall of fire on the last terrace (Purgatorio XXV-XXVI). */
+		PENANCE_LUST(DamnedAnim.BURN, true, true, 7);
 
 		public final DamnedAnim base;
 		public final boolean walks;
 		public final boolean burns;
+		/** The terrace of Purgatory it is purged on (1 to 7), or 0 for Hell's damned. */
+		public final int terrace;
 
 		Punishment(DamnedAnim base, boolean walks, boolean burns) {
+			this(base, walks, burns, 0);
+		}
+
+		Punishment(DamnedAnim base, boolean walks, boolean burns, int terrace) {
 			this.base = base;
 			this.walks = walks;
 			this.burns = burns;
+			this.terrace = terrace;
+		}
+
+		/** One of Purgatory's penitents rather than Hell's damned. */
+		public boolean penitent() {
+			return terrace > 0;
+		}
+
+		/** The penance of Purgatory's terrace k (1 to 7). */
+		public static Punishment penance(int k) {
+			for (Punishment p : values()) {
+				if (p.terrace == k) {
+					return p;
+				}
+			}
+			throw new IllegalArgumentException("no terrace " + k);
 		}
 
 		public String id() {
@@ -254,6 +292,13 @@ public class Damned extends PathfinderMob {
 		return this;
 	}
 
+	/** Purgatory: a penitent that walks round its terrace at this radius, this way round, turning back at the stairs. */
+	public Damned walkRound(double radius, int way) {
+		this.radius = radius;
+		this.side = way;
+		return this;
+	}
+
 	/** The Burning Sands: a soul that runs round and round its spot (radius > 0) or lies on its back in the fire. */
 	public Damned lap(double radius, boolean lying) {
 		this.radius = radius;
@@ -351,6 +396,7 @@ public class Damned extends PathfinderMob {
 			case SANDS -> sands(level);
 			case MALEBOLGE -> line(level, 0.45, Zone.MALEBOLGE_BLIGHT);
 			case COCYTUS -> ice(level);
+			case PENANCE_PRIDE, PENANCE_ENVY, PENANCE_WRATH, PENANCE_SLOTH, PENANCE_AVARICE, PENANCE_GLUTTONY, PENANCE_LUST -> penance(level);
 		}
 		cry(level);
 	}
@@ -554,6 +600,57 @@ public class Damned extends PathfinderMob {
 		}
 	}
 
+	/**
+	 * Purgatory's penitents: the walkers go round their terrace and turn back before a stair (so none climbs off it); the
+	 * others keep their place. Wrath's walk in smoke, Lust's in flame, Avarice's dust stirs with their breath.
+	 */
+	private void penance(ServerLevel level) {
+		Punishment p = punishment();
+		if (pinned || !p.walks) {
+			hold(home, getYRot());
+		} else {
+			double r = Math.hypot(getX(), getZ());
+			if (net.thesmallthings.hellcraft.world.Purgatory.ring(r) != p.terrace) {
+				// pushed off its terrace somehow (a fall): it goes, and another comes
+				discard();
+				return;
+			}
+			if (tickCount % 20 == 0 || getNavigation().isDone()) {
+				double a = Math.atan2(getZ(), getX()) + side * 7.0 / radius;
+				int x = (int) Math.floor(Math.cos(a) * radius);
+				int z = (int) Math.floor(Math.sin(a) * radius);
+				if (net.thesmallthings.hellcraft.world.Purgatory.onAWayUp(x, z, p.terrace) || tickCount - turnedAt > 2400) {
+					side = -side;
+					turnedAt = tickCount;
+					a = Math.atan2(getZ(), getX()) + side * 7.0 / radius;
+					x = (int) Math.floor(Math.cos(a) * radius);
+					z = (int) Math.floor(Math.sin(a) * radius);
+				}
+				double pace = switch (p) {
+					case PENANCE_PRIDE -> 0.35;
+					case PENANCE_WRATH -> 0.5;
+					case PENANCE_SLOTH -> 1.25;
+					default -> 0.7;
+				};
+				getNavigation().moveTo(x + 0.5, home.y, z + 0.5, pace);
+			}
+		}
+		if (tickCount % 10 == getId() % 10) {
+			switch (p) {
+				case PENANCE_WRATH -> level.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 1.4, getZ(), 4, 0.8, 0.6, 0.8, 0.01);
+				case PENANCE_LUST -> level.sendParticles(ParticleTypes.FLAME, getX(), getY() + 1.0, getZ(), 3, 0.4, 0.6, 0.4, 0.01);
+				case PENANCE_AVARICE -> {
+					if (tickCount % 40 == getId() % 40) {
+						level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(blockPosition().below())), getX(),
+								getY() + 0.2, getZ(), 4, 0.5, 0.05, 0.5, 0.05);
+					}
+				}
+				default -> {
+				}
+			}
+		}
+	}
+
 	// ------------------------------------------------------------------ crying out
 
 	/** Cries out soon (its punishment just peaked), if nobody near heard a cry a moment ago. */
@@ -571,9 +668,10 @@ public class Damned extends PathfinderMob {
 		}
 		nextCry = tickCount + 300 + getRandom().nextInt(500);
 		float pitch = 0.9f + getRandom().nextFloat() * 0.3f;
-		if (punishment() == Punishment.LIMBO) {
+		if (punishment() == Punishment.LIMBO || punishment().penitent()) {
+			// Limbo longs; Purgatory's penitents wait in hope: they sigh, and never scream
 			play(DamnedAnim.SIGH);
-			level.playSound(null, getX(), getEyeY(), getZ(), SIGH, SoundSource.AMBIENT, 1.0f, pitch);
+			level.playSound(null, getX(), getEyeY(), getZ(), SIGH, SoundSource.AMBIENT, punishment().penitent() ? 0.8f : 1.0f, pitch);
 			return;
 		}
 		// the frozen can't move to scream: only the sound comes out of the ice

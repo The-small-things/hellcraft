@@ -5,13 +5,14 @@ They are not monsters: they can't be hurt, pay you no mind and only cry out. Dra
 hollow sockets with a faint light deep in them, a mouth always a little open, stringy hair, and a torn shroud over one
 shoulder and round the hips. The client tints each a little differently and draws it see-through.
 
-Three props hang on the model and show only where the punishment calls for them (client/render/npc/DamnedModel):
+Four props hang on the model and show only where the punishment calls for them (client/render/npc/DamnedModel):
 the great weight a soul of Greed rolls with its chest (Inferno VII), the white banner the Vestibule's neutrals run
-after (Inferno III), and the gilded cloak and hood of Malebolge's hypocrites (Inferno XXIII).
+after (Inferno III), the gilded cloak and hood of Malebolge's hypocrites (Inferno XXIII), and the stone the proud carry
+on their backs round Purgatory's first terrace (Purgatorio X-XI).
 
 Each punishment has its own looping animation, which the server names (idle for Limbo's longing, run and lead in the
 Vestibule, tumble in Lust's storm, wallow in Gluttony's mud, push in Greed, brawl in the Styx, writhe in Heresy's tombs,
-bob in the river of blood, burn on the Burning Sands, march in Malebolge, shiver in the ice of Cocytus), and three
+bob in the river of blood, burn on the Burning Sands, march in Malebolge, shiver in the ice of Cocytus, bear under Purgatory's stones), and three
 play over it: scream, sigh and flinch.
 
 Run from the repo root:  python3 tools/art/damned.py && python3 tools/gen_bosses.py
@@ -29,6 +30,7 @@ GILT = material("gilt", "metal", base="c9a23e", high="f4dc84", low="6a4e14")
 WEIGHT = material("weight", "metal", base="cf9f2a", high="ffe286", low="70500e")
 POLE = material("pole", "flat", base="6c5842")
 BANNER = material("banner", "flat", base="e6e6de")
+STONE = material("stone", "flat", base="8c8780")
 
 SOCKET = hexc("16141c")
 MOUTH = hexc("120a0e")
@@ -240,6 +242,20 @@ def weight_detail(fs):
             mul(f, x, y + 1, 0.75)
 
 
+def stone_detail(fs):
+    """A rough boulder: cracks, lichen-pale flecks and darker pits."""
+    for n in ("front", "back", "left", "right", "top", "bottom"):
+        f = fs[n]
+        for _ in range(max(3, f.w * f.h // 10)):
+            x, y = f.rng.randrange(f.w), f.rng.randrange(f.h)
+            mul(f, x, y, 0.72 if f.rng.random() < 0.6 else 1.18)
+        # a crack wandering across
+        x = f.rng.randrange(f.w)
+        for y in range(f.h):
+            mul(f, x, y, 0.6)
+            x = max(0, min(f.w - 1, x + f.rng.choice((-1, 0, 0, 1))))
+
+
 def banner_cloth(fs):
     """A plain white banner, tattered at its free edge, as blank as the neutrals' cause."""
     for n in ("left", "right"):
@@ -331,6 +347,12 @@ def build():
     weight.cube("weight_x", (-7, 3, -19), (14, 10, 10), WEIGHT, detail=weight_detail)
     weight.cube("weight_y", (-5, 0, -19), (10, 16, 10), WEIGHT, detail=weight_detail)
     weight.cube("weight_z", (-5, 3, -22), (10, 10, 16), WEIGHT, detail=weight_detail)
+
+    # the stone of Pride, borne on the back and shoulders (shown only on Purgatory's first terrace)
+    stone = body.bone("stone", (0, 20, 3))
+    stone.cube("stone", (-5, 15, 2), (10, 9, 8), STONE, detail=stone_detail)
+    stone.cube("stone_x", (-6, 16, 3), (12, 7, 6), STONE, detail=stone_detail)
+    stone.cube("stone_y", (-4, 14, 3), (8, 11, 6), STONE, detail=stone_detail)
 
     animations(m)
     return m
@@ -501,6 +523,20 @@ def animations(m):
     loop(march, "left_shin", "rot", 2.4, [(-10, 0, 0), (-5, 0, 0), (-5, 0, 0), (-25, 0, 0)])
     loop(march, "right_arm", "rot", 2.4, [(-6, 0, 4), (6, 0, 4)])
     loop(march, "left_arm", "rot", 2.4, [(6, 0, -4), (-6, 0, -4)])
+
+    # Purgatory's Pride: bowed double under the stone, hands up behind the neck holding it, slow dragging steps
+    bear = m.animation("bear", 3.2, loop=True)
+    loop(bear, "body", "rot", 3.2, [(-62, 0, 3), (-66, 0, 0), (-62, 0, -3), (-66, 0, 0)])
+    loop(bear, "root", "pos", 3.2, [(0, -1, 0), (0, -1.6, 0), (0, -1, 0), (0, -1.6, 0)])
+    loop(bear, "head", "rot", 3.2, [(30, 0, 0), (26, 0, 0)])
+    loop(bear, "right_arm", "rot", 3.2, [(-118, 0, -14), (-114, 0, -16)])
+    loop(bear, "left_arm", "rot", 3.2, [(-114, 0, 16), (-118, 0, 14)])
+    loop(bear, "right_forearm", "rot", 3.2, [(100, 0, 0), (104, 0, 0)])
+    loop(bear, "left_forearm", "rot", 3.2, [(104, 0, 0), (100, 0, 0)])
+    loop(bear, "right_leg", "rot", 3.2, [(36, 0, 0), (20, 0, 0), (6, 0, 0), (20, 0, 0)])
+    loop(bear, "left_leg", "rot", 3.2, [(6, 0, 0), (20, 0, 0), (36, 0, 0), (20, 0, 0)])
+    loop(bear, "right_shin", "rot", 3.2, [(-30, 0, 0), (-50, 0, 0), (-25, 0, 0), (-20, 0, 0)])
+    loop(bear, "left_shin", "rot", 3.2, [(-25, 0, 0), (-20, 0, 0), (-30, 0, 0), (-50, 0, 0)])
 
     # over any of them: a scream, the head thrown back, the jaw wide, both arms flung up
     scream = m.animation("scream", 1.6)

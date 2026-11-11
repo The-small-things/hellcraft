@@ -137,13 +137,19 @@ FACES = {
 }
 
 
+HIDDEN = set()
+
+
 def collect(doc, poses):
-    """Every visible face as (corner, u edge, v edge, normal, uv rect), in model space after bones and animation."""
+    """Every visible face as (corner, u edge, v edge, normal, uv rect), in model space after bones and animation.
+    Groups named in HIDDEN (--hide) are left out with everything under them."""
     elements = {e["uuid"]: e for e in doc["elements"]}
     faces = []
 
     def walk(group, parent_m):
         name = group["name"]
+        if name in HIDDEN:
+            return
         rot = np.array(group.get("rotation", [0, 0, 0]), dtype=float)
         pos = np.zeros(3)
         if name in poses:
@@ -273,7 +279,9 @@ def main():
     ap.add_argument("--views", default=None, help="comma-separated: " + ", ".join(VIEWS) + " or yaw:pitch")
     ap.add_argument("--size", type=int, default=320)
     ap.add_argument("--out")
+    ap.add_argument("--hide", default="", help="comma-separated groups to leave out (props the game hides)")
     args = ap.parse_args()
+    HIDDEN.update(h for h in args.hide.split(",") if h)
 
     path = args.model if args.model.endswith(".bbmodel") else os.path.join(ART, args.model + ".bbmodel")
     doc = json.load(open(path))

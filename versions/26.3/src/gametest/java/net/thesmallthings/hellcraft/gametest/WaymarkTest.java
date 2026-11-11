@@ -129,7 +129,7 @@ public class WaymarkTest implements FabricClientGameTest {
 	/**
 	 * The gatehouse towers (world/Gatehouses) at the spawn gate of the Gate of Hell and at a gate of Dis: from outside
 	 * (gatehouse_outside), the guard room (gatehouse_guard), the stair climbing past a floor (gatehouse_stair), the walk over
-	 * the gate (gatehouse_walk) and a room in Dis (gatehouse_dis).
+	 * the gate (gatehouse_walk), a room in Dis (gatehouse_dis) and a door onto the wall on a tower's far side (gatehouse_far_door).
 	 */
 	private static void gatehouses(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		server.runCommand("gamemode spectator Player0");
@@ -186,6 +186,33 @@ public class WaymarkTest implements FabricClientGameTest {
 		connection.waitForChunksRender();
 		context.waitTicks(10);
 		context.takeScreenshot("gatehouse_dis");
+		// a tower whose stair left no room for a door onto the walk over its gate: its door onto the wall on the far side,
+		// and the walk levelled along the wall's top from it (gatehouse_far_door)
+		net.thesmallthings.hellcraft.world.Gatehouses.Tower far = server.computeOnServer(s -> {
+			for (String id : net.thesmallthings.hellcraft.world.Gatehouses.ids()) {
+				for (int side = -1; side <= 1; side += 2) {
+					net.thesmallthings.hellcraft.world.Gatehouses.Tower c = net.thesmallthings.hellcraft.world.Gatehouses.tower(s.overworld(), id, side);
+					if (c.farDoor()) {
+						net.thesmallthings.hellcraft.world.Gatehouses.build(s.overworld(), id);
+						return c;
+					}
+				}
+			}
+			return null;
+		});
+		if (far == null) {
+			System.out.println("Gatehouse far door: no tower in this world needs one");
+			return;
+		}
+		double fa = Math.cos(far.walkDoorAngle());
+		double fb = Math.sin(far.walkDoorAngle());
+		System.out.println("Gatehouse far door: " + far.site() + " at " + far.centre().toShortString());
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %d %.2f", far.cx() + fa * 14, far.walk() + 2, far.cz() + fb * 14,
+				far.cx(), far.walk() + 1, far.cz()));
+		context.waitTicks(20);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("gatehouse_far_door");
 	}
 
 	/**

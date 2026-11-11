@@ -14,7 +14,8 @@ import java.util.List;
 /**
  * A damned soul's jointed model (generated: DamnedMesh) moved by its animations (DamnedAnimations): the punishment's
  * own loop with a scream, a sigh or a flinch played over it (keyframes add up). Its props show only where the
- * punishment calls for them: Greed's weight, the Vestibule leader's banner, Malebolge's gilded hood and cloak.
+ * punishment calls for them: Greed's weight, the Vestibule leader's banner, Malebolge's gilded hood and cloak, and the
+ * stone Purgatory's proud carry.
  */
 public class DamnedModel extends EntityModel<DamnedRenderState> {
 	public static final ModelLayerLocation LAYER = new ModelLayerLocation(HellcraftMod.id("damned"), "main");
@@ -24,6 +25,7 @@ public class DamnedModel extends EntityModel<DamnedRenderState> {
 	private final ModelPart banner;
 	private final ModelPart hood;
 	private final ModelPart cloak;
+	private final ModelPart stone;
 
 	public DamnedModel(ModelPart root) {
 		super(root, RenderTypes::entityTranslucent);
@@ -38,6 +40,7 @@ public class DamnedModel extends EntityModel<DamnedRenderState> {
 		this.banner = body.getChild("right_arm").getChild("right_forearm").getChild("banner");
 		this.hood = body.getChild("head").getChild("hood");
 		this.cloak = body.getChild("cloak");
+		this.stone = body.getChild("stone");
 	}
 
 	@Override
@@ -48,6 +51,7 @@ public class DamnedModel extends EntityModel<DamnedRenderState> {
 		boolean hypocrite = state.punishment == Damned.Punishment.MALEBOLGE;
 		hood.visible = hypocrite;
 		cloak.visible = hypocrite;
+		stone.visible = state.punishment == Damned.Punishment.PENANCE_PRIDE;
 		for (int i = 0; i < animations.length; i++) {
 			animations[i].apply(state.states[i], state.ageInTicks);
 		}

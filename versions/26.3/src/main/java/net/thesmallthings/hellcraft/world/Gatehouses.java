@@ -119,6 +119,11 @@ public final class Gatehouses {
 		return (lo + hi) / 2;
 	}
 
+	/** Every gate's id ("gate_0" .., "dis_0" ..). */
+	public static List<String> ids() {
+		return sites().stream().map(Site::id).toList();
+	}
+
 	static Site site(String id) {
 		for (Site s : sites()) {
 			if (s.id().equals(id)) {

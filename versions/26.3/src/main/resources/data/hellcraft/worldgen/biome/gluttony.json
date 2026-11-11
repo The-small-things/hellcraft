@@ -120,7 +120,7 @@
   ],
   "downfall": 1.0,
   "effects": {
-    "water_color": "#4a3a20",
+    "water_color": "#5f6b3a",
     "grass_color": "#5a5a2a",
     "foliage_color": "#4a4a20",
     "grass_color_modifier": "swamp"

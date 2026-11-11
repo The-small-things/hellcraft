@@ -16,13 +16,15 @@ import org.jetbrains.annotations.Nullable;
  * Draws one of the damned: pale and see-through like Limbo's shades, each a little differently tinted (ash, warm,
  * cold, sickly), stained by its circle (the blood of Phlegethon, the mud of Gluttony), the faint light in its eye
  * sockets lit even in the dark. It is never quite lost in the dark itself, and casts no shadow where it is sunk in
- * something or blown about the sky.
+ * something or blown about the sky. Purgatory's penitents are drawn paler, warmer and a little brighter.
  */
 public class DamnedRenderer extends MobRenderer<Damned, DamnedRenderState, DamnedModel> {
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/damned.png");
 	private static final RenderType GLOW = RenderTypes.eyes(HellcraftMod.id("textures/entity/damned_glow.png"));
 	/** How solid a soul looks (of 255). */
 	private static final int ALPHA = 200;
+	/** Purgatory's penitents: a little fainter, being nearer to leaving. */
+	private static final int PENITENT_ALPHA = 185;
 	private static final int[] TINTS = {0xFFFFFF, 0xFFE8DA, 0xDAE4FF, 0xDDE8D4};
 
 	public DamnedRenderer(EntityRendererProvider.Context context) {
@@ -53,13 +55,14 @@ public class DamnedRenderer extends MobRenderer<Damned, DamnedRenderState, Damne
 
 	@Override
 	protected int getBlockLightLevel(Damned damned, BlockPos pos) {
-		return Math.max(5, super.getBlockLightLevel(damned, pos));
+		// Purgatory's penitents are lit by their hope a little more than Hell's damned
+		return Math.max(damned.punishment().penitent() ? 9 : 5, super.getBlockLightLevel(damned, pos));
 	}
 
 	@Override
 	protected float getShadowRadius(DamnedRenderState state) {
 		return switch (state.punishment) {
-			case LUST, GLUTTONY, WRATH, HERESY, PHLEGETHON, COCYTUS -> 0;
+			case LUST, GLUTTONY, WRATH, HERESY, PHLEGETHON, COCYTUS, PENANCE_AVARICE -> 0;
 			default -> super.getShadowRadius(state);
 		};
 	}
@@ -77,6 +80,10 @@ public class DamnedRenderer extends MobRenderer<Damned, DamnedRenderState, Damne
 			case GLUTTONY -> 0xDCCCB4;
 			default -> 0xFFFFFF;
 		};
+		if (state.punishment.penitent()) {
+			// paler and warmer: the dawn is coming for them
+			return ARGB.color(PENITENT_ALPHA, ARGB.multiply(0xFFF4E2, ARGB.srgbLerp(0.5f, tint, 0xFFFFFF)));
+		}
 		return ARGB.color(ALPHA, ARGB.multiply(tint, stain));
 	}
 

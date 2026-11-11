@@ -294,7 +294,7 @@ BIOMES = {
     ),
     "gluttony": dict(
         temp=0.6, rain=True, downfall=1.0,
-        colors=dict(fog_color=0x3A3020, sky_color=0x2A2418, water_color=0x4A3A20, water_fog_color=0x1A1408,
+        colors=dict(fog_color=0x3A3020, sky_color=0x2A2418, water_color=0x5F6B3A, water_fog_color=0x1A1408,
                     grass_color=0x5A5A2A, foliage_color=0x4A4A20, grass_color_modifier="swamp"),
         particle=("minecraft:mycelium", 0.02), sound=CAVE_MOOD, music="music.overworld.swamp",
         features=["hellcraft:filth_pool", "hellcraft:feast_table", "hellcraft:rotting_tree", "hellcraft:bloated_fungus",

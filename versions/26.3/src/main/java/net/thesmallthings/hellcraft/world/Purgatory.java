@@ -197,9 +197,9 @@ public final class Purgatory {
 			// Sloth: neglected, gone to moss
 			new Floor(Blocks.STONE_BRICKS.defaultBlockState(), new BlockState[]{Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.MOSSY_COBBLESTONE.defaultBlockState(),
 					Blocks.STONE_BRICKS.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()}, Blocks.CRACKED_STONE_BRICKS.defaultBlockState()),
-			// Avarice: dust, on sandstone
-			new Floor(Blocks.SMOOTH_SANDSTONE.defaultBlockState(), new BlockState[]{Blocks.CUT_SANDSTONE.defaultBlockState(), Blocks.SANDSTONE.defaultBlockState(),
-					Blocks.SMOOTH_SANDSTONE.defaultBlockState(), Blocks.SAND.defaultBlockState()}, Blocks.CHISELED_SANDSTONE.defaultBlockState()),
+			// Avarice: the dust they lie in, trodden earth between worn sandstone (not pale sand, which read as snow)
+			new Floor(Blocks.PACKED_MUD.defaultBlockState(), new BlockState[]{Blocks.COARSE_DIRT.defaultBlockState(), Blocks.SANDSTONE.defaultBlockState(),
+					Blocks.PACKED_MUD.defaultBlockState(), Blocks.CUT_SANDSTONE.defaultBlockState()}, Blocks.CHISELED_SANDSTONE.defaultBlockState()),
 			// Gluttony: the garden of its trees, moss and grass between the bricks
 			new Floor(Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), new BlockState[]{Blocks.MOSS_BLOCK.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(),
 					Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState()}, Blocks.MUD_BRICKS.defaultBlockState()),
@@ -477,6 +477,9 @@ public final class Purgatory {
 				}
 			}
 		}
+		if (now % 40 == 20) {
+			penitents(level);
+		}
 		for (ServerPlayer player : new ArrayList<>(level.players())) {
 			if (player.isSpectator() || player.getY() < SHORE_Y) {
 				continue;
@@ -492,6 +495,112 @@ public final class Purgatory {
 				}
 			}
 		}
+	}
+
+	// ---------------------------------------------------------------------------------- the penitents
+
+	/** How many penitents a terrace shows near one player, and how far round the terrace from them they come out. */
+	private static final int PENITENTS_NEAR = 5;
+	private static final double PENITENT_FROM = 12;
+	private static final double PENITENT_TO = 32;
+
+	/**
+	 * The souls purging their sins (entity/npc/Damned's PENANCE_ punishments): every two seconds, near each player on a
+	 * terrace, one more is brought out round the terrace from them until it shows a handful, each at its penance (see
+	 * Damned.Punishment). They keep off the stairs and go when nobody is near. Config damnedSouls turns them off.
+	 */
+	private static void penitents(ServerLevel level) {
+		if (!net.thesmallthings.hellcraft.config.HellConfig.get().damnedSouls) {
+			return;
+		}
+		for (ServerPlayer p : level.players()) {
+			if (p.isSpectator()) {
+				continue;
+			}
+			double r = Math.hypot(p.getX(), p.getZ());
+			int k = ring(r);
+			if (k < 1 || k > TERRACES || Math.abs(p.getY() - (topY(r) + 1)) > 3) {
+				continue;
+			}
+			int terrace = k;
+			int near = level.getEntitiesOfClass(net.thesmallthings.hellcraft.entity.npc.Damned.class, p.getBoundingBox().inflate(40),
+					d -> d.punishment().terrace == terrace).size();
+			if (near < PENITENTS_NEAR) {
+				bringOut(level, k, Math.atan2(p.getZ(), p.getX()), PENITENT_FROM, PENITENT_TO, 8);
+			}
+		}
+	}
+
+	/**
+	 * Brings out one penitent of terrace k somewhere {@code from} to {@code to} blocks round the terrace (either way) from
+	 * angle a0, on a free block of its floor clear of the ways up, trying a few spots; null if none would do. Envy's huddle
+	 * against the cliff, facing out; Avarice's lie in the dust; Gluttony's stand; the rest walk round.
+	 */
+	@Nullable
+	public static net.thesmallthings.hellcraft.entity.npc.Damned bringOut(ServerLevel level, int k, double a0, double from, double to, int tries) {
+		net.thesmallthings.hellcraft.entity.npc.Damned.Punishment penance = net.thesmallthings.hellcraft.entity.npc.Damned.Punishment.penance(k);
+		RandomSource random = level.getRandom();
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		for (int i = 0; i < tries; i++) {
+			double d = switch (penance) {
+				case PENANCE_ENVY -> 1.2 + random.nextDouble() * 0.5;
+				case PENANCE_AVARICE, PENANCE_GLUTTONY -> 2 + random.nextDouble() * 6.5;
+				default -> 4 + random.nextDouble() * 3;
+			};
+			double r = cliff(k) + d;
+			double arc = (from + random.nextDouble() * (to - from)) * (random.nextBoolean() ? 1 : -1);
+			double a = a0 + arc / r;
+			int x = (int) Math.floor(Math.cos(a) * r);
+			int z = (int) Math.floor(Math.sin(a) * r);
+			double rc = Math.hypot(x + 0.5, z + 0.5);
+			if (ring(rc) != k || onAWayUp(x, z, k) || !level.isLoaded(pos.set(x, 0, z))) {
+				continue;
+			}
+			int top = topY(rc);
+			// standing room: the floor solid, the feet and head clear of the terrace's dressing
+			if (level.getBlockState(pos.set(x, top, z)).getCollisionShape(level, pos).isEmpty()
+					|| !level.getBlockState(pos.set(x, top + 1, z)).getCollisionShape(level, pos).isEmpty()
+					|| !level.getBlockState(pos.set(x, top + 2, z)).getCollisionShape(level, pos).isEmpty()) {
+				continue;
+			}
+			net.minecraft.world.phys.Vec3 home = new net.minecraft.world.phys.Vec3(x + 0.5, top + 1 + (penance == net.thesmallthings.hellcraft.entity.npc.Damned.Punishment.PENANCE_AVARICE ? 0.2 : 0), z + 0.5);
+			if (!level.getEntitiesOfClass(net.thesmallthings.hellcraft.entity.npc.Damned.class, new net.minecraft.world.phys.AABB(home, home).inflate(1.5)).isEmpty()) {
+				continue;
+			}
+			net.thesmallthings.hellcraft.entity.npc.Damned soul = net.thesmallthings.hellcraft.entity.HellEntities.DAMNED.create(level,
+					net.minecraft.world.entity.EntitySpawnReason.EVENT);
+			if (soul == null) {
+				return null;
+			}
+			soul.punish(penance, home, !penance.walks);
+			if (penance.walks) {
+				soul.walkRound(rc, random.nextBoolean() ? 1 : -1);
+			} else {
+				// facing out from the mountain (Envy's backs to the cliff), or any way along the terrace
+				double out = Math.atan2(z + 0.5, x + 0.5) + (penance == net.thesmallthings.hellcraft.entity.npc.Damned.Punishment.PENANCE_ENVY ? 0
+						: (random.nextDouble() - 0.5) * Math.PI);
+				float yaw = (float) Math.toDegrees(Math.atan2(-Math.cos(out), Math.sin(out)));
+				soul.setYRot(yaw);
+				soul.setYBodyRot(yaw);
+				soul.setYHeadRot(yaw);
+			}
+			level.addFreshEntity(soul);
+			return soul;
+		}
+		return null;
+	}
+
+	/** /hellcraft damned spawn penance_(sin): a penitent near here, which must be on that sin's terrace. */
+	public static String spawnCommand(ServerLevel level, net.minecraft.world.phys.Vec3 at, net.thesmallthings.hellcraft.entity.npc.Damned.Punishment penance) {
+		String where = "Penitents of " + penance.id() + " show only on terrace " + penance.terrace + " of Purgatory.";
+		if (level.dimension() != LEVEL) {
+			return where;
+		}
+		net.thesmallthings.hellcraft.entity.npc.Damned soul = bringOut(level, penance.terrace, Math.atan2(at.z, at.x), 0, 24, 200);
+		if (soul == null) {
+			return where + " Stand on it, away from the stairs.";
+		}
+		return String.format(java.util.Locale.ROOT, "Brought out a penitent (%s) at %.1f %.1f %.1f", penance.id(), soul.getX(), soul.getY(), soul.getZ());
 	}
 
 	/** Sets a player down on Purgatory's shore, out of Hell (the burrow, or the climb out after Lucifer). */

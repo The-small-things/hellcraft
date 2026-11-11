@@ -389,7 +389,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # the damned in their torments: one soul of each circle's punishment, struck with everything the circles have, unhurt
   damned=$(rcon "hellcraft damned test")
   echo "$damned"
-  echo "$damned" | grep -q "Damned test: 11 punishments, all invulnerable=true, fireproof=true, unpushable=true, sounds=true" \
+  echo "$damned" | grep -q "Damned test: 18 punishments, all invulnerable=true, fireproof=true, unpushable=true, sounds=true" \
     || { echo "The damned are missing, or can be hurt or pushed"; exit 1; }
   # the blood gear is real items, and the circles' own enchantments loaded
   gear=$(rcon "hellcraft gear test")
