@@ -165,6 +165,12 @@ public class MapOfHellScreen extends Screen {
 	}
 
 	@Override
+	public void removed() {
+		MapCloseUp.closed();
+		super.removed();
+	}
+
+	@Override
 	public boolean isPauseScreen() {
 		return false;
 	}
@@ -193,11 +199,26 @@ public class MapOfHellScreen extends Screen {
 		double z1 = Math.min(e, viewZ + halfZ());
 		g.blit(texture, sx(x0), sy(z0), sx(x1), sy(z1),
 				(float) ((x0 + e) / (2 * e)), (float) ((x1 + e) / (2 * e)), (float) ((z0 + e) / (2 * e)), (float) ((z1 + e) / (2 * e)));
+		// zoomed in, the part in view painted sharp (once it's ready) over the coarse map
+		double vx0 = viewX - halfX();
+		double vz0 = viewZ - halfZ();
+		double vx1 = viewX + halfX();
+		double vz1 = viewZ + halfZ();
+		int real = Math.max(1, minecraft.getWindow().getGuiScale());
+		MapCloseUp.Picture sharp = MapCloseUp.frame(vx0, vz0, vx1, vz1, mapW * real, mapH * real);
+		if (sharp != null) {
+			g.blit(MapCloseUp.ID, sx(sharp.x0()), sy(sharp.z0()), sx(sharp.x1()), sy(sharp.z1()), 0, 1, 0, 1);
+		}
 		// faded, so the ground you've seen (drawn over it from MapTiles, its real blocks) stands out
 		g.fill(left, top, left + mapW, top + mapH, UNSEEN_FADE);
-		boolean small = scale() > 3;
-		for (MapTiles.Tile t : MapTiles.tilesIn(viewX - halfX(), viewZ - halfZ(), viewX + halfX(), viewZ + halfZ())) {
-			g.blit(MapTiles.texture(t, small), sx(t.minX()), sy(t.minZ()), sx(t.minX() + MapTiles.SIZE), sy(t.minZ() + MapTiles.SIZE), 0, 1, 0, 1);
+		// the ground seen: the overview everywhere, and a block a pixel over it once zoomed in
+		for (MapTiles.Region r : MapTiles.regionsIn(vx0, vz0, vx1, vz1)) {
+			g.blit(MapTiles.texture(r), sx(r.minX()), sy(r.minZ()), sx(r.minX() + MapTiles.REGION), sy(r.minZ() + MapTiles.REGION), 0, 1, 0, 1);
+		}
+		if (MapTiles.detail(vx0, vz0, vx1, vz1, scale())) {
+			for (MapTiles.Tile t : MapTiles.detailIn(vx0, vz0, vx1, vz1)) {
+				g.blit(MapTiles.texture(t), sx(t.minX()), sy(t.minZ()), sx(t.minX() + MapTiles.SIZE), sy(t.minZ() + MapTiles.SIZE), 0, 1, 0, 1);
+			}
 		}
 		g.disableScissor();
 
@@ -865,6 +886,11 @@ public class MapOfHellScreen extends Screen {
 		MapOfHellScreen screen = at(x, z, zoomTo);
 		screen.editing = new Editing(0, (int) x, (int) z, name, colour, true, true, "");
 		return screen;
+	}
+
+	/** True once the view in front is painted sharp (for the client tests). */
+	public static boolean sharp() {
+		return MapCloseUp.ready();
 	}
 
 	/** Opens the map centred on a point (for the client tests). */

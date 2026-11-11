@@ -4,10 +4,12 @@ import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerConnection;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerContext;
+import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
 import net.thesmallthings.hellcraft.client.nav.ClientWaymarks;
 import net.thesmallthings.hellcraft.client.nav.JournalScreen;
 import net.thesmallthings.hellcraft.client.nav.MapOfHellScreen;
+import net.thesmallthings.hellcraft.client.nav.MapTiles;
 import net.thesmallthings.hellcraft.net.WaymarksPayload;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 
@@ -90,7 +92,7 @@ public class WaymarkTest implements FabricClientGameTest {
 				throw new AssertionError("the shared waymark was not saved, or can't be followed");
 			}
 			// the ground seen round Player0 is drawn in its real blocks (MapTiles)
-			context.waitFor(client -> net.thesmallthings.hellcraft.client.nav.MapTiles.seen((int) x, 6), 400);
+			context.waitFor(client -> MapTiles.seen((int) x, 6), 400);
 			context.waitTicks(100);
 			context.setScreen(() -> MapOfHellScreen.at(x, 6, 30));
 			context.getInput().setCursorPos(2, 2);
@@ -108,6 +110,7 @@ public class WaymarkTest implements FabricClientGameTest {
 			context.getInput().setCursorPos(2, 2);
 			context.waitTicks(10);
 			context.takeScreenshot("waymark_map_whole");
+			mapMemory(context);
 			context.setScreen(() -> null);
 			server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f 6.5 120 8", x, y));
 			context.waitTicks(20);
@@ -335,6 +338,44 @@ public class WaymarkTest implements FabricClientGameTest {
 	}
 
 	/** Teleports Player0 to stand at a block, facing another. */
+	/**
+	 * The map stays light however much has been explored (MapTiles): the unexplored map is painted sharp once zoomed in
+	 * (map_unexplored_zoom); then 400 tiles are marked explored as if the whole middle of Hell had been walked, and the
+	 * detail kept in memory must stay under its cap while the map shows them all from afar (map_overview, the overview)
+	 * and close to (map_detail, a block a pixel, read back from disk).
+	 */
+	private static void mapMemory(ClientGameTestContext context) {
+		double x = InfernoGeometry.scaled(2160) + 700;
+		context.setScreen(() -> MapOfHellScreen.at(x, 400, 30));
+		context.getInput().setCursorPos(2, 2);
+		context.waitFor(client -> MapOfHellScreen.sharp(), 400);
+		context.waitTicks(5);
+		context.takeScreenshot("map_unexplored_zoom");
+		int before = context.computeOnClient(client -> MapTiles.explored());
+		context.runOnClient(client -> MapTiles.pretendExplored(-10, -10, 9, 9));
+		context.waitTicks(10);
+		int[] counts = context.computeOnClient(client -> new int[]{MapTiles.explored(), MapTiles.loaded(), MapTiles.cap()});
+		if (counts[0] < before + 400 || counts[1] > counts[2]) {
+			throw new AssertionError("after exploring 400 more tiles: " + counts[0] + " explored (from " + before + "), " + counts[1]
+					+ " in memory, cap " + counts[2]);
+		}
+		context.setScreen(() -> MapOfHellScreen.at(0, 0, 1));
+		context.getInput().setCursorPos(2, 2);
+		context.waitTicks(20);
+		context.takeScreenshot("map_overview");
+		context.setScreen(() -> MapOfHellScreen.at(-700, -400, 12));
+		context.getInput().setCursorPos(2, 2);
+		// the tiles in view come back from disk in the background
+		context.waitFor(client -> MapTiles.loaded() >= 20, 400);
+		context.waitTicks(20);
+		context.takeScreenshot("map_detail");
+		counts = context.computeOnClient(client -> new int[]{MapTiles.explored(), MapTiles.loaded(), MapTiles.cap()});
+		if (counts[1] > counts[2]) {
+			throw new AssertionError("with the map zoomed in: " + counts[1] + " tiles in memory, cap " + counts[2]);
+		}
+		HellcraftMod.LOGGER.info("Map memory: {} tiles explored, {} in memory (cap {})", counts[0], counts[1], counts[2]);
+	}
+
 	private static void stand(TestDedicatedServerContext server, net.minecraft.core.BlockPos at, net.minecraft.core.BlockPos toward) {
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.2f %d %.2f facing %.2f %.2f %.2f", at.getX() + 0.5, at.getY(), at.getZ() + 0.5,
 				toward.getX() + 0.5, toward.getY() + 0.5, toward.getZ() + 0.5));

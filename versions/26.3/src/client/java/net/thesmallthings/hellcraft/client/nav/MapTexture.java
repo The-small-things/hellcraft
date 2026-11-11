@@ -63,7 +63,7 @@ public final class MapTexture {
 	}
 
 	/** Outside the world's edge: parchment, its grain and stains, an inked rim and a shadow cast by the funnel. */
-	private static int parchment(double x, double z, double r, double scale) {
+	static int parchment(double x, double z, double r, double scale) {
 		double past = r - InfernoGeometry.BORDER_RADIUS;
 		if (past < scale * 1.5) {
 			return 0x2A1A10;
