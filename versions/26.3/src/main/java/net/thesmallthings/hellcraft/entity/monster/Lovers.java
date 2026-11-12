@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The lovers (Lust's monster, tools/art/lovers.py): two souls turning round each other on the hurricane. They circle
+ * The lovers (Lust's monster, art/lovers.bbmodel, edited in Blender via tools/art/blender_bridge.py): two souls turning round each other on the hurricane. They circle
  * over their prey, then dive through it and throw it about with the wind (a hard shove, up and away: mind the cliffs).
  * They fly, and never touch the ground, except stunned: block a dive with a shield and they tumble to the ground for a
  * few seconds, open to your blows. Only one pair dives at a time at the same soul; the others wait their turn.
