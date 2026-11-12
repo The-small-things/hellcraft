@@ -85,10 +85,11 @@ jobs:
           path: versions/26.3/build/run/clientGameTest/screenshots
           if-no-files-found: warn
 
-  # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click.
+  # Publishes the single-player downloads as a GitHub pre-release so they can be grabbed with one click. A run
+  # started by hand (Actions tab, "Run workflow") publishes the beta too, for when a push's run gets stuck.
   release:
     needs: [build-26, smoke-test-26, client-test-26]
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
     # one test release at a time: two pushes in a row must not race over the same tag
     concurrency:
