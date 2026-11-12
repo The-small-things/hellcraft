@@ -31,6 +31,8 @@ chmod -R a+rwX "$CONFIG_DIR"
 if [ "$MC_VERSION" != "1.21.1" ]; then
   # the art ships in the mod (the client loads it from the jar)
   JAR=$(ls "$MODS_DIR"/hellcraft-*.jar | head -1)
+  # grep reads a process substitution, not a pipe: grep -q stops early, and under pipefail the SIGPIPE it
+  # sends unzip would count as a missing file
   for f in assets/hellcraft/items/blood_heart.json assets/hellcraft/models/item/lucifer_morning_star.json \
            assets/hellcraft/models/item/lucifer_emperor.json assets/hellcraft/textures/item/boss/lucifer_emperor.png \
            assets/hellcraft/textures/item/tithe_axe.png assets/hellcraft/items/vigil_candle.json assets/hellcraft/items/soul_anchor.json \
@@ -38,7 +40,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
            assets/hellcraft/textures/entity/equipment/humanoid_leggings/blood.png \
            assets/hellcraft/textures/gui/sprites/hud/heart/full.png assets/hellcraft/textures/gui/sprites/hud/heart/rank_3/container.png \
            hellcraft.client.mixins.json; do
-    unzip -l "$JAR" | grep -q "$f" || { echo "The mod jar is missing $f"; exit 1; }
+    grep -q "$f" <(unzip -l "$JAR") || { echo "The mod jar is missing $f"; exit 1; }
   done
   # item models (the boss models included) can only use textures stitched into the item or block atlas,
   # anything else draws as the black and magenta missing texture
