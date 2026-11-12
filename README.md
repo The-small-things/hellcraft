@@ -638,7 +638,9 @@ A third of the way into each circle (Limbo, Lust, Gluttony, Greed, the Styx, Her
 
 They are built the first time someone comes near. The compass and the Map of Hell show them, and entering a circle, and `/circle`, tell you where the nearest one is.
 
-**Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off). The places run over pages: the arrows in the bottom row turn them.
+**Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off). The places run over pages: the arrows in the bottom row turn them. Every Rest has a name of its own, its circle and where it stands ("Circle II — Lust, east road", "Circle II — Lust, southeast" for the four between the roads), so the eight in a circle are easy to tell apart.
+
+**Naming a Rest (3.4).** Stand inside a Rest and type `/rest name <name>`: it goes by that name in your travel menu, on your Map of Hell and in your Journal. Only you see your names. `/rest name` on its own gives the Rest back its own name, and `/rest list` shows the names you've given.
 
 ## Secret ways down (3.1)
 
@@ -766,6 +768,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hearts [player]` | all | Show hearts |
 | `/withdraw [n]` | all | Bleed hearts into Blood Hearts |
 | `/circle` | all | Where am I in Hell? |
+| `/rest name [name]`, `/rest list` | all | Name the Rest you're standing in (only you see it); no name gives it back its own (3.4) |
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
 | `/guide` | all | Open the Pilgrim's Journal (the same as J) |

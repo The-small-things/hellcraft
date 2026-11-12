@@ -423,6 +423,11 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$champ"
   echo "$champ" | grep -q "Champion test OK" || { echo "The champions of the circles are wrong"; exit 1; }
   # waymarks on the Map of Hell: placed, renamed, shared, guarded from others and removed
+  # every Rest has a name of its own, and a player's name for one is kept, cleaned and seen only by them
+  restnames=$(rcon "hellcraft rests names test")
+  echo "$restnames"
+  echo "$restnames" | grep -q "Rest names test: 76 Rests, all named apart=true (Circle II.*Lust, southeast); kept=true private=true shortened=true undone=true" \
+    || { echo "Naming Rests is wrong"; exit 1; }
   waymarks=$(rcon "hellcraft waymarks test")
   echo "$waymarks"
   echo "$waymarks" | grep -q "Waymarks test OK" || { echo "Waymarks don't work"; exit 1; }

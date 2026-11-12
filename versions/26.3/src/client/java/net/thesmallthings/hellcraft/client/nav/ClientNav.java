@@ -27,6 +27,8 @@ public final class ClientNav {
 	private static volatile Set<String> codex = Set.of();
 	private static volatile List<Guide.Page> pages = List.of();
 	private static volatile int spheres;
+	/** The names this player gave Rests (Rest id to name; world/RestNames). */
+	private static volatile java.util.Map<String, String> restNames = java.util.Map.of();
 
 	public static void map(MapPayload payload) {
 		inferno = payload.inferno();
@@ -35,6 +37,20 @@ public final class ClientNav {
 		beaten = Set.copyOf(payload.beaten());
 		codex = Set.copyOf(payload.codex());
 		spheres = payload.spheres();
+	}
+
+	public static void restNames(net.thesmallthings.hellcraft.net.RestNamesPayload payload) {
+		java.util.Map<String, String> names = new java.util.HashMap<>();
+		for (int i = 0; i < Math.min(payload.ids().size(), payload.names().size()); i++) {
+			names.put(payload.ids().get(i), payload.names().get(i));
+		}
+		restNames = java.util.Map.copyOf(names);
+	}
+
+	/** The name this player gave a Rest, or null. */
+	@org.jetbrains.annotations.Nullable
+	public static String restName(String id) {
+		return restNames.get(id);
 	}
 
 	public static void journal(JournalPayload payload) {
@@ -48,6 +64,7 @@ public final class ClientNav {
 		beaten = Set.of();
 		codex = Set.of();
 		pages = List.of();
+		restNames = java.util.Map.of();
 	}
 
 	/** True in the overworld of an Inferno world: the compass, cards and map apply. */

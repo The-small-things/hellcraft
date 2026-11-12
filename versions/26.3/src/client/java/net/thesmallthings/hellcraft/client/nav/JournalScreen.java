@@ -542,7 +542,7 @@ public class JournalScreen extends Screen {
 			if (rest != null) {
 				wrap(out, "NEAREST VIRGIL'S REST", HEADING);
 				boolean found = ClientNav.found(rest.id());
-				wrap(out, rest.title() + ": " + away(x, z, rest.x() + 0.5, rest.z() + 0.5) + ". "
+				wrap(out, (ClientNav.restName(rest.id()) != null ? ClientNav.restName(rest.id()) : rest.label()) + ": " + away(x, z, rest.x() + 0.5, rest.z() + 0.5) + ". "
 						+ (found ? "Found: you can travel back to it from any Blood Altar." : "Not found yet: step into its ring to remember it."), TEXT);
 				wrap(out, ClientNav.foundCount() + " of " + ShrineSites.all().size() + " Rests found. Press M for the Map of Hell.", DIM);
 				out.add(new Line(FormattedCharSequence.EMPTY, TEXT));

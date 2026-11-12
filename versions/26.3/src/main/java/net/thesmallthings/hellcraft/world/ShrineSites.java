@@ -22,6 +22,16 @@ public final class ShrineSites {
 	 * 2 lower), {@code dry} is false when no dry ground was found and the Rest stands on a raised platform.
 	 */
 	public record Site(String id, Zone zone, String title, int tier, int x, int z, boolean dry) {
+		/** Which of its circle's Rests this is: by a road ("east road") or between two ("southeast"). */
+		public String place() {
+			String where = id.substring(id.lastIndexOf('_') + 1);
+			return where.length() <= 5 ? where + " road" : where;
+		}
+
+		/** The Rest's own name, which tells it from the other seven in its circle: "Circle II — Lust, east road". */
+		public String label() {
+			return title + ", " + place();
+		}
 	}
 
 	/** Each circle's way in: the zone the Rest stands in, and its chest tier. */

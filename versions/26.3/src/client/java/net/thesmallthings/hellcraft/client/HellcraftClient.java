@@ -140,6 +140,7 @@ public class HellcraftClient implements ClientModInitializer {
 			}
 		});
 		ClientPlayNetworking.registerGlobalReceiver(JournalPayload.TYPE, (payload, context) -> ClientNav.journal(payload));
+		ClientPlayNetworking.registerGlobalReceiver(net.thesmallthings.hellcraft.net.RestNamesPayload.TYPE, (payload, context) -> ClientNav.restNames(payload));
 		ClientPlayNetworking.registerGlobalReceiver(OpenJournalPayload.TYPE, (payload, context) -> context.client().gui.setScreen(new JournalScreen()));
 		ClientPlayNetworking.registerGlobalReceiver(DangerPayload.TYPE, (payload, context) -> DangerMarks.receive(payload));
 		ClientPlayNetworking.registerGlobalReceiver(StylePayload.TYPE, (payload, context) -> StylePanel.receive(payload));

@@ -631,9 +631,19 @@ public class MapOfHellScreen extends Screen {
 		}
 		for (ShrineSites.Site site : ShrineSites.all()) {
 			boolean found = ClientNav.found(site.id());
-			out.add(new Marker(sx(site.x() + 0.5), sy(site.z() + 0.5), Shape.REST, found, List.of(
-					Component.literal("Virgil's Rest: " + site.title()),
-					Component.literal(found ? "Found: travel here from any Blood Altar." : "Not found yet: step into its ring to remember it.").withColor(DIM))));
+			String named = ClientNav.restName(site.id());
+			List<Component> lines = new ArrayList<>();
+			if (named != null) {
+				lines.add(Component.literal(named));
+				lines.add(Component.literal("Virgil's Rest: " + site.label()).withColor(DIM));
+			} else {
+				lines.add(Component.literal("Virgil's Rest: " + site.label()));
+			}
+			lines.add(Component.literal(found ? "Found: travel here from any Blood Altar." : "Not found yet: step into its ring to remember it.").withColor(DIM));
+			if (found && named == null) {
+				lines.add(Component.literal("Stand in it and type /rest name <name> to give it a name of your own.").withColor(DIM));
+			}
+			out.add(new Marker(sx(site.x() + 0.5), sy(site.z() + 0.5), Shape.REST, found, List.copyOf(lines)));
 		}
 		for (Guardian guardian : Guardian.values()) {
 			if (guardian.offMap()) {

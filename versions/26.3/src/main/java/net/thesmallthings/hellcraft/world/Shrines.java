@@ -106,7 +106,7 @@ public final class Shrines {
 			HellState.Soul soul = state.existing(p.getUUID());
 			if (soul != null && !soul.ghost && soul.visited.add(site.id())) {
 				state.setDirty();
-				Dialogue.notice(p, Component.literal("Virgil's Rest remembered (" + site.title() + "): you can travel back here from any Blood Altar.")
+				Dialogue.notice(p, Component.literal("Virgil's Rest remembered (" + site.label() + "): you can travel back here from any Blood Altar.")
 						.withStyle(ChatFormatting.GOLD));
 				MapSync.send(p);
 				level.playSound(null, p.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.6f, 1.4f);
@@ -271,7 +271,7 @@ public final class Shrines {
 			return null;
 		}
 		int d = (int) Math.sqrt(dist2(site, player.getX(), player.getZ()));
-		return Component.literal("Nearest Virgil's Rest (" + site.title() + "): " + site.x() + ", " + site.z() + ", " + d + " blocks away. "
+		return Component.literal("Nearest Virgil's Rest (" + RestNames.of(HellState.get(player.level().getServer()).existing(player.getUUID()), site) + "): " + site.x() + ", " + site.z() + ", " + d + " blocks away. "
 				+ "It's safe from monsters, and setting your respawn there is free.").withStyle(ChatFormatting.GOLD);
 	}
 

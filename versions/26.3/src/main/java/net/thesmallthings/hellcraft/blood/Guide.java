@@ -139,6 +139,8 @@ public final class Guide {
 				"",
 				"Travel (at any altar) teleports you to a Rest you've found.",
 				"",
+				"Name a Rest: stand in it and type /rest name and then the name. Only you see it, in your travel menu, on your map and here. /rest list shows your names.",
+				"",
 				"/circle shows the nearest one."));
 		pages.add(page("HELL WEAPONS",
 				"Craft the Bloodletter with Blood Fragments. The Reaper of Minos, Tithe Axe and Blood Pickaxe also cost Blood Hearts.",
@@ -270,6 +272,7 @@ public final class Guide {
 				"/hearts: your hearts",
 				"/withdraw [n]: turn hearts into Blood Hearts",
 				"/circle: where you are, and the nearest Rest",
+				"/rest name <name>: name the Rest you're standing in",
 				"/revive [name]: bring a ghost back",
 				"/guide: open this Journal",
 				"",

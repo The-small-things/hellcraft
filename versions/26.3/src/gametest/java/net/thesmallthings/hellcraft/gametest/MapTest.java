@@ -19,6 +19,7 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.blood.TravelMenu;
 import net.thesmallthings.hellcraft.client.dialogue.DialogueHud;
 import net.thesmallthings.hellcraft.client.layer.SoulFlocks;
 import net.thesmallthings.hellcraft.client.nav.ClientNav;
@@ -43,12 +44,15 @@ import net.thesmallthings.hellcraft.world.FraudSites;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.NobleCastle;
 import net.thesmallthings.hellcraft.world.Shades;
+import net.thesmallthings.hellcraft.world.ShrineSites;
+import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Sullen;
 import net.thesmallthings.hellcraft.world.Tombs;
 import net.thesmallthings.hellcraft.world.WindStreams;
 import net.thesmallthings.hellcraft.world.Zone;
 import net.thesmallthings.hellcraft.world.feature.WatchtowerFeature;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -241,6 +245,7 @@ public class MapTest implements FabricClientGameTest {
 			wingbeat(context, server, connection);
 			findingTheWay(context, server, connection);
 			arenaTeleport(context, server, connection);
+			restNames(context, server, connection);
 			dialogueBox(context, server);
 			nobleCastle(context, server, connection);
 			setPieces(context, server, connection);
@@ -888,6 +893,61 @@ public class MapTest implements FabricClientGameTest {
 	 * /hellcraft arena takes you to the edge of a lair, facing in (screenshot arena_minos_3): Minos's third lair, with
 	 * its ring of soul-fire braziers.
 	 */
+	/**
+	 * Naming a Rest (screenshots rest_travel_named, rest_map_named): Player0 stands in the Rest between the south and
+	 * east roads of Lust and names it with /rest name; the travel menu lists it by that name (the Rest's own name in its
+	 * lore) beside the others, each with a name of its own, and the Map of Hell shows the name too.
+	 */
+	private static void restNames(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
+		server.runCommand("gamemode creative Player0");
+		server.runCommand("hellcraft shrine build lust");
+		ShrineSites.Site site = ShrineSites.byId("lust_southeast");
+		int floor = server.computeOnServer(sv -> Shrines.floor(sv, site));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f 0 20", site.x() + 0.5, floor, site.z() + 3.5));
+		server.runCommand("hellcraft shrine visit Player0 lust_east");
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		server.runCommand("execute as Player0 at Player0 run rest name Nonna's Fire");
+		context.waitTicks(10);
+		String named = server.computeOnServer(sv -> HellState.get(sv).existing(sv.getPlayerList().getPlayerByName("Player0").getUUID()).restNames.get(site.id()));
+		if (!"Nonna's Fire".equals(named)) {
+			throw new AssertionError("/rest name didn't name the Rest Player0 stood in: " + named);
+		}
+		context.waitFor(client -> "Nonna's Fire".equals(ClientNav.restName(site.id())), 100);
+		// the travel menu at this Rest's altar, the pointer on the named Rest so its name and lore show
+		int index = server.computeOnServer(sv -> {
+			ServerPlayer p = sv.getPlayerList().getPlayerByName("Player0");
+			List<TravelMenu.Destination> places = TravelMenu.destinations(sv, HellState.get(sv).existing(p.getUUID()));
+			TravelMenu.open(p, sv.overworld(), new net.minecraft.core.BlockPos(site.x(), floor, site.z()));
+			for (int i = 0; i < places.size(); i++) {
+				if (places.get(i).id().equals(site.id())) {
+					return i;
+				}
+			}
+			return -1;
+		});
+		if (index < 0 || index >= 45) {
+			throw new AssertionError("the named Rest isn't on the travel menu's first page: " + index);
+		}
+		context.waitForScreen(net.minecraft.client.gui.screens.inventory.ContainerScreen.class);
+		double scale = context.computeOnClient(c -> (double) c.getWindow().getScreenWidth() / c.getWindow().getGuiScaledWidth());
+		int gw = context.computeOnClient(c -> c.getWindow().getGuiScaledWidth());
+		int gh = context.computeOnClient(c -> c.getWindow().getGuiScaledHeight());
+		// a 9x6 chest: 176 wide, 222 high, the first slot 8 in and 18 down, slots 18 apart
+		double x = (gw - 176) / 2.0 + 8 + (index % 9) * 18 + 8;
+		double y = (gh - 222) / 2.0 + 18 + (index / 9) * 18 + 8;
+		context.getInput().setCursorPos(x * scale, y * scale);
+		context.waitTicks(10);
+		context.takeScreenshot("rest_travel_named");
+		context.setScreen(() -> null);
+		context.setScreen(() -> MapOfHellScreen.at(site.x(), site.z(), 6));
+		context.getInput().setCursorPos(2, 2);
+		context.waitTicks(20);
+		context.takeScreenshot("rest_map_named");
+		context.setScreen(() -> null);
+		server.runCommand("gamemode spectator Player0");
+	}
+
 	private static void arenaTeleport(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		server.runCommand("gamemode spectator Player0");
 		server.runCommand("hellcraft arena minos 3 Player0");

@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.world.RestNames;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 import net.thesmallthings.hellcraft.world.Shrines;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +42,22 @@ public final class TravelMenu {
 	private TravelMenu() {
 	}
 
-	/** Where a trip can end: "gate" or a Rest id, with the altar there. */
-	public record Destination(String id, String title, HellState.GlobalSpot altar) {
+	/**
+	 * Where a trip can end: "gate" or a Rest id, with the altar there. {@code place} is the Rest's own name when the
+	 * player has given it one of theirs (the title), else null.
+	 */
+	public record Destination(String id, String title, HellState.GlobalSpot altar, @Nullable String place) {
+		Destination(String id, String title, HellState.GlobalSpot altar) {
+			this(id, title, altar, null);
+		}
+	}
+
+	/** A Rest as a destination, by the name this soul knows it by. */
+	private static Destination rest(MinecraftServer server, @Nullable HellState.Soul soul, ShrineSites.Site site, int floor) {
+		String given = soul == null ? null : RestNames.given(soul, site);
+		return new Destination(site.id(), given != null ? given : "Virgil's Rest: " + site.label(),
+				new HellState.GlobalSpot(server.overworld().dimension(), new BlockPos(site.x(), floor, site.z())),
+				given != null ? "Virgil's Rest: " + site.label() : null);
 	}
 
 	private static final Map<UUID, Long> READY = new HashMap<>();
@@ -57,8 +72,7 @@ public final class TravelMenu {
 		for (ShrineSites.Site site : ShrineSites.all()) {
 			Integer floor = Shrines.floor(server, site);
 			if (floor != null && (soul.visited.contains(site.id()) || KeysOfPeter.carrying(server, soul))) {
-				out.add(new Destination(site.id(), "Virgil's Rest: " + site.title(),
-						new HellState.GlobalSpot(server.overworld().dimension(), new BlockPos(site.x(), floor, site.z()))));
+				out.add(rest(server, soul, site, floor));
 			}
 		}
 		return out;
@@ -75,8 +89,7 @@ public final class TravelMenu {
 		if (site == null || floor == null) {
 			return null;
 		}
-		return new Destination(site.id(), "Virgil's Rest: " + site.title(),
-				new HellState.GlobalSpot(server.overworld().dimension(), new BlockPos(site.x(), floor, site.z())));
+		return rest(server, soul, site, floor);
 	}
 
 	/** Seconds until this player may travel again (0 = now). */
@@ -89,6 +102,8 @@ public final class TravelMenu {
 	private static final int PAGE = 45;
 	private static final int PREVIOUS = 45;
 	private static final int NEXT = 53;
+	/** The middle of the bottom row: how to give a Rest a name of your own. */
+	private static final int HOW_TO_NAME = 49;
 
 	public static void open(ServerPlayer player, ServerLevel level, BlockPos altar) {
 		open(player, level, altar, 0);
@@ -109,12 +124,16 @@ public final class TravelMenu {
 			ItemStack icon = new ItemStack(d.id().equals("gate") ? Items.RESPAWN_ANCHOR : Items.LODESTONE);
 			icon.set(DataComponents.ITEM_NAME, Component.literal(d.title()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 			List<Component> lore = new ArrayList<>();
+			if (d.place() != null) {
+				lore.add(line(d.place(), ChatFormatting.DARK_AQUA));
+			}
 			lore.add(line(p.getX() + ", " + p.getY() + ", " + p.getZ() + " (" + dist + " blocks)", ChatFormatting.GRAY));
 			lore.add(wait > 0 ? line("✖ You can travel again in " + wait + " s", ChatFormatting.RED) : line("▶ Click to travel", ChatFormatting.YELLOW));
 			icon.set(DataComponents.LORE, new ItemLore(lore));
 			container.setItem(i, icon);
 			slots.put(i, d);
 		}
+		container.setItem(HOW_TO_NAME, howToName());
 		if (page > 0) {
 			container.setItem(PREVIOUS, pageButton("◀ Previous page"));
 		}
@@ -128,6 +147,18 @@ public final class TravelMenu {
 			player.sendSystemMessage(Component.literal("Find a Virgil's Rest (the safe camp where the ramp comes down into each circle) to unlock teleporting there from any Blood Altar.")
 					.withStyle(ChatFormatting.GRAY));
 		}
+	}
+
+	private static ItemStack howToName() {
+		ItemStack icon = new ItemStack(Items.NAME_TAG);
+		icon.set(DataComponents.ITEM_NAME, Component.literal("Name a Rest").withStyle(ChatFormatting.AQUA));
+		icon.set(DataComponents.LORE, new ItemLore(List.of(
+				line("Stand inside a Virgil's Rest and type", ChatFormatting.GRAY),
+				line("/rest name <name>", ChatFormatting.YELLOW),
+				line("It shows here and on your Map of Hell", ChatFormatting.GRAY),
+				line("by that name (only you see it).", ChatFormatting.GRAY),
+				line("/rest name alone gives it back its own name.", ChatFormatting.GRAY))));
+		return icon;
 	}
 
 	private static ItemStack pageButton(String text) {

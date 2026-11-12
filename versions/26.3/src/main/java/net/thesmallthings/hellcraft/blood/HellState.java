@@ -160,6 +160,8 @@ public class HellState extends SavedData {
 		public long cainUntil;
 		/** Virgil's Rests this soul has reached (by site id): the places they can travel back to. */
 		public final Set<String> visited = new HashSet<>();
+		/** The names this soul gave Virgil's Rests (Rest id to name; only they see them: world/RestNames). */
+		public final Map<String, String> restNames = new java.util.TreeMap<>();
 		/** Codex entries this soul has opened (the bosses it has met). */
 		public final Set<String> codex = new HashSet<>();
 		/** Cutscenes this soul has seen (it may skip them next time). */
@@ -309,6 +311,9 @@ public class HellState extends SavedData {
 			CompoundTag visited = new CompoundTag();
 			s.visited.forEach(v -> visited.putBoolean(v, true));
 			st.put("visited", visited);
+			CompoundTag restNames = new CompoundTag();
+			s.restNames.forEach(restNames::putString);
+			st.put("restNames", restNames);
 			CompoundTag cutscenes = new CompoundTag();
 			s.cutscenes.forEach(c -> cutscenes.putBoolean(c, true));
 			st.put("cutscenes", cutscenes);
@@ -477,6 +482,13 @@ public class HellState extends SavedData {
 			s.tamedKilled = st.getIntOr("tamedKilled", 0);
 			s.weakKills = st.getIntOr("weakKills", 0);
 			s.visited.addAll(st.getCompoundOrEmpty("visited").keySet());
+			CompoundTag restNames = st.getCompoundOrEmpty("restNames");
+			for (String key : restNames.keySet()) {
+				String name = restNames.getStringOr(key, "");
+				if (!name.isEmpty()) {
+					s.restNames.put(key, name);
+				}
+			}
 			s.cutscenes.addAll(st.getCompoundOrEmpty("cutscenes").keySet());
 			s.codex.addAll(st.getCompoundOrEmpty("codex").keySet());
 			CompoundTag spoils = st.getCompoundOrEmpty("guardianSpoils");

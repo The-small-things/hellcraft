@@ -199,7 +199,10 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   36 streams of older worlds, `plans(seed)` = 72 drawn from the seed, pads clear of roads, lairs, Rests, secret ways and each other;
   `SecretWays` keeps clear of `legacyPads()` so its sites never move); `net/WindSync` picks it on the overworld's `ServerLevelEvents.LOAD`
   (`HellState.windSeed`, absent in old saves = legacy; before any of Lust generates, since pads level the ground) and sends
-  `net/WindPayload` on join; `WindStreamsTest`. Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
+  `net/WindPayload` on join; `WindStreamsTest`. Rest names: `ShrineSites.Site.place()`/`label()` (each Rest's own name: "Circle II — Lust, east road" or "..., southeast");
+  `world/RestNames` (`/rest name [name]` while standing in a Rest, `/rest list`; each player's own, `HellState.Soul.restNames`, sent as
+  `net/RestNamesPayload` to `ClientNav.restName`; shown in `TravelMenu` (the Rest's own name in the lore, a name tag in the bottom row
+  says how), the Map of Hell's tooltips, the Journal and /circle; `/hellcraft rests names test`; `MapTest.restNames` films `rest_*`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
   `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.
