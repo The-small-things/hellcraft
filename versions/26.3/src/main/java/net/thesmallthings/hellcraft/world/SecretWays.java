@@ -311,7 +311,8 @@ public final class SecretWays {
 		if (NobleCastle.distance(x, z) < NobleCastle.GREEN + radius + 30) {
 			return false;
 		}
-		for (double[] pad : WindStreams.pads()) {
+		// the wind pads of the first layout: the secret ways were placed clear of them, and stay where they are
+		for (double[] pad : WindStreams.legacyPads()) {
 			if (Math.hypot(pad[0] - x, pad[1] - z) < radius + 24) {
 				return false;
 			}

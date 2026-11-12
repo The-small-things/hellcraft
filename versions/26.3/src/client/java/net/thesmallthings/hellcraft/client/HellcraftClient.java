@@ -145,6 +145,10 @@ public class HellcraftClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(StylePayload.TYPE, (payload, context) -> StylePanel.receive(payload));
 		ClientPlayNetworking.registerGlobalReceiver(CutscenePayload.TYPE, (payload, context) -> CutscenePlayer.start(payload));
 		ClientPlayNetworking.registerGlobalReceiver(DialoguePayload.TYPE, (payload, context) -> DialogueHud.receive(payload));
+		// this world's wind streams in Lust (kept until the next world says otherwise: a single-player server may still be
+		// generating chunks with them as it shuts down)
+		ClientPlayNetworking.registerGlobalReceiver(net.thesmallthings.hellcraft.net.WindPayload.TYPE,
+				(payload, context) -> net.thesmallthings.hellcraft.world.WindStreams.use(payload.seed()));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			DangerMarks.clear();
 			CutscenePlayer.reset();

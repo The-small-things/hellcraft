@@ -228,6 +228,6 @@ public final class LayerRules {
 			}
 		}
 		return "Layer rules test: mud soft=" + mud + " roots soft=" + roots + " stone soft=" + stone + "; " + WindStreams.all().size()
-				+ " wind streams, in Lust=" + inLust + "; sullen spots on a line across the Styx=" + (sullen > 0);
+				+ " wind streams (" + (WindStreams.seed() == WindStreams.LEGACY ? "the first layout" : "this world's own") + "), in Lust=" + inLust + "; sullen spots on a line across the Styx=" + (sullen > 0);
 	}
 }

@@ -430,6 +430,11 @@ public final class InfernoGeometry {
 		return roadShape(theta, r, ROAD_LEVEL_HALF_WIDTH, ROAD_LEVEL_FADE);
 	}
 
+	/** How level a road keeps the ground at a column (0 off the roads): Lust's wind pads keep off them. */
+	static double roadLevel(double x, double z) {
+		return roadLevelling(Math.atan2(z, x), Math.sqrt(x * x + z * z));
+	}
+
 	private static double causeway(double theta, double r) {
 		return roadShape(theta, r, ROAD_HALF_WIDTH + 1.5, 2.0);
 	}

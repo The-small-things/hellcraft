@@ -365,7 +365,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # the upper circles' rules: Lust's wind streams, Gluttony's mud, Greed's hoarders, Wrath's sullen
   layers=$(rcon "hellcraft layers test")
   echo "$layers"
-  echo "$layers" | grep -q "mud soft=true roots soft=false stone soft=false; 36 wind streams, in Lust=true; sullen spots on a line across the Styx=true" \
+  echo "$layers" | grep -q "mud soft=true roots soft=false stone soft=false; 72 wind streams (this world's own), in Lust=true; sullen spots on a line across the Styx=true" \
     || { echo "The layer rules are wrong"; exit 1; }
   echo "$layers" | grep -q "4 ingots draw 0, 20 draw 1, a stack of blocks (576) draws 6; a gold block is worth 9 ingots" || { echo "Greed's hoarders are wrong"; exit 1; }
   rcon "summon hellcraft:hoarder 3247 200 1875 {NoAI:1b,Tags:[\"smoke_hoarder\"]}"
@@ -611,6 +611,7 @@ echo "---- hellcraft log lines ----"
 grep -i 'hellcraft\|inferno\|Gate of Hell\|Lucifer\|Reliquary\|Arena' "$LOG" || true
 
 fail=0
+grep -q "Lust's wind: 72 streams (this world's own)" "$LOG" || { echo "This world didn't get its own wind streams in Lust"; fail=1; }
 grep -q 'The Gate of Hell stands' "$LOG" || { echo "Landmarks were not built (is the overworld an Inferno world?)"; fail=1; }
 grep -qE 'Gate wall: [1-9][0-9]* blocks' "$LOG" || { echo "The Gate of Hell wall was not generated"; fail=1; }
 for phase in INTRO DUEL ENRAGE_TRANSITION ENRAGED TRUE_FORM_TRANSITION TRUE_FORM DEFEAT DONE; do

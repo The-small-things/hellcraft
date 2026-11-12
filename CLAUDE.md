@@ -195,7 +195,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   in (`nav/MapCloseUp`: the painted map in view repainted at screen resolution in the background once the view settles);
   `WaymarkTest.mapMemory` (`map_unexplored_zoom`, `map_overview`, `map_detail`). Gatehouse towers whose stair blocks the door toward the
   gate get it on the far side (`Gatehouses.Tower.walkDoorAngle`, `farDoor()`, `wallWalk` levels a walk along the wall top; keys `v3:`;
-  `gatehouse_far_door`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
+  `gatehouse_far_door`). Lust's wind per world: `world/WindStreams` has a `Layout` per wind seed (`use(seed)`; `LEGACY` 0 = the
+  36 streams of older worlds, `plans(seed)` = 72 drawn from the seed, pads clear of roads, lairs, Rests, secret ways and each other;
+  `SecretWays` keeps clear of `legacyPads()` so its sites never move); `net/WindSync` picks it on the overworld's `ServerLevelEvents.LOAD`
+  (`HellState.windSeed`, absent in old saves = legacy; before any of Lust generates, since pads level the ground) and sends
+  `net/WindPayload` on join; `WindStreamsTest`. Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
   `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.

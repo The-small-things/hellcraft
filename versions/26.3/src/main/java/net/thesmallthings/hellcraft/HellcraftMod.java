@@ -46,6 +46,7 @@ import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.JoinCheck;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.net.WindSync;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Ferries;
 import net.thesmallthings.hellcraft.world.GreatForge;
@@ -105,6 +106,7 @@ public class HellcraftMod implements ModInitializer {
 		HudSync.register();
 		Dialogue.register();
 		MapSync.register();
+		WindSync.register();
 		Danger.register();
 		CutsceneManager.register();
 		net.thesmallthings.hellcraft.blood.Sins.register();

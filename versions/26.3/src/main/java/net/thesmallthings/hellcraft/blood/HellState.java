@@ -32,6 +32,13 @@ public class HellState extends SavedData {
 
 	private final Map<UUID, Soul> souls = new HashMap<>();
 	public boolean landmarksBuilt;
+	/**
+	 * The seed of Lust's wind streams (world/WindStreams): drawn from the world seed when a new world is made;
+	 * {@link net.thesmallthings.hellcraft.world.WindStreams#LEGACY} (0) for worlds made before 3.4, which keep their first streams.
+	 */
+	public long windSeed;
+	/** False only for a world made just now, before its wind seed is picked. */
+	public boolean windChosen;
 	/** Where Antaeus stands (x, y, z of his feet, then his facing), once AntaeusCleft has placed him; null before. */
 	public double[] antaeus;
 	/** The Emperor's Spine has been laid (it is added to worlds made before it existed, too). */
@@ -333,6 +340,7 @@ public class HellState extends SavedData {
 		}
 		tag.put("souls", list);
 		tag.putBoolean("landmarks", landmarksBuilt);
+		tag.putLong("windSeed", windSeed);
 		if (antaeus != null) {
 			ListTag place = new ListTag();
 			for (double v : antaeus) {
@@ -493,6 +501,9 @@ public class HellState extends SavedData {
 			state.souls.put(id.get(), s);
 		}
 		state.landmarksBuilt = tag.getBooleanOr("landmarks", false);
+		// a world saved before 3.4 has no wind seed: it keeps the streams it was made with
+		state.windSeed = tag.getLongOr("windSeed", 0L);
+		state.windChosen = true;
 		ListTag place = tag.getListOrEmpty("antaeus");
 		if (place.size() == 4) {
 			state.antaeus = new double[]{place.getDoubleOr(0, 0), place.getDoubleOr(1, 0), place.getDoubleOr(2, 0), place.getDoubleOr(3, 0)};
