@@ -654,6 +654,67 @@ def new_animation(model, anim, length, loop=False):
     return act
 
 
+def add_bone(model, parent, name, pivot, rotation=(0, 0, 0)):
+    """Adds a bone (Blockbench pivot in pixels and rest rotation in degrees) under parent (a bone's name, or None for
+    the model's root)."""
+    root = model_root(model)
+    if name in model_bones(model):
+        raise BridgeError(f"{model} already has a bone {name}")
+    par = model_bones(model)[parent] if parent else root
+    parent_pivot = bone_pivot(model, parent) if parent else [0.0, 0.0, 0.0]
+    b = bpy.data.objects.new(name, None)
+    for coll in root.users_collection:
+        coll.objects.link(b)
+    b.empty_display_type = "PLAIN_AXES"
+    b.empty_display_size = 0.12
+    b.parent = par
+    b.matrix_parent_inverse = Matrix.Identity(4)
+    b.rotation_mode = ROT_MODE
+    b.location = to_blender([pivot[i] - parent_pivot[i] for i in range(3)])
+    b.rotation_euler = rot_to_blender(rotation)
+    b["bb_name"] = name
+    b["bb_kind"] = "bone"
+    b["bb_model"] = model
+    _store_rest(b)
+    return b
+
+
+def key(model, anim, bone, channel, keys, interp="catmullrom"):
+    """Keys a bone in an animation the Blockbench way: channel "rotation" (degrees), "position" (pixels) or "scale",
+    keys [(seconds, (x, y, z)), ...] as offsets from rest (scale as factors). Replaces that bone's keys on the channel."""
+    act = bpy.data.actions.get(f"{model}.{anim}")
+    if act is None:
+        raise BridgeError(f"{model} has no animation {anim}")
+    b = model_bones(model)[bone]
+    prop = dict(CHANNELS)[channel]
+    slot = next((s for s in act.slots if s.name_display == bone), None) or act.slots.new(id_type="OBJECT", name=bone)
+    if not act.layers:
+        act.layers.new("bb").strips.new(type="KEYFRAME")
+    bag = act.layers[0].strips[0].channelbag(slot, ensure=True)
+    for i in range(3):
+        old = bag.fcurves.find(prop, index=i)
+        if old is not None:
+            bag.fcurves.remove(old)
+    curves = [bag.fcurves.new(prop, index=i) for i in range(3)]
+    rest_loc, rest_rot = Vector(b["bb_rest_loc"]), Vector(b["bb_rest_rot"])
+    for fc in curves:
+        fc.keyframe_points.add(len(keys))
+    for j, (t, vec) in enumerate(sorted(keys, key=lambda k: k[0])):
+        if channel == "rotation":
+            val = Vector(rot_to_blender(vec)) + rest_rot
+        elif channel == "position":
+            val = to_blender(vec) + rest_loc
+        else:
+            val = Vector(scale_to_blender(vec))
+        for i, fc in enumerate(curves):
+            kp = fc.keyframe_points[j]
+            kp.co = (t * FPS, val[i])
+            kp.interpolation = INTERP_IN[interp]
+            kp.handle_left_type = kp.handle_right_type = "AUTO"
+    for fc in curves:
+        fc.update()
+
+
 def add_cube(model, bone, name, frm, size, uv, rotation=(0, 0, 0), origin=None, inflate=0.0, mirror=False):
     """Adds a cube in Blockbench terms (pixels; frm = its lowest corner, size whole pixels) to a bone, with its box UV
     patch at uv (a free patch of the texture: 2 * (depth + width) wide, depth + height tall)."""
