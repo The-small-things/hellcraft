@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 
 /**
- * Minos, Judge of the Damned: the body of his fight (MinosFight), modelled in tools/art/minos.py. He never leaves his
+ * Minos, Judge of the Damned: the body of his fight (MinosFight), modelled in art/minos.bbmodel (edited in Blender via tools/art/blender_bridge.py). He never leaves his
  * coils; the fight turns him toward his targets and tells him what to play.
  */
 public class MinosEntity extends BossEntity {

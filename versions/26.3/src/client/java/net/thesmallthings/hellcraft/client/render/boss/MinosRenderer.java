@@ -15,12 +15,12 @@ import net.thesmallthings.hellcraft.entity.boss.MinosEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 
 /**
- * Draws Minos: his model at 1.35 times its Blockbench size, his eyes lit even in the dark (minos_glow.png), a white
+ * Draws Minos: his model at 0.675 times its Blockbench size (built at twice the detail, so 1.35 times a game pixel), his eyes lit even in the dark (minos_glow.png), a white
  * flash while a blow can be blocked and a purple pulse while one can't (the danger language). He plays his own death
  * instead of tipping over.
  */
 public class MinosRenderer extends MobRenderer<MinosEntity, MinosRenderState, MinosModel> {
-	public static final float SCALE = 1.35f;
+	public static final float SCALE = 0.675f;
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/minos.png");
 	private static final RenderType GLOW = RenderTypes.eyes(HellcraftMod.id("textures/entity/minos_glow.png"));
 

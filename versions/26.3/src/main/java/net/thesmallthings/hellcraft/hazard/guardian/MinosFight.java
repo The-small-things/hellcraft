@@ -64,7 +64,7 @@ final class MinosFight extends GuardianFight {
 	private static final double TAIL_INNER = 2.5;
 	private static final double TAIL_OUTER = 9.5;
 	private static final float TAIL_DAMAGE = 8.0f;
-	/** The tail's turn during the sweep, in degrees from straight behind him (as tools/art/minos.py animates it). */
+	/** The tail's turn during the sweep, in degrees from straight behind him (as art/minos.bbmodel animates it). */
 	private static final double SWEEP_FROM = -50;
 	private static final double SWEEP_TO = 330;
 	private static final double SENTENCE_RADIUS = 3.0;

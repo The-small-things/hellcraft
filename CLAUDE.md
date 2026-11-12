@@ -64,9 +64,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   values come back exactly: `blender -b --factory-startup -P tools/art/blender_bridge.py -- roundtrip all` then
   `tools/gen_bosses.py` leaves git clean (Plutus's .bbmodel reorders its duplicate `*_claw_*` cubes, which share ids, so the
   game draws one box for both; same game output). Remade so far (their .bbmodel is now the source: edit it in Blender
-  through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers. Remakes are built at
+  through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers, minos. Remakes are built at
   twice the detail (two model pixels to a game pixel: `scale_model(model, 2)` doubles pivots and position keys) and drawn at
-  half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers), so heads have room for eyes, noses and lips.
+  half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers; `MinosRenderer.SCALE` 0.675, was 1.35), so heads have room for eyes, noses and lips.
 - `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh` takes the showcase pictures (or name groups:
   `hell,court,bosses,realms`; `HELLCRAFT_TESTS` runs only the listed test classes, without touching the manifest in git): no HUD,
   view distance 16, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without
@@ -140,7 +140,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `damnedSouls`. `DamnedTest` films every punishment (`damned_*`).
 - 3.1, Minos's judgement: `blood/Sins` works out each soul's worst sin from vanilla statistics (and `HellState.Soul`'s
   `tamedKilled`, `weakKills`), each count over an ordinary pilgrim's share, Limbo below 1; kept in `Soul.judged`/`judgedFact`.
-  `MinosFight.judge` wraps his tail once per circle (`MinosAnim.JUDGE` from tools/art/minos.py, event `count`) for souls
+  `MinosFight.judge` wraps his tail once per circle (`MinosAnim.JUDGE` from art/minos.bbmodel, event `count`) for souls
   walking in for the first time or judged differently; `Sins.tick` judges walk-ins while he sleeps; the title in the tab
   list is `mixin/ServerPlayerTabMixin` (`judgementTitles`), the Journal page comes with `MapSync.sendJournal`; `/judge`,
   `/hellcraft judge [player|test]`. The champions of the circles: `hazard/Champions` (names and monster kinds per circle,
