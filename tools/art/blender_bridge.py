@@ -559,6 +559,42 @@ def remove_model(model):
         bpy.data.images.remove(im)
 
 
+def new_model(model, tex_w, tex_h, header=None, glow=True):
+    """Starts an empty model (for one built from scratch, say from concept art): its collection and root, blank
+    texture and glow images of the given size, and its material. header: the .bbmodel's other fields (meta and the
+    like), e.g. those of the model it replaces; Blockbench's defaults when left out."""
+    remove_model(model)
+    scene = bpy.context.scene
+    scene.render.fps = FPS
+    scene.render.fps_base = 1.0
+    coll = bpy.data.collections.new(model)
+    scene.collection.children.link(coll)
+    root = _link(bpy.data.objects.new(model, None), coll)
+    root.empty_display_type = "ARROWS"
+    root.empty_display_size = 0.5
+    root["bb_model"] = model
+    root["bb_header"] = json.dumps(header or {
+        "meta": {"format_version": "4.10", "model_format": "modded_entity", "box_uv": True}, "name": model,
+        "model_identifier": "", "modded_entity_entity_class": "", "modded_entity_version": "1.17",
+        "modded_entity_flip_y": True, "visible_box": [1, 1, 0], "variable_placeholders": "",
+        "variable_placeholder_buttons": [], "timeline_setups": [], "unhandled_root_fields": {}})
+    root["bb_playing"] = ""
+    images = []
+    for i, name in enumerate([f"{model}.png"] + ([f"{model}_glow.png"] if glow else [])):
+        old = bpy.data.images.get(name)
+        if old is not None:
+            bpy.data.images.remove(old)
+        img = bpy.data.images.new(name, tex_w, tex_h, alpha=True)
+        img.pixels.foreach_set(np.zeros(tex_w * tex_h * 4, dtype=np.float32))
+        img.pack()
+        img.alpha_mode = "STRAIGHT"
+        img["bb_index"] = i
+        img["bb_model"] = model
+        images.append(img)
+    make_material(model, images[0], images[1] if glow else None)
+    return root
+
+
 def _capture_rest(model):
     """Takes the bones' current transforms as their rest pose (the scene is at rest), shifting every animation's
     keys by the same amount so each animation's offsets from rest stay as they were."""
