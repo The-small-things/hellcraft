@@ -679,6 +679,35 @@ def add_bone(model, parent, name, pivot, rotation=(0, 0, 0)):
     return b
 
 
+def scale_model(model, k):
+    """Scales a model by k about its feet: bone pivots, cubes (their boxes, origins and inflate) and every animation's
+    position offsets; rotations stay. For building at k times the detail and drawing it at 1/k in game (the renderer's
+    scale). Cubes keep their bb_uv, but their sizes change: re-pack and repaint their box UV patches afterwards."""
+    rest(model)
+    for b in model_bones(model).values():
+        b.location = Vector(b.location) * k
+        _store_rest(b)
+    for o in model_objects(model):
+        if o.get("bb_kind") == "cube":
+            o.location = Vector(o.location) * k
+            for v in o.data.vertices:
+                v.co = v.co * k
+            o["bb_inflate"] = float(o.get("bb_inflate", 0.0)) * k
+    for act in model_actions(model):
+        for layer in act.layers:
+            for strip in layer.strips:
+                for slot in act.slots:
+                    bag = strip.channelbag(slot)
+                    if bag is None:
+                        continue
+                    for fc in bag.fcurves:
+                        if fc.data_path == "location":  # absolute keys (rest + offset): both scale by k
+                            for kp in fc.keyframe_points:
+                                for p in (kp.co, kp.handle_left, kp.handle_right):
+                                    p[1] *= k
+                            fc.update()
+
+
 def key(model, anim, bone, channel, keys, interp="catmullrom"):
     """Keys a bone in an animation the Blockbench way: channel "rotation" (degrees), "position" (pixels) or "scale",
     keys [(seconds, (x, y, z)), ...] as offsets from rest (scale as factors). Replaces that bone's keys on the channel."""
