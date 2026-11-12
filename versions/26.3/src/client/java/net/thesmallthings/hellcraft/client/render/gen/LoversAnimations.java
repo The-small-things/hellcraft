@@ -25,7 +25,7 @@ public final class LoversAnimations {
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, -360F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("pair", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("soul_a", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 8F), AnimationChannel.Interpolations.CATMULLROM),
@@ -92,8 +92,8 @@ public final class LoversAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("pair", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, 2F, 2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.45F, KeyframeAnimations.posVec(0F, -2F, -6F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, 4F, 4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.45F, KeyframeAnimations.posVec(0F, -4F, -12F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("soul_a_reach", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -162,7 +162,7 @@ public final class LoversAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, 60F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("soul_a", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.4F, KeyframeAnimations.posVec(-8F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(1.4F, KeyframeAnimations.posVec(-16F, 12F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("soul_a_tail", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
@@ -177,7 +177,7 @@ public final class LoversAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, -60F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("soul_b", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.4F, KeyframeAnimations.posVec(8F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(1.4F, KeyframeAnimations.posVec(16F, 12F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("soul_b_hair1", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(-40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))

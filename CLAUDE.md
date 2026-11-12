@@ -64,7 +64,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   values come back exactly: `blender -b --factory-startup -P tools/art/blender_bridge.py -- roundtrip all` then
   `tools/gen_bosses.py` leaves git clean (Plutus's .bbmodel reorders its duplicate `*_claw_*` cubes, which share ids, so the
   game draws one box for both; same game output). Remade so far (their .bbmodel is now the source: edit it in Blender
-  through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers.
+  through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers. Remakes are built at
+  twice the detail (two model pixels to a game pixel: `scale_model(model, 2)` doubles pivots and position keys) and drawn at
+  half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers), so heads have room for eyes, noses and lips.
 - `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh` takes the showcase pictures (or name groups:
   `hell,court,bosses,realms`; `HELLCRAFT_TESTS` runs only the listed test classes, without touching the manifest in git): no HUD,
   view distance 16, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without

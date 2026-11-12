@@ -216,7 +216,7 @@ public class HellcraftClient implements ClientModInitializer {
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("lovers"), LoversMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.LOVERS, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("lovers"),
 				new SoulMonsterModel.Anims(LoversAnimations.IDLE, null, LoversAnimations.ATTACK, LoversAnimations.HURT, LoversAnimations.DEATH, null),
-				"lovers", 0.0f, 175));
+				"lovers", 0.0f, 175, 0.5f));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("glutton"), GluttonMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.GLUTTON, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("glutton"),
 				new SoulMonsterModel.Anims(GluttonAnimations.IDLE, GluttonAnimations.WALK, GluttonAnimations.ATTACK, GluttonAnimations.HURT,

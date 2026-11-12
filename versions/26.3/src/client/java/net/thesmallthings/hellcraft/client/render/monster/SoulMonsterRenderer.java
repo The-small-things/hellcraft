@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.client.render.monster;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -20,10 +21,18 @@ public class SoulMonsterRenderer<T extends SoulMonster> extends MobRenderer<T, S
 	private final Identifier texture;
 	/** How solid it looks (255: solid). */
 	private final int alpha;
+	/** The size it is drawn at: 0.5 for a model built at twice the detail (remade in Blender at two model pixels per texel). */
+	private final float scale;
 
 	public SoulMonsterRenderer(EntityRendererProvider.Context context, ModelLayerLocation layer, SoulMonsterModel.Anims anims, String name,
 							   float shadow, int alpha, String... headPath) {
+		this(context, layer, anims, name, shadow, alpha, 1.0f, headPath);
+	}
+
+	public SoulMonsterRenderer(EntityRendererProvider.Context context, ModelLayerLocation layer, SoulMonsterModel.Anims anims, String name,
+							   float shadow, int alpha, float scale, String... headPath) {
 		super(context, new SoulMonsterModel(context.bakeLayer(layer), anims, alpha < 255, headPath), shadow);
+		this.scale = scale;
 		this.texture = HellcraftMod.id("textures/entity/" + name + ".png");
 		this.alpha = alpha;
 		// the parts that glow in the dark, if it has any (a mimic has none: it would give itself away)
@@ -56,6 +65,13 @@ public class SoulMonsterRenderer<T extends SoulMonster> extends MobRenderer<T, S
 		state.hurt.copyFrom(monster.hurt);
 		state.death.copyFrom(monster.death);
 		state.special.copyFrom(monster.special);
+	}
+
+	@Override
+	protected void scale(SoulMonsterRenderState state, PoseStack poseStack) {
+		if (scale != 1.0f) {
+			poseStack.scale(scale, scale, scale);
+		}
 	}
 
 	@Override
