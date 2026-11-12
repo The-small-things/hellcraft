@@ -308,6 +308,7 @@ loadout command, the style panel, the guardians' lifts and lines about Lucifer, 
 from the play session, boss music (none sent yet), in later 3.0 updates. **3.0.0 was released** on 2026-10-19 at the owner's request, **3.3.0 was released** on 2026-11-09 at the owner's request (the explored Map of Hell, lairs on the diagonals, worn roads, Purgatory's Great Stair and terraces, plainer prestige; needs a new world), **3.2.0 was released** on 2026-11-07 at the owner's request (the 3.2 notes in the code map: onlookers, soundscapes, the Unbound, the Keys of Peter, lessons, the Labyrinth, the walls lived in, gatehouses), and **3.1.0 was released** on 2026-10-28 at the owner's request (begun 2026-10-20: title screen, boss impacts, the damned, grey Limbo, Minos's judgement, champions, secret ways, the Pilgrimage, ideas from comparing other Inferno mods; then waymarks, the Journal as a book with item pictures, the Map on parchment, and the README's showcase screenshots); later stable releases bump `mod_version` and add a "New in" block as usual. Each phase ships as a test build for a play session before the next.
 
 Local environment notes: the Ubuntu package `openjdk-25-jdk-headless` provides JDK 25 (the container ships
-21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works, but Modrinth is blocked, so
-a local smoke test must take Fabric API from maven.fabricmc.net. `./gradlew genSources` decompiles Minecraft into
+21). Maven Central sometimes answers 429; re-run (or retry with a pause). Docker works (start it with `dockerd &`), but Modrinth is
+blocked and containers can't reach the proxy: `bash tools/dev/smokelocal.sh` runs the smoke test locally anyway (Fabric
+API from maven.fabricmc.net, the server on the host network through the proxy). `./gradlew genSources` decompiles Minecraft into
 `versions/26.3/.gradle/loom-cache/minecraftMaven/.../*-sources.jar`: read the real code instead of guessing.
