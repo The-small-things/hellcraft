@@ -58,6 +58,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   (with only BossTest listed) films every model's key frames from its side, front on the right (`audit_*`): check
   that blows swing forward. `python3 tools/art/render.py <model> [--anim <name> --times 0.4,0.8] [--views front,three,side,back]`
   renders a .bbmodel offline in a second (versions/26.3/build/art-preview/): use it while building a model, then confirm in game.
+- Models in Blender (the model remake): `tools/art/blender_bridge.py` runs inside Blender 5.x (the Blender MCP) and imports a
+  .bbmodel as bones (Empties), box-UV cubes and one Action per animation (events as pose markers, 20 fps), and exports it back
+  (`import_model`, `play`, `rest`, `export_model`, `add_cube`, `refresh_uvs`; the axis mapping is in its docstring). Untouched
+  values come back exactly: `blender -b --factory-startup -P tools/art/blender_bridge.py -- roundtrip all` then
+  `tools/gen_bosses.py` leaves git clean (Plutus's .bbmodel reorders its duplicate `*_claw_*` cubes, which share ids, so the
+  game draws one box for both; same game output).
 - `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh` takes the showcase pictures (or name groups:
   `hell,court,bosses,realms`; `HELLCRAFT_TESTS` runs only the listed test classes, without touching the manifest in git): no HUD,
   view distance 16, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without
