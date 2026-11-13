@@ -15,28 +15,44 @@ public final class CoinMesh {
 	private CoinMesh() {
 	}
 
-	public static final int TEXTURE_WIDTH = 256;
-	public static final int TEXTURE_HEIGHT = 512;
+	public static final int TEXTURE_WIDTH = 512;
+	public static final int TEXTURE_HEIGHT = 1024;
 
 	public static LayerDefinition createLayer() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition root = mesh.getRoot();
-		PartDefinition p_coin = root.addOrReplaceChild("coin", CubeListBuilder.create().texOffs(80, 116).mirror(false).addBox(-4F, -40F, -16.5F, 8F, 80F, 33F).texOffs(164, 232).mirror(false).addBox(-5F, -16F, -16F, 10F, 32F, 32F),
-				PartPose.offset(0F, -16F, 0F));
-		p_coin.addOrReplaceChild("rim_0_r", CubeListBuilder.create().texOffs(0, 0).mirror(false).addBox(-3F, -41F, -17F, 6F, 82F, 34F),
+		PartDefinition p_coin = root.addOrReplaceChild("coin", CubeListBuilder.create().texOffs(96, 588).mirror(false).addBox(-9F, -40F, -40F, 18F, 80F, 80F).texOffs(276, 198).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
+				PartPose.offset(0F, -56F, 0F));
+		p_coin.addOrReplaceChild("disc_1_r", CubeListBuilder.create().texOffs(372, 198).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -0.3927F, 0F, 0F));
-		p_coin.addOrReplaceChild("disc_1_r", CubeListBuilder.create().texOffs(162, 116).mirror(false).addBox(-4F, -40F, -16.5F, 8F, 80F, 33F),
+		p_coin.addOrReplaceChild("disc_2_r", CubeListBuilder.create().texOffs(0, 396).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -0.7854F, 0F, 0F));
-		p_coin.addOrReplaceChild("rim_1_r", CubeListBuilder.create().texOffs(80, 0).mirror(false).addBox(-3F, -41F, -17F, 6F, 82F, 34F),
+		p_coin.addOrReplaceChild("disc_3_r", CubeListBuilder.create().texOffs(96, 396).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -1.1781F, 0F, 0F));
-		p_coin.addOrReplaceChild("disc_2_r", CubeListBuilder.create().texOffs(0, 232).mirror(false).addBox(-4F, -40F, -16.5F, 8F, 80F, 33F),
+		p_coin.addOrReplaceChild("disc_4_r", CubeListBuilder.create().texOffs(192, 396).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -1.5708F, 0F, 0F));
-		p_coin.addOrReplaceChild("rim_2_r", CubeListBuilder.create().texOffs(160, 0).mirror(false).addBox(-3F, -41F, -17F, 6F, 82F, 34F),
+		p_coin.addOrReplaceChild("disc_5_r", CubeListBuilder.create().texOffs(288, 396).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -1.9635F, 0F, 0F));
-		p_coin.addOrReplaceChild("disc_3_r", CubeListBuilder.create().texOffs(82, 232).mirror(false).addBox(-4F, -40F, -16.5F, 8F, 80F, 33F),
+		p_coin.addOrReplaceChild("disc_6_r", CubeListBuilder.create().texOffs(384, 396).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -2.3562F, 0F, 0F));
-		p_coin.addOrReplaceChild("rim_3_r", CubeListBuilder.create().texOffs(0, 116).mirror(false).addBox(-3F, -41F, -17F, 6F, 82F, 34F),
+		p_coin.addOrReplaceChild("disc_7_r", CubeListBuilder.create().texOffs(0, 588).mirror(false).addBox(-8F, -80F, -16F, 16F, 160F, 32F),
 				PartPose.offsetAndRotation(0F, 0F, 0F, -2.7489F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_0_r", CubeListBuilder.create().texOffs(0, 0).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -0.1963F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_1_r", CubeListBuilder.create().texOffs(92, 0).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -0.589F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_2_r", CubeListBuilder.create().texOffs(184, 0).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -0.9817F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_3_r", CubeListBuilder.create().texOffs(276, 0).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -1.3744F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_4_r", CubeListBuilder.create().texOffs(368, 0).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -1.7671F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_5_r", CubeListBuilder.create().texOffs(0, 198).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -2.1598F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_6_r", CubeListBuilder.create().texOffs(92, 198).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -2.5525F, 0F, 0F));
+		p_coin.addOrReplaceChild("rim_7_r", CubeListBuilder.create().texOffs(184, 198).mirror(false).addBox(-6F, -82F, -17F, 12F, 164F, 34F),
+				PartPose.offsetAndRotation(0F, 0F, 0F, -2.9452F, 0F, 0F));
 		return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	}
 }

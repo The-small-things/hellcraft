@@ -14,6 +14,7 @@ import net.thesmallthings.hellcraft.entity.boss.RollingCoin;
 /** Draws a great coin of the Mint standing on its edge, turned the way it rolls. */
 public class CoinRenderer extends EntityRenderer<RollingCoin, CoinRenderState> {
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/coin.png");
+	public static final float SCALE = 0.5f;
 	private final CoinModel model;
 
 	public CoinRenderer(EntityRendererProvider.Context context) {
@@ -38,6 +39,8 @@ public class CoinRenderer extends EntityRenderer<RollingCoin, CoinRenderState> {
 	public void submit(CoinRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
 		poseStack.pushPose();
 		poseStack.rotateDegrees(Axis.YP, 180.0f - state.yaw);
+		// built at twice the detail (art/coin.bbmodel, edited in Blender), so drawn at half its model size
+		poseStack.scale(SCALE, SCALE, SCALE);
 		poseStack.scale(-1.0f, -1.0f, 1.0f);
 		poseStack.translate(0.0f, -1.501f, 0.0f);
 		model.setupAnim(state);

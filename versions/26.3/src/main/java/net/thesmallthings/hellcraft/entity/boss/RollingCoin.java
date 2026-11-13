@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A great coin of the Mint, as tall as a house (tools/art/coin.py), rolling straight across the ground the way it
+ * A great coin of the Mint, as tall as a house (art/coin.bbmodel, edited in Blender via tools/art/blender_bridge.py), rolling straight across the ground the way it
  * faces and flattening whoever it meets (unblockable, like every red mark). Plutus sends them across his lair in his
  * fury; each one goes after a while. It can't be hurt.
  */

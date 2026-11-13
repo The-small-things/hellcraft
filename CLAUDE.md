@@ -64,9 +64,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   values come back exactly: `blender -b --factory-startup -P tools/art/blender_bridge.py -- roundtrip all` then
   `tools/gen_bosses.py` leaves git clean (Plutus's .bbmodel reorders its duplicate `*_claw_*` cubes, which share ids, so the
   game draws one box for both; same game output). Remade so far (their .bbmodel is now the source: edit it in Blender
-  through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers, minos, cerberus, plutus. Remakes are built at
+  through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers, minos, cerberus, plutus, coin. Remakes are built at
   twice the detail (two model pixels to a game pixel: `scale_model(model, 2)` doubles pivots and position keys) and drawn at
-  half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers; `MinosRenderer.SCALE` 0.675, was 1.35; `CerberusRenderer.SCALE` 0.75, was 1.5; `PlutusRenderer.SCALE` 0.65, was 1.3). `tools/art/remake_kit.py` holds the shared builder (bones, cubes, segments, packing and painting with bbmodel's painters, animation keys with events), so heads have room for eyes, noses and lips.
+  half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers; `MinosRenderer.SCALE` 0.675, was 1.35; `CerberusRenderer.SCALE` 0.75, was 1.5; `PlutusRenderer.SCALE` 0.65, was 1.3; `CoinRenderer.SCALE` 0.5, applied before its flip like a living model's). `tools/art/remake_kit.py` holds the shared builder (bones, cubes, segments, packing and painting with bbmodel's painters, animation keys with events), so heads have room for eyes, noses and lips.
 - `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh` takes the showcase pictures (or name groups:
   `hell,court,bosses,realms`; `HELLCRAFT_TESTS` runs only the listed test classes, without touching the manifest in git): no HUD,
   view distance 16, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without

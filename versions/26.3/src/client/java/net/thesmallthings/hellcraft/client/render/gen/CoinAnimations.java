@@ -18,11 +18,15 @@ public final class CoinAnimations {
 
 	public static final AnimationDefinition ROLL = AnimationDefinition.Builder.withLength(2F).looping()
 			.addAnimation("coin", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-90F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(-180F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-270F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.degreeVec(-360F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(0.25F, KeyframeAnimations.degreeVec(-45F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(0.5F, KeyframeAnimations.degreeVec(-90F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(0.75F, KeyframeAnimations.degreeVec(-135F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(-180F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(1.25F, KeyframeAnimations.degreeVec(-225F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(1.5F, KeyframeAnimations.degreeVec(-270F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(1.75F, KeyframeAnimations.degreeVec(-315F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(-360F, 0F, 0F), AnimationChannel.Interpolations.LINEAR)))
 			.build();
 
 	public static AnimationDefinition of(CoinAnim anim) {

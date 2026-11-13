@@ -143,10 +143,12 @@ class Builder:
                 header = {k: v for k, v in json.load(fh).items()
                           if k not in ("elements", "outliner", "animations", "textures")}
         height = self.pack()
-        bb.new_model(self.model, self.tex_width, height, header=header)
         canvas, glow = self.paint(height)
+        glows = any(p[3] for p in glow.pixels)  # a glow texture only if something glows
+        bb.new_model(self.model, self.tex_width, height, header=header, glow=glows)
         self.to_image(bpy.data.images[f"{self.model}.png"], canvas)
-        self.to_image(bpy.data.images[f"{self.model}_glow.png"], glow)
+        if glows:
+            self.to_image(bpy.data.images[f"{self.model}_glow.png"], glow)
         for parent, name, pivot, rot in self.bones:
             bb.add_bone(self.model, parent, name, pivot, rot)
         for c in self.cubes:
