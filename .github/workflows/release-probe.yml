@@ -1,0 +1,43 @@
+name: release-probe
+
+# A diagnostic, run by hand: can this repository's workflow token create releases? It makes draft releases (never
+# public) a few ways, prints what GitHub answers, and deletes whatever it made.
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Try creating releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          try() {
+            echo "---- $1"
+            shift
+            gh api -X POST "repos/$GITHUB_REPOSITORY/releases" "$@" -i 2>&1 | grep -E '^HTTP|"message"|"id":|"tag_name"|x-accepted-github-permissions|x-github-request-id' | head -8
+          }
+          try "draft, new tag" -f tag_name="probe-$GITHUB_RUN_ID" -f target_commitish="$GITHUB_SHA" -F draft=true -f name=probe
+          try "draft pre-release, new tag" -f tag_name="probe-pre-$GITHUB_RUN_ID" -f target_commitish="$GITHUB_SHA" -F draft=true -F prerelease=true -f name=probe
+          try "draft pre-release, the beta's tag name" -f tag_name="v0.0.0-beta" -f target_commitish="$GITHUB_SHA" -F draft=true -F prerelease=true -f name=probe
+          try "draft, no target" -f tag_name="probe-nt-$GITHUB_RUN_ID" -F draft=true -f name=probe
+          echo "---- a tag by git"
+          git init -q probe && cd probe && git remote add origin "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY" \
+            && git fetch -q --depth 1 origin "$GITHUB_SHA" && git tag "probe-git-$GITHUB_RUN_ID" FETCH_HEAD \
+            && git push origin "probe-git-$GITHUB_RUN_ID" 2>&1 | tail -3; cd ..
+      - name: Clean up
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for id in $(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" -q '.[] | select(.name == "probe") | .id'); do
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/$id" && echo "deleted release $id"
+          done
+          for t in "probe-$GITHUB_RUN_ID" "probe-pre-$GITHUB_RUN_ID" "v0.0.0-beta" "probe-nt-$GITHUB_RUN_ID" "probe-git-$GITHUB_RUN_ID"; do
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/$t" >/dev/null 2>&1 && echo "deleted tag $t"
+          done
+          true
