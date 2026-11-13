@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 
 /**
- * Phlegyas, the Ferryman of the Styx: the body of his fight (PhlegyasFight), modelled in tools/art/phlegyas.py. He
+ * Phlegyas, the Ferryman of the Styx: the body of his fight (PhlegyasFight), modelled in art/phlegyas.bbmodel (edited in Blender via tools/art/blender_bridge.py). He
  * stands waist-deep in the pool at the heart of his landing; the fight turns him toward his targets and tells him
  * what to play.
  */

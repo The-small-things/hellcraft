@@ -52,7 +52,7 @@ final class PhlegyasFight extends GuardianFight {
 	private static final double OAR_WIDTH = 1.6;
 	private static final float OAR_DAMAGE = 11.0f;
 	private static final double SWEEP_INNER = Fen.POOL;
-	/** The oar's reach, held out at arm's length (tools/art/phlegyas.py): the purple ring is exactly what it sweeps. */
+	/** The oar's reach, held out at arm's length (art/phlegyas.bbmodel): the purple ring is exactly what it sweeps. */
 	private static final double SWEEP_OUTER = 10.5;
 	private static final float SWEEP_DAMAGE = 8.0f;
 	private static final double WAVE_INNER = 10.0;

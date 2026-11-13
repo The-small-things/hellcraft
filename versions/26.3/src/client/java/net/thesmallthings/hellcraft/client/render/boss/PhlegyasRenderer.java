@@ -15,12 +15,12 @@ import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 
 /**
- * Draws Phlegyas: his model at 1.3 times its Blockbench size, his eyes burning like the beacons that call him
+ * Draws Phlegyas: his model at 0.65 times its Blockbench size (built at twice the detail, so 1.3 times a game pixel), his eyes burning like the beacons that call him
  * (phlegyas_glow.png), a white flash while his oar can be blocked and a purple pulse while it can't. He sinks for his
  * death.
  */
 public class PhlegyasRenderer extends MobRenderer<PhlegyasEntity, PhlegyasRenderState, PhlegyasModel> {
-	public static final float SCALE = 1.3f;
+	public static final float SCALE = 0.65f;
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/phlegyas.png");
 	private static final RenderType GLOW = RenderTypes.eyes(HellcraftMod.id("textures/entity/phlegyas_glow.png"));
 
