@@ -119,10 +119,19 @@ jobs:
           VER=$(grep '^mod_version=' versions/26.3/gradle.properties | cut -d= -f2)
           echo "tag=v${VER}-beta" >> "$GITHUB_OUTPUT"
           echo "ver=${VER}" >> "$GITHUB_OUTPUT"
+      # an older run whose workflow differs from the branch tip's can't create the tag (403), so it must not delete
+      # the beta either: only a run whose workflow matches the tip's touches it
+      - name: Check this commit can still be released
+        id: gate
+        run: |
+          git fetch -q --depth=1 origin "refs/heads/$GITHUB_REF_NAME"
+          if git diff --quiet "$GITHUB_SHA" FETCH_HEAD -- .github/workflows; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          else echo "ok=false" >> "$GITHUB_OUTPUT"; echo "::notice::the workflow changed after this commit; a newer run publishes the beta"; fi
       # The workflow token may not move a tag across a change to this workflow file, but it may delete a tag and
       # create one: so the previous beta and its tag go, and the next step makes them again at this commit. Older
       # pre-releases (betas of earlier versions, the old "-test" builds) go too, so only one beta is ever up.
       - name: Remove the previous beta
+        if: steps.gate.outputs.ok == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -136,12 +145,14 @@ jobs:
       # workflow token tag a commit whose workflow differs from the branch tip's: a notes edit pushed during a
       # build used to fail its release)
       - name: Write the release notes
+        if: steps.gate.outputs.ok == 'true'
         env:
           VER: ${{ steps.tag.outputs.ver }}
           REF: ${{ github.ref_name }}
           SHA: ${{ github.sha }}
         run: sed -e "s|{{VER}}|$VER|g" -e "s|{{REF}}|$REF|g" -e "s|{{SHA}}|$SHA|g" .github/notes/beta.md > "$RUNNER_TEMP/notes.md"
       - uses: softprops/action-gh-release@v2
+        if: steps.gate.outputs.ok == 'true'
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           target_commitish: ${{ github.sha }}
@@ -176,7 +187,7 @@ jobs:
           VER: ${{ steps.ver.outputs.ver }}
           REF: ${{ github.ref_name }}
           SHA: ${{ github.sha }}
-        run: sed -e "s|{{VER}}|$VER|g" -e "s|{{REF}}|$REF|g" -e "s|{{SHA}}|$SHA|g" .github/notes/stable.md > "$RUNNER_TEMP/notes.md"
+        run: sed -e "s|{{VER}}|$VER|g" -e "s|{{REF}}|$REF|g" -e "s|{{SHA}}|$SHA|g" src/.github/notes/stable.md > "$RUNNER_TEMP/notes.md"
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.ver.outputs.ver }}
