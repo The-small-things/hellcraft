@@ -555,7 +555,7 @@ public class MapOfHellScreen extends Screen {
 		for (int i = 0; i < LEGEND.length; i++) {
 			legendMark(g, i, x + 3, y);
 			g.text(font, font.plainSubstrByWidth(LEGEND[i], x1 - x - 18), x + 12, y, TEXT);
-			y += 12;
+			y += 11;
 		}
 		y += 8;
 		for (var line : font.split(Component.literal(found()), x1 - x - 8)) {
@@ -564,10 +564,13 @@ public class MapOfHellScreen extends Screen {
 		}
 		y += 8;
 		for (String hint : new String[]{"Scroll to zoom.", "Drag to move.", "Right-click to place a waymark.", "Point at anything to see what it is."}) {
-			for (var line : font.split(Component.literal(hint), x1 - x - 8)) {
-				if (y < y1 - 14) {
-					g.text(font, line, x, y, DIM);
-				}
+			// a hint shows whole or not at all (a short screen has room for the first few)
+			var lines = font.split(Component.literal(hint), x1 - x - 8);
+			if (y + 10 * lines.size() > y1 - 4) {
+				break;
+			}
+			for (var line : lines) {
+				g.text(font, line, x, y, DIM);
 				y += 10;
 			}
 		}
