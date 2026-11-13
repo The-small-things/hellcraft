@@ -16,6 +16,7 @@ import net.thesmallthings.hellcraft.entity.Ferry;
 public class FerryRenderer extends EntityRenderer<Ferry, FerryRenderState> {
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/ferry.png");
 	private static final Identifier GLOW = HellcraftMod.id("textures/entity/ferry_glow.png");
+	public static final float SCALE = 0.5f;
 	private final FerryModel model;
 
 	public FerryRenderer(EntityRendererProvider.Context context) {
@@ -40,6 +41,8 @@ public class FerryRenderer extends EntityRenderer<Ferry, FerryRenderState> {
 	public void submit(FerryRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
 		poseStack.pushPose();
 		poseStack.rotateDegrees(Axis.YP, 180.0f - state.yaw);
+		// built at twice the detail (art/ferry.bbmodel, edited in Blender), so drawn at half its model size
+		poseStack.scale(SCALE, SCALE, SCALE);
 		poseStack.scale(-1.0f, -1.0f, 1.0f);
 		poseStack.translate(0.0f, -1.501f, 0.0f);
 		model.setupAnim(state);

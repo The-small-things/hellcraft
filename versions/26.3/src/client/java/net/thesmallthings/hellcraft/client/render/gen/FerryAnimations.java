@@ -18,19 +18,23 @@ public final class FerryAnimations {
 
 	public static final AnimationDefinition FLOAT = AnimationDefinition.Builder.withLength(4F).looping()
 			.addAnimation("hull", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-					new Keyframe(0F, KeyframeAnimations.degreeVec(-1F, 0F, 1F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -1F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.degreeVec(1F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 1F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(4F, KeyframeAnimations.degreeVec(-1F, 0F, 1F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-1F, 0F, 1.5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, -1.5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(1F, 0F, 0.5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 1.2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4F, KeyframeAnimations.degreeVec(-1F, 0F, 1.5F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("hull", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, 1.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, -2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.posVec(0F, 0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("lantern", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 3F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, -3F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(4F, KeyframeAnimations.degreeVec(0F, 0F, 3F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.degreeVec(-2F, 0F, 6F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.degreeVec(1F, 0F, -2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.degreeVec(3F, 0F, -6F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.degreeVec(-1F, 0F, 2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4F, KeyframeAnimations.degreeVec(-2F, 0F, 6F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 
 	public static AnimationDefinition of(FerryAnim anim) {

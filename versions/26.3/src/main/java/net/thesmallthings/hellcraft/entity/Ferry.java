@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Phlegyas's ferry (tools/art/ferry.py): it glides in to a dock, waits for pilgrims, and carries whoever boards it
+ * Phlegyas's ferry (art/ferry.bbmodel, edited in Blender via tools/art/blender_bridge.py): it glides in to a dock, waits for pilgrims, and carries whoever boards it
  * (right-click) across the Fen of Styx and through a gate of Dis, where it sets them down on the road inside the walls and
  * goes back into the fog (world/Ferries says where and when). It skims over whatever stands in the water (reeds,
  * boardwalks, the banks) instead of ploughing through it, and nobody aboard can be hurt (Carrier): not the sullen, not
