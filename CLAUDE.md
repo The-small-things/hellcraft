@@ -15,8 +15,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   guardians, the Spine's whispers) may speak in Dante's voice, but every mechanic also gets a plain tip.
 - Releases: a commit whose message contains `[release]` publishes a stable GitHub release tagged
   `v<mod_version>`. Bump `mod_version` in `versions/26.3/gradle.properties` and add a "New in x.y.z" block to the
-  stable-release body in `.github/workflows/build.yml`. Every other push to the branch refreshes the
-  `v<version>-beta` pre-release (the beta; older pre-releases are removed). Publish stable only when the owner asks.
+  stable release's notes, `.github/notes/stable.md`. Every other push to the branch refreshes the
+  `v<version>-beta` pre-release (the beta; older pre-releases are removed), with the notes in `.github/notes/beta.md`.
+  Publish stable only when the owner asks. Release notes live only in those two files (`{{VER}}`, `{{REF}}` and
+  `{{SHA}}` are filled in by the release jobs), never in `.github/workflows/build.yml`: GitHub won't let the workflow
+  token tag a commit whose workflow file differs from the branch tip's, so a notes edit inside the workflow made every
+  build still running fail its release (403).
 
 ## Building and testing
 - CI (`.github/workflows/build.yml`) builds 26.3, then boots a real server with
