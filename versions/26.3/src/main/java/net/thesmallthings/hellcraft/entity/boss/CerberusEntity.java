@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 
 /**
- * Cerberus, the Great Worm: the body of his fight (CerberusFight), modelled in tools/art/cerberus.py. Unlike Minos he
+ * Cerberus, the Great Worm: the body of his fight (CerberusFight), modelled in art/cerberus.bbmodel (edited in Blender via tools/art/blender_bridge.py). Unlike Minos he
  * hunts: the fight walks him after his prey between blows (his walk plays from his speed) and tells him what to play.
  */
 public class CerberusEntity extends BossEntity {

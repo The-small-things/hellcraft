@@ -15,11 +15,11 @@ import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 
 /**
- * Draws Cerberus: his model at 1.5 times its Blockbench size, his six red eyes lit in the dark (cerberus_glow.png), a
+ * Draws Cerberus: his model at 0.75 times its Blockbench size (built at twice the detail, so 1.5 times a game pixel), his six red eyes lit in the dark (cerberus_glow.png), a
  * white flash while a bite can be blocked and a purple pulse while his howl can't. He plays his own death.
  */
 public class CerberusRenderer extends MobRenderer<CerberusEntity, CerberusRenderState, CerberusModel> {
-	public static final float SCALE = 1.5f;
+	public static final float SCALE = 0.75f;
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/cerberus.png");
 	private static final RenderType GLOW = RenderTypes.eyes(HellcraftMod.id("textures/entity/cerberus_glow.png"));
 
