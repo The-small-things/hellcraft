@@ -29,8 +29,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - **Client game tests** (`versions/26.3/src/gametest`, run with `bash tools/dev/clienttest.sh`): a real headless
   client (Xvfb; 26.3 falls back to software Vulkan, since Xvfb's GLX has no matching visual) joins a dedicated
   server and single-player worlds and takes screenshots into `versions/26.3/build/run/clientGameTest/screenshots`.
-  Look at them (Read the PNGs; crop and enlarge small details with PIL). CI runs them too (`client-test-26`,
-  screenshots uploaded as an artifact) and releases only if they pass. Use them to check every model, texture,
+  Look at them (Read the PNGs; crop and enlarge small details with PIL). CI runs them too (`client-test-26`, split over
+  four machines at once by `tools/dev/test-shards.txt`, `HELLCRAFT_SHARD=<n>`; keep the shards about equal in time and run
+  `python3 tools/dev/testshard.py check` after adding a test class; each shard's screenshots are an artifact) and releases only if they pass. Use them to check every model, texture,
   animation and HUD change. Locally they need `apt-get install xvfb mesa-vulkan-drivers mesa-utils`.
 - CI builds put the commit in the version (`3.0.0+26.3.abc1234`), so the join check tells test builds apart.
 - **Local builds need network access** to `maven.fabricmc.net`, `meta.fabricmc.net`, `piston-meta.mojang.com`,

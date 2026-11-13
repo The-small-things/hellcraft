@@ -2,7 +2,10 @@
 # .github/workflows/build.yml lists the shard numbers). The shard marked * also runs every test class no line names, so
 # a new test is never left out. Balance the shards by time: the run takes as long as the slowest one.
 # `python3 tools/dev/testshard.py check` checks this against the test list.
-1 MapTest
-2 BossTest LuciferTest
-3 NetherTest ParadisoTest
-4 *
+# Measured locally on 2026-11-13 (minutes): Boss 11.3, Map 9.3, Paradiso 6.5, Lucifer 6.2, Nether 4.9, Waymark 3.0,
+# Damned 2.4, Title 1.7, Limbo 1.6, Judgement and Secrets about 3 each, the rest under a minute; each machine also
+# spends 2 to 3 minutes building and starting the game.
+1 BossTest LimboTest
+2 MapTest TitleTest ImpactTest JoinTest HudTest RigTest
+3 LuciferTest ParadisoTest
+4 * NetherTest WaymarkTest DamnedTest JudgementTest SecretsTest
