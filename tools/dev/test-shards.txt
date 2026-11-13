@@ -7,5 +7,5 @@
 # spends 2 to 3 minutes building and starting the game.
 1 BossTest LimboTest
 2 MapTest TitleTest ImpactTest JoinTest HudTest RigTest
-3 LuciferTest ParadisoTest
-4 * NetherTest WaymarkTest DamnedTest JudgementTest SecretsTest
+3 LuciferTest ParadisoTest SecretsTest
+4 * NetherTest WaymarkTest DamnedTest JudgementTest

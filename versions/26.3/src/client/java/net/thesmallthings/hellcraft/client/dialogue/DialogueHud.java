@@ -29,7 +29,7 @@ public final class DialogueHud implements HudElement {
 	/** The widest the box's text runs, in GUI pixels. */
 	private static final int MAX_WIDTH = 260;
 	/** Lines waiting beyond this many drop the oldest. */
-	private static final int MAX_WAITING = 6;
+	private static final int MAX_WAITING = 10;
 	private static final float LETTERS_PER_TICK = 1.8f;
 	private static final int FADE_IN = 4;
 	private static final int FADE_OUT = 8;
@@ -53,10 +53,43 @@ public final class DialogueHud implements HudElement {
 	private static int shown;
 
 	public static void receive(DialoguePayload payload) {
-		if (WAITING.size() >= MAX_WAITING) {
-			WAITING.pollFirst();
+		String text = payload.line().getString();
+		remember((payload.speaker().isEmpty() ? "" : payload.speaker() + ": ") + text);
+		// a line already waiting (a notice sent again) is shown once
+		for (Line waiting : WAITING) {
+			if (waiting.speaker().equals(payload.speaker()) && waiting.text().getString().equals(text)) {
+				return;
+			}
 		}
-		WAITING.addLast(new Line(payload.speaker(), payload.colour(), payload.line(), payload.shout(), payload.line().getString().length()));
+		if (WAITING.size() >= MAX_WAITING) {
+			// full (lines pile up while a cutscene plays): a notice gives way before anything a character says
+			Line drop = null;
+			for (Line waiting : WAITING) {
+				if (waiting.speaker().isEmpty()) {
+					drop = waiting;
+					break;
+				}
+			}
+			Line dropped = drop != null ? drop : WAITING.peekFirst();
+			WAITING.remove(dropped);
+			remember("(dropped) " + dropped.text().getString());
+		}
+		WAITING.addLast(new Line(payload.speaker(), payload.colour(), payload.line(), payload.shout(), text.length()));
+	}
+
+	/** The last lines received (and any dropped), newest last: for the client test's failure messages. */
+	private static final Deque<String> RECENT = new ArrayDeque<>();
+
+	private static void remember(String line) {
+		if (RECENT.size() >= 16) {
+			RECENT.pollFirst();
+		}
+		RECENT.addLast(line);
+	}
+
+	/** The last lines received, newest last (for the client test). */
+	public static String recent() {
+		return String.join(" | ", RECENT);
 	}
 
 	/** How many lines have been put on screen since the game started (for the client test). */

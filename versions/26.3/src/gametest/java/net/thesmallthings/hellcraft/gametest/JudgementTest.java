@@ -95,10 +95,10 @@ public class JudgementTest implements FabricClientGameTest {
 			throw new AssertionError("Minos never pronounced his verdict");
 		}
 		// the dialogue box catches up (it waits out his cutscene): his verdict, then the plain line
-		context.waitFor(client -> DialogueHud.showing().contains("Heresy"), 900);
+		waitForLine(context, "Heresy", 900);
 		context.waitTicks(30);
 		context.takeScreenshot("minos_judgement");
-		context.waitFor(client -> DialogueHud.showing().contains("Your worst sin"), 600);
+		waitForLine(context, "Your worst sin", 600);
 		context.waitTicks(60);
 		context.takeScreenshot("minos_judgement_plain");
 		String verdict = server.computeOnServer(s -> {
@@ -140,6 +140,18 @@ public class JudgementTest implements FabricClientGameTest {
 		server.computeOnServer(s -> GuardianManager.slay(Guardian.MINOS));
 		context.waitTicks(40);
 		server.runCommand(String.format(Locale.ROOT, "forceload remove %d %d", x, z));
+	}
+
+	/** Waits for the dialogue box to show a line containing these words; if it never does, says what it got instead. */
+	private static void waitForLine(ClientGameTestContext context, String words, int ticks) {
+		for (int t = 0; t < ticks; t += 5) {
+			if (context.computeOnClient(client -> DialogueHud.showing().contains(words))) {
+				return;
+			}
+			context.waitTicks(5);
+		}
+		throw new AssertionError("the dialogue box never showed \"" + words + "\"; the last lines it received: "
+				+ context.computeOnClient(client -> DialogueHud.recent()));
 	}
 
 	private static boolean waitForVerdict(ClientGameTestContext context, TestDedicatedServerContext server, int ticks) {
