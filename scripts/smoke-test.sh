@@ -426,7 +426,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   # every Rest has a name of its own, and a player's name for one is kept, cleaned and seen only by them
   restnames=$(rcon "hellcraft rests names test")
   echo "$restnames"
-  echo "$restnames" | grep -q "Rest names test: 76 Rests, all named apart=true (Circle II.*Lust, southeast); kept=true private=true shortened=true undone=true" \
+  echo "$restnames" | grep -q "Rest names test: 76 Rests, all named apart=true (Circle II.*Lust, southeast); kept=true private=true shortened=true undone=true; altars: Blood Altar in Gluttony named=true undone=true" \
     || { echo "Naming Rests is wrong"; exit 1; }
   waymarks=$(rcon "hellcraft waymarks test")
   echo "$waymarks"

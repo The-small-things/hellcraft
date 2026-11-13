@@ -40,6 +40,8 @@ public class MapOfHellScreen extends Screen {
 	private static final int LAIR = 0xFFE04040;
 	private static final int BEATEN = 0xFF808080;
 	private static final int SECRET = 0xFF40D8E8;
+	/** A Blood Altar found outside the Rests: crying obsidian's purple. */
+	private static final int ALTAR = 0xFFB04CF0;
 	/** Laid over the painted map, so the ground you've seen stands out from what you haven't. */
 	private static final int UNSEEN_FADE = 0x58CBB894;
 	private static final float MAX_ZOOM = 48;
@@ -484,7 +486,7 @@ public class MapOfHellScreen extends Screen {
 		g.fill(x, y - 3, x + 1, y + 1, 0xFF000000);
 	}
 
-	private static final String[] LEGEND = {"Way down", "Rest found", "Rest not found", "Guardian", "Beaten", "Secret way", "Waymark", "You", "Ground seen"};
+	private static final String[] LEGEND = {"Way down", "Rest found", "Rest not found", "Guardian", "Beaten", "Secret way", "Altar found", "Waymark", "You", "Ground seen"};
 
 	private void legendMark(GuiGraphicsExtractor g, int i, int mx, int y) {
 		switch (i) {
@@ -498,8 +500,12 @@ public class MapOfHellScreen extends Screen {
 				g.fill(mx - 2, y + 2, mx + 3, y + 7, SECRET);
 				g.fill(mx - 1, y + 3, mx + 2, y + 6, 0xFF061418);
 			}
-			case 6 -> pin(g, mx, y + 8, ClientWaymarks.COLOURS[0], false);
-			case 7 -> g.fill(mx - 2, y + 2, mx + 3, y + 7, 0xFFFFFFFF);
+			case 6 -> {
+				g.fill(mx - 2, y + 2, mx + 3, y + 7, 0xFF000000);
+				g.fill(mx - 1, y + 3, mx + 2, y + 6, ALTAR);
+			}
+			case 7 -> pin(g, mx, y + 8, ClientWaymarks.COLOURS[0], false);
+			case 8 -> g.fill(mx - 2, y + 2, mx + 3, y + 7, 0xFFFFFFFF);
 			default -> {
 				// a patch of real ground: grass, a path, water
 				g.fill(mx - 3, y + 1, mx + 4, y + 8, 0xFF000000);
@@ -645,6 +651,13 @@ public class MapOfHellScreen extends Screen {
 			}
 			out.add(new Marker(sx(site.x() + 0.5), sy(site.z() + 0.5), Shape.REST, found, List.copyOf(lines)));
 		}
+		// the Blood Altars you've found outside the Rests (ruined ones, built ones)
+		for (ClientNav.Altar altar : ClientNav.altars()) {
+			out.add(new Marker(sx(altar.x() + 0.5), sy(altar.z() + 0.5), Shape.ALTAR, true, List.of(
+					Component.literal(altar.name()),
+					Component.literal("A Blood Altar you've found: travel here from any Blood Altar.").withColor(DIM),
+					Component.literal("Beside it, /rest name <name> names it.").withColor(DIM))));
+		}
 		for (Guardian guardian : Guardian.values()) {
 			if (guardian.offMap()) {
 				continue;
@@ -672,7 +685,7 @@ public class MapOfHellScreen extends Screen {
 		return out;
 	}
 
-	private enum Shape {RAMP, GATE, PIT, REST, LAIR, SECRET, NONE}
+	private enum Shape {RAMP, GATE, PIT, REST, LAIR, SECRET, ALTAR, NONE}
 
 	private record Marker(int x, int y, Shape shape, boolean done, List<Component> lines) {
 		void draw(GuiGraphicsExtractor g) {
@@ -698,6 +711,11 @@ public class MapOfHellScreen extends Screen {
 					CompassHud.diamond(g, x, y, done ? CompassHud.REST_FOUND : CompassHud.REST_NEW);
 				}
 				case LAIR -> lair(g, x, y, done ? BEATEN : LAIR, done);
+				case ALTAR -> {
+					// a found Blood Altar: a dark square, crying obsidian's purple at its heart
+					g.fill(x - 2, y - 2, x + 3, y + 3, 0xFF000000);
+					g.fill(x - 1, y - 1, x + 2, y + 2, ALTAR);
+				}
 				case SECRET -> {
 					// a secret way: a dark hole ringed in soul-fire blue
 					g.fill(x - 3, y - 2, x + 4, y + 3, 0xFF000000);

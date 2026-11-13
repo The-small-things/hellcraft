@@ -24,7 +24,8 @@ import java.util.Map;
 
 /**
  * Names for Virgil's Rests, each player's own: stand in a Rest and type {@code /rest name <name>}, and that Rest goes by
- * your name in your travel menu, on your Map of Hell and in your Journal (nobody else sees it). {@code /rest name} alone
+ * your name in your travel menu, on your Map of Hell and in your Journal (nobody else sees it). Beside a Blood Altar
+ * you've found (world/FoundAltars) the same command names the altar. {@code /rest name} alone
  * gives it back its own name; {@code /rest list} shows the names you've given. Kept in {@code HellState.Soul.restNames}
  * and sent to the player's game as {@code RestNamesPayload}.
  */
@@ -85,6 +86,18 @@ public final class RestNames {
 		return "You named this Rest \"" + name + "\". It goes by that name in your travel menu, on your Map of Hell and in your Journal (only you see it).";
 	}
 
+	/** Names (or, with an empty name, un-names) a found Blood Altar for this soul. Returns what happened. */
+	public static String nameAltar(HellState.Soul soul, FoundAltars.Altar altar, String raw) {
+		String name = clean(raw);
+		String own = FoundAltars.defaultName(altar.dimension(), altar.pos());
+		soul.altars.put(altar.key(), name);
+		if (name.isEmpty()) {
+			return altar.given() != null ? "This altar has its own name again: " + own + "."
+					: "This altar already goes by its own name: " + own + ". To name it, type /rest name and then the name.";
+		}
+		return "You named this altar \"" + name + "\". It goes by that name in your travel menu and on your Map of Hell (only you see it).";
+	}
+
 	public static void send(ServerPlayer player) {
 		if (!ServerPlayNetworking.canSend(player, RestNamesPayload.TYPE)) {
 			return;
@@ -121,12 +134,20 @@ public final class RestNames {
 	private static int rename(CommandSourceStack source, String raw) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
 		ShrineSites.Site site = standingIn(player);
-		if (site == null) {
-			source.sendFailure(Component.literal("Stand inside a Virgil's Rest (the ring of soul fire round its altar) to name it."));
-			return 0;
-		}
 		HellState.Soul soul = Hearts.soul(player);
-		String result = name(soul, site, raw);
+		String result;
+		if (site != null) {
+			result = name(soul, site, raw);
+		} else {
+			FoundAltars.Altar altar = FoundAltars.beside(player);
+			if (altar == null) {
+				source.sendFailure(Component.literal("Stand inside a Virgil's Rest (the ring of soul fire round its altar), or beside a Blood Altar you've found "
+						+ "(right-click it first), to name it."));
+				return 0;
+			}
+			result = nameAltar(soul, altar, raw);
+			FoundAltars.send(player);
+		}
 		HellState.get(player.level().getServer()).setDirty();
 		send(player);
 		source.sendSuccess(() -> Component.literal(result).withStyle(ChatFormatting.GOLD), false);
@@ -135,10 +156,18 @@ public final class RestNames {
 
 	private static int list(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		HellState.Soul soul = Hearts.soul(source.getPlayerOrException());
+		List<FoundAltars.Altar> altars = FoundAltars.of(soul);
+		if (!altars.isEmpty()) {
+			source.sendSuccess(() -> Component.literal("Blood Altars you've found (" + altars.size() + "):").withStyle(ChatFormatting.GOLD), false);
+			for (FoundAltars.Altar a : altars) {
+				source.sendSuccess(() -> Component.literal("  " + a.name()).withStyle(ChatFormatting.YELLOW)
+						.append(Component.literal(" (" + a.pos().getX() + ", " + a.pos().getY() + ", " + a.pos().getZ() + ")").withStyle(ChatFormatting.GRAY)), false);
+			}
+		}
 		if (soul.restNames.isEmpty()) {
 			source.sendSuccess(() -> Component.literal("You haven't named any Rests. Stand in one and type /rest name and then a name.")
 					.withStyle(ChatFormatting.GRAY), false);
-			return 0;
+			return altars.size();
 		}
 		source.sendSuccess(() -> Component.literal("The Rests you've named:").withStyle(ChatFormatting.GOLD), false);
 		for (ShrineSites.Site site : ShrineSites.all()) {
@@ -168,7 +197,17 @@ public final class RestNames {
 		boolean shortened = of(alice, site).length() == MAX_LENGTH;
 		name(alice, site, "");
 		boolean undone = of(alice, site).equals(site.label());
+		// a found altar: kept by its place, named, given back its own name
+		String key = FoundAltars.key(Level.OVERWORLD, new net.minecraft.core.BlockPos(3100, 120, 40));
+		alice.altars.put(key, "");
+		FoundAltars.Altar altar = FoundAltars.parse(key, alice.altars.get(key));
+		String own = altar == null ? "?" : altar.name();
+		boolean altarNamed = altar != null && nameAltar(alice, altar, "Nonna's Fire").startsWith("You named")
+				&& "Nonna's Fire".equals(FoundAltars.of(alice).getFirst().name());
+		boolean altarUndone = altar != null && nameAltar(alice, FoundAltars.of(alice).getFirst(), "").contains("own name again")
+				&& FoundAltars.of(alice).getFirst().name().equals(own);
 		return "Rest names test: " + ShrineSites.all().size() + " Rests, all named apart=" + unique + " (" + site.label() + "); kept=" + kept
-				+ " private=" + privately + " shortened=" + shortened + " undone=" + undone;
+				+ " private=" + privately + " shortened=" + shortened + " undone=" + undone + "; altars: " + own + " named=" + altarNamed
+				+ " undone=" + altarUndone;
 	}
 }

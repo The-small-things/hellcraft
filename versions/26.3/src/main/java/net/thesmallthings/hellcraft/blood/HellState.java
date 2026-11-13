@@ -162,6 +162,11 @@ public class HellState extends SavedData {
 		public final Set<String> visited = new HashSet<>();
 		/** The names this soul gave Virgil's Rests (Rest id to name; only they see them: world/RestNames). */
 		public final Map<String, String> restNames = new java.util.TreeMap<>();
+		/**
+		 * The Blood Altars outside the Rests this soul has found, in the order found (world/FoundAltars): "dimension x y z" to
+		 * the name they gave it (empty for none). Ruined altars and the ones players build; travel goes to any of them.
+		 */
+		public final Map<String, String> altars = new java.util.LinkedHashMap<>();
 		/** Codex entries this soul has opened (the bosses it has met). */
 		public final Set<String> codex = new HashSet<>();
 		/** Cutscenes this soul has seen (it may skip them next time). */
@@ -314,6 +319,14 @@ public class HellState extends SavedData {
 			CompoundTag restNames = new CompoundTag();
 			s.restNames.forEach(restNames::putString);
 			st.put("restNames", restNames);
+			ListTag altars = new ListTag();
+			s.altars.forEach((k, v) -> {
+				CompoundTag at = new CompoundTag();
+				at.putString("at", k);
+				at.putString("name", v);
+				altars.add(at);
+			});
+			st.put("altars", altars);
 			CompoundTag cutscenes = new CompoundTag();
 			s.cutscenes.forEach(c -> cutscenes.putBoolean(c, true));
 			st.put("cutscenes", cutscenes);
@@ -487,6 +500,11 @@ public class HellState extends SavedData {
 				String name = restNames.getStringOr(key, "");
 				if (!name.isEmpty()) {
 					s.restNames.put(key, name);
+				}
+			}
+			for (net.minecraft.nbt.Tag t : st.getListOrEmpty("altars")) {
+				if (t instanceof CompoundTag at && !at.getStringOr("at", "").isEmpty()) {
+					s.altars.put(at.getStringOr("at", ""), at.getStringOr("name", ""));
 				}
 			}
 			s.cutscenes.addAll(st.getCompoundOrEmpty("cutscenes").keySet());

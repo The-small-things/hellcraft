@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.world.FoundAltars;
 import net.thesmallthings.hellcraft.world.RestNames;
 import net.thesmallthings.hellcraft.world.ShrineSites;
 import net.thesmallthings.hellcraft.world.Shrines;
@@ -75,12 +76,27 @@ public final class TravelMenu {
 				out.add(rest(server, soul, site, floor));
 			}
 		}
+		// the ruined altars and built ones this soul has found
+		for (FoundAltars.Altar a : FoundAltars.of(soul)) {
+			out.add(altar(a));
+		}
 		return out;
+	}
+
+	/** A found altar as a destination ("altar:" and its key), by the name this soul knows it by. */
+	private static Destination altar(FoundAltars.Altar a) {
+		return new Destination("altar:" + a.key(), a.name(), new HellState.GlobalSpot(a.dimension(), a.pos()),
+				a.given() != null ? FoundAltars.defaultName(a.dimension(), a.pos()) : null);
 	}
 
 	@Nullable
 	public static Destination find(MinecraftServer server, HellState.Soul soul, String id) {
 		HellState state = HellState.get(server);
+		if (id.startsWith("altar:")) {
+			String key = id.substring("altar:".length());
+			FoundAltars.Altar a = soul == null || !soul.altars.containsKey(key) ? null : FoundAltars.parse(key, soul.altars.get(key));
+			return a == null ? null : altar(a);
+		}
 		if (id.equals("gate") && state.starterAltar != null) {
 			return new Destination("gate", "The Gate of Hell", state.starterAltar);
 		}
@@ -121,7 +137,7 @@ public final class TravelMenu {
 			Destination d = places.get(page * PAGE + i);
 			BlockPos p = d.altar().pos();
 			int dist = (int) Math.sqrt(p.distSqr(player.blockPosition()));
-			ItemStack icon = new ItemStack(d.id().equals("gate") ? Items.RESPAWN_ANCHOR : Items.LODESTONE);
+			ItemStack icon = new ItemStack(d.id().equals("gate") ? Items.RESPAWN_ANCHOR : d.id().startsWith("altar:") ? Items.CRYING_OBSIDIAN : Items.LODESTONE);
 			icon.set(DataComponents.ITEM_NAME, Component.literal(d.title()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 			List<Component> lore = new ArrayList<>();
 			if (d.place() != null) {
@@ -153,7 +169,8 @@ public final class TravelMenu {
 		ItemStack icon = new ItemStack(Items.NAME_TAG);
 		icon.set(DataComponents.ITEM_NAME, Component.literal("Name a Rest").withStyle(ChatFormatting.AQUA));
 		icon.set(DataComponents.LORE, new ItemLore(List.of(
-				line("Stand inside a Virgil's Rest and type", ChatFormatting.GRAY),
+				line("Stand inside a Virgil's Rest (or beside", ChatFormatting.GRAY),
+				line("a Blood Altar you've found) and type", ChatFormatting.GRAY),
 				line("/rest name <name>", ChatFormatting.YELLOW),
 				line("It shows here and on your Map of Hell", ChatFormatting.GRAY),
 				line("by that name (only you see it).", ChatFormatting.GRAY),
@@ -188,7 +205,18 @@ public final class TravelMenu {
 		from.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
 		from.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8f, 0.6f);
 		BlockPos altar = to.altar().pos();
-		Ghosts.teleport(player, new HellState.GlobalSpot(to.altar().dimension(), altar.offset(0, 0, 2)));
+		BlockPos arrive = altar.offset(0, 0, 2);
+		if (to.id().startsWith("altar:")) {
+			// a found altar may have been broken since; and its sides aren't laid out like a Rest's
+			String key = to.id().substring("altar:".length());
+			FoundAltars.Altar a = FoundAltars.parse(key, "");
+			if (a == null || !FoundAltars.stands(player.level().getServer(), a)) {
+				FoundAltars.forget(player, key);
+				return "That Blood Altar is gone (someone broke it), so it's no longer on your travel menu.";
+			}
+			arrive = FoundAltars.arrival(player.level().getServer().getLevel(a.dimension()), altar);
+		}
+		Ghosts.teleport(player, new HellState.GlobalSpot(to.altar().dimension(), arrive));
 		player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 60, 1));
 		ServerLevel at = player.level();
 		at.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
@@ -228,7 +256,7 @@ public final class TravelMenu {
 			}
 			sp.closeContainer();
 			String result = travel(sp, to, false);
-			if (result.startsWith("Ghosts") || result.startsWith("Travel is on cooldown")) {
+			if (!result.startsWith("Sent ")) {
 				sp.sendSystemMessage(Component.literal(result).withStyle(ChatFormatting.RED));
 			}
 		}

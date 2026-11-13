@@ -640,6 +640,8 @@ They are built the first time someone comes near. The compass and the Map of Hel
 
 **Travel.** Every Rest you step into is remembered. Right-click **any Blood Altar** (a Rest's, the Gate's, or one you built) and click **Travel** to go back to the Gate of Hell or any Rest you've reached. You still have to walk down to a new circle the first time. It's free, but you can only travel once every 2 minutes (`travelCooldownSeconds`; `travel: false` turns it off). The places run over pages: the arrows in the bottom row turn them. Every Rest has a name of its own, its circle and where it stands ("Circle II — Lust, east road", "Circle II — Lust, southeast" for the four between the roads), so the eight in a circle are easy to tell apart.
 
+**Blood Altars you find (3.4.1).** The ruined altars scattered through Hell (a respawn anchor on crying obsidian among broken pillars, with a chest of offerings) and the altars players build are places too: right-click one and it's remembered, for you, as a place to travel to from any Blood Altar, and your Map of Hell marks it in purple. Stand beside one and `/rest name <name>` names it. If someone breaks it, it leaves your travel menu the next time you try to go there.
+
 **Naming a Rest (3.4).** Stand inside a Rest and type `/rest name <name>`: it goes by that name in your travel menu, on your Map of Hell and in your Journal. Only you see your names. `/rest name` on its own gives the Rest back its own name, and `/rest list` shows the names you've given.
 
 ## Secret ways down (3.1)
@@ -768,7 +770,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hearts [player]` | all | Show hearts |
 | `/withdraw [n]` | all | Bleed hearts into Blood Hearts |
 | `/circle` | all | Where am I in Hell? |
-| `/rest name [name]`, `/rest list` | all | Name the Rest you're standing in (only you see it); no name gives it back its own (3.4) |
+| `/rest name [name]`, `/rest list` | all | Name the Rest you're standing in, or a Blood Altar you've found that you stand beside (only you see it); no name gives it back its own; the list shows your names and found altars (3.4) |
 | `/revive` | all | How reviving works, who is a ghost, and where the nearest altar is (26.3) |
 | `/revive <name>` | all | Revive a ghost while standing next to a Blood Altar, paying the Blood Hearts (26.3) |
 | `/guide` | all | Open the Pilgrim's Journal (the same as J) |

@@ -29,6 +29,12 @@ public final class ClientNav {
 	private static volatile int spheres;
 	/** The names this player gave Rests (Rest id to name; world/RestNames). */
 	private static volatile java.util.Map<String, String> restNames = java.util.Map.of();
+	/** The Blood Altars outside the Rests this player has found, in the overworld (world/FoundAltars). */
+	private static volatile List<Altar> altars = List.of();
+
+	/** A found altar: where it stands and the name the player knows it by. */
+	public record Altar(int x, int y, int z, String name) {
+	}
 
 	public static void map(MapPayload payload) {
 		inferno = payload.inferno();
@@ -45,6 +51,23 @@ public final class ClientNav {
 			names.put(payload.ids().get(i), payload.names().get(i));
 		}
 		restNames = java.util.Map.copyOf(names);
+	}
+
+	public static void altars(net.thesmallthings.hellcraft.net.FoundAltarsPayload payload) {
+		List<Altar> out = new java.util.ArrayList<>();
+		for (int i = 0; i < payload.positions().size(); i++) {
+			if (!"minecraft:overworld".equals(payload.dimensions().get(i))) {
+				continue;
+			}
+			net.minecraft.core.BlockPos p = net.minecraft.core.BlockPos.of(payload.positions().get(i));
+			out.add(new Altar(p.getX(), p.getY(), p.getZ(), payload.names().get(i)));
+		}
+		altars = List.copyOf(out);
+	}
+
+	/** The overworld Blood Altars this player has found (not the Rests' or the Gate's). */
+	public static List<Altar> altars() {
+		return altars;
 	}
 
 	/** The name this player gave a Rest, or null. */
@@ -65,6 +88,7 @@ public final class ClientNav {
 		codex = Set.of();
 		pages = List.of();
 		restNames = java.util.Map.of();
+		altars = List.of();
 	}
 
 	/** True in the overworld of an Inferno world: the compass, cards and map apply. */

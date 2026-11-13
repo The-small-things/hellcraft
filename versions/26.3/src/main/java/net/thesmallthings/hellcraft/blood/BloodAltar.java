@@ -67,6 +67,8 @@ public final class BloodAltar {
 			return InteractionResult.PASS;
 		}
 		HellState state = HellState.get(level.getServer());
+		// a ruined altar, or one somebody built: remembered as a place to travel back to
+		net.thesmallthings.hellcraft.world.FoundAltars.remember(player, level, pos);
 
 		// shortcut: a Name Tag renamed to a ghost's name
 		if (held.is(Items.NAME_TAG) && held.has(DataComponents.CUSTOM_NAME)) {

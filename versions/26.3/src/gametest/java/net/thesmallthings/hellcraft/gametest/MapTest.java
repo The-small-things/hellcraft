@@ -894,9 +894,11 @@ public class MapTest implements FabricClientGameTest {
 	 * its ring of soul-fire braziers.
 	 */
 	/**
-	 * Naming a Rest (screenshots rest_travel_named, rest_map_named): Player0 stands in the Rest between the south and
-	 * east roads of Lust and names it with /rest name; the travel menu lists it by that name (the Rest's own name in its
-	 * lore) beside the others, each with a name of its own, and the Map of Hell shows the name too.
+	 * Naming places (screenshots rest_travel_named, altar_travel_named, altar_arrived, rest_map_named): Player0 stands in
+	 * the Rest between the south and east roads of Lust and names it with /rest name; then finds a ruined altar nearby by
+	 * right-clicking it, and names that too. The travel menu lists both by those names (their own names in the lore)
+	 * beside the other places, each with a name of its own; travel to the altar sets Player0 down beside it, clear of its
+	 * chest; the Map of Hell marks it.
 	 */
 	private static void restNames(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {
 		server.runCommand("gamemode creative Player0");
@@ -914,38 +916,102 @@ public class MapTest implements FabricClientGameTest {
 			throw new AssertionError("/rest name didn't name the Rest Player0 stood in: " + named);
 		}
 		context.waitFor(client -> "Nonna's Fire".equals(ClientNav.restName(site.id())), 100);
-		// the travel menu at this Rest's altar, the pointer on the named Rest so its name and lore show
-		int index = server.computeOnServer(sv -> {
+
+		// a ruined altar 40 blocks out from the Rest: right-clicked, it's remembered; beside it, /rest name names it
+		net.minecraft.core.BlockPos ruin = server.computeOnServer(sv -> {
+			var level = sv.overworld();
+			int x = site.x() + 40;
+			int z = site.z();
+			level.getChunk(x >> 4, z >> 4);
+			net.minecraft.core.BlockPos at = new net.minecraft.core.BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z), z);
+			level.setBlock(at.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
+			net.thesmallthings.hellcraft.world.feature.AltarRuinFeature.INSTANCE.place(level, level.getChunkSource().getGenerator(),
+					net.minecraft.util.RandomSource.create(7), at);
+			return at;
+		});
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f 180 30", ruin.getX() + 0.5, ruin.getY(), ruin.getZ() - 2.5));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		server.runOnServer(sv -> {
+			ServerPlayer p = sv.getPlayerList().getPlayerByName("Player0");
+			net.thesmallthings.hellcraft.blood.BloodAltar.use(p, sv.overworld(), InteractionHand.MAIN_HAND, ruin);
+			p.closeContainer();
+		});
+		context.waitTicks(10);
+		server.runCommand("execute as Player0 at Player0 run rest name Ruin by the Storm");
+		context.waitTicks(10);
+		String altarKey = "altar:" + net.thesmallthings.hellcraft.world.FoundAltars.key(net.minecraft.world.level.Level.OVERWORLD, ruin);
+		String altarName = server.computeOnServer(sv -> {
+			var soul = HellState.get(sv).existing(sv.getPlayerList().getPlayerByName("Player0").getUUID());
+			return soul.altars.get(altarKey.substring("altar:".length()));
+		});
+		if (!"Ruin by the Storm".equals(altarName)) {
+			throw new AssertionError("right-clicking a ruined altar and /rest name beside it didn't remember and name it: " + altarName);
+		}
+		context.waitFor(client -> ClientNav.altars().stream().anyMatch(a -> a.name().equals("Ruin by the Storm")), 100);
+
+		// the travel menu at the Rest's altar, the pointer on each named place so its name and lore show
+		int[] index = server.computeOnServer(sv -> {
 			ServerPlayer p = sv.getPlayerList().getPlayerByName("Player0");
 			List<TravelMenu.Destination> places = TravelMenu.destinations(sv, HellState.get(sv).existing(p.getUUID()));
 			TravelMenu.open(p, sv.overworld(), new net.minecraft.core.BlockPos(site.x(), floor, site.z()));
+			int rest = -1;
+			int altar = -1;
 			for (int i = 0; i < places.size(); i++) {
 				if (places.get(i).id().equals(site.id())) {
-					return i;
+					rest = i;
+				}
+				if (places.get(i).id().equals(altarKey)) {
+					altar = i;
 				}
 			}
-			return -1;
+			return new int[]{rest, altar};
 		});
-		if (index < 0 || index >= 45) {
-			throw new AssertionError("the named Rest isn't on the travel menu's first page: " + index);
+		if (index[0] < 0 || index[0] >= 45 || index[1] < 0 || index[1] >= 45) {
+			throw new AssertionError("the named Rest and altar aren't on the travel menu's first page: " + index[0] + ", " + index[1]);
 		}
 		context.waitForScreen(net.minecraft.client.gui.screens.inventory.ContainerScreen.class);
-		double scale = context.computeOnClient(c -> (double) c.getWindow().getScreenWidth() / c.getWindow().getGuiScaledWidth());
-		int gw = context.computeOnClient(c -> c.getWindow().getGuiScaledWidth());
-		int gh = context.computeOnClient(c -> c.getWindow().getGuiScaledHeight());
-		// a 9x6 chest: 176 wide, 222 high, the first slot 8 in and 18 down, slots 18 apart
-		double x = (gw - 176) / 2.0 + 8 + (index % 9) * 18 + 8;
-		double y = (gh - 222) / 2.0 + 18 + (index / 9) * 18 + 8;
-		context.getInput().setCursorPos(x * scale, y * scale);
-		context.waitTicks(10);
+		hoverSlot(context, index[0]);
 		context.takeScreenshot("rest_travel_named");
+		hoverSlot(context, index[1]);
+		context.takeScreenshot("altar_travel_named");
 		context.setScreen(() -> null);
-		context.setScreen(() -> MapOfHellScreen.at(site.x(), site.z(), 6));
+
+		// travel there: set down beside the altar, on its north side (its chest stands on the south)
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f", site.x() + 0.5, floor, site.z() + 3.5));
+		context.waitTicks(5);
+		double[] landed = server.computeOnServer(sv -> {
+			ServerPlayer p = sv.getPlayerList().getPlayerByName("Player0");
+			TravelMenu.travel(p, TravelMenu.find(sv, HellState.get(sv).existing(p.getUUID()), altarKey), true);
+			return new double[]{p.getX(), p.getY(), p.getZ()};
+		});
+		double off = Math.hypot(landed[0] - ruin.getX() - 0.5, landed[2] - ruin.getZ() - 0.5);
+		if (off > 3.5 || Math.abs(landed[1] - ruin.getY()) > 1.5 || landed[2] > ruin.getZ() + 1) {
+			throw new AssertionError(String.format(Locale.ROOT, "travel to the altar at %s set Player0 down at %.1f %.1f %.1f", ruin, landed[0], landed[1], landed[2]));
+		}
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %.1f %.1f facing %d %d %d", landed[0], landed[1], landed[2],
+				ruin.getX(), ruin.getY(), ruin.getZ()));
+		context.waitTicks(10);
+		connection.waitForChunksRender();
+		context.waitTicks(10);
+		context.takeScreenshot("altar_arrived");
+		context.setScreen(() -> MapOfHellScreen.at(site.x() + 20, site.z(), 30));
 		context.getInput().setCursorPos(2, 2);
 		context.waitTicks(20);
 		context.takeScreenshot("rest_map_named");
 		context.setScreen(() -> null);
 		server.runCommand("gamemode spectator Player0");
+	}
+
+	/** Puts the pointer over slot {@code index} of an open 9x6 chest menu (176 wide, 222 high, slots 18 apart). */
+	private static void hoverSlot(ClientGameTestContext context, int index) {
+		double scale = context.computeOnClient(c -> (double) c.getWindow().getScreenWidth() / c.getWindow().getGuiScaledWidth());
+		int gw = context.computeOnClient(c -> c.getWindow().getGuiScaledWidth());
+		int gh = context.computeOnClient(c -> c.getWindow().getGuiScaledHeight());
+		double x = (gw - 176) / 2.0 + 8 + (index % 9) * 18 + 8;
+		double y = (gh - 222) / 2.0 + 18 + (index / 9) * 18 + 8;
+		context.getInput().setCursorPos(x * scale, y * scale);
+		context.waitTicks(10);
 	}
 
 	private static void arenaTeleport(ClientGameTestContext context, TestDedicatedServerContext server, TestDedicatedServerConnection connection) {

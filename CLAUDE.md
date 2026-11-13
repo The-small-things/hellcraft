@@ -202,7 +202,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `net/WindPayload` on join; `WindStreamsTest`. Rest names: `ShrineSites.Site.place()`/`label()` (each Rest's own name: "Circle II — Lust, east road" or "..., southeast");
   `world/RestNames` (`/rest name [name]` while standing in a Rest, `/rest list`; each player's own, `HellState.Soul.restNames`, sent as
   `net/RestNamesPayload` to `ClientNav.restName`; shown in `TravelMenu` (the Rest's own name in the lore, a name tag in the bottom row
-  says how), the Map of Hell's tooltips, the Journal and /circle; `/hellcraft rests names test`; `MapTest.restNames` films `rest_*`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
+  says how), the Map of Hell's tooltips, the Journal and /circle; `/hellcraft rests names test`; `MapTest.restNames` films `rest_*`).
+  3.4.1: found altars (`world/FoundAltars`: any Blood Altar outside the Rests and the Gate, ruined (`feature/AltarRuinFeature`) or built,
+  is remembered per player on right-click (`BloodAltar.use`), `HellState.Soul.altars` "dim x y z" to name; travel destinations
+  `altar:<key>`, checked to still stand (`stands`) and set down by `arrival` (a ruin's chest is at z+2); named with `/rest name` within
+  `NAMING_REACH`; `net/FoundAltarsPayload` to `ClientNav.altars` for the map's purple `Shape.ALTAR`; `MapTest.restNames` films `altar_*`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
   `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.
