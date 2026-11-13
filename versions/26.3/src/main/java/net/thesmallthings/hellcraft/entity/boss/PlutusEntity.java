@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 
 /**
- * Plutus, the Great Enemy: the body of his fight (PlutusFight), modelled in tools/art/plutus.py. He waddles after his
+ * Plutus, the Great Enemy: the body of his fight (PlutusFight), modelled in art/plutus.bbmodel (edited in Blender via tools/art/blender_bridge.py). He waddles after his
  * prey between blows (his walk plays from his speed); the fight tells him what to play.
  */
 public class PlutusEntity extends BossEntity {

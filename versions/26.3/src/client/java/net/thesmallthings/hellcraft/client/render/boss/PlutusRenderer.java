@@ -15,12 +15,12 @@ import net.thesmallthings.hellcraft.entity.boss.PlutusEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 
 /**
- * Draws Plutus: his model at 1.3 times its Blockbench size, his greedy eyes and rubies lit in the dark
+ * Draws Plutus: his model at 0.65 times its Blockbench size (built at twice the detail, so 1.3 times a game pixel), his greedy eyes and rubies lit in the dark
  * (plutus_glow.png), a white flash while his fist can be blocked and a purple pulse while his shriek can't. He plays
  * his own death.
  */
 public class PlutusRenderer extends MobRenderer<PlutusEntity, PlutusRenderState, PlutusModel> {
-	public static final float SCALE = 1.3f;
+	public static final float SCALE = 0.65f;
 	private static final Identifier TEXTURE = HellcraftMod.id("textures/entity/plutus.png");
 	private static final RenderType GLOW = RenderTypes.eyes(HellcraftMod.id("textures/entity/plutus_glow.png"));
 
