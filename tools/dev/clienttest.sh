@@ -2,6 +2,7 @@
 # clienttest.sh: runs the client game tests (versions/26.3/src/gametest) in a real, headless Minecraft client and
 # lists the screenshots they took (versions/26.3/build/run/clientGameTest/screenshots). Needs Xvfb, Mesa (software
 # OpenGL) and JDK 25. Locally: apt-get install xvfb mesa-utils mesa-vulkan-drivers openjdk-25-jdk-headless.
+# HELLCRAFT_TESTS=A,B runs only those test classes; HELLCRAFT_SHARD=<n> runs one CI machine's share (tools/dev/test-shards.txt).
 set -uo pipefail
 cd "$(dirname "$0")/../../versions/26.3"
 if [ -z "${DISPLAY:-}" ]; then
@@ -14,6 +15,12 @@ fi
 export LIBGL_ALWAYS_SOFTWARE=1
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$(mktemp -d)}
 [ -d /usr/lib/jvm/java-25-openjdk-amd64 ] && export JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64 PATH=/usr/lib/jvm/java-25-openjdk-amd64/bin:$PATH
+if [ -n "${HELLCRAFT_SHARD:-}" ]; then
+  # one CI machine's share of the tests (tools/dev/test-shards.txt)
+  HELLCRAFT_TESTS=$(python3 ../../tools/dev/testshard.py "$HELLCRAFT_SHARD") || exit 1
+  export HELLCRAFT_TESTS
+  echo "Test shard $HELLCRAFT_SHARD: $HELLCRAFT_TESTS"
+fi
 if [ -n "${HELLCRAFT_TESTS:-}" ]; then
   # Only these tests (a comma list of class names, e.g. HELLCRAFT_TESTS=ShowcaseTest): list them in the built copy of the
   # test manifest, put the source back at once, and run without rebuilding the resources, so the working tree stays clean.

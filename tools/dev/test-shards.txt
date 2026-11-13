@@ -1,0 +1,8 @@
+# Which client test classes each CI machine runs (tools/dev/clienttest.sh with HELLCRAFT_SHARD=<n>; the matrix in
+# .github/workflows/build.yml lists the shard numbers). The shard marked * also runs every test class no line names, so
+# a new test is never left out. Balance the shards by time: the run takes as long as the slowest one.
+# `python3 tools/dev/testshard.py check` checks this against the test list.
+1 MapTest
+2 BossTest LuciferTest
+3 NetherTest ParadisoTest
+4 *

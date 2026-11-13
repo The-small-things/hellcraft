@@ -13,9 +13,10 @@ for r in json.load(sys.stdin)['workflow_runs']:
 ") && [ -n "$RUN" ] && curl -s "https://api.github.com/repos/$REPO/actions/runs/$RUN/jobs" | python3 -c "
 import json,sys
 js={j['name']:j for j in json.load(sys.stdin)['jobs']}
-for n in ('build-26','smoke-test-26','client-test-26'):
-  j=js.get(n)
-  if j and j['conclusion'] in ('failure','cancelled'): print(n,j['conclusion'],j['id']); sys.exit(0)
+# the client tests run as several shards: client-test-26 (1), (2), ...
+for n,j in sorted(js.items()):
+  if n.split(' ')[0] in ('build-26','smoke-test-26','client-test-26') and j['conclusion'] in ('failure','cancelled'):
+    print(n,j['conclusion'],j['id']); sys.exit(0)
 r=js.get('$JOB')
 if r and r['status']=='completed': print('$JOB',r['conclusion']); sys.exit(0)
 sys.exit(1)"; do sleep 30; done

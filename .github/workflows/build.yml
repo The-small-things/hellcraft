@@ -61,13 +61,21 @@ jobs:
           name: server-log-26.3
           path: smoke-server.log
 
-  # A real Minecraft client, headless (Xvfb, software Vulkan): joins a dedicated server and a single-player world,
-  # and screenshots the HUD, the blood items and the animated test rig (see versions/26.3/src/gametest).
+  # A real Minecraft client, headless (Xvfb, software Vulkan): joins a dedicated server and single-player worlds, and
+  # screenshots the HUD, the map, the bosses and the realms (see versions/26.3/src/gametest). The tests are split over
+  # several machines that run at once (tools/dev/test-shards.txt; HELLCRAFT_SHARD picks a machine's share), so the
+  # whole run takes about as long as its longest share instead of the sum of them all.
   client-test-26:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
+      - name: Check the test shards against the test list
+        run: python3 tools/dev/testshard.py check
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -76,12 +84,14 @@ jobs:
       - name: Install a virtual display and software graphics
         run: sudo apt-get update && sudo apt-get install -y xvfb mesa-vulkan-drivers libvulkan1
       - name: Client game tests
+        env:
+          HELLCRAFT_SHARD: ${{ matrix.shard }}
         run: bash tools/dev/clienttest.sh
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: client-screenshots-26.3
+          name: client-screenshots-26.3-${{ matrix.shard }}
           path: versions/26.3/build/run/clientGameTest/screenshots
           if-no-files-found: warn
 
