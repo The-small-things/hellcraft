@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 /**
- * One of the three Furies (FuriesFight), modelled in tools/art/fury.py. The leader (Tisiphone) is the fight's body;
+ * One of the three Furies (FuriesFight), modelled in art/fury.bbmodel (edited in Blender via tools/art/blender_bridge.py). The leader (Tisiphone) is the fight's body;
  * her sisters fly with her, and a blow to a sister wounds the leader, so the three share one life: the boss bar.
  */
 public class FuryEntity extends AnimatedBoss {

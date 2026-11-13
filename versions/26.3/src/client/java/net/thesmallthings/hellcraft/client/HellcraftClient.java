@@ -260,7 +260,7 @@ public class HellcraftClient implements ClientModInitializer {
 						ThiefAnimations.DEATH, ThiefAnimations.FLEE), "thief", 0.5f, 255, "body", "head"));
 		// Lower Hell's guardians (AnimatedBoss: one renderer for all), Medusa, the tamed Geryon and Antaeus
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("fury"), FuryMesh::createLayer);
-		EntityRendererRegistry.register(HellEntities.FURY, context -> new AnimatedBossRenderer<>(context, "fury", FuryAnimations.all(), -1, 1.4f, 1.0f,
+		EntityRendererRegistry.register(HellEntities.FURY, context -> new AnimatedBossRenderer<>(context, "fury", FuryAnimations.all(), -1, 0.7f, 1.0f,
 				0.5f, "body", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("medusa"), MedusaMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MEDUSA, context -> {
