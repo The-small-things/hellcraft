@@ -54,7 +54,7 @@ public final class BloodEvents {
 			if (level.isClientSide() || !(player instanceof ServerPlayer sp) || !BloodItems.isBlood(stack)) {
 				return InteractionResult.PASS;
 			}
-			return consume(sp, stack) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+			return use(sp, stack);
 		});
 
 		UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
@@ -71,13 +71,36 @@ public final class BloodEvents {
 			}
 			if (BloodItems.isBlood(stack)) {
 				// never let blood be used as dye or planted; treat it like using it in the air
-				return consume(sp, stack) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+				return use(sp, stack);
 			}
 			return InteractionResult.PASS;
 		});
 
 		UseEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
 				!level.isClientSide() && BloodItems.isBlood(player.getItemInHand(hand)) ? InteractionResult.FAIL : InteractionResult.PASS);
+	}
+
+	/**
+	 * Uses a Hellcraft item, then puts that item on a short cooldown (the grey sweep on the hotbar). One right-click on a
+	 * block reaches the server twice, as a use on the block and then a use in the air, so without it one click could spend
+	 * two Vigil Candles or drink two Blood Hearts.
+	 */
+	private static InteractionResult use(ServerPlayer player, ItemStack stack) {
+		if (player.getCooldowns().isOnCooldown(stack)) {
+			return InteractionResult.FAIL;
+		}
+		// the cooldown is keyed by the item, so remember it before a use empties the stack
+		ItemStack kind = stack.copyWithCount(1);
+		if (!consume(player, stack)) {
+			return InteractionResult.FAIL;
+		}
+		player.getCooldowns().addCooldown(kind, cooldownTicks(kind));
+		return InteractionResult.SUCCESS;
+	}
+
+	/** How long after one use the next can come: a moment for most, a second for a candle or the Bane. */
+	static int cooldownTicks(ItemStack stack) {
+		return BloodItems.isVigil(stack) || BloodItems.isBane(stack) ? 20 : 10;
 	}
 
 	/** Right-clicking blood: hearts are drunk, fragments clot. Returns true if something happened. */

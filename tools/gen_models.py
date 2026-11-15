@@ -451,6 +451,39 @@ def gear():
     write(lang, current)
 
 
+# Every Hellcraft item, block and creature gets a name in the language file too. In game an item shows its own name
+# (the ITEM_NAME component, set in HellItems), but some screens (recipe viewers, statistics, some mods) look a thing up
+# by its translation key, and with no entry there they showed the bare key. The client test HudTest checks none is
+# missing.
+ITEM_NAMES = {
+    "blood_heart": "Blood Heart", "blood_fragment": "Blood Fragment", "lucifers_bane": "Lucifer's Bane",
+    "vigil_candle": "Vigil Candle", "soul_anchor": "Soul Anchor", "pilgrim_shell": "Pilgrim's Shell",
+    "keys_of_peter": "The Keys of Peter", "ariadnes_thread": "Ariadne's Thread",
+    "halo": "Halo", "seraph_wings": "Seraph Wings", "beatrices_rose": "Beatrice's Rose",
+}
+BLOCK_NAMES = {"slag_crust": "Slag Crust", "thorns": "Thorns of the Wood"}
+ENTITY_NAMES = {
+    "test_rig": "Test Rig", "minos": "Minos", "cerberus": "Cerberus", "plutus": "Plutus", "rolling_coin": "Plutus's Coin",
+    "phlegyas": "Phlegyas", "ferry": "Phlegyas's Ferry", "hoarder": "Hoarder", "shade": "Shade", "lovers": "The Lovers",
+    "glutton": "Glutton", "wrathful": "Wrathful Soul", "angel": "Angel", "harpy": "Harpy", "centaur": "Centaur",
+    "heretic": "Heretic", "mimic": "Mimic", "thief": "Thief", "malebranche": "Malebranche", "malacoda": "Malacoda",
+    "fury": "Fury", "medusa": "Medusa", "farinata": "Farinata", "vulcan": "Vulcan", "seraph": "The Seraph",
+    "cyclops": "Cyclops", "minotaur": "The Minotaur", "geryon": "Geryon", "geryon_carrier": "Geryon",
+    "antaeus": "Antaeus", "fallen_seraph": "The Fallen Seraph", "emperor": "The Three-Faced Emperor",
+    "emperor_weak_point": "The Emperor's Weak Point", "damned": "Damned Soul",
+}
+
+
+def names():
+    lang = os.path.join(ASSETS, "lang", "en_us.json")
+    with open(lang) as f:
+        current = json.load(f)
+    current.update({"item.hellcraft." + k: v for k, v in ITEM_NAMES.items()})
+    current.update({"block.hellcraft." + k: v for k, v in BLOCK_NAMES.items()})
+    current.update({"entity.hellcraft." + k: v for k, v in ENTITY_NAMES.items()})
+    write(lang, current)
+
+
 def item_recipes():
     write(os.path.join(DATA, "recipe", "vigil_candle.json"), {
         "type": "minecraft:crafting_shapeless", "category": "misc",
@@ -475,6 +508,7 @@ def blocks():
 
 
 def main():
+    names()
     blocks()
     recipes()
     item_recipes()

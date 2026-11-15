@@ -18,6 +18,7 @@ import net.thesmallthings.hellcraft.blood.Relics;
 public class HudTest implements FabricClientGameTest {
 	@Override
 	public void runTest(ClientGameTestContext context) {
+		names(context);
 		try (TestSingleplayerContext world = context.worldBuilder().create()) {
 			world.getConnection().waitForChunksRender();
 			world.getServer().runCommand("gamemode survival Player0");
@@ -48,7 +49,47 @@ public class HudTest implements FabricClientGameTest {
 				throw new AssertionError("the client doesn't see the Blood Hearts in the inventory");
 			}
 			relicsWorn(context, world);
+			doubleUse(context, world);
 		}
+	}
+
+	/**
+	 * One right-click on the ground uses a Hellcraft item once: the click reaches the server as a use on the block and
+	 * again as a use in the air, which used to spend two (two Vigil Candles, or 16 fragments into two hearts). The item's
+	 * cooldown stops the second, and a quick second click; one a moment later works.
+	 */
+	private static void doubleUse(ClientGameTestContext context, TestSingleplayerContext world) {
+		context.setScreen(() -> null);
+		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
+		world.getServer().runCommand("clear Player0");
+		world.getServer().runCommand("item replace entity Player0 hotbar.0 with hellcraft:blood_fragment 16");
+		world.getServer().runCommand("tp Player0 ~ ~ ~ 0 90");
+		context.runOnClient(client -> client.player.getInventory().setSelectedSlot(0));
+		context.waitTicks(10);
+		context.getInput().pressKey(options -> options.keyUse);
+		context.waitTicks(4);
+		context.getInput().pressKey(options -> options.keyUse);
+		context.waitTicks(10);
+		int[] first = carried(world);
+		if (first[0] != 1 || first[1] != 8) {
+			throw new AssertionError("one click (and a quick second) on the ground made " + first[0] + " Blood Heart(s), leaving "
+					+ first[1] + " fragments: expected 1 and 8");
+		}
+		context.waitTicks(10);
+		context.getInput().pressKey(options -> options.keyUse);
+		context.waitTicks(10);
+		int[] second = carried(world);
+		if (second[0] != 2 || second[1] != 0) {
+			throw new AssertionError("a click after the cooldown made " + second[0] + " heart(s) in all, leaving " + second[1] + " fragments: expected 2 and 0");
+		}
+	}
+
+	/** The Blood Hearts and Blood Fragments Player0 carries. */
+	private static int[] carried(TestSingleplayerContext world) {
+		return world.getServer().computeOnServer(server -> {
+			var player = server.getPlayerList().getPlayerByName("Player0");
+			return new int[]{BloodItems.countHearts(player), BloodItems.countFragments(player)};
+		});
 	}
 
 	/** The Halo and the Seraph Wings as worn, seen from in front and behind (relics_worn_front, relics_worn_back). */
@@ -80,5 +121,23 @@ public class HudTest implements FabricClientGameTest {
 			client.options.setCameraType(CameraType.FIRST_PERSON);
 			client.gui.hud.toggle();
 		});
+	}
+
+	/**
+	 * Every Hellcraft item, block and creature has a name in the language file (tools/gen_models.py): screens that look a
+	 * thing up by its translation key (recipe viewers, statistics) otherwise show the bare key.
+	 */
+	private static void names(ClientGameTestContext context) {
+		String missing = context.computeOnClient(client -> {
+			net.minecraft.locale.Language lang = net.minecraft.locale.Language.getInstance();
+			java.util.List<String> keys = new java.util.ArrayList<>();
+			net.minecraft.core.registries.BuiltInRegistries.ITEM.forEach(i -> keys.add(i.getDescriptionId()));
+			net.minecraft.core.registries.BuiltInRegistries.BLOCK.forEach(b -> keys.add(b.getDescriptionId()));
+			net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.forEach(e -> keys.add(e.getDescriptionId()));
+			return String.join(", ", keys.stream().filter(k -> k.contains("hellcraft") && !lang.has(k)).sorted().toList());
+		});
+		if (!missing.isEmpty()) {
+			throw new AssertionError("these have no name in assets/hellcraft/lang/en_us.json (tools/gen_models.py): " + missing);
+		}
 	}
 }

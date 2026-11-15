@@ -215,7 +215,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   Ruined altars are safe camps (`world/RuinedAltars`: each Inferno overworld chunk's surface looked over on `ServerChunkEvents.CHUNK_LOAD`
   for an altar with the ruin's corner pillars or brick floor (`isRuin`; on a chunk's edge it waits in `PENDING` for its neighbours);
   kept in memory per loaded chunk; `Shrines.inside` asks `inside` (`RADIUS` 10), so spawns, hazards and the damned keep off, and
-  `tick` throws monsters out; a broken altar stops protecting; `/hellcraft ruins test|list`; `MapTest` films `altar_ruin_safe`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
+  `tick` throws monsters out; a broken altar stops protecting; `/hellcraft ruins test|list`; `MapTest` films `altar_ruin_safe`).
+  Hellcraft items' use: `BloodEvents.use` refuses an item on cooldown and starts one after a use (`cooldownTicks`: 10, a candle or
+  the Bane 20; the altar's heart shortcuts 10): a right-click on a block reaches the server as a use on the block and again as a
+  use in the air, which spent two; `HudTest.doubleUse` checks it. Names: every item, block and entity in the lang file
+  (`gen_models.py` `ITEM_NAMES`/`BLOCK_NAMES`/`ENTITY_NAMES`; `HudTest.names` fails on a missing one). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
   `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.

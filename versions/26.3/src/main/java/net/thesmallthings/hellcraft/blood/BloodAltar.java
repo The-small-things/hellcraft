@@ -86,11 +86,17 @@ public final class BloodAltar {
 
 		// shortcuts: offer the Blood Heart in your hand
 		if (BloodItems.isHeart(held)) {
+			// a moment's cooldown after: the same click also arrives as a use in the air, which would drink another heart
+			if (player.getCooldowns().isOnCooldown(held)) {
+				return InteractionResult.SUCCESS;
+			}
+			ItemStack kind = held.copyWithCount(1);
 			if (player.isShiftKeyDown()) {
 				bind(player, level, pos);
 			} else {
 				ward(player, level, pos);
 			}
+			player.getCooldowns().addCooldown(kind, 10);
 			return InteractionResult.SUCCESS;
 		}
 
