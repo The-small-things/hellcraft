@@ -129,6 +129,52 @@ Not wired in yet. Played now and then while you explore, like Minecraft's own ba
 | Heart gained and heart lost | lifesteal |
 | Blood Altar | using one |
 
+## 4. Also wanted (added 2026-11-15)
+
+### Combat (for the planned combat overhaul: swings, combos, dodge roll, weapon guard and parry)
+Combat now has only vanilla sounds. These make fights readable by ear. Three to four takes of each.
+
+| Sound | When | Notes |
+|---|---|---|
+| Light swing | a sword, a spear's jab, a fist | A quick, thin whoosh |
+| Heavy swing | an axe, a mace, a charged blow | A slow, deep whoosh |
+| Spin swing | the Reaper's full circle | A long wide sweep |
+| Hit on flesh, on armour, on bone, on stone | any blow that lands | Flesh wet, armour with sparks, bone dry, stone for giants and golems |
+| Heavy hit and critical hit | a charged blow, a crit | A thump with weight; a crit adds a bright snap |
+| Weapon block | a blow taken on guard | Blade on blade |
+| Parry | a guard raised just in time | A bright ring: the reward sound |
+| Guard break | the stamina runs out on guard | A clang and a stun |
+| Dodge roll | the dash key | Cloth and a scuff; `perfect dodge` a soft whoosh when a blow misses |
+| Out of stamina | the stamina bar empties | A gasp; a quiet heartbeat when it is low |
+| Heavy attack charging | holding attack | A drone that rises, then a click when it's ready |
+| Each hell weapon's art | Exsanguinate (a dash and a slice), Harvest (a pulling howl), Blood Frenzy (a roar), Excavate (a rumble), the Blood Oath (a heartbeat and a blood chord) | |
+
+### Blood, items and relics (sound effects)
+| Sound | When |
+|---|---|
+| Blood Fragment pickup, Blood Heart use | the items |
+| Vigil Candle, Soul Anchor, Lucifer's Bane, the Keys of Peter | using each |
+| Halo, Seraph Wings, Beatrice's Rose | wearing or using the relics |
+| Hellforge strike and done | making infernal gear |
+| Blood armour equip (heavy plates), infernal armour equip (a hiss of hot metal) | wearing the sets |
+| Ghost whisper | a ghost's faint chorus only ghosts hear |
+| Cain's Mark, bounty set, bounty claimed | the fairness and bounty systems |
+
+### More stingers (5-15 seconds)
+A boss wakes (small guardian, great guardian), the fight is won, everyone dies, a new circle's card, the style rank climbs (S, SS, SSS),
+the secret way found, a Rest found, a ruined altar found, a ghost revived, a new Seven P's rank, and Lucifer's three cutscenes
+(the descent, the reveal, the climb out).
+
+### Voices (optional, the most expensive item)
+Short lines for Virgil, Beatrice, Lucifer's taunts and each guardian's last words (the lines are already in the Codex and its rumours).
+
+### Which of these I can make myself
+Without sending anything, I can synthesise in code (a `tools/gen_sounds.py`, like `tools/gen_textures.py`): swings, whooshes,
+thumps, parry and guard rings, the dodge roll, bells and chimes, the danger marks' horns and tolls, interface sounds, and
+simple drones for beds. **I can't make music, voices, or organic sounds** (screams, growls, footsteps, water): those need your
+files or a sound library. Say the word and I'll start with the synthesised ones, so combat and the danger language stop
+sounding like vanilla while the music is still being made.
+
 ## What already works with nothing to change
 
 The three Lucifer tracks: put `duel.ogg`, `enraged.ogg` and `true_form.ogg` in the mod and they play. Everything else on
