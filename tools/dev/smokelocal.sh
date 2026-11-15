@@ -9,7 +9,7 @@
 # Needs Docker (start it with `dockerd &` if `docker info` fails). Takes about ten minutes.
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
-JAR=${1:-$(ls "$ROOT"/versions/26.3/build/libs/hellcraft-*.jar | grep -v sources | head -1)}
+JAR=${1:-$(ls -t "$ROOT"/versions/26.3/build/libs/hellcraft-*.jar | grep -v sources | head -1)}
 FAPI=$(grep '^fabric_api_version=' "$ROOT/versions/26.3/gradle.properties" | cut -d= -f2)
 WORK=$(mktemp -d)
 mkdir -p "$WORK/mods"
