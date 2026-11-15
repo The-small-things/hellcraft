@@ -311,7 +311,7 @@ Excavate's 3×3 only takes blocks the pickaxe can mine and that are no harder th
 
 ### Blood armour (26.3)
 
-Four pieces of armour of their own (3.0: real items), forged at a crafting table: each is the diamond piece plus 4 Blood Fragments. They're in everyone's recipe book. At a Hellforge they become **infernal**: netherite's protection, fire-proof.
+Four pieces of armour of their own (3.0: real items), forged at a crafting table: each is the diamond piece plus 4 Blood Fragments. They're in everyone's recipe book. At a Hellforge they become **infernal**: netherite's protection, fire-proof. Blood armour is crimson plate with bone trim; infernal armour is blackened steel and brass with molten cracks, so the two look different worn and in the inventory.
 
 They protect like diamond, look like crimson plate with bone rivets and burning eye slits (from the resource pack), and work as a set:
 - **2 or more pieces:** your melee hits heal you 5% of the damage they deal.

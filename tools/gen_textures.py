@@ -470,44 +470,192 @@ art("blood_boots", ARMOUR, [
 ])
 
 
-def armour_layer(path, regions, face=None):
-    """A 64x32 humanoid armour layer: overlapping crimson plates, each lit along its top edge and shadowed
-    beneath, with bone rivets; the helmet's face is a skull visor with burning eye slits."""
-    base, seam, bone, bone_d = hexc("7a0e12"), hexc("2a0404"), hexc("e2d8c4"), hexc("8a7c62")
-    pixels = [[(0, 0, 0, 0)] * 64 for _ in range(32)]
-    for x0, y0, x1, y1 in regions:
-        grain = [[1.0 + (rng.random() - 0.5) * 0.22 for _ in range((x1 - x0) // 2 + 1)] for _ in range((y1 - y0) // 2 + 1)]
-        for y in range(y0, y1):
-            for x in range(x0, x1):
-                band = (y - y0) % 5
-                f = grain[(y - y0) // 2][(x - x0) // 2] + (rng.random() - 0.5) * 0.08
-                if band == 4:
-                    c = seam
-                elif band == 0:
-                    c = shade(base, 1.35 * f)       # the lit lip of the plate
-                elif band == 3:
-                    c = shade(base, 0.72 * f)       # shadow before the next plate
-                else:
-                    c = shade(base, f)
-                if band == 1 and (x - x0) % 6 == 2:
-                    c = bone
-                elif band == 2 and (x - x0) % 6 == 2:
-                    c = bone_d
-                pixels[y][x] = c
-    if face:
-        fx0, fy0 = face
-        for x in range(fx0, fx0 + 8):
-            pixels[fy0][x] = bone                                   # the bone brow
-            pixels[fy0 + 1][x] = bone_d
-        for x in (fx0 + 1, fx0 + 2, fx0 + 5, fx0 + 6):
-            pixels[fy0 + 3][x] = hexc("1a0000")                     # sockets
-            pixels[fy0 + 4][x] = hexc("ff4a3a") if x in (fx0 + 2, fx0 + 5) else hexc("a01a10")
-        for y in range(fy0 + 2, fy0 + 7):
-            pixels[y][fx0 + 3] = pixels[y][fx0 + 4] = bone if y < fy0 + 6 else bone_d   # the nasal guard
-        for x in range(fx0 + 1, fx0 + 7):
-            if x not in (fx0 + 3, fx0 + 4):
-                pixels[fy0 + 6][x] = bone if x % 2 else bone_d      # teeth along the jaw
-    png(os.path.join(OUT, "entity", "equipment", path, "blood.png"), pixels)
+# The blood armour as worn, painted face by face on Minecraft's 64x32 armour layers (layer 1: helmet, chestplate,
+# boots; layer 2: leggings). Each body part has its own design: a skull-visored helm with a bone crest, a ribcage of
+# bone over the breastplate and a spine down the back, pauldrons and vambraces, a belted waist with knee guards, and
+# greaves with bone cuffs and toe caps. The infernal (reinforced) armour from the Hellforge is the same design in
+# blackened steel with brass trim and molten cracks, so the two are told apart at a glance.
+ARMOUR_KINDS = {
+    "blood": {"plate": "8a1418", "lit": "c83238", "dark": "4c080c", "edge": "260406",
+              "trim": "e2d8c4", "trim_d": "a8997c", "trim_k": "6e6250", "eye": "ff5a3a", "eye_d": "a01a10",
+              "vein": None},
+    "infernal_blood": {"plate": "2c2828", "lit": "5c5450", "dark": "161212", "edge": "080606",
+                       "trim": "e0a83c", "trim_d": "a8741e", "trim_k": "5e3c10", "eye": "ffd860", "eye_d": "e07818",
+                       "vein": ("ffc040", "ff7018", "a8300a")},
+}
+
+
+def armour_worn(kind):
+    k = {n: (hexc(v) if isinstance(v, str) else v) for n, v in ARMOUR_KINDS[kind].items()}
+    veins = [hexc(v) for v in k["vein"]] if k["vein"] else None
+    vr = random.Random("veins-" + kind)
+
+    def canvas():
+        return [[(0, 0, 0, 0)] * 64 for _ in range(32)]
+
+    def plate(px, x0, y0, w, h, rows=None, seed=0, ridge=None):
+        """A metal face: lit from above, darker below, a dark rim round the edge, a faint grain; rows limits it."""
+        g = random.Random("%s-%d-%d-%d" % (kind, x0, y0, seed))
+        for v in range(h):
+            if rows and not (rows[0] <= v <= rows[1]):
+                continue
+            for u in range(w):
+                t = v / max(1, h - 1)
+                f = 1.18 - 0.36 * t + (g.random() - 0.5) * 0.10
+                c = shade(k["plate"], f)
+                if v == (rows[0] if rows else 0):
+                    c = shade(k["lit"], 0.92 + (g.random() - 0.5) * 0.08)
+                elif u == 0 or u == w - 1:
+                    c = shade(c, 0.86)                       # a soft shadow where the face turns the corner
+                if v == (rows[1] if rows else h - 1):
+                    c = k["edge"]
+                if ridge is not None and u == ridge:
+                    c = shade(k["lit"], 0.95)
+                px[y0 + v][x0 + u] = c
+
+    def put(px, x, y, c):
+        if 0 <= x < 64 and 0 <= y < 32:
+            px[y][x] = c
+
+    def trim_row(px, x0, y, w, studs=True):
+        for u in range(w):
+            put(px, x0 + u, y, k["trim"] if (u % 3 or not studs) else k["trim_d"])
+        put(px, x0, y, k["trim_d"])
+        put(px, x0 + w - 1, y, k["trim_k"])
+
+    def crack(px, x0, y0, w, h, n, rows=None):
+        """Infernal plates only: molten cracks wandering down the face, bright at the heart, cooling at the ends."""
+        if not veins:
+            return
+        lo, hi = rows if rows else (0, h - 1)
+        for _ in range(n):
+            u = vr.randrange(1, max(2, w - 1))
+            v = vr.randrange(lo, max(lo + 1, hi))
+            length = vr.randrange(3, 7)
+            for i in range(length):
+                if not (lo <= v <= hi and 0 < u < w - 1):
+                    break
+                put(px, x0 + u, y0 + v, veins[0] if i in (1, 2) else veins[1] if i < length - 1 else veins[2])
+                v += 1
+                u += vr.choice((-1, 0, 0, 1))
+
+    # ------------------------------------------------------------------ layer 1: helmet, chestplate, boots
+    px = canvas()
+    # the helmet: top (8,0), bottom (16,0), right (0,8), front (8,8), left (16,8), back (24,8)
+    plate(px, 8, 0, 8, 8, seed=1)
+    for v in range(8):                                        # the crest from brow to nape
+        put(px, 11, v, k["trim"]); put(px, 12, v, k["trim_d"])
+    plate(px, 16, 0, 8, 8, seed=2)
+    for x0, side in ((0, "right"), (16, "left")):
+        plate(px, x0, 8, 8, 8, seed=3 + x0)
+        front = 7 if side == "right" else 0                  # the face end of a side
+        for v in range(4, 8):                                 # a cheek guard toward the face
+            for du in range(3):
+                u = front - du if side == "right" else front + du
+                put(px, x0 + u, 8 + v, shade(k["lit"], 0.85 if du else 1.0))
+        put(px, x0 + (front - 3 if side == "right" else front + 3), 8 + 5, k["trim"])     # a rivet
+        trim_row(px, x0, 8 + 2, 8, studs=False)               # the brow band runs round
+        crack(px, x0, 8, 8, 8, 1, rows=(3, 7))
+    # the face: brow band, burning eye slits, a nasal guard, teeth along the jaw
+    plate(px, 8, 8, 8, 8, seed=9)
+    trim_row(px, 8, 10, 8)
+    for u in (1, 2, 5, 6):
+        put(px, 8 + u, 11, k["edge"])
+        put(px, 8 + u, 12, k["eye"] if u in (2, 5) else k["eye_d"])
+    for v in range(10, 15):
+        put(px, 11, 8 + v - 8 + 0, k["trim"]); put(px, 12, 8 + v - 8 + 0, k["trim_d"])
+    for u in (1, 2, 5, 6):
+        put(px, 8 + u, 14, k["trim"] if u % 2 else k["trim_d"])
+    put(px, 8 + 3, 14, k["edge"]); put(px, 8 + 4, 14, k["edge"])
+    # the back: a layered neck guard
+    plate(px, 24, 8, 8, 8, seed=10)
+    trim_row(px, 24, 10, 8, studs=False)
+    for v in (12, 14):
+        for u in range(8):
+            put(px, 24 + u, 8 + v - 8, shade(k["lit"], 0.9))
+            put(px, 24 + u, 8 + v - 7, shade(k["dark"], 1.0))
+    crack(px, 24, 8, 8, 8, 2, rows=(4, 7))
+
+    # the chestplate: body top (20,16), bottom (28,16), right (16,20), front (20,20), left (28,20), back (32,20)
+    plate(px, 20, 16, 8, 4, seed=11)
+    plate(px, 28, 16, 8, 4, seed=12)
+    for x0 in (16, 28):
+        plate(px, x0, 20, 4, 12, seed=13 + x0)
+        trim_row(px, x0, 20, 4, studs=False)
+        crack(px, x0, 20, 4, 12, 1)
+    plate(px, 20, 20, 8, 12, seed=14)
+    trim_row(px, 20, 20, 8)                                   # the collar
+    if not veins:
+        # a ribcage of bone: the sternum, and three pairs of ribs curving down from it
+        for v in range(1, 9):
+            put(px, 23, 20 + v, k["trim"]); put(px, 24, 20 + v, k["trim_d"])
+        for i, v in enumerate((2, 4, 6)):
+            for u in range(1, 3):
+                put(px, 20 + 3 - u, 20 + v + (u == 2), k["trim"])
+                put(px, 20 + 4 + u, 20 + v + (u == 2), k["trim_d"])
+            put(px, 20 + 0, 20 + v + 2, k["trim_k"]); put(px, 20 + 7, 20 + v + 2, k["trim_k"])
+    else:
+        # brass ribs on black, a molten heart and cracks spreading from it
+        for v in range(1, 9):
+            put(px, 23, 20 + v, k["trim_d"]); put(px, 24, 20 + v, k["trim_k"])
+        for v in (2, 4, 6):
+            for u in (1, 2, 5, 6):
+                put(px, 20 + u, 20 + v + (u in (1, 6)), k["trim_d"] if u < 4 else k["trim_k"])
+        put(px, 23, 24, veins[0]); put(px, 24, 24, veins[0]); put(px, 23, 25, veins[1]); put(px, 24, 23, veins[1])
+        crack(px, 20, 20, 8, 12, 3, rows=(2, 10))
+    trim_row(px, 20, 30, 8, studs=False)                      # the lower rim
+    plate(px, 32, 20, 8, 12, seed=15)
+    trim_row(px, 32, 20, 8)
+    for v in range(1, 11):                                    # the spine, vertebra by vertebra
+        put(px, 35, 20 + v, k["trim"] if v % 2 else k["trim_k"]); put(px, 36, 20 + v, k["trim_d"] if v % 2 else k["trim_k"])
+    for v in (3, 4):                                          # shoulder blades
+        for u in (1, 2, 5, 6):
+            put(px, 32 + u, 20 + v, shade(k["lit"], 0.9))
+    crack(px, 32, 20, 8, 12, 2, rows=(2, 10))
+    # the arms: top (44,16), bottom (48,16), right (40,20), front (44,20), left (48,20), back (52,20)
+    plate(px, 44, 16, 4, 4, seed=16)
+    put(px, 45, 17, k["trim"]); put(px, 46, 18, k["trim_d"])  # a stud on the pauldron
+    plate(px, 48, 16, 4, 4, seed=17)
+    for i, x0 in enumerate((40, 44, 48, 52)):
+        plate(px, x0, 20, 4, 5, seed=18 + i)                  # the pauldron, the big plate on the shoulder
+        trim_row(px, x0, 24, 4, studs=False)
+        for v in range(5, 8):                                 # mail between pauldron and vambrace
+            for u in range(4):
+                put(px, x0 + u, 20 + v, shade(k["dark"], 1.15 if (u + v) % 2 else 0.85))
+        plate(px, x0, 28, 4, 4, seed=22 + i)                  # the vambrace
+        trim_row(px, x0, 28, 4, studs=False)
+        crack(px, x0, 20, 4, 5, 1)
+    # the boots, the lower half of the legs: top (4,16), bottom (8,16), right (0,20), front (4,20), left (8,20), back (12,20)
+    plate(px, 8, 16, 4, 4, seed=26)
+    for i, x0 in enumerate((0, 4, 8, 12)):
+        plate(px, x0, 20, 4, 12, rows=(6, 11), seed=27 + i)
+        trim_row(px, x0, 26, 4, studs=False)                  # the cuff
+        crack(px, x0, 20, 4, 12, 1, rows=(7, 10))
+    for u in range(4):                                        # the toe cap
+        put(px, 4 + u, 31, k["trim"] if u in (1, 2) else k["trim_d"])
+        put(px, 4 + u, 30, k["trim_d"] if u in (1, 2) else shade(k["plate"], 1.0))
+    png(os.path.join(OUT, "entity", "equipment", "humanoid", kind + ".png"), px)
+
+    # ------------------------------------------------------------------ layer 2: leggings
+    px = canvas()
+    # the waist: the lower part of the body box, a belt with a buckle in front
+    for x0, w in ((16, 4), (20, 8), (28, 4), (32, 8)):
+        plate(px, x0, 20, w, 12, rows=(7, 11), seed=40 + x0)
+        trim_row(px, x0, 27, w, studs=False)
+    for v in (27, 28):                                        # the buckle
+        put(px, 23, v, k["trim_k"]); put(px, 24, v, k["trim_k"])
+    put(px, 23, 28, k["eye"] if veins else k["trim"]); put(px, 24, 28, k["eye_d"] if veins else k["trim_d"])
+    # the legs: thigh plates, knee guards on the front, the shin above the boot
+    for i, x0 in enumerate((0, 4, 8, 12)):
+        plate(px, x0, 20, 4, 12, rows=(0, 9), seed=50 + i)
+        crack(px, x0, 20, 4, 12, 1, rows=(1, 8))
+    for u in range(4):
+        put(px, 4 + u, 25, k["trim"]); put(px, 4 + u, 26, k["trim_d"] if u in (1, 2) else k["trim_k"])   # the knee guard
+    for x0 in (0, 8, 12):
+        for u in range(4):
+            put(px, x0 + u, 25, shade(k["lit"], 0.9))
+    plate(px, 4, 16, 4, 4, seed=60)
+    png(os.path.join(OUT, "entity", "equipment", "humanoid_leggings", kind + ".png"), px)
 
 
 # ---------------------------------------------------------------------- Lucifer swatch atlases
@@ -636,8 +784,33 @@ atlas("lucifer_emperor", [
 ])
 
 # the blood armour as worn (layer 1: helmet, chestplate and boots; layer 2: leggings)
-armour_layer("humanoid", [(0, 0, 32, 16), (16, 16, 40, 32), (40, 16, 56, 32), (0, 16, 16, 32)], face=(8, 8))
-armour_layer("humanoid_leggings", [(16, 16, 40, 32), (0, 16, 16, 32)])
+for armour_kind in ARMOUR_KINDS:
+    armour_worn(armour_kind)
+
+# the infernal (reinforced) armour's icons: the blood armour's, recoloured in blackened steel and brass with burning eyes
+INFERNAL_RECOLOUR = {"1a0505": "080606", "4a0808": "1c1818", "7a0e12": "34302e", "a81a22": "4e4844", "d0343a": "6e6660",
+                     "f07068": "948a82", "e2d8c4": "e0a83c", "a8997c": "a8741e", "ff5a3a": "ffd860", "0e0202": "050303"}
+
+
+def recolour_icon(name, mapping):
+    from PIL import Image
+    src = Image.open(os.path.join(OUT, "item", name + ".png")).convert("RGBA")
+    table = {hexc(a)[:3]: hexc(b)[:3] for a, b in mapping.items()}
+    pixels = [[(0, 0, 0, 0)] * src.width for _ in range(src.height)]
+    for y in range(src.height):
+        for x in range(src.width):
+            r, g, b, al = src.getpixel((x, y))
+            if al:
+                pixels[y][x] = table.get((r, g, b), (r, g, b)) + (al,)
+    png(os.path.join(OUT, "item", "infernal_" + name + ".png"), pixels)
+
+
+for piece in ("blood_helmet", "blood_chestplate", "blood_leggings", "blood_boots"):
+    recolour_icon(piece, INFERNAL_RECOLOUR)
+# the old armour painter drew from the shared rng; draw as many numbers so the textures painted after it stay as they were
+for x0, y0, x1, y1 in [(0, 0, 32, 16), (16, 16, 40, 32), (40, 16, 56, 32), (0, 16, 16, 32), (16, 16, 40, 32), (0, 16, 16, 32)]:
+    for _ in range(((x1 - x0) // 2 + 1) * ((y1 - y0) // 2 + 1) + (x1 - x0) * (y1 - y0)):
+        rng.random()
 
 
 def halo_layer():

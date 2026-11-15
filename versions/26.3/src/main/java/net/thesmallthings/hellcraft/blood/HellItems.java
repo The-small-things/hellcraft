@@ -117,7 +117,7 @@ public final class HellItems {
 			ItemTags.REPAIRS_DIAMOND_ARMOR, BloodArmour.ASSET);
 	/** Infernal blood armour (the Hellforge): netherite's. */
 	public static final ArmorMaterial INFERNAL_ARMOUR = new ArmorMaterial(37, defense(3, 6, 8, 3, 19), 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0f, 0.1f,
-			ItemTags.REPAIRS_NETHERITE_ARMOR, BloodArmour.ASSET);
+			ItemTags.REPAIRS_NETHERITE_ARMOR, BloodArmour.INFERNAL_ASSET);
 
 	/** The Halo: worn as a helmet, a gold circlet (equipment asset hellcraft:halo); gold's protection. */
 	public static final ArmorMaterial HALO_MATERIAL = new ArmorMaterial(7, defense(1, 3, 5, 2, 7), 25, SoundEvents.ARMOR_EQUIP_GOLD, 0.0f, 0.0f,

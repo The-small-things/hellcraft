@@ -395,6 +395,11 @@ def armour_recipes():
         "humanoid": [{"texture": "hellcraft:blood"}],
         "humanoid_leggings": [{"texture": "hellcraft:blood"}],
     }})
+    # the infernal (reinforced) armour has its own look: blackened steel, brass and molten cracks
+    write(os.path.join(ASSETS, "equipment", "infernal_blood.json"), {"layers": {
+        "humanoid": [{"texture": "hellcraft:infernal_blood"}],
+        "humanoid_leggings": [{"texture": "hellcraft:infernal_blood"}],
+    }})
     # Paradiso's relics as worn (HellItems.relicProperties): the Halo's circlet, the Seraph Wings' feathers
     write(os.path.join(ASSETS, "equipment", "halo.json"), {"layers": {"humanoid": [{"texture": "hellcraft:halo"}]}})
     write(os.path.join(ASSETS, "equipment", "seraph_wings.json"), {"layers": {"wings": [{"texture": "hellcraft:seraph_wings"}]}})
@@ -414,6 +419,7 @@ def recipes():
 
 
 # which vanilla item tags each piece of gear joins (so enchanting tables, anvils and trims treat it as its kind)
+ARMOUR_IDS = {a[0] for a in ARMOUR}
 GEAR_TAGS = {
     "bloodletter": ["swords"],
     "reaper_of_minos": ["hoes", "enchantable/sharp_weapon", "enchantable/weapon", "enchantable/fire_aspect", "enchantable/sweeping",
@@ -437,9 +443,16 @@ def gear():
     for gid, joins in GEAR_TAGS.items():
         for tag in joins:
             tags.setdefault(tag, []).extend(["hellcraft:" + gid, "hellcraft:infernal_" + gid])
-        # the infernal form looks the same (its name and glint tell it apart)
-        write(os.path.join(ASSETS, "items", "infernal_" + gid + ".json"),
-              {"model": {"type": "minecraft:model", "model": "hellcraft:item/" + gid}})
+        if gid in ARMOUR_IDS:
+            # infernal armour has icons of its own (gen_textures.py recolours the blood armour's)
+            write(os.path.join(ASSETS, "items", "infernal_" + gid + ".json"),
+                  {"model": {"type": "minecraft:model", "model": "hellcraft:item/infernal_" + gid}})
+            write(os.path.join(ASSETS, "models", "item", "infernal_" + gid + ".json"),
+                  {"parent": "minecraft:item/generated", "textures": {"layer0": "hellcraft:item/infernal_" + gid}})
+        else:
+            # an infernal weapon looks the same (its name and glint tell it apart)
+            write(os.path.join(ASSETS, "items", "infernal_" + gid + ".json"),
+                  {"model": {"type": "minecraft:model", "model": "hellcraft:item/" + gid}})
         names["item.hellcraft." + gid] = titles[gid]
         names["item.hellcraft.infernal_" + gid] = "Infernal " + titles[gid]
     for tag, values in tags.items():

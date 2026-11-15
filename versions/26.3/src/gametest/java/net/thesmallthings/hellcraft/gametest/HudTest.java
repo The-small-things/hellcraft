@@ -30,7 +30,7 @@ public class HudTest implements FabricClientGameTest {
 			world.getServer().runCommand("give Player0 hellcraft:soul_anchor");
 			// the blood gear, real items since 3.0, an infernal piece, and Paradiso's relics
 			for (String gear : new String[]{"bloodletter", "reaper_of_minos", "tithe_axe", "blood_pickaxe", "blood_helmet", "blood_chestplate",
-					"blood_leggings", "blood_boots", "infernal_bloodletter", "halo", "seraph_wings", "beatrices_rose"}) {
+					"blood_leggings", "blood_boots", "infernal_bloodletter", "infernal_blood_helmet", "infernal_blood_chestplate", "halo", "seraph_wings", "beatrices_rose"}) {
 				world.getServer().runCommand("give Player0 hellcraft:" + gear);
 			}
 			context.waitTicks(20);
@@ -49,8 +49,37 @@ public class HudTest implements FabricClientGameTest {
 				throw new AssertionError("the client doesn't see the Blood Hearts in the inventory");
 			}
 			relicsWorn(context, world);
+			armourWorn(context, world);
 			doubleUse(context, world);
 		}
+	}
+
+	/** The blood armour and the infernal (reinforced) armour as worn, front and back (armour_blood_*, armour_infernal_*). */
+	private static void armourWorn(ClientGameTestContext context, TestSingleplayerContext world) {
+		context.setScreen(() -> null);
+		world.getServer().runCommand("tp Player0 ~ ~ ~ 0 10");
+		context.runOnClient(client -> {
+			if (!client.gui.hud.isHidden()) {
+				client.gui.hud.toggle();
+			}
+		});
+		for (String set : new String[]{"blood", "infernal"}) {
+			String prefix = set.equals("blood") ? "" : "infernal_";
+			world.getServer().runCommand("item replace entity Player0 armor.head with hellcraft:" + prefix + "blood_helmet");
+			world.getServer().runCommand("item replace entity Player0 armor.chest with hellcraft:" + prefix + "blood_chestplate");
+			world.getServer().runCommand("item replace entity Player0 armor.legs with hellcraft:" + prefix + "blood_leggings");
+			world.getServer().runCommand("item replace entity Player0 armor.feet with hellcraft:" + prefix + "blood_boots");
+			context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_FRONT));
+			context.waitTicks(10);
+			context.takeScreenshot("armour_" + set + "_front");
+			context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
+			context.waitTicks(10);
+			context.takeScreenshot("armour_" + set + "_back");
+		}
+		context.runOnClient(client -> {
+			client.options.setCameraType(CameraType.FIRST_PERSON);
+			client.gui.hud.toggle();
+		});
 	}
 
 	/**

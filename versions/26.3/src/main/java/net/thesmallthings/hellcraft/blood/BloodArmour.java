@@ -46,6 +46,8 @@ public final class BloodArmour {
 
 	public static final String KIND = "armour";
 	static final ResourceKey<EquipmentAsset> ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("blood"));
+	/** The infernal (reinforced) armour's own look: blackened steel, brass and molten cracks. */
+	static final ResourceKey<EquipmentAsset> INFERNAL_ASSET = ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("infernal_blood"));
 	private static final int RUSH_COOLDOWN = 60 * 20;
 	private static final List<String> LORE = List.of(
 			"Blood armour: 2 pieces heal you 5% of the damage you deal,",

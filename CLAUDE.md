@@ -218,7 +218,9 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `tick` throws monsters out; a broken altar stops protecting; `/hellcraft ruins test|list`; `MapTest` films `altar_ruin_safe`).
   Hellcraft items' use: `BloodEvents.use` refuses an item on cooldown and starts one after a use (`cooldownTicks`: 10, a candle or
   the Bane 20; the altar's heart shortcuts 10): a right-click on a block reaches the server as a use on the block and again as a
-  use in the air, which spent two; `HudTest.doubleUse` checks it. Names: every item, block and entity in the lang file
+  use in the air, which spent two; `HudTest.doubleUse` checks it. Armour looks: `gen_textures.py` `armour_worn(kind)` paints the worn layers per `ARMOUR_KINDS`
+  (`blood`: crimson and bone; `infernal_blood`: blackened steel, brass, molten cracks; equipment assets `BloodArmour.ASSET`/`INFERNAL_ASSET`)
+  and `recolour_icon` the infernal icons; `HudTest.armourWorn` films both sets (`armour_*`). Names: every item, block and entity in the lang file
   (`gen_models.py` `ITEM_NAMES`/`BLOCK_NAMES`/`ENTITY_NAMES`; `HudTest.names` fails on a missing one). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
