@@ -69,8 +69,9 @@ public final class RuinedAltars {
 		if (level.dimension() != Level.OVERWORLD || !HellWorldgen.isInferno(level)) {
 			return;
 		}
+		// only the chunk handed in is read here: asking the level for blocks while a chunk loads waits on that very
+		// chunk and stalls the server, so every altar found waits in PENDING and is looked at properly on the next tick
 		ChunkPos cp = chunk.getPos();
-		List<BlockPos> found = new ArrayList<>();
 		for (int lx = 0; lx < 16; lx++) {
 			for (int lz = 0; lz < 16; lz++) {
 				int top = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, lx, lz);
@@ -82,22 +83,32 @@ public final class RuinedAltars {
 						continue;
 					}
 				}
-				if (lx < 3 || lx > 12 || lz < 3 || lz > 12) {
-					// its ruin reaches into the chunks beside: look once they're loaded
-					PENDING.add(anchor);
-				} else if (isRuin(level, anchor)) {
-					found.add(anchor);
-				}
+				PENDING.add(anchor);
 			}
 		}
-		if (!found.isEmpty()) {
-			RUINS.put(cp.pack(), found);
+	}
+
+	/** Looks at the altars waiting in PENDING whose ground is loaded now: the ruins among them protect from now on. */
+	private static void settle(ServerLevel level) {
+		for (BlockPos anchor : List.copyOf(PENDING)) {
+			if (!level.hasChunk(anchor.getX() >> 4, anchor.getZ() >> 4)) {
+				PENDING.remove(anchor);
+			} else if (loadedAround(level, anchor)) {
+				PENDING.remove(anchor);
+				if (isRuin(level, anchor)) {
+					List<BlockPos> list = RUINS.computeIfAbsent(ChunkPos.containing(anchor).pack(), k -> new ArrayList<>());
+					if (!list.contains(anchor)) {
+						list.add(anchor);
+					}
+				}
+			}
 		}
 	}
 
 	/** Looks a loaded chunk over again (for a ruin built after it loaded: the client test). */
 	public static void rescan(ServerLevel level, ChunkPos pos) {
 		scan(level, level.getChunk(pos.x(), pos.z()));
+		settle(level);
 	}
 
 	/** A Blood Altar with the ruin round it: at least two of its corner pillars, or most of its floor of blackstone brick. */
@@ -165,16 +176,7 @@ public final class RuinedAltars {
 		if (!HellWorldgen.isInferno(level)) {
 			return;
 		}
-		for (BlockPos anchor : List.copyOf(PENDING)) {
-			if (!level.hasChunk(anchor.getX() >> 4, anchor.getZ() >> 4)) {
-				PENDING.remove(anchor);
-			} else if (loadedAround(level, anchor)) {
-				PENDING.remove(anchor);
-				if (isRuin(level, anchor)) {
-					RUINS.computeIfAbsent(ChunkPos.containing(anchor).pack(), k -> new ArrayList<>()).add(anchor);
-				}
-			}
-		}
+		settle(level);
 		if (level.players().isEmpty()) {
 			return;
 		}
@@ -235,6 +237,7 @@ public final class RuinedAltars {
 		net.thesmallthings.hellcraft.world.feature.AltarRuinFeature.INSTANCE.place(level, level.getChunkSource().getGenerator(),
 				net.minecraft.util.RandomSource.create(5), at);
 		scan(level, chunk);
+		settle(level);
 		boolean found = all().contains(at);
 		boolean protects = inside(x + 6.5, y, z + 0.5) && Shrines.near(level, at.offset(-5, 0, 3));
 		boolean outside = !inside(x + 14.5, y, z + 0.5);
