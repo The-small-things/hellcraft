@@ -929,6 +929,30 @@ public class MapTest implements FabricClientGameTest {
 					net.minecraft.util.RandomSource.create(7), at);
 			return at;
 		});
+		// the ruin is a small Rest: a monster that appears in its ring is gone, one carried into it is thrown back out
+		server.runOnServer(sv -> net.thesmallthings.hellcraft.world.RuinedAltars.rescan(sv.overworld(), net.minecraft.world.level.ChunkPos.containing(ruin)));
+		server.runCommand(String.format(Locale.ROOT, "summon minecraft:zombie %d %d %d {Tags:[\"ruin_inside\"]}", ruin.getX() + 4, ruin.getY(), ruin.getZ()));
+		server.runCommand(String.format(Locale.ROOT, "summon minecraft:zombie %d %d %d {Tags:[\"ruin_outside\"]}", ruin.getX() + 18, ruin.getY() + 2, ruin.getZ()));
+		context.waitTicks(10);
+		server.runCommand(String.format(Locale.ROOT, "tp @e[tag=ruin_outside] %d %d %d", ruin.getX() + 4, ruin.getY(), ruin.getZ() + 3));
+		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f 0 25", ruin.getX() + 0.5, ruin.getY() + 4, ruin.getZ() - 13.5));
+		context.waitTicks(30);
+		connection.waitForChunksRender();
+		context.takeScreenshot("altar_ruin_safe");
+		context.waitTicks(30);
+		double[] zombies = server.computeOnServer(sv -> {
+			var level = sv.overworld();
+			var box = new AABB(ruin).inflate(40);
+			var inside = level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, box, z -> z.entityTags().contains("ruin_inside"));
+			var carried = level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, box, z -> z.entityTags().contains("ruin_outside"));
+			double off = carried.isEmpty() ? 99 : Math.hypot(carried.getFirst().getX() - ruin.getX() - 0.5, carried.getFirst().getZ() - ruin.getZ() - 0.5);
+			return new double[]{inside.size(), off};
+		});
+		server.runCommand("kill @e[tag=ruin_outside]");
+		if (zombies[0] > 0 || zombies[1] < 7) {
+			throw new AssertionError(String.format(Locale.ROOT, "the ruined altar didn't keep monsters off: %.0f still inside, the carried one %.1f blocks out",
+					zombies[0], zombies[1]));
+		}
 		server.runCommand(String.format(Locale.ROOT, "tp Player0 %.1f %d %.1f 180 30", ruin.getX() + 0.5, ruin.getY(), ruin.getZ() - 2.5));
 		context.waitTicks(10);
 		connection.waitForChunksRender();

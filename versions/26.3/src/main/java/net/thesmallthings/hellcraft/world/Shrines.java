@@ -120,7 +120,7 @@ public final class Shrines {
 		return HellState.get(server).shrines.get(site.id());
 	}
 
-	/** Monsters that appear inside a built Rest are gone a tick later (named ones, guardians and Lucifer excepted). */
+	/** Monsters that appear inside a built Rest or a ruined altar's ring are gone a tick later (named ones, guardians and Lucifer excepted). */
 	public static void onLoad(Entity entity, ServerLevel level) {
 		if (entity instanceof Enemy && !entity.hasCustomName() && !LuciferManager.isLucifer(entity) && !GuardianManager.isGuardian(entity)
 				&& level.dimension() == net.minecraft.world.level.Level.OVERWORLD && HellWorldgen.isInferno(level)
@@ -129,7 +129,7 @@ public final class Shrines {
 		}
 	}
 
-	/** True inside the ring of a built Rest: the circles don't torment you there. */
+	/** True inside the ring of a built Rest or a ruined altar: the circles don't torment you there. */
 	public static boolean shelters(ServerPlayer player) {
 		return player.level().dimension() == net.minecraft.world.level.Level.OVERWORLD
 				&& inside(player.level().getServer(), player.getX(), player.getY(), player.getZ());
@@ -141,6 +141,10 @@ public final class Shrines {
 	}
 
 	private static boolean inside(MinecraftServer server, double x, double y, double z) {
+		// a ruined altar's ring is a small Rest of its own
+		if (RuinedAltars.inside(x, y, z)) {
+			return true;
+		}
 		ShrineSites.Site site = ShrineSites.nearest(x, z);
 		if (site == null || dist2(site, x, z) > SAFE_RADIUS * SAFE_RADIUS) {
 			return false;

@@ -428,6 +428,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   echo "$restnames"
   echo "$restnames" | grep -q "Rest names test: 76 Rests, all named apart=true (Circle II.*Lust, southeast); kept=true private=true shortened=true undone=true; altars: Blood Altar in Gluttony named=true undone=true" \
     || { echo "Naming Rests is wrong"; exit 1; }
+  # a ruined altar is a small Rest: its ring keeps monsters and hazards off, and stops when the altar is broken
+  ruins=$(rcon "hellcraft ruins test")
+  echo "$ruins"
+  echo "$ruins" | grep -q "Ruined altars test: found=true protects=true outside=true broken stops=true" || { echo "Ruined altars don't protect"; exit 1; }
   waymarks=$(rcon "hellcraft waymarks test")
   echo "$waymarks"
   echo "$waymarks" | grep -q "Waymarks test OK" || { echo "Waymarks don't work"; exit 1; }

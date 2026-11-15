@@ -141,7 +141,7 @@ public final class Guide {
 				"",
 				"Name a Rest: stand in it and type /rest name and then the name. Only you see it, in your travel menu, on your map and here. /rest list shows your names.",
 				"",
-				"Ruined altars (a respawn anchor on crying obsidian among broken pillars) and altars players build: right-click one to remember it, and you can travel there too. /rest name beside it names it.",
+				"Ruined altars (a respawn anchor on crying obsidian among broken pillars) and altars players build: right-click one to remember it, and you can travel there too. /rest name beside it names it. A ruined altar is a small safe camp: no monsters or hazards within 10 blocks.",
 				"",
 				"/circle shows the nearest one."));
 		pages.add(page("HELL WEAPONS",

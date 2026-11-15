@@ -211,7 +211,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   3.4.1: found altars (`world/FoundAltars`: any Blood Altar outside the Rests and the Gate, ruined (`feature/AltarRuinFeature`) or built,
   is remembered per player on right-click (`BloodAltar.use`), `HellState.Soul.altars` "dim x y z" to name; travel destinations
   `altar:<key>`, checked to still stand (`stands`) and set down by `arrival` (a ruin's chest is at z+2); named with `/rest name` within
-  `NAMING_REACH`; `net/FoundAltarsPayload` to `ClientNav.altars` for the map's purple `Shape.ALTAR`; `MapTest.restNames` films `altar_*`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
+  `NAMING_REACH`; `net/FoundAltarsPayload` to `ClientNav.altars` for the map's purple `Shape.ALTAR`; `MapTest.restNames` films `altar_*`).
+  Ruined altars are safe camps (`world/RuinedAltars`: each Inferno overworld chunk's surface looked over on `ServerChunkEvents.CHUNK_LOAD`
+  for an altar with the ruin's corner pillars or brick floor (`isRuin`; on a chunk's edge it waits in `PENDING` for its neighbours);
+  kept in memory per loaded chunk; `Shrines.inside` asks `inside` (`RADIUS` 10), so spawns, hazards and the damned keep off, and
+  `tick` throws monsters out; a broken altar stops protecting; `/hellcraft ruins test|list`; `MapTest` films `altar_ruin_safe`). Purgatory's penitents: `Damned.Punishment.PENANCE_*` (one per terrace, `terrace`, `penitent()`; Pride's
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
   `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.

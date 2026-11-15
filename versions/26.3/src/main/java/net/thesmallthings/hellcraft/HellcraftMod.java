@@ -111,6 +111,7 @@ public class HellcraftMod implements ModInitializer {
 		WindSync.register();
 		RestNames.register();
 		FoundAltars.register();
+		net.thesmallthings.hellcraft.world.RuinedAltars.register();
 		Danger.register();
 		CutsceneManager.register();
 		net.thesmallthings.hellcraft.blood.Sins.register();
@@ -153,6 +154,7 @@ public class HellcraftMod implements ModInitializer {
 			BossModel.tickFalling(server);
 			Spine.tick(server);
 			Shrines.tick(server);
+			net.thesmallthings.hellcraft.world.RuinedAltars.tick(server);
 			Villages.tick(server);
 			Paradiso.tick(server);
 			net.thesmallthings.hellcraft.hazard.guardian.LairLifts.tick(server);
