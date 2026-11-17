@@ -289,11 +289,25 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 (On 1.21.1 there is no menu: use the Name Tag and Blood Heart shortcuts.)
 
+### Fighting (3.5 beta)
+
+Hellcraft has combat of its own, made to move smoothly: every move blends into the next instead of snapping, in first and third person alike. It is arriving in parts; this is the first.
+
+- **Stamina**: a thin gold bar over your hunger. Rolling and guarding spend it, and it comes back a moment after you stop (more slowly while you guard). It hides when full.
+- **Dodge roll**: press **Dash** (Left Alt; Controls, Hellcraft) to roll the way you're moving; standing still, you hop back. It is a forward roll over the shoulders that carries you about 3.4 blocks, and for most of it **blows pass through you**: a monster's, a player's, an arrow, a blast, a boss's marks on the ground. Not fire, falls or drowning. It costs stamina and you can roll again as soon as you're up. A blow that passes through gives a little stamina back, and style in a boss fight.
+- **Guard**: hold right-click with a **sword, an axe, a mace or a hell weapon** in your main hand, and nothing to use in the other (a shield, food or a bow there comes first; so do chests, doors and anything else you'd right-click). The guard turns aside 60% of a blow from the front (an axe or mace about half, a hell weapon about 70%), **not arrows or blasts**. Every guarded blow costs stamina, and with none left **the guard breaks**: the weapon is beaten down for a moment and you stagger. An axe's blow breaks it at once, as it does a shield. You walk at half speed while guarding.
+- **Parry**: raise the guard **just before the blow lands** (within 6 ticks). Nothing gets through, the attacker is thrown back and can't strike for a moment, and you get stamina back. A boss's white flash can be parried with a weapon this way. Fluttering the button doesn't work: a guard raised straight after the last one can't parry.
+- **Shields** are as they were: they block everything, arrows too, and cost no stamina, but are slower to raise.
+- **Hits have weight**: your blow holds for a frame and kicks the view (off with View Bobbing), and the target shows it: blood from flesh, chips from bone, sparks from golems.
+- **Hell weapons**: right-click guards now, so a full weapon's **Blood Art** is struck from the guard: hold right-click, then press attack. The Blood Oath is still sneak + right-click, and the Blood Pickaxe works as before.
+
+Still to come: weapons that swing in combos, each kind with its own animations, and a moveset for every hell weapon. Server owners can turn all of it off with `/hellcraft config combatOverhaul false`: vanilla combat returns, and only Sidestep leggings dash.
+
 ### Hell weapons (26.3)
 
 Four weapons and tools of their own (3.0: real items, in the creative tab and `/give hellcraft:bloodletter`), forged at a crafting table from a vanilla tool with Blood Fragments (and, for the stronger ones, Blood Hearts). They're in everyone's recipe book, and swinging them costs nothing. Ones made before 3.0 (vanilla tools with the blood marks) keep working:
 - **Passive**: every fully charged hit does something extra (below).
-- **Blood charge**: charged hits on monsters (and players) add 5%, kills add 20%. The action bar shows the meter, and the weapon glows when it's full. **Right-click at 100%** to unleash its **Blood Art**. You lose the charge when you die.
+- **Blood charge**: charged hits on monsters (and players) add 5%, kills add 20%. The action bar shows the meter, and the weapon glows when it's full. At 100%, **hold right-click to guard and press attack** to unleash its **Blood Art** (with Hellcraft's combat off, or with the Blood Pickaxe: just right-click). You lose the charge when you die.
 - **Blood Oath**: sneak and right-click (in the air or at a block) to pay **3 hearts of health** (not max hearts) for a full charge and **30 seconds of full power**. It needs more than 4 hearts of health, and your blood takes 3 minutes to recover before the next oath.
 
 | Weapon | Recipe | Passive (charged hits) | Blood Art (right-click at full charge) | Blood Oath |
@@ -327,7 +341,7 @@ Five enchantments that no enchanting table, librarian or ordinary chest gives: e
 |---|---|---|---|
 | **Windstep** I–III | boots | +8% walking speed per level | Lust: the lovers sometimes drop it |
 | **Quickening** I–II | swords, axes (and the Reaper) | +10% attack speed per level | Greed: the vaults of the Counting House |
-| **Sidestep** I–III | leggings | the **Dash** key (Left Alt; Controls, Hellcraft) throws you a few blocks the way you're moving (back, if you stand still), and a boss's blow passes through you mid-dash. Once every 3 / 2.25 / 1.5 s | Wrath: the caches at the foot of the Fen's watchtowers |
+| **Sidestep** I–III | leggings | your **dodge roll** (the Dash key; see Fighting) costs a fifth less stamina per level, goes half a block further and is safe for 2 ticks longer. With Hellcraft's combat off it is the dash it used to be: a few blocks the way you're moving, a boss's blow passing through you, once every 3 / 2.25 / 1.5 s | Wrath: the caches at the foot of the Fen's watchtowers |
 | **Steadfast** I–IV | chestplate | bosses (the guardians, Lucifer and what they bring) hurt you 7% less per level | Heresy: the tombs |
 | **Judgement** I–V | swords, axes (and the Reaper) | your blows hurt bosses 1.5 more per level | Violence: the centaurs sometimes drop it |
 
@@ -842,6 +856,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
+- Hellcraft's combat (3.5): `combatOverhaul` (on), `staminaMax` (100), `staminaRegen` (1.6 a tick), `staminaRegenDelay` (16 ticks), `dodgeCost` (26), `dodgeCooldownTicks` (16), `dodgeDistance` (3.4 blocks), `dodgeInvulnerableTicks` (8), `guardBlock` (0.6), `guardStaminaPerDamage` (4), `parryTicks` (6), `parryStaggerTicks` (30), `guardBreakTicks` (30)
 - how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (0.85)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`

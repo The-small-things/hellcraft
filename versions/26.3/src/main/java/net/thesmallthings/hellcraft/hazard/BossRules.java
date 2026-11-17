@@ -61,7 +61,7 @@ public final class BossRules {
 
 	/** Whether a player has a shield up (or going up) facing a point, as vanilla judges a block: within 90 degrees. */
 	public static boolean shieldFacing(Player player, Vec3 from) {
-		if (!player.isUsingItem() || !player.getUseItem().has(DataComponents.BLOCKS_ATTACKS)) {
+		if (!player.isUsingItem() || !player.getUseItem().has(DataComponents.BLOCKS_ATTACKS) && !net.thesmallthings.hellcraft.combat.Guard.guarding(player)) {
 			return false;
 		}
 		Vec3 to = from.subtract(player.position());

@@ -2,6 +2,7 @@ package net.thesmallthings.hellcraft.client.mixin;
 
 import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.client.combat.HitFeel;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
 import net.thesmallthings.hellcraft.client.danger.Impacts;
 import net.thesmallthings.hellcraft.client.layer.CameraSway;
@@ -72,8 +73,13 @@ public abstract class CameraMixin {
 		if (shake[0] != 0 || shake[1] != 0 || blow[0] != 0 || blow[1] != 0) {
 			setRotation(yRot() + shake[0] + blow[0], xRot() + shake[1] + blow[1]);
 		}
+		// a blow landing, a parry, a roll: the view kicks and settles (combat/HitFeel)
+		float[] feel = HitFeel.camera(partialTicks);
+		if (feel[0] != 0 || feel[1] != 0) {
+			setRotation(yRot() + feel[1], xRot() + feel[0]);
+		}
 		// Lust's storm rocks the view, and a ride leans into its turns (CameraSway)
-		float roll = CameraSway.roll(partialTicks);
+		float roll = CameraSway.roll(partialTicks) + feel[2];
 		if (roll != 0) {
 			rotation().rotateZ((float) Math.toRadians(roll));
 			new Vector3f(0, 1, 0).rotate(rotation(), up);

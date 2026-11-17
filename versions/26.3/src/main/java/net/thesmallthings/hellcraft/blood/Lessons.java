@@ -149,6 +149,14 @@ public final class Lessons {
 				"Well fought. Your spoils follow your style rank in the fight: hit often, swap weapons, parry, and don't get hit. "
 						+ "Your first S and first SSS on each boss pay a Blood Heart. (Journal: STYLE)");
 		// newer features: old souls hear of these too
+		Key dash = new Key("key.hellcraft.dash");
+		LESSONS.add(new Lesson("roll", true, false, (p, s) -> net.thesmallthings.hellcraft.combat.Combat.on() && s.playSeconds >= 45, new Object[]{
+				"You can dodge. Press ", dash, " to roll the way you're moving: in the middle of the roll, blows pass through you. "
+						+ "It costs stamina, the gold bar over your hunger. (Journal: FIGHTING)"}));
+		LESSONS.add(new Lesson("guard", true, false, (p, s) -> net.thesmallthings.hellcraft.combat.Combat.on()
+				&& net.thesmallthings.hellcraft.combat.Guard.guards(p.getMainHandItem()) && s.playSeconds >= 20, new Object[]{
+				"That weapon can guard. Hold right-click and it turns most of a blow aside, at a cost in stamina. Raise it just before "
+						+ "the blow lands and you parry: nothing gets through and the attacker reels. (Journal: FIGHTING)"}));
 		LESSONS.add(new Lesson("gatehouse", true, false, (p, s) -> Gatehouses.nearBuilt(p.level(), p.getX(), p.getZ(), 16), new Object[]{
 				"The gate's towers stand open: go in by the door off the passage. A stair climbs through guard rooms and libraries to "
 						+ "the walk over the gate, and on to the roof."}));

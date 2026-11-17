@@ -4,13 +4,18 @@
 	"package": "net.thesmallthings.hellcraft.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"AvatarRendererMixin",
 		"BossOverlayAccessor",
 		"CameraMixin",
 		"EntityRendererMixin",
+		"FirstPersonHandsMixin",
 		"GameRendererMixin",
 		"HeartTypeMixin",
 		"HudMixin",
+		"HumanoidModelMixin",
 		"KeyboardInputMixin",
+		"LocalPlayerMixin",
+		"MinecraftMixin",
 		"MouseHandlerMixin",
 		"ScreenMixin",
 		"TitleScreenMixin"

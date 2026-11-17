@@ -144,10 +144,24 @@ public final class Guide {
 				"Ruined altars (a respawn anchor on crying obsidian among broken pillars) and altars players build: right-click one to remember it, and you can travel there too. /rest name beside it names it. A ruined altar is a small safe camp: no monsters or hazards within 10 blocks.",
 				"",
 				"/circle shows the nearest one."));
+		boolean combat = net.thesmallthings.hellcraft.combat.Combat.on();
+		if (combat) {
+			pages.add(page("FIGHTING",
+					"Stamina: the thin gold bar over your hunger. Rolling and guarding spend it; it comes back a moment after you stop.",
+					"",
+					"Dodge roll: press Dash (Left Alt) to roll the way you're moving (standing still, you hop back). It costs stamina, and in the middle of the roll blows pass through you, a boss's too. Sidestep leggings make it cheaper, longer and safer.",
+					"",
+					"Guard: hold right-click with a sword, an axe, a mace or a hell weapon in your main hand (and nothing to use in the other). It turns aside most of a blow from the front, not arrows or blasts, and each blow costs stamina. Out of stamina, the guard breaks and the weapon is beaten down for a moment.",
+					"",
+					"Parry: raise the guard just before the blow lands. Nothing gets through, the attacker reels, and you get stamina back. A boss's white flash can be parried this way.",
+					"",
+					"A shield still blocks everything and costs no stamina, but it is slower to raise."));
+		}
 		pages.add(page("HELL WEAPONS",
 				"Craft the Bloodletter with Blood Fragments. The Reaper of Minos, Tithe Axe and Blood Pickaxe also cost Blood Hearts.",
 				"",
-				"Hits and kills charge them. When full, right-click for a special attack.",
+				combat ? "Hits and kills charge them. When full: hold right-click to guard, then press attack for the Blood Art (the Blood Pickaxe: just right-click)."
+						: "Hits and kills charge them. When full, right-click for a special attack.",
 				"",
 				"Sneak + right-click (Blood Oath): pay 3 hearts of health for 30 s of full power."));
 		pages.add(page("BLOOD ARMOUR",
@@ -167,7 +181,8 @@ public final class Guide {
 				"Five enchantments only Hell gives, each found as a book in one circle. Put them on at an anvil.",
 				"Windstep (boots, faster walking): the lovers of Lust drop it.",
 				"Quickening (weapons, faster blows): Greed's vaults.",
-				"Sidestep (leggings): Wrath's watchtower caches. Press Dash (Left Alt) to dash, and dodge a boss's blow.",
+				combat ? "Sidestep (leggings): Wrath's watchtower caches. Your dodge roll costs less, goes further and is safe for longer."
+						: "Sidestep (leggings): Wrath's watchtower caches. Press Dash (Left Alt) to dash, and dodge a boss's blow.",
 				"Steadfast (chestplate, less boss damage): Heresy's tombs.",
 				"Judgement (weapons, more damage to bosses): the centaurs of Violence drop it."));
 		pages.add(page("RIDES DOWN",

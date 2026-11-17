@@ -225,6 +225,30 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `bear` animation and `stone` prop in tools/art/damned.py), brought out by `Purgatory.penitents`/`bringOut` near players on a
   terrace (off `onAWayUp`, walkers turn back at stairs), sigh only, paler in `DamnedRenderer`; `ParadisoTest` films them in
   `purgatory_terrace_<k>`. `tools/art/render.py --hide <groups>` leaves out props the game hides.
+- 3.5 (beta), Hellcraft's combat (the plan and its state: `docs/COMBAT.md`; on unless `combatOverhaul` is off). Server, `combat/`:
+  `Combat` (registration, the rules sent to clients as `net/CombatPayload`, `show` a move to watchers (`net/MovePayload`), `feel`
+  (`net/FeelPayload`), blood/chips/sparks on a player's blow, `/hellcraft combat test`), `Stamina` (in memory; `net/StaminaPayload`),
+  `Dodge` (the roll: the Dash key's `net/DashPayload`; the client moves itself, the server takes stamina and decides which blows miss,
+  `evading`; Sidestep now only improves it; `blood/LayerEnchants.dash` hands over when combat is on), `Guard` (a weapon's guard is
+  vanilla's "using an item" started by `net/GuardPayload`, since Fabric's UseItemCallback only forwards SUCCESS, which swings the arm;
+  `block` is called from `mixin/LivingEntityMixin` at the head of `applyItemBlocking`: a share turned, stamina drained, `parried` within
+  `parryTicks` of raising (not within `PARRY_LOCK` of the last raise), `broken` out of stamina; `turnedWhole` keeps vanilla from
+  flashing and crying on a parry), `WeaponClass` (what guards and how well). Hell weapons: right-click guards, so the Blood Art is the
+  attack key from the guard (`net/ArtPayload`, `HellWeapons.art`). Client, `client/combat/`: `CombatClient` (receivers, `afterUse`
+  from `mixin/MinecraftMixin` at the tail of `startUseItem`: a right-click vanilla found no use for raises the guard), `RollControl`
+  (this player's roll: ten ticks of driven velocity), `StaminaHud`, `HitFeel` (held frames, the view's spring kick, the rig's camera
+  bone; through `CameraMixin`), and `anim/`: the animation runtime. **Player moves are animations on a rig**: `tools/art/player_moves.py`
+  (key poses with easing curves, limbs slerped, baked to a key a tick; `aim(point, blade)` poses an arm by where it points, `fp_xyz`/
+  `fp_aim` the first-person item, `cam` the view) writes `art/player_moves.bbmodel`, and `tools/gen_bosses.py` (`RIGS`: animations
+  only, no mesh) makes `PlayerMovesAnimations` and `PlayerMovesAnim`. `anim/Clips` samples those keyframes by hand (Catmull-Rom),
+  `PlayerAnimator` (one per player seen) blends a move over a stance with cross-fades from a snapshot, on its own clock between
+  ticks, `RigPose` is the weighted pose, and `PlayerRig.apply` puts it on the vanilla model as a real skeleton (root at the hips, the
+  body carrying head and arms; `mixin/HumanoidModelMixin` at the tail of `setupAnim`, the pose carried on the render state by
+  `mixin/AvatarRendererMixin`, so armour and held items follow); `mixin/FirstPersonHandsMixin` applies the `fp` bone after
+  `applyItemArmTransform`. Rotations: the rig is Blockbench space like the bosses; the game holds a sword 10 degrees below a hanging
+  arm's forward. `CombatTest` films every move on three mannequins (front, three-quarter, side) with the first-person hand in the
+  same picture (`combat_<move>_<tick>`; `HELLCRAFT_COMBAT_FILM=<move,...|all>` films tick by tick) and checks the roll, guard, parry
+  and guard break. Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

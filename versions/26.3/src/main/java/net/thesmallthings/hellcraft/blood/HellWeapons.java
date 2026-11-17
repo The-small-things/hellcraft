@@ -286,11 +286,39 @@ public final class HellWeapons {
 			swearOath(player, weapon);
 			return InteractionResult.SUCCESS;
 		}
+		if (net.thesmallthings.hellcraft.combat.Combat.on() && weapon != Weapon.BLOOD_PICKAXE) {
+			// Hellcraft's combat: right-click guards (combat/Guard); the Blood Art is struck from the guard (art())
+			return InteractionResult.PASS;
+		}
 		if (charge(player) < FULL) {
 			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
 			// a sword or axe still blocks/strips as usual when there's no art to use
 			return InteractionResult.PASS;
 		}
+		unleash(player, weapon, stack);
+		return InteractionResult.SUCCESS;
+	}
+
+	/**
+	 * Hellcraft's combat: the attack key pressed from a hell weapon's guard looses its Blood Art, if the blood is full.
+	 * Returns whether it did.
+	 */
+	public static boolean art(ServerPlayer player) {
+		ItemStack stack = player.getMainHandItem();
+		Weapon weapon = of(stack);
+		if (weapon == null) {
+			return false;
+		}
+		if (charge(player) < FULL) {
+			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
+			return false;
+		}
+		player.stopUsingItem();
+		unleash(player, weapon, stack);
+		return true;
+	}
+
+	private static void unleash(ServerPlayer player, Weapon weapon, ItemStack stack) {
 		spend(player);
 		switch (weapon) {
 			case BLOODLETTER -> exsanguinate(player, infernal(stack) ? 9.0 : 6.0, infernal(stack) ? 11.0f : 8.0f);
@@ -298,7 +326,6 @@ public final class HellWeapons {
 			case TITHE_AXE -> frenzy(player, infernal(stack) ? FRENZY_TICKS * 4 / 3 : FRENZY_TICKS);
 			case BLOOD_PICKAXE -> excavate(player, infernal(stack) ? EXCAVATE_TICKS * 3 / 2 : EXCAVATE_TICKS);
 		}
-		return InteractionResult.SUCCESS;
 	}
 
 	private static void swearOath(ServerPlayer player, Weapon weapon) {

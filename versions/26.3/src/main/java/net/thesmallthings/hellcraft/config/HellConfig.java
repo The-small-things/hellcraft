@@ -144,6 +144,39 @@ public class HellConfig {
 	 * match. Their walking speed doesn't change.
 	 */
 	public double bossTempo = 0.6;
+	// --- Combat (docs/COMBAT.md)
+	/**
+	 * Hellcraft's combat: a stamina bar, a dodge roll for everyone (the Dash key), guarding and parrying with weapons
+	 * (hold right-click), and weapons that swing in combos. Off: vanilla combat, and only Sidestep leggings dash.
+	 */
+	public boolean combatOverhaul = true;
+	/** The most stamina a player holds. */
+	public int staminaMax = 100;
+	/** Stamina that comes back each tick, once it starts to. */
+	public double staminaRegen = 1.6;
+	/** Ticks after spending stamina before it starts to come back. */
+	public int staminaRegenDelay = 16;
+	/** Stamina a dodge roll costs (Sidestep leggings: a fifth less per level). */
+	public int dodgeCost = 26;
+	/** Ticks between dodge rolls. */
+	public int dodgeCooldownTicks = 16;
+	/** How far a dodge roll carries you, in blocks (Sidestep: half a block more per level). */
+	public double dodgeDistance = 3.4;
+	/** Ticks of a dodge roll during which blows pass through you (Sidestep: two more per level). */
+	public int dodgeInvulnerableTicks = 8;
+	/** The share of a blow a guarding sword turns aside (an axe or mace 0.5, a hell weapon 0.7; a shield stays 1.0). */
+	public double guardBlock = 0.6;
+	/** Stamina a guarded blow costs, per point of damage it would have done. */
+	public double guardStaminaPerDamage = 4.0;
+	/** A guard raised within this many ticks before a blow is a parry: nothing gets through and the attacker reels. */
+	public int parryTicks = 6;
+	/** Ticks a parried monster is staggered for. */
+	public int parryStaggerTicks = 30;
+	/** Ticks a broken guard leaves your weapon unusable for. */
+	public int guardBreakTicks = 30;
+	/** Stamina a charged heavy attack costs. */
+	public int heavyCost = 22;
+
 	/** The share of their damage Lucifer's forms and attacks do (1.0 = full). */
 	public double luciferDamage = 0.9;
 	/**
@@ -334,6 +367,19 @@ public class HellConfig {
 		hoarderGoldPerExtra = Math.max(1, hoarderGoldPerExtra);
 		hoardersMax = Math.max(0, hoardersMax);
 		sullenGripTicks = Math.max(0, sullenGripTicks);
+		staminaMax = Math.max(10, staminaMax);
+		staminaRegen = Math.max(0.0, staminaRegen);
+		staminaRegenDelay = Math.max(0, staminaRegenDelay);
+		dodgeCost = Math.max(0, dodgeCost);
+		dodgeCooldownTicks = Math.max(12, dodgeCooldownTicks);
+		dodgeDistance = Math.max(1.0, Math.min(8.0, dodgeDistance));
+		dodgeInvulnerableTicks = Math.max(0, Math.min(12, dodgeInvulnerableTicks));
+		guardBlock = Math.max(0.0, Math.min(1.0, guardBlock));
+		guardStaminaPerDamage = Math.max(0.0, guardStaminaPerDamage);
+		parryTicks = Math.max(0, parryTicks);
+		parryStaggerTicks = Math.max(0, parryStaggerTicks);
+		guardBreakTicks = Math.max(0, guardBreakTicks);
+		heavyCost = Math.max(0, heavyCost);
 		bossHeartScaling = Math.max(0.0, bossHeartScaling);
 		bossTempo = Math.max(0.2, Math.min(1.0, bossTempo));
 		luciferDamage = Math.max(0.0, luciferDamage);

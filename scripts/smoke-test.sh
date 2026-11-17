@@ -319,6 +319,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   lifts=$(rcon "hellcraft lifts test" || true)
   echo "$lifts"
   echo "$lifts" | grep -q "Lifts test OK" || { echo "A guardian's lift lands in the wrong place"; exit 1; }
+  # Hellcraft's combat: stamina, the dodge roll's cost and safe ticks, the guard's facing, every move's timing
+  combat=$(rcon "hellcraft combat test" || true)
+  echo "$combat"
+  echo "$combat" | grep -q "Combat self-test OK" || { echo "The combat self-test failed"; exit 1; }
   # the secret ways down: sites off the roads, lairs and Rests, each landing in the next circle; the first one built
   secrets=$(rcon "hellcraft secrets test" || true)
   echo "$secrets"

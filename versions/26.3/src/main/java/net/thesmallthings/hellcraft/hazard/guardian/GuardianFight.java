@@ -410,6 +410,13 @@ public abstract class GuardianFight {
 		return false;
 	}
 
+	void dodged(ServerPlayer player) {
+		StyleMeter style = styles.get(player.getUUID());
+		if (style != null && inArena(player)) {
+			style.onDodge();
+		}
+	}
+
 	void afterDamage(LivingEntity entity, DamageSource source, float dealt, boolean blocked) {
 		// a fighter hurt in the lair by anything but another player loses style; a shield block earns it
 		StyleMeter hurt = styles.get(entity.getUUID());

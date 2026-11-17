@@ -38,6 +38,11 @@ public final class DashKey {
 			double fz = Math.cos(yaw);
 			double x = fx * move.y + fz * move.x;
 			double z = fz * move.y - fx * move.x;
+			if (net.thesmallthings.hellcraft.combat.Combat.rules(true).on()) {
+				// Hellcraft's combat: everyone rolls, and the roll starts here and now (combat/RollControl)
+				net.thesmallthings.hellcraft.client.combat.RollControl.tryRoll(mc, x, z);
+				continue;
+			}
 			ClientPlayNetworking.send(new DashPayload((float) x, (float) z));
 		}
 	}

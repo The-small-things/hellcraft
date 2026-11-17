@@ -130,6 +130,11 @@ public final class StyleMeter {
 		add(15.0f, "PARRY");
 	}
 
+	/** A boss's blow passed through the fighter's dodge roll. */
+	public void onDodge() {
+		add(12.0f, "DODGE");
+	}
+
 	/** The fighter killed one of the boss's summons. */
 	public void onCleanup() {
 		add(20.0f, "CLEANUP");

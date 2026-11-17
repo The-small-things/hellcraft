@@ -82,6 +82,11 @@ public final class LayerEnchants {
 	// ------------------------------------------------------------------ Sidestep
 
 	private static void dash(ServerPlayer player, float x, float z) {
+		if (net.thesmallthings.hellcraft.combat.Combat.on()) {
+			// Hellcraft's combat: everyone rolls (combat/Dodge); Sidestep makes it cheaper, longer and safer
+			net.thesmallthings.hellcraft.combat.Dodge.roll(player, x, z);
+			return;
+		}
 		if (!player.isAlive() || player.isSpectator() || player.isPassenger() || player.isFallFlying()) {
 			return;
 		}

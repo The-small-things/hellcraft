@@ -233,6 +233,13 @@ public final class GuardianManager {
 		return g.title + (unbound ? " Unbound" : "") + " awakens at " + lair(level, g, lair).toShortString() + ".";
 	}
 
+	/** A blow passed through this player's dodge roll: style, if they're in a guardian's fight. */
+	public static void dodged(ServerPlayer player) {
+		for (GuardianFight f : FIGHTS.values()) {
+			f.dodged(player);
+		}
+	}
+
 	/** True while this guardian is awake. */
 	public static boolean awake(Guardian g) {
 		return FIGHTS.containsKey(g);

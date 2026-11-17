@@ -99,6 +99,7 @@ public class HellcraftMod implements ModInitializer {
 		Paradiso.register();
 		BloodArmour.register();
 		LayerEnchants.register();
+		net.thesmallthings.hellcraft.combat.Combat.register();
 		Wingbeat.register();
 		CircleHazards.register();
 		LuciferManager.register();
