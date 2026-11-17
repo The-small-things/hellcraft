@@ -59,6 +59,27 @@ public final class CombatClient {
 			StaminaHud.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.FOOD_BAR, StaminaHud.ID, new StaminaHud());
+		// each player's own choice: Hellcraft's animations for getting about and using items, or vanilla's
+		net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> dispatcher.register(
+				net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("hellcraft-client")
+						.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("animations")
+								.executes(ctx -> animations(ctx.getSource(), null))
+								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("on")
+										.executes(ctx -> animations(ctx.getSource(), true)))
+								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("off")
+										.executes(ctx -> animations(ctx.getSource(), false))))));
+	}
+
+	private static int animations(net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource source, Boolean on) {
+		if (on != null) {
+			net.thesmallthings.hellcraft.client.combat.anim.Settings.setSmoothAnimations(on);
+			PlayerAnimator.clear();
+		}
+		boolean now = net.thesmallthings.hellcraft.client.combat.anim.Settings.smoothAnimations();
+		source.sendFeedback(net.minecraft.network.chat.Component.literal(now
+				? "Hellcraft's animations are on: walking, running, jumping, landing, bows, shields and food are animated, and sudden pose changes are eased. Turn them off with /hellcraft-client animations off."
+				: "Hellcraft's animations are off: players get about as in vanilla (combat moves still play). Turn them on with /hellcraft-client animations on."));
+		return 1;
 	}
 
 	/** Someone's move, from the server. */

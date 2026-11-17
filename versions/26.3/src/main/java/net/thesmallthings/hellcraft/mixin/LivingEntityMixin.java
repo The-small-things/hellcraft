@@ -36,6 +36,14 @@ public abstract class LivingEntityMixin {
 		}
 	}
 
+	/** A blow taken on a shield (not a weapon's guard, which returns early above): those watching see the player rock back. */
+	@Inject(method = "applyItemBlocking", at = @At("RETURN"))
+	private void hellcraft$shieldHit(ServerLevel level, DamageSource source, float damage, CallbackInfoReturnable<Float> cir) {
+		if (cir.getReturnValueF() > 0 && (Object) this instanceof net.minecraft.server.level.ServerPlayer player) {
+			net.thesmallthings.hellcraft.combat.Combat.show(player, net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim.SHIELD_HIT, 0, 0, 1.0f, true);
+		}
+	}
+
 	/** A parry lets nothing through, so nothing shows: no red flash and tilted view... */
 	@WrapOperation(method = "hurtServer", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/server/level/ServerLevel;broadcastDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V"))

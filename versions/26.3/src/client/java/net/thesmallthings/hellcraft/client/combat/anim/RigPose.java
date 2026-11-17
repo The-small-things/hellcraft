@@ -13,6 +13,11 @@ public final class RigPose {
 	public final Quaternionf[] rotation = new Quaternionf[Bone.COUNT];
 	public final Vector3f[] position = new Vector3f[Bone.COUNT];
 	public final float[] weight = new float[Bone.COUNT];
+	/**
+	 * Bones whose turn and shift are added to vanilla's in the part's own frame instead of replacing it (the bow's draw over
+	 * vanilla's aiming arms: vanilla keeps the aim, the pose adds the pull).
+	 */
+	public final boolean[] additive = new boolean[Bone.COUNT];
 	/** The way a roll goes, as a yaw in the world (degrees); NaN when the pose has no direction of its own. */
 	public float heading = Float.NaN;
 	/** How much the pose keeps its own legs while the player walks (0: the walk shows through; 1: the pose's legs, as in a roll). */
@@ -30,6 +35,7 @@ public final class RigPose {
 			rotation[i].identity();
 			position[i].zero();
 			weight[i] = 0;
+			additive[i] = false;
 		}
 		heading = Float.NaN;
 		legs = 0;
@@ -41,6 +47,7 @@ public final class RigPose {
 			rotation[i].set(other.rotation[i]);
 			position[i].set(other.position[i]);
 			weight[i] = other.weight[i];
+			additive[i] = other.additive[i];
 		}
 		heading = other.heading;
 		legs = other.legs;
@@ -72,6 +79,11 @@ public final class RigPose {
 				rotation[i].set(over.rotation[i]);
 				position[i].set(over.position[i]);
 				weight[i] = o;
+				additive[i] = over.additive[i];
+			} else if (over.additive[i] && !additive[i]) {
+				// an addition over a pose of its own: added on top of it
+				rotation[i].mul(new Quaternionf().slerp(over.rotation[i], o));
+				position[i].add(over.position[i].x * o, over.position[i].y * o, over.position[i].z * o);
 			} else {
 				rotation[i].slerp(over.rotation[i], o);
 				position[i].lerp(over.position[i], o);
@@ -97,6 +109,7 @@ public final class RigPose {
 			if (a <= 1.0e-5f) {
 				rotation[i].set(to.rotation[i]);
 				position[i].set(to.position[i]);
+				additive[i] = to.additive[i];
 			} else if (b > 1.0e-5f) {
 				rotation[i].slerp(to.rotation[i], k);
 				position[i].lerp(to.position[i], k);
@@ -134,6 +147,9 @@ public final class RigPose {
 				float w = weight[a];
 				weight[a] = weight[b];
 				weight[b] = w;
+				boolean d = additive[a];
+				additive[a] = additive[b];
+				additive[b] = d;
 			}
 		}
 		for (int i = 0; i < Bone.COUNT; i++) {

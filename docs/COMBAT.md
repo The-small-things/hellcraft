@@ -26,6 +26,19 @@ whether the wind-up before a blow feels late on a busy server, the parry window 
 and the first-person positions of each swing (tools/art/player_moves.py, filmed by CombatTest). Ideas not done: fists, a
 screen-space blade trail in first person, real sounds (docs/AUDIO.md), mobs that guard and roll.
 
+**Getting about (2026-11-17, after "add more smooth animations like for running, bows, blocking, jumping"):** every player
+seen, combat or not, is drawn by the rig: `client/combat/anim/Locomotion` (walk, run and sneak strides read by vanilla's walk
+position so the feet keep pace with the ground, cross-faded by sprint and played backwards when backing up; idle breath; a
+jump's tuck, a long fall's flailing, a landing that gives with how hard it was and dips your own view; leaning into bends),
+item stances in `PlayerAnimator.items` (a bow drawn by how far it is drawn and loosed with a release move, a shield braced
+behind and rocking when struck (the server sends `SHIELD_HIT` from `LivingEntityMixin`), food and bottles to the mouth, a
+crossbow's kick, a trident's throw), and `PoseSmoother`, which eases every pose vanilla switches at once (crouching, a bow or
+shield coming up, a crossbow loaded, getting into a boat) over 4.5 ticks, with the crouch's drop eased in
+`AvatarRendererMixin.getRenderOffset`. The bow and crossbow clips are additive (`RigPose.additive`, `Clips.ADDITIVE`) over
+vanilla's aiming arms, so the aim stays. Vanilla keeps swimming, gliding, riding, climbing, flying and sleeping, and any arm
+busy with an item pose or a swing. Each player can turn it off for themselves: `/hellcraft-client animations off`
+(config/hellcraft-client.json). `MotionTest` plays and films it (`motion_*`); CombatTest films the clips on mannequins.
+
 ## Context
 The owner wants combat that feels like Better Combat / Epic Fight / Immersive Combat: weapons that swing differently
 and chain into combos, a stamina bar with dodge rolls, guarding and parrying with weapons (not only shields), and

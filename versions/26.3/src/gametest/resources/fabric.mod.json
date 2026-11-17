@@ -14,6 +14,7 @@
 			"net.thesmallthings.hellcraft.gametest.HudTest",
 			"net.thesmallthings.hellcraft.gametest.RigTest",
 			"net.thesmallthings.hellcraft.gametest.CombatTest",
+			"net.thesmallthings.hellcraft.gametest.MotionTest",
 			"net.thesmallthings.hellcraft.gametest.MapTest",
 			"net.thesmallthings.hellcraft.gametest.WaymarkTest",
 			"net.thesmallthings.hellcraft.gametest.LimboTest",

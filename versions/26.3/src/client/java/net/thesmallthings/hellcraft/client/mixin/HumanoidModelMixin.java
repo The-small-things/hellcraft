@@ -2,6 +2,7 @@ package net.thesmallthings.hellcraft.client.mixin;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerRig;
 import net.thesmallthings.hellcraft.client.combat.anim.RigPose;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +21,10 @@ public abstract class HumanoidModelMixin {
 		RigPose pose = state.getData(PlayerRig.POSE);
 		if (pose != null) {
 			PlayerRig.apply((HumanoidModel<?>) (Object) this, state, pose);
+		}
+		PlayerAnimator smoothing = state.getData(PlayerRig.SMOOTH);
+		if (smoothing != null) {
+			smoothing.smoother.apply((HumanoidModel<?>) (Object) this, state);
 		}
 	}
 }

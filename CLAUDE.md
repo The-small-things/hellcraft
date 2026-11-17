@@ -287,7 +287,16 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `shockwave` (purple ring, hurts the grounded); his own `Posture` (`hurtBy` from `LuciferFight.afterDamage` on hits through weak
   points, parries and dodges add shares; broken he plays `SLUMP`, faces and hands open); `epoch`/`alive` cancel blows when he slumps;
   after half health `string` chains a second blow; icefall only after `STANDOFF` with everyone beyond his reach; new tips once a fight
-  (`tellOnce`, no hint bits left but 63). `luciferTempo` is 1.0 (config version 5). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  (`tellOnce`, no hint bits left but 63). `luciferTempo` is 1.0 (config version 5). **Getting about:** every player seen gets a
+  `PlayerAnimator` (unless `/hellcraft-client animations off`, client `anim/Settings`, config/hellcraft-client.json): `anim/Locomotion`
+  (walk/run/sneak clips sampled at vanilla's walk position over `CYCLE`, cross-faded by sprint, reversed backwards; idle, jump, fall,
+  land by eased weights; lean from body yaw rate; arms left to vanilla when an arm pose isn't EMPTY/ITEM or a swing runs, ITEM arms
+  18 degrees forward and half the swing), item stances in `PlayerAnimator.items` (BOW_DRAW by draw ticks, EAT, DRINK, SHIELD_BRACE; releases
+  BOW_RELEASE, THROW, CROSSBOW_FIRE as moves; SHIELD_HIT from the server's `LivingEntityMixin.shieldHit`), `sampleBody` (locomotion
+  under the combat layers, a move's legs kept by its `legs`), `anim/PoseSmoother` (eases vanilla's pose switches, keyed by crouch,
+  arm poses, item use, riding; run last in `HumanoidModelMixin`) and the eased crouch drop (`AvatarRendererMixin.getRenderOffset`).
+  Additive clips (`Clips.ADDITIVE`, `RigPose.additive`) lie over vanilla's aiming arms. Clips in player_moves.py "getting about" and
+  "bows, shields, food" (before `sword_1`: CombatTest treats every move from SWORD_1 on as a swing). `MotionTest` (`motion_*`). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

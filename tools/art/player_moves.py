@@ -449,6 +449,176 @@ def guard_break():
     return c
 
 
+# ----------------------------------------------------------------------------------------------- moves: getting about
+# These play on every player, all the time (client/combat/anim/Locomotion): the walk, run and sneak are one stride each,
+# read by the player's own footfalls (vanilla's walk position, so the feet keep pace with the ground), blended by speed
+# and cross-faded into each other; the jump, the fall and the landing come and go by weight. Phase 0 is vanilla's: the
+# right leg back, the left forward, the right arm forward. Signs as everywhere here: +X swings a limb forward and tips the
+# body back; +Z takes a right limb outward (a left one inward); +Y turns the right shoulder forward.
+
+def _stride(c, frames, ease="inout"):
+    """Keys a looping stride from (tick, pose) pairs, the last copied to the end so it wraps without a seam."""
+    for t, pose in frames:
+        c.key(t, ease, **pose)
+    c.key(c.ticks, ease, **frames[0][1])
+    return c
+
+
+def walk():
+    """An unhurried walk: legs a third as far apart as vanilla's (which swings them 80 degrees), arms swinging easily
+    against them, the hips riding up as a leg passes under and the shoulders turning with the forward arm."""
+    c = Clip("walk", 20, loop=True)
+    contact = lambda s: dict(right_leg=(-28 * s, 0, 0.5), left_leg=(28 * s, 0, -0.5), right_arm=(20 * s, 0, 3), left_arm=(-20 * s, 0, -3),
+                             body=(-2, 4 * s, 0), root_pos=(0, -0.45, 0))
+    passing = dict(right_leg=(0, 0, 0.5), left_leg=(0, 0, -0.5), right_arm=(0, 0, 3), left_arm=(0, 0, -3), body=(-2, 0, 0),
+                   root_pos=(0, 0.35, 0))
+    return _stride(c, [(0, contact(1)), (5, passing), (10, contact(-1)), (15, passing)])
+
+
+def run():
+    """A sprint: leaning into it, the front leg reaching, the arms pumping hard and a little across the body, the hips
+    dropping on each footfall and lifting in the flight between."""
+    c = Clip("run", 20, loop=True)
+    contact = lambda s: dict(right_leg=((-42 if s > 0 else 55), 0, 1), left_leg=((55 if s > 0 else -42), 0, -1),
+                             right_arm=((58 if s > 0 else -42), (-8 if s > 0 else 0), (6 if s > 0 else 10)),
+                             left_arm=((-42 if s > 0 else 58), (0 if s > 0 else 8), (-10 if s > 0 else -6)),
+                             body=(-13, 8 * s, 0), root_pos=(0, -1.1, 0))
+    flight = dict(right_leg=(10, 0, 1), left_leg=(8, 0, -1), right_arm=(8, 0, 8), left_arm=(8, 0, -8), body=(-12, 0, 0),
+                  root_pos=(0, 0.9, 0))
+    return _stride(c, [(0, contact(1)), (5, flight), (10, contact(-1)), (15, flight)])
+
+
+def sneak():
+    """Sneaking: short careful steps under the bent back (vanilla bends the body), the arms forward and swinging little."""
+    c = Clip("sneak", 20, loop=True)
+    contact = lambda s: dict(right_leg=(-17 * s, 0, 0), left_leg=(17 * s, 0, 0), right_arm=(23 + 9 * s, 0, 4), left_arm=(23 - 9 * s, 0, -4),
+                             root_pos=(0, -0.2, 0))
+    passing = dict(right_leg=(0, 0, 0), left_leg=(0, 0, 0), right_arm=(23, 0, 4), left_arm=(23, 0, -4), root_pos=(0, 0.15, 0))
+    return _stride(c, [(0, contact(1)), (5, passing), (10, contact(-1)), (15, passing)])
+
+
+def idle():
+    """Standing: slow breath, the chest lifting and the shoulders rising a hair. The arms are left to vanilla's sway."""
+    c = Clip("idle", 80, loop=True, step=2.0)
+    c.key(0, body=(0, 0, 0), root_pos=(0, 0, 0))
+    c.key(36, "inout", body=(1.2, 0, 0), root_pos=(0, 0.18, 0))
+    c.key(80, "inout", body=(0, 0, 0), root_pos=(0, 0, 0))
+    return c
+
+
+def jump():
+    """Leaving the ground: a dip and push, then one knee up and the arms rising out for balance; it holds the last pose
+    while in the air."""
+    c = Clip("jump", 10)
+    c.key(0, root_pos=(0, -1.2, 0), body=(-6, 0, 0), right_leg=(-6, 0, 1), left_leg=(6, 0, -1), right_arm=(-8, 0, 6), left_arm=(-8, 0, -6))
+    c.key(3, "out", root_pos=(0, 0.6, 0), body=(-2, 0, 0), right_leg=(30, 0, 2), left_leg=(-14, 0, -2), right_arm=(28, 0, 16), left_arm=(18, 0, -16))
+    c.key(10, "inout", root_pos=(0, 0.2, 0), body=(-1, 0, 0), right_leg=(22, 0, 2), left_leg=(-10, 0, -3), right_arm=(24, 0, 20), left_arm=(14, 0, -20))
+    return c
+
+
+def fall():
+    """A long drop: arms out wide and working, legs apart and pedalling, leaning back from the ground coming up."""
+    c = Clip("fall", 20, loop=True, step=2.0)
+    a = dict(right_arm=(40, 0, 48), left_arm=(28, 0, -40), right_leg=(18, 0, 6), left_leg=(-14, 0, -6), body=(6, 0, 0))
+    b = dict(right_arm=(30, 0, 40), left_arm=(42, 0, -50), right_leg=(-12, 0, 6), left_leg=(20, 0, -6), body=(7, 0, 0))
+    return _stride(c, [(0, a), (10, b)])
+
+
+def land():
+    """Touching down: the knees give (the hips drop), the body folds forward over them and the arms go out in front.
+    The client fades it in and out by how hard the landing was; this is the deepest moment, held."""
+    c = Clip("land", 4)
+    pose = dict(root_pos=(0, -2.6, 0.6), body=(-14, 0, 0), right_leg=(16, 0, 2), left_leg=(-6, 0, -2), right_arm=(32, 0, 10), left_arm=(26, 0, -10))
+    c.key(0, **pose)
+    c.key(4, "inout", **pose)
+    return c
+
+
+# ----------------------------------------------------------------------------------------------- moves: bows, shields, food
+# The bow, crossbow and trident poses lie OVER vanilla's own aiming arms (client/combat/anim/Clips.ADDITIVE): vanilla
+# points the arms where the player looks, and these turns and shifts are added in each arm's own frame, so the aim stays.
+
+def bow_draw():
+    """Drawing a bow, read by how far it is drawn (0 to 20 ticks, a full draw). Vanilla holds the bow in the main hand
+    (the right here) and draws with the other: the string hand reaches to the bow, then pulls back past the cheek while
+    the bow arm locks out; the feet open into an archer's stance."""
+    c = Clip("bow_draw", 20)
+    c.key(0, left_arm=(6, -4, 0), left_arm_pos=(0, 0, -1.5), right_arm=(0, 0, 0), root_pos=(0, -0.3, 0), body=(1, 0, 0),
+          right_leg=(-8, 0, 2), left_leg=(9, 0, -3))
+    c.key(20, "out", left_arm=(-4, -14, 0), left_arm_pos=(0, 0, 2.5), right_arm=(-3, 4, 0), root_pos=(0, -0.7, 0), body=(3, 0, 0),
+          right_leg=(-10, 0, 3), left_leg=(11, 0, -4))
+    return c
+
+
+def bow_release():
+    """Loosing the arrow: the string hand flies back off the cheek and the bow arm kicks up, then both settle."""
+    c = Clip("bow_release", 10)
+    c.key(0, left_arm=(-4, -14, 0), left_arm_pos=(0, 0, 2.5), right_arm=(-3, 4, 0))
+    c.key(2, "out5", left_arm=(-10, -30, -6), left_arm_pos=(-1, 0.5, 4.5), right_arm=(-9, 6, 0))
+    c.key(10, "inout", left_arm=(0, 0, 0), left_arm_pos=(0, 0, 0), right_arm=(0, 0, 0))
+    return c
+
+
+def crossbow_fire():
+    """A crossbow's kick: both arms thrown up and back, the shoulders rocking, then steady again."""
+    c = Clip("crossbow_fire", 8)
+    c.key(0, right_arm=(0, 0, 0), left_arm=(0, 0, 0), right_arm_pos=(0, 0, 0), left_arm_pos=(0, 0, 0), body=(0, 0, 0))
+    c.key(1, "out5", right_arm=(-14, 0, 0), left_arm=(-14, 0, 0), right_arm_pos=(0, 0.5, 2), left_arm_pos=(0, 0.5, 2), body=(5, 0, 0))
+    c.key(8, "inout", right_arm=(0, 0, 0), left_arm=(0, 0, 0), right_arm_pos=(0, 0, 0), left_arm_pos=(0, 0, 0), body=(0, 0, 0))
+    return c
+
+
+def throw():
+    """A trident thrown: from vanilla's arm cocked up and back, the arm whips over and forward, the body following it
+    through and the left foot stepping in."""
+    c = Clip("throw", 12)
+    c.key(0, right_arm=aim((0.1, 1, 0.45)), body=(4, -12, 0), left_arm=aim((-0.3, -0.6, -0.7)), right_leg=(-10, 0, 2), left_leg=(8, 0, -2))
+    c.key(2, "in", right_arm=aim((0.08, 0.35, -1)), body=(-6, 6, 0), left_arm=aim((-0.4, -0.9, 0.2)), right_leg=(-14, 0, 2), left_leg=(14, 0, -2))
+    c.key(5, "out", right_arm=aim((-0.15, -0.7, -0.75)), body=(-12, 16, 0), left_arm=aim((-0.3, -1, 0.3)), right_leg=(-16, 0, 2), left_leg=(18, 0, -2))
+    c.key(12, "inout", right_arm=READY_R, body=(-2, 4, 0), left_arm=READY_L, right_leg=(-4, 0, 1), left_leg=(5, 0, -1))
+    return c
+
+
+def shield_brace():
+    """Behind a raised shield: the feet set one before the other, knees soft, leaning into it. (Vanilla raises the arm.)"""
+    c = Clip("shield_brace", 40, loop=True, step=2.0)
+    legs = dict(right_leg=(-12, 0, 3), left_leg=(13, 0, -3))
+    c.key(0, body=(-5, -8, 0), root_pos=(0, -1.1, 0), **legs)
+    c.key(20, "inout", body=(-6, -8, 0), root_pos=(0, -1.3, 0), **legs)
+    c.key(40, "inout", body=(-5, -8, 0), root_pos=(0, -1.1, 0), **legs)
+    return c
+
+
+def shield_hit():
+    """A blow taken on the shield: the body rocks back on its heels and comes forward again."""
+    c = Clip("shield_hit", 8)
+    c.key(0, body=(-5, -8, 0), root_pos=(0, -1.1, 0))
+    c.key(1, "out5", body=(7, -10, 0), root_pos=(0, -1.3, 1.6))
+    c.key(8, "softback", body=(-5, -8, 0), root_pos=(0, -1.1, 0))
+    return c
+
+
+def eat():
+    """Eating: the food held to the mouth, the arm bobbing and the head nodding as they chew."""
+    c = Clip("eat", 8, loop=True)
+    up = aim((-0.42, 0.42, -0.8))
+    up2 = aim((-0.42, 0.3, -0.85))
+    c.key(0, right_arm=up, head=(4, 0, 0))
+    c.key(4, "inout", right_arm=up2, head=(-3, 0, 0))
+    c.key(8, "inout", right_arm=up, head=(4, 0, 0))
+    return c
+
+
+def drink():
+    """Drinking: the bottle tipped up to the lips, the head back, a slow swallow."""
+    c = Clip("drink", 16, loop=True)
+    up = aim((-0.35, 0.75, -0.55))
+    c.key(0, right_arm=up, head=(16, 0, 0), body=(3, 0, 0))
+    c.key(8, "inout", right_arm=aim((-0.35, 0.8, -0.5)), head=(19, 0, 0), body=(4, 0, 0))
+    c.key(16, "inout", right_arm=up, head=(16, 0, 0), body=(3, 0, 0))
+    return c
+
+
 # ----------------------------------------------------------------------------------------------- moves: the sword
 
 READY_ITEM = (0, 0, 0)
@@ -723,7 +893,8 @@ def tithe_heavy():
     return overhead("tithe_heavy", 28, 10, 14, 25, heft=1.4, hop=2.0)
 
 
-CLIPS = [roll, guard, guard_two, parry, guard_break, sword_1, sword_2, sword_3, sword_heavy, axe_1, axe_2, axe_heavy,
+CLIPS = [roll, guard, guard_two, parry, guard_break, walk, run, sneak, idle, jump, fall, land, bow_draw, bow_release, crossbow_fire,
+         throw, shield_brace, shield_hit, eat, drink, sword_1, sword_2, sword_3, sword_heavy, axe_1, axe_2, axe_heavy,
          mace_1, mace_2, mace_heavy, blood_1, blood_2, blood_3, blood_4, blood_heavy, reaper_1, reaper_2, reaper_3,
          reaper_heavy, tithe_1, tithe_2, tithe_heavy]
 

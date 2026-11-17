@@ -62,11 +62,14 @@ public final class Clips {
 		public final boolean looping;
 		private final Track[] rotation = new Track[Bone.COUNT];
 		private final Track[] position = new Track[Bone.COUNT];
+		/** Its arms are added to vanilla's (ADDITIVE). */
+		public final boolean additiveArms;
 
 		private Clip(PlayerMovesAnim move, AnimationDefinition def) {
 			this.move = move;
 			this.ticks = def.lengthInSeconds() * 20.0f;
 			this.looping = def.looping();
+			this.additiveArms = ADDITIVE.contains(move);
 			for (Bone bone : Bone.ALL) {
 				List<AnimationChannel> channels = def.boneAnimations().get(bone.id);
 				if (channels == null) {
@@ -103,9 +106,11 @@ public final class Clips {
 				Track p = position[i];
 				if (r == null && p == null) {
 					out.weight[i] = 0;
+					out.additive[i] = false;
 					continue;
 				}
 				out.weight[i] = 1;
+				out.additive[i] = additiveArms && (i == Bone.RIGHT_ARM.ordinal() || i == Bone.LEFT_ARM.ordinal());
 				if (r != null) {
 					r.sample(seconds, v);
 					// Minecraft's part rotation: about Z, then Y, then X (the keys are radians)
@@ -121,6 +126,10 @@ public final class Clips {
 			}
 		}
 	}
+
+	/** Moves whose arms lie over vanilla's aiming arms, adding to them (tools/art/player_moves.py: the bow and crossbow). */
+	private static final java.util.Set<PlayerMovesAnim> ADDITIVE = java.util.EnumSet.of(PlayerMovesAnim.BOW_DRAW, PlayerMovesAnim.BOW_RELEASE,
+			PlayerMovesAnim.CROSSBOW_FIRE);
 
 	private static final Map<PlayerMovesAnim, Clip> CLIPS = new EnumMap<>(PlayerMovesAnim.class);
 

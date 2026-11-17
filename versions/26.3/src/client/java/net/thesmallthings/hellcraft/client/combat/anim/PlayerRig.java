@@ -27,6 +27,9 @@ public final class PlayerRig {
 
 	/** The pose a player is drawn with this frame, carried on their render state (mixin/AvatarRendererMixin sets it). */
 	public static final RenderStateDataKey<RigPose> POSE = RenderStateDataKey.create(() -> "hellcraft:combat_pose");
+	/** The player's animator, when their sudden pose changes are to be eased (PoseSmoother), and their crouch eased (0 to 1). */
+	public static final RenderStateDataKey<PlayerAnimator> SMOOTH = RenderStateDataKey.create(() -> "hellcraft:pose_smoother");
+	public static final RenderStateDataKey<Float> CROUCH = RenderStateDataKey.create(() -> "hellcraft:crouch");
 
 	/** The hips, in the model's own space (y runs down from the shoulders at 0 to the feet at 24). */
 	private static final Vector3f HIPS = new Vector3f(0, 12, 0);
@@ -91,7 +94,7 @@ public final class PlayerRig {
 			float w = pose.weight(bone) * hold;
 			if (w > 0) {
 				Quaternionf target = pose.rotation[bone.ordinal()];
-				if (additive) {
+				if (additive || pose.additive[bone.ordinal()]) {
 					local.mul(new Quaternionf().slerp(target, w));
 				} else {
 					local.slerp(target, w);

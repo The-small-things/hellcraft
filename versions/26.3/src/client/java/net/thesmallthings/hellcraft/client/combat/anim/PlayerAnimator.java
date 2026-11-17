@@ -4,8 +4,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.Items;
 import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.combat.WeaponClass;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim;
@@ -20,6 +25,11 @@ import org.jetbrains.annotations.Nullable;
  * ticks (so it is as smooth as the screen, not as the 20 ticks a second the game thinks in), can be held for a few
  * frames when a blow lands ({@link #freeze}), and fades back out to the vanilla pose after its last key. A stance eases
  * in and out by its weight.
+ *
+ * <p>Under it all, for every player seen (unless this player turned it off, {@link Settings}), {@link Locomotion} draws the
+ * walk, run, sneak, jumps and landings; over that an item stance shows what the player is using (a bow drawn by how far
+ * it is drawn, a shield braced behind, food or a bottle at the mouth), and letting go of a bow, a trident or a crossbow
+ * plays its release as a move. {@link PoseSmoother} eases whatever vanilla still switches at once.
  */
 public final class PlayerAnimator {
 	private static final Int2ObjectMap<PlayerAnimator> BY_ID = new Int2ObjectOpenHashMap<>();
@@ -44,6 +54,29 @@ public final class PlayerAnimator {
 
 	private final RigPose scratch = new RigPose();
 	private final RigPose scratch2 = new RigPose();
+	private final RigPose scratch3 = new RigPose();
+	private boolean mirrored;
+
+	/** Getting about, under everything. */
+	public final Locomotion motion = new Locomotion();
+	/** Vanilla's sudden pose changes, eased. */
+	public final PoseSmoother smoother = new PoseSmoother();
+
+	// what the player is using: a bow, a shield, food or drink (its clip, weight, its own clock, and which hand)
+	@Nullable
+	private Clips.Clip use;
+	private float useTime;
+	private float lastUseTime;
+	private float useWeight;
+	private float lastUseWeight;
+	private boolean useMirrored;
+	private boolean useByProgress;
+	// last tick, for releases
+	private ItemUseAnimation lastUseAnim = ItemUseAnimation.NONE;
+	private int lastTicksUsing;
+	private boolean lastUseMirrored;
+	private final boolean[] crossbowCharged = new boolean[2];
+	private boolean motionTicked;
 
 	@Nullable
 	public static PlayerAnimator get(int entityId) {
@@ -64,24 +97,30 @@ public final class PlayerAnimator {
 			BY_ID.clear();
 			return;
 		}
+		boolean smooth = Settings.smoothAnimations();
 		for (Player player : level.players()) {
 			PlayerAnimator animator = BY_ID.get(player.getId());
 			if (animator == null) {
-				if (!Guard.guarding(player)) {
+				if (!smooth && !Guard.guarding(player)) {
 					continue;
 				}
 				animator = of(player);
 			}
-			animator.tick(player);
+			animator.tick(player, smooth);
 		}
 		BY_ID.int2ObjectEntrySet().removeIf(e -> {
 			Entity entity = level.getEntity(e.getIntKey());
-			return entity == null || !entity.isAlive() || e.getValue().idle();
+			return entity == null || !entity.isAlive() || !smooth && e.getValue().idle();
 		});
 	}
 
 	private boolean idle() {
-		return action == null && stance == null;
+		return action == null && stance == null && use == null;
+	}
+
+	/** True once {@link Locomotion} has been ticked for this player (mannequins in the tests never are). */
+	public boolean moving() {
+		return motionTicked;
 	}
 
 	/** Starts a move, fading in from whatever shows now. heading: the way it goes in the world (a yaw), or NaN. */
@@ -100,6 +139,13 @@ public final class PlayerAnimator {
 		this.blendOut = Math.max(0.01f, blendOut);
 		this.freeze = 0;
 		this.held = false;
+		this.mirrored = false;
+	}
+
+	/** Starts a move made for the right hand, done with the other one (a trident thrown left-handed). */
+	public void playMirrored(PlayerMovesAnim move, float speed, float blendIn, float blendOut) {
+		play(move, speed, Float.NaN, blendIn, blendOut);
+		this.mirrored = true;
 	}
 
 	/**
@@ -117,6 +163,7 @@ public final class PlayerAnimator {
 		this.blendOut = 1000;
 		this.freeze = 0;
 		this.held = true;
+		this.mirrored = false;
 	}
 
 	/** Holds the move still for a few ticks: the pause as a blow lands. */
@@ -142,7 +189,16 @@ public final class PlayerAnimator {
 		return action != null && time < action.ticks;
 	}
 
-	private void tick(Player player) {
+	private void tick(Player player, boolean smooth) {
+		if (smooth) {
+			motion.tick(player, player == net.minecraft.client.Minecraft.getInstance().player);
+			motionTicked = true;
+			items(player);
+		} else {
+			motionTicked = false;
+			use = null;
+			useWeight = lastUseWeight = 0;
+		}
 		// the stance: a raised guard, by the weapon
 		Clips.Clip want = null;
 		if (Guard.guarding(player)) {
@@ -195,9 +251,21 @@ public final class PlayerAnimator {
 			scratch.legs = 0.3f;
 			out.layer(scratch, sw);
 		}
+		float uw = smooth(Mth.lerp(partial, lastUseWeight, useWeight));
+		if (use != null && uw > 0) {
+			use.sample(useByProgress ? Mth.lerp(partial, lastUseTime, useTime) : useTime + partial - 1, scratch.clear());
+			if (useMirrored) {
+				scratch.mirror();
+			}
+			scratch.legs = 0.4f;
+			out.layer(scratch, uw);
+		}
 		if (action != null) {
 			float t = held ? time : Mth.lerp(partial, lastTime, time);
 			action.sample(t, scratch.clear());
+			if (mirrored) {
+				scratch.mirror();
+			}
 			scratch.heading = heading;
 			scratch.legs = action.move == PlayerMovesAnim.ROLL || action.move == PlayerMovesAnim.GUARD_BREAK ? 1.0f : 0.3f;
 			float fade = t <= action.ticks ? 1 : 1 - smooth((t - action.ticks) / blendOut);
@@ -208,6 +276,115 @@ public final class PlayerAnimator {
 			}
 		}
 		return !out.empty();
+	}
+
+	/**
+	 * The whole body at this frame: getting about underneath, the moves and stances over it (a move keeps its own legs as
+	 * far as it says, {@link RigPose#legs}, and lets the stride show through the rest while the player walks). For the
+	 * player model (mixin/AvatarRendererMixin); first person reads {@link #sample}.
+	 */
+	public boolean sampleBody(float partial, net.minecraft.client.renderer.entity.state.HumanoidRenderState state, RigPose out) {
+		boolean moved = motionTicked && motion.sample(partial, state, out);
+		if (!moved) {
+			return sample(partial, out);
+		}
+		if (sample(partial, scratch3)) {
+			float walk = Mth.clamp(state.walkAnimationSpeed, 0, 1);
+			float keep = 1 - (1 - scratch3.legs) * walk * 0.85f;
+			scratch3.weight[Bone.RIGHT_LEG.ordinal()] *= keep;
+			scratch3.weight[Bone.LEFT_LEG.ordinal()] *= keep;
+			if (!Float.isNaN(scratch3.heading)) {
+				// a roll turns the whole body its own way: under it the stride would turn too, so it gives way
+				out.scale(1 - smooth(scratch3.weight(Bone.ROOT)));
+			}
+			out.layer(scratch3, 1);
+		}
+		out.legs = 1;
+		return !out.empty();
+	}
+
+	/** Each tick: what the player is using, and what they just let go of. */
+	private void items(Player player) {
+		ItemStack using = player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY;
+		ItemUseAnimation anim = using.isEmpty() ? ItemUseAnimation.NONE : using.getUseAnimation();
+		int ticksUsing = player.isUsingItem() ? player.getTicksUsingItem() : 0;
+		boolean mirror = player.isUsingItem() && player.getUsedItemHand().asArm(player.getMainArm()) != player.getMainArm();
+		PlayerMovesAnim want = switch (anim) {
+			case BOW -> PlayerMovesAnim.BOW_DRAW;
+			case EAT -> PlayerMovesAnim.EAT;
+			case DRINK -> PlayerMovesAnim.DRINK;
+			case BLOCK -> Guard.guarding(player) ? null : PlayerMovesAnim.SHIELD_BRACE;
+			default -> null;
+		};
+		lastUseWeight = useWeight;
+		lastUseTime = useTime;
+		if (want != null) {
+			Clips.Clip clip = Clips.of(want);
+			if (use != clip) {
+				if (use == null || useWeight <= 0) {
+					useTime = 0;
+					lastUseTime = 0;
+				}
+				use = clip;
+			}
+			useMirrored = mirror;
+			useByProgress = want == PlayerMovesAnim.BOW_DRAW;
+			useTime = useByProgress ? Math.min(ticksUsing, clip.ticks) : useTime + 1;
+			useWeight = Math.min(1, useWeight + 0.34f);
+		} else {
+			useWeight = Math.max(0, useWeight - 0.25f);
+			if (useByProgress) {
+				lastUseTime = useTime;
+			} else {
+				useTime += 1;
+			}
+			if (useWeight <= 0 && lastUseWeight <= 0) {
+				use = null;
+			}
+		}
+		// let go: an arrow loosed, a trident thrown
+		if (lastUseAnim != anim) {
+			if (lastUseAnim == ItemUseAnimation.BOW && lastTicksUsing >= 3 && holding(player, Items.BOW)) {
+				release(PlayerMovesAnim.BOW_RELEASE, lastUseMirrored, 0.5f, 3.0f);
+				useWeight = lastUseWeight = 0;
+				use = null;
+			} else if (lastUseAnim == ItemUseAnimation.TRIDENT && lastTicksUsing >= 10) {
+				release(PlayerMovesAnim.THROW, lastUseMirrored, 1.0f, 4.0f);
+			}
+		}
+		// a crossbow fired: it was loaded last tick and isn't now
+		for (InteractionHand hand : InteractionHand.values()) {
+			ItemStack stack = player.getItemInHand(hand);
+			boolean charged = stack.is(Items.CROSSBOW) && CrossbowItem.isCharged(stack);
+			if (crossbowCharged[hand.ordinal()] && !charged && stack.is(Items.CROSSBOW)) {
+				release(PlayerMovesAnim.CROSSBOW_FIRE, hand.asArm(player.getMainArm()) != player.getMainArm(), 0.3f, 3.0f);
+			}
+			crossbowCharged[hand.ordinal()] = charged;
+		}
+		lastUseAnim = anim;
+		lastTicksUsing = ticksUsing;
+		lastUseMirrored = mirror;
+	}
+
+	private void release(PlayerMovesAnim move, boolean mirror, float blendIn, float blendOut) {
+		if (busy() && action != null && action.move.ordinal() >= PlayerMovesAnim.SWORD_1.ordinal()) {
+			return;
+		}
+		if (mirror) {
+			playMirrored(move, 1.0f, blendIn, blendOut);
+		} else {
+			play(move, 1.0f, Float.NaN, blendIn, blendOut);
+		}
+	}
+
+	private static boolean holding(Player player, net.minecraft.world.item.Item item) {
+		return player.getMainHandItem().is(item) || player.getOffhandItem().is(item);
+	}
+
+	/** For the client tests: the item stance showing (null for none) and how strongly. */
+	@Nullable
+	public PlayerMovesAnim using() {
+		return use == null || useWeight <= 0 ? null : use.move;
 	}
 
 	private static float smooth(float x) {
