@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.client.render.monster;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
@@ -22,6 +23,12 @@ public class HoarderRenderer extends MobRenderer<Hoarder, HoarderRenderState, Ho
 				return GLOW;
 			}
 		});
+	}
+
+	/** The model is built at twice the detail (two model pixels to a game pixel) and drawn at half size. */
+	@Override
+	protected void scale(HoarderRenderState state, PoseStack poseStack) {
+		poseStack.scale(0.5f, 0.5f, 0.5f);
 	}
 
 	@Override

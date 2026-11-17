@@ -19,7 +19,7 @@ public final class ShadeAnimations {
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(4F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

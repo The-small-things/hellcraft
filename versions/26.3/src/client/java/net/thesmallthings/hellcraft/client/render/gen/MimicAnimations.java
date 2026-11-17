@@ -24,9 +24,9 @@ public final class MimicAnimations {
 	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(0.6F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.15F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.15F, KeyframeAnimations.posVec(0F, 8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.45F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.45F, KeyframeAnimations.posVec(0F, 8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("lid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -48,8 +48,8 @@ public final class MimicAnimations {
 	public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(0.6F)
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 2F, -2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.32F, KeyframeAnimations.posVec(0F, 0F, -5F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 4F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.32F, KeyframeAnimations.posVec(0F, 0F, -10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("lid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -94,8 +94,8 @@ public final class MimicAnimations {
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 90F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(-1.5F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(-7F, 7F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.posVec(-3F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(-14F, 14F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("lid", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.3F, KeyframeAnimations.degreeVec(-110F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

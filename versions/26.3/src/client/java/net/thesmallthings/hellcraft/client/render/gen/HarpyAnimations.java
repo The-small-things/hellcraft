@@ -19,7 +19,7 @@ public final class HarpyAnimations {
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(0.6F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, 1.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, 2.4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -141,8 +141,8 @@ public final class HarpyAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(90F, 0F, 40F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -11F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -16F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_leg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-60F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))

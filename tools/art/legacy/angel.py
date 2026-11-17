@@ -15,7 +15,7 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, shade, hexc  # noqa: E402
 from seraph import FEATHER, stick, side_x, lerp, add, mul, norm, feather, calm_face, lips, palm, gold_rim  # noqa: E402
 

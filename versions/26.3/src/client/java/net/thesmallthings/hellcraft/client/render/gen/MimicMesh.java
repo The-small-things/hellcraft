@@ -15,58 +15,58 @@ public final class MimicMesh {
 	private MimicMesh() {
 	}
 
-	public static final int TEXTURE_WIDTH = 128;
-	public static final int TEXTURE_HEIGHT = 64;
+	public static final int TEXTURE_WIDTH = 512;
+	public static final int TEXTURE_HEIGHT = 128;
 
 	public static LayerDefinition createLayer() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition root = mesh.getRoot();
-		PartDefinition p_body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 21).mirror(false).addBox(-7F, -1F, -7F, 14F, 1F, 14F).texOffs(30, 36).mirror(false).addBox(-7F, -10F, -7F, 14F, 9F, 1F).texOffs(0, 36).mirror(false).addBox(-7F, -10F, 6F, 14F, 9F, 1F).texOffs(26, 0).mirror(false).addBox(-7F, -10F, -6F, 1F, 9F, 12F).texOffs(0, 0).mirror(false).addBox(6F, -10F, -6F, 1F, 9F, 12F).texOffs(56, 21).mirror(false).addBox(-6F, -8.5F, -6F, 12F, 1F, 12F).texOffs(116, 36).mirror(false).addBox(5F, -2F, -7F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(0, 46).mirror(false).addBox(-7F, -2F, -7F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(8, 46).mirror(false).addBox(5F, -2F, 5F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(16, 46).mirror(false).addBox(-7F, -2F, 5F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(100, 36).mirror(false).addBox(-7.5F, -7.5F, -2F, 1F, 1F, 4F, new CubeDeformation(-0.1F)).texOffs(90, 36).mirror(false).addBox(6.5F, -7.5F, -2F, 1F, 1F, 4F, new CubeDeformation(-0.1F)).texOffs(98, 46).mirror(false).addBox(-4.5F, -10F, 6.6F, 2F, 2F, 1F).texOffs(92, 46).mirror(false).addBox(2.5F, -10F, 6.6F, 2F, 2F, 1F),
+		PartDefinition p_body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(216, 0).mirror(false).addBox(-14F, -2F, -14F, 28F, 2F, 28F).texOffs(172, 42).mirror(false).addBox(10F, -4F, -14F, 4F, 4F, 4F).texOffs(188, 42).mirror(false).addBox(-14F, -4F, -14F, 4F, 4F, 4F).texOffs(204, 42).mirror(false).addBox(10F, -4F, 10F, 4F, 4F, 4F).texOffs(220, 42).mirror(false).addBox(-14F, -4F, 10F, 4F, 4F, 4F).texOffs(372, 42).mirror(false).addBox(5F, -20F, 13.2F, 4F, 4F, 2F).texOffs(384, 42).mirror(false).addBox(-9F, -20F, 13.2F, 4F, 4F, 2F).texOffs(120, 42).mirror(false).addBox(13F, -15F, -4F, 2F, 2F, 8F).texOffs(328, 0).mirror(false).addBox(-12F, -17F, -12F, 24F, 2F, 24F).texOffs(140, 42).mirror(false).addBox(-15F, -15F, -4F, 2F, 2F, 8F).texOffs(424, 0).mirror(false).addBox(-14F, -20F, 12F, 28F, 18F, 2F).texOffs(0, 42).mirror(false).addBox(-14F, -20F, -14F, 28F, 18F, 2F).texOffs(0, 0).mirror(false).addBox(12F, -20F, -12F, 2F, 18F, 24F).texOffs(52, 0).mirror(false).addBox(-14F, -20F, -12F, 2F, 18F, 24F),
 				PartPose.offset(0F, 24F, 0F));
-		p_body.addOrReplaceChild("tooth_low_front_0_r", CubeListBuilder.create().texOffs(0, 50).mirror(false).addBox(-0.5F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(4.5F, -9.5F, -5.4F, 0.1396F, 0F, 0.1047F));
-		p_body.addOrReplaceChild("tooth_low_front_1_r", CubeListBuilder.create().texOffs(64, 46).mirror(false).addBox(-0.5F, -2F, -0.3F, 1F, 3F, 1F),
-				PartPose.offsetAndRotation(2.3F, -9.5F, -5.4F, 0.0698F, 0F, 0.0349F));
-		p_body.addOrReplaceChild("tooth_low_front_2_r", CubeListBuilder.create().texOffs(4, 50).mirror(false).addBox(-0.5F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(0F, -9.5F, -5.4F, 0F, 0F, -0.0349F));
-		p_body.addOrReplaceChild("tooth_low_front_3_r", CubeListBuilder.create().texOffs(68, 46).mirror(false).addBox(-0.5F, -2F, -0.3F, 1F, 3F, 1F),
-				PartPose.offsetAndRotation(-2.3F, -9.5F, -5.4F, 0.1396F, 0F, -0.1047F));
-		p_body.addOrReplaceChild("tooth_low_front_4_r", CubeListBuilder.create().texOffs(8, 50).mirror(false).addBox(-0.5F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-4.5F, -9.5F, -5.4F, 0.0698F, 0F, 0.1047F));
-		p_body.addOrReplaceChild("tooth_low_right_0_r", CubeListBuilder.create().texOffs(24, 50).mirror(false).addBox(-0.4F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-5F, -9.5F, -2.5F, 0F, 0F, -0.1396F));
-		p_body.addOrReplaceChild("tooth_low_right_1_r", CubeListBuilder.create().texOffs(28, 50).mirror(false).addBox(-0.4F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-5F, -9.5F, 1F, 0F, 0F, -0.1396F));
-		p_body.addOrReplaceChild("tooth_low_right_2_r", CubeListBuilder.create().texOffs(32, 50).mirror(false).addBox(-0.4F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-5F, -9.5F, 4F, 0F, 0F, -0.1396F));
-		p_body.addOrReplaceChild("tooth_low_left_0_r", CubeListBuilder.create().texOffs(12, 50).mirror(false).addBox(-0.6F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(5F, -9.5F, -2.5F, 0F, 0F, 0.1396F));
-		p_body.addOrReplaceChild("tooth_low_left_1_r", CubeListBuilder.create().texOffs(16, 50).mirror(false).addBox(-0.6F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(5F, -9.5F, 1F, 0F, 0F, 0.1396F));
-		p_body.addOrReplaceChild("tooth_low_left_2_r", CubeListBuilder.create().texOffs(20, 50).mirror(false).addBox(-0.6F, -1F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(5F, -9.5F, 4F, 0F, 0F, 0.1396F));
-		PartDefinition p_tongue = p_body.addOrReplaceChild("tongue", CubeListBuilder.create().texOffs(60, 36).mirror(false).addBox(-2F, -0.5F, -3F, 4F, 1F, 4F).texOffs(76, 36).mirror(false).addBox(-1.5F, -0.6F, -7F, 3F, 1F, 4F),
-				PartPose.offset(0F, -9F, 4F));
-		PartDefinition p_tongue_tip = p_tongue.addOrReplaceChild("tongue_tip", CubeListBuilder.create().texOffs(72, 46).mirror(false).addBox(-1F, -0.7F, -2F, 2F, 1F, 2F).texOffs(40, 50).mirror(false).addBox(-1.1F, -0.8F, -2.8F, 1F, 1F, 1F, new CubeDeformation(-0.1F)).texOffs(36, 50).mirror(false).addBox(0.1F, -0.8F, -2.8F, 1F, 1F, 1F, new CubeDeformation(-0.1F)),
-				PartPose.offset(0F, 0F, -7F));
-		PartDefinition p_lid = p_body.addOrReplaceChild("lid", CubeListBuilder.create().texOffs(52, 0).mirror(false).addBox(-7F, -5F, -14F, 14F, 5F, 14F).texOffs(24, 46).mirror(false).addBox(5F, -5F, -14F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(32, 46).mirror(false).addBox(-7F, -5F, -14F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(40, 46).mirror(false).addBox(5F, -5F, -2F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(48, 46).mirror(false).addBox(-7F, -5F, -2F, 2F, 2F, 2F, new CubeDeformation(0.06F)).texOffs(110, 36).mirror(false).addBox(-1F, -2F, -14.8F, 2F, 4F, 1F).texOffs(86, 46).mirror(false).addBox(-4.5F, -2F, -0.4F, 2F, 2F, 1F).texOffs(80, 46).mirror(false).addBox(2.5F, -2F, -0.4F, 2F, 2F, 1F),
-				PartPose.offset(0F, -10F, 7F));
-		p_lid.addOrReplaceChild("tooth_high_front_0_r", CubeListBuilder.create().texOffs(104, 46).mirror(false).addBox(-0.5F, -0.2F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(3.5F, 0.2F, -12.4F, -0.1396F, 0F, -0.1047F));
-		p_lid.addOrReplaceChild("tooth_high_front_1_r", CubeListBuilder.create().texOffs(56, 46).mirror(false).addBox(-0.5F, -0.2F, -0.5F, 1F, 3F, 1F),
-				PartPose.offsetAndRotation(1.1F, 0.2F, -12.4F, -0.0698F, 0F, -0.0349F));
-		p_lid.addOrReplaceChild("tooth_high_front_2_r", CubeListBuilder.create().texOffs(108, 46).mirror(false).addBox(-0.5F, -0.2F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-1.1F, 0.2F, -12.4F, 0F, 0F, 0.0349F));
-		p_lid.addOrReplaceChild("tooth_high_front_3_r", CubeListBuilder.create().texOffs(60, 46).mirror(false).addBox(-0.5F, -0.2F, -0.5F, 1F, 3F, 1F),
-				PartPose.offsetAndRotation(-3.5F, 0.2F, -12.4F, -0.1396F, 0F, 0.1047F));
-		p_lid.addOrReplaceChild("tooth_high_right_0_r", CubeListBuilder.create().texOffs(120, 46).mirror(false).addBox(-0.4F, -0.2F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-5F, 0.2F, -8F, 0F, 0F, 0.1396F));
-		p_lid.addOrReplaceChild("tooth_high_right_1_r", CubeListBuilder.create().texOffs(124, 46).mirror(false).addBox(-0.4F, -0.2F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(-5F, 0.2F, -4.5F, 0F, 0F, 0.1396F));
-		p_lid.addOrReplaceChild("tooth_high_left_0_r", CubeListBuilder.create().texOffs(112, 46).mirror(false).addBox(-0.6F, -0.2F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(5F, 0.2F, -8F, 0F, 0F, -0.1396F));
-		p_lid.addOrReplaceChild("tooth_high_left_1_r", CubeListBuilder.create().texOffs(116, 46).mirror(false).addBox(-0.6F, -0.2F, -0.5F, 1F, 2F, 1F),
-				PartPose.offsetAndRotation(5F, 0.2F, -4.5F, 0F, 0F, -0.1396F));
+		p_body.addOrReplaceChild("tooth_low_front_0_r", CubeListBuilder.create().texOffs(444, 42).mirror(false).addBox(-1F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(9F, -19F, -10.8F, 0.1396F, 0F, 0.1047F));
+		p_body.addOrReplaceChild("tooth_low_front_1_r", CubeListBuilder.create().texOffs(316, 42).mirror(false).addBox(-1F, -4F, -0.6F, 2F, 6F, 2F),
+				PartPose.offsetAndRotation(4.6F, -19F, -10.8F, 0.0698F, 0F, 0.0349F));
+		p_body.addOrReplaceChild("tooth_low_front_2_r", CubeListBuilder.create().texOffs(452, 42).mirror(false).addBox(-1F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(0F, -19F, -10.8F, 0F, 0F, -0.0349F));
+		p_body.addOrReplaceChild("tooth_low_front_3_r", CubeListBuilder.create().texOffs(324, 42).mirror(false).addBox(-1F, -4F, -0.6F, 2F, 6F, 2F),
+				PartPose.offsetAndRotation(-4.6F, -19F, -10.8F, 0.1396F, 0F, -0.1047F));
+		p_body.addOrReplaceChild("tooth_low_front_4_r", CubeListBuilder.create().texOffs(460, 42).mirror(false).addBox(-1F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-9F, -19F, -10.8F, 0.0698F, 0F, 0.1047F));
+		p_body.addOrReplaceChild("tooth_low_left_0_r", CubeListBuilder.create().texOffs(468, 42).mirror(false).addBox(-1.2F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(10F, -19F, -5F, 0F, 0F, 0.1396F));
+		p_body.addOrReplaceChild("tooth_low_left_1_r", CubeListBuilder.create().texOffs(476, 42).mirror(false).addBox(-1.2F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(10F, -19F, 2F, 0F, 0F, 0.1396F));
+		p_body.addOrReplaceChild("tooth_low_left_2_r", CubeListBuilder.create().texOffs(484, 42).mirror(false).addBox(-1.2F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(10F, -19F, 8F, 0F, 0F, 0.1396F));
+		p_body.addOrReplaceChild("tooth_low_right_0_r", CubeListBuilder.create().texOffs(492, 42).mirror(false).addBox(-0.8F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-10F, -19F, -5F, 0F, 0F, -0.1396F));
+		p_body.addOrReplaceChild("tooth_low_right_1_r", CubeListBuilder.create().texOffs(500, 42).mirror(false).addBox(-0.8F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-10F, -19F, 2F, 0F, 0F, -0.1396F));
+		p_body.addOrReplaceChild("tooth_low_right_2_r", CubeListBuilder.create().texOffs(0, 62).mirror(false).addBox(-0.8F, -2F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-10F, -19F, 8F, 0F, 0F, -0.1396F));
+		PartDefinition p_tongue = p_body.addOrReplaceChild("tongue", CubeListBuilder.create().texOffs(60, 42).mirror(false).addBox(-4F, -1F, -6F, 8F, 2F, 8F).texOffs(92, 42).mirror(false).addBox(-3F, -1.2F, -14F, 6F, 2F, 8F),
+				PartPose.offset(0F, -18F, 8F));
+		PartDefinition p_tongue_tip = p_tongue.addOrReplaceChild("tongue_tip", CubeListBuilder.create().texOffs(8, 62).mirror(false).addBox(0.2F, -1.6F, -5.6F, 2F, 2F, 2F).texOffs(16, 62).mirror(false).addBox(-2.2F, -1.6F, -5.6F, 2F, 2F, 2F).texOffs(332, 42).mirror(false).addBox(-2F, -1.4F, -4F, 4F, 2F, 4F),
+				PartPose.offset(0F, 0F, -14F));
+		PartDefinition p_lid = p_body.addOrReplaceChild("lid", CubeListBuilder.create().texOffs(348, 42).mirror(false).addBox(5F, -4F, -0.8F, 4F, 4F, 2F).texOffs(360, 42).mirror(false).addBox(-9F, -4F, -0.8F, 4F, 4F, 2F).texOffs(160, 42).mirror(false).addBox(-2F, -4F, -29.6F, 4F, 8F, 2F).texOffs(104, 0).mirror(false).addBox(-14F, -10F, -28F, 28F, 10F, 28F).texOffs(236, 42).mirror(false).addBox(10F, -10F, -28F, 4F, 4F, 4F).texOffs(252, 42).mirror(false).addBox(-14F, -10F, -28F, 4F, 4F, 4F).texOffs(268, 42).mirror(false).addBox(10F, -10F, -4F, 4F, 4F, 4F).texOffs(284, 42).mirror(false).addBox(-14F, -10F, -4F, 4F, 4F, 4F),
+				PartPose.offset(0F, -20F, 14F));
+		p_lid.addOrReplaceChild("tooth_high_front_0_r", CubeListBuilder.create().texOffs(396, 42).mirror(false).addBox(-1F, -0.4F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(7F, 0.4F, -24.8F, -0.1396F, 0F, -0.1047F));
+		p_lid.addOrReplaceChild("tooth_high_front_1_r", CubeListBuilder.create().texOffs(300, 42).mirror(false).addBox(-1F, -0.4F, -1F, 2F, 6F, 2F),
+				PartPose.offsetAndRotation(2.2F, 0.4F, -24.8F, -0.0698F, 0F, -0.0349F));
+		p_lid.addOrReplaceChild("tooth_high_front_2_r", CubeListBuilder.create().texOffs(404, 42).mirror(false).addBox(-1F, -0.4F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-2.2F, 0.4F, -24.8F, 0F, 0F, 0.0349F));
+		p_lid.addOrReplaceChild("tooth_high_front_3_r", CubeListBuilder.create().texOffs(308, 42).mirror(false).addBox(-1F, -0.4F, -1F, 2F, 6F, 2F),
+				PartPose.offsetAndRotation(-7F, 0.4F, -24.8F, -0.1396F, 0F, 0.1047F));
+		p_lid.addOrReplaceChild("tooth_high_left_0_r", CubeListBuilder.create().texOffs(412, 42).mirror(false).addBox(-1.2F, -0.4F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(10F, 0.4F, -16F, 0F, 0F, -0.1396F));
+		p_lid.addOrReplaceChild("tooth_high_left_1_r", CubeListBuilder.create().texOffs(420, 42).mirror(false).addBox(-1.2F, -0.4F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(10F, 0.4F, -9F, 0F, 0F, -0.1396F));
+		p_lid.addOrReplaceChild("tooth_high_right_0_r", CubeListBuilder.create().texOffs(428, 42).mirror(false).addBox(-0.8F, -0.4F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-10F, 0.4F, -16F, 0F, 0F, 0.1396F));
+		p_lid.addOrReplaceChild("tooth_high_right_1_r", CubeListBuilder.create().texOffs(436, 42).mirror(false).addBox(-0.8F, -0.4F, -1F, 2F, 4F, 2F),
+				PartPose.offsetAndRotation(-10F, 0.4F, -9F, 0F, 0F, 0.1396F));
 		return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	}
 }

@@ -13,7 +13,7 @@ Run from the repo root:  python3 tools/art/glutton.py && python3 tools/gen_bosse
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, shade, hexc, mix, value_noise  # noqa: E402
 
 SKIN = material("skin", "skin", base="8a8a5a", dark="5a5a36")

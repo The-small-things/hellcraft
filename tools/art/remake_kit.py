@@ -336,6 +336,7 @@ class Remake(Builder):
         import bbmodel
         sys.path.insert(0, os.path.join(bb.HERE, "legacy"))
         mod = importlib.import_module(script)
+        self.legacy = mod
         k = self.detail
         mats, details, also = mats or {}, details or {}, also or {}
 

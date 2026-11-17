@@ -97,9 +97,9 @@ public final class HereticAnimations {
 			.build();
 	public static final AnimationDefinition RISE = AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -10F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(25F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -116,8 +116,8 @@ public final class HereticAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_leg", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-170F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -130,15 +130,15 @@ public final class HereticAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_leg", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition DEATH = AnimationDefinition.Builder.withLength(1F)
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, -6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, -14F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, -12F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, -28F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.SCALE,
 					new Keyframe(0F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.scaleVec(1.2, 0.3, 1.2), AnimationChannel.Interpolations.CATMULLROM)))

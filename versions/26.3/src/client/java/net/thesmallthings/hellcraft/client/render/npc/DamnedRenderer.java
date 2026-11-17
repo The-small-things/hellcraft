@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.client.render.npc;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
@@ -35,6 +36,12 @@ public class DamnedRenderer extends MobRenderer<Damned, DamnedRenderState, Damne
 				return GLOW;
 			}
 		});
+	}
+
+	/** The model is built at twice the detail (two model pixels to a game pixel) and drawn at half size. */
+	@Override
+	protected void scale(DamnedRenderState state, PoseStack poseStack) {
+		poseStack.scale(0.5f, 0.5f, 0.5f);
 	}
 
 	@Override

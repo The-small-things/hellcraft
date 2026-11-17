@@ -99,9 +99,9 @@ public final class DamnedAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition LEAD = AnimationDefinition.Builder.withLength(0.8F).looping()
@@ -161,9 +161,9 @@ public final class DamnedAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition WRITHE = AnimationDefinition.Builder.withLength(1.6F).looping()
@@ -344,9 +344,9 @@ public final class DamnedAnimations {
 					new Keyframe(2.25F, KeyframeAnimations.degreeVec(-86F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(-88F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -10F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, -10.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.posVec(0F, -10F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, -21F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.posVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition PUSH = AnimationDefinition.Builder.withLength(3F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -399,7 +399,7 @@ public final class DamnedAnimations {
 					new Keyframe(3F, KeyframeAnimations.degreeVec(40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, -0.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, -1.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("weight", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.LINEAR),
@@ -516,9 +516,9 @@ public final class DamnedAnimations {
 					new Keyframe(0.8F, KeyframeAnimations.degreeVec(40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 1.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.2F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 1.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition BOB = AnimationDefinition.Builder.withLength(2.4F).looping()
@@ -570,7 +570,7 @@ public final class DamnedAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 2.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition SHIVER = AnimationDefinition.Builder.withLength(0.5F).looping()
@@ -644,9 +644,9 @@ public final class DamnedAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(5F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition BEAR = AnimationDefinition.Builder.withLength(3.2F).looping()
@@ -701,11 +701,11 @@ public final class DamnedAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.2F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, -1.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, -1.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3.2F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, -3.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, -3.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.posVec(0F, -2F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition SCREAM = AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -752,8 +752,8 @@ public final class DamnedAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -0.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -0.4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

@@ -19,9 +19,9 @@ public final class WrathfulAnimations {
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(1.2F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.9F, KeyframeAnimations.posVec(0F, -0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.9F, KeyframeAnimations.posVec(0F, -1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -141,8 +141,8 @@ public final class WrathfulAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(75F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, -6F, -2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -10F, -3F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, -12F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -20F, -6F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

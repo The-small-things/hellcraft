@@ -14,7 +14,7 @@ candlestick and a cup poking out of its mouth, held on by ropes over his shoulde
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, shade, hexc, mix  # noqa: E402
 
 SKIN = material("skin", "skin", base="9c9868", dark="6b6844")

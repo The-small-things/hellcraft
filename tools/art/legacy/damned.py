@@ -20,7 +20,7 @@ Run from the repo root:  python3 tools/art/damned.py && python3 tools/gen_bosses
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, shade, hexc  # noqa: E402
 
 SKIN = material("skin", "skin", base="b6bac0", dark="7a7f8a")

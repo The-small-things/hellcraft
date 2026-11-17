@@ -43,9 +43,9 @@ public final class HoarderAnimations {
 	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.25F, KeyframeAnimations.posVec(0F, -0.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.posVec(0F, -1.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.75F, KeyframeAnimations.posVec(0F, -0.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.posVec(0F, -1.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -130,8 +130,8 @@ public final class HoarderAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(50F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -12F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(-20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

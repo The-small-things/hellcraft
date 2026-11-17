@@ -41,10 +41,11 @@ public class ShadeRenderer extends MobRenderer<Shade, ShadeRenderState, ShadeMod
 		state.talk.copyFrom(shade.talk);
 	}
 
-	/** They float a hand's breadth above the meadow. */
+	/** They float a hand's breadth above the meadow; the model is built at twice the detail, so drawn at half size. */
 	@Override
 	protected void scale(ShadeRenderState state, PoseStack poseStack) {
-		poseStack.translate(0, -0.2f, 0);
+		poseStack.scale(0.5f, 0.5f, 0.5f);
+		poseStack.translate(0, -0.4f, 0);
 	}
 
 	@Override

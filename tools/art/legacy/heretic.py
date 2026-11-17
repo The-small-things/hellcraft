@@ -16,7 +16,7 @@ from the head and both shoulders.
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, shade, hexc, mix  # noqa: E402
 
 CHAR = material("char", "skin", base="2a2420", dark="0e0a08")

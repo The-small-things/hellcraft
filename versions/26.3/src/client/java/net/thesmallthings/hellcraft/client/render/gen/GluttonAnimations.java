@@ -19,7 +19,7 @@ public final class GluttonAnimations {
 	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(2F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, -0.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, -1.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -65,8 +65,8 @@ public final class GluttonAnimations {
 					new Keyframe(1F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.35F, KeyframeAnimations.posVec(0F, 0F, 2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, 0F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.35F, KeyframeAnimations.posVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, 0F, -8F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -91,9 +91,9 @@ public final class GluttonAnimations {
 			.build();
 	public static final AnimationDefinition EMERGE = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -44F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -44F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -109,8 +109,8 @@ public final class GluttonAnimations {
 					new Keyframe(1.1F, KeyframeAnimations.degreeVec(-40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_leg", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -44F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -44F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(-150F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM),
@@ -122,8 +122,8 @@ public final class GluttonAnimations {
 					new Keyframe(1F, KeyframeAnimations.degreeVec(-10F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_leg", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -22F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -44F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -44F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.3F)
@@ -139,7 +139,7 @@ public final class GluttonAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(-40F, 0F, 20F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

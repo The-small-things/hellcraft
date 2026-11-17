@@ -227,38 +227,38 @@ public class HellcraftClient implements ClientModInitializer {
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("glutton"), GluttonMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.GLUTTON, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("glutton"),
 				new SoulMonsterModel.Anims(GluttonAnimations.IDLE, GluttonAnimations.WALK, GluttonAnimations.ATTACK, GluttonAnimations.HURT,
-						GluttonAnimations.DEATH, GluttonAnimations.EMERGE), "glutton", 0.8f, 255, "body", "head"));
+						GluttonAnimations.DEATH, GluttonAnimations.EMERGE), "glutton", 0.8f, 255, 0.5f, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("wrathful"), WrathfulMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.WRATHFUL, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("wrathful"),
 				new SoulMonsterModel.Anims(WrathfulAnimations.IDLE, WrathfulAnimations.WALK, WrathfulAnimations.ATTACK, WrathfulAnimations.HURT,
-						WrathfulAnimations.DEATH, WrathfulAnimations.RAGE), "wrathful", 0.5f, 255, "body", "head"));
+						WrathfulAnimations.DEATH, WrathfulAnimations.RAGE), "wrathful", 0.5f, 255, 0.5f, "body", "head"));
 		// Lower Hell's: the heretics out of their tombs, the centaurs of the river of blood, the harpies of the Wood
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("heretic"), HereticMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HERETIC, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("heretic"),
 				new SoulMonsterModel.Anims(HereticAnimations.IDLE, HereticAnimations.WALK, HereticAnimations.ATTACK, HereticAnimations.HURT,
-						HereticAnimations.DEATH, HereticAnimations.RISE), "heretic", 0.5f, 255, "body", "head"));
+						HereticAnimations.DEATH, HereticAnimations.RISE), "heretic", 0.5f, 255, 0.5f, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("centaur"), CentaurMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.CENTAUR, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("centaur"),
 				new SoulMonsterModel.Anims(CentaurAnimations.IDLE, CentaurAnimations.WALK, CentaurAnimations.ATTACK, CentaurAnimations.HURT,
-						CentaurAnimations.DEATH, CentaurAnimations.LOOK), "centaur", 1.0f, 255, "horse", "torso", "head"));
+						CentaurAnimations.DEATH, CentaurAnimations.LOOK), "centaur", 1.0f, 255, 0.5f, "horse", "torso", "head"));
 		// Paradiso's angels: the host round the spheres and the Rose, and the Angelic Guard
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("angel"), AngelMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.ANGEL, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("angel"),
 				new SoulMonsterModel.Anims(AngelAnimations.IDLE, AngelAnimations.FLY, AngelAnimations.ATTACK, AngelAnimations.HURT,
-						AngelAnimations.DEATH, AngelAnimations.SING), "angel", 0.0f, 255, "root", "body", "chest", "head"));
+						AngelAnimations.DEATH, AngelAnimations.SING), "angel", 0.0f, 255, 0.5f, "root", "body", "chest", "head"));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("harpy"), HarpyMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HARPY, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("harpy"),
 				new SoulMonsterModel.Anims(HarpyAnimations.IDLE, null, HarpyAnimations.ATTACK, HarpyAnimations.HURT, HarpyAnimations.DEATH,
-						HarpyAnimations.SHRIEK), "harpy", 0.4f, 255, "body", "head"));
+						HarpyAnimations.SHRIEK), "harpy", 0.4f, 255, 0.5f, "body", "head"));
 		// Malebolge's: mimics (no glow: nothing gives them away but their breathing) and thieves
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("mimic"), MimicMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MIMIC, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("mimic"),
 				new SoulMonsterModel.Anims(MimicAnimations.IDLE, MimicAnimations.WALK, MimicAnimations.ATTACK, MimicAnimations.HURT,
-						MimicAnimations.DEATH, MimicAnimations.BREATHE), "mimic", 0.4f, 255));
+						MimicAnimations.DEATH, MimicAnimations.BREATHE), "mimic", 0.4f, 255, 0.5f));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("thief"), ThiefMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.THIEF, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("thief"),
 				new SoulMonsterModel.Anims(ThiefAnimations.IDLE, ThiefAnimations.WALK, ThiefAnimations.ATTACK, ThiefAnimations.HURT,
-						ThiefAnimations.DEATH, ThiefAnimations.FLEE), "thief", 0.5f, 255, "body", "head"));
+						ThiefAnimations.DEATH, ThiefAnimations.FLEE), "thief", 0.5f, 255, 0.5f, "body", "head"));
 		// Lower Hell's guardians (AnimatedBoss: one renderer for all), Medusa, the tamed Geryon and Antaeus
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("fury"), FuryMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.FURY, context -> new AnimatedBossRenderer<>(context, "fury", FuryAnimations.all(), -1, 0.7f, 1.0f,
@@ -326,11 +326,11 @@ public class HellcraftClient implements ClientModInitializer {
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("malebranche"), MalebrancheMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MALEBRANCHE, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("malebranche"),
 				new SoulMonsterModel.Anims(MalebrancheAnimations.IDLE, MalebrancheAnimations.WALK, MalebrancheAnimations.ATTACK,
-						MalebrancheAnimations.HURT, MalebrancheAnimations.DEATH, MalebrancheAnimations.JEER), "malebranche", 0.6f, 255, "body", "head"));
+						MalebrancheAnimations.HURT, MalebrancheAnimations.DEATH, MalebrancheAnimations.JEER), "malebranche", 0.6f, 255, 0.5f, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("malacoda"), MalacodaMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MALACODA, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("malacoda"),
 				new SoulMonsterModel.Anims(MalacodaAnimations.IDLE, MalacodaAnimations.WALK, MalacodaAnimations.POINT, MalacodaAnimations.HURT,
-						MalacodaAnimations.DEATH, MalacodaAnimations.LAUGH), "malacoda", 0.6f, 255, "body", "head"));
+						MalacodaAnimations.DEATH, MalacodaAnimations.LAUGH), "malacoda", 0.6f, 255, 0.5f, "body", "head"));
 		ModelLayerRegistry.registerModelLayer(HoarderModel.LAYER, HoarderMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.HOARDER, HoarderRenderer::new);
 		ModelLayerRegistry.registerModelLayer(ShadeModel.LAYER, ShadeMesh::createLayer);

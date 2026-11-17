@@ -45,9 +45,9 @@ public final class AngelAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 3.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 7F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition FLY = AnimationDefinition.Builder.withLength(1.2F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -95,9 +95,9 @@ public final class AngelAnimations {
 					new Keyframe(1.08F, KeyframeAnimations.degreeVec(0F, 0F, 8.8F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(0.9F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -126,8 +126,8 @@ public final class AngelAnimations {
 					new Keyframe(0.5F, KeyframeAnimations.degreeVec(0F, -20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.9F, KeyframeAnimations.degreeVec(0F, 18F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.9F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.9F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.3F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -153,9 +153,9 @@ public final class AngelAnimations {
 					new Keyframe(0.4F, KeyframeAnimations.degreeVec(0F, -40F, -10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 40F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 48F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 96F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.SCALE,
 					new Keyframe(0F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.LINEAR),
 					new Keyframe(0.8F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.LINEAR),
@@ -188,9 +188,9 @@ public final class AngelAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 40F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 18F, 10F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 
 	public static AnimationDefinition of(AngelAnim anim) {

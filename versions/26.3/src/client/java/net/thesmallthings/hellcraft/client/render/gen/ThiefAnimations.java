@@ -149,16 +149,16 @@ public final class ThiefAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(80F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -6F, -2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -10F, -3F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -12F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -20F, -6F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_leg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(72F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_leg", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -6F, -2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -10F, -3F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -12F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -20F, -6F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_shin", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(45F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -169,8 +169,8 @@ public final class ThiefAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(78F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_leg", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -6F, -2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -10F, -3F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, -12F, -4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -20F, -6F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_shin", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.6F, KeyframeAnimations.degreeVec(30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),

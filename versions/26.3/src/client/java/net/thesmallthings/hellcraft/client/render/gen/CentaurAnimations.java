@@ -36,7 +36,7 @@ public final class CentaurAnimations {
 					new Keyframe(2F, KeyframeAnimations.degreeVec(20F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("torso", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0.4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0.8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1F).looping()
@@ -66,9 +66,9 @@ public final class CentaurAnimations {
 					new Keyframe(1F, KeyframeAnimations.degreeVec(-30F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("horse", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.25F, KeyframeAnimations.posVec(0F, 0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.25F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.75F, KeyframeAnimations.posVec(0F, 0.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.75F, KeyframeAnimations.posVec(0F, 1F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("tail", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(25F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -165,8 +165,8 @@ public final class CentaurAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, 85F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("horse", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.4F, KeyframeAnimations.posVec(0F, -9F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.5F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.4F, KeyframeAnimations.posVec(0F, -18F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("torso", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(40F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))

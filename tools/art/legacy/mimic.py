@@ -17,7 +17,7 @@ The lid opens upward (positive X about its hinge at the back).
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, shade, hexc  # noqa: E402
 
 WOOD = material("wood", "flat", base="9c6a2c")
