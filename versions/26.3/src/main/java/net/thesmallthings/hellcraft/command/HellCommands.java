@@ -197,6 +197,9 @@ public final class HellCommands {
 				.then(Commands.literal("lifts")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
 								net.thesmallthings.hellcraft.hazard.guardian.LairLifts.selfTest()))))
+				.then(Commands.literal("hitbox")
+						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
+								net.thesmallthings.hellcraft.entity.boss.BossPart.selfTest(ctx.getSource().getLevel(), ctx.getSource().getPosition())))))
 				.then(Commands.literal("combat")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
 								net.thesmallthings.hellcraft.combat.Combat.selfTest()))))

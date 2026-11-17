@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.CerberusShape;
 
 /**
  * Cerberus, the Great Worm: the body of his fight (CerberusFight), modelled in art/cerberus.bbmodel (edited in Blender via tools/art/blender_bridge.py). Unlike Minos he
@@ -101,5 +102,11 @@ public class CerberusEntity extends BossEntity {
 		if (!level().isClientSide()) {
 			play(CerberusAnim.DEATH);
 		}
+	}
+
+	/** Where he can be hit beyond his main box (tools/art/hitboxes.py). */
+	@Override
+	public BossShape shape() {
+		return CerberusShape.SHAPE;
 	}
 }

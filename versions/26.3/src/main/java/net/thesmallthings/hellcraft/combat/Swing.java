@@ -28,6 +28,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.entity.boss.BossPart;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.net.SwingPayload;
 import net.thesmallthings.hellcraft.util.Feedback;
@@ -327,15 +328,17 @@ public final class Swing {
 		double reach = player.entityInteractionRange() + move.reach();
 		Vec3 eye = player.getEyePosition();
 		Vec3 look = player.getLookAngle();
-		Entity aimed = aimed(player, eye, look, reach);
+		// a boss's part (BossPart: Cerberus's heads, Geryon's tail) is the boss: its box is where the blow lands, the boss what it hurts
+		Entity aimed = BossPart.body(aimed(player, eye, look, reach));
 		List<Target> found = new ArrayList<>();
 		AABB box = player.getBoundingBox().inflate(reach + 1.5);
 		for (Entity entity : level.getEntities(player, box, e -> e.isAlive() && e.isAttackable() && !e.isSpectator())) {
-			if (entity == player.getVehicle() || entity.isPassengerOfSameVehicle(player)) {
+			Entity body = BossPart.body(entity);
+			if (body == null || body == player || body == player.getVehicle() || body.isPassengerOfSameVehicle(player)) {
 				continue;
 			}
-			boolean isAimed = entity == aimed;
-			if (!isAimed && !fightsBack(entity, player)) {
+			boolean isAimed = body == aimed;
+			if (!isAimed && !fightsBack(body, player)) {
 				continue;
 			}
 			Vec3 nearest = nearest(entity.getBoundingBox(), eye);
@@ -351,9 +354,12 @@ public final class Swing {
 					&& level.clip(new ClipContext(eye, nearest, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() != HitResult.Type.MISS) {
 				continue;
 			}
-			found.add(new Target(entity, distance, isAimed));
+			found.add(new Target(body, distance, isAimed));
 		}
 		found.sort(Comparator.comparing((Target t) -> !t.aimed()).thenComparingDouble(Target::distance));
+		// a boss struck through its main box and a part, or two parts, is struck once (at its nearest)
+		Set<Integer> seen = new HashSet<>();
+		found.removeIf(t -> !seen.add(t.entity().getId()));
 		return found.size() > MAX_TARGETS ? new ArrayList<>(found.subList(0, MAX_TARGETS)) : found;
 	}
 

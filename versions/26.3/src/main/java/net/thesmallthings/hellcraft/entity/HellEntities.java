@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.boss.AntaeusEntity;
+import net.thesmallthings.hellcraft.entity.boss.BossPart;
 import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
 import net.thesmallthings.hellcraft.entity.boss.CyclopsEntity;
 import net.thesmallthings.hellcraft.entity.boss.EmperorEntity;
@@ -186,6 +187,14 @@ public final class HellEntities {
 			EntityType.Builder.of(Damned::new, MobCategory.MISC).sized(0.6f, 1.9f).eyeHeight(1.75f).fireImmune().clientTrackingRange(6)
 					.updateInterval(2));
 
+	/**
+	 * A boss's hit box beyond its main one (BossPart, tools/art/hitboxes.py): invisible, follows its bone, a blow there is a
+	 * blow to the boss. Its size is set by the boss; it is never saved.
+	 */
+	public static final EntityType<BossPart> BOSS_PART = register("boss_part",
+			EntityType.Builder.<BossPart>of(BossPart::new, MobCategory.MISC).sized(1.0f, 1.0f).fireImmune().noSummon()
+					.clientTrackingRange(16).updateInterval(20));
+
 	public static void register() {
 		FabricDefaultAttributeRegistry.register(TEST_RIG, TestRig.attributes());
 		FabricDefaultAttributeRegistry.register(MINOS, MinosEntity.attributes());
@@ -220,6 +229,7 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(DAMNED, Damned.attributes());
 		Damned.registerSounds();
 		Carrier.register();
+		BossPart.register();
 	}
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {

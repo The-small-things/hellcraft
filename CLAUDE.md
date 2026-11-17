@@ -348,6 +348,15 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
 - `entity/`: Hellcraft's own mobs (`HellEntities`); `TestRig` is the animated test dummy. `entity/boss/`: bosses with
   real bodies: `BossEntity` (plays the animation the server names, shows the danger warnings, plays its own death),
   `MinosEntity`; `boss/gen/` is generated (tools/gen_bosses.py).
+- Multi-part hit boxes (3.5 beta): the game hard-wires parts to the Ender Dragon, so a boss whose body reaches past its main box
+  has `entity/boss/BossPart`s, entities of their own (`hellcraft:boss_part`, invisible, never saved, `NoopRenderer`) that its
+  `BossEntity.shape()` places every tick on both sides (`updateParts`, from the animation last started, `poseAnim`, at its speed;
+  idle otherwise; parts with a `gaze` turn with the head). The shape is baked by `tools/gen_bosses.py` from the parts listed in
+  `tools/art/hitboxes.py` (group, size, gaze; keep its `scale` in step with the renderer's) into `entity/boss/gen/<Boss>Shape`
+  (`BossShape`: each part's centre per tick per animation, model frame, `toWorld` by body yaw). A part passes any hurt on to its
+  boss (not the boss's own); `AttackEntityCallback` turns a player's attack on a part into one on the boss, and `Swing.targets`
+  strikes the boss once through any of its boxes (`BossPart.body`). Cerberus (heads, necks, tail), Geryon (head, body, tail,
+  sting) and Minos (tail); `/hellcraft hitbox test` (smoke test). Add a boss: list its parts, re-run gen_bosses, override `shape()`.
 - `hazard/Danger`: the danger language (red = get out, white = block now, a parry staggers, purple = can't be
   blocked); marks on the ground, sent to clients (`client/danger/DangerMarks` draws them), and the unblockable
   `hellcraft:judgement` damage type. `GuardianFight` gives real-bodied guardians an intro, a parry window
@@ -422,8 +431,8 @@ every 30 degrees on every cliff, Rests beside the roads (a third of the way into
 circle cards, the compass, the Map of Hell (M) and the Journal (J). It needs a fresh world. **Phase 2 (boss tech,
 proven on Minos) is built** (2026-10-14): the model pipeline (tools/art, tools/gen_bosses.py), Minos's real body
 and fight in the danger language, cutscenes (his entrance), the Codex, level lair arenas; the written guide book is
-gone (the Journal holds it). Not done: multi-part hitboxes (26.3 hard-wires them to the Ender Dragon; add them with
-the first boss that needs them), boss music (none sent yet). **Phase 3 (Upper Hell) is built** (2026-10-15): the fairness
+gone (the Journal holds it). Multi-part hitboxes came later (3.5: `BossPart`, see the code map). Not done: boss music
+(none sent yet). **Phase 3 (Upper Hell) is built** (2026-10-15): the fairness
 rules, a rule to play with in each upper circle, the Noble Castle and its shades, set-pieces in every circle, Cerberus,
 Plutus and Phlegyas on real bodies (Phlegyas is called by the east watchtower's beacons; any watchtower's beacons call
 his ferry to Dis), and a new monster per circle. **Phase 4 (Lower Hell) is built** (2026-10-15): a rule in each lower

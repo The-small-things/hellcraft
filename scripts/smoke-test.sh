@@ -336,6 +336,10 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   combat=$(rcon "hellcraft combat test" || true)
   echo "$combat"
   echo "$combat" | grep -q "Combat self-test OK" || { echo "The combat self-test failed"; exit 1; }
+  # bosses' hit boxes beyond their main one (Cerberus's heads, Geryon's and Minos's tails): they follow the model and pass blows on
+  hitbox=$(rcon "hellcraft hitbox test" || true)
+  echo "$hitbox"
+  echo "$hitbox" | grep -q "Boss hit box test OK" || { echo "The bosses' hit boxes are wrong"; exit 1; }
   # the secret ways down: sites off the roads, lairs and Rests, each landing in the next circle; the first one built
   secrets=$(rcon "hellcraft secrets test" || true)
   echo "$secrets"

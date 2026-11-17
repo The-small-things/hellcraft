@@ -322,6 +322,8 @@ public class HellcraftClient implements ClientModInitializer {
 			return r.minLight(12);
 		});
 		EntityRendererRegistry.register(HellEntities.EMPEROR_WEAK_POINT, NoopRenderer::new);
+		// a boss's hit boxes beyond its main one (BossPart): nothing to draw, the boss's model is there
+		EntityRendererRegistry.register(HellEntities.BOSS_PART, NoopRenderer::new);
 		// the Malebranche (special: the jeer) and their captain Malacoda (attack: pointing the way; special: his laugh)
 		ModelLayerRegistry.registerModelLayer(SoulMonsterRenderer.layer("malebranche"), MalebrancheMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MALEBRANCHE, context -> new SoulMonsterRenderer<>(context, SoulMonsterRenderer.layer("malebranche"),
