@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.client.danger;
 
+import net.thesmallthings.hellcraft.client.sound.DangerCues;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
@@ -89,20 +90,13 @@ public final class DangerMarks {
 			return;
 		}
 		MARKS.add(new Mark(payload));
-		ClientLevel level = Minecraft.getInstance().level;
-		if (level != null) {
-			SoundEvent sound = switch (payload.colour()) {
-				case 1 -> SoundEvents.BELL_BLOCK;
-				case 2 -> SoundEvents.AMETHYST_BLOCK_RESONATE;
-				default -> SoundEvents.NOTE_BLOCK_DIDGERIDOO.value();
-			};
-			float pitch = payload.colour() == 0 ? 0.6f : payload.colour() == 1 ? 1.4f : 0.8f;
-			level.playLocalSound(payload.x(), payload.y(), payload.z(), sound, SoundSource.HOSTILE, 1.6f, pitch, false);
-		}
+		// its cue, timed to land with it (client/sound/DangerCues)
+		DangerCues.mark(payload.colour(), payload.x(), payload.y(), payload.z(), payload.warnTicks());
 	}
 
 	public static void tick(Minecraft mc) {
 		Impacts.tick();
+		DangerCues.tick(mc);
 		if (mc.level == null) {
 			MARKS.clear();
 			return;
@@ -131,6 +125,7 @@ public final class DangerMarks {
 
 	public static void clear() {
 		MARKS.clear();
+		DangerCues.clear();
 	}
 
 	public static void render(LevelRenderContext context) {

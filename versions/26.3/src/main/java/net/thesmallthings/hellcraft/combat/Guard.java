@@ -22,6 +22,7 @@ import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.net.FeelPayload;
 import net.thesmallthings.hellcraft.net.GuardPayload;
 import net.thesmallthings.hellcraft.util.Feedback;
@@ -177,9 +178,8 @@ public final class Guard {
 	private static void parried(ServerPlayer player, ServerLevel level, Entity attacker, float damage) {
 		HellConfig config = HellConfig.get();
 		Vec3 at = clash(player, attacker);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BLOCK.value(), SoundSource.PLAYERS, 1.0f, 1.7f);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.35f, 1.9f);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.TRIDENT_HIT_GROUND, SoundSource.PLAYERS, 0.7f, 1.5f);
+		Cue.PARRY.play(level, at.x, at.y, at.z, 1.4f, 0.95f + level.getRandom().nextFloat() * 0.1f);
+		level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BLOCK.value(), SoundSource.PLAYERS, 0.5f, 1.7f);
 		level.sendParticles(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, 14, 0.2, 0.2, 0.2, 0.6);
 		level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 10, 0.2, 0.2, 0.2, 0.4);
 		Stamina.restore(player, 12);
@@ -220,8 +220,8 @@ public final class Guard {
 			player.getCooldowns().addCooldown(weapon, config.guardBreakTicks);
 		}
 		player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 2, false, false));
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BREAK.value(), SoundSource.PLAYERS, 0.9f, 0.9f);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.3f, 0.7f);
+		Cue.GUARD_BREAK.play(level, at.x, at.y, at.z, 1.3f, 1.0f);
+		level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BREAK.value(), SoundSource.PLAYERS, 0.5f, 0.9f);
 		level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 16, 0.25, 0.25, 0.25, 0.5);
 		Combat.show(player, PlayerMovesAnim.GUARD_BREAK, 0, 0, 1.0f, true);
 		Combat.feel(player, FeelPayload.Kind.GUARD_BREAK, 1.5f);

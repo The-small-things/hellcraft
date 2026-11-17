@@ -142,7 +142,7 @@ public final class Dodge {
 		Stamina.restore(player, 8);
 		Combat.feel(player, FeelPayload.Kind.DODGED, 1.0f);
 		ServerLevel level = player.level();
-		level.playSound(null, player.blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.PLAYERS, 0.7f, 1.7f);
+		net.thesmallthings.hellcraft.hazard.Cue.DODGE.play(level, player.getX(), player.getY() + 1, player.getZ(), 1.0f, 1.0f);
 		level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() + 0.9, player.getZ(), 5, 0.3, 0.4, 0.3, 0.01);
 		net.thesmallthings.hellcraft.hazard.guardian.GuardianManager.dodged(player);
 		net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager.dodged(player);

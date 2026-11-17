@@ -530,5 +530,149 @@
         "pitch": 1.1
       }
     ]
+  },
+  "cue.red": {
+    "subtitle": "subtitles.hellcraft.cue.red",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/red"
+      }
+    ]
+  },
+  "cue.white": {
+    "subtitle": "subtitles.hellcraft.cue.white",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/white"
+      }
+    ]
+  },
+  "cue.purple": {
+    "subtitle": "subtitles.hellcraft.cue.purple",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/purple"
+      }
+    ]
+  },
+  "cue.parry": {
+    "subtitle": "subtitles.hellcraft.cue.parry",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/parry"
+      }
+    ]
+  },
+  "cue.guard_break": {
+    "subtitle": "subtitles.hellcraft.cue.guard_break",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/guard_break"
+      }
+    ]
+  },
+  "cue.dodge": {
+    "subtitle": "subtitles.hellcraft.cue.dodge",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/dodge"
+      }
+    ]
+  },
+  "cue.posture_crack": {
+    "subtitle": "subtitles.hellcraft.cue.posture_crack",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/posture_crack"
+      }
+    ]
+  },
+  "cue.posture_break": {
+    "subtitle": "subtitles.hellcraft.cue.posture_break",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/posture_break"
+      }
+    ]
+  },
+  "cue.flurry": {
+    "subtitle": "subtitles.hellcraft.cue.flurry",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/flurry"
+      }
+    ]
+  },
+  "cue.feint": {
+    "subtitle": "subtitles.hellcraft.cue.feint",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/feint"
+      }
+    ]
+  },
+  "cue.dive": {
+    "subtitle": "subtitles.hellcraft.cue.dive",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/dive"
+      }
+    ]
+  },
+  "cue.crescent": {
+    "subtitle": "subtitles.hellcraft.cue.crescent",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/crescent"
+      }
+    ]
+  },
+  "cue.counter": {
+    "subtitle": "subtitles.hellcraft.cue.counter",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/counter"
+      }
+    ]
+  },
+  "cue.blink": {
+    "subtitle": "subtitles.hellcraft.cue.blink",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/blink"
+      }
+    ]
+  },
+  "cue.hand_rise": {
+    "subtitle": "subtitles.hellcraft.cue.hand_rise",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/hand_rise"
+      }
+    ]
+  },
+  "cue.swat": {
+    "subtitle": "subtitles.hellcraft.cue.swat",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/swat"
+      }
+    ]
+  },
+  "cue.clap": {
+    "subtitle": "subtitles.hellcraft.cue.clap",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/clap"
+      }
+    ]
+  },
+  "cue.slump": {
+    "subtitle": "subtitles.hellcraft.cue.slump",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/slump"
+      }
+    ]
   }
 }

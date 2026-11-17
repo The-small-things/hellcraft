@@ -44,6 +44,7 @@ import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.BossModel;
 import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.net.Dialogue;
@@ -426,6 +427,7 @@ public abstract class GuardianFight {
 				hurt.onParry(Guard.turnedWhole(entity) || tick <= parryUntil);
 				if (tick <= parryUntil && source.getEntity().getUUID().equals(bodyId) && entity instanceof ServerPlayer player && body() != null) {
 					parryUntil = -1;
+					Cue.PARRY.play(level, player.getX(), player.getEyeY(), player.getZ(), 1.4f, 0.9f);
 					onParried(body(), player);
 				}
 			} else if (dealt > 0) {

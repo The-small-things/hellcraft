@@ -175,6 +175,18 @@ simple drones for beds. **I can't make music, voices, or organic sounds** (screa
 files or a sound library. Say the word and I'll start with the synthesised ones, so combat and the danger language stop
 sounding like vanilla while the music is still being made.
 
+## 5. Made in code so far (tools/gen_sounds.py, 2026-11-17)
+These are synthesised and ship in the mod (`assets/hellcraft/sounds/cue/`). Any of them can be replaced by a real recording:
+drop an `.ogg` of the same name in, and take it out of `CUES` in the script.
+
+| Cue | What it is |
+|---|---|
+| `red`, `white`, `purple` | The danger marks: a low horn that swells and thumps, a bright shimmer rising to a ring, a sour rising whine. Each starts early so its moment lands with the blow. |
+| `parry`, `guard_break`, `dodge` | Combat: a clean steel ring, a dull buzzing clang, an airy whoosh. |
+| `posture_crack`, `posture_break` | A boss's posture straining and breaking (a glassy tick; a shatter over a boom). |
+| `flurry`, `feint`, `dive`, `crescent`, `counter`, `blink` | The Fallen Seraph's tells, one per attack. |
+| `hand_rise`, `swat`, `clap`, `slump` | The Emperor's tells. |
+
 ## What already works with nothing to change
 
 The three Lucifer tracks: put `duel.ogg`, `enraged.ogg` and `true_form.ogg` in the mod and they play. Everything else on
