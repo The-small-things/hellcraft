@@ -153,6 +153,7 @@ public class HellcraftClient implements ClientModInitializer {
 				(payload, context) -> net.thesmallthings.hellcraft.world.WindStreams.use(payload.seed()));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			DangerMarks.clear();
+			net.thesmallthings.hellcraft.client.layer.MobHealthBars.clear();
 			CutscenePlayer.reset();
 			BloodHud.reset();
 			ClientNav.reset();
@@ -176,6 +177,7 @@ public class HellcraftClient implements ClientModInitializer {
 			StylePanel.tick(client);
 			GazeOverlay.tick(client);
 			WingbeatFx.tick(client);
+			net.thesmallthings.hellcraft.client.layer.MobHealthBars.tick(client);
 		});
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, CompassHud.ID, new CompassHud());
 		// the secret ways found (Map of Hell, Journal) and the pilgrim's mark at the top left
@@ -204,6 +206,8 @@ public class HellcraftClient implements ClientModInitializer {
 		LevelRenderEvents.COLLECT_SUBMITS.register(Colossus::render);
 		LevelRenderEvents.COLLECT_SUBMITS.register(HeatColumn::render);
 		LevelRenderEvents.COLLECT_SUBMITS.register(LightColumns::render);
+		// health bars over hurt mobs (or beside them: /hellcraft-client healthbars)
+		LevelRenderEvents.COLLECT_SUBMITS.register(net.thesmallthings.hellcraft.client.layer.MobHealthBars::render);
 
 		ModelLayerRegistry.registerModelLayer(TestRigModel.LAYER, TestRigModel::createLayer);
 		EntityRendererRegistry.register(HellEntities.TEST_RIG, TestRigRenderer::new);

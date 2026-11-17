@@ -10,10 +10,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.blood.Relics;
+import net.thesmallthings.hellcraft.client.combat.anim.Settings;
+import net.thesmallthings.hellcraft.client.layer.MobHealthBars;
 
 /**
  * The Blood Heart HUD and the blood items, in single player: hearts rimmed in a prestige rank's colour, and the
- * five blood items in the hotbar and the inventory, and the Halo and Seraph Wings as worn.
+ * five blood items in the hotbar and the inventory, the Halo and Seraph Wings as worn, and mobs' health bars.
  */
 public class HudTest implements FabricClientGameTest {
 	@Override
@@ -51,6 +53,7 @@ public class HudTest implements FabricClientGameTest {
 			relicsWorn(context, world);
 			armourWorn(context, world);
 			doubleUse(context, world);
+			healthBars(context, world);
 		}
 	}
 
@@ -111,6 +114,30 @@ public class HudTest implements FabricClientGameTest {
 		if (second[0] != 2 || second[1] != 0) {
 			throw new AssertionError("a click after the cooldown made " + second[0] + " heart(s) in all, leaving " + second[1] + " fragments: expected 2 and 0");
 		}
+	}
+
+	/**
+	 * Mobs' health bars (client layer/MobHealthBars): a hurt husk (red) and a hurt pig (green) ahead show bars over their
+	 * heads, then upright beside them (health_bars_above, health_bars_side).
+	 */
+	private static void healthBars(ClientGameTestContext context, TestSingleplayerContext world) {
+		context.setScreen(() -> null);
+		world.getServer().runCommand("time set noon");
+		world.getServer().runCommand("tp Player0 ~ ~ ~ 0 15");
+		world.getServer().runCommand("execute as Player0 at Player0 run summon husk ^1.2 ^ ^4 {NoAI:1b,PersistenceRequired:1b,Health:7f,Rotation:[180f,0f]}");
+		world.getServer().runCommand("execute as Player0 at Player0 run summon pig ^-1.4 ^ ^4.5 {NoAI:1b,PersistenceRequired:1b,Health:4f,Rotation:[180f,0f]}");
+		context.waitTicks(30);
+		int bars = context.computeOnClient(client -> MobHealthBars.count());
+		if (bars < 2) {
+			throw new AssertionError("expected health bars over the hurt husk and pig, found " + bars);
+		}
+		context.takeScreenshot("health_bars_above");
+		context.runOnClient(client -> Settings.setHealthBars(Settings.HealthBars.SIDE));
+		context.waitTicks(5);
+		context.takeScreenshot("health_bars_side");
+		context.runOnClient(client -> Settings.setHealthBars(Settings.HealthBars.ABOVE));
+		world.getServer().runCommand("kill @e[type=husk]");
+		world.getServer().runCommand("kill @e[type=pig]");
 	}
 
 	/** The Blood Hearts and Blood Fragments Player0 carries. */

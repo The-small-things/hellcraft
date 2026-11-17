@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
+import net.thesmallthings.hellcraft.client.combat.anim.Settings;
 import net.thesmallthings.hellcraft.combat.Combat;
 import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim;
@@ -74,7 +75,27 @@ public final class CombatClient {
 								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("on")
 										.executes(ctx -> animations(ctx.getSource(), true)))
 								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("off")
-										.executes(ctx -> animations(ctx.getSource(), false))))));
+										.executes(ctx -> animations(ctx.getSource(), false))))
+						.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("healthbars")
+								.executes(ctx -> healthBars(ctx.getSource(), null))
+								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("above")
+										.executes(ctx -> healthBars(ctx.getSource(), Settings.HealthBars.ABOVE)))
+								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("side")
+										.executes(ctx -> healthBars(ctx.getSource(), Settings.HealthBars.SIDE)))
+								.then(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("off")
+										.executes(ctx -> healthBars(ctx.getSource(), Settings.HealthBars.OFF))))));
+	}
+
+	private static int healthBars(net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource source, Settings.HealthBars mode) {
+		if (mode != null) {
+			Settings.setHealthBars(mode);
+		}
+		source.sendFeedback(net.minecraft.network.chat.Component.literal(switch (Settings.healthBars()) {
+			case ABOVE -> "Mobs show their health in a bar over their heads once they are hurt, or while you look at them. Put it beside them with /hellcraft-client healthbars side, or hide it with /hellcraft-client healthbars off.";
+			case SIDE -> "Mobs show their health in an upright bar beside them once they are hurt, or while you look at them. Put it over their heads with /hellcraft-client healthbars above, or hide it with /hellcraft-client healthbars off.";
+			case OFF -> "Mobs' health bars are hidden. Show them with /hellcraft-client healthbars above (over their heads) or side (beside them).";
+		}));
+		return 1;
 	}
 
 	private static int animations(net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource source, Boolean on) {
