@@ -176,6 +176,9 @@ public final class PlayerAnimator {
 			} else {
 				time += speed;
 			}
+			if (time > lastTime && lastTime < action.ticks) {
+				net.thesmallthings.hellcraft.client.combat.Trails.tick(player, this, action.move, lastTime, time);
+			}
 			if (lastTime >= action.ticks + blendOut) {
 				action = null;
 				heading = Float.NaN;

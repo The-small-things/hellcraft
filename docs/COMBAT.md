@@ -17,8 +17,14 @@ keyframes, a blending runtime on the real player model and in first person). Wha
 arc hits through vanilla's own attack, the weapon turning in the hand, first- and third-person animation. Left out on purpose:
 fists (the empty hand is for the world, not for fighting) and "swing through grass" (a click at a block with something to fight
 in the arc already swings). Blade trails wait for stage 3.
-**Next: stage 3**, the hell weapons' own movesets (the Bloodletter's four cuts, the Reaper's wide arcs and spin, the Tithe
-Axe's slam), trails, and their Blood Arts' own animations.
+**Stage 3 is built** (2026-11-17): the hell weapons' own movesets (the Bloodletter's four cuts with a spin and a deep
+finisher, the Reaper's sweeps and pulling turn, the Tithe Axe's ground-shaking slam), blood trails on their blades, and a move
+shown for each Blood Art.
+**Next: stage 4, tuning from play.** Every number is in `combat/Moveset` (damage shares, arcs, reach) and `HellConfig`
+(stamina, roll, guard, parry). Things to watch in the first session: whether a chain out-damages vanilla clicking by too much,
+whether the wind-up before a blow feels late on a busy server, the parry window (6 ticks), the roll's distance and safe ticks,
+and the first-person positions of each swing (tools/art/player_moves.py, filmed by CombatTest). Ideas not done: fists, a
+screen-space blade trail in first person, real sounds (docs/AUDIO.md), mobs that guard and roll.
 
 ## Context
 The owner wants combat that feels like Better Combat / Epic Fight / Immersive Combat: weapons that swing differently

@@ -593,6 +593,45 @@ def overhead(name, total, wind, hit, nxt, heft=1.0, hop=0.0):
     return _finish(c, wind, hit, nxt)
 
 
+def spin(name, total, wind, hit, nxt, two_handed=False, heft=1.0):
+    """A full turn with the weapon held out: the whole body spins once to its left and the blade cuts everything round it.
+    The turn is the root's (so the feet turn too); the arm stays out and level and the blade lies in line with it. In first
+    person the view can't spin, so the blade sweeps across it twice, once each way round."""
+    c = Clip(name, total)
+    end = hit + max(3, round((total - hit) * 0.55))
+    coil, coil_i = hold((0.75, -0.3, 0.55), (0.55, 0.05, 0.85))
+    out, out_i = hold((0.92, -0.08, -0.38), (0.96, 0.0, -0.3))
+    low, low_i = hold((0.6, -0.55, -0.55), (0.75, -0.35, -0.55))
+    c.key(0, root=(0, 0, 0))
+    c.key(wind, "out", root=(0, -38 * heft, 0))
+    c.key(hit, "in", root=(0, 190, 0))
+    c.key(end, "out", root=(0, 360, 0))
+    c.key(total, "linear", root=(0, 360, 0))
+    if two_handed:
+        left = [(0, "inout", READY_L), (wind, "out", aim((0.35, -0.45, 0.2))), (hit, "in", aim((0.55, -0.3, -0.75))), (end, "out", aim((0.3, -0.6, -0.7))),
+                (total, "inout", READY_L)]
+    else:
+        left = [(0, "inout", READY_L), (wind, "out", aim((-0.3, -0.7, -0.65))), (hit, "in", aim((-0.85, -0.45, 0.25))), (end, "out", aim((-0.5, -0.8, 0.2))),
+                (total, "inout", READY_L)]
+    swing(c, total,
+          arm=[(0, "inout", READY_R), (wind, "out", coil), (hit, "in", out), (end, "out", low), (total, "inout", READY_R)],
+          item=[(0, "inout", READY_ITEM), (wind, "out", coil_i), (hit, "in", out_i), (end, "out", low_i), (total, "inout", READY_ITEM)],
+          body=[(0, "inout", (0, 0, 0)), (wind, "out", (-4, -22, 0)), (hit, "in", (-9, 20, 3)), (end, "out", (-6, 12, 2)), (total, "inout", (0, 0, 0))],
+          left=left,
+          legs=[(0, "inout", STAND), (wind, "out", ((-12, 0, -3), (10, 0, 3))), (hit, "in", ((16, 0, -5), (-14, 0, 5))), (end, "out", ((8, 0, -3), (-8, 0, 3))),
+                (total, "inout", STAND)],
+          root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, -1.4 * heft, 0)), (hit, "in", (0, -0.6, 0)), (end, "out", (0, -0.9, 0)), (total, "inout", (0, 0, 0))])
+    mid = (wind + hit) / 2.0
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(wind, "out", fp_pos=fp_pos(3.0, 2.0, 1.5), fp=fp_aim((0.8, 0.3, 0.45), flat=(0.1, 1, 0.1)), camera=cam(0.5, 3.5 * heft, -1.5))
+    c.key(mid, "in", fp_pos=fp_pos(-7.5, 3.0, -3.0), fp=fp_cut((-0.2, 0.25, -0.95), (-1, 0, 0.1)), camera=cam(0.8, -3.0, 2.0))
+    c.key(hit, "linear", fp_pos=fp_pos(-17.0, 2.6, 0.5), fp=fp_cut((-0.95, 0.15, 0.1), (-0.6, 0, 0.8)), camera=cam(0.8, -5.0 * heft, 3.0))
+    c.key(hit + 0.01 if hit + 0.01 < end else end, "hold", fp_pos=fp_pos(6.0, 2.6, 2.0))
+    c.key(end, "out", fp_pos=fp_pos(-5.0, 2.8, -2.4), fp=fp_cut((-0.35, 0.3, -0.85), (-1, -0.1, 0.1)), camera=cam(0.6, -1.5, 1.0))
+    c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    return _finish(c, wind, hit, nxt)
+
+
 # total, wind-up ends, the blow lands, the next move may begin (ticks, at the weapon's own attack speed)
 def sword_1():
     return diagonal("sword_1", 13, 3, 5, 9)
@@ -634,8 +673,59 @@ def mace_heavy():
     return overhead("mace_heavy", 32, 11, 16, 28, heft=1.4, hop=2.5)
 
 
+# the hell weapons' own: the Bloodletter is quick (four cuts, the third a spin, the last a deep thrust; its heavy blow a
+# long lunge), the Reaper of Minos wide (two great sweeps and a full reaping turn), the Tithe Axe heavy
+def blood_1():
+    return diagonal("blood_1", 12, 3, 5, 8)
+
+
+def blood_2():
+    return backhand("blood_2", 12, 3, 5, 8)
+
+
+def blood_3():
+    return spin("blood_3", 15, 3, 7, 11)
+
+
+def blood_4():
+    return thrust("blood_4", 18, 4, 7, 14)
+
+
+def blood_heavy():
+    return thrust("blood_heavy", 22, 8, 11, 19)
+
+
+def reaper_1():
+    return backhand("reaper_1", 19, 5, 9, 14, heft=1.35, two_handed=True)
+
+
+def reaper_2():
+    return diagonal("reaper_2", 19, 5, 9, 14, heft=1.35, two_handed=True)
+
+
+def reaper_3():
+    return spin("reaper_3", 24, 6, 12, 19, two_handed=True, heft=1.3)
+
+
+def reaper_heavy():
+    return overhead("reaper_heavy", 27, 9, 14, 24, heft=1.3)
+
+
+def tithe_1():
+    return diagonal("tithe_1", 18, 5, 8, 13, heft=1.3, two_handed=True)
+
+
+def tithe_2():
+    return backhand("tithe_2", 18, 5, 8, 13, heft=1.25, two_handed=True, rising=0.9)
+
+
+def tithe_heavy():
+    return overhead("tithe_heavy", 28, 10, 14, 25, heft=1.4, hop=2.0)
+
+
 CLIPS = [roll, guard, guard_two, parry, guard_break, sword_1, sword_2, sword_3, sword_heavy, axe_1, axe_2, axe_heavy,
-         mace_1, mace_2, mace_heavy]
+         mace_1, mace_2, mace_heavy, blood_1, blood_2, blood_3, blood_4, blood_heavy, reaper_1, reaper_2, reaper_3,
+         reaper_heavy, tithe_1, tithe_2, tithe_heavy]
 
 
 def build():

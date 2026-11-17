@@ -291,7 +291,7 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 ### Fighting (3.5 beta)
 
-Hellcraft has combat of its own, made to move smoothly: every move blends into the next instead of snapping, in first and third person alike. It is arriving in parts; two are in.
+Hellcraft has combat of its own, made to move smoothly: every move blends into the next instead of snapping, in first and third person alike. All of it can be turned off (see the end of this section).
 
 - **Swings**: with a **sword, an axe or a mace** in hand (and the hell weapons), the attack key swings the weapon. There is a short wind-up, and the blow lands when the weapon comes round, on **everything in its path**: no need to keep the crosshair on one target. Only monsters and other players are caught in the arc (the one you look straight at takes the full blow, the others 60%, all of it with Sweeping Edge III); animals, villagers, boats and the like are struck only if you aim at them, and your own pets never by accident. Nothing is hit through a wall. Critical hits, enchantments and the hell weapons' passives all work as before.
 - **Combos**: click again as a swing ends (or a little before: the click is remembered) and the next move follows. A **sword** cuts down across, cuts back, then **thrusts** with a lunge (125% damage, longer reach). An **axe** chops, then rips upward. A **mace** smashes down, then sweeps wide. Stop clicking and the chain starts over.
@@ -307,7 +307,7 @@ Hellcraft has combat of its own, made to move smoothly: every move blends into t
 - **Hits have weight**: your blow holds for a frame and kicks the view (off with View Bobbing), and the target shows it: blood from flesh, chips from bone, sparks from golems.
 - **Hell weapons**: right-click guards now, so a full weapon's **Blood Art** is struck from the guard: hold right-click, then press attack. The Blood Oath is still sneak + right-click, and the Blood Pickaxe works as before.
 
-Still to come: a moveset of its own for every hell weapon (until then they swing as a sword or an axe does). Server owners can turn all of it off with `/hellcraft config combatOverhaul false`: vanilla combat returns, and only Sidestep leggings dash.
+- **The hell weapons fight their own way.** The **Bloodletter**: four quick cuts, the third a **spin** that strikes everything round you, the last a thrust that opens the deepest wound (a longer, stronger bleed); held, a long lunge. The **Reaper of Minos**: two great sweeps and a **full turn** that drags what it reaps towards you. The **Tithe Axe**: a chop, an upward rip and, held, a **slam** that shakes the ground: whatever fights back within 3.5 blocks of where it lands is hurt and thrown up. Their blades trail blood (and embers, once infernal), and each Blood Art plays a move of its own. Server owners can turn all of it off with `/hellcraft config combatOverhaul false`: vanilla combat returns, and only Sidestep leggings dash.
 
 ### Hell weapons (26.3)
 

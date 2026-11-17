@@ -259,7 +259,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   rig's `item` bone turns the weapon in the hand). In player_moves.py the swings are shapes (`diagonal`, `backhand`, `thrust`,
   `overhead`) given timing and heft per weapon; `hold(point, blade)` gives an arm and its weapon's turn for an exact blade direction;
   `fp_cut(blade, motion)` turns the first-person blade edge-first. The first-person hand rests at the screen's bottom right corner:
-  keep `fp_pos` y above 0 or the blade passes out of sight. Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  keep `fp_pos` y above 0 or the blade passes out of sight. **Hell weapons (part 3):** their own `Moveset`s (the Bloodletter's
+  four cuts with a `spin` and a finisher, `Move.finisher` read by `HellWeapons` for the deeper bleed through `Swing.landingMove`;
+  the Reaper's `pulling` turn; the Tithe Axe's `shaking` slam, `Swing.shockwave`), client `combat/Trails` (a sweep particle as wide
+  moves land; a hell weapon's blade traced in blood dust from the pose itself, `blade` and `toWorld` mirroring PlayerRig and the
+  renderer), and each Blood Art shows a move (`HellWeapons.unleash`). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

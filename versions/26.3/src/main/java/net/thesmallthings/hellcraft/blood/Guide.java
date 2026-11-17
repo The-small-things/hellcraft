@@ -169,7 +169,10 @@ public final class Guide {
 				combat ? "Hits and kills charge them. When full: hold right-click to guard, then press attack for the Blood Art (the Blood Pickaxe: just right-click)."
 						: "Hits and kills charge them. When full, right-click for a special attack.",
 				"",
-				"Sneak + right-click (Blood Oath): pay 3 hearts of health for 30 s of full power."));
+				"Sneak + right-click (Blood Oath): pay 3 hearts of health for 30 s of full power.",
+				"",
+				combat ? "Each fights its own way. Bloodletter: four quick cuts, the third a spin that catches everything round you, the last a thrust that opens the deepest wound; hold for a long lunge. Reaper of Minos: two great sweeps and a full turn that drags what it reaps towards you. Tithe Axe: a chop, an upward rip, and held, a slam that shakes the ground round where it lands."
+						: ""));
 		pages.add(page("BLOOD ARMOUR",
 				"Craft diamond armour with 4 Blood Fragments per piece.",
 				"",

@@ -320,6 +320,18 @@ public final class HellWeapons {
 
 	private static void unleash(ServerPlayer player, Weapon weapon, ItemStack stack) {
 		spend(player);
+		if (net.thesmallthings.hellcraft.combat.Combat.on()) {
+			// the art has a body: the Bloodletter's lunge, the Reaper's turn, the Tithe Axe raised over the head
+			net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim shown = switch (weapon) {
+				case BLOODLETTER -> net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim.BLOOD_HEAVY;
+				case REAPER -> net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim.REAPER_3;
+				case TITHE_AXE -> net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim.TITHE_HEAVY;
+				case BLOOD_PICKAXE -> null;
+			};
+			if (shown != null) {
+				net.thesmallthings.hellcraft.combat.Combat.show(player, shown, 0, 0, weapon == Weapon.BLOODLETTER ? 1.6f : 1.0f, true);
+			}
+		}
 		switch (weapon) {
 			case BLOODLETTER -> exsanguinate(player, infernal(stack) ? 9.0 : 6.0, infernal(stack) ? 11.0f : 8.0f);
 			case REAPER -> harvest(player, infernal(stack) ? 7.0 : 5.0, infernal(stack) ? 15.0f : 12.0f);
@@ -459,7 +471,10 @@ public final class HellWeapons {
 						target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
 						player.heal(2.0f);
 					} else {
-						target.addEffect(new MobEffectInstance(MobEffects.WITHER, Math.round(60 * power), 0));
+						// the last thrust of the Bloodletter's four cuts opens the deepest wound
+						net.thesmallthings.hellcraft.combat.Moveset.Move move = net.thesmallthings.hellcraft.combat.Swing.landingMove();
+						boolean deep = move != null && move.finisher(net.thesmallthings.hellcraft.combat.Moveset.of(net.thesmallthings.hellcraft.combat.WeaponClass.BLOODLETTER));
+						target.addEffect(new MobEffectInstance(MobEffects.WITHER, Math.round((deep ? 140 : 60) * power), deep ? 1 : 0));
 						player.heal(1.0f * power);
 						bleed(level, target, 6);
 					}

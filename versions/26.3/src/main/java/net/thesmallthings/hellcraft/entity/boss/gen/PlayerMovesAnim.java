@@ -25,7 +25,19 @@ public enum PlayerMovesAnim implements BossAnim {
 	AXE_HEAVY(26, false, Map.of("swing", 9, "hit", 13, "next", 23)),
 	MACE_1(24, false, Map.of("swing", 7, "hit", 11, "next", 18)),
 	MACE_2(24, false, Map.of("swing", 7, "hit", 11, "next", 18)),
-	MACE_HEAVY(32, false, Map.of("swing", 11, "hit", 16, "next", 28));
+	MACE_HEAVY(32, false, Map.of("swing", 11, "hit", 16, "next", 28)),
+	BLOOD_1(12, false, Map.of("swing", 3, "hit", 5, "next", 8)),
+	BLOOD_2(12, false, Map.of("swing", 3, "hit", 5, "next", 8)),
+	BLOOD_3(15, false, Map.of("swing", 3, "hit", 7, "next", 11)),
+	BLOOD_4(18, false, Map.of("swing", 4, "hit", 7, "next", 14)),
+	BLOOD_HEAVY(22, false, Map.of("swing", 8, "hit", 11, "next", 19)),
+	REAPER_1(19, false, Map.of("swing", 5, "hit", 9, "next", 14)),
+	REAPER_2(19, false, Map.of("swing", 5, "hit", 9, "next", 14)),
+	REAPER_3(24, false, Map.of("swing", 6, "hit", 12, "next", 19)),
+	REAPER_HEAVY(27, false, Map.of("swing", 9, "hit", 14, "next", 24)),
+	TITHE_1(18, false, Map.of("swing", 5, "hit", 8, "next", 13)),
+	TITHE_2(18, false, Map.of("swing", 5, "hit", 8, "next", 13)),
+	TITHE_HEAVY(28, false, Map.of("swing", 10, "hit", 14, "next", 25));
 
 	public final int ticks;
 	public final boolean looping;

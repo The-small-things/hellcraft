@@ -62,6 +62,7 @@ public class CombatTest implements FabricClientGameTest {
 			roll(context, world);
 			guard(context, world);
 			swings(context, world);
+			hellWeapons(context, world);
 		}
 	}
 
@@ -90,7 +91,7 @@ public class CombatTest implements FabricClientGameTest {
 				continue;
 			} else if (move.looping) {
 				ticks.add(0f);
-			} else if (name.startsWith("sword") || name.startsWith("axe") || name.startsWith("mace")) {
+			} else if (move.ordinal() >= PlayerMovesAnim.SWORD_1.ordinal()) {
 				// a swing: wound up, landing, followed through
 				ticks.add((float) move.at("swing"));
 				ticks.add((float) move.at("hit"));
@@ -335,6 +336,58 @@ public class CombatTest implements FabricClientGameTest {
 			throw new AssertionError("with a block under the crosshair and nothing to fight, the attack key should mine, not swing (" + playing(context) + ")");
 		}
 		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 8");
+		context.waitTicks(5);
+	}
+
+	/**
+	 * The hell weapons' own moves: the Bloodletter's third cut is its spin (seen from outside, its blade trailing blood),
+	 * and the Tithe Axe's held slam shakes the ground, hurting what stands beside the blade's path.
+	 */
+	private static void hellWeapons(ClientGameTestContext context, TestSingleplayerContext world) {
+		String husk = "{NoAI:1b,Silent:1b,PersistenceRequired:1b,Rotation:[180f,0f],CustomName:\"%s\"}";
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with hellcraft:bloodletter");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~ ~ ~2.4 " + String.format(husk, "front"));
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~ ~ ~-2.2 " + String.format(husk, "behind"));
+		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 0");
+		context.waitTicks(15);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(7);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(7);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(4);
+		if (playing(context) != PlayerMovesAnim.BLOOD_3) {
+			throw new AssertionError("the Bloodletter's third click should be its spin, not " + playing(context));
+		}
+		context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_FRONT));
+		context.waitTicks(3);
+		context.takeScreenshot("combat_bloodletter_spin");
+		context.waitTicks(10);
+		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
+		java.util.Map<String, Float> spun = husks(world);
+		if (spun.get("behind") >= 20) {
+			throw new AssertionError("the Bloodletter's spin should strike the husk behind too: " + spun);
+		}
+		world.getServer().runCommand("kill @e[type=minecraft:husk]");
+		// the Tithe Axe's slam: a husk off to the side, outside the blade's arc but inside the shockwave
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with hellcraft:tithe_axe");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~2.8 ~ ~2.0 " + String.format(husk, "side"));
+		context.waitTicks(60);
+		context.getInput().holdKey(options -> options.keyAttack);
+		context.waitTicks(8);
+		if (playing(context) != PlayerMovesAnim.TITHE_HEAVY) {
+			throw new AssertionError("holding attack with the Tithe Axe should begin its slam, not " + playing(context));
+		}
+		context.waitTicks(11);
+		context.takeScreenshot("combat_tithe_slam");
+		context.getInput().releaseKey(options -> options.keyAttack);
+		context.waitTicks(12);
+		java.util.Map<String, Float> shaken = husks(world);
+		if (shaken.get("side") >= 20) {
+			throw new AssertionError("the Tithe Axe's slam should shake the husk beside its path: " + shaken);
+		}
+		world.getServer().runCommand("kill @e[type=minecraft:husk]");
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_sword");
 		context.waitTicks(5);
 	}
 

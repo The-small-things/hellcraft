@@ -2,6 +2,9 @@ package net.thesmallthings.hellcraft.combat;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -19,12 +22,15 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.net.SwingPayload;
+import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -223,9 +229,21 @@ public final class Swing {
 			if (move.knockback() > 0 && target instanceof LivingEntity living && living.isAlive()) {
 				living.knockback(move.knockback(), Mth.sin(yaw), -Mth.cos(yaw), level.damageSources().playerAttack(player), 0.0f);
 			}
+			if (move.pull() > 0 && target instanceof LivingEntity living && living.isAlive() && !BossRules.fromBoss(living)) {
+				// dragged in towards the reaper
+				Vec3 to = player.position().subtract(living.position());
+				if (to.horizontalDistance() > 1.2) {
+					Vec3 in = new Vec3(to.x, 0, to.z).normalize().scale(move.pull());
+					living.push(in.x, 0.18, in.z);
+					Feedback.syncMotion(living);
+				}
+			}
 			struck.add(target.getId());
 		}
 		s.struck = struck;
+		if (move.shock() > 0 && player.onGround()) {
+			shockwave(player, move, struck);
+		}
 		if (riposte) {
 			Guard.spendRiposte(player);
 		}
@@ -237,6 +255,45 @@ public final class Swing {
 		} else if (move.heavy()) {
 			level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundSource.PLAYERS, 0.9f, 0.8f);
 		}
+	}
+
+	/**
+	 * The slam shakes the ground where it lands, two blocks ahead: what fights back within the ring and wasn't struck by
+	 * the blade itself takes 40% of the weapon's damage and is thrown up.
+	 */
+	private static void shockwave(ServerPlayer player, Moveset.Move move, Set<Integer> struck) {
+		ServerLevel level = player.level();
+		float yaw = player.getYRot() * Mth.DEG_TO_RAD;
+		Vec3 at = player.position().add(-Mth.sin(yaw) * 2.0, 0, Mth.cos(yaw) * 2.0);
+		float damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.4f;
+		for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, new AABB(at, at).inflate(move.shock(), 1.5, move.shock()),
+				e -> e != player && e.isAlive() && fightsBack(e, player) && e.position().distanceTo(at) <= move.shock())) {
+			if (!struck.contains(living.getId())) {
+				living.hurtServer(level, level.damageSources().playerAttack(player), damage);
+			}
+			if (!BossRules.fromBoss(living)) {
+				living.push(0, 0.42, 0);
+				Feedback.syncMotion(living);
+			}
+		}
+		BlockState ground = level.getBlockState(BlockPos.containing(at.x, player.getY() - 0.2, at.z));
+		if (!ground.isAir()) {
+			for (int i = 0; i < 16; i++) {
+				double a = Math.PI * 2 * i / 16;
+				level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), at.x + Math.cos(a) * move.shock() * 0.7, player.getY() + 0.15,
+						at.z + Math.sin(a) * move.shock() * 0.7, 4, 0.2, 0.1, 0.2, 0.12);
+			}
+			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), at.x, player.getY() + 0.2, at.z, 30, 0.6, 0.2, 0.6, 0.2);
+		}
+		level.sendParticles(ParticleTypes.POOF, at.x, player.getY() + 0.2, at.z, 12, 1.0, 0.1, 1.0, 0.03);
+		level.playSound(null, at.x, at.y, at.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5f, 1.5f);
+		level.playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.5f, 0.6f);
+	}
+
+	/** The move landing right now, or null (blood/HellWeapons asks, for the Bloodletter's finisher). */
+	@Nullable
+	public static Moveset.Move landingMove() {
+		return landingMove;
 	}
 
 	/** Everything this move's blow strikes, nearest first, what the player looks straight at before the rest. */

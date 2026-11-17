@@ -24,7 +24,28 @@ import java.util.Map;
  */
 public final class Moveset {
 	/** One move of a weapon. */
-	public record Move(PlayerMovesAnim anim, int index, boolean heavy, float damage, float halfAngle, float pitch, float reach, float knockback, float lunge) {
+	public record Move(PlayerMovesAnim anim, int index, boolean heavy, float damage, float halfAngle, float pitch, float reach, float knockback, float lunge,
+					   float pull, float shock) {
+		/** A plain move: no pull, no shockwave. */
+		public Move(PlayerMovesAnim anim, int index, boolean heavy, float damage, float halfAngle, float pitch, float reach, float knockback, float lunge) {
+			this(anim, index, heavy, damage, halfAngle, pitch, reach, knockback, lunge, 0, 0);
+		}
+
+		/** The same move, dragging what it strikes towards the player (the Reaper's turn). */
+		public Move pulling(float strength) {
+			return new Move(anim, index, heavy, damage, halfAngle, pitch, reach, knockback, lunge, strength, shock);
+		}
+
+		/** The same move, with a shockwave this wide where it lands (the Tithe Axe's slam). */
+		public Move shaking(float radius) {
+			return new Move(anim, index, heavy, damage, halfAngle, pitch, reach, knockback, lunge, pull, radius);
+		}
+
+		/** The last light move of its chain (the Bloodletter's bleeds deepest). */
+		public boolean finisher(Moveset set) {
+			return !heavy && index == set.light.size() - 1;
+		}
+
 		/** The tick of the animation at which the blow lands. */
 		public int hitTick() {
 			return anim.at("hit");
@@ -83,10 +104,25 @@ public final class Moveset {
 		SETS.put(WeaponClass.SWORD, sword);
 		SETS.put(WeaponClass.AXE, axe);
 		SETS.put(WeaponClass.MACE, mace);
-		// the hell weapons swing as their kind does until they get movesets of their own
-		SETS.put(WeaponClass.BLOODLETTER, sword);
-		SETS.put(WeaponClass.TITHE_AXE, axe);
-		SETS.put(WeaponClass.REAPER, axe);
+		// the hell weapons' own. The Bloodletter: four quick cuts, the third a spin that catches everything round you, the
+		// last a deep thrust; its heavy blow a long lunge
+		SETS.put(WeaponClass.BLOODLETTER, new Moveset(1.6f,
+				heavy(PlayerMovesAnim.BLOOD_HEAVY, 1.9f, 22, 35, 1.2f, 0.5f, 0.62f),
+				light(PlayerMovesAnim.BLOOD_1, 0, 0.75f, 62, 45, 0.0f, 0.0f, 0.10f),
+				light(PlayerMovesAnim.BLOOD_2, 1, 0.75f, 66, 40, 0.0f, 0.0f, 0.10f),
+				light(PlayerMovesAnim.BLOOD_3, 2, 0.85f, 180, 40, 0.2f, 0.2f, 0.0f),
+				light(PlayerMovesAnim.BLOOD_4, 3, 1.3f, 24, 30, 0.8f, 0.3f, 0.38f)));
+		// the Reaper of Minos: two great sweeps and a full reaping turn that drags the harvest in
+		SETS.put(WeaponClass.REAPER, new Moveset(1.0f,
+				heavy(PlayerMovesAnim.REAPER_HEAVY, 1.9f, 46, 65, 0.9f, 0.8f, 0.24f),
+				light(PlayerMovesAnim.REAPER_1, 0, 0.95f, 85, 45, 0.6f, 0.2f, 0.10f),
+				light(PlayerMovesAnim.REAPER_2, 1, 1.0f, 78, 55, 0.6f, 0.3f, 0.12f),
+				light(PlayerMovesAnim.REAPER_3, 2, 1.15f, 180, 45, 0.8f, 0.0f, 0.0f).pulling(0.55f)));
+		// the Tithe Axe: a chop, an upward rip, and a slam that shakes the ground
+		SETS.put(WeaponClass.TITHE_AXE, new Moveset(1.0f,
+				heavy(PlayerMovesAnim.TITHE_HEAVY, 2.0f, 40, 65, 0.3f, 1.0f, 0.26f).shaking(3.5f),
+				light(PlayerMovesAnim.TITHE_1, 0, 0.95f, 58, 50, 0.1f, 0.25f, 0.12f),
+				light(PlayerMovesAnim.TITHE_2, 1, 1.15f, 58, 55, 0.1f, 0.5f, 0.12f)));
 	}
 
 	@Nullable
