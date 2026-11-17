@@ -64,6 +64,9 @@ final class LuciferDialogue {
 	static final String[] BITE = {"Judas has room for company!", "Into the mouth, TRAITOR!", "I shall chew thee for eternity."};
 	static final String[] WINGBEAT = {"The wind of my wings froze all of Cocytus!", "BE STILL!", "Six wings, and I cannot fly. FEEL THEM!"};
 	static final String[] WEEP = {"Six eyes weep... and still I cannot rise.", "Drown in my tears.", "Weep with me, heart-thief."};
+	static final String[] SWAT = {"AWAY!", "Thou art an insect on my ice.", "Begone from my sight!"};
+	static final String[] CLAP = {"Between my hands!", "I shall crush thee like a moth.", "CLOSER."};
+	static final String[] SLUMP = {"I... cannot... rise...", "The ice- it holds me-", "No- NO-"};
 	static final String[] EMPEROR_HALF = {"Thou bleedest the Emperor? Then BLEED WITH ME!", "All three faces see thee now."};
 
 	static final String[] DEFEAT = {

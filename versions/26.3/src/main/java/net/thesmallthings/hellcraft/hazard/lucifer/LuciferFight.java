@@ -691,6 +691,7 @@ public final class LuciferFight {
 		}
 		bar.removeAllPlayers();
 		seraphAttacks.posture.hide();
+		emperorAttacks.posture.hide();
 		schedule(EmperorAnim.REVEAL.at("open"), () -> {
 			EmperorEntity e = emperor();
 			if (e != null) {
@@ -719,6 +720,7 @@ public final class LuciferFight {
 		scheduled.clear();
 		bar.removeAllPlayers();
 		seraphAttacks.posture.hide();
+		emperorAttacks.posture.hide();
 		styles.values().forEach(StyleMeter::finish);
 		EmperorEntity emperor = emperor();
 		if (emperor != null) {
@@ -800,7 +802,7 @@ public final class LuciferFight {
 
 	/** Whether a blow on Lucifer now is a punish: his posture is broken. */
 	boolean punishable() {
-		return (phase == Phase.DUEL || phase == Phase.ENRAGED) && seraphAttacks.punishable();
+		return (phase == Phase.DUEL || phase == Phase.ENRAGED) && seraphAttacks.punishable() || phase == Phase.TRUE_FORM && emperorAttacks.punishable();
 	}
 
 	/** A blow passed through this player's dodge roll: style, if they fight here. */
@@ -812,6 +814,10 @@ public final class LuciferFight {
 		FallenSeraphEntity s = seraph();
 		if (s != null && (phase == Phase.DUEL || phase == Phase.ENRAGED) && LuciferArena.inside(player.getX(), player.getZ())) {
 			seraphAttacks.dodged(s);
+		}
+		EmperorEntity m = emperor();
+		if (m != null && phase == Phase.TRUE_FORM && LuciferArena.inside(player.getX(), player.getZ())) {
+			emperorAttacks.dodged(m);
 		}
 	}
 
@@ -881,6 +887,10 @@ public final class LuciferFight {
 		FallenSeraphEntity hitSeraph = seraph();
 		if (hitSeraph != null && entity == hitSeraph && (phase == Phase.DUEL || phase == Phase.ENRAGED)) {
 			seraphAttacks.hurtBy(hitSeraph, player, dealt);
+		}
+		EmperorEntity hitEmperor = emperor();
+		if (hitEmperor != null && entity == hitEmperor && phase == Phase.TRUE_FORM) {
+			emperorAttacks.hurtBy(hitEmperor, dealt);
 		}
 		if (newcomer) {
 			HellState.Soul soul = HellState.get(level.getServer()).existing(player.getUUID());
@@ -969,6 +979,16 @@ public final class LuciferFight {
 		return true;
 	}
 
+	/** Test helper: the Emperor's posture broken now. */
+	boolean breakEmperorPosture() {
+		EmperorEntity m = emperor();
+		if (m == null || phase != Phase.TRUE_FORM) {
+			return false;
+		}
+		emperorAttacks.posture.breakNow(m);
+		return true;
+	}
+
 	/** Test helper: one of the Seraph's attacks now, at the nearest target. */
 	boolean forceAttack(SeraphAttacks.Attack attack) {
 		FallenSeraphEntity s = seraph();
@@ -1033,6 +1053,11 @@ public final class LuciferFight {
 			seraphAttacks.posture.show(audience);
 		} else {
 			seraphAttacks.posture.hide();
+		}
+		if (phase == Phase.TRUE_FORM) {
+			emperorAttacks.posture.show(audience);
+		} else {
+			emperorAttacks.posture.hide();
 		}
 		LivingEntity body = phase == Phase.TRUE_FORM ? emperor() : seraph();
 		if (phase == Phase.INTRO) {
@@ -1114,6 +1139,7 @@ public final class LuciferFight {
 		scheduled.clear();
 		bar.removeAllPlayers();
 		seraphAttacks.posture.hide();
+		emperorAttacks.posture.hide();
 		styles.values().forEach(StyleMeter::finish);
 		discardStrays();
 		traitors.clear();

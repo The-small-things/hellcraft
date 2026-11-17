@@ -23,8 +23,8 @@ import java.util.Properties;
  * past his frozen body to Purgatory.
  */
 public class LuciferTest implements FabricClientGameTest {
-	/** The fight's own clock runs at luciferTempo (0.85 by default): a blow's fight ticks take this many real ticks each. */
-	private static final double SLOW = 1 / 0.85;
+	/** The fight's own clock runs at luciferTempo (1.0 by default since 3.5): a blow's fight ticks take this many real ticks each. */
+	private static final double SLOW = 1 / 1.0;
 
 	@Override
 	public void runTest(ClientGameTestContext context) {
@@ -184,6 +184,29 @@ public class LuciferTest implements FabricClientGameTest {
 		context.waitTicks((int) ((EmperorAnim.BREATH.at("breathe") + 16) * SLOW));
 		context.takeScreenshot("lucifer_breath");
 		context.waitTicks(160);
+		// the 3.5 playtest's blows: the swat (white, parry it), the clap (red, roll out) and his posture broken (he slumps)
+		use(server, "swat");
+		context.waitTicks((int) ((EmperorAnim.SWAT_RIGHT.at("flash") + 4) * SLOW));
+		context.takeScreenshot("lucifer_swat");
+		context.waitTicks(160);
+		use(server, "clap");
+		context.waitTicks((int) ((EmperorAnim.CLAP.at("clap") - 6) * SLOW));
+		context.takeScreenshot("lucifer_clap");
+		context.waitTicks(160);
+		String broke = server.computeOnServer(s -> LuciferManager.breakPosture());
+		if (!broke.contains("breaks")) {
+			throw new AssertionError("couldn't break the Emperor's posture: " + broke);
+		}
+		context.waitTicks((int) ((EmperorAnim.SLUMP.at("down") + 6) * SLOW));
+		context.takeScreenshot("lucifer_slump");
+		if (!server.computeOnServer(s -> LuciferManager.punishable())) {
+			throw new AssertionError("with his posture broken, a blow on the Emperor should be a punish");
+		}
+		boolean faceOpen = server.computeOnServer(s -> s.overworld().getEntities(HellEntities.EMPEROR_WEAK_POINT, e -> true).size() >= 3);
+		if (!faceOpen) {
+			throw new AssertionError("slumped, the Emperor should lie open at his faces and both hands");
+		}
+		context.waitTicks(200);
 	}
 
 	/** He freezes, the victors climb down his side (the camera rolls over as they pass his middle) and out to Purgatory. */

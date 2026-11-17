@@ -282,7 +282,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   boss bar; `add`/`addShare`, `breakNow`, `brokenFor`; drains when left alone): `hurtBy` (heavy and finishers 1.5x, double while
   `openUntil`), `parried` (a third; a flurry's three parries break it), `dodged`; broken he takes `BROKEN` 1.5x and blows are
   punishes (`LuciferFight.punishable`). `/hellcraft lucifer attack <name>` takes every attack; `LuciferManager.breakPosture` for tests;
-  `HELLCRAFT_BOSSES=lucifer` makes BossTest film only Lucifer's bodies. `luciferTempo` is 1.0 (config version 5). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  `HELLCRAFT_BOSSES=lucifer` makes BossTest film only Lucifer's bodies. **The Emperor reworked:** `EmperorAttacks` adds
+  `SWAT` (white wedge, a parried swat stuns the hand: `swatting`), `CLAP` (red circle in front, both hands open after) and a slam
+  `shockwave` (purple ring, hurts the grounded); his own `Posture` (`hurtBy` from `LuciferFight.afterDamage` on hits through weak
+  points, parries and dodges add shares; broken he plays `SLUMP`, faces and hands open); `epoch`/`alive` cancel blows when he slumps;
+  after half health `string` chains a second blow; icefall only after `STANDOFF` with everyone beyond his reach; new tips once a fight
+  (`tellOnce`, no hint bits left but 63). `luciferTempo` is 1.0 (config version 5). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

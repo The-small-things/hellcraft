@@ -552,47 +552,80 @@ def animations(m):
     dormant.rot("head", [(0, (-15, 0, 0)), (8.0, (-15, 0, 0))])
 
     # a hand raised high and brought down on the ice; it lies there until it lifts (a weak point)
+    # (3.5 playtest: quicker throughout: the slam lands at 1.2 s, not 1.6, and the hand lies open a little less long)
     for side, s in (("right", 1), ("left", -1)):
-        slam = m.animation(f"slam_{side}", 5.0)
-        slam.rot(f"{side}_arm", [(0, ZERO), (1.2, (170 - AT_REST, 0, 10 * s)), (1.6, (SLAM - AT_REST, 0, 0)), (4.2, (SLAM - AT_REST, 0, 0)),
-                                 (5.0, ZERO)], interp="linear")
-        slam.rot("upper", [(0, ZERO), (1.2, (8, 8 * s, 0)), (1.6, (-12, -6 * s, 0)), (4.2, (-12, -6 * s, 0)), (5.0, ZERO)])
-        slam.event(1.6, "slam").event(4.2, "lift")
+        slam = m.animation(f"slam_{side}", 4.3)
+        slam.rot(f"{side}_arm", [(0, ZERO), (0.85, (170 - AT_REST, 0, 10 * s)), (1.2, (SLAM - AT_REST, 0, 0)), (3.6, (SLAM - AT_REST, 0, 0)),
+                                 (4.3, ZERO)], interp="linear")
+        slam.rot("upper", [(0, ZERO), (0.85, (8, 8 * s, 0)), (1.2, (-12, -6 * s, 0)), (3.6, (-12, -6 * s, 0)), (4.3, ZERO)])
+        slam.event(1.2, "slam").event(3.6, "lift")
 
     # both hands at once: raised high together and brought down either side of him (both lie on the ice after)
-    both = m.animation("slam_both", 5.0)
+    both = m.animation("slam_both", 4.3)
     for side, s in (("right", 1), ("left", -1)):
-        both.rot(f"{side}_arm", [(0, ZERO), (1.4, (175 - AT_REST, 0, 14 * s)), (1.8, (SLAM - AT_REST, 0, 0)), (4.2, (SLAM - AT_REST, 0, 0)),
-                                 (5.0, ZERO)], interp="linear")
-    both.rot("upper", [(0, ZERO), (1.4, (12, 0, 0)), (1.8, (-16, 0, 0)), (4.2, (-16, 0, 0)), (5.0, ZERO)])
-    both.event(1.8, "slam").event(4.2, "lift")
+        both.rot(f"{side}_arm", [(0, ZERO), (1.0, (175 - AT_REST, 0, 14 * s)), (1.35, (SLAM - AT_REST, 0, 0)), (3.6, (SLAM - AT_REST, 0, 0)),
+                                 (4.3, ZERO)], interp="linear")
+    both.rot("upper", [(0, ZERO), (1.0, (12, 0, 0)), (1.35, (-16, 0, 0)), (3.6, (-16, 0, 0)), (4.3, ZERO)])
+    both.event(1.35, "slam").event(3.6, "lift")
 
     # a hand laid on the ice and dragged across it: the arm comes down low and stays there while he turns in the ice
     # (the game turns his whole body, so the hand sweeps round with him); "down" when it touches, "lift" at the end
     for side, s in (("right", 1), ("left", -1)):
-        drag = m.animation(f"drag_{side}", 5.0)
-        drag.rot(f"{side}_arm", [(0, ZERO), (0.8, (100 - AT_REST, 0, 25 * s)), (1.2, (SLAM - AT_REST, 0, 12 * s)),
-                                 (4.0, (SLAM - AT_REST, 0, 12 * s)), (5.0, ZERO)], interp="linear")
-        drag.rot("upper", [(0, ZERO), (1.2, (-10, 10 * s, 0)), (4.0, (-10, 10 * s, 0)), (5.0, ZERO)])
-        drag.event(1.2, "down").event(4.0, "lift")
+        drag = m.animation(f"drag_{side}", 4.3)
+        drag.rot(f"{side}_arm", [(0, ZERO), (0.6, (100 - AT_REST, 0, 25 * s)), (0.9, (SLAM - AT_REST, 0, 12 * s)),
+                                 (3.5, (SLAM - AT_REST, 0, 12 * s)), (4.3, ZERO)], interp="linear")
+        drag.rot("upper", [(0, ZERO), (0.9, (-10, 10 * s, 0)), (3.5, (-10, 10 * s, 0)), (4.3, ZERO)])
+        drag.event(0.9, "down").event(3.5, "lift")
 
     # his frozen breath: the head drawn back to inhale, then thrust forward and down with the jaws wide while the cold
     # pours out (the game turns his whole body, so the breath sweeps across the ice); "breathe" to "end"
-    breath = m.animation("breath", 5.0)
-    breath.rot("head", [(0, ZERO), (0.9, (25, 0, 0)), (1.4, (-30, 0, 0)), (4.0, (-30, 0, 0)), (5.0, ZERO)])
-    breath.rot("upper", [(0, ZERO), (0.9, (8, 0, 0)), (1.4, (-14, 0, 0)), (4.0, (-14, 0, 0)), (5.0, ZERO)])
+    breath = m.animation("breath", 4.2)
+    breath.rot("head", [(0, ZERO), (0.7, (25, 0, 0)), (1.1, (-30, 0, 0)), (3.4, (-30, 0, 0)), (4.2, ZERO)])
+    breath.rot("upper", [(0, ZERO), (0.7, (8, 0, 0)), (1.1, (-14, 0, 0)), (3.4, (-14, 0, 0)), (4.2, ZERO)])
     for side, s in (("right", 1), ("left", -1)):
         for i in range(3):
-            breath.rot(f"{side}_wing{i}", [(0, ZERO), (1.4, (0, -25 * s, 20 * s)), (4.0, (0, -25 * s, 20 * s)), (5.0, ZERO)])
-    breath.event(0.9, "inhale").event(1.4, "breathe").event(4.0, "end")
+            breath.rot(f"{side}_wing{i}", [(0, ZERO), (1.1, (0, -25 * s, 20 * s)), (3.4, (0, -25 * s, 20 * s)), (4.2, ZERO)])
+    breath.event(0.7, "inhale").event(1.1, "breathe").event(3.4, "end")
 
     # a bite: he bends, a face comes down to the ice, flashes, bites, and stays low a moment (a weak point)
     for name, yaw in (("bite", 0), ("bite_right", 90), ("bite_left", -90)):
-        bite = m.animation(name, 5.0)
-        bite.rot("upper", [(0, ZERO), (1.4, (-BEND, 0, 0)), (4.0, (-BEND, 0, 0)), (5.0, ZERO)])
-        bite.rot("neck", [(0, ZERO), (1.4, (-NOD, 0, 0)), (4.0, (-NOD, 0, 0)), (5.0, ZERO)])
-        bite.rot("head", [(0, ZERO), (0.8, (0, yaw, 0)), (1.5, (10, yaw, 0)), (1.6, (-10, yaw, 0)), (4.0, (-10, yaw, 0)), (5.0, ZERO)])
-        bite.event(1.0, "flash").event(1.5, "bite").event(4.0, "rise")
+        bite = m.animation(name, 4.0)
+        bite.rot("upper", [(0, ZERO), (1.05, (-BEND, 0, 0)), (3.2, (-BEND, 0, 0)), (4.0, ZERO)])
+        bite.rot("neck", [(0, ZERO), (1.05, (-NOD, 0, 0)), (3.2, (-NOD, 0, 0)), (4.0, ZERO)])
+        bite.rot("head", [(0, ZERO), (0.6, (0, yaw, 0)), (1.12, (10, yaw, 0)), (1.2, (-10, yaw, 0)), (3.2, (-10, yaw, 0)), (4.0, ZERO)])
+        bite.event(0.75, "flash").event(1.15, "bite").event(3.2, "rise")
+
+    # the swat: a hand swung out to his side low over the ice, then swept across in front of him (a white wedge: parry
+    # it and the hand lies stunned on the ice, a weak point); "flash" as it starts across, "hit" as it passes
+    for side, s in (("right", 1), ("left", -1)):
+        swat = m.animation(f"swat_{side}", 3.0)
+        # (a negative turn about Y swings his right arm out to his right, a positive one in across him)
+        swat.rot(f"{side}_arm", [(0, ZERO), (0.6, (SLAM - 8 - AT_REST, -55 * s, 0)), (0.8, (SLAM - 6 - AT_REST, -58 * s, 0)),
+                                 (1.05, (SLAM - AT_REST, 35 * s, 0)), (1.3, (SLAM - AT_REST, 38 * s, 0)), (2.4, (SLAM - AT_REST, 38 * s, 0)),
+                                 (3.0, ZERO)])
+        swat.rot("upper", [(0, ZERO), (0.6, (0, -20 * s, 0)), (1.05, (-8, 18 * s, 0)), (2.4, (-8, 18 * s, 0)), (3.0, ZERO)])
+        swat.event(0.75, "flash").event(1.0, "hit").event(2.4, "lift")
+
+    # the clap: both hands raised wide, then brought together on the ice in front of him with a thunderclap; they lie
+    # there after (weak points)
+    clap = m.animation("clap", 3.4)
+    for side, s in (("right", 1), ("left", -1)):
+        clap.rot(f"{side}_arm", [(0, ZERO), (0.9, (120 - AT_REST, -45 * s, 0)), (1.1, (125 - AT_REST, -48 * s, 0)), (1.3, (SLAM - AT_REST, 20 * s, 0)),
+                                 (2.8, (SLAM - AT_REST, 20 * s, 0)), (3.4, ZERO)])
+    clap.rot("upper", [(0, ZERO), (0.9, (12, 0, 0)), (1.3, (-14, 0, 0)), (2.8, (-14, 0, 0)), (3.4, ZERO)])
+    clap.rot("head", [(0, ZERO), (0.9, (15, 0, 0)), (1.3, (-10, 0, 0)), (3.4, ZERO)])
+    clap.event(0.3, "rise").event(1.3, "clap").event(2.8, "lift")
+
+    # his posture broken: he slumps forward onto the ice, all three faces down, both hands flat (a long opening)
+    slump = m.animation("slump", 4.5)
+    slump.rot("upper", [(0, ZERO), (0.6, (-BEND - 5, 0, 0)), (3.8, (-BEND - 3, 0, 0)), (4.5, ZERO)])
+    slump.rot("neck", [(0, ZERO), (0.6, (-NOD, 0, 0)), (3.8, (-NOD, 0, 0)), (4.5, ZERO)])
+    slump.rot("head", [(0, ZERO), (0.6, (-15, 0, 0)), (3.8, (-12, 0, 0)), (4.5, ZERO)])
+    for side, s in (("right", 1), ("left", -1)):
+        slump.rot(f"{side}_arm", [(0, ZERO), (0.6, (SLAM - AT_REST, 0, 0)), (3.8, (SLAM - AT_REST, 0, 0)), (4.5, ZERO)])
+        for i in range(3):
+            slump.rot(f"{side}_wing{i}", [(0, ZERO), (0.6, (0, 0, -45 * s)), (3.8, (0, 0, -45 * s)), (4.5, ZERO)])
+    slump.event(0.6, "down").event(3.8, "rise")
 
     # his wingbeat: the cold wind across the whole pit
     beat = m.animation("wingbeat", 3.0)

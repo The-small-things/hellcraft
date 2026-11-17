@@ -221,7 +221,7 @@ public final class LuciferManager {
 		if (fight == null) {
 			return "No fight in progress.";
 		}
-		return fight.breakPosture() ? "His posture breaks." : "The Seraph isn't fighting now.";
+		return fight.breakPosture() || fight.breakEmperorPosture() ? "His posture breaks." : "Neither of his forms is fighting now.";
 	}
 
 	/** Test helper: is a blow on him now a punish (his posture broken)? */
@@ -243,7 +243,7 @@ public final class LuciferManager {
 		try {
 			attack = SeraphAttacks.Attack.valueOf(upper);
 		} catch (IllegalArgumentException e) {
-			return "Unknown attack: " + name + " (the Seraph: slash, sweep, stars, lunge, flurry, feint, dive, crescent, counter, blink; the Emperor: slam, bite, wingbeat, weep, both_hands, drag, breath)";
+			return "Unknown attack: " + name + " (the Seraph: slash, sweep, stars, lunge, flurry, feint, dive, crescent, counter, blink; the Emperor: slam, bite, wingbeat, weep, both_hands, drag, breath, swat, clap)";
 		}
 		return fight.forceAttack(attack) ? "The Seraph uses " + attack + "." : "The Seraph isn't fighting now, or there is no target.";
 	}

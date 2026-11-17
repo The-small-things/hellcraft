@@ -367,6 +367,11 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(EmperorAnim.BITE_LEFT, EmperorAnim.BITE_LEFT.at("bite") + 10, n),
 				new Shot(EmperorAnim.WINGBEAT, EmperorAnim.WINGBEAT.at("beat") - 6, p),
 				new Shot(EmperorAnim.WEEP, EmperorAnim.WEEP.at("weep") + 10, n),
+				new Shot(EmperorAnim.SWAT_RIGHT, EmperorAnim.SWAT_RIGHT.at("flash"), w),
+				new Shot(EmperorAnim.SWAT_RIGHT, EmperorAnim.SWAT_RIGHT.at("hit") + 2, n),
+				new Shot(EmperorAnim.CLAP, EmperorAnim.CLAP.at("rise") + 6, n),
+				new Shot(EmperorAnim.CLAP, EmperorAnim.CLAP.at("clap") + 2, n),
+				new Shot(EmperorAnim.SLUMP, EmperorAnim.SLUMP.at("down") + 10, n),
 				new Shot(EmperorAnim.DEATH, EmperorAnim.DEATH.ticks - 4, n)));
 	}
 

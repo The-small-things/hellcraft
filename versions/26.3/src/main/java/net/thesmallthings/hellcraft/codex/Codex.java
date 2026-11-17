@@ -216,10 +216,13 @@ public final class Codex {
 							+ "takes half as much again. At half his health he snaps: wings folded and humming means DON'T strike (he answers); "
 							+ "a pop means he is behind you, so turn and parry the ring.",
 					"The Emperor. He can't be hurt anywhere but where he opens up. Red: a hand slams down; once it lands, hit the "
-							+ "glowing hand. White flash: a face bites; block it and the face stays down, glowing, for longer, and takes "
-							+ "more damage.",
-					"Purple ring round the whole pit: his wingbeat. It can't be blocked: get behind one of the ice pillars before it comes.",
-					"At half his health he weeps too: red circles of frozen tears. Keep moving.",
+							+ "glowing hand, and jump the purple ring that runs out from it. White flash: a face bites, or a hand sweeps "
+							+ "across the ice; parry on the ring and it stays down, glowing, for longer, and takes double damage.",
+					"Both hands raised wide: a clap on the red circle; roll out and both hands lie open. Purple ring round the whole "
+							+ "pit: his wingbeat. It can't be blocked: get behind one of the ice pillars before it comes.",
+					"He has a POSTURE too: blows on his hands and faces, parries and blows you roll through fill it, and full, he "
+							+ "slumps onto the ice with every face open. Keep far from him and icicles fall; at half his health he strings "
+							+ "his blows together and now and then weeps red circles of frozen tears.",
 					"The wingbeat reaches all of Cocytus: if you feel it far from the pit, a lit brazier keeps you warm."),
 			"The Emperor of the kingdom dolorous from his mid-breast forth issued from the ice.",
 			"Inferno XXXIV");

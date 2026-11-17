@@ -511,10 +511,13 @@ Lucifer's pit is a flat floor of ice about 70 blocks across at the very centre o
    - **Red, both hands:** both hands come down at once, either side of him; both stay down to be hit.
    - **Red circles in an arc:** a hand laid on the ice and dragged round as he turns in the ice. *Get off its path.* It lies still at the end: hit it.
    - **Red wedge:** his frozen breath, sweeping across the ice as he turns. *Get out of the wedge or behind an ice pillar.* The face hangs low after: hit it.
-   - **Red circles, from half health:** he weeps, and his tears fall as ice. *Keep moving.*
-   - **Small red circles round you, all fight long:** icicles shaken from his wings, whatever else he's doing.
+   - **White flash, a hand swung out to his side:** the **swat** sweeps a wedge of ice in front of him. *Parry it on the ring* and the hand lies stunned on the ice, glowing, for twice the damage.
+   - **Red circle in front of him, both hands raised wide:** the **clap**. *Roll out*, and both hands lie open after.
+   - **A thin purple ring running out from a slammed hand:** the shockwave. *Jump it or roll through it.*
+   - **Red circles, from half health, now and then:** he weeps, and his tears fall as ice. *Keep moving.*
+   - **Small red circles round you:** icicles shaken from his wings, but only if everyone keeps far from him for a while.
 
-   He picks his blows at random (never the same twice running), with little rest between them.
+   He picks his blows at random (never the same twice running), most often the ones you answer with a parry or a roll, and from half health he strings two together. Like the Seraph he has a **posture bar** under his health: blows on his hands and faces, parries and blows rolled through fill it, and when it's full he **slumps** onto the ice with all three faces and both hands open for a few seconds (blows then score PUNISH). Each of his blows has its own sound: a rising rumble as a hand lifts, a whoosh for the swat, thunder for the clap.
 
    Every attack is told on the ground first, and the first time you see each one a plain tip says what to do.
 
@@ -843,7 +846,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |
 | `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |
 | `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
-| `/hellcraft lucifer attack <hatred\|impotence\|ignorance\|wingbeat\|mouths>` | op | Make the Emperor use one attack (26.3, true form) |
+| `/hellcraft lucifer attack <name>` | op | Make the Seraph or the Emperor use one attack (the Seraph: slash, sweep, stars, lunge, flurry, feint, dive, crescent, counter, blink; the Emperor: slam, bite, wingbeat, weep, both_hands, drag, breath, swat, clap) |
 | `/hellcraft prestige <player> [set <n>]` / `prestige test` | op | Show or set a player's burned P's; self-test the Seven P's (26.3) |
 | `/hellcraft whiteroom <player>` / `whiteroom release <player>` / `whiteroom list` | op | Shut a player in the white room: a 21×11×21 cell high above the edge of the world, every surface papered with white maps in invisible glow frames and lit from behind, so it has no depth. They're kept in adventure mode and pulled back if they get out, even after a restart; release puts them back where they were, in their old game mode, and takes the room down (26.3) |
 | `/hellcraft hall [build]` | op | The Hall of the Damned standings; (re)build the monument (26.3) |
