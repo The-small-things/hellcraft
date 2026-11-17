@@ -4,7 +4,23 @@
 
 A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *Inferno*. The world is a funnel of nine circles terracing down to frozen Cocytus. The rules are Lifesteal SMP, where **blood is fuel** and **hell is full**.
 
-**Hellcraft 3.4 is in beta:** penitents on Purgatory's terraces, a lighter and sharper Map of Hell, a door onto the wall in every gatehouse tower, and small fixes (no new world needed). **Hellcraft 3.3 is out:** a Map of Hell that shows the real ground where you've been, tidier lairs on the diagonals, worn Pilgrim Roads, a Purgatory you can climb (the Great Stair and seven terraces, each dressed for its sin) and plainer prestige. It needs a new world. Before it, **3.2** furnished the walls of Hell with rooms and watch towers, added gatehouses, the Labyrinth, onlookers, circle soundscapes, Virgil's tips, the Unbound and the Keys of Peter, and **3.1** brought a title screen of its own, the damned suffering in every circle, Minos's judgement, champions, secret ways down, an optional Pilgrimage, waymarks and a Journal you can read like a book (below). It came after **3.0**: a new, wider map with roads and a compass, every boss and monster on a real animated body, a rule to play with in every circle, Lucifer's two-part fight, the Nether rebuilt as the Forge of Dis, and Purgatory and Paradiso as worlds of their own (the plan was [the revamp](docs/REVAMP.md)). Since 3.0, **every player installs Hellcraft too** (the Hellcraft modpack, below), and 3.0 needed **a new world** (a 3.0 world carries on in 3.1). The old 1.21.1 version is frozen and no longer updated.
+**What it is, in short:**
+- **A world built as Hell.** The overworld is a funnel of nine circles, 10,500 blocks across, terracing down from the Dark Wood to Lucifer frozen in the ice at 0, 0. Every circle has its own land, a rule to play with (a wind that carries you, mud that swallows you, tombs that blast fire), its own monsters and the damned suffering its punishment.
+- **Lifesteal.** Kill a player, take a heart. Lose your last heart and you become a ghost until friends buy you back at a Blood Altar.
+- **Bosses worth learning.** Eight circle guardians, Vulcan in the Nether, the Seraph in Paradiso and Lucifer himself, each on an animated body, fighting in one shared **danger language**: red on the ground means get out, white means block or parry now, purple means jump or roll.
+- **Combat of its own (3.5).** Weapons swing in arcs and chain into combos; a stamina bar, a dodge roll, a guard and a parry with any weapon; every player animated smoothly in first and third person.
+- **Beyond Hell.** Climb out to Purgatory's mountain, then up through the nine spheres of Paradiso to the Celestial Rose.
+
+**Versions.** The latest release is **3.4.0**; **3.5 is in beta** (newer, still changing; see [Install it](#install-it)). Every player installs Hellcraft too, at the same version as the server. What came in each version: [Version history](#version-history).
+
+### New in 3.5 (beta)
+- **Hellcraft's own combat.** Swords, axes, maces and the hell weapons swing in arcs that hit everything in their path, chain into combos and have a held heavy blow. A **stamina** bar, a **dodge roll** (Left Alt) that blows pass through and that shrinks you under a block high, a **guard** with any weapon (right-click) and a timed **parry**. Your guard cuts any swing or roll short, so you never wait for an animation. All in [Fighting](#fighting-35-beta).
+- **Every player moves smoothly.** Walking, sprinting, sneaking, jumping, falling and landing are animated in step with your feet; bows draw back, shields brace, food goes to the mouth. In first person your weapon sways with your stride and every swing stays in view. See [How players move](#how-players-move-35-beta).
+- **Lucifer rebuilt.** The Fallen Seraph duels like a swordsman (flurries, feints, dives, a counter stance, blinks behind you) and the Three-Faced Emperor swats, claps and sends shockwaves; both have a **posture bar** to break. See [The fight](#the-fight-30).
+- **Fights you can hear.** Every danger mark sounds as it comes (red a low horn, white a bright ring on the moment to parry, purple a sour whine), and Lucifer's blows each have their own sound.
+- **Style that rewards skill.** Each move of your chain goes stale on its own, and parries, dodges and finishers raise a multiplier up to x2.
+- **Found altars and safe camps (3.4.1).** Any Blood Altar you find is a place to travel to, and the ruined ones keep monsters away.
+
 
 ## Screenshots
 
@@ -54,42 +70,9 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 
 ![map](docs/inferno_map.png)
 
-**New in 3.2 (beta):**
-- **Onlookers:** now and then a shade stands far off and stares at you, the living, wearing the skin of someone who has walked this Hell before; walk up to it and it's gone.
-- **Every circle sounds like itself:** Lust's storm, Gluttony's rain, gold clinking in Greed, creaking trees in the Wood, ice cracking on Cocytus and a vast heart beating under Judecca.
-- **Virgil teaches as you go:** new souls get one short tip at a time (the Journal, the compass, Blood Fragments, altars, hearts, bosses...) as they first meet each thing, at most one a minute. `/lessons` shows how far you've got, `/lessons off` stops them.
-- **Gatehouses:** climb the towers beside every gate of the Gate of Hell and Dis: a spiral stair up through carpeted rooms (a guard room, a war room at the top, and in between libraries, kitchens, chapels, prisons, shrines, armouries, enchanting rooms and treasuries) to the walk over the gate and the roof.
-- **The walls are lived in, all the way round:** the Gate of Hell's wall and the Walls of Dis are full of rooms: every ten blocks a door at the foot of the wall opens on a stack of furnished rooms, a winding stone stair climbing through them. Every eighty blocks a **watch tower** stands out from the wall and above it, with doors onto the walk along the wall's top and an open top with a watch fire. Fourteen kinds of room; the good ones (an anvil, brewing stands, an enchanting table with real bookshelf power, a treasury with loot) are about one room in eight on the Gate and two in five on Dis. Rooms are 7 blocks high, and the stairs have room over your head. Built as you come near, so an older world gets them too.
-- **The Labyrinth of Crete**: step through an old arch beside the Minotaur's arena and into a sealed maze deep underground. Find **Ariadne's Thread** at its heart; it shows you the way out to him, and in his fight his charges end with him stunned.
-- **The Unbound:** once you've beaten Lucifer, the guardians wake stronger, and pay better.
-- **The Keys of Peter:** one set on the whole server, from the angel at Purgatory's gate. Two more hearts and travel to any Rest, but everyone knows who has them, and they fall when you die.
-- **A camera that feels the ride:** the view rocks in Lust's storm and leans into the turns on Geryon's back.
-
-**New in 3.1:**
-- **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
-- **The damned** suffer each circle's punishment around you, and scream.
-- **Limbo has no colour**, except in the Noble Castle's light.
-- **Waymarks** on the Map of Hell (yours, or shared with everyone) that the compass can follow, the Map drawn on parchment, and **the Journal as a book** with pictures on every page.
-- **Minos judges you** by your worst sin; **champions** of the circles walk; **secret ways down** hide off the roads; and an optional **Pilgrimage**: the Gate to Purgatory without dying once.
-
-**New in 3.0:**
-- **A new map.** Hell is 10,500 blocks across, with four Pilgrim Roads from the Gate to the Well of Giants, a way down every 30 degrees, a compass, the Map of Hell (M) and the Pilgrim's Journal (J).
-- **Real bosses.** Every guardian, Lucifer, Vulcan, the Cyclopes and the Seraph have animated bodies, entrances and fights in the danger language (red: get out, white: block now, purple: jump or keep out), with a style panel and a Codex page each.
-- **Circles to play with.** Lust's wind streams, Gluttony's mud, the sullen of the Styx, the tombs of Heresy, the thicket of the Wood of the Suicides, Malebolge's tricks, the cold of Cocytus and new monsters in every circle.
-- **Lucifer.** The Fallen Seraph's duel, then the Three-Faced Emperor in the ice, and the climb out to Purgatory.
-- **The Forge of Dis and Paradiso.** The Nether rebuilt round Vulcan's Great Forge, Purgatory's island in its own sea, and nine spheres of Paradiso with trials, angels and the Celestial Rose.
-
-**New in 2.0 (26.3):**
-- **Prestige (the Seven P's).** At max hearts, trade them in at a Blood Altar for a higher max and a bonus you keep.
-- **The Blood Heart HUD.** Bleeding hearts in the health bar, rimmed bronze to white by your rank.
-- **The Hall of the Damned.** A monument at spawn naming the Inferno's best and most damned.
-- **Dante's Journey.** An advancement tab from the Dark Wood to the Empyrean.
-
-**The title screen (3.1).** Hellcraft has its own: the HELLCRAFT logo burning over a painted view of Hell from the Walls of Dis (Lucifer in the pit with his wings spread, the river of blood, the circles rising behind), embers drifting up, *Lasciate ogne speranza* under the logo and a line of Dante for the splash. Minecraft's buttons are all where they were.
-
 ## Install it
 
-Grab **Hellcraft 3.1.0** (the latest release) from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). When the next version is being tested it's there too as a **beta**: newer, still changing. A server and its players need the same version.
+Grab **Hellcraft 3.4.0** (the latest release) from the repo's [Releases page](https://github.com/the-small-things/hellcraft/releases). The next version, **3.5**, is there too as a **beta**: newer, still changing, and refreshed whenever it changes. A server and its players need the same version.
 
 - **Modrinth App or Prism Launcher (easiest):** download `Hellcraft-<version>-mc26.3.mrpack` and import it as a modpack. That installs the right Minecraft, Fabric Loader and Fabric API for you. Use this to play single player **and** to join a Hellcraft server.
 - **Official Minecraft Launcher:** download `hellcraft-<version>-mc26.3-mods.zip` and follow the `INSTALL.txt` inside. In short:
@@ -273,7 +256,7 @@ Dropping to 10 hearts makes you easier to kill until you fill up again; that's t
 
 ### The Blood Heart HUD (26.3)
 
-The resource pack replaces the health bar with Hellcraft's own hearts: dark, glistening blood with a drop running off the point. In hardcore they turn to ember-lit black blood. Each player also gets a tiny second pack that re-rims their hearts in the colour of their rank. Turn it off with `heartHud`.
+Hellcraft draws your health bar with its own hearts: dark, glistening blood with a drop running off the point (in hardcore, ember-lit black blood), rimmed in the colour of your prestige rank. Turn it off with `heartHud`.
 
 ### Blood altars
 
@@ -291,29 +274,61 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 ### Fighting (3.5 beta)
 
-Hellcraft has combat of its own, made to move smoothly: every move blends into the next instead of snapping, in first and third person alike. All of it can be turned off (see the end of this section).
+Hellcraft has combat of its own, built to feel smooth: every move blends into the next instead of snapping, in first and third person alike. A server owner can turn it all off with `/hellcraft config combatOverhaul false` (vanilla combat comes back).
 
-- **Swings**: with a **sword, an axe or a mace** in hand (and the hell weapons), the attack key swings the weapon. There is a short wind-up, and the blow lands when the weapon comes round, on **everything in its path**: no need to keep the crosshair on one target. Only monsters and other players are caught in the arc (the one you look straight at takes the full blow, the others 60%, all of it with Sweeping Edge III); animals, villagers, boats and the like are struck only if you aim at them, and your own pets never by accident. Nothing is hit through a wall. Critical hits, enchantments and the hell weapons' passives all work as before.
-- **Combos**: click again as a swing ends (or a little before: the click is remembered) and the next move follows. A **sword** cuts down across, cuts back, then **thrusts** with a lunge (125% damage, longer reach). An **axe** chops, then rips upward. A **mace** smashes down, then sweeps wide. Stop clicking and the chain starts over.
-- **Heavy blows**: **hold** the attack key instead of tapping it. The weapon goes up over your head and comes down for about 190% damage, with a shove; it costs stamina (22). Without the stamina, holding just keeps the chain going.
-- A chain deals about what vanilla's clicking would, a little more for keeping it going. Moves are timed for each weapon's attack speed and play faster with Haste.
-- With a block under the crosshair and nothing to fight in front of you, the key **mines as ever**. Spears, tridents, tools and bare hands are unchanged.
+**The controls** (change them under Options → Controls; Hellcraft's keys are in their own section):
 
-- **Stamina**: a thin gold bar over your hunger. Rolling and guarding spend it, and it comes back a moment after you stop (more slowly while you guard). It hides when full.
-- **Guard any time**: raising your guard cuts a swing short at any moment (a blow stopped before it lands never lands, so a wind-up can be a feint) and cuts a roll short once you're back up; press it early in a roll and it goes up as soon as it can.
-- **Dodge roll**: press **Dash** (Left Alt; Controls, Hellcraft) to roll the way you're moving; standing still, you hop back. It is a forward roll over the shoulders that carries you about 3.4 blocks; while you roll you're under a block high (you can roll under a one-block gap, and there's less of you to hit), and for most of it **blows pass through you**: a monster's, a player's, an arrow, a blast, a boss's marks on the ground. Not fire, falls or drowning. It costs stamina and you can roll again as soon as you're up. A blow that passes through gives a little stamina back, and style in a boss fight.
-- **Guard**: hold right-click with a **sword, an axe, a mace or a hell weapon** in your main hand, and nothing to use in the other (a shield, food or a bow there comes first; so do chests, doors and anything else you'd right-click). The guard turns aside 60% of a blow from the front (an axe or mace about half, a hell weapon about 70%), **not arrows or blasts**. Every guarded blow costs stamina, and with none left **the guard breaks**: the weapon is beaten down for a moment and you stagger. An axe's blow breaks it at once, as it does a shield. You walk at half speed while guarding.
-- **Parry**: raise the guard **just before the blow lands** (within 6 ticks). Nothing gets through, the attacker is thrown back and can't strike for a moment, and you get stamina back. A boss's white flash can be parried with a weapon this way. Fluttering the button doesn't work: a guard raised straight after the last one can't parry.
-- **Sounds**: every boss's danger marks can be heard as they come: **red** is a low horn that swells and thumps as the blow lands, **white** a bright shimmer that rises to a hard ring on the very moment to have your guard up, **purple** a sour rising whine (jump or roll). A parry rings, a broken guard clangs and a blow slipping through your roll whooshes. These are Hellcraft's own sounds, made in code.
-- **Shields** are as they were: they block everything, arrows too, and cost no stamina, but are slower to raise.
-- **Hits have weight**: your blow holds for a frame and kicks the view (off with View Bobbing), and the target shows it: blood from flesh, chips from bone, sparks from golems.
-- **Hell weapons**: right-click guards now, so a full weapon's **Blood Art** has its own key, **R** (Controls, Hellcraft); attack pressed while guarding does it too. The Blood Oath is still sneak + right-click.
-- **Style in boss fights**: each move of your weapon's chain (and its heavy blow) goes stale on its own if you repeat it, so play the chain through. **Feats** (a chain's finisher, a heavy blow, a timed parry, a riposte in a parry's opening, a dodge through a blow, a counter just after one, a Blood Art, a critical hit, a mace smash, killing summons, staying close and unhurt) raise a **flow multiplier** from x1 up to x2, shown at the top of the style panel; a different feat from the last raises it more than the same again, getting hit resets it, and it ebbs if you stop. A guard just held up when a blow lands scores a little; a parry timed to the blow scores a lot. Blows from close overhead (a lover's dive) count as faced, whichever way you look.
+| Do this | With | What happens |
+|---|---|---|
+| **Click** attack | a sword, axe, mace or hell weapon | A swing: a short wind-up, then the blow lands on everything in its arc |
+| **Click again** as a swing ends | | The next move of the combo |
+| **Hold** attack | | A **heavy blow**: slower, about twice the damage, costs stamina |
+| **Hold** right-click | a weapon in your main hand | **Guard**: turns aside most of a blow from the front |
+| Raise the guard **just before** a blow lands | | **Parry**: nothing gets through and the attacker reels |
+| **Dash** (Left Alt) | anything | **Dodge roll** the way you're moving (standing still: a hop back) |
+| **R** | a hell weapon at full charge | Its **Blood Art** |
+| Sneak + right-click | a hell weapon | Its **Blood Oath** |
 
-- **The hell weapons fight their own way.** The **Bloodletter**: four quick cuts, the third a **spin** that strikes everything round you, the last a thrust that opens the deepest wound (a longer, stronger bleed); held, a long lunge. The **Reaper of Minos**: two great sweeps and a **full turn** that drags what it reaps towards you. The **Tithe Axe**: a chop, an upward rip and, held, a **slam** that shakes the ground: whatever fights back within 3.5 blocks of where it lands is hurt and thrown up. Their blades trail blood (and embers, once infernal), and each Blood Art plays a move of its own. Server owners can turn all of it off with `/hellcraft config combatOverhaul false`: vanilla combat returns, and only Sidestep leggings dash.
+#### Swings, combos and heavy blows
+- **Every blow hits everything in its path.** You don't need to keep the crosshair on one target: monsters and players caught in the arc are all struck (the one you look at takes the full blow, the others 60%, more with Sweeping Edge). Animals, villagers and boats are hit only if you aim at them, your own pets never by accident, and nothing through a wall. Critical hits, enchantments and the hell weapons' powers all still work.
+- **Combos.** Click again as a swing ends (a click a little early is remembered). A **sword** cuts down across, cuts back, then **thrusts** with a lunge (more damage, longer reach). An **axe** chops, then rips upward. A **mace** smashes down, then sweeps wide. Stop clicking and the chain starts over.
+- **Heavy blows.** Hold the attack key: the weapon goes up over your head and comes down for about 190% damage, with a shove. It costs 22 stamina; without it, holding just keeps the chain going.
+- A chain deals about what vanilla clicking would, a little more for keeping it going. Moves follow each weapon's attack speed and play faster with Haste.
+- Looking at a block with nothing to fight, the key **mines as usual**. Spears, tridents, tools and bare hands work as in vanilla.
+
+#### Stamina, guarding and parrying
+- **Stamina** is the thin gold bar over your hunger. Heavy blows, rolls and guarded blows spend it; it comes back a moment after you stop (more slowly while you guard) and hides when full.
+- **Guard:** hold right-click with a sword, axe, mace or hell weapon in your main hand and nothing usable in the other (a shield, food or a bow in your off hand comes first, and so do doors, chests and anything else you'd right-click). The guard turns aside 60% of a blow from the front (an axe or mace about half, a hell weapon about 70%), but **not arrows or blasts**. Each guarded blow costs stamina, and with none left **the guard breaks**: you stagger for a moment. An axe breaks a guard at once, as it does a shield. You walk at half speed while guarding.
+- **Parry:** raise the guard **just before the blow lands** (within 6 ticks, a third of a second). Nothing gets through, the attacker is thrown back and can't strike for a moment, and you get stamina back. A boss's white flash can be parried this way. Mashing the button doesn't work: a guard raised straight after the last one can't parry.
+- **You never wait for an animation.** Raising your guard cuts a swing short at any moment; a blow stopped before it lands never lands, so a wind-up can also be a feint. It cuts a roll short as soon as you're back up off the ground, and if you press it a little early in a roll it goes up the moment it can.
+- **Shields** work as before: they block everything, arrows too, cost no stamina, and are a little slower to raise. Against a boss or one of Hell's monsters a shield blocks the moment it's raised.
+
+#### The dodge roll
+Press **Dash** (Left Alt) to roll the way you're moving; standing still, you hop back. It's a forward roll over the shoulders that carries you about 3.4 blocks.
+- **Blows pass through you** for most of the roll: a monster's, a player's, an arrow, a blast, a boss's marks on the ground (not fire, falls or drowning). One that passes through gives a little stamina back, and style in a boss fight.
+- **You're small while you roll:** under a block high, so there's less of you to hit and you can roll under a one-block gap (come up inside one and you crawl out).
+- It costs 26 stamina and you can roll again as soon as you're up. **Sidestep** leggings make it cheaper, longer and safe for longer.
+
+#### Hits you can feel and hear
+- Your blow holds for a frame and kicks the view (off with View Bobbing), and the target shows it: blood from flesh, chips from bone, sparks from golems.
+- A parry rings, a broken guard clangs and a blow slipping through your roll whooshes. Every boss's danger marks sound as they come: **red** a low horn that swells and thumps as the blow lands, **white** a bright shimmer rising to a hard ring on the very moment to have your guard up, **purple** a sour rising whine. These are Hellcraft's own sounds, made in code.
+
+#### Style in boss fights
+The style panel on the right ranks how well you fight (details under [the circle guardians](#the-circle-guardians-263)):
+- **Each move of your chain goes stale on its own** if you repeat it, so play the whole chain rather than mashing the first cut (it no longer matters how many weapons you carry).
+- **Feats raise a flow multiplier** from x1 up to x2, shown at the top of the panel: a chain's finisher, a heavy blow, a timed parry, a riposte in a parry's opening, a dodge through a blow, a counter just after one, a Blood Art, a critical hit, a mace smash, killing summons, staying close and unhurt. A different feat raises it more than the same one again; getting hit resets it, and it ebbs if you stop.
+- A guard just held up when a blow lands scores a little; a parry timed to the blow scores a lot. Blows from close overhead (a lover's dive) count as faced, whichever way you look.
+
+#### The hell weapons fight their own way
+The **Bloodletter**: four quick cuts, the third a **spin** that strikes everything round you, the last a thrust that opens the deepest wound; held, a long lunge. The **Reaper of Minos**: two great sweeps and a **full turn** that drags what it reaps towards you. The **Tithe Axe**: a chop, an upward rip and, held, a **slam** that shakes the ground: whatever fights back within 3.5 blocks of where it lands is hurt and thrown up. Their blades trail blood (embers too, once infernal), and each Blood Art plays a move of its own.
 
 ### How players move (3.5 beta)
-Every player is animated by Hellcraft, not only in a fight: a calm **walk** with the arms swinging easily, a **sprint** that leans into it with the arms pumping, short careful steps when **sneaking**, a slow breath standing still, a **jump** that pushes off and tucks a knee, arms out wide in a **long fall**, and a **landing** whose knees give (harder landings dip your view a little). Running round a bend leans into it. Using things has its own moves: a **bow** is drawn back past the cheek as it charges and the string hand flies back when you loose, a **shield** is braced behind with the feet set and rocks back when a blow lands on it, **food** and **drink** go to the mouth, a **crossbow** kicks, and a **trident** is whipped over in a throw. Vanilla's sudden pose changes (crouching, raising a bow or shield) now ease in instead of snapping. In first person your hands move too: the weapon sways with your stride, swings side to side when sprinting, lifts as you jump and drops when you land (with View Bobbing on), and a bow, shield or food eases into place and back instead of snapping. Each player chooses for themselves: `/hellcraft-client animations off` turns all of this off (and `on` back on); combat moves still play.
+Every player is animated by Hellcraft, in or out of a fight:
+- **Getting about:** a calm **walk** with the arms swinging easily (vanilla swings the legs 80 degrees), a **sprint** that leans in with the arms pumping, short careful steps when **sneaking**, a slow breath standing still, a **jump** that pushes off and tucks a knee, arms out wide in a **long fall**, and a **landing** whose knees give (a hard landing dips your view a little). The steps keep pace with the ground, walking backwards plays them in reverse, and running round a bend leans into it.
+- **Using things:** a **bow** is drawn back past the cheek as it charges and the string hand flies back when you loose; a **shield** is braced behind with the feet set and rocks back when a blow lands on it; **food** and **drink** go to the mouth; a **crossbow** kicks; a **trident** is whipped over in a throw.
+- **No more snapping:** crouching, raising a bow or shield, loading a crossbow and climbing into a boat ease in over a moment instead of jumping between poses.
+- **In first person** your weapon moves with you: it sways with your stride, swings side to side when sprinting, lifts as you jump and drops when you land (with View Bobbing on). Every swing stays in view: raised before the blow, sweeping through the middle of the screen, finishing above the hotbar. A bow, shield or food eases into place and back, and loosing an arrow or firing a crossbow kicks.
+- **Your choice:** each player can turn the animations off for themselves with `/hellcraft-client animations off` (and back on with `on`). Combat moves still play.
 
 ### Hell weapons (26.3)
 
@@ -322,7 +337,7 @@ Four weapons and tools of their own (3.0: real items, in the creative tab and `/
 - **Blood charge**: charged hits on monsters (and players) add 5%, kills add 20%. The action bar shows the meter, and the weapon glows when it's full. At 100%, press **R** (the Blood Art key) to unleash its **Blood Art** (with Hellcraft's combat off, right-click works too). You lose the charge when you die.
 - **Blood Oath**: sneak and right-click (in the air or at a block) to pay **3 hearts of health** (not max hearts) for a full charge and **30 seconds of full power**. It needs more than 4 hearts of health, and your blood takes 3 minutes to recover before the next oath.
 
-| Weapon | Recipe | Passive (charged hits) | Blood Art (right-click at full charge) | Blood Oath |
+| Weapon | Recipe | Passive (charged hits) | Blood Art (R at full charge) | Blood Oath |
 |---|---|---|---|---|
 | **Bloodletter** (sword) | iron sword + 4 Blood Fragments | 3 s of bleeding (Wither), heals you ½❤ | **Exsanguinate**: lunge 6 blocks, cutting everything in your path for 8 with deep bleeding, healing 1❤ per foe | +10 damage, deep bleeding, each hit heals you 1❤ |
 | **Reaper of Minos** (scythe) | diamond hoe + **2 Blood Hearts** + 4 Blood Fragments | cleaves everything within 3 blocks of the target for 4 | **Harvest**: everything within 5 blocks takes 12, slowed and dragged toward you | every hit is a Harvest around the target |
@@ -339,7 +354,7 @@ Excavate's 3×3 only takes blocks the pickaxe can mine and that are no harder th
 
 Four pieces of armour of their own (3.0: real items), forged at a crafting table: each is the diamond piece plus 4 Blood Fragments. They're in everyone's recipe book. At a Hellforge they become **infernal**: netherite's protection, fire-proof. Blood armour is crimson plate with bone trim; infernal armour is blackened steel and brass with molten cracks, so the two look different worn and in the inventory.
 
-They protect like diamond, look like crimson plate with bone rivets and burning eye slits (from the resource pack), and work as a set:
+They protect like diamond and work as a set:
 - **2 or more pieces:** your melee hits heal you 5% of the damage they deal.
 - **All 4:** 10%, plus a **Blood Rush** (Regeneration II for 5 s) when you drop below 3 hearts of health, once a minute. A Blood Oath also gives you Resistance while it lasts.
 
@@ -382,7 +397,7 @@ Eight of Dante's monsters wait in lairs ringed with soul-fire braziers, each wel
 
 **Antaeus (3.0).** The unchained giant stands in the ice of Cocytus at the foot of the Well of Giants, his hand resting on the rim of a cleft worn in the cliff. Wait on the crying obsidian at the brink by his hand: he lifts you, bends, and sets you down on the ice. To go back up, wait on the crying obsidian beside his hand down on the ice. Nobody in his hand can be hurt.
 
-**Time to react (3.0).** The guardians fight at 60% of their old pace (`bossTempo`): every wind-up, warning on the ground, white parry window and pause between blows lasts longer, and their animations slow to match, so there is time to see a blow coming and get out of the way or raise your shield. The flyers come down to be hit: Geryon sinks to just above the ground after each attack, and a Fury lands where her talons strike and stays down a moment. Lucifer, the last fight, runs faster (`luciferTempo`, 0.85) and hits for 90% (`luciferDamage`). **Late blocks count (playtest):** against a boss or one of Hell's monsters a shield blocks the moment it's raised (vanilla only counts it a quarter of a second later), so a block timed to the white flash works; it must still face the blow.
+**Time to react (3.0).** The guardians fight at 60% of their old pace (`bossTempo`): every wind-up, warning on the ground, white parry window and pause between blows lasts longer, and their animations slow to match, so there is time to see a blow coming and get out of the way or raise your shield. The flyers come down to be hit: Geryon sinks to just above the ground after each attack, and a Fury lands where her talons strike and stays down a moment. Lucifer, the last fight, runs at full speed (`luciferTempo`, 1.0) and hits for 90% (`luciferDamage`). **Late blocks count (playtest):** against a boss or one of Hell's monsters a shield blocks the moment it's raised (vanilla only counts it a quarter of a second later), so a block timed to the white flash works; it must still face the blow.
 
 A slain guardian sleeps for 30 minutes (in all four of its lairs). If everyone leaves its lair, it goes back to sleep at full health.
 
@@ -391,7 +406,7 @@ A slain guardian sleeps for 30 minutes (in all four of its lairs). If everyone l
 - **White**: the boss flashes white and the ground where the blow will land shows white. Raise your shield now: blocking that blow in time staggers the boss (a parry).
 - **Purple**: can't be blocked. Jump it, or get out of the way.
 
-Marks are drawn block by block on the ground, fill from the middle out, and the blow lands as they fill. Each colour has its own sound: a low horn for red, a bell for white, a chime for purple.
+Marks are drawn block by block on the ground, fill from the middle out, and the blow lands as they fill. Each colour has its own sound, timed so its moment lands with the blow: a low horn that swells for red, a bright ring for white (parry on the ring), a sour rising whine for purple.
 
 **Blows you can't miss (3.1).** When a blow lands, its whole mark erupts in its colour: red bursts into fire, smoke and flying earth, white cracks with light and sparks, purple tears open in violet. A circle sends a shockwave out from its edge and a column up from its heart, a line blasts along its length, and if you're standing close the view shakes. The bosses' other effects (splashes, gold, flames, light) are twice as dense and show from across the arena, whatever your particle setting. Ops can try it anywhere with `/hellcraft danger show` (a red circle, a white ring and a purple line in front of you).
 
@@ -421,8 +436,8 @@ Marks are drawn block by block on the ground, fill from the middle out, and the 
 | **SSS** | Satanic | 330 | 10 |
 
 - **Hitting the boss fills the meter**, more for a full-strength blow than for spam-clicking.
-- **Freshness:** a weapon used again and again goes stale (FRESH, USED, STALE, DULL) and scores less, while the others freshen up. Swap between sword, axe, mace, spear, trident and bow.
-- **Extra style** for a critical hit, a mace smash, hitting while airborne, blocking a boss's blow with a shield, killing the boss's summons, and every 10 s close to the boss without getting hit.
+- **Play the whole chain:** with Hellcraft's combat on, each move of your weapon's combo (and its heavy blow) goes stale on its own if you repeat it, and scores less ("REPEATED"); the others stay fresh. One weapon is enough. (With the combat off, a weapon used again and again goes stale instead.)
+- **Feats** score by name and raise your **flow multiplier** (x1 to x2, shown on the panel): a combo's finisher, a heavy blow, a timed parry, a riposte, a dodge through a blow, a counter, a Blood Art, a critical hit, a mace smash, killing the boss's summons, and every 10 s close to the boss without getting hit. Getting hit resets the multiplier.
 - **It drains** whenever you hold back (faster the higher you are), and **getting hit takes a big bite**. Dying resets it, and your rank for that fight can't go above B.
 
 When the boss dies, your **rank is the average of your style over the fight**. Chat tells you your rank, what it paid, and what to do better.
@@ -433,7 +448,7 @@ When the boss dies, your **rank is the average of your style over the fight**. C
 - **Again after 3 hours:** 1 Blood Heart, but only for a victory ranked S or better (a lower rank doesn't use up the wait).
 - **Lucifer:** his full reward comes back every 6 hours. A win in between pays twice the fragments, plus a treasure roll for S or better.
 
-Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (0.5; 1.0 = full scaling, 0 = off), `bossTempo` (0.6; 1.0 = full speed), `luciferDamage` (0.9), `luciferTempo` (0.85), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
+Config: `guardians`, `guardianRespawnMinutes`, `guardianHealthMultiplier`, `guardianHearts`, `guardianRepeatHearts`, `guardianSpoilsCooldownMinutes`. The rules above: `bossHeartScaling` (0.5; 1.0 = full scaling, 0 = off), `bossTempo` (0.6; 1.0 = full speed), `luciferDamage` (0.9), `luciferTempo` (1.0), `bossProjectileDamage` (0.4), `bossPullsArchers`, `bossNoBuilding`. Ops can use `/hellcraft guardian <name> summon|slay|stop|status|attack <attack>`.
 
 | Minos | Cerberus | Plutus | The Minotaur | Geryon |
 |---|---|---|---|---|
@@ -574,7 +589,7 @@ He returns 2 hours after a defeat. If everyone in the pit dies or flees, he mock
 
 His lines appear in the dialogue box, each with a low voice cue.
 
-Testing it: `/hellcraft lucifer summon` skips the ready check and starts the fight now (stand in the pit). `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, `/hellcraft lucifer attack <slash|sweep|stars|lunge|slam|bite|wingbeat|weep>` forces a blow, and `/hellcraft lucifer stop` ends the fight.
+Testing it: `/hellcraft lucifer summon` skips the ready check and starts the fight now (stand in the pit). `/hellcraft lucifer status` shows the fight's state. Play in **survival**, because he ignores creative players. `/hellcraft lucifer skip` jumps to the next phase, `/hellcraft lucifer attack <name>` forces a blow (any of the Seraph's or the Emperor's, listed under [Commands](#commands)), `/hellcraft lucifer posture` breaks the posture of the form fighting, and `/hellcraft lucifer stop` ends the fight.
 
 ## The Keys of Peter (3.2)
 
@@ -812,6 +827,9 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/lessons [off\|on\|again]` | all | How many of Virgil's first-steps lessons you've had; turn them off or on; hear the last one again (3.2) |
 | `/judge` | all | Minos's judgement of you, read afresh from what you've done (3.1) |
 | `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
+| `/hellcraft-client animations [on\|off]` | each player | Hellcraft's animations for walking, running, jumping, bows, shields and food, in first and third person: on or off for you alone (kept in your own `config/hellcraft-client.json`) (3.5) |
+| `/hellcraft combat test` | op | Self-test Hellcraft's combat: stamina, guards, swings, the roll (3.5) |
+| `/hellcraft charge <players>` | op | Fill their hell weapon's blood charge, to try a Blood Art (3.5) |
 | `/hellcraft sethearts <player> <n>` | op | |
 | `/hellcraft giveheart\|givefragment <player> [n]` | op | |
 | `/hellcraft revive <name>` | op | Revive a ghost without an altar |
@@ -849,7 +867,6 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/hellcraft shrine list\|build [circle]` | op | List the Virgil's Rests, or build them now instead of when someone comes near (26.3) |
 | `/hellcraft shrine visit <player> <rest\|all>` | op | Let a player travel to a Rest without walking there (26.3) |
 | `/hellcraft travel <player> <gate\|rest>` | op | Send a player to the Gate or a built Rest, ignoring the cooldown (26.3) |
-| `/hellcraft lucifer attack <slash\|fangs\|wings\|hellfire>` | op | Make him use one attack |
 | `/hellcraft lucifer attack <name>` | op | Make the Seraph or the Emperor use one attack (the Seraph: slash, sweep, stars, lunge, flurry, feint, dive, crescent, counter, blink; the Emperor: slam, bite, wingbeat, weep, both_hands, drag, breath, swat, clap) |
 | `/hellcraft lucifer posture` | op | Break the posture of whichever of his forms is fighting (testing) |
 | `/hellcraft prestige <player> [set <n>]` / `prestige test` | op | Show or set a player's burned P's; self-test the Seven P's (26.3) |
@@ -879,7 +896,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
 - Hellcraft's combat (3.5): `combatOverhaul` (on), `staminaMax` (100), `staminaRegen` (1.6 a tick), `staminaRegenDelay` (16 ticks), `dodgeCost` (26), `dodgeCooldownTicks` (16), `dodgeDistance` (3.4 blocks), `dodgeInvulnerableTicks` (8), `guardBlock` (0.6), `guardStaminaPerDamage` (4), `parryTicks` (6), `parryStaggerTicks` (30), `guardBreakTicks` (30), `heavyCost` (22)
-- how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (0.85)
+- how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (1.0)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`
 - onlookers, the shades that stare from afar (3.2): `onlookers`, `onlookerMinutes` (about how many minutes between one and the next, for each player)
@@ -890,6 +907,58 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
+Each player also has a small settings file of their own, `config/hellcraft-client.json` in their game folder: `smoothAnimations` (Hellcraft's animations for getting about and using items; `/hellcraft-client animations on|off` changes it in game).
+
+## Version history
+
+**3.5** (beta): Hellcraft's own combat, smooth animations for every player, Lucifer rebuilt, fights you can hear, style that rewards skill (see [New in 3.5](#new-in-35-beta)).
+
+**3.4.0** (2026-11-12):
+- **Penitents on Purgatory:** each terrace has souls working off their sin, as scenery.
+- **Name your Rests** (`/rest name`), and every Rest has a clear name of its own in the travel menu.
+- **Lust's wind is different in every world**, with twice as many streams.
+- **A lighter Map of Hell** that opens at once however much you've explored, and is sharp zoomed in.
+- Minos and the lovers remade with more detail; a door onto the wall in every gatehouse tower.
+- 3.4.1 (beta only, folded into 3.5): found Blood Altars to travel to, ruined altars as safe camps, redrawn blood and infernal armour, a cooldown so one click never uses an item twice.
+
+**3.3.0** (2026-11-09, needs a new world):
+- **The Map of Hell shows the real ground** wherever you've been.
+- Every guardian's lairs on the diagonals between the roads; the Pilgrim Roads worn like ruins.
+- **Purgatory you can climb:** the Great Stair and seven terraces, each dressed for its sin. Plainer prestige.
+
+**3.2.0** (2026-11-07):
+- **Onlookers:** now and then a shade stands far off and stares at you, the living, wearing the skin of someone who has walked this Hell before; walk up to it and it's gone.
+- **Every circle sounds like itself:** Lust's storm, Gluttony's rain, gold clinking in Greed, creaking trees in the Wood, ice cracking on Cocytus and a vast heart beating under Judecca.
+- **Virgil teaches as you go:** new souls get one short tip at a time (the Journal, the compass, Blood Fragments, altars, hearts, bosses...) as they first meet each thing, at most one a minute. `/lessons` shows how far you've got, `/lessons off` stops them.
+- **Gatehouses:** climb the towers beside every gate of the Gate of Hell and Dis: a spiral stair up through carpeted rooms (a guard room, a war room at the top, and in between libraries, kitchens, chapels, prisons, shrines, armouries, enchanting rooms and treasuries) to the walk over the gate and the roof.
+- **The walls are lived in, all the way round:** the Gate of Hell's wall and the Walls of Dis are full of rooms: every ten blocks a door at the foot of the wall opens on a stack of furnished rooms, a winding stone stair climbing through them. Every eighty blocks a **watch tower** stands out from the wall and above it, with doors onto the walk along the wall's top and an open top with a watch fire. Fourteen kinds of room; the good ones (an anvil, brewing stands, an enchanting table with real bookshelf power, a treasury with loot) are about one room in eight on the Gate and two in five on Dis. Rooms are 7 blocks high, and the stairs have room over your head. Built as you come near, so an older world gets them too.
+- **The Labyrinth of Crete**: step through an old arch beside the Minotaur's arena and into a sealed maze deep underground. Find **Ariadne's Thread** at its heart; it shows you the way out to him, and in his fight his charges end with him stunned.
+- **The Unbound:** once you've beaten Lucifer, the guardians wake stronger, and pay better.
+- **The Keys of Peter:** one set on the whole server, from the angel at Purgatory's gate. Two more hearts and travel to any Rest, but everyone knows who has them, and they fall when you die.
+- **A camera that feels the ride:** the view rocks in Lust's storm and leans into the turns on Geryon's back.
+
+**3.1.0** (2026-10-28):
+- **A Hellcraft title screen** over a painted view of Hell, and **boss blows that erupt** as they land.
+- **The damned** suffer each circle's punishment around you, and scream.
+- **Limbo has no colour**, except in the Noble Castle's light.
+- **Waymarks** on the Map of Hell (yours, or shared with everyone) that the compass can follow, the Map drawn on parchment, and **the Journal as a book** with pictures on every page.
+- **Minos judges you** by your worst sin; **champions** of the circles walk; **secret ways down** hide off the roads; and an optional **Pilgrimage**: the Gate to Purgatory without dying once.
+
+**3.0.0** (2026-10-19):
+- **A new map.** Hell is 10,500 blocks across, with four Pilgrim Roads from the Gate to the Well of Giants, a way down every 30 degrees, a compass, the Map of Hell (M) and the Pilgrim's Journal (J).
+- **Real bosses.** Every guardian, Lucifer, Vulcan, the Cyclopes and the Seraph have animated bodies, entrances and fights in the danger language (red: get out, white: block now, purple: jump or keep out), with a style panel and a Codex page each.
+- **Circles to play with.** Lust's wind streams, Gluttony's mud, the sullen of the Styx, the tombs of Heresy, the thicket of the Wood of the Suicides, Malebolge's tricks, the cold of Cocytus and new monsters in every circle.
+- **Lucifer.** The Fallen Seraph's duel, then the Three-Faced Emperor in the ice, and the climb out to Purgatory.
+- **The Forge of Dis and Paradiso.** The Nether rebuilt round Vulcan's Great Forge, Purgatory's island in its own sea, and nine spheres of Paradiso with trials, angels and the Celestial Rose.
+
+**2.0** (the first 26.3 version):
+- **Prestige (the Seven P's).** At max hearts, trade them in at a Blood Altar for a higher max and a bonus you keep.
+- **The Blood Heart HUD.** Bleeding hearts in the health bar, rimmed bronze to white by your rank.
+- **The Hall of the Damned.** A monument at spawn naming the Inferno's best and most damned.
+- **Dante's Journey.** An advancement tab from the Dark Wood to the Empyrean.
+
+**The title screen (3.1).** Hellcraft has its own: the HELLCRAFT logo burning over a painted view of Hell from the Walls of Dis (Lucifer in the pit with his wings spread, the river of blood, the circles rising behind), embers drifting up, *Lasciate ogne speranza* under the logo and a line of Dante for the splash. Minecraft's buttons are all where they were.
+
 ## How Hellcraft was made
 
 Hellcraft is written by **Claude Code**, Anthropic's AI coding agent, working for the mod's owner: the owner says what the mod should be, plays the test builds with friends and says what to change, and Claude writes the code, makes the art, tests it and ships it. Everything is in this repository, and nearly everything is made by code you can run again.
@@ -898,7 +967,7 @@ Hellcraft is written by **Claude Code**, Anthropic's AI coding agent, working fo
 1. **A plan first.** The 3.0 rebuild started as a written plan, [docs/REVAMP.md](docs/REVAMP.md), split into phases (the map, boss tech, upper Hell, lower Hell, Lucifer, the Nether, Purgatory and Paradiso, polish). The owner read and marked it up in a shared, commentable copy, and answered its open questions before any code was written.
 2. **One phase at a time.** Each phase was built, tested and pushed as a **test build** (the beta on the Releases page) for a play session. What the owner found in play (a boss too easy, a road too flat, a circle too dark) became the next round of fixes.
 3. **Tested by machines before people.** Every push is built and checked automatically (below), and a release only goes out if every check passes.
-4. **Released when the owner says so.** A stable release (3.0.0, 3.1.0) is published only on the owner's word, with notes saying what's new.
+4. **Released when the owner says so.** A stable release (3.0.0 to 3.4.0 so far) is published only on the owner's word, with notes saying what's new.
 
 **The tools**
 - **The mod:** Java 25 on [Fabric](https://fabricmc.net/) (Fabric Loader, Fabric API and the Loom Gradle plugin) for Minecraft 26.3, whose code ships unobfuscated, so the mod uses Mojang's own names. When something about the game wasn't clear, Claude decompiled Minecraft and read the real code, or asked CI to print it (the `probe` workflow).
