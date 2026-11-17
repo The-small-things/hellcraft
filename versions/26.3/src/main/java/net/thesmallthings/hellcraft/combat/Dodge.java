@@ -114,6 +114,18 @@ public final class Dodge {
 		return started != null && player.level().getGameTime() - started < TICKS;
 	}
 
+	/** The tick into a roll from which a guard may cut it short (the roll's "recover": up off the ground, blows no longer missing). */
+	public static final int GUARD_FROM = PlayerMovesAnim.ROLL.at("recover");
+
+	/** Whether a guard may go up now: not rolling, or past the part of the roll where blows pass through. */
+	public static boolean mayGuard(ServerPlayer player) {
+		Long started = STARTED.get(player.getUUID());
+		if (started == null || !rolling(player)) {
+			return true;
+		}
+		return player.level().getGameTime() - started >= GUARD_FROM && !evading(player);
+	}
+
 	/** In the part of a roll where blows pass through. */
 	public static boolean evading(ServerPlayer player) {
 		Long started = STARTED.get(player.getUUID());

@@ -62,6 +62,7 @@ public class CombatTest implements FabricClientGameTest {
 			roll(context, world);
 			guard(context, world);
 			swings(context, world);
+			guardCutsIn(context, world);
 			hellWeapons(context, world);
 			bloodArt(context, world);
 			overhead(context, world);
@@ -258,6 +259,67 @@ public class CombatTest implements FabricClientGameTest {
 	 * holding the key makes the heavy move, for stamina; and with a block under the crosshair and nothing to fight, the
 	 * key still mines.
 	 */
+	/**
+	 * A guard needn't wait for a move to finish: raised mid-wind-up it cuts the swing short (the blow never lands and the
+	 * animation gives way to the guard), and held through a roll it goes up as soon as the roll is past its dodge.
+	 */
+	private static void guardCutsIn(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 0");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~ ~ ~2.4 {NoAI:1b,Silent:1b,PersistenceRequired:1b,Rotation:[180f,0f],CustomName:\"cut\"}");
+		context.waitTicks(40);
+		float before = world.getServer().computeOnServer(server -> {
+			for (var e : server.overworld().getEntities(EntityTypes.HUSK, h -> true)) {
+				return ((LivingEntity) e).getHealth();
+			}
+			return -1f;
+		});
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(1);
+		if (playing(context) != PlayerMovesAnim.SWORD_1) {
+			throw new AssertionError("the cut didn't start: " + playing(context));
+		}
+		context.getInput().holdKey(options -> options.keyUse);
+		context.waitTicks(3);
+		boolean guarding = world.getServer().computeOnServer(server -> Guard.guarding(server.getPlayerList().getPlayerByName("Player0")));
+		context.takeScreenshot("combat_guard_cuts_swing");
+		context.waitTicks(8);
+		float after = world.getServer().computeOnServer(server -> {
+			for (var e : server.overworld().getEntities(EntityTypes.HUSK, h -> true)) {
+				return ((LivingEntity) e).getHealth();
+			}
+			return -1f;
+		});
+		PlayerMovesAnim still = playing(context);
+		context.getInput().releaseKey(options -> options.keyUse);
+		if (!guarding) {
+			throw new AssertionError("a guard raised in a swing's wind-up should go up at once");
+		}
+		if (after < before) {
+			throw new AssertionError("a swing cut short in its wind-up should never land: the husk went from " + before + " to " + after);
+		}
+		if (still == PlayerMovesAnim.SWORD_1) {
+			throw new AssertionError("the cut's animation should give way to the guard, but it is still playing");
+		}
+		world.getServer().runCommand("kill @e[type=minecraft:husk]");
+		context.waitTicks(40);
+		// through a roll: the guard held from early on goes up once the roll is past its dodge, not after it ends
+		context.getInput().pressKey(DashKey.DASH);
+		context.waitTicks(2);
+		context.getInput().holdKey(options -> options.keyUse);
+		int upAt = -1;
+		for (int t = 3; t <= 16 && upAt < 0; t++) {
+			context.waitTicks(1);
+			if (world.getServer().computeOnServer(server -> Guard.guarding(server.getPlayerList().getPlayerByName("Player0")))) {
+				upAt = t;
+			}
+		}
+		context.getInput().releaseKey(options -> options.keyUse);
+		if (upAt < 0 || upAt > 12) {
+			throw new AssertionError("a guard held through a roll should go up as the roll recovers (about tick 9-11), not " + upAt);
+		}
+		context.waitTicks(40);
+	}
+
 	private static void swings(ClientGameTestContext context, TestSingleplayerContext world) {
 		world.getServer().runCommand("effect give Player0 minecraft:instant_health 1 4 true");
 		context.waitTicks(60);

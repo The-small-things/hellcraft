@@ -302,7 +302,10 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   fp keys there, keep the blade on screen and above the hotbar. The locomotion clips carry fp keys too (`Locomotion.sampleFirstPerson`,
   `PlayerAnimator.sampleFirstPerson`, only with View Bobbing on). `combat/FirstPersonEase` (from `FirstPersonHandsMixin`'s wrap of
   `ItemStackRenderState.submit`) eases a hand's switch of use (bow loosed, shield raised, food) by blending its last drawn matrix, a
-  shield's two display transforms folded in. **The roll's hitbox:** `combat/RollShape` (0.9 high, eyes 0.75, for `TICKS`; started by
+  shield's two display transforms folded in. **Guard cancels:** a guard cuts a swing at any moment (client `CombatClient.raiseGuard`, server `Guard`'s receiver with `Swing.cancel`) and a
+  roll from `Dodge.GUARD_FROM` (its "recover", and past `evading`; `Dodge.mayGuard`, client `RollControl.guardReady`/`stop`); a press too
+  early in a roll is kept `GUARD_BUFFER` ticks (`tickGuard`); `PlayerAnimator.cut` freezes the move and fades it into the guard (when the
+  guard stance starts over a swing or roll, for every viewer); `CombatTest.guardCutsIn`. **The roll's hitbox:** `combat/RollShape` (0.9 high, eyes 0.75, for `TICKS`; started by
   `Dodge.roll`, `RollControl`, and `CombatClient.move` for others; `mixin/AvatarMixin` on `getDefaultDimensions`; CombatTest checks both sides). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title

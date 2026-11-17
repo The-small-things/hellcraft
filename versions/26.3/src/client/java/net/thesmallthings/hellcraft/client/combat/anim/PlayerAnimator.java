@@ -45,6 +45,9 @@ public final class PlayerAnimator {
 	private final RigPose from = new RigPose();
 	private int freeze;
 	private boolean held;
+	/** A move cut short (a guard raised mid-swing or late in a roll): held where it was and faded out over cutTotal ticks. */
+	private float cutLeft;
+	private float cutTotal;
 
 	@Nullable
 	private Clips.Clip stance;
@@ -140,6 +143,21 @@ public final class PlayerAnimator {
 		this.freeze = 0;
 		this.held = false;
 		this.mirrored = false;
+		this.cutLeft = this.cutTotal = 0;
+	}
+
+	/**
+	 * Cuts the move playing short: it stops where it is and fades out over `fade` ticks into whatever is under it (the guard
+	 * a player raised mid-swing). Nothing jumps: the pose holds still while its weight goes.
+	 */
+	public void cut(float fade) {
+		if (action == null || cutTotal > 0 || held) {
+			return;
+		}
+		speed = 0;
+		freeze = 0;
+		cutTotal = Math.max(0.01f, fade);
+		cutLeft = cutTotal;
 	}
 
 	/** Starts a move made for the right hand, done with the other one (a trident thrown left-handed). */
@@ -206,6 +224,11 @@ public final class PlayerAnimator {
 			want = Clips.of(kind != null && kind.twoHanded ? PlayerMovesAnim.GUARD_TWO : PlayerMovesAnim.GUARD);
 		}
 		lastStanceWeight = stanceWeight;
+		if (want != null && stanceWeight <= 0 && action != null && busy()
+				&& (action.move == PlayerMovesAnim.ROLL || action.move.ordinal() >= PlayerMovesAnim.SWORD_1.ordinal())) {
+			// the guard went up mid-swing or late in a roll: the move gives way to it at once (for everyone watching too)
+			cut(3.0f);
+		}
 		if (want != null) {
 			if (stance != want) {
 				if (stance == null || stanceWeight <= 0) {
@@ -226,6 +249,14 @@ public final class PlayerAnimator {
 			player.setYBodyRot(Mth.rotLerp(0.6f, player.yBodyRot, player.getYHeadRot()));
 		}
 		lastTime = time;
+		if (action != null && cutTotal > 0) {
+			cutLeft -= 1;
+			if (cutLeft <= 0) {
+				action = null;
+				heading = Float.NaN;
+				cutLeft = cutTotal = 0;
+			}
+		}
 		if (action != null) {
 			if (freeze > 0) {
 				freeze--;
@@ -269,6 +300,9 @@ public final class PlayerAnimator {
 			scratch.heading = heading;
 			scratch.legs = action.move == PlayerMovesAnim.ROLL || action.move == PlayerMovesAnim.GUARD_BREAK ? 1.0f : 0.3f;
 			float fade = t <= action.ticks ? 1 : 1 - smooth((t - action.ticks) / blendOut);
+			if (cutTotal > 0) {
+				fade *= smooth((cutLeft - partial) / cutTotal);
+			}
 			out.layer(scratch, fade);
 			if (!held && t < blendIn) {
 				scratch2.set(from).crossfade(out, smooth(t / blendIn));

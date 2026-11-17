@@ -54,6 +54,7 @@ public final class CombatClient {
 				return;
 			}
 			RollControl.tick(client);
+			tickGuard(client);
 			SwingControl.tick(client);
 			PlayerAnimator.tickAll(client.level);
 			net.thesmallthings.hellcraft.combat.RollShape.tick(true);
@@ -109,12 +110,44 @@ public final class CombatClient {
 	public static void afterUse(Minecraft mc) {
 		LocalPlayer player = mc.player;
 		if (player == null || mc.gameMode == null || mc.gameMode.isDestroying() || player.isHandsBusy() || !Combat.rules(true).on()
-				|| RollControl.rolling() || SwingControl.windingUp() || !Guard.mayRaise(player) || !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
+				|| !Guard.mayRaise(player) || !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
 			return;
 		}
+		if (!RollControl.guardReady()) {
+			// too early in a roll: remembered, and raised the moment the roll allows (tick)
+			guardQueued = GUARD_BUFFER;
+			return;
+		}
+		raiseGuard(player);
+	}
+
+	/** Ticks a guard pressed too early in a roll is remembered. */
+	private static final int GUARD_BUFFER = 10;
+	private static int guardQueued;
+
+	/** Raises the guard now, cutting short a swing (at any moment) or the end of a roll. */
+	private static void raiseGuard(LocalPlayer player) {
+		guardQueued = 0;
 		SwingControl.cancel();
+		RollControl.stop();
 		player.startUsingItem(InteractionHand.MAIN_HAND);
 		ClientPlayNetworking.send(GuardPayload.INSTANCE);
+	}
+
+	/** Each tick: a guard remembered from a roll goes up as soon as it may. */
+	private static void tickGuard(Minecraft mc) {
+		if (guardQueued <= 0) {
+			return;
+		}
+		guardQueued--;
+		LocalPlayer player = mc.player;
+		if (player == null || mc.gui.screen() != null || !Combat.rules(true).on() || !Guard.mayRaise(player)
+				|| !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
+			return;
+		}
+		if (RollControl.guardReady()) {
+			raiseGuard(player);
+		}
 	}
 
 	/**

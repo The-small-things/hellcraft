@@ -45,6 +45,16 @@ public final class RollControl {
 		return tick >= 0;
 	}
 
+	/** A guard may cut the roll short from its "recover" (the server agrees: combat/Dodge.mayGuard). */
+	public static boolean guardReady() {
+		return tick < 0 || tick >= net.thesmallthings.hellcraft.combat.Dodge.GUARD_FROM;
+	}
+
+	/** The guard went up: the roll stops carrying the player. */
+	public static void stop() {
+		tick = -1;
+	}
+
 	public static void reset() {
 		tick = -1;
 		cooldown = 0;

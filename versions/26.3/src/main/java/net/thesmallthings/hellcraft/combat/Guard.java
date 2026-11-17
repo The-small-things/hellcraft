@@ -63,7 +63,9 @@ public final class Guard {
 		PayloadTypeRegistry.serverboundPlay().register(GuardPayload.TYPE, GuardPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(GuardPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			if (Combat.on() && mayRaise(player) && !Dodge.rolling(player)) {
+			// a guard cuts a swing short at any moment (the blow, if it hadn't landed, never will) and a roll once it's past
+			// its dodge
+			if (Combat.on() && mayRaise(player) && Dodge.mayGuard(player)) {
 				Swing.cancel(player);
 				player.startUsingItem(InteractionHand.MAIN_HAND);
 			}
