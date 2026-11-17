@@ -49,6 +49,14 @@ public class MotionTest implements FabricClientGameTest {
 		context.waitTicks(ticks);
 	}
 
+	/** A jump (the key held a moment: jumping reads whether it is down, which a press and release in one go never is). */
+	private static void jump(ClientGameTestContext context, int ticks) {
+		context.getInput().holdKey(o -> o.keyJump);
+		context.waitTicks(2);
+		context.getInput().releaseKey(o -> o.keyJump);
+		context.waitTicks(ticks - 2);
+	}
+
 	private static PlayerAnimator animator(ClientGameTestContext context) {
 		return context.computeOnClient(client -> PlayerAnimator.of(client.player));
 	}
@@ -69,8 +77,7 @@ public class MotionTest implements FabricClientGameTest {
 			throw new AssertionError("sprinting, but the run's weight is only " + sprint);
 		}
 		// a jump mid-run
-		context.getInput().pressKey(o -> o.keyJump);
-		context.waitTicks(4);
+		jump(context, 4);
 		context.takeScreenshot("motion_run_jump");
 		float air = context.computeOnClient(client -> PlayerAnimator.of(client.player).motion.airborne());
 		context.getInput().releaseKey(o -> o.keySprint);
@@ -81,8 +88,7 @@ public class MotionTest implements FabricClientGameTest {
 		context.waitTicks(20);
 		// standing still, then a jump on the spot
 		context.takeScreenshot("motion_idle");
-		context.getInput().pressKey(o -> o.keyJump);
-		context.waitTicks(5);
+		jump(context, 5);
 		context.takeScreenshot("motion_jump");
 		context.waitTicks(20);
 		// a long fall and its landing
@@ -105,10 +111,10 @@ public class MotionTest implements FabricClientGameTest {
 		context.waitTicks(20);
 		// sneaking forward: the crouch eases down (not at once) and the short steps play
 		context.getInput().holdKey(o -> o.keyShift);
-		context.waitTicks(1);
-		float crouch = context.computeOnClient(client -> PlayerAnimator.of(client.player).motion.crouch(0));
+		context.waitTicks(2);
+		float crouch = context.computeOnClient(client -> PlayerAnimator.of(client.player).motion.crouch(1));
 		if (crouch <= 0.05f || crouch >= 0.95f) {
-			throw new AssertionError("a tick into a crouch it should be part way down, not " + crouch);
+			throw new AssertionError("two ticks into a crouch it should be part way down, not " + crouch);
 		}
 		hold(context, o -> o.keyUp, 14);
 		context.takeScreenshot("motion_sneak");
@@ -139,7 +145,7 @@ public class MotionTest implements FabricClientGameTest {
 		// a shield raised, then struck
 		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:air");
 		world.getServer().runCommand("item replace entity Player0 weapon.offhand with minecraft:shield");
-		world.getServer().runCommand("execute at Player0 run summon minecraft:zombie ~ ~ ~3 {NoAI:1b,Silent:1b,Rotation:[180f,0f]}");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:zombie ~2.5 ~ ~1.5 {NoAI:1b,Silent:1b,Rotation:[120f,0f]}");
 		context.waitTicks(5);
 		hold(context, o -> o.keyUse, 12);
 		context.takeScreenshot("motion_shield");
@@ -149,7 +155,8 @@ public class MotionTest implements FabricClientGameTest {
 		context.takeScreenshot("motion_shield_hit");
 		expectMove(context, PlayerMovesAnim.SHIELD_HIT);
 		context.getInput().releaseKey(o -> o.keyUse);
-		world.getServer().runCommand("kill @e[type=minecraft:zombie]");
+		// gone without a puff of smoke in front of the camera
+		world.getServer().runCommand("tp @e[type=minecraft:zombie] ~ -100 ~");
 		world.getServer().runCommand("item replace entity Player0 weapon.offhand with minecraft:air");
 		context.waitTicks(15);
 
