@@ -557,7 +557,7 @@ echo "$status" | grep -q "awake=false" || { echo "The Emperor woke too early"; e
 seraph=$(rcon "execute if entity @e[type=hellcraft:fallen_seraph,tag=hellcraft_lucifer]" || true)
 echo "The Fallen Seraph in the duel: $seraph"
 echo "$seraph" | grep -q "Test passed" || { echo "The Fallen Seraph is missing from the duel"; exit 1; }
-for a in slash sweep stars lunge; do
+for a in slash sweep stars lunge flurry feint dive crescent; do
   out=$(rcon "hellcraft lucifer attack $a")
   echo "$out"
   echo "$out" | grep -q "The Seraph uses" || { echo "The Seraph could not use $a"; exit 1; }
@@ -588,12 +588,17 @@ done
 echo "Weak point after the slam: $opened"
 echo "$opened" | grep -q "Test passed" || { echo "The Emperor's hand never opened a weak point"; exit 1; }
 sleep 4
-for a in bite wingbeat weep both_hands drag breath; do
+for a in bite wingbeat weep both_hands drag breath swat clap; do
   out=$(rcon "hellcraft lucifer attack $a")
   echo "$out"
   echo "$out" | grep -q "The Emperor uses" || { echo "The Emperor could not use $a"; exit 1; }
   sleep 6
 done
+# his posture broken: he slumps, and blows on him are punishes
+out=$(rcon "hellcraft lucifer posture")
+echo "$out"
+echo "$out" | grep -q "posture breaks" || { echo "The Emperor's posture would not break"; exit 1; }
+sleep 6
 frozen=$(rcon "execute if entity @e[type=hellcraft:emperor,tag=hellcraft_lucifer,x=0.5,y=$floor,z=0.5,distance=..2]" || true)
 echo "Emperor at the centre: $frozen"
 echo "$frozen" | grep -q "Test passed" || { echo "The Emperor left the centre of the pit"; exit 1; }
@@ -657,7 +662,7 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
   adv=$(grep -oE 'Hellcraft advancements: [0-9]+' "$LOG" | tail -1 | grep -oE '[0-9]+$' || echo 0)
   [ "${adv:-0}" -ge 25 ] || { echo "Only ${adv:-0} Dante's Journey advancements loaded"; fail=1; }
   grep -qE "Hellcraft recipes: 9; take Blood Hearts: 3; take Blood Fragments: 8(\s|\r|$)" "$LOG" || { grep "Hellcraft recipes" "$LOG"; echo "Real blood items don't fit the recipes"; fail=1; }
-  grep -q "Hellcraft config updated from version 0 to 4" "$LOG" || { echo "Config migration was not logged"; fail=1; }
+  grep -q "Hellcraft config updated from version 0 to 5" "$LOG" || { echo "Config migration was not logged"; fail=1; }
   [ "$(grep -c "Virgil's Rest (limbo_" "$LOG")" -ge 3 ] || { echo "The Virgil's Rests were not logged"; fail=1; }
   grep -q "The Great Forge of Dis at" "$LOG" || { echo "The Great Forge of Dis was not built"; fail=1; }
   grep -q "Guardian slain: vulcan" "$LOG" || { echo "Vulcan was never slain"; fail=1; }

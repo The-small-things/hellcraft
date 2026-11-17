@@ -265,6 +265,7 @@ public final class HellCommands {
 				.then(Commands.literal("lucifer")
 						.then(Commands.literal("summon").executes(HellCommands::summonLucifer))
 						.then(Commands.literal("skip").executes(ctx -> reply(ctx.getSource(), LuciferManager.skip())))
+						.then(Commands.literal("posture").executes(ctx -> reply(ctx.getSource(), LuciferManager.breakPosture())))
 						.then(Commands.literal("stop").executes(ctx -> reply(ctx.getSource(), LuciferManager.stop())))
 						.then(Commands.literal("status").executes(ctx -> reply(ctx.getSource(), LuciferManager.status())))
 						.then(Commands.literal("burrow").executes(ctx -> reply(ctx.getSource(), LuciferManager.openBurrow(ctx.getSource().getServer()))))
