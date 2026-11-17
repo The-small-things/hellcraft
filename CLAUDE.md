@@ -72,6 +72,22 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   through the bridge, never by re-running the old script, which sits in `tools/art/legacy/`): lovers, minos, cerberus, plutus, coin, phlegyas, ferry, fury. Remakes are built at
   twice the detail (two model pixels to a game pixel: `scale_model(model, 2)` doubles pivots and position keys) and drawn at
   half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers; `MinosRenderer.SCALE` 0.675, was 1.35; `CerberusRenderer.SCALE` 0.75, was 1.5; `PlutusRenderer.SCALE` 0.65, was 1.3; `CoinRenderer.SCALE` 0.5, applied before its flip like a living model's; `PhlegyasRenderer.SCALE` 0.65, was 1.3; `FerryRenderer.SCALE` 0.5, like the coin's; the Furies' `AnimatedBossRenderer` scale 0.7, was 1.4, in HellcraftClient). `tools/art/remake_kit.py` holds the shared builder (bones, cubes, segments, packing and painting with bbmodel's painters, animation keys with events), so heads have room for eyes, noses and lips.
+  **Every model is remade now** (2026-11-17): the other ten bosses (medusa, farinata, minotaur, geryon, antaeus, fallen_seraph,
+  emperor, vulcan, cyclops, seraph) and the thirteen mobs (glutton, wrathful, hoarder, heretic, centaur, harpy, mimic, thief,
+  malebranche, malacoda, angel, damned, shade) were remade headless, without the Blender app: `pip install bpy` gives `python3` Blender
+  5.x as a module. Their source is a script again, but one that rebuilds the body inside the .bbmodel and leaves its bones and
+  animations alone: `python3 tools/art/remake/<boss>.py`, or `python3 tools/art/remake/mobs.py [name ...]` for the mobs, then
+  `tools/gen_bosses.py`. Re-running is safe (a `hellcraft_detail` entry in the .bbmodel says it is already at 2x). `remake_kit.Remake`
+  imports the model, doubles it once, drops the cubes and builds new ones: `keep(name, material, ...)` re-adds an old cube by name,
+  `port("<legacy script>", skip=..., also=...)` carries every cube of the old script over with its old painting at 2x (`ported`), and
+  new parts go on with `cube`/`stick`; `finish()` packs, paints and exports. `tools/art/paintkit.py` has the painting helpers
+  (grooves, veins, teeth, eyes, folds, rivets, ambient shade), `tools/art/remake/faces.py` the shared faces (`paint`, `features`:
+  brow, nose, cheeks, lips). Animations still live in the .bbmodel only (the old scripts in `tools/art/legacy/` wrote them; never
+  re-run those): new ones go in through the bridge or a script that edits the .bbmodel's animations. Where these notes name
+  `tools/art/<model>.py` for one of these models, it is now `tools/art/legacy/<model>.py` (kept for `port`) and the .bbmodel is the
+  source. Draw sizes halved in HellcraftClient (Medusa, Antaeus, the Fallen Seraph and the Emperor `<Entity>.SCALE / 2`, the entity
+  constants unchanged for the server; Farinata 0.9, the Minotaur 0.7, Geryon and his carrier 1.0, the Cyclops 0.65, Vulcan 0.8, the
+  Seraph 1.0; every SoulMonsterRenderer 0.5) and in `ShadeRenderer`, `DamnedRenderer` and `HoarderRenderer` (`scale`).
 - `tools/gen_sounds.py`: the mod's own sounds, synthesised with numpy and encoded with ffmpeg (libvorbis; installed in this
   container) into `assets/hellcraft/sounds/cue/*.ogg`, their `cue.*` entries in `sounds.json` and subtitles in the lang file, and
   `hazard/gen/CueTimes` (how early each cue starts so its moment lands with the blow; common code, the server times Lucifer's tells by it). Deterministic: re-running leaves git
