@@ -491,13 +491,19 @@ Lucifer's pit is a flat floor of ice about 70 blocks across at the very centre o
 
 **The pit can't be broken.** Its ice (the floor, the wall and the pillars) can't be mined except in creative, and whatever explosions blow out of the floor during the fight freezes back within half a second.
 
-1. **The Fallen Seraph.** A cutscene: a shining angel with six white wings comes down between you and the sleeping mountain. Lucifer as he was before the Fall, gentle, kind, telling you to lower your blade. He is still the boss. He glides round you and fights like a duelist, in Hellcraft's danger language:
-   - **White flash, white cone:** his blade. *Raise your shield as it lands:* he reels, open, for two seconds.
-   - **Purple ring:** his wings sweep all the way round. It can't be blocked. *Jump as it reaches you, or be out of the ring.*
-   - **Red circles:** stars fall there. *Step out.*
-   - **Red line:** he lunges along it. *Step aside.*
-   - **His guard (from the playtest).** His wings turn most of your blows aside: only 30% gets through. **Block his white slash** to break his guard, and for a few seconds your blows do 160%. Hit him three times quickly at his guard and he answers at once with the slash, so standing and trading blows doesn't work: block, then strike.
-2. **The Morning Star.** At half health his kindness snaps ("ENOUGH!"). He glows, moves faster, often strikes twice, the stars keep falling round you while he fights, and Judas, Brutus and Cassius crawl out of the ice to fight for him.
+1. **The Fallen Seraph.** A cutscene: a shining angel with six white wings comes down between you and the sleeping mountain. Lucifer as he was before the Fall, gentle, kind, telling you to lower your blade. He is still the boss. He glides round you and fights like a swordsman, in short strings of blows picked by how far away you are (close: his blade; far: what crosses the ice), each with its own look and its own sound:
+   - **Slash** (white flash, white cone): the blade up, down across you. *Parry it on the ring:* he reels.
+   - **Flurry** (three quick chimes, three white cuts): short, short, long. *Parry each on its chime;* parry all three and his posture breaks.
+   - **Feint** (the blade held up, humming): it falls late, on a ring. A guard raised at the slash's timing is too early to parry: *wait for the ring.*
+   - **Sweep** (purple ring, close in): his wings sweep round. *Jump, roll, or be out of the ring.*
+   - **Lunge** (red line): across the ice like light. *Step off the line.*
+   - **Dive** (a falling whistle, a red circle following you): up into the dark and down blade first. *Roll out late:* he's stuck in the ice a moment, and blows then wear his posture twice as fast.
+   - **Crescent** (purple line): a wave of light along the ice. *Jump it or roll through it.* Two at once after he snaps.
+   - **Stars** (red circles): now and then, and when he snaps. *Step out.*
+   - **Posture** (the bar under his health): every blow that lands wears it down (heavy blows and finishers more), a parry a third of it, a blow slipped through your roll a little; it comes back if you leave him be. When it's gone he **breaks**: down on one knee for a few seconds, taking half as much again from every blow (and your style scores PUNISH). There is no guard to wait out: your blows always do their damage.
+2. **The Morning Star.** At half health his kindness snaps ("ENOUGH!"). He glows, the stars come down, Judas, Brutus and Cassius crawl out of the ice to fight for him, and his strings get longer and quicker, with two new blows:
+   - **Counter stance** (wings folded round him, a low hum): *don't strike.* Hit him now and he answers at once with an unblockable cut. Wait it out and he's open.
+   - **Blink** (a pop): he's gone, and back behind you with the blade raised; the ring comes as it falls. *Turn and parry.*
 3. **The Three-Faced Emperor.** Break the Seraph and he shatters like glass. Another cutscene: the mountain in the middle of the pit opens its eyes. It was him all along: Dante's Lucifer, frozen to the chest, three faces (red, pale yellow, black) and six bat wings. He can't move, but his reach is the whole pit, and **he can only be hurt where he opens up**:
    - **Red, under a hand:** the hand slams down. *Get out of the red.* Then it stays down on the ice, glowing: **hit the hand** while it lasts.
    - **White flash:** a face bites. *Block it* and the face stays down, glowing, longer, and takes three times the damage; dodge it and it's down for a moment at half that.

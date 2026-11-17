@@ -108,7 +108,7 @@ public final class Danger {
 
 	/** Takes a mark away early (the boss died, the attack was cut short). */
 	public static void clear(ServerLevel level, int id, Vec3 near) {
-		DangerPayload payload = new DangerPayload(id, 0, Shape.CLEAR.ordinal(), near.x, near.y, near.z, 0, 0, 0, 0, -1, 0);
+		DangerPayload payload = new DangerPayload(id, 0, Shape.CLEAR.ordinal(), near.x, near.y, near.z, 0, 0, 0, 0, -1, 0, true);
 		for (ServerPlayer p : level.players()) {
 			if (p.position().distanceToSqr(near) < AUDIENCE * AUDIENCE && ServerPlayNetworking.canSend(p, DangerPayload.TYPE)) {
 				ServerPlayNetworking.send(p, payload);
@@ -124,6 +124,19 @@ public final class Danger {
 
 	/** While a boss fight runs on its slowed clock, its marks take longer to fill by the same factor (GuardianFight). */
 	private static double stretch = 1.0;
+
+	/** Marks sent inside {@link #quietly} carry no colour cue: their boss plays a tell of its own (hazard/Cue). */
+	private static boolean quiet;
+
+	public static void quietly(Runnable action) {
+		boolean before = quiet;
+		quiet = true;
+		try {
+			action.run();
+		} finally {
+			quiet = before;
+		}
+	}
 
 	/** Runs `action` with every mark it sends stretched by this factor (1 / the boss's tempo). */
 	public static void stretched(double factor, Runnable action) {
@@ -142,7 +155,7 @@ public final class Danger {
 		followTicks = (int) Math.round(followTicks * stretch);
 		int id = nextId++;
 		DangerPayload payload = new DangerPayload(id, colour.ordinal(), shape.ordinal(), at.x, at.y, at.z, (float) size, (float) width, (float) angle,
-				warnTicks, follow == null ? -1 : follow.getId(), followTicks);
+				warnTicks, follow == null ? -1 : follow.getId(), followTicks, quiet);
 		for (ServerPlayer p : level.players()) {
 			if (p.position().distanceToSqr(at) < AUDIENCE * AUDIENCE && ServerPlayNetworking.canSend(p, DangerPayload.TYPE)) {
 				ServerPlayNetworking.send(p, payload);

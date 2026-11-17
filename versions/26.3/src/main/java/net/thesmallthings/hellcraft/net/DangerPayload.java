@@ -7,10 +7,11 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 
 /**
  * A danger mark on the ground (see Danger): its colour and shape, where it is, how it is sized and turned, how long
- * it fills before the blow lands, and the entity it follows for a while (or -1).
+ * it fills before the blow lands, the entity it follows for a while (or -1), and whether it is quiet (its boss plays a tell
+ * of its own instead of the colour's cue).
  */
 public record DangerPayload(int id, int colour, int shape, double x, double y, double z, float size, float width, float angle,
-							int warnTicks, int follow, int followTicks) implements CustomPacketPayload {
+							int warnTicks, int follow, int followTicks, boolean quiet) implements CustomPacketPayload {
 	public static final Type<DangerPayload> TYPE = new Type<>(HellcraftMod.id("danger"));
 	public static final StreamCodec<ByteBuf, DangerPayload> CODEC = StreamCodec.of((buf, p) -> {
 		buf.writeInt(p.id);
@@ -25,8 +26,9 @@ public record DangerPayload(int id, int colour, int shape, double x, double y, d
 		buf.writeInt(p.warnTicks);
 		buf.writeInt(p.follow);
 		buf.writeInt(p.followTicks);
+		buf.writeBoolean(p.quiet);
 	}, buf -> new DangerPayload(buf.readInt(), buf.readByte(), buf.readByte(), buf.readDouble(), buf.readDouble(), buf.readDouble(),
-			buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readInt(), buf.readInt()));
+			buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readInt(), buf.readInt(), buf.readBoolean()));
 
 	@Override
 	public Type<DangerPayload> type() {

@@ -16,7 +16,7 @@ public class HellConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static HellConfig instance = new HellConfig();
 	/** Bumped when default balance values change; see {@link #migrate()}. */
-	private static final int CURRENT_VERSION = 4;
+	private static final int CURRENT_VERSION = 5;
 
 	/** Which defaults this file was written with (0: before versioning). Don't edit. */
 	public int configVersion;
@@ -183,7 +183,7 @@ public class HellConfig {
 	 * How fast Lucifer's fight runs, as bossTempo does for the guardians (1.0 = full speed): his own, since the last
 	 * fight should be the hardest (playtest: at the guardians' tempo he was slow and easy to read).
 	 */
-	public double luciferTempo = 0.85;
+	public double luciferTempo = 1.0;
 	/** Lucifer's wings beat all over Hell about this often, in minutes (0 = never). */
 	public double wingbeatMinutes = 6.0;
 	/** The share of their damage arrows and other projectiles do to a boss (1.0 = full damage). */
@@ -416,6 +416,10 @@ public class HellConfig {
 		if (configVersion < 4) {
 			// playtest: the Fallen Seraph's blows could simply be taken
 			luciferDamage = moved(luciferDamage, 0.7, 0.9);
+		}
+		if (configVersion < 5) {
+			// combat playtest: his fight was slow; he fights at full speed now, in strings of blows
+			luciferTempo = moved(luciferTempo, 0.85, 1.0);
 		}
 		if (configVersion < CURRENT_VERSION) {
 			HellcraftMod.LOGGER.info("Hellcraft config updated from version {} to {}", configVersion, CURRENT_VERSION);

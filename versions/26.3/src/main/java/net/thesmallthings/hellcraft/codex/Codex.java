@@ -208,8 +208,13 @@ public final class Codex {
 							+ "and he stands frozen at its bottom to the chest in the ice of Cocytus, the wind of his six wings keeping it frozen.",
 					"He meets you first as the Seraph he was before the Fall, beautiful and kind. It is a lie: underneath sleeps the "
 							+ "giant with three faces, chewing the three worst traitors."),
-			List.of("The Seraph. White flash: his blade. Block it and he reels. Purple ring: his wings sweep round; jump it or stand "
-							+ "out of reach. Red circles: stars fall there. Red line: he lunges along it. At half his health he is faster.",
+			List.of("The Seraph, a swordsman: he fights in short strings of blows, each with its own sound. White flash: his blade; parry "
+							+ "on the ring and he reels. Three quick chimes: a flurry of three cuts; parry all three and he breaks. A blade held "
+							+ "up, humming: a feint, the blow comes late, on the ring. Purple: his wings or a wave of light along the ice; jump "
+							+ "or roll. Red: a lunge along a line, or a dive onto the circle following you (roll out late: he's stuck in the ice).",
+					"His POSTURE (the bar under his health) wears down with every blow, parry and dodged blow; broken, he kneels and "
+							+ "takes half as much again. At half his health he snaps: wings folded and humming means DON'T strike (he answers); "
+							+ "a pop means he is behind you, so turn and parry the ring.",
 					"The Emperor. He can't be hurt anywhere but where he opens up. Red: a hand slams down; once it lands, hit the "
 							+ "glowing hand. White flash: a face bites; block it and the face stays down, glowing, for longer, and takes "
 							+ "more damage.",

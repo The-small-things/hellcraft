@@ -91,7 +91,7 @@ public final class DangerMarks {
 		}
 		MARKS.add(new Mark(payload));
 		// its cue, timed to land with it (client/sound/DangerCues)
-		DangerCues.mark(payload.colour(), payload.x(), payload.y(), payload.z(), payload.warnTicks());
+		DangerCues.mark(payload.colour(), payload.quiet(), payload.x(), payload.y(), payload.z(), payload.warnTicks());
 	}
 
 	public static void tick(Minecraft mc) {

@@ -87,20 +87,38 @@ public class LuciferTest implements FabricClientGameTest {
 
 	/** Each of the Seraph's blows as its mark fills, then his enrage. */
 	private static void seraph(ClientGameTestContext context, TestDedicatedServerContext server) {
-		for (String attack : new String[]{"slash", "sweep", "stars", "lunge"}) {
-			String used = server.computeOnServer(s -> LuciferManager.attack(attack));
-			if (!used.contains("The Seraph uses")) {
-				throw new AssertionError("the Seraph could not use " + attack + ": " + used);
-			}
-			context.waitTicks(20);
-			context.takeScreenshot("lucifer_" + attack);
-			context.waitTicks(90);
+		for (String attack : new String[]{"slash", "sweep", "stars", "lunge", "flurry", "feint", "dive", "crescent"}) {
+			seraphAttack(context, server, attack);
 		}
+		// his posture broken: he kneels, and blows on him are punishes
+		String broke = server.computeOnServer(s -> LuciferManager.breakPosture());
+		if (!broke.contains("breaks")) {
+			throw new AssertionError("couldn't break the Seraph's posture: " + broke);
+		}
+		context.waitTicks(12);
+		context.takeScreenshot("lucifer_posture_broken");
+		if (!server.computeOnServer(s -> LuciferManager.punishable())) {
+			throw new AssertionError("with his posture broken, a blow on the Seraph should be a punish");
+		}
+		context.waitTicks(100);
 		server.computeOnServer(s -> LuciferManager.skip());
 		context.waitTicks(FallenSeraphAnim.SNAP.at("snap") + 6);
 		context.takeScreenshot("lucifer_enrage");
 		context.waitTicks(80);
 		expectPhase(server, "ENRAGED");
+		for (String attack : new String[]{"counter", "blink"}) {
+			seraphAttack(context, server, attack);
+		}
+	}
+
+	private static void seraphAttack(ClientGameTestContext context, TestDedicatedServerContext server, String attack) {
+		String used = server.computeOnServer(s -> LuciferManager.attack(attack));
+		if (!used.contains("The Seraph uses")) {
+			throw new AssertionError("the Seraph could not use " + attack + ": " + used);
+		}
+		context.waitTicks(attack.equals("dive") ? 16 : attack.equals("blink") ? 14 : 20);
+		context.takeScreenshot("lucifer_" + attack);
+		context.waitTicks(90);
 	}
 
 	/** His seraph form breaks, and the mountain in the middle of the pit opens its eyes. */

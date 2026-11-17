@@ -674,5 +674,29 @@
         "name": "hellcraft:cue/slump"
       }
     ]
+  },
+  "cue.red_short": {
+    "subtitle": "subtitles.hellcraft.cue.red_short",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/red_short"
+      }
+    ]
+  },
+  "cue.white_short": {
+    "subtitle": "subtitles.hellcraft.cue.white_short",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/white_short"
+      }
+    ]
+  },
+  "cue.purple_short": {
+    "subtitle": "subtitles.hellcraft.cue.purple_short",
+    "sounds": [
+      {
+        "name": "hellcraft:cue/purple_short"
+      }
+    ]
   }
 }

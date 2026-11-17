@@ -7,7 +7,7 @@ Writes, for every cue:
   versions/26.3/src/main/resources/assets/hellcraft/sounds/cue/<name>.ogg
   its entry in assets/hellcraft/sounds.json ("cue.<name>"; the file's other entries are left alone)
   its subtitle in assets/hellcraft/lang/en_us.json
-and client/sound/gen/CueTimes.java: how long before its moment each cue must start (a danger cue builds up and lands
+and hazard/gen/CueTimes.java (common code: the server times Lucifer's tells by it too): how long before its moment each cue must start (a danger cue builds up and lands
 exactly when the blow does).
 
 Any cue can be replaced by a real recording later: drop an .ogg of the same name in and remove it from CUES here.
@@ -24,7 +24,7 @@ import numpy as np
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "versions", "26.3")
 ASSETS = os.path.join(ROOT, "src", "main", "resources", "assets", "hellcraft")
 SOUNDS = os.path.join(ASSETS, "sounds", "cue")
-CLIENT = os.path.join(ROOT, "src", "client", "java", "net", "thesmallthings", "hellcraft", "client", "sound", "gen")
+COMMON = os.path.join(ROOT, "src", "main", "java", "net", "thesmallthings", "hellcraft", "hazard", "gen")
 RATE = 44100
 rng = np.random.default_rng(666)
 
@@ -168,6 +168,40 @@ def purple():
     return at(lead + 0.3, (0, whine), (lead, rush * 0.5)), lead
 
 
+def red_short():
+    """Red, for a quick mark: the horn's last moment and the thump."""
+    lead = 0.3
+    n = int(lead * RATE)
+    t = t_axis(lead)
+    horn = np.zeros(n)
+    for f, a in ((73.4, 1.0), (110.0, 0.7)):
+        for h in range(1, int(1200 / f) + 1):
+            horn += a * np.sin(h * 2 * np.pi * f * t) / h ** 1.2
+    horn = lowpass(horn, 700) * swell(n, 1.2)
+    thump = tone(55, 0.35, ((1, 1.0), (2, 0.3))) * decay(int(0.35 * RATE), 0.08)
+    thump += lowpass(noise(0.35), 300) * decay(int(0.35 * RATE), 0.05) * 0.8
+    return at(lead + 0.4, (0, horn * 0.7), (lead, thump * 1.4)), lead
+
+
+def white_short():
+    """White, for a quick mark: a short flick of shimmer and the ring."""
+    lead = 0.25
+    n = int(lead * RATE)
+    rise = np.sin(sweep(1400, 2100, lead, 2.0)) * swell(n, 2.0)
+    return at(lead + 0.55, (0, rise * 0.4), (lead - 0.005, bell(2350, 0.55, hardness=0.7))), lead
+
+
+def purple_short():
+    """Purple, for a quick mark: the whine's top and the rush."""
+    lead = 0.3
+    n = int(lead * RATE)
+    pa = sweep(450, 620, lead)
+    pb = sweep(450 * 1.414, 620 * 1.414, lead)
+    whine = (np.sin(pa) + 0.8 * np.sin(pb) + 0.4 * np.sin(2 * pa)) * swell(n, 1.2)
+    rush = band(noise(0.3), 400, 3000) * decay(int(0.3 * RATE), 0.06)
+    return at(lead + 0.3, (0, whine), (lead, rush * 0.5)), lead
+
+
 def parry():
     """A parry: a clean, high ring of steel on steel, with a bright crack on top."""
     ring = bell(1480, 0.9, ratios=(1, 2.32, 4.25, 6.63), hardness=0.5)
@@ -210,17 +244,22 @@ def posture_break():
 # Lucifer's tells: one per attack, so each can be told apart without looking
 
 def flurry():
-    """The Seraph's flurry: three quick rising chimes, short, short, long: one for each cut."""
-    out = at(0.9, (0, bell(1760, 0.25)), (0.18, bell(1980, 0.25)), (0.42, bell(2350, 0.45)))
-    return out, 0.0
+    """The Seraph's flurry: a breath of shimmer, then three rising chimes, short, short, long, each on a cut's blow."""
+    lead = 0.3
+    n = int(lead * RATE)
+    breath = band(noise(lead), 3000, 9000) * swell(n, 2.0) * 0.5
+    out = at(1.7, (0, breath), (lead, bell(1760, 0.3)), (lead + 0.3, bell(1980, 0.3)), (lead + 0.9, bell(2350, 0.5)))
+    return out, lead
 
 
 def feint():
-    """The feint: the blade hums, held, wavering (the blow is late: wait for the ring)."""
+    """The feint: the blade hums, held, wavering; then the ring on the moment the late blow falls (wait for it)."""
+    lead = 0.95
     n = int(0.8 * RATE)
     t = t_axis(0.8)
     hum = (np.sin(2 * np.pi * 523 * t) + 0.5 * np.sin(2 * np.pi * 1046 * t)) * (0.6 + 0.4 * np.sin(2 * np.pi * 14 * t))
-    return hum * env(n, 0.08, 0.1) * 0.5, 0.0
+    hum *= env(n, 0.08, 0.05)
+    return at(lead + 0.5, (0, hum * 0.45), (lead, bell(2350, 0.5, hardness=0.7))), lead
 
 
 def dive():
@@ -248,10 +287,11 @@ def counter():
 
 
 def blink():
-    """The blink: a pop as he vanishes (he'll be behind you)."""
+    """The blink: a pop as he vanishes, a rush as he comes back behind you, and the ring on his blow."""
     pop = np.sin(sweep(900, 120, 0.12)) * decay(int(0.12 * RATE), 0.04)
     air = band(noise(0.25), 1500, 8000) * decay(int(0.25 * RATE), 0.06) * 0.6
-    return at(0.3, (0, pop), (0.005, air)), 0.0
+    back = np.sin(sweep(150, 900, 0.1)) * decay(int(0.1 * RATE), 0.05) * 0.8
+    return at(1.4, (0, pop), (0.005, air), (0.4, back), (0.8, bell(2350, 0.55, hardness=0.7))), 0.0
 
 
 def hand_rise():
@@ -289,6 +329,9 @@ CUES = {
     "red": (red, "A red mark: get out"),
     "white": (white, "A white mark: block now"),
     "purple": (purple, "A purple mark: jump or roll"),
+    "red_short": (red_short, "A red mark: get out"),
+    "white_short": (white_short, "A white mark: block now"),
+    "purple_short": (purple_short, "A purple mark: jump or roll"),
     "parry": (parry, "Parried"),
     "guard_break": (guard_break, "Guard broken"),
     "dodge": (dodge, "A blow slips past"),
@@ -322,7 +365,7 @@ def encode(signal, path):
 
 def main():
     os.makedirs(SOUNDS, exist_ok=True)
-    os.makedirs(CLIENT, exist_ok=True)
+    os.makedirs(COMMON, exist_ok=True)
     sounds_json = os.path.join(ASSETS, "sounds.json")
     with open(sounds_json) as f:
         sounds = json.load(f)
@@ -344,7 +387,7 @@ def main():
         json.dump(lang, f, indent=2, ensure_ascii=False)
         f.write("\n")
     consts = "\n".join(f"\t/** {CUES[n][1]}. */\n\tpublic static final int {n.upper()} = {v};" for n, v in leads.items())
-    java = f"""package net.thesmallthings.hellcraft.client.sound.gen;
+    java = f"""package net.thesmallthings.hellcraft.hazard.gen;
 
 // Generated by tools/gen_sounds.py: edit the script, not this file.
 
@@ -356,7 +399,7 @@ public final class CueTimes {{
 {consts}
 }}
 """
-    with open(os.path.join(CLIENT, "CueTimes.java"), "w") as f:
+    with open(os.path.join(COMMON, "CueTimes.java"), "w") as f:
         f.write(java)
     print(f"Wrote {len(CUES)} cue sounds to {os.path.relpath(SOUNDS)}")
 

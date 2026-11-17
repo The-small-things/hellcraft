@@ -74,9 +74,10 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   half size (`SoulMonsterRenderer`'s `scale` argument, 0.5 for the lovers; `MinosRenderer.SCALE` 0.675, was 1.35; `CerberusRenderer.SCALE` 0.75, was 1.5; `PlutusRenderer.SCALE` 0.65, was 1.3; `CoinRenderer.SCALE` 0.5, applied before its flip like a living model's; `PhlegyasRenderer.SCALE` 0.65, was 1.3; `FerryRenderer.SCALE` 0.5, like the coin's; the Furies' `AnimatedBossRenderer` scale 0.7, was 1.4, in HellcraftClient). `tools/art/remake_kit.py` holds the shared builder (bones, cubes, segments, packing and painting with bbmodel's painters, animation keys with events), so heads have room for eyes, noses and lips.
 - `tools/gen_sounds.py`: the mod's own sounds, synthesised with numpy and encoded with ffmpeg (libvorbis; installed in this
   container) into `assets/hellcraft/sounds/cue/*.ogg`, their `cue.*` entries in `sounds.json` and subtitles in the lang file, and
-  `client/sound/gen/CueTimes` (how early each cue starts so its moment lands with the blow). Deterministic: re-running leaves git
+  `hazard/gen/CueTimes` (how early each cue starts so its moment lands with the blow; common code, the server times Lucifer's tells by it). Deterministic: re-running leaves git
   clean. Server cues: `hazard/Cue` (`play`, `playTo`); the danger marks' cues are timed on the client (`client/sound/DangerCues`,
-  from `DangerMarks.receive`). `ImpactTest` checks every mark plays its cue and every cue's file loads; the smoke test checks the jar.
+  from `DangerMarks.receive`; a mark too quick for the full build-up gets the `*_short` cue; `Danger.quietly` marks get none).
+  `ImpactTest` checks every mark plays its cue and every cue's file loads; the smoke test checks the jar.
 - `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh` takes the showcase pictures (or name groups:
   `hell,court,bosses,realms`; `HELLCRAFT_TESTS` runs only the listed test classes, without touching the manifest in git): no HUD,
   view distance 16, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without
@@ -273,7 +274,15 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   from close above counts as faced, for shields and weapon guards; `Lovers` judges a dive by `diveFrom` too); `StyleMeter` scores per
   move (`Swing.landingMove`, `Moveset.label`) and by named feats, each raising the flow multiplier (`raise`, x1 to x2, reset by a hit,
   ebbing; sent in `StylePayload.flow`, drawn by `StylePanel`), `onParry(timed)` (`Guard.turnedWhole` or the boss's parry window),
-  `onHit(..., punish)` for broken posture, `openingTip`; dodges reach Lucifer's meters through `LuciferManager.dodged`. Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  `onHit(..., punish)` for broken posture, `openingTip`; dodges reach Lucifer's meters through `LuciferManager.dodged`. **The Fallen Seraph
+  reworked:** `SeraphAttacks` picks strings of blows by distance (`choose`; `STARS` on a timer and at the snap), each attack with its
+  own animation in tools/art/fallen_seraph.py (flurry, feint, dive, crescent, counter, riposte, blink, broken), its own `hazard/Cue`
+  timed by `hazard/gen/CueTimes`, and marks sent `Danger.quietly` where its own cue replaces the colour's; `cut` is the shared white
+  blade blow; `epoch` cancels scheduled blows when he is cut short. His wing guard is replaced by `hazard/lucifer/Posture` (a second
+  boss bar; `add`/`addShare`, `breakNow`, `brokenFor`; drains when left alone): `hurtBy` (heavy and finishers 1.5x, double while
+  `openUntil`), `parried` (a third; a flurry's three parries break it), `dodged`; broken he takes `BROKEN` 1.5x and blows are
+  punishes (`LuciferFight.punishable`). `/hellcraft lucifer attack <name>` takes every attack; `LuciferManager.breakPosture` for tests;
+  `HELLCRAFT_BOSSES=lucifer` makes BossTest film only Lucifer's bodies. `luciferTempo` is 1.0 (config version 5). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

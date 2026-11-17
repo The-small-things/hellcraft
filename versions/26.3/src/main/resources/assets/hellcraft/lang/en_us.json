@@ -154,5 +154,8 @@
   "subtitles.hellcraft.cue.hand_rise": "The Emperor raises a hand",
   "subtitles.hellcraft.cue.swat": "The Emperor swats",
   "subtitles.hellcraft.cue.clap": "The Emperor's hands clap",
-  "subtitles.hellcraft.cue.slump": "The Emperor slumps"
+  "subtitles.hellcraft.cue.slump": "The Emperor slumps",
+  "subtitles.hellcraft.cue.red_short": "A red mark: get out",
+  "subtitles.hellcraft.cue.white_short": "A white mark: block now",
+  "subtitles.hellcraft.cue.purple_short": "A purple mark: jump or roll"
 }

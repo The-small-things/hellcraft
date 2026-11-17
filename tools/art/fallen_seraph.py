@@ -425,6 +425,73 @@ def animations(m):
     intro.rot("left_arm", [(0, ARM_L), (3.6, ARM_L), (4.0, (90, 0, -30)), (5.0, (90, 0, -30))])
     intro.event(3.0, "land").event(3.6, "speak")
 
+    # the flurry: three cuts, short, short, long: right to left, left to right, then down from high
+    flurry = m.animation("flurry", 2.0)
+    right_arm(flurry, [(0, ARM_R), (0.25, (115, 0, 65)), (0.45, (45, 0, -35)), (0.6, (120, 0, -45)), (0.75, (40, 0, 45)),
+                       (1.05, (175, 0, 15)), (1.35, (25, 0, -10)), (2.0, ARM_R)])
+    flurry.rot("torso", [(0, ZERO), (0.25, (5, 25, 0)), (0.45, (-10, -25, 0)), (0.6, (0, -25, 0)), (0.75, (-10, 25, 0)),
+                         (1.05, (12, 0, 0)), (1.35, (-22, -10, 0)), (2.0, ZERO)])
+    flurry.event(0.3, "flash1").event(0.45, "hit1").event(0.6, "flash2").event(0.75, "hit2").event(1.05, "flash3").event(1.35, "hit3")
+
+    # the feint: the blade goes up as for his slash, then hangs a beat too long, trembling, before it falls
+    feint = m.animation("feint", 1.9)
+    right_arm(feint, [(0, ARM_R), (0.45, (165, 0, 20)), (0.65, (170, 0, 22)), (0.8, (167, 0, 18)), (0.95, (172, 0, 24)),
+                      (1.05, (175, 0, 22)), (1.3, (40, 0, -20)), (1.9, ARM_R)])
+    feint.rot("torso", [(0, ZERO), (0.45, (8, 15, 0)), (1.05, (14, 20, 0)), (1.3, (-22, -30, 0)), (1.9, ZERO)])
+    feint.rot("head", [(0, ZERO), (0.45, (-10, 0, 0)), (1.05, (-12, 0, 0)), (1.3, (10, 0, 0)), (1.9, ZERO)])
+    feint.event(1.05, "flash").event(1.3, "hit")
+
+    # the dive: up into the dark, a moment hanging over you, then straight down blade first, stuck in the ice a while
+    dive = m.animation("dive", 2.2)
+    dive.pos("root", [(0, (0, 2, 0)), (0.7, (0, 40, 0)), (1.05, (0, 42, 0)), (1.25, (0, -1, 0)), (2.0, (0, -1, 0)), (2.2, (0, 2, 0))])
+    dive.rot("body", [(0, ZERO), (0.7, (-10, 0, 0)), (1.05, (25, 0, 0)), (1.25, (40, 0, 0)), (2.0, (35, 0, 0)), (2.2, ZERO)])
+    right_arm(dive, [(0, ARM_R), (0.7, (175, 0, 10)), (1.05, (180, 0, 0)), (1.25, (15, 0, 0)), (2.0, (12, 0, 0)), (2.2, ARM_R)])
+    dive.rot("left_arm", [(0, ARM_L), (0.7, (40, 0, -60)), (1.25, (60, 0, -30)), (2.0, (60, 0, -30)), (2.2, ARM_L)])
+    beat(dive, 0.7, 25)
+    dive.event(0.1, "rise").event(1.05, "drop").event(1.25, "land").event(2.0, "free")
+
+    # the crescent: the blade swept low along the ice, loosing a wave of light
+    crescent = m.animation("crescent", 1.2)
+    right_arm(crescent, [(0, ARM_R), (0.45, (55, 0, 85)), (0.6, (60, 0, -80)), (0.75, (55, 0, -90)), (1.2, ARM_R)])
+    crescent.rot("torso", [(0, ZERO), (0.45, (15, 35, 0)), (0.6, (20, -35, 0)), (1.2, ZERO)])
+    crescent.pos("root", [(0, (0, 2, 0)), (0.45, (0, 0, 0)), (0.6, (0, 0, 0)), (1.2, (0, 2, 0))])
+    crescent.event(0.6, "release")
+
+    # the counter stance: wings folded round him, blade low, head bowed, waiting for you to strike
+    counter = m.animation("counter", 2.6)
+    for side, s in (("right", 1), ("left", -1)):
+        for i in range(3):
+            counter.rot(f"{side}_wing{i}", [(0, ZERO), (0.3, (0, 55 * s, 10 * s)), (2.2, (0, 58 * s, 12 * s)), (2.6, ZERO)])
+    right_arm(counter, [(0, ARM_R), (0.3, (30, 0, -45)), (2.2, (32, 0, -48)), (2.6, ARM_R)])
+    counter.rot("left_arm", [(0, ARM_L), (0.3, (35, 0, 40)), (2.2, (35, 0, 40)), (2.6, ARM_L)])
+    counter.rot("head", [(0, ZERO), (0.3, (25, 0, 0)), (2.2, (25, 0, 0)), (2.6, ZERO)])
+    counter.event(0.3, "ready").event(2.2, "open")
+
+    # his answer to a blow struck into the counter stance: an instant cut
+    riposte = m.animation("riposte", 0.8)
+    right_arm(riposte, [(0, (30, 0, -45)), (0.15, (150, 0, 60)), (0.3, (40, 0, -50)), (0.8, ARM_R)])
+    riposte.rot("torso", [(0, ZERO), (0.15, (5, 30, 0)), (0.3, (-15, -35, 0)), (0.8, ZERO)])
+    riposte.event(0.3, "hit")
+
+    # the blink: gone in a point of light, and back behind you, the blade already raised
+    blink = m.animation("blink", 1.5)
+    blink.scale("root", [(0, (1, 1, 1)), (0.2, (0.02, 0.02, 0.02)), (0.55, (0.02, 0.02, 0.02)), (0.65, (1, 1, 1)), (1.5, (1, 1, 1))], interp="linear")
+    right_arm(blink, [(0, ARM_R), (0.2, ARM_R), (0.65, (170, 0, 20)), (0.85, (175, 0, 20)), (1.0, (40, 0, -20)), (1.5, ARM_R)])
+    blink.rot("torso", [(0, ZERO), (0.65, (10, 20, 0)), (1.0, (-20, -30, 0)), (1.5, ZERO)])
+    blink.event(0.2, "vanish").event(0.6, "appear").event(0.75, "flash").event(1.0, "hit")
+
+    # his posture broken: down on one knee, blade on the ice, wings dragging, then he gathers himself
+    broken = m.animation("broken", 3.0)
+    broken.pos("root", [(0, (0, 2, 0)), (0.25, (0, -3, 0)), (2.6, (0, -3, 0)), (3.0, (0, 2, 0))])
+    broken.rot("torso", [(0, ZERO), (0.25, (40, 0, 8)), (2.6, (38, 0, 6)), (3.0, ZERO)])
+    broken.rot("head", [(0, ZERO), (0.25, (30, 0, 0)), (2.6, (25, 0, 0)), (3.0, ZERO)])
+    right_arm(broken, [(0, ARM_R), (0.25, (-15, 0, 45)), (2.6, (-15, 0, 45)), (3.0, ARM_R)])
+    broken.rot("left_arm", [(0, ARM_L), (0.25, (50, 0, -20)), (2.6, (50, 0, -20)), (3.0, ARM_L)])
+    for side, s in (("right", 1), ("left", -1)):
+        for i in range(3):
+            broken.rot(f"{side}_wing{i}", [(0, ZERO), (0.25, (25, -20 * s, -35 * s)), (2.6, (25, -20 * s, -35 * s)), (3.0, ZERO)])
+    broken.event(2.6, "rise")
+
     hurt = m.animation("hurt", 0.3)
     hurt.rot("torso", [(0, ZERO), (0.1, (15, 0, 8)), (0.3, ZERO)])
 

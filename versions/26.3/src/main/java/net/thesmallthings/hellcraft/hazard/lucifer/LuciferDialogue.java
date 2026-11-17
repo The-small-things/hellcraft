@@ -38,6 +38,13 @@ final class LuciferDialogue {
 	static final String[] SWEEP = {"Behold my wings.", "Six wings, and still the most beautiful.", "Bow."};
 	static final String[] STARS = {"Fall with me!", "I was the Morning Star. Watch the stars come down.", "Look up."};
 	static final String[] LUNGE = {"Here.", "Too slow.", "Behind thee? No. HERE."};
+	static final String[] FLURRY = {"Once. Twice. And-", "Dance with me.", "Keep up."};
+	static final String[] FEINT = {"Wait for it.", "Patience was never thy virtue.", "Not yet..."};
+	static final String[] DIVE = {"From the height of Heaven I fell. FEEL it.", "Look up, little soul.", "As I fell, so shalt thou."};
+	static final String[] COUNTER = {"Strike, then.", "Go on. I am open.", "I wait."};
+	static final String[] ANSWER = {"Fool.", "I said: STRIKE.", "As I thought."};
+	static final String[] BLINK = {"Behind thee.", "Here. No- here.", "Light is quicker than thou."};
+	static final String[] BROKEN = {"How... dare...", "On my knees? AGAIN?", "No- not again-"};
 
 	static final String[] ENRAGE = {
 			"ENOUGH!",

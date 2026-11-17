@@ -639,7 +639,7 @@ public final class LuciferFight {
 				s.setPermanentlyInvulnerable(false);
 			}
 			setPhase(Phase.ENRAGED);
-			tip("He's faster now, and often strikes twice. Keep blocking the white flashes.");
+			tip("He's faster now: strings of blows, a stance that punishes greed (wait while he hums), and a blink behind you (turn and parry on the ring).");
 		});
 	}
 
@@ -648,6 +648,7 @@ public final class LuciferFight {
 		if (phase == Phase.TRUE_FORM_TRANSITION || phase == Phase.TRUE_FORM || phase == Phase.DEFEAT) {
 			return;
 		}
+		seraphAttacks.posture.hide();
 		setPhase(Phase.TRUE_FORM_TRANSITION);
 		scheduled.clear();
 		FallenSeraphEntity seraph = seraph();
@@ -689,6 +690,7 @@ public final class LuciferFight {
 			CutsceneManager.play(p, Cutscenes.LUCIFER_REVEAL, emperor.position(), emperor.getYRot());
 		}
 		bar.removeAllPlayers();
+		seraphAttacks.posture.hide();
 		schedule(EmperorAnim.REVEAL.at("open"), () -> {
 			EmperorEntity e = emperor();
 			if (e != null) {
@@ -716,6 +718,7 @@ public final class LuciferFight {
 		setPhase(Phase.DEFEAT);
 		scheduled.clear();
 		bar.removeAllPlayers();
+		seraphAttacks.posture.hide();
 		styles.values().forEach(StyleMeter::finish);
 		EmperorEntity emperor = emperor();
 		if (emperor != null) {
@@ -790,9 +793,14 @@ public final class LuciferFight {
 	float damageTaken(LivingEntity entity, Player by, float amount) {
 		FallenSeraphEntity s = seraph();
 		if (s != null && entity == s && (phase == Phase.DUEL || phase == Phase.ENRAGED)) {
-			return seraphAttacks.guard(s, by, amount);
+			return seraphAttacks.damageTaken(s, by, amount);
 		}
 		return amount;
+	}
+
+	/** Whether a blow on Lucifer now is a punish: his posture is broken. */
+	boolean punishable() {
+		return (phase == Phase.DUEL || phase == Phase.ENRAGED) && seraphAttacks.punishable();
 	}
 
 	/** A blow passed through this player's dodge roll: style, if they fight here. */
@@ -800,6 +808,10 @@ public final class LuciferFight {
 		StyleMeter style = styles.get(player.getUUID());
 		if (style != null && LuciferArena.inside(player.getX(), player.getZ())) {
 			style.onDodge();
+		}
+		FallenSeraphEntity s = seraph();
+		if (s != null && (phase == Phase.DUEL || phase == Phase.ENRAGED) && LuciferArena.inside(player.getX(), player.getZ())) {
+			seraphAttacks.dodged(s);
 		}
 	}
 
@@ -864,7 +876,11 @@ public final class LuciferFight {
 		boolean newcomer = !participants.containsKey(player.getUUID());
 		participants.merge(player.getUUID(), dealt, Float::sum);
 		if (styles.containsKey(player.getUUID())) {
-			styles.get(player.getUUID()).onHit(player, source, dealt);
+			styles.get(player.getUUID()).onHit(player, source, dealt, punishable());
+		}
+		FallenSeraphEntity hitSeraph = seraph();
+		if (hitSeraph != null && entity == hitSeraph && (phase == Phase.DUEL || phase == Phase.ENRAGED)) {
+			seraphAttacks.hurtBy(hitSeraph, player, dealt);
 		}
 		if (newcomer) {
 			HellState.Soul soul = HellState.get(level.getServer()).existing(player.getUUID());
@@ -943,6 +959,16 @@ public final class LuciferFight {
 		}
 	}
 
+	/** Test helper: the Seraph's posture broken now. */
+	boolean breakPosture() {
+		FallenSeraphEntity s = seraph();
+		if (s == null || !(phase == Phase.DUEL || phase == Phase.ENRAGED)) {
+			return false;
+		}
+		seraphAttacks.posture.breakNow(s);
+		return true;
+	}
+
 	/** Test helper: one of the Seraph's attacks now, at the nearest target. */
 	boolean forceAttack(SeraphAttacks.Attack attack) {
 		FallenSeraphEntity s = seraph();
@@ -1002,6 +1028,11 @@ public final class LuciferFight {
 		}
 		for (ServerPlayer p : audience) {
 			bar.addPlayer(p);
+		}
+		if (phase == Phase.DUEL || phase == Phase.ENRAGED || phase == Phase.ENRAGE_TRANSITION) {
+			seraphAttacks.posture.show(audience);
+		} else {
+			seraphAttacks.posture.hide();
 		}
 		LivingEntity body = phase == Phase.TRUE_FORM ? emperor() : seraph();
 		if (phase == Phase.INTRO) {
@@ -1082,6 +1113,7 @@ public final class LuciferFight {
 	private void cleanup() {
 		scheduled.clear();
 		bar.removeAllPlayers();
+		seraphAttacks.posture.hide();
 		styles.values().forEach(StyleMeter::finish);
 		discardStrays();
 		traitors.clear();

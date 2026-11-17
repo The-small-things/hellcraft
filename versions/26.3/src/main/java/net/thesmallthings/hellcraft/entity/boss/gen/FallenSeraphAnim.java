@@ -19,6 +19,14 @@ public enum FallenSeraphAnim implements BossAnim {
 	STAGGER(40, false, Map.of()),
 	SNAP(52, false, Map.of("snap", 20)),
 	INTRO(100, false, Map.of("land", 60, "speak", 72)),
+	FLURRY(40, false, Map.of("flash1", 6, "hit1", 9, "flash2", 12, "hit2", 15, "flash3", 21, "hit3", 27)),
+	FEINT(38, false, Map.of("flash", 21, "hit", 26)),
+	DIVE(44, false, Map.of("rise", 2, "drop", 21, "land", 25, "free", 40)),
+	CRESCENT(24, false, Map.of("release", 12)),
+	COUNTER(52, false, Map.of("ready", 6, "open", 44)),
+	RIPOSTE(16, false, Map.of("hit", 6)),
+	BLINK(30, false, Map.of("vanish", 4, "appear", 12, "flash", 15, "hit", 20)),
+	BROKEN(60, false, Map.of("rise", 52)),
 	HURT(6, false, Map.of()),
 	DEATH(48, false, Map.of("break", 32));
 

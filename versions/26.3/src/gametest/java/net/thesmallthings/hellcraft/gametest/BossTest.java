@@ -143,6 +143,12 @@ public class BossTest implements FabricClientGameTest {
 				audit(context, world);
 				return;
 			}
+			if ("lucifer".equals(System.getenv("HELLCRAFT_BOSSES"))) {
+				// tuning Lucifer's bodies: only they are filmed
+				world.getServer().runCommand("kill @e[type=hellcraft:minos]");
+				lucifer(context, world);
+				return;
+			}
 			// from the front, eye to eye
 			world.getServer().runCommand("execute at @e[type=hellcraft:minos,limit=1] run tp Player0 ~ ~5 ~-16 0 8");
 			context.waitTicks(30);
@@ -340,6 +346,17 @@ public class BossTest implements FabricClientGameTest {
 				new Shot(FallenSeraphAnim.LUNGE, FallenSeraphAnim.LUNGE.at("go"), n),
 				new Shot(FallenSeraphAnim.STAGGER, 8, n),
 				new Shot(FallenSeraphAnim.SNAP, FallenSeraphAnim.SNAP.at("snap") + 6, n),
+				new Shot(FallenSeraphAnim.FLURRY, FallenSeraphAnim.FLURRY.at("hit1"), n),
+				new Shot(FallenSeraphAnim.FLURRY, FallenSeraphAnim.FLURRY.at("flash3"), w),
+				new Shot(FallenSeraphAnim.FEINT, FallenSeraphAnim.FEINT.at("flash") - 4, n),
+				new Shot(FallenSeraphAnim.DIVE, FallenSeraphAnim.DIVE.at("drop") - 2, n),
+				new Shot(FallenSeraphAnim.DIVE, FallenSeraphAnim.DIVE.at("land") + 4, n),
+				new Shot(FallenSeraphAnim.CRESCENT, FallenSeraphAnim.CRESCENT.at("release"), p),
+				new Shot(FallenSeraphAnim.COUNTER, 20, n),
+				new Shot(FallenSeraphAnim.RIPOSTE, FallenSeraphAnim.RIPOSTE.at("hit"), p),
+				new Shot(FallenSeraphAnim.BLINK, FallenSeraphAnim.BLINK.at("vanish") + 4, n),
+				new Shot(FallenSeraphAnim.BLINK, FallenSeraphAnim.BLINK.at("flash") + 2, w),
+				new Shot(FallenSeraphAnim.BROKEN, 20, n),
 				new Shot(FallenSeraphAnim.DEATH, FallenSeraphAnim.DEATH.at("break") - 2, n)));
 		boss(context, world, HellEntities.EMPEROR, "emperor", 75, 28, List.of(
 				new Shot(EmperorAnim.DORMANT, 30, n),
