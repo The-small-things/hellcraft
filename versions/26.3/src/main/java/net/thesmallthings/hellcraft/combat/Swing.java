@@ -111,6 +111,31 @@ public final class Swing {
 		return s != null && s.move != null && player.level().getGameTime() < s.end;
 	}
 
+	/** What a braced wielder (a heavy weapon's committed recovery) takes of a blow. */
+	private static final float BRACED = 0.75f;
+
+	/**
+	 * A heavy weapon's swing whose blow has landed commits its wielder until the move ends: no guard cuts its recovery short
+	 * (one pressed now goes up when it ends; client/combat/SwingControl.committed agrees). Lighter weapons may guard at any
+	 * moment.
+	 */
+	public static boolean committed(ServerPlayer player) {
+		State s = STATES.get(player.getUUID());
+		if (s == null || s.move == null || !s.landed || player.level().getGameTime() >= s.end) {
+			return false;
+		}
+		WeaponClass kind = WeaponClass.of(s.weapon);
+		return kind != null && kind.heavy;
+	}
+
+	/**
+	 * A blow reaches someone (mixin/LivingEntityMixin): a heavy weapon's wielder, committed to the recovery of a blow that
+	 * landed, is braced and takes a quarter less (what they gave up by not being able to guard out of it).
+	 */
+	public static float brace(LivingEntity victim, float amount) {
+		return victim instanceof ServerPlayer player && Combat.on() && committed(player) ? amount * BRACED : amount;
+	}
+
 	/** A roll or a raised guard cuts a swing short: a blow not yet landed never lands. */
 	public static void cancel(ServerPlayer player) {
 		State s = STATES.get(player.getUUID());

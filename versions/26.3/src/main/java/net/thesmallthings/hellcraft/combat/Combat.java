@@ -37,7 +37,7 @@ public final class Combat {
 	 * What this game's server said (client side: there is no server config to read). A single-player game runs both sides
 	 * in one JVM, where the server's own answer is the same thing.
 	 */
-	private static volatile CombatPayload client = new CombatPayload(false, 100, 0, 16, 3.4f, 0);
+	private static volatile CombatPayload client = new CombatPayload(false, 100, 0, 16, 3.4f, 0, 8);
 	private static CombatPayload sent;
 
 	/** Server side: is Hellcraft's combat on? */
@@ -51,12 +51,13 @@ public final class Combat {
 			return client;
 		}
 		HellConfig c = HellConfig.get();
-		return new CombatPayload(c.combatOverhaul, c.staminaMax, c.dodgeCost, c.dodgeCooldownTicks, (float) c.dodgeDistance, c.heavyCost);
+		return new CombatPayload(c.combatOverhaul, c.staminaMax, c.dodgeCost, c.dodgeCooldownTicks, (float) c.dodgeDistance, c.heavyCost,
+				c.dodgeInvulnerableTicks);
 	}
 
 	/** Client side: the server's rules arrived (or the game was left: off). */
 	public static void clientRules(CombatPayload rules) {
-		client = rules == null ? new CombatPayload(false, 100, 0, 16, 3.4f, 0) : rules;
+		client = rules == null ? new CombatPayload(false, 100, 0, 16, 3.4f, 0, 8) : rules;
 	}
 
 	public static void register() {

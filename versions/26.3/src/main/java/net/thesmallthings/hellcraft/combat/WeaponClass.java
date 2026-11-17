@@ -12,21 +12,27 @@ import org.jetbrains.annotations.Nullable;
  * axes and the mace, and each hell weapon as its own kind. Spears, tridents and tools keep vanilla's ways.
  */
 public enum WeaponClass {
-	SWORD(1.0f, false),
-	AXE(0.85f, true),
-	MACE(0.85f, true),
-	BLOODLETTER(1.15f, false),
-	REAPER(1.15f, true),
-	TITHE_AXE(1.15f, true);
+	SWORD(1.0f, false, false),
+	AXE(0.85f, true, true),
+	MACE(0.85f, true, true),
+	BLOODLETTER(1.15f, false, false),
+	REAPER(1.15f, true, true),
+	TITHE_AXE(1.15f, true, true);
 
 	/** How well it guards, against the guardBlock setting (a sword: 1). */
 	public final float guard;
 	/** Held in both hands: its own guard stance. */
 	public final boolean twoHanded;
+	/**
+	 * A heavy weapon: once its blow lands the swing is committed, and no guard cuts its recovery short (combat/Swing.committed).
+	 * In return its wielder is braced through that recovery and takes less from blows (Swing.brace).
+	 */
+	public final boolean heavy;
 
-	WeaponClass(float guard, boolean twoHanded) {
+	WeaponClass(float guard, boolean twoHanded, boolean heavy) {
 		this.guard = guard;
 		this.twoHanded = twoHanded;
+		this.heavy = heavy;
 	}
 
 	@Nullable

@@ -67,7 +67,7 @@ public final class Dodge {
 		return base * Math.max(0.4f, 1.0f - 0.2f * sidestep);
 	}
 
-	static int invulnerableTicks(int base, int sidestep) {
+	public static int invulnerableTicks(int base, int sidestep) {
 		return Math.min(TICKS - EVADE_FROM, base + 2 * sidestep);
 	}
 
@@ -114,8 +114,17 @@ public final class Dodge {
 		return started != null && player.level().getGameTime() - started < TICKS;
 	}
 
-	/** The tick into a roll from which a guard may cut it short (the roll's "recover": up off the ground, blows no longer missing). */
+	/** The earliest tick into a roll from which a guard may cut it short: its "recover", up off the ground. */
 	public static final int GUARD_FROM = PlayerMovesAnim.ROLL.at("recover");
+
+	/**
+	 * The tick into a roll from which a guard may cut it short: its "recover", and never while blows still pass through
+	 * (Sidestep and the dodgeInvulnerableTicks setting make that part longer). The client asks the same (RollControl), with
+	 * the safe ticks the server sent, so it never raises a guard the server won't.
+	 */
+	public static int guardFrom(int invulnerableBase, int sidestep) {
+		return Math.max(GUARD_FROM, EVADE_FROM + invulnerableTicks(invulnerableBase, sidestep));
+	}
 
 	/** Whether a guard may go up now: not rolling, or past the part of the roll where blows pass through. */
 	public static boolean mayGuard(ServerPlayer player) {
@@ -123,7 +132,8 @@ public final class Dodge {
 		if (started == null || !rolling(player)) {
 			return true;
 		}
-		return player.level().getGameTime() - started >= GUARD_FROM && !evading(player);
+		int from = guardFrom(HellConfig.get().dodgeInvulnerableTicks, LayerEnchants.level(player, LayerEnchants.SIDESTEP));
+		return player.level().getGameTime() - started >= from && !evading(player);
 	}
 
 	/** In the part of a roll where blows pass through. */
@@ -168,6 +178,9 @@ public final class Dodge {
 		}
 		if (invulnerableTicks(8, 0) != 8 || invulnerableTicks(8, 3) > TICKS) {
 			return "a roll's safe ticks should fit inside the roll";
+		}
+		if (guardFrom(8, 0) != GUARD_FROM || guardFrom(8, 1) <= GUARD_FROM || guardFrom(8, 1) < EVADE_FROM + invulnerableTicks(8, 1)) {
+			return "a guard should cut a roll short at its recover, and never while blows still pass through";
 		}
 		return "";
 	}

@@ -24,7 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LivingEntityMixin {
 	@ModifyVariable(method = "hurtServer", at = @At("HEAD"), argsOnly = true)
 	private float hellcraft$bossRules(float amount, @Local(argsOnly = true) DamageSource source) {
-		return BossRules.adjust((LivingEntity) (Object) this, source, amount);
+		LivingEntity self = (LivingEntity) (Object) this;
+		return net.thesmallthings.hellcraft.combat.Swing.brace(self, BossRules.adjust(self, source, amount));
 	}
 
 	/** A weapon's guard (combat/Guard) turns aside its share of the blow; shields are left to vanilla. */

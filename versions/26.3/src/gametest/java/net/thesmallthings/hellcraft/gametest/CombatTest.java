@@ -16,6 +16,7 @@ import net.thesmallthings.hellcraft.client.combat.StaminaHud;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
 import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.combat.Stamina;
+import net.thesmallthings.hellcraft.combat.Swing;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim;
 
 import java.util.ArrayList;
@@ -255,13 +256,10 @@ public class CombatTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * Swings: a click cuts everything in the arc in front and nothing behind; clicks in time chain into the next moves;
-	 * holding the key makes the heavy move, for stamina; and with a block under the crosshair and nothing to fight, the
-	 * key still mines.
-	 */
-	/**
 	 * A guard needn't wait for a move to finish: raised mid-wind-up it cuts the swing short (the blow never lands and the
-	 * animation gives way to the guard), and held through a roll it goes up as soon as the roll is past its dodge.
+	 * animation gives way to the guard), and held through a roll it goes up as soon as the roll is past its dodge, with
+	 * Sidestep's longer dodge too (client and server agree on when). A heavy weapon's recovery is committed: a guard held
+	 * through it goes up when the move ends.
 	 */
 	private static void guardCutsIn(ClientGameTestContext context, TestSingleplayerContext world) {
 		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 0");
@@ -317,9 +315,67 @@ public class CombatTest implements FabricClientGameTest {
 		if (upAt < 0 || upAt > 12) {
 			throw new AssertionError("a guard held through a roll should go up as the roll recovers (about tick 9-11), not " + upAt);
 		}
+		context.waitTicks(60);
+		// with Sidestep II the roll's dodge lasts to its end: the guard waits for the server instead of standing on screen
+		// blocking nothing (the client used to raise it at tick 9, which the server refused)
+		world.getServer().runCommand("item replace entity Player0 armor.legs with minecraft:iron_leggings[minecraft:enchantments={\"hellcraft:sidestep\":2}]");
+		context.waitTicks(5);
+		context.getInput().pressKey(DashKey.DASH);
+		context.waitTicks(2);
+		context.getInput().holdKey(options -> options.keyUse);
+		context.waitTicks(18);
+		boolean clientUp = context.computeOnClient(client -> Guard.guarding(client.player));
+		boolean serverUp = world.getServer().computeOnServer(server -> Guard.guarding(server.getPlayerList().getPlayerByName("Player0")));
+		context.getInput().releaseKey(options -> options.keyUse);
+		world.getServer().runCommand("item replace entity Player0 armor.legs with minecraft:air");
+		if (!clientUp || !serverUp) {
+			throw new AssertionError("a guard held through a Sidestep roll should be up on both sides once the roll ends (client " + clientUp
+					+ ", server " + serverUp + ")");
+		}
+		context.waitTicks(40);
+		// a heavy weapon commits to its recovery: the guard held from just after the blow goes up only when the move ends
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_axe");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~ ~ ~2.4 {NoAI:1b,Silent:1b,PersistenceRequired:1b,Rotation:[180f,0f],CustomName:\"commit\"}");
+		context.waitTicks(30);
+		context.getInput().pressKey(options -> options.keyAttack);
+		int landedAt = -1;
+		for (int t = 1; t <= 30 && landedAt < 0; t++) {
+			context.waitTicks(1);
+			if (world.getServer().computeOnServer(server -> Swing.committed(server.getPlayerList().getPlayerByName("Player0")))) {
+				landedAt = t;
+			}
+		}
+		if (landedAt < 0) {
+			throw new AssertionError("an axe's blow should commit its wielder to the recovery");
+		}
+		context.getInput().holdKey(options -> options.keyUse);
+		context.waitTicks(2);
+		boolean early = world.getServer().computeOnServer(server -> Guard.guarding(server.getPlayerList().getPlayerByName("Player0")))
+				|| context.computeOnClient(client -> Guard.guarding(client.player));
+		int axeUp = -1;
+		for (int t = 1; t <= 40 && axeUp < 0; t++) {
+			context.waitTicks(1);
+			if (world.getServer().computeOnServer(server -> Guard.guarding(server.getPlayerList().getPlayerByName("Player0")))) {
+				axeUp = t;
+			}
+		}
+		context.getInput().releaseKey(options -> options.keyUse);
+		world.getServer().runCommand("kill @e[type=minecraft:husk]");
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_sword");
+		if (early) {
+			throw new AssertionError("a guard shouldn't cut a heavy weapon's recovery short");
+		}
+		if (axeUp < 0) {
+			throw new AssertionError("a guard held through a heavy weapon's recovery should go up when the move ends");
+		}
 		context.waitTicks(40);
 	}
 
+	/**
+	 * Swings: a click cuts everything in the arc in front and nothing behind; clicks in time chain into the next moves;
+	 * holding the key makes the heavy move, for stamina; and with a block under the crosshair and nothing to fight, the
+	 * key still mines.
+	 */
 	private static void swings(ClientGameTestContext context, TestSingleplayerContext world) {
 		world.getServer().runCommand("effect give Player0 minecraft:instant_health 1 4 true");
 		context.waitTicks(60);

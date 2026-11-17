@@ -48,6 +48,8 @@ public final class PlayerAnimator {
 	/** A move cut short (a guard raised mid-swing or late in a roll): held where it was and faded out over cutTotal ticks. */
 	private float cutLeft;
 	private float cutTotal;
+	/** The guard was up last tick: a move is cut short on the tick it goes up. */
+	private boolean wasGuarding;
 
 	@Nullable
 	private Clips.Clip stance;
@@ -157,7 +159,8 @@ public final class PlayerAnimator {
 		speed = 0;
 		freeze = 0;
 		cutTotal = Math.max(0.01f, fade);
-		cutLeft = cutTotal;
+		// one over: the tick that cuts it counts one off before it is drawn, and the fade starts from the whole move
+		cutLeft = cutTotal + 1;
 	}
 
 	/** Starts a move made for the right hand, done with the other one (a trident thrown left-handed). */
@@ -224,11 +227,13 @@ public final class PlayerAnimator {
 			want = Clips.of(kind != null && kind.twoHanded ? PlayerMovesAnim.GUARD_TWO : PlayerMovesAnim.GUARD);
 		}
 		lastStanceWeight = stanceWeight;
-		if (want != null && stanceWeight <= 0 && action != null && busy()
+		if (want != null && !wasGuarding && action != null && busy()
 				&& (action.move == PlayerMovesAnim.ROLL || action.move.ordinal() >= PlayerMovesAnim.SWORD_1.ordinal())) {
-			// the guard went up mid-swing or late in a roll: the move gives way to it at once (for everyone watching too)
+			// the guard went up mid-swing or late in a roll: the move gives way to it at once (for everyone watching too),
+			// even when the last guard's stance hasn't quite faded
 			cut(3.0f);
 		}
+		wasGuarding = want != null;
 		if (want != null) {
 			if (stance != want) {
 				if (stance == null || stanceWeight <= 0) {
@@ -301,7 +306,7 @@ public final class PlayerAnimator {
 			scratch.legs = action.move == PlayerMovesAnim.ROLL || action.move == PlayerMovesAnim.GUARD_BREAK ? 1.0f : 0.3f;
 			float fade = t <= action.ticks ? 1 : 1 - smooth((t - action.ticks) / blendOut);
 			if (cutTotal > 0) {
-				fade *= smooth((cutLeft - partial) / cutTotal);
+				fade *= smooth(Math.min(1, (cutLeft - partial) / cutTotal));
 			}
 			out.layer(scratch, fade);
 			if (!held && t < blendIn) {
