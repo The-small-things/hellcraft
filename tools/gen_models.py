@@ -484,6 +484,7 @@ ENTITY_NAMES = {
     "cyclops": "Cyclops", "minotaur": "The Minotaur", "geryon": "Geryon", "geryon_carrier": "Geryon",
     "antaeus": "Antaeus", "fallen_seraph": "The Fallen Seraph", "emperor": "The Three-Faced Emperor",
     "emperor_weak_point": "The Emperor's Weak Point", "damned": "Damned Soul",
+    "boss_part": "Part of a Boss",
 }
 
 

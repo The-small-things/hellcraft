@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.MinosShape;
 
 /**
  * Minos, Judge of the Damned: the body of his fight (MinosFight), modelled in art/minos.bbmodel (edited in Blender via tools/art/blender_bridge.py). He never leaves his
@@ -88,5 +89,11 @@ public class MinosEntity extends BossEntity {
 		if (!level().isClientSide()) {
 			play(MinosAnim.DEATH);
 		}
+	}
+
+	/** Where he can be hit beyond his main box: his tail across the floor (tools/art/hitboxes.py). */
+	@Override
+	public BossShape shape() {
+		return MinosShape.SHAPE;
 	}
 }

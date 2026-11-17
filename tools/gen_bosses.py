@@ -5,7 +5,9 @@
 - client/render/gen/MinosAnimations.java: each animation as an AnimationDefinition (Minecraft's own keyframes);
 - entity/boss/gen/MinosAnim.java (common code): the animations' lengths and named events, which the server times
   its blows by;
-- assets/hellcraft/textures/entity/minos.png (and minos_glow.png, the parts that shine in the dark).
+- assets/hellcraft/textures/entity/minos.png (and minos_glow.png, the parts that shine in the dark);
+- entity/boss/gen/MinosShape.java (common code), for models listed in tools/art/hitboxes.py: where each of its hit boxes
+  is at every tick of every animation (BossShape; the game's BossPart entities follow them).
 
 Run from the repo root:  python3 tools/gen_bosses.py   (after tools/art/<model>.py, which writes the .bbmodel)
 
@@ -18,6 +20,14 @@ import base64
 import glob
 import json
 import os
+import struct
+import sys
+
+import numpy as np
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "art"))
+import render  # noqa: E402  (tools/art/render.py: the same bones and keyframes, worked out in Python)
+from hitboxes import HITBOXES  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "versions", "26.3")
 ART = os.path.join(ROOT, "art")
@@ -325,6 +335,123 @@ public enum {self.java}Anim implements BossAnim {{
             written.append(name)
         return written
 
+
+    # ---------------------------------------------------------------------------------------------- the hit boxes
+
+    def matrices(self, poses):
+        """Every group's matrix (Blockbench space, pixels) in a pose, as render.py works them out."""
+        out = {}
+
+        def walk(group, parent_m):
+            name = group["name"]
+            rot = np.array(group.get("rotation", [0, 0, 0]), dtype=float)
+            pos = np.zeros(3)
+            if name in poses:
+                rot = rot + poses[name][0]
+                pos = poses[name][1]
+            m = parent_m @ render.translate(pos) @ render.affine(rot, group["origin"])
+            out.setdefault(name, (m, parent_m, group))
+            for child in group.get("children", []):
+                if isinstance(child, dict):
+                    walk(child, m)
+
+        for g in self.doc["outliner"]:
+            if isinstance(g, dict):
+                walk(g, np.eye(4))
+        return out
+
+    def cube_points(self, group, m, children):
+        """The corners of a group's cubes at rest (with its children's cubes too if asked)."""
+        points = []
+        for child in group.get("children", []):
+            if isinstance(child, dict):
+                if children:
+                    cm = m @ render.affine(np.array(child.get("rotation", [0, 0, 0]), dtype=float), child["origin"])
+                    points += self.cube_points(child, cm, True)
+                continue
+            e = self.elements.get(child)
+            if e is None:
+                continue
+            em = m @ render.affine(e.get("rotation", [0, 0, 0]), e.get("origin", [0, 0, 0]))
+            lo, hi = np.array(e["from"], dtype=float), np.array(e["to"], dtype=float)
+            for i in range(8):
+                corner = np.array([(hi if i >> k & 1 else lo)[k] for k in range(3)] + [1.0])
+                points.append((em @ corner)[:3])
+        return points
+
+    def shape(self):
+        spec = HITBOXES[self.name]
+        scale = float(spec["scale"])
+        rest = self.matrices({})
+        parts = []
+        for name, group, opts in spec["parts"]:
+            assert group in rest, f"{self.src}: hit box {name} is on {group}, which isn't a group"
+            m, _, g = rest[group]
+            points = np.array(self.cube_points(g, m, opts.get("children", False)))
+            assert len(points), f"{self.src}: hit box {name}: {group} has no cubes"
+            lo, hi = points.min(0), points.max(0)
+            centre = (lo + hi) / 2
+            local = np.linalg.inv(m) @ np.append(centre, 1)
+            if "size" in opts:
+                width, height = opts["size"]
+            else:
+                width = ((hi[0] - lo[0]) + (hi[2] - lo[2])) / 2 / 16 * scale
+                height = (hi[1] - lo[1]) / 16 * scale
+            gaze = float(opts.get("gaze", 0))
+            pivot = np.zeros(3)
+            if gaze:
+                pm, parent_m, pg = rest[opts["pivot"]]
+                pivot = (parent_m @ np.append(np.array(pg["origin"], dtype=float), 1))[:3] / 16 * scale
+            parts.append((name, group, local, width, height, gaze, pivot))
+        names, ticks, loops, tracks = [], [], [], []
+        for a in self.doc.get("animations", []):
+            short = self.anim_name(a)
+            n = round(float(a["length"]) * 20)
+            data = bytearray()
+            for i in range(n + 1):
+                poses = render.pose_of(self.doc, a["name"].split(".")[-1], i / 20)
+                mats = self.matrices(poses)
+                for _, group, local, *_ in parts:
+                    p = (mats[group][0] @ local)[:3] / 16 * scale
+                    for v in p:
+                        q = int(round(v * 128))
+                        assert -32768 <= q <= 32767, f"{self.src}: a hit box strays too far ({v} blocks)"
+                        data += struct.pack(">h", q)
+            names.append(constant(short))
+            ticks.append(n)
+            loops.append(a.get("loop") == "loop")
+            tracks.append(base64.b64encode(bytes(data)).decode())
+        part_lines = ",\n".join(
+            f"\t\t\t\t\tnew BossShape.Part(\"{name}\", {f(w)}, {f(h)}, {f(gz)}, {f(pv[0])}, {f(pv[1])}, {f(pv[2])})"
+            for name, _, _, w, h, gz, pv in parts)
+        track_lines = ",\n".join(f"\t\t\t\t\t\"{t}\"" for t in tracks)
+        return f"""package net.thesmallthings.hellcraft.entity.boss.gen;
+
+{HEADER.format(src=self.src)}
+
+import net.thesmallthings.hellcraft.entity.boss.BossShape;
+
+/**
+ * Where {self.java} can be hit beyond its main box (tools/art/hitboxes.py): each part's box and where its centre is at
+ * every tick of every animation, which the game's BossPart entities follow.
+ */
+public final class {self.java}Shape {{
+	public static final BossShape SHAPE = new BossShape({f(scale)},
+			new BossShape.Part[]{{
+{part_lines}
+			}},
+			new String[]{{{", ".join(f'"{n}"' for n in names)}}},
+			new int[]{{{", ".join(str(t) for t in ticks)}}},
+			new boolean[]{{{", ".join(str(lp).lower() for lp in loops)}}},
+			new String[]{{
+{track_lines}
+			}});
+
+	private {self.java}Shape() {{
+	}}
+}}
+"""
+
     def run(self):
         if self.name in RIGS:
             # a rig: its animations play on a model the game already has (the player's), so no mesh and no texture
@@ -339,6 +466,9 @@ public enum {self.java}Anim implements BossAnim {{
         write(os.path.join(CLIENT, f"{self.java}Animations.java"), anims)
         write(os.path.join(COMMON, f"{self.java}Anim.java"), enum)
         textures = self.textures()
+        if self.name in HITBOXES:
+            write(os.path.join(COMMON, f"{self.java}Shape.java"), self.shape())
+            print(f"{self.src}: {len(HITBOXES[self.name]['parts'])} hit boxes")
         print(f"{self.src}: {len(self.part_names)} parts, {len(self.doc.get('animations', []))} animations, textures {', '.join(textures)}")
 
 

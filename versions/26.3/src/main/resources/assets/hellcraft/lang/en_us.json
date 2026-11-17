@@ -157,5 +157,6 @@
   "subtitles.hellcraft.cue.slump": "The Emperor slumps",
   "subtitles.hellcraft.cue.red_short": "A red mark: get out",
   "subtitles.hellcraft.cue.white_short": "A white mark: block now",
-  "subtitles.hellcraft.cue.purple_short": "A purple mark: jump or roll"
+  "subtitles.hellcraft.cue.purple_short": "A purple mark: jump or roll",
+  "entity.hellcraft.boss_part": "Part of a Boss"
 }

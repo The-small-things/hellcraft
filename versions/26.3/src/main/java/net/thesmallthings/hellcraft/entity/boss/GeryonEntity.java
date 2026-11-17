@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.entity.boss.gen.GeryonShape;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 
 /**
@@ -62,5 +63,11 @@ public class GeryonEntity extends AnimatedBoss {
 	@Override
 	public boolean shouldBeSaved() {
 		return !isFalse() && super.shouldBeSaved();
+	}
+
+	/** Where he can be hit beyond his main box (tools/art/hitboxes.py). */
+	@Override
+	public BossShape shape() {
+		return GeryonShape.SHAPE;
 	}
 }

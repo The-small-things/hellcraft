@@ -4,11 +4,15 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.thesmallthings.hellcraft.entity.HellEntities;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -18,6 +22,9 @@ import java.util.Set;
  * shows (the danger language: a white flash means block now, purple means it can't be blocked); the fight
  * (hazard/guardian) decides when. Bosses never wander off, despawn, drown or take fall damage, can't be pushed or
  * leashed, and play their own death before they go.
+ *
+ * A boss whose body reaches past its main box has a {@link #shape()}: hit boxes that follow its bones (BossPart), placed
+ * every tick on the server and on each client from the animation the server last started.
  */
 public abstract class BossEntity extends Monster {
 	private static final EntityDataAccessor<Integer> DATA_ANIMATION = SynchedEntityData.defineId(BossEntity.class, EntityDataSerializers.INT);
@@ -37,6 +44,12 @@ public abstract class BossEntity extends Monster {
 	}
 
 	private int sequence;
+	/** The animation the server last started and the tick it started on (both sides): where the parts are. */
+	private int poseAnim = -1;
+	private int poseStart;
+	/** Its hit boxes beyond the main one, by part (null without a shape, or before the first tick). */
+	@Nullable
+	private BossPart[] parts;
 
 	protected BossEntity(EntityType<? extends Monster> type, Level level) {
 		super(type, level);
@@ -83,7 +96,12 @@ public abstract class BossEntity extends Monster {
 
 	/** How fast this animation plays: blows at the boss's tempo, everything else as made. */
 	public float speedOf(BossAnim anim) {
-		return UNPACED.contains(anim.name()) ? 1.0f : Math.max(0.1f, tempo());
+		return speedOf(anim.name());
+	}
+
+	/** How fast the animation of this name plays. */
+	public float speedOf(String anim) {
+		return UNPACED.contains(anim) ? 1.0f : Math.max(0.1f, tempo());
 	}
 
 	/** How many ticks this animation lasts at its speed. */
@@ -98,9 +116,109 @@ public abstract class BossEntity extends Monster {
 	@Override
 	public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
 		super.onSyncedDataUpdated(accessor);
-		if (DATA_ANIMATION.equals(accessor) && level().isClientSide() && animation() >= 0) {
-			onAnimation(animation());
+		if (DATA_ANIMATION.equals(accessor)) {
+			poseAnim = animation();
+			poseStart = tickCount;
+			if (level().isClientSide() && animation() >= 0) {
+				onAnimation(animation());
+			}
 		}
+	}
+
+	// ------------------------------------------------------------------ hit boxes beyond the main one
+
+	/** Where it can be hit beyond its main box (entity/boss/gen/<Boss>Shape), or null: only its main box. */
+	@Nullable
+	public BossShape shape() {
+		return null;
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		BossShape shape = shape();
+		if (shape != null && !isRemoved()) {
+			updateParts(shape);
+		}
+	}
+
+	/** Spawns any part it lacks (server) and puts every part where the model has that bone now. */
+	public void updateParts(BossShape shape) {
+		if (parts == null || parts.length != shape.parts()) {
+			parts = new BossPart[shape.parts()];
+		}
+		if (level() instanceof ServerLevel server && isAlive()) {
+			for (int i = 0; i < parts.length; i++) {
+				if (parts[i] == null || parts[i].isRemoved()) {
+					BossPart part = HellEntities.BOSS_PART.create(server, EntitySpawnReason.EVENT);
+					if (part == null) {
+						continue;
+					}
+					part.attach(this, i);
+					parts[i] = part;
+					placePart(shape, i);
+					server.addFreshEntity(part);
+				}
+			}
+		}
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i] != null && !parts[i].isRemoved()) {
+				placePart(shape, i);
+			}
+		}
+	}
+
+	private void placePart(BossShape shape, int i) {
+		int anim = poseAnim;
+		float age = tickCount - poseStart;
+		if (anim >= 0 && anim < shape.anims()) {
+			String name = shape.animName(anim);
+			age *= speedOf(name);
+			if (!shape.looping(anim) && age > shape.ticks(anim) && !"DEATH".equals(name)) {
+				anim = -1;
+			}
+		} else {
+			anim = -1;
+		}
+		if (anim < 0) {
+			// nothing of its own playing: it breathes
+			anim = shape.anim("IDLE");
+			age = tickCount;
+		}
+		BossShape.Part part = shape.part(i);
+		float headTurn = Mth.wrapDegrees(getYHeadRot() - yBodyRot);
+		parts[i].place(position().add(shape.offset(i, anim, age, yBodyRot, headTurn)), part.width(), part.height());
+	}
+
+	/** A client's part found its boss. */
+	void adopt(int index, BossPart part) {
+		BossShape shape = shape();
+		if (shape == null || index < 0 || index >= shape.parts()) {
+			return;
+		}
+		if (parts == null || parts.length != shape.parts()) {
+			parts = new BossPart[shape.parts()];
+		}
+		parts[index] = part;
+	}
+
+	/** Whether this is its part (a part it no longer knows is a stray, and goes). */
+	boolean owns(BossPart part) {
+		int i = part.index();
+		return parts != null && i >= 0 && i < parts.length && parts[i] == part;
+	}
+
+	/** Its parts as they are now (for tests): none without a shape. */
+	public java.util.List<BossPart> parts() {
+		java.util.List<BossPart> out = new java.util.ArrayList<>();
+		if (parts != null) {
+			for (BossPart p : parts) {
+				if (p != null && !p.isRemoved()) {
+					out.add(p);
+				}
+			}
+		}
+		return out;
 	}
 
 	/** How long the death animation runs before the body goes. */
