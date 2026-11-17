@@ -22,7 +22,7 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from bbmodel import Model, material, mix, shade, hexc  # noqa: E402
 
 STONE = material("stone", "skin", base="8e8e86", dark="5c5c56")

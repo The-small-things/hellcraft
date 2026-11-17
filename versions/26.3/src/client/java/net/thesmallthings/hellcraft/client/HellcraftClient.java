@@ -298,7 +298,7 @@ public class HellcraftClient implements ClientModInitializer {
 				1.0f, 2.0f, 0.0f));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("antaeus"), AntaeusMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.ANTAEUS, context -> new AnimatedBossRenderer<>(context, "antaeus", AntaeusAnimations.all(), -1,
-				AntaeusEntity.SCALE, 0.0f, 0.0f) {
+				AntaeusEntity.SCALE / 2, 0.0f, 0.0f) {
 			// his arm reaches far past his feet: don't hide him when only his hand is in view
 			@Override
 			protected AABB getBoundingBoxForCulling(AntaeusEntity entity, float partialTicks) {

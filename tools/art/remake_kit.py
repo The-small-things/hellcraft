@@ -18,6 +18,7 @@ Animation keys are offsets from rest, as Minecraft adds them. Remakes are built 
 to a game pixel) and drawn at half size by their renderer."""
 import json
 import math
+import os
 
 import bpy
 import numpy as np
@@ -58,11 +59,12 @@ class Builder:
         self.bones.append((parent, name, tuple(pivot), tuple(rotation)))
         return name
 
-    def cube(self, bone, name, frm, size, mat, inflate=0.0, rotation=None, origin=None, detail=None):
+    def cube(self, bone, name, frm, size, mat, inflate=0.0, rotation=None, origin=None, detail=None, mirror=False):
         size = tuple(int(round(s)) for s in size)
         assert all(s > 0 for s in size), f"{name}: size {size}"
         self.cubes.append(dict(bone=bone, name=name, frm=tuple(float(v) for v in frm), size=size, mat=mat,
-                               inflate=inflate, rotation=tuple(rotation or ZERO), origin=origin, detail=detail))
+                               inflate=inflate, rotation=tuple(rotation or ZERO), origin=origin, detail=detail,
+                               mirror=mirror))
 
     def seg(self, bone, name, p0, p1, w, h, mat, extra=0.0, **kw):
         """A cube laid along p0 -> p1 (its length on its own Z), w wide and h thick, turned about its centre; extra
@@ -205,6 +207,48 @@ def fresh_scene():
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
 
+def ported(old, k=2):
+    """A detail that carries an old cube's hand-painted detail over to the same cube at k times the size: the old
+    material and detail are painted at the old size off to one side, and every pixel the detail changed is brought
+    across to the k x k pixels it covers: a plain darkening or lightening as the same tone over the new, finer grain;
+    a new colour, a glow or a hole as itself."""
+    def detail(faces):
+        w, h, d = old.size
+        cv, gl = Canvas(2 * (w + d), h + d), Canvas(2 * (w + d), h + d)
+        small = {n: Face(old, n, *r, cv, gl) for n, r in Builder.rects(0, 0, w, h, d).items()}
+        for f in small.values():
+            old.material.paint(f)
+        before = list(cv.pixels)
+        old.detail(small)
+        for n, sf in small.items():
+            f = faces[n]
+            for y in range(sf.h):
+                for x in range(sf.w):
+                    i = (sf.y + y) * cv.width + sf.x + x
+                    was, now, glow = before[i], cv.pixels[i], gl.pixels[i]
+                    if was == now and not glow[3]:
+                        continue
+                    for yy in range(y * k, y * k + k):
+                        for xx in range(x * k, x * k + k):
+                            if not (0 <= xx < f.w and 0 <= yy < f.h):
+                                continue
+                            if glow[3]:
+                                f.glow(xx, yy, glow[:3])
+                            elif not now[3]:
+                                f.px(xx, yy, (0, 0, 0), 0)
+                            else:
+                                lw, ln = sum(was[:3]) + 1, sum(now[:3]) + 1
+                                r = ln / lw
+                                plain = was[3] and all(abs(now[j] - was[j] * r) < 14 for j in range(3))
+                                cur = f.canvas.get(f.x + xx, f.y + yy)
+                                if plain and cur[3]:
+                                    f.px(xx, yy, tuple(max(0, min(255, int(round(v * r)))) for v in cur[:3]))
+                                else:
+                                    j = 0.95 + 0.1 * f.rng.random()
+                                    f.px(xx, yy, tuple(max(0, min(255, int(round(v * j)))) for v in now[:3]))
+    return detail
+
+
 class Remake(Builder):
     """Remakes a model's body and keeps its skeleton and animations: reads versions/26.3/art/<model>.bbmodel, brings
     it to `detail` model pixels per game pixel (pivots and position keys scale; the file remembers its detail in
@@ -218,6 +262,7 @@ class Remake(Builder):
 
     def __init__(self, model, tex_width=512, detail=2):
         super().__init__(model, tex_width)
+        self.detail = detail
         fresh_scene()
         bb.import_model(model)
         root = bb.model_root(model)
@@ -280,6 +325,36 @@ class Remake(Builder):
         self.cube(bone or o["bone"], rename or name, frm, size, mat, inflate=inflate, rotation=o["rotation"], origin=origin,
                   detail=detail)
 
+    def port(self, script, skip=(), mats=None, details=None, also=None):
+        """Brings over the body an old script built (tools/art/legacy/<script>.py), every cube at the new detail in
+        its old material, so the material's grain is finer, with the old script's hand-painted details carried over
+        (`ported`). skip: names (or prefixes ending in *) to leave out, for parts this remake rebuilds; mats and
+        details: name -> a new material or detail (a detail of None keeps the old one carried over; give a function
+        to repaint the part at the new detail); also: name -> a detail painted after the carried-over one."""
+        import importlib
+        import sys
+        import bbmodel
+        sys.path.insert(0, os.path.join(bb.HERE, "legacy"))
+        mod = importlib.import_module(script)
+        k = self.detail
+        mats, details, also = mats or {}, details or {}, also or {}
+
+        def skipped(name):
+            return any(name == s or (s.endswith("*") and name.startswith(s[:-1])) for s in skip)
+        self.ported = {}
+        for c in mod.build().cubes:
+            self.ported[c.name] = c
+            if skipped(c.name):
+                continue
+            detail = details[c.name] if c.name in details else (ported(c, k) if c.detail else None)
+            if c.name in also:
+                first, second = detail, also[c.name]
+                detail = (lambda fs, first=first, second=second: ((first(fs) if first else None), second(fs)))
+            turned = any(c.rotation)
+            self.cube(c.bone.name, c.name, tuple(v * k for v in c.frm), tuple(s * k for s in c.size),
+                      mats.get(c.name, c.material), rotation=c.rotation if turned else None,
+                      origin=tuple(v * k for v in c.origin) if turned else None, detail=detail, mirror=c.mirror)
+
     def stick(self, bone, name, a, b, t, mat, depth=None, **kw):
         """A cube t wide (depth deep) standing on point a and reaching to point b, turned about a (the old scripts'
         stick): a fold, a brow, a serpent's segment."""
@@ -310,6 +385,6 @@ class Remake(Builder):
         bb.make_material(model, images[0], images[1] if glows else None)
         for c in self.cubes:
             bb.add_cube(model, c["bone"], c["name"], c["frm"], c["size"], c["uv"], rotation=c["rotation"],
-                        origin=c["origin"], inflate=c["inflate"])
+                        origin=c["origin"], inflate=c["inflate"], mirror=c["mirror"])
         path = bb.export_model(model)
         print(f"{model}: {len(self.cubes)} cubes, {len(bb.model_bones(model))} bones, texture {self.tex_width}x{height} -> {path}")
