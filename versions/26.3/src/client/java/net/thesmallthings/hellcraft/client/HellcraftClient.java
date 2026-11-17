@@ -308,7 +308,7 @@ public class HellcraftClient implements ClientModInitializer {
 		// Lucifer: the Fallen Seraph, and the Emperor (his eyes shut while he sleeps; seen from far across the pit)
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("fallen_seraph"), FallenSeraphMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.FALLEN_SERAPH, context -> new AnimatedBossRenderer<>(context, "fallen_seraph",
-				FallenSeraphAnimations.all(), -1, FallenSeraphEntity.SCALE, 0.8f, 0.5f, "root", "body", "torso", "head").minLight(15));
+				FallenSeraphAnimations.all(), -1, FallenSeraphEntity.SCALE / 2, 0.8f, 0.5f, "root", "body", "torso", "head").minLight(15));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("emperor"), EmperorMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.EMPEROR, context -> {
 			AnimatedBossRenderer<EmperorEntity> r = new AnimatedBossRenderer<>(context, "emperor", EmperorAnimations.all(), -1, EmperorEntity.SCALE,
