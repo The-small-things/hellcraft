@@ -292,10 +292,10 @@ public class HellcraftClient implements ClientModInitializer {
 		EntityRendererRegistry.register(HellEntities.MINOTAUR, context -> new AnimatedBossRenderer<>(context, "minotaur", MinotaurAnimations.all(),
 				MinotaurAnim.WALK.ordinal(), 0.7f, 2.0f, 0.5f, "hips", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("geryon"), GeryonMesh::createLayer);
-		EntityRendererRegistry.register(HellEntities.GERYON, context -> new AnimatedBossRenderer<>(context, "geryon", GeryonAnimations.all(), -1, 2.0f,
+		EntityRendererRegistry.register(HellEntities.GERYON, context -> new AnimatedBossRenderer<>(context, "geryon", GeryonAnimations.all(), -1, 1.0f,
 				2.0f, 0.4f, "root", "chest", "neck", "head"));
 		EntityRendererRegistry.register(HellEntities.GERYON_CARRIER, context -> new AnimatedBossRenderer<>(context, "geryon", GeryonAnimations.all(), -1,
-				2.0f, 2.0f, 0.0f));
+				1.0f, 2.0f, 0.0f));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("antaeus"), AntaeusMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.ANTAEUS, context -> new AnimatedBossRenderer<>(context, "antaeus", AntaeusAnimations.all(), -1,
 				AntaeusEntity.SCALE, 0.0f, 0.0f) {
