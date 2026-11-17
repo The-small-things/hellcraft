@@ -196,3 +196,90 @@ class Anim:
             v[axis] += round(amp * math.sin(2 * math.pi * i / points - phase), 3)
             keys.append((round(self.length * i / n, 4), tuple(v)))
         return self.rot(bone, keys)
+
+
+# ------------------------------------------------------------------------------------------------- remakes, headless
+
+def fresh_scene():
+    """An empty scene (for running under `python3` with the bpy module, or `blender -b -P`)."""
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+
+
+class Remake(Builder):
+    """Remakes a model's body and keeps its skeleton and animations: reads versions/26.3/art/<model>.bbmodel, brings
+    it to `detail` model pixels per game pixel (pivots and position keys scale; the file remembers its detail in
+    "hellcraft_detail", so running a remake twice changes nothing), throws its cubes away and takes this builder's.
+    Bones the file has are there already (`pivot(name)`); `bone(...)` adds the ones it lacks.
+
+        b = kit.Remake("minotaur")                      # tools/art/remake/minotaur.py
+        b.cube("torso", "chest", ...)
+        b.finish()                                      # writes the .bbmodel; then python3 tools/gen_bosses.py
+    """
+
+    def __init__(self, model, tex_width=512, detail=2):
+        super().__init__(model, tex_width)
+        fresh_scene()
+        bb.import_model(model)
+        root = bb.model_root(model)
+        header = json.loads(root["bb_header"])
+        was = header.get("hellcraft_detail", 1)
+        if was != detail:
+            bb.scale_model(model, detail / was)
+            header["hellcraft_detail"] = detail
+            root["bb_header"] = json.dumps(header)
+        for o in list(bb.model_objects(model)):
+            if o.get("bb_kind") == "cube":
+                data = o.data
+                bpy.data.objects.remove(o)
+                if data is not None and data.users == 0:
+                    bpy.data.meshes.remove(data)
+
+    def pivot(self, name):
+        return tuple(bb.bone_pivot(self.model, name))
+
+    def has(self, name):
+        return name in bb.model_bones(self.model)
+
+    def bone(self, parent, name, pivot, rotation=ZERO):
+        """Adds a bone at once (so its children can ask for its pivot); one the model has already must sit where
+        the script says."""
+        if self.has(name):
+            old = self.pivot(name)
+            assert all(abs(old[i] - pivot[i]) < 0.02 for i in range(3)), f"{name} is at {old}, not {pivot}"
+            return name
+        bb.add_bone(self.model, parent, name, pivot, rotation)
+        return name
+
+    def stick(self, bone, name, a, b, t, mat, depth=None, **kw):
+        """A cube t wide (depth deep) standing on point a and reaching to point b, turned about a (the old scripts'
+        stick): a fold, a brow, a serpent's segment."""
+        d = [b[i] - a[i] for i in range(3)]
+        length = math.sqrt(sum(v * v for v in d)) or 1.0
+        rx = math.degrees(math.asin(max(-1.0, min(1.0, d[2] / length))))
+        rz = math.degrees(math.atan2(-d[0], d[1]))
+        depth = depth or t
+        self.cube(bone, name, (a[0] - t / 2, a[1], a[2] - depth / 2), (t, max(1, round(length)), depth), mat,
+                  rotation=(round(rx, 2), 0, round(rz, 2)), origin=tuple(a), **kw)
+
+    def finish(self):
+        model = self.model
+        height = self.pack()
+        canvas, glow = self.paint(height)
+        glows = any(p[3] for p in glow.pixels)
+        for im in [im for im in bpy.data.images if im.get("bb_model") == model]:
+            bpy.data.images.remove(im)
+        images = []
+        for i, name in enumerate([f"{model}.png"] + ([f"{model}_glow.png"] if glows else [])):
+            img = bpy.data.images.new(name, self.tex_width, height, alpha=True)
+            img.alpha_mode = "STRAIGHT"
+            img["bb_index"] = i
+            img["bb_model"] = model
+            self.to_image(img, canvas if i == 0 else glow)
+            img.pack()
+            images.append(img)
+        bb.make_material(model, images[0], images[1] if glows else None)
+        for c in self.cubes:
+            bb.add_cube(model, c["bone"], c["name"], c["frm"], c["size"], c["uv"], rotation=c["rotation"],
+                        origin=c["origin"], inflate=c["inflate"])
+        path = bb.export_model(model)
+        print(f"{model}: {len(self.cubes)} cubes, {len(bb.model_bones(model))} bones, texture {self.tex_width}x{height} -> {path}")

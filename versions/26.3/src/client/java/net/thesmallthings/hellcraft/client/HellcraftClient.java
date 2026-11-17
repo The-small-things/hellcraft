@@ -265,7 +265,7 @@ public class HellcraftClient implements ClientModInitializer {
 				0.5f, "body", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("medusa"), MedusaMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MEDUSA, context -> {
-			AnimatedBossRenderer<MedusaEntity> r = new AnimatedBossRenderer<>(context, "medusa", MedusaAnimations.all(), -1, MedusaEntity.SCALE, 0.0f,
+			AnimatedBossRenderer<MedusaEntity> r = new AnimatedBossRenderer<>(context, "medusa", MedusaAnimations.all(), -1, MedusaEntity.SCALE / 2, 0.0f,
 					0.6f, "bust", "head");
 			// her open eyes show only while she gazes
 			r.getModel().onlyDuring(MedusaAnim.GAZE.ordinal(), "bust", "head", "eyes");

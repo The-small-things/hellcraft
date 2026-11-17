@@ -460,7 +460,7 @@ public final class MedusaAnimations {
 			.build();
 	public static final AnimationDefinition INTRO = AnimationDefinition.Builder.withLength(3F)
 			.addAnimation("bust", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -80F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake0", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -675,7 +675,7 @@ public final class MedusaAnimations {
 	public static final AnimationDefinition DEATH = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("bust", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, -40F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, -80F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("snake0", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.125F, KeyframeAnimations.degreeVec(45F, 0F, -45F), AnimationChannel.Interpolations.CATMULLROM),
