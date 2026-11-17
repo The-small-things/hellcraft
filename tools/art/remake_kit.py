@@ -227,6 +227,26 @@ class Remake(Builder):
             bb.scale_model(model, detail / was)
             header["hellcraft_detail"] = detail
             root["bb_header"] = json.dumps(header)
+        # the old body, at the new detail, for `keep`: name -> its bone, box, turn and inflate
+        self.old = {}
+        with open(f"{bb.ART}/{model}.bbmodel") as fh:
+            doc = json.load(fh)
+        k = detail / was
+        els = {e["uuid"]: e for e in doc["elements"]}
+
+        def walk(g):
+            for ch in g["children"]:
+                if isinstance(ch, dict):
+                    walk(ch)
+                else:
+                    e = els[ch]
+                    self.old.setdefault(e["name"], dict(
+                        bone=g["name"], frm=tuple(v * k for v in e["from"]),
+                        size=tuple(round((e["to"][i] - e["from"][i]) * k) for i in range(3)),
+                        rotation=tuple(e.get("rotation", ZERO)), origin=tuple(v * k for v in e["origin"]) if e.get("rotation") else None,
+                        inflate=(e.get("inflate") or 0.0) * k))
+        for g in doc["outliner"]:
+            walk(g)
         for o in list(bb.model_objects(model)):
             if o.get("bb_kind") == "cube":
                 data = o.data
@@ -249,6 +269,16 @@ class Remake(Builder):
             return name
         bb.add_bone(self.model, parent, name, pivot, rotation)
         return name
+
+    def keep(self, name, mat, detail=None, grow=ZERO, shift=ZERO, inflate=0.0, bone=None, rename=None):
+        """Takes a cube of the old body as it was (at the new detail), in a new material and detail; grow widens it
+        by that much on each side of each axis, shift moves it."""
+        o = self.old[name]
+        frm = tuple(o["frm"][i] - grow[i] + shift[i] for i in range(3))
+        size = tuple(o["size"][i] + 2 * grow[i] for i in range(3))
+        origin = tuple(o["origin"][i] + shift[i] for i in range(3)) if o["origin"] else None
+        self.cube(bone or o["bone"], rename or name, frm, size, mat, inflate=inflate, rotation=o["rotation"], origin=origin,
+                  detail=detail)
 
     def stick(self, bone, name, a, b, t, mat, depth=None, **kw):
         """A cube t wide (depth deep) standing on point a and reaching to point b, turned about a (the old scripts'

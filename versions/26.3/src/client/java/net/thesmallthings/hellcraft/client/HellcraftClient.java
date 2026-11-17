@@ -290,7 +290,7 @@ public class HellcraftClient implements ClientModInitializer {
 				SeraphAnim.WALK.ordinal(), 2.0f, 2.0f, 0.5f, "root", "body", "chest", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("minotaur"), MinotaurMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MINOTAUR, context -> new AnimatedBossRenderer<>(context, "minotaur", MinotaurAnimations.all(),
-				MinotaurAnim.WALK.ordinal(), 1.4f, 2.0f, 0.5f, "hips", "torso", "head"));
+				MinotaurAnim.WALK.ordinal(), 0.7f, 2.0f, 0.5f, "hips", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("geryon"), GeryonMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.GERYON, context -> new AnimatedBossRenderer<>(context, "geryon", GeryonAnimations.all(), -1, 2.0f,
 				2.0f, 0.4f, "root", "chest", "neck", "head"));
