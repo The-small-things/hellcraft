@@ -104,6 +104,11 @@ an axe disabling a shield). **Parry:** a guard raised in the last 5 ticks before
 staggers the attacker: Hell's monsters (`SoulMonster` gets `stagger(ticks)`: AI paused, knocked back), vanilla mobs
 knocked back and slowed, and a boss counts as a blocked white flash (the existing `onParried`). Sound and particles to
 match.
+**Guard cancels (3.5 beta):** a guard cuts a swing short (a blow not yet landed never lands) and a roll once it is past
+its recover and its safe ticks (`Dodge.guardFrom`; the client checks the same, so it never shows a guard the server
+refused, and any refusal is sent back as `GuardRefusedPayload`). **Heavy weapons commit** (axes, the mace, the Reaper,
+the Tithe Axe; `WeaponClass.heavy`): once their blow lands, no guard until the move ends (a held guard goes up then), and
+in return the wielder is braced, taking 25% less damage meanwhile (`Swing.brace`; a first guess, to tune from playtests).
 Hell weapons' **Blood Art** moves to the charged heavy attack at 100% blood (see below). The **Blood Oath** stays on
 sneak + right-click. Plain right-click becomes guard. The weapons' lore and the Guide say so.
 

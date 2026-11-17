@@ -17,6 +17,7 @@ import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
 import net.thesmallthings.hellcraft.combat.Combat;
 import net.thesmallthings.hellcraft.combat.Moveset;
 import net.thesmallthings.hellcraft.combat.Swing;
+import net.thesmallthings.hellcraft.combat.WeaponClass;
 import net.thesmallthings.hellcraft.net.CombatPayload;
 import net.thesmallthings.hellcraft.net.SwingPayload;
 import org.jetbrains.annotations.Nullable;
@@ -61,10 +62,30 @@ public final class SwingControl {
 		return current != null;
 	}
 
-	/** Winding up: before the blow has gone forward (a guard can't cut in). */
+	/** Winding up: before the blow has gone forward. */
 	public static boolean windingUp() {
 		return current != null && time < current.hitTick();
 	}
+
+	/**
+	 * A heavy weapon's blow has gone forward: committed to the recovery, no guard until the move ends (combat/Swing.committed,
+	 * which the server checks; a guard pressed now is raised when it ends).
+	 */
+	public static boolean committed() {
+		if (current == null || time < current.hitTick()) {
+			return false;
+		}
+		WeaponClass kind = WeaponClass.of(weapon);
+		return kind != null && kind.heavy;
+	}
+
+	/**
+	 * Ticks until the server, whose swing a guard cut short after its blow landed, takes a fresh one (Swing.mayBegin: a new
+	 * chain only from the old move's combo window). A click before then waits for it, instead of a swing only this client sees.
+	 */
+	private static int fresh;
+	/** A click came while {@link #fresh} counted down: it swings the moment that ends. */
+	private static boolean freshQueued;
 
 	public static void reset() {
 		current = null;
@@ -72,11 +93,16 @@ public final class SwingControl {
 		queued = -1;
 		sinceLast = 1000;
 		spent = false;
+		fresh = 0;
+		freshQueued = false;
 	}
 
 	/** A roll or a raised guard takes over. */
 	public static void cancel() {
 		if (current != null) {
+			// past its blow, the server keeps the move until its combo window (cut in the wind-up, it lets it go at once)
+			fresh = time >= current.hitTick() ? Math.max(0, Mth.ceil((current.nextTick() - 2 - time) / pace)) : 0;
+			freshQueued = false;
 			last = null;
 			current = null;
 			queued = -1;
@@ -91,7 +117,7 @@ public final class SwingControl {
 	public static boolean click(Minecraft mc) {
 		LocalPlayer player = mc.player;
 		if (player == null || mc.level == null || !Combat.rules(true).on() || player.isSpectator() || player.isHandsBusy() || player.isUsingItem()
-				|| RollControl.rolling() || !ClientPlayNetworking.canSend(SwingPayload.TYPE)) {
+				|| RollControl.busy() || !ClientPlayNetworking.canSend(SwingPayload.TYPE)) {
 			return false;
 		}
 		Moveset moves = Moveset.of(player.getMainHandItem());
@@ -107,6 +133,10 @@ public final class SwingControl {
 		if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK && !somethingToFight(player, moves.light.get(0))) {
 			// a block in front and nothing to fight: mine it, as ever
 			return false;
+		}
+		if (fresh > 0) {
+			freshQueued = true;
+			return true;
 		}
 		Moveset.Move next = last != null && sinceLast <= Swing.CHAIN_GRACE ? moves.after(last) : moves.light.get(0);
 		begin(mc, moves, next, 2.0f);
@@ -139,9 +169,13 @@ public final class SwingControl {
 			if (sinceLast < 1000) {
 				sinceLast++;
 			}
+			if (fresh > 0 && --fresh == 0 && freshQueued) {
+				freshQueued = false;
+				click(mc);
+			}
 			return;
 		}
-		if (player == null || !player.isAlive() || !ItemStack.isSameItem(player.getMainHandItem(), weapon) || player.isUsingItem() || RollControl.rolling()) {
+		if (player == null || !player.isAlive() || !ItemStack.isSameItem(player.getMainHandItem(), weapon) || player.isUsingItem() || RollControl.busy()) {
 			cancel();
 			return;
 		}

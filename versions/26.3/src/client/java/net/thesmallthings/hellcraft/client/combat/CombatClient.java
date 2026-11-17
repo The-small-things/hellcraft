@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
 import net.thesmallthings.hellcraft.combat.Combat;
@@ -20,6 +21,7 @@ import net.thesmallthings.hellcraft.net.ArtPayload;
 import net.thesmallthings.hellcraft.net.CombatPayload;
 import net.thesmallthings.hellcraft.net.FeelPayload;
 import net.thesmallthings.hellcraft.net.GuardPayload;
+import net.thesmallthings.hellcraft.net.GuardRefusedPayload;
 import net.thesmallthings.hellcraft.net.MovePayload;
 import net.thesmallthings.hellcraft.net.StaminaPayload;
 
@@ -40,12 +42,14 @@ public final class CombatClient {
 		ClientPlayNetworking.registerGlobalReceiver(StaminaPayload.TYPE, (payload, context) -> StaminaHud.receive(payload.stamina()));
 		ClientPlayNetworking.registerGlobalReceiver(FeelPayload.TYPE, (payload, context) -> HitFeel.receive(payload));
 		ClientPlayNetworking.registerGlobalReceiver(MovePayload.TYPE, (payload, context) -> move(context.client(), payload));
+		ClientPlayNetworking.registerGlobalReceiver(GuardRefusedPayload.TYPE, (payload, context) -> refused(context.client()));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			Combat.clientRules(null);
 			PlayerAnimator.clear();
 			FirstPersonEase.reset();
 			RollControl.reset();
 			SwingControl.reset();
+			guardQueued = 0;
 			HitFeel.reset();
 			StaminaHud.reset();
 		});
@@ -113,17 +117,36 @@ public final class CombatClient {
 				|| !Guard.mayRaise(player) || !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
 			return;
 		}
-		if (!RollControl.guardReady()) {
-			// too early in a roll: remembered, and raised the moment the roll allows (tick)
+		if (!guardAllowed()) {
+			// too early in a roll, or in a heavy weapon's recovery: remembered, and raised the moment it's allowed (tickGuard)
 			guardQueued = GUARD_BUFFER;
+			guardWeapon = player.getMainHandItem();
 			return;
 		}
 		raiseGuard(player);
 	}
 
-	/** Ticks a guard pressed too early in a roll is remembered. */
+	/** Ticks a guard pressed too early is remembered (held, vanilla presses it again every 4 ticks, which renews it). */
 	private static final int GUARD_BUFFER = 10;
 	private static int guardQueued;
+	/** The weapon in hand when the guard was pressed: switch weapons and the press is forgotten. */
+	private static ItemStack guardWeapon = ItemStack.EMPTY;
+
+	/** Whether a guard may go up now as the server sees it: past a roll's dodge, and not in a heavy weapon's committed recovery. */
+	private static boolean guardAllowed() {
+		return RollControl.guardReady() && !SwingControl.committed();
+	}
+
+	/**
+	 * The server wouldn't raise the guard this client already raised (a tick early by its clock, say): it comes down here
+	 * too, rather than stand on screen blocking nothing. Held, vanilla presses the key again in 4 ticks and it tries again.
+	 */
+	private static void refused(Minecraft mc) {
+		LocalPlayer player = mc.player;
+		if (player != null && mc.gameMode != null && Guard.guarding(player)) {
+			mc.gameMode.releaseUsingItem(player);
+		}
+	}
 
 	/** Raises the guard now, cutting short a swing (at any moment) or the end of a roll. */
 	private static void raiseGuard(LocalPlayer player) {
@@ -141,11 +164,15 @@ public final class CombatClient {
 		}
 		guardQueued--;
 		LocalPlayer player = mc.player;
-		if (player == null || mc.gui.screen() != null || !Combat.rules(true).on() || !Guard.mayRaise(player)
-				|| !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
+		if (player == null || !player.isAlive() || !mc.options.keyUse.isDown() || !ItemStack.isSameItem(player.getMainHandItem(), guardWeapon)) {
+			// let go, died or changed weapons: the press is forgotten (a tap early in a roll is not a parry at its end)
+			guardQueued = 0;
 			return;
 		}
-		if (RollControl.guardReady()) {
+		if (mc.gui.screen() != null || !Combat.rules(true).on() || !Guard.mayRaise(player) || !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
+			return;
+		}
+		if (guardAllowed()) {
 			raiseGuard(player);
 		}
 	}

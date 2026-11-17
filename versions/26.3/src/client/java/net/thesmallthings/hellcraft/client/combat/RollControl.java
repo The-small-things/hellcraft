@@ -35,7 +35,10 @@ public final class RollControl {
 		PACE_SUM = sum;
 	}
 
+	/** Ticks into the roll's carry (-1: not carrying). Ends with PACE, or when a guard cuts it short. */
 	private static int tick = -1;
+	/** Ticks into the roll as the server counts it (combat/Dodge: Dodge.TICKS long, -1: not rolling); a guard doesn't end it. */
+	private static int age = -1;
 	private static double dirX;
 	private static double dirZ;
 	private static float distance;
@@ -45,9 +48,22 @@ public final class RollControl {
 		return tick >= 0;
 	}
 
-	/** A guard may cut the roll short from its "recover" (the server agrees: combat/Dodge.mayGuard). */
+	/** Mid-roll as the server sees it (its last ticks too, after the carry stops): swings wait. */
+	public static boolean busy() {
+		return age >= 0;
+	}
+
+	/**
+	 * A guard may cut the roll short from its "recover", once blows no longer pass through: the same tick the server
+	 * allows (combat/Dodge.guardFrom, with the safe ticks it sent and this player's Sidestep).
+	 */
 	public static boolean guardReady() {
-		return tick < 0 || tick >= net.thesmallthings.hellcraft.combat.Dodge.GUARD_FROM;
+		if (age < 0) {
+			return true;
+		}
+		Minecraft mc = Minecraft.getInstance();
+		int sidestep = mc.player == null ? 0 : LayerEnchants.level(mc.player, LayerEnchants.SIDESTEP);
+		return age >= net.thesmallthings.hellcraft.combat.Dodge.guardFrom(Combat.rules(true).dodgeInvulnerable(), sidestep);
 	}
 
 	/** The guard went up: the roll stops carrying the player. */
@@ -57,6 +73,7 @@ public final class RollControl {
 
 	public static void reset() {
 		tick = -1;
+		age = -1;
 		cooldown = 0;
 	}
 
@@ -88,6 +105,7 @@ public final class RollControl {
 		dirZ = z / len;
 		distance = rules.dodgeDistance() + 0.5f * sidestep;
 		tick = 0;
+		age = 0;
 		cooldown = rules.dodgeCooldown();
 		if (!player.hasInfiniteMaterials()) {
 			StaminaHud.predict(cost);
@@ -111,7 +129,11 @@ public final class RollControl {
 		LocalPlayer player = mc.player;
 		if (player == null || !player.isAlive()) {
 			tick = -1;
+			age = -1;
 			return;
+		}
+		if (age >= 0 && ++age >= net.thesmallthings.hellcraft.combat.Dodge.TICKS) {
+			age = -1;
 		}
 		if (tick >= 0) {
 			tick++;

@@ -25,6 +25,7 @@ import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.net.FeelPayload;
 import net.thesmallthings.hellcraft.net.GuardPayload;
+import net.thesmallthings.hellcraft.net.GuardRefusedPayload;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.HashMap;
@@ -61,13 +62,17 @@ public final class Guard {
 
 	static void register() {
 		PayloadTypeRegistry.serverboundPlay().register(GuardPayload.TYPE, GuardPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(GuardRefusedPayload.TYPE, GuardRefusedPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(GuardPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			// a guard cuts a swing short at any moment (the blow, if it hadn't landed, never will) and a roll once it's past
-			// its dodge
-			if (Combat.on() && mayRaise(player) && Dodge.mayGuard(player)) {
+			// a guard cuts a swing short (the blow, if it hadn't landed, never will), except a heavy weapon's recovery, and a
+			// roll once it's past its dodge
+			if (Combat.on() && mayRaise(player) && Dodge.mayGuard(player) && !Swing.committed(player)) {
 				Swing.cancel(player);
 				player.startUsingItem(InteractionHand.MAIN_HAND);
+			} else if (!guarding(player)) {
+				// the client has already raised it: say no, or its guard stays up on screen while nothing is blocked here
+				ServerPlayNetworking.send(player, GuardRefusedPayload.INSTANCE);
 			}
 		});
 	}
