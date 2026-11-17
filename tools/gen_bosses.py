@@ -214,8 +214,17 @@ public final class {self.java}Mesh {{
                     chains.append(f"\t\t\t.addAnimation(\"{bone}\", new AnimationChannel(AnimationChannel.Targets.{target},\n"
                                   + ",\n".join(frames) + "))")
             looping = ".looping()" if loop else ""
-            defs.append(f"\tpublic static final AnimationDefinition {const} = AnimationDefinition.Builder.withLength({f(length)}){looping}\n"
-                        + "\n".join(chains) + "\n\t\t\t.build();")
+            if self.name in RIGS:
+                # a rig's animations are baked to a key every tick: too much for one class initialiser (Java allows a
+                # method 64 KB), so each is built in a method of its own
+                method = "build" + camel(name)
+                defs.append(f"\tpublic static final AnimationDefinition {const} = {method}();\n\n"
+                            f"\tprivate static AnimationDefinition {method}() {{\n"
+                            f"\t\treturn AnimationDefinition.Builder.withLength({f(length)}){looping}\n"
+                            + "\n".join(chains) + "\n\t\t\t.build();\n\t}")
+            else:
+                defs.append(f"\tpublic static final AnimationDefinition {const} = AnimationDefinition.Builder.withLength({f(length)}){looping}\n"
+                            + "\n".join(chains) + "\n\t\t\t.build();")
             ticks = round(length * 20)
             ev = ", ".join(f"\"{n}\", {round(t * 20)}" for t, n in sorted(events))
             common.append(f"\t{const}({ticks}, {str(loop).lower()}, Map.of({ev}))")

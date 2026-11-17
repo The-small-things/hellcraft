@@ -153,6 +153,10 @@ public final class Lessons {
 		LESSONS.add(new Lesson("roll", true, false, (p, s) -> net.thesmallthings.hellcraft.combat.Combat.on() && s.playSeconds >= 45, new Object[]{
 				"You can dodge. Press ", dash, " to roll the way you're moving: in the middle of the roll, blows pass through you. "
 						+ "It costs stamina, the gold bar over your hunger. (Journal: FIGHTING)"}));
+		LESSONS.add(new Lesson("swing", true, false, (p, s) -> net.thesmallthings.hellcraft.combat.Combat.on()
+				&& net.thesmallthings.hellcraft.combat.Moveset.of(p.getMainHandItem()) != null && s.playSeconds >= 10, new Object[]{
+				"Your weapon swings now: a click cuts everything in its path a moment later. Click again as the swing ends to chain "
+						+ "the next move, or hold the key for a slow, heavy blow that costs stamina. (Journal: FIGHTING)"}));
 		LESSONS.add(new Lesson("guard", true, false, (p, s) -> net.thesmallthings.hellcraft.combat.Combat.on()
 				&& net.thesmallthings.hellcraft.combat.Guard.guards(p.getMainHandItem()) && s.playSeconds >= 20, new Object[]{
 				"That weapon can guard. Hold right-click and it turns most of a blow aside, at a cost in stamina. Raise it just before "

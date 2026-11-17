@@ -90,6 +90,7 @@ public final class Dodge {
 		if (player.isUsingItem()) {
 			player.stopUsingItem();
 		}
+		Swing.cancel(player);
 		STARTED.put(player.getUUID(), now);
 		Vec3 dir = new Vec3(x, 0, z);
 		if (dir.lengthSqr() < 1.0e-4) {

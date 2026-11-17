@@ -13,8 +13,12 @@ keyframes, a blending runtime on the real player model and in first person). Wha
   server push: it starts the moment the key goes down and matches the animation.
 - **Heavy attacks** (stage 2): press starts the light swing's wind-up at once; still holding four ticks later, it turns into the
   heavy's charge. No delay on a tap, and no separate key.
-**Next: stage 2**, swings and combos for swords, axes, maces and fists (arc hits, combo windows, heavies, first- and
-third-person animation, vanilla's attack replaced while a weapon is held), then stage 3, the hell weapons' own movesets.
+**Stage 2 is built** (2026-11-17): swings, combos and heavy blows for swords, axes and maces (the hell weapons borrow them),
+arc hits through vanilla's own attack, the weapon turning in the hand, first- and third-person animation. Left out on purpose:
+fists (the empty hand is for the world, not for fighting) and "swing through grass" (a click at a block with something to fight
+in the arc already swings). Blade trails wait for stage 3.
+**Next: stage 3**, the hell weapons' own movesets (the Bloodletter's four cuts, the Reaper's wide arcs and spin, the Tithe
+Axe's slam), trails, and their Blood Arts' own animations.
 
 ## Context
 The owner wants combat that feels like Better Combat / Epic Fight / Immersive Combat: weapons that swing differently

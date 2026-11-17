@@ -165,6 +165,10 @@ public final class PlayerAnimator {
 			}
 		}
 		stanceTime += 1;
+		if (action != null && time < action.ticks && action.move != PlayerMovesAnim.ROLL || want != null) {
+			// swinging or guarding: the body squares up to where the player looks (vanilla does the same for its own swing)
+			player.setYBodyRot(Mth.rotLerp(0.6f, player.yBodyRot, player.getYHeadRot()));
+		}
 		lastTime = time;
 		if (action != null) {
 			if (freeze > 0) {

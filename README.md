@@ -291,7 +291,13 @@ An altar is a **respawn anchor on a 3×3 of crying obsidian**. There is one at t
 
 ### Fighting (3.5 beta)
 
-Hellcraft has combat of its own, made to move smoothly: every move blends into the next instead of snapping, in first and third person alike. It is arriving in parts; this is the first.
+Hellcraft has combat of its own, made to move smoothly: every move blends into the next instead of snapping, in first and third person alike. It is arriving in parts; two are in.
+
+- **Swings**: with a **sword, an axe or a mace** in hand (and the hell weapons), the attack key swings the weapon. There is a short wind-up, and the blow lands when the weapon comes round, on **everything in its path**: no need to keep the crosshair on one target. Only monsters and other players are caught in the arc (the one you look straight at takes the full blow, the others 60%, all of it with Sweeping Edge III); animals, villagers, boats and the like are struck only if you aim at them, and your own pets never by accident. Nothing is hit through a wall. Critical hits, enchantments and the hell weapons' passives all work as before.
+- **Combos**: click again as a swing ends (or a little before: the click is remembered) and the next move follows. A **sword** cuts down across, cuts back, then **thrusts** with a lunge (125% damage, longer reach). An **axe** chops, then rips upward. A **mace** smashes down, then sweeps wide. Stop clicking and the chain starts over.
+- **Heavy blows**: **hold** the attack key instead of tapping it. The weapon goes up over your head and comes down for about 190% damage, with a shove; it costs stamina (22). Without the stamina, holding just keeps the chain going.
+- A chain deals about what vanilla's clicking would, a little more for keeping it going. Moves are timed for each weapon's attack speed and play faster with Haste.
+- With a block under the crosshair and nothing to fight in front of you, the key **mines as ever**. Spears, tridents, tools and bare hands are unchanged.
 
 - **Stamina**: a thin gold bar over your hunger. Rolling and guarding spend it, and it comes back a moment after you stop (more slowly while you guard). It hides when full.
 - **Dodge roll**: press **Dash** (Left Alt; Controls, Hellcraft) to roll the way you're moving; standing still, you hop back. It is a forward roll over the shoulders that carries you about 3.4 blocks, and for most of it **blows pass through you**: a monster's, a player's, an arrow, a blast, a boss's marks on the ground. Not fire, falls or drowning. It costs stamina and you can roll again as soon as you're up. A blow that passes through gives a little stamina back, and style in a boss fight.
@@ -301,7 +307,7 @@ Hellcraft has combat of its own, made to move smoothly: every move blends into t
 - **Hits have weight**: your blow holds for a frame and kicks the view (off with View Bobbing), and the target shows it: blood from flesh, chips from bone, sparks from golems.
 - **Hell weapons**: right-click guards now, so a full weapon's **Blood Art** is struck from the guard: hold right-click, then press attack. The Blood Oath is still sneak + right-click, and the Blood Pickaxe works as before.
 
-Still to come: weapons that swing in combos, each kind with its own animations, and a moveset for every hell weapon. Server owners can turn all of it off with `/hellcraft config combatOverhaul false`: vanilla combat returns, and only Sidestep leggings dash.
+Still to come: a moveset of its own for every hell weapon (until then they swing as a sword or an axe does). Server owners can turn all of it off with `/hellcraft config combatOverhaul false`: vanilla combat returns, and only Sidestep leggings dash.
 
 ### Hell weapons (26.3)
 
@@ -856,7 +862,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - ward length
 - toggles for hazards, titles and revenants
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
-- Hellcraft's combat (3.5): `combatOverhaul` (on), `staminaMax` (100), `staminaRegen` (1.6 a tick), `staminaRegenDelay` (16 ticks), `dodgeCost` (26), `dodgeCooldownTicks` (16), `dodgeDistance` (3.4 blocks), `dodgeInvulnerableTicks` (8), `guardBlock` (0.6), `guardStaminaPerDamage` (4), `parryTicks` (6), `parryStaggerTicks` (30), `guardBreakTicks` (30)
+- Hellcraft's combat (3.5): `combatOverhaul` (on), `staminaMax` (100), `staminaRegen` (1.6 a tick), `staminaRegenDelay` (16 ticks), `dodgeCost` (26), `dodgeCooldownTicks` (16), `dodgeDistance` (3.4 blocks), `dodgeInvulnerableTicks` (8), `guardBlock` (0.6), `guardStaminaPerDamage` (4), `parryTicks` (6), `parryStaggerTicks` (30), `guardBreakTicks` (30), `heavyCost` (22)
 - how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (0.85)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`

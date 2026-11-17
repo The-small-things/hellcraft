@@ -147,7 +147,13 @@ public final class Guide {
 		boolean combat = net.thesmallthings.hellcraft.combat.Combat.on();
 		if (combat) {
 			pages.add(page("FIGHTING",
-					"Stamina: the thin gold bar over your hunger. Rolling and guarding spend it; it comes back a moment after you stop.",
+					"Stamina: the thin gold bar over your hunger. Rolling, guarding and heavy blows spend it; it comes back a moment after you stop.",
+					"",
+					"Swings: with a sword, an axe or a mace, the attack key swings the weapon and hits everything in its path, not just what's under the crosshair. The blow lands a moment after the click, when the weapon comes round. Only monsters and players are caught in the arc; anything else you must aim at.",
+					"",
+					"Combos: click again as a swing ends and the next move follows: a sword cuts, cuts back and thrusts; an axe chops and rips upward. The last move of a chain hits hardest.",
+					"",
+					"Heavy blow: hold the attack key instead of tapping it. It is slower, costs stamina and hits about twice as hard.",
 					"",
 					"Dodge roll: press Dash (Left Alt) to roll the way you're moving (standing still, you hop back). It costs stamina, and in the middle of the roll blows pass through you, a boss's too. Sidestep leggings make it cheaper, longer and safer.",
 					"",

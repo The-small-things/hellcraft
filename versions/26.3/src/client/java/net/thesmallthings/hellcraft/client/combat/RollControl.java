@@ -86,6 +86,7 @@ public final class RollControl {
 			mc.gameMode.releaseUsingItem(player);
 		}
 		player.setSprinting(false);
+		SwingControl.cancel();
 		float heading = (float) (Mth.atan2(-dirX, dirZ) * Mth.RAD_TO_DEG);
 		PlayerAnimator.of(player).play(PlayerMovesAnim.ROLL, 1.0f, heading, 1.5f, 3.0f);
 		ClientPlayNetworking.send(new DashPayload((float) dirX, (float) dirZ));

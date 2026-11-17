@@ -10,6 +10,7 @@
 		"DisplayAccess",
 		"ServerPlayerTabMixin",
 		"MannequinAccess",
+		"PlayerMixin",
 		"SlotMixin"
 	],
 	"injectors": {

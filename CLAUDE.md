@@ -248,7 +248,18 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `applyItemArmTransform`. Rotations: the rig is Blockbench space like the bosses; the game holds a sword 10 degrees below a hanging
   arm's forward. `CombatTest` films every move on three mannequins (front, three-quarter, side) with the first-person hand in the
   same picture (`combat_<move>_<tick>`; `HELLCRAFT_COMBAT_FILM=<move,...|all>` films tick by tick) and checks the roll, guard, parry
-  and guard break. Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  and guard break. **Swings (part 2):** `combat/Moveset` (per `WeaponClass`: a chain of light moves and a heavy one; each a rig
+  animation whose events `swing`, `hit` and `next` time the wind-up's end, the blow and the combo window, plus damage share, arc,
+  reach, shove and lunge; `pace` scales by attack speed), `combat/Swing` (the client's `net/SwingPayload` is checked against the
+  chain, the blow lands at the `hit` tick on everything in the arc: what is aimed at first, then only what `fightsBack`, with line of
+  sight; each through vanilla's `player.attack` under a transient damage modifier, `mixin/PlayerMixin` giving full strength and no
+  vanilla sweep while `landing`), client `combat/SwingControl` (from `mixin/MinecraftMixin` at the head of `startAttack`: a click
+  swings or queues the next move, the key held `CHARGE_AT` ticks into a light wind-up turns it into the heavy, a block under the
+  crosshair with nothing to fight is left to vanilla; `continueAttack` is cancelled mid-swing) and `mixin/ItemInHandLayerMixin` (the
+  rig's `item` bone turns the weapon in the hand). In player_moves.py the swings are shapes (`diagonal`, `backhand`, `thrust`,
+  `overhead`) given timing and heft per weapon; `hold(point, blade)` gives an arm and its weapon's turn for an exact blade direction;
+  `fp_cut(blade, motion)` turns the first-person blade edge-first. The first-person hand rests at the screen's bottom right corner:
+  keep `fp_pos` y above 0 or the blade passes out of sight. Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

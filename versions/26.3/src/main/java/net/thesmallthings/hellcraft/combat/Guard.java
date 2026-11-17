@@ -63,6 +63,7 @@ public final class Guard {
 		ServerPlayNetworking.registerGlobalReceiver(GuardPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
 			if (Combat.on() && mayRaise(player) && !Dodge.rolling(player)) {
+				Swing.cancel(player);
 				player.startUsingItem(InteractionHand.MAIN_HAND);
 			}
 		});

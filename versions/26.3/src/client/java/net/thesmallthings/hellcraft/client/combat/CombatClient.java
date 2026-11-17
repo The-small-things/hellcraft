@@ -44,6 +44,7 @@ public final class CombatClient {
 			Combat.clientRules(null);
 			PlayerAnimator.clear();
 			RollControl.reset();
+			SwingControl.reset();
 			HitFeel.reset();
 			StaminaHud.reset();
 		});
@@ -52,6 +53,7 @@ public final class CombatClient {
 				return;
 			}
 			RollControl.tick(client);
+			SwingControl.tick(client);
 			PlayerAnimator.tickAll(client.level);
 			HitFeel.tick(client);
 			StaminaHud.tick(client);
@@ -81,9 +83,10 @@ public final class CombatClient {
 	public static void afterUse(Minecraft mc) {
 		LocalPlayer player = mc.player;
 		if (player == null || mc.gameMode == null || mc.gameMode.isDestroying() || player.isHandsBusy() || !Combat.rules(true).on()
-				|| RollControl.rolling() || !Guard.mayRaise(player) || !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
+				|| RollControl.rolling() || SwingControl.windingUp() || !Guard.mayRaise(player) || !ClientPlayNetworking.canSend(GuardPayload.TYPE)) {
 			return;
 		}
+		SwingControl.cancel();
 		player.startUsingItem(InteractionHand.MAIN_HAND);
 		ClientPlayNetworking.send(GuardPayload.INSTANCE);
 	}

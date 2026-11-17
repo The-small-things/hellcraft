@@ -55,8 +55,13 @@ public class CombatTest implements FabricClientGameTest {
 				throw new AssertionError(self);
 			}
 			film(context, world);
+			if (!System.getenv().getOrDefault("HELLCRAFT_COMBAT_FILM", "").isEmpty()) {
+				// tuning an animation: the films are all that's wanted
+				return;
+			}
 			roll(context, world);
 			guard(context, world);
+			swings(context, world);
 		}
 	}
 
@@ -85,6 +90,11 @@ public class CombatTest implements FabricClientGameTest {
 				continue;
 			} else if (move.looping) {
 				ticks.add(0f);
+			} else if (name.startsWith("sword") || name.startsWith("axe") || name.startsWith("mace")) {
+				// a swing: wound up, landing, followed through
+				ticks.add((float) move.at("swing"));
+				ticks.add((float) move.at("hit"));
+				ticks.add(move.at("hit") + 2f);
 			} else {
 				ticks.add(move.ticks * 0.25f);
 				ticks.add(move.ticks * 0.5f);
@@ -209,6 +219,123 @@ public class CombatTest implements FabricClientGameTest {
 		context.getInput().releaseKey(options -> options.keyUse);
 		world.getServer().runCommand("kill @e[type=minecraft:husk]");
 		context.waitTicks(10);
+	}
+
+	/** Each husk's health, by its name tag. */
+	private static java.util.Map<String, Float> husks(TestSingleplayerContext world) {
+		return world.getServer().computeOnServer(server -> {
+			ServerPlayer player = server.getPlayerList().getPlayerByName("Player0");
+			java.util.Map<String, Float> health = new java.util.TreeMap<>();
+			for (LivingEntity e : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10), e -> e.getType() == EntityTypes.HUSK)) {
+				health.put(e.getCustomName() == null ? "?" : e.getCustomName().getString(), e.getHealth());
+			}
+			return health;
+		});
+	}
+
+	private static PlayerMovesAnim playing(ClientGameTestContext context) {
+		return context.computeOnClient(client -> {
+			PlayerAnimator animator = PlayerAnimator.get(client.player.getId());
+			return animator == null ? null : animator.move();
+		});
+	}
+
+	/**
+	 * Swings: a click cuts everything in the arc in front and nothing behind; clicks in time chain into the next moves;
+	 * holding the key makes the heavy move, for stamina; and with a block under the crosshair and nothing to fight, the
+	 * key still mines.
+	 */
+	private static void swings(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("effect give Player0 minecraft:instant_health 1 4 true");
+		context.waitTicks(60);
+		String husk = "{NoAI:1b,Silent:1b,PersistenceRequired:1b,Rotation:[180f,0f],CustomName:\"%s\"}";
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~ ~ ~2.4 " + String.format(husk, "front"));
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~1.6 ~ ~1.9 " + String.format(husk, "left"));
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~-1.6 ~ ~1.9 " + String.format(husk, "right"));
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~ ~ ~-2.4 " + String.format(husk, "behind"));
+		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 0");
+		context.waitTicks(15);
+		java.util.Map<String, Float> before = husks(world);
+		// one click: the first cut
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(2);
+		if (playing(context) != PlayerMovesAnim.SWORD_1) {
+			throw new AssertionError("a click with a sword should begin its first cut, not " + playing(context));
+		}
+		context.waitTicks(3);
+		context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
+		context.waitTicks(1);
+		context.takeScreenshot("combat_swing_live");
+		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
+		context.waitTicks(4);
+		java.util.Map<String, Float> after = husks(world);
+		for (String name : new String[]{"front", "left", "right"}) {
+			if (after.get(name) >= before.get(name)) {
+				throw new AssertionError("the cut should strike the husk in the arc at " + name + ": " + before + " then " + after);
+			}
+		}
+		if (after.get("behind") < before.get("behind")) {
+			throw new AssertionError("the cut struck the husk behind the player");
+		}
+		if (before.get("front") - after.get("front") <= before.get("left") - after.get("left")) {
+			throw new AssertionError("the husk aimed at should take the most: " + before + " then " + after);
+		}
+		// click again as it ends, and again: the chain
+		context.waitTicks(12);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(8);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(4);
+		if (playing(context) != PlayerMovesAnim.SWORD_2) {
+			throw new AssertionError("a second click in time should chain into the second cut, not " + playing(context));
+		}
+		context.waitTicks(4);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(6);
+		if (playing(context) != PlayerMovesAnim.SWORD_3) {
+			throw new AssertionError("a third click in time should chain into the thrust, not " + playing(context));
+		}
+		context.waitTicks(3);
+		context.takeScreenshot("combat_thrust_first_person");
+		context.waitTicks(30);
+		java.util.Map<String, Float> chained = husks(world);
+		if (chained.get("front") >= after.get("front") - 8) {
+			throw new AssertionError("three more blows should have landed on the husk in front: " + after + " then " + chained);
+		}
+		// hold the key: the heavy move, for stamina
+		world.getServer().runCommand("effect give @e[type=minecraft:husk] minecraft:instant_damage 1 4 true");
+		context.waitTicks(40);
+		double[] fresh = place(world);
+		context.getInput().holdKey(options -> options.keyAttack);
+		context.waitTicks(9);
+		if (playing(context) != PlayerMovesAnim.SWORD_HEAVY) {
+			throw new AssertionError("holding the attack key should turn the cut into the heavy blow, not " + playing(context));
+		}
+		context.takeScreenshot("combat_heavy_first_person");
+		// (asked now: stamina is back before the blow has even recovered)
+		double[] spent = place(world);
+		if (spent[2] >= fresh[2]) {
+			throw new AssertionError("a heavy blow should cost stamina: " + fresh[2] + " then " + spent[2]);
+		}
+		context.waitTicks(12);
+		context.getInput().releaseKey(options -> options.keyAttack);
+		context.waitTicks(10);
+		java.util.Map<String, Float> heavy = husks(world);
+		// (the husks were healed to full before it)
+		if (heavy.get("front") > 12) {
+			throw new AssertionError("the heavy blow should have taken about half the health of the husk in front: " + heavy);
+		}
+		// nothing to fight and a block under the crosshair: the key mines
+		world.getServer().runCommand("kill @e[type=minecraft:husk]");
+		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 80");
+		context.waitTicks(20);
+		context.getInput().pressKey(options -> options.keyAttack);
+		context.waitTicks(3);
+		if (playing(context) != null) {
+			throw new AssertionError("with a block under the crosshair and nothing to fight, the attack key should mine, not swing (" + playing(context) + ")");
+		}
+		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 8");
+		context.waitTicks(5);
 	}
 
 	/** The husk in front deals the player a blow, by hand. */

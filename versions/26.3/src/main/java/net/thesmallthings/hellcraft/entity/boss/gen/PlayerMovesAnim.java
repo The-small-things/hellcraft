@@ -16,7 +16,16 @@ public enum PlayerMovesAnim implements BossAnim {
 	GUARD_TWO(40, true, Map.of()),
 	PARRY(8, false, Map.of("clash", 1)),
 	GUARD_BREAK(16, false, Map.of()),
-	SWORD_1(12, false, Map.of("swing", 3, "hit", 5, "next", 9));
+	SWORD_1(13, false, Map.of("swing", 3, "hit", 5, "next", 9)),
+	SWORD_2(13, false, Map.of("swing", 3, "hit", 5, "next", 9)),
+	SWORD_3(17, false, Map.of("swing", 4, "hit", 6, "next", 13)),
+	SWORD_HEAVY(22, false, Map.of("swing", 8, "hit", 11, "next", 19)),
+	AXE_1(18, false, Map.of("swing", 5, "hit", 8, "next", 13)),
+	AXE_2(18, false, Map.of("swing", 5, "hit", 8, "next", 13)),
+	AXE_HEAVY(26, false, Map.of("swing", 9, "hit", 13, "next", 23)),
+	MACE_1(24, false, Map.of("swing", 7, "hit", 11, "next", 18)),
+	MACE_2(24, false, Map.of("swing", 7, "hit", 11, "next", 18)),
+	MACE_HEAVY(32, false, Map.of("swing", 11, "hit", 16, "next", 28));
 
 	public final int ticks;
 	public final boolean looping;

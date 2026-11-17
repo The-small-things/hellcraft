@@ -81,12 +81,14 @@ public final class Combat {
 			Stamina.forget(handler.getPlayer());
 			Dodge.forget(handler.getPlayer());
 			Guard.forget(handler.getPlayer());
+			Swing.forget(handler.getPlayer());
 		});
 		ServerTickEvents.END_SERVER_TICK.register(Combat::tick);
 		ServerLivingEntityEvents.AFTER_DAMAGE.register(Combat::struck);
 		Stamina.register();
 		Dodge.register();
 		Guard.register();
+		Swing.register();
 	}
 
 	private static void tick(MinecraftServer server) {
@@ -102,6 +104,7 @@ public final class Combat {
 		}
 		Stamina.tick(server);
 		Guard.tick(server);
+		Swing.tick(server);
 	}
 
 	/**
@@ -114,7 +117,7 @@ public final class Combat {
 			return;
 		}
 		float strength = Math.max(0.5f, Math.min(2.0f, taken / 7.0f));
-		feel(attacker, taken >= 12 ? FeelPayload.Kind.HEAVY_HIT : FeelPayload.Kind.HIT, strength);
+		feel(attacker, taken >= 12 || Swing.landingHeavy() ? FeelPayload.Kind.HEAVY_HIT : FeelPayload.Kind.HIT, strength);
 		double x = target.getX();
 		double y = target.getY() + target.getBbHeight() * 0.6;
 		double z = target.getZ();
@@ -159,6 +162,10 @@ public final class Combat {
 		String g = Guard.selfTest();
 		if (!g.isEmpty()) {
 			problems.append(g).append("; ");
+		}
+		String w = Swing.selfTest();
+		if (!w.isEmpty()) {
+			problems.append(w).append("; ");
 		}
 		String d = Dodge.selfTest();
 		if (!d.isEmpty()) {

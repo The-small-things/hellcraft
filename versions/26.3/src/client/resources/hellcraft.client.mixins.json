@@ -13,6 +13,7 @@
 		"HeartTypeMixin",
 		"HudMixin",
 		"HumanoidModelMixin",
+		"ItemInHandLayerMixin",
 		"KeyboardInputMixin",
 		"LocalPlayerMixin",
 		"MinecraftMixin",

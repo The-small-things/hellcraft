@@ -470,31 +470,172 @@ def swing(c, ticks, arm, item, body, left, legs, root=None):
         c.key(t, e, root_pos=v)
 
 
-def sword_1():
-    """The first cut: from high on the right, down across to the left. The shoulders wind back, the hips lead, the arm
-    whips through and the blade trails it (the item's turn lags the arm), then everything settles."""
-    c = Clip("sword_1", 12)
-    up, up_i = hold((0.62, 0.72, 0.12), (0.25, 0.85, 0.62))
-    mid, mid_i = hold((-0.25, -0.2, -1), (-0.55, -0.1, -1))
-    low, low_i = hold((-0.78, -0.62, -0.42), (-1, -0.45, 0.05))
-    swing(c, 12,
-          arm=[(0, "inout", READY_R), (3, "out", up), (5, "in3", mid), (6, "out", low), (12, "inout", READY_R)],
-          item=[(0, "inout", READY_ITEM), (3, "out", up_i), (5, "in", mid_i), (7, "out", low_i), (12, "inout", READY_ITEM)],
-          body=[(0, "inout", (0, 0, 0)), (3, "out", (4, -24, -3)), (5, "in", (-7, 18, 2)), (7, "out", (-8, 34, 3)), (12, "inout", (0, 0, 0))],
-          left=[(0, "inout", READY_L), (3, "out", aim((-0.35, -0.8, -0.55))), (6, "inout", aim((-0.55, -0.8, 0.35))), (12, "inout", READY_L)],
-          legs=[(0, "inout", ((0, 0, 0), (0, 0, 0))), (3, "out", ((-10, 0, -2), (10, 0, 2))), (6, "inout", ((14, 0, -2), (-12, 0, 2))),
-                (12, "inout", ((0, 0, 0), (0, 0, 0)))],
-          root=[(0, "inout", (0, 0, 0)), (3, "out", (0, 0.4, 0.6)), (6, "inout", (0, -0.9, -1.2)), (12, "inout", (0, 0, 0))])
-    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.key(3, "out", fp_pos=fp_pos(1.2, 2.6, 1.6), fp=fp_aim((0.3, 0.8, 0.55), flat=(-1, 0.25, 0.2)), camera=cam(-1.2, 1.6, -1.0))
-    c.key(5, "in3", fp_pos=fp_pos(-6.5, -0.8, -2.6), fp=fp_cut((-0.45, 0.25, -0.9), (-0.8, -0.55, -0.2)), camera=cam(1.4, -2.0, 1.6))
-    c.key(7, "out", fp_pos=fp_pos(-11.5, -4.2, -0.6), fp=fp_cut((-0.9, -0.4, -0.2), (-0.7, -0.6, 0.3)), camera=cam(1.8, -2.6, 2.2))
-    c.key(12, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.event(3, "swing").event(5, "hit").event(9, "next")
+def _finish(c, wind, hit, nxt):
+    c.event(wind, "swing").event(hit, "hit").event(nxt, "next")
     return c
 
 
-CLIPS = [roll, guard, guard_two, parry, guard_break, sword_1]
+STAND = ((0, 0, 0), (0, 0, 0))
+
+
+def diagonal(name, total, wind, hit, nxt, heft=1.0, two_handed=False):
+    """A cut from high on the sword side down across the body. The shoulders wind back, the hips lead, the arm whips
+    through and the blade trails it (the weapon's own turn lags the arm's), then it all settles. `heft` makes it bigger
+    and deeper (an axe); two_handed brings the other hand to the haft."""
+    c = Clip(name, total)
+    f = hit + max(1, round((total - hit) * 0.25))
+    up, up_i = hold((0.62, 0.72 + 0.1 * (heft - 1), 0.12 + 0.15 * (heft - 1)), (0.25, 0.85, 0.62 + 0.2 * (heft - 1)))
+    mid, mid_i = hold((-0.25, -0.2, -1), (-0.55, -0.1 - 0.15 * (heft - 1), -1))
+    low, low_i = hold((-0.78, -0.62 - 0.1 * (heft - 1), -0.42), (-1, -0.45 - 0.2 * (heft - 1), 0.05))
+    tw = 24 * heft
+    if two_handed:
+        left = [(0, "inout", READY_L), (wind, "out", aim((0.5, 0.55, -0.45))), (hit, "in3", aim((0.15, -0.35, -1))),
+                (f, "out", aim((-0.1, -0.75, -0.6))), (total, "inout", READY_L)]
+    else:
+        left = [(0, "inout", READY_L), (wind, "out", aim((-0.35, -0.8, -0.55))), (f, "inout", aim((-0.55, -0.8, 0.35))), (total, "inout", READY_L)]
+    swing(c, total,
+          arm=[(0, "inout", READY_R), (wind, "out", up), (hit, "in3", mid), (f, "out", low), (total, "inout", READY_R)],
+          item=[(0, "inout", READY_ITEM), (wind, "out", up_i), (hit, "in", mid_i), (f + 1, "out", low_i), (total, "inout", READY_ITEM)],
+          body=[(0, "inout", (0, 0, 0)), (wind, "out", (4 * heft, -tw, -3)), (hit, "in", (-7 * heft, tw * 0.75, 2)), (f + 1, "out", (-8 * heft, tw * 1.4, 3)),
+                (total, "inout", (0, 0, 0))],
+          left=left,
+          legs=[(0, "inout", STAND), (wind, "out", ((-10, 0, -2), (10, 0, 2))), (f, "inout", ((14 * heft, 0, -2), (-12 * heft, 0, 2))), (total, "inout", STAND)],
+          root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, 0.4, 0.6)), (f, "inout", (0, -0.9 * heft, -1.2 * heft)), (total, "inout", (0, 0, 0))])
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(wind, "out", fp_pos=fp_pos(0.5, 4.5 * heft, 1.2), fp=fp_aim((0.35, 0.8, 0.5), flat=(-1, 0.3, 0.2)), camera=cam(-1.2 * heft, 1.6, -1.0))
+    c.key(hit, "in3", fp_pos=fp_pos(-6.5, 3.4, -2.8), fp=fp_cut((-0.55, 0.35, -0.75), (-0.8, -0.55, -0.2)), camera=cam(1.4 * heft, -2.0, 1.6))
+    c.key(f + 1, "out", fp_pos=fp_pos(-12.0, 2.2, -1.2), fp=fp_cut((-0.9, -0.1, -0.45), (-0.7, -0.6, 0.3)), camera=cam(1.8 * heft, -2.6, 2.2))
+    c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    return _finish(c, wind, hit, nxt)
+
+
+def backhand(name, total, wind, hit, nxt, heft=1.0, two_handed=False, rising=0.0):
+    """The return cut: from the off side back across to the sword side, level (or, rising > 0, from low to high: an
+    axe's upward rip). The body unwinds the other way."""
+    c = Clip(name, total)
+    f = hit + max(1, round((total - hit) * 0.25))
+    r = rising
+    back, back_i = hold((-0.85, -0.15 - 0.55 * r, -0.5), (-0.6, 0.2 - 0.5 * r, 0.75))
+    mid, mid_i = hold((0.3, -0.1 + 0.1 * r, -1), (0.62, 0.0 + 0.3 * r, -0.8))
+    out, out_i = hold((0.95, -0.2 + 0.75 * r, -0.1 + 0.1 * r), (0.75, 0.1 + 0.8 * r, 0.65))
+    tw = 26 * heft
+    if two_handed:
+        left = [(0, "inout", READY_L), (wind, "out", aim((-0.55, -0.45 - 0.3 * r, -0.7))), (hit, "in3", aim((0.45, -0.3, -0.85))),
+                (f, "out", aim((0.6, -0.1 + 0.5 * r, -0.6))), (total, "inout", READY_L)]
+    else:
+        left = [(0, "inout", READY_L), (wind, "out", aim((-0.5, -0.8, 0.3))), (f, "inout", aim((-0.3, -0.75, -0.6))), (total, "inout", READY_L)]
+    swing(c, total,
+          arm=[(0, "inout", READY_R), (wind, "out", back), (hit, "in3", mid), (f, "out", out), (total, "inout", READY_R)],
+          item=[(0, "inout", READY_ITEM), (wind, "out", back_i), (hit, "in", mid_i), (f + 1, "out", out_i), (total, "inout", READY_ITEM)],
+          body=[(0, "inout", (0, 0, 0)), (wind, "out", (-3 - 6 * r, tw, 2)), (hit, "in", (-4 + 4 * r, -tw * 0.7, -2)), (f + 1, "out", (-2 + 8 * r, -tw * 1.3, -3)),
+                (total, "inout", (0, 0, 0))],
+          left=left,
+          legs=[(0, "inout", STAND), (wind, "out", ((12, 0, -2), (-10, 0, 2))), (f, "inout", ((-12 * heft, 0, -3), (12 * heft, 0, 2))), (total, "inout", STAND)],
+          root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, -0.5 - 1.0 * r, 0.3)), (f, "inout", (0, -0.3 + 1.0 * r, -1.0 * heft)), (total, "inout", (0, 0, 0))])
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(wind, "out", fp_pos=fp_pos(-13.0, 2.6 - 2.5 * r, -0.5), fp=fp_aim((-0.8, 0.35 - 0.4 * r, 0.3), flat=(0.1, 1, 0.1)), camera=cam(0.8 * r, -1.8, 1.2))
+    c.key(hit, "in3", fp_pos=fp_pos(-7.5, 3.2, -3.0), fp=fp_cut((0.3, 0.3 + 0.2 * r, -0.85), (1, 0.05 + 0.6 * r, 0.1)), camera=cam(-0.6 * r, 1.8, -1.6))
+    c.key(f + 1, "out", fp_pos=fp_pos(-0.5, 3.4 + 2.5 * r, -0.4), fp=fp_cut((0.85, 0.35 + 0.3 * r, -0.1), (0.7, 0.1 + 0.6 * r, 0.6)), camera=cam(-1.4 * r, 2.6, -2.2))
+    c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    return _finish(c, wind, hit, nxt)
+
+
+def thrust(name, total, wind, hit, nxt):
+    """A lunge: the hilt drawn back to the hip, then the whole body driven forward behind the point, the blade in line
+    with the arm for reach. The front foot steps out; a small overshoot, and back."""
+    c = Clip(name, total)
+    back, back_i = hold((0.4, -0.55, 0.72), (-0.05, 0.08, -1))
+    out, out_i = hold((-0.1, 0.04, -1), (-0.04, 0.02, -1))
+    swing(c, total,
+          arm=[(0, "inout", READY_R), (wind, "out", back), (hit, "in3", out), (hit + 2, "out", hold((-0.1, 0.0, -1), (-0.04, 0.0, -1))[0]),
+               (total, "inout", READY_R)],
+          item=[(0, "inout", READY_ITEM), (wind, "out", back_i), (hit, "in", out_i), (hit + 3, "inout", out_i), (total, "inout", READY_ITEM)],
+          body=[(0, "inout", (0, 0, 0)), (wind, "out", (5, -30, 0)), (hit, "in3", (-13, 34, 0)), (hit + 2, "out", (-11, 30, 0)), (total, "inout", (0, 0, 0))],
+          left=[(0, "inout", READY_L), (wind, "out", aim((-0.2, -0.5, -0.85))), (hit, "in3", aim((-0.5, -0.6, 0.65))), (total, "inout", READY_L)],
+          legs=[(0, "inout", STAND), (wind, "out", ((-8, 0, -2), (6, 0, 2))), (hit, "in3", ((30, 0, -2), (-26, 0, 2))), (hit + 3, "inout", ((26, 0, -2), (-22, 0, 2))),
+                (total, "inout", STAND)],
+          root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, -0.4, 1.0)), (hit, "in3", (0, -1.6, -3.2)), (hit + 3, "inout", (0, -1.4, -2.8)), (total, "inout", (0, 0, 0))])
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(wind, "out", fp_pos=fp_pos(0.5, 2.4, 3.6), fp=fp_aim((-0.3, 0.25, -1), flat=(-1, 0.3, 0.2)), camera=cam(-0.5, 0.8, 0))
+    c.key(hit, "in3", fp_pos=fp_pos(-5.5, 3.6, -7.5), fp=fp_aim((-0.18, 0.16, -1), flat=(-1, 0.4, 0.1)), camera=cam(1.2, -0.6, 0))
+    c.key(hit + 3, "out", fp_pos=fp_pos(-5.1, 3.4, -6.4), fp=fp_aim((-0.19, 0.16, -1), flat=(-1, 0.4, 0.1)), camera=cam(0.6, -0.3, 0))
+    c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    return _finish(c, wind, hit, nxt)
+
+
+def overhead(name, total, wind, hit, nxt, heft=1.0, hop=0.0):
+    """Both hands, straight over the head and down: the body arches back as the weapon goes up (and hangs there: this
+    is the charged blow), then folds forward behind it. `hop` lifts the feet for the heaviest (a mace's slam)."""
+    c = Clip(name, total)
+    top = max(2, wind - max(2, round(wind * 0.3)))
+    f = hit + max(2, round((total - hit) * 0.25))
+    up, up_i = hold((0.22, 0.95, 0.3 + 0.1 * heft), (0.0, 0.5, 0.86))
+    high, high_i = hold((0.2, 0.97, 0.36 + 0.1 * heft), (0.0, 0.38, 0.92))
+    down, down_i = hold((-0.02, -0.5, -0.86), (0.0, -0.32, -0.95))
+    low, low_i = hold((-0.08, -0.86, -0.5), (0.0, -0.82, -0.57))
+    swing(c, total,
+          arm=[(0, "inout", READY_R), (top, "out", up), (wind, "inout", high), (hit, "in3", down), (f, "out", low), (total, "inout", READY_R)],
+          item=[(0, "inout", READY_ITEM), (top, "out", up_i), (wind, "inout", high_i), (hit, "in", down_i), (f + 1, "out", low_i), (total, "inout", READY_ITEM)],
+          body=[(0, "inout", (0, 0, 0)), (top, "out", (11 * heft, -6, 0)), (wind, "inout", (14 * heft, -8, 0)), (hit, "in3", (-20 * heft, 8, 0)),
+                (f, "out", (-26 * heft, 10, 0)), (total, "inout", (0, 0, 0))],
+          left=[(0, "inout", READY_L), (top, "out", aim((-0.1, 0.95, 0.3))), (wind, "inout", aim((-0.08, 0.97, 0.36))), (hit, "in3", aim((0.1, -0.45, -0.9))),
+                (f, "out", aim((0.12, -0.85, -0.5))), (total, "inout", READY_L)],
+          legs=[(0, "inout", STAND), (top, "out", ((-6, 0, -3), (6, 0, 3))), (wind, "inout", ((-8, 0, -3), (8, 0, 3))),
+                (hit, "in3", ((24 * heft, 0, -3), (-20 * heft, 0, 3))), (total, "inout", STAND)],
+          root=[(0, "inout", (0, 0, 0)), (top, "out", (0, 0.8 + hop * 0.6, 0.8)), (wind, "inout", (0, 1.0 + hop, 1.0)), (hit, "in3", (0, -1.8 * heft, -2.6)),
+                (f, "out", (0, -2.2 * heft, -2.8)), (total, "inout", (0, 0, 0))])
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(top, "out", fp_pos=fp_pos(-5.5, 6.0, 0.4), fp=fp_aim((-0.1, 0.82, 0.56), flat=(-1, 0, 0)), camera=cam(-2.6 * heft, 0, 0))
+    c.key(wind, "inout", fp_pos=fp_pos(-5.7, 6.6, 0.7), fp=fp_aim((-0.1, 0.74, 0.66), flat=(-1, 0, 0)), camera=cam(-3.2 * heft, 0, 0))
+    c.key(hit, "in3", fp_pos=fp_pos(-6.5, 3.0, -4.2), fp=fp_aim((-0.14, -0.1, -0.98), flat=(-1, 0.05, 0.1)), camera=cam(4.2 * heft, 0, 0))
+    c.key(f, "out", fp_pos=fp_pos(-6.5, 0.5, -3.0), fp=fp_aim((-0.12, -0.5, -0.86), flat=(-1, 0.05, 0.1)), camera=cam(2.6 * heft, 0, 0))
+    c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
+    return _finish(c, wind, hit, nxt)
+
+
+# total, wind-up ends, the blow lands, the next move may begin (ticks, at the weapon's own attack speed)
+def sword_1():
+    return diagonal("sword_1", 13, 3, 5, 9)
+
+
+def sword_2():
+    return backhand("sword_2", 13, 3, 5, 9)
+
+
+def sword_3():
+    return thrust("sword_3", 17, 4, 6, 13)
+
+
+def sword_heavy():
+    return overhead("sword_heavy", 22, 8, 11, 19)
+
+
+def axe_1():
+    return diagonal("axe_1", 18, 5, 8, 13, heft=1.25, two_handed=True)
+
+
+def axe_2():
+    return backhand("axe_2", 18, 5, 8, 13, heft=1.2, two_handed=True, rising=0.85)
+
+
+def axe_heavy():
+    return overhead("axe_heavy", 26, 9, 13, 23, heft=1.25)
+
+
+def mace_1():
+    return overhead("mace_1", 24, 7, 11, 18, heft=1.1)
+
+
+def mace_2():
+    return backhand("mace_2", 24, 7, 11, 18, heft=1.35, two_handed=True)
+
+
+def mace_heavy():
+    return overhead("mace_heavy", 32, 11, 16, 28, heft=1.4, hop=2.5)
+
+
+CLIPS = [roll, guard, guard_two, parry, guard_break, sword_1, sword_2, sword_3, sword_heavy, axe_1, axe_2, axe_heavy,
+         mace_1, mace_2, mace_heavy]
 
 
 def build():
