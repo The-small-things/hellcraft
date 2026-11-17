@@ -43,6 +43,7 @@ public final class CombatClient {
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			Combat.clientRules(null);
 			PlayerAnimator.clear();
+			FirstPersonEase.reset();
 			RollControl.reset();
 			SwingControl.reset();
 			HitFeel.reset();
@@ -55,6 +56,7 @@ public final class CombatClient {
 			RollControl.tick(client);
 			SwingControl.tick(client);
 			PlayerAnimator.tickAll(client.level);
+			net.thesmallthings.hellcraft.combat.RollShape.tick(true);
 			HitFeel.tick(client);
 			StaminaHud.tick(client);
 		});
@@ -95,6 +97,9 @@ public final class CombatClient {
 		PlayerMovesAnim move = moves[payload.move()];
 		float heading = payload.x() == 0 && payload.z() == 0 ? Float.NaN : (float) (Mth.atan2(-payload.x(), payload.z()) * Mth.RAD_TO_DEG);
 		PlayerAnimator.of(entity).play(move, payload.speed(), heading, move == PlayerMovesAnim.PARRY ? 1.0f : 2.0f, move == PlayerMovesAnim.ROLL ? 3.0f : 4.0f);
+		if (move == PlayerMovesAnim.ROLL && entity != client.player) {
+			net.thesmallthings.hellcraft.combat.RollShape.start((Player) entity);
+		}
 	}
 
 	/**

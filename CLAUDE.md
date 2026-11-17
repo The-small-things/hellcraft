@@ -296,7 +296,14 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   under the combat layers, a move's legs kept by its `legs`), `anim/PoseSmoother` (eases vanilla's pose switches, keyed by crouch,
   arm poses, item use, riding; run last in `HumanoidModelMixin`) and the eased crouch drop (`AvatarRendererMixin.getRenderOffset`).
   Additive clips (`Clips.ADDITIVE`, `RigPose.additive`) lie over vanilla's aiming arms. Clips in player_moves.py "getting about" and
-  "bows, shields, food" (before `sword_1`: CombatTest treats every move from SWORD_1 on as a swing). `MotionTest` (`motion_*`). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  "bows, shields, food" (before `sword_1`: CombatTest treats every move from SWORD_1 on as a swing). `MotionTest` (`motion_*`, and
+  `motion_fp_*` in first person). **First person:** `python3 tools/art/fp_preview.py <move> [--times ...]` draws the first-person sword
+  through a move offline exactly as the game places it (vanilla's arm place, the fp bone, the handheld display, 70 degree view): tune
+  fp keys there, keep the blade on screen and above the hotbar. The locomotion clips carry fp keys too (`Locomotion.sampleFirstPerson`,
+  `PlayerAnimator.sampleFirstPerson`, only with View Bobbing on). `combat/FirstPersonEase` (from `FirstPersonHandsMixin`'s wrap of
+  `ItemStackRenderState.submit`) eases a hand's switch of use (bow loosed, shield raised, food) by blending its last drawn matrix, a
+  shield's two display transforms folded in. **The roll's hitbox:** `combat/RollShape` (0.9 high, eyes 0.75, for `TICKS`; started by
+  `Dodge.roll`, `RollControl`, and `CombatClient.move` for others; `mixin/AvatarMixin` on `getDefaultDimensions`; CombatTest checks both sides). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

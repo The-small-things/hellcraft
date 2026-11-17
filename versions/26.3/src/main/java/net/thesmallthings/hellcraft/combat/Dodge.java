@@ -39,6 +39,7 @@ public final class Dodge {
 	private static final Map<UUID, Long> PRAISED = new HashMap<>();
 
 	static void register() {
+		net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> RollShape.tick(false));
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if (entity instanceof ServerPlayer player && evading(player) && dodgeable(source)) {
 				passedThrough(player);
@@ -92,6 +93,7 @@ public final class Dodge {
 		}
 		Swing.cancel(player);
 		STARTED.put(player.getUUID(), now);
+		RollShape.start(player);
 		Vec3 dir = new Vec3(x, 0, z);
 		if (dir.lengthSqr() < 1.0e-4) {
 			double yaw = Math.toRadians(player.getYRot());

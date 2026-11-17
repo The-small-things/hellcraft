@@ -37,6 +37,7 @@ public class MotionTest implements FabricClientGameTest {
 			context.waitTicks(20);
 			getAbout(context, world);
 			items(context, world);
+			firstPerson(context, world);
 		}
 	}
 
@@ -196,6 +197,49 @@ public class MotionTest implements FabricClientGameTest {
 		context.takeScreenshot("motion_trident_throw");
 		expectMove(context, PlayerMovesAnim.THROW);
 		context.waitTicks(15);
+	}
+
+	// ------------------------------------------------------------------------------------------------- first person
+
+	private static void firstPerson(ClientGameTestContext context, TestSingleplayerContext world) {
+		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
+		back(world);
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_sword");
+		context.waitTicks(10);
+		context.takeScreenshot("motion_fp_stand");
+		// sprinting: the sword carried lower, pumping
+		hold(context, o -> o.keyUp, 6);
+		hold(context, o -> o.keySprint, 10);
+		context.takeScreenshot("motion_fp_run");
+		jump(context, 4);
+		context.takeScreenshot("motion_fp_jump");
+		context.getInput().releaseKey(o -> o.keySprint);
+		context.getInput().releaseKey(o -> o.keyUp);
+		context.waitTicks(20);
+		back(world);
+		// a shield coming up: part way there two ticks in, not snapped
+		world.getServer().runCommand("item replace entity Player0 weapon.offhand with minecraft:shield");
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:air");
+		context.waitTicks(10);
+		context.getInput().holdKey(o -> o.keyUse);
+		context.waitTicks(2);
+		context.takeScreenshot("motion_fp_shield_raising");
+		context.waitTicks(8);
+		context.takeScreenshot("motion_fp_shield_up");
+		context.getInput().releaseKey(o -> o.keyUse);
+		context.waitTicks(2);
+		context.takeScreenshot("motion_fp_shield_lowering");
+		context.waitTicks(10);
+		world.getServer().runCommand("item replace entity Player0 weapon.offhand with minecraft:air");
+		// a bow loosed: it eases back down instead of snapping
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:bow");
+		context.waitTicks(10);
+		hold(context, o -> o.keyUse, 22);
+		context.takeScreenshot("motion_fp_bow_drawn");
+		context.getInput().releaseKey(o -> o.keyUse);
+		context.waitTicks(2);
+		context.takeScreenshot("motion_fp_bow_loosed");
+		context.waitTicks(10);
 	}
 
 	private static void expectUsing(ClientGameTestContext context, PlayerMovesAnim want) {

@@ -137,12 +137,22 @@ public class CombatTest implements FabricClientGameTest {
 		// with no way held the roll is a hop back (north, away from where the player looks)
 		context.getInput().pressKey(DashKey.DASH);
 		context.waitTicks(3);
+		// mid-roll the hitbox is small, on both sides (combat/RollShape)
+		float clientHeight = context.computeOnClient(client -> client.player.getBbHeight());
+		float serverHeight = world.getServer().computeOnServer(server -> server.getPlayerList().getPlayerByName("Player0").getBbHeight());
+		if (clientHeight >= 1.0f || serverHeight >= 1.0f) {
+			throw new AssertionError("mid-roll the player should be under a block high; client " + clientHeight + ", server " + serverHeight);
+		}
 		context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
 		context.waitTicks(2);
 		context.takeScreenshot("combat_roll_live");
 		context.waitTicks(16);
 		context.runOnClient(client -> client.options.setCameraType(CameraType.FIRST_PERSON));
 		double[] after = place(world);
+		float standing = world.getServer().computeOnServer(server -> server.getPlayerList().getPlayerByName("Player0").getBbHeight());
+		if (standing < 1.7f) {
+			throw new AssertionError("after the roll the player should be full height again, not " + standing);
+		}
 		double moved = before[1] - after[1];
 		if (moved < 2.6 || moved > 4.2) {
 			throw new AssertionError("a roll should carry the player about 3.4 blocks; they moved " + moved);

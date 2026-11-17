@@ -339,7 +339,7 @@ GUARD_L = aim((0.28, -0.9, -0.42))
 
 # in first person: the sword block Minecraft had before shields (the numbers vanilla still uses for a blocking item
 # that isn't a shield): the blade lies across the view, slanting up to the left
-FP_GUARD_POS = fp_pos(-2.26, 1.28, 2.26)
+FP_GUARD_POS = fp_pos(-2.26, 2.8, 2.26)
 FP_GUARD = fp_xyz(-102.25, 13.365, 78.05)
 
 
@@ -376,8 +376,8 @@ def roll():
     c.key(12, "inout", right_arm=READY_R, left_arm=READY_L)
     # first person: the weapon drops out of sight and comes back; the view dips and rights itself
     c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.key(3, "out", fp_pos=fp_pos(-1.5, -7, 1), fp=fp_xyz(-40, 0, -20), camera=cam(9, 0, -3))
-    c.key(8, "inout", fp_pos=fp_pos(-1, -6, 1), fp=fp_xyz(-25, 0, -12), camera=cam(4, 0, 2))
+    c.key(3, "out", fp_pos=fp_pos(-2, -15, 2), fp=fp_xyz(-40, 0, -20), camera=cam(9, 0, -3))
+    c.key(8, "inout", fp_pos=fp_pos(-1.5, -14, 1.5), fp=fp_xyz(-25, 0, -12), camera=cam(4, 0, 2))
     c.key(12, "softback", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     c.event(2, "evade").event(9, "recover")
     return c
@@ -395,7 +395,7 @@ def guard():
     c.key(40, "inout", left_arm=off, body=(-6, 14, 0), root_pos=(0, -1.0, 0), right_leg=(-10, 0, -3), left_leg=(12, 0, 3))
     # first person: the blade comes up across the view, slanting from low right to high left
     c.key(0, fp_pos=FP_GUARD_POS, fp=FP_GUARD)
-    c.key(20, "inout", fp_pos=fp_pos(-2.26, 1.45, 2.26), fp=fp_xyz(-101.25, 13.365, 78.05))
+    c.key(20, "inout", fp_pos=fp_pos(-2.26, 2.97, 2.26), fp=fp_xyz(-101.25, 13.365, 78.05))
     c.key(40, "inout", fp_pos=FP_GUARD_POS, fp=FP_GUARD)
     return c
 
@@ -411,9 +411,9 @@ def guard_two():
     c.key(0, right_arm=arm, left_arm=off, body=(-8, 8, 0), root_pos=(0, -1.2, 0), **legs)
     c.key(20, "inout", right_arm=arm2, left_arm=off2, body=(-9, 8, 0), root_pos=(0, -1.4, 0), **legs)
     c.key(40, "inout", right_arm=arm, left_arm=off, body=(-8, 8, 0), root_pos=(0, -1.2, 0), **legs)
-    c.key(0, fp_pos=fp_pos(-3.2, 0.9, 2.0), fp=fp_xyz(-98, 6, 86))
-    c.key(20, "inout", fp_pos=fp_pos(-3.2, 1.05, 2.0), fp=fp_xyz(-97, 6, 86))
-    c.key(40, "inout", fp_pos=fp_pos(-3.2, 0.9, 2.0), fp=fp_xyz(-98, 6, 86))
+    c.key(0, fp_pos=fp_pos(-3.2, 2.4, 2.0), fp=fp_xyz(-98, 6, 86))
+    c.key(20, "inout", fp_pos=fp_pos(-3.2, 2.55, 2.0), fp=fp_xyz(-97, 6, 86))
+    c.key(40, "inout", fp_pos=fp_pos(-3.2, 2.4, 2.0), fp=fp_xyz(-98, 6, 86))
     return c
 
 
@@ -425,7 +425,7 @@ def parry():
     c.key(2, "out5", right_arm=aim((0.35, 0.15, -1), blade=(0.5, 1, -0.2)), body=(-2, -16, 0))
     c.key(8, "softback", right_arm=g, body=(-6, 14, 0))
     c.key(0, fp_pos=FP_GUARD_POS, fp=FP_GUARD, camera=cam(0, 0, 0))
-    c.key(2, "out5", fp_pos=fp_pos(-0.2, 2.6, -1.4), fp=fp_xyz(-80, -12, 48), camera=cam(-1.2, -1.6, 1.0))
+    c.key(2, "out5", fp_pos=fp_pos(-0.2, 4.1, -1.4), fp=fp_xyz(-80, -12, 48), camera=cam(-1.2, -1.6, 1.0))
     c.key(8, "softback", fp_pos=FP_GUARD_POS, fp=FP_GUARD, camera=cam(0, 0, 0))
     c.event(1, "clash")
     return c
@@ -443,8 +443,8 @@ def guard_break():
     c.key(16, "inout", right_arm=READY_R, left_arm=READY_L, body=(0, 0, 0), head=(0, 0, 0), root_pos=(0, 0, 0), right_leg=(0, 0, 0),
           left_leg=(0, 0, 0))
     c.key(0, fp_pos=FP_GUARD_POS, fp=FP_GUARD, camera=cam(0, 0, 0))
-    c.key(3, "out5", fp_pos=fp_pos(4, -1.5, 1.5), fp=fp_xyz(25, -35, -40), camera=cam(-5, 3, -4))
-    c.key(10, "inout", fp_pos=fp_pos(2, -3, 1), fp=fp_xyz(10, -12, -14), camera=cam(-1.5, 1, -1))
+    c.key(3, "out5", fp_pos=fp_pos(1.5, 6.0, 0.5), fp=fp_aim((0.7, 0.7, 0.1), flat=(0.1, 1, 0.2)), camera=cam(-5, 3, -4))
+    c.key(10, "inout", fp_pos=fp_pos(1.0, 3.5, 0.5), fp=fp_aim((0.45, 0.85, 0.1), flat=(-0.5, 0.3, 0.8)), camera=cam(-1.5, 1, -1))
     c.key(16, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     return c
 
@@ -468,10 +468,11 @@ def walk():
     """An unhurried walk: legs a third as far apart as vanilla's (which swings them 80 degrees), arms swinging easily
     against them, the hips riding up as a leg passes under and the shoulders turning with the forward arm."""
     c = Clip("walk", 20, loop=True)
+    # first person: the hand dips a little on each footfall and sways towards the foot that lands (over vanilla's bob)
     contact = lambda s: dict(right_leg=(-28 * s, 0, 0.5), left_leg=(28 * s, 0, -0.5), right_arm=(20 * s, 0, 3), left_arm=(-20 * s, 0, -3),
-                             body=(-2, 4 * s, 0), root_pos=(0, -0.45, 0))
+                             body=(-2, 4 * s, 0), root_pos=(0, -0.45, 0), fp_pos=fp_pos(-0.4 * s, -0.45, 0), fp=fp_xyz(1.0, 0, 1.2 * s))
     passing = dict(right_leg=(0, 0, 0.5), left_leg=(0, 0, -0.5), right_arm=(0, 0, 3), left_arm=(0, 0, -3), body=(-2, 0, 0),
-                   root_pos=(0, 0.35, 0))
+                   root_pos=(0, 0.35, 0), fp_pos=fp_pos(0, 0.2, 0), fp=fp_xyz(0, 0, 0))
     return _stride(c, [(0, contact(1)), (5, passing), (10, contact(-1)), (15, passing)])
 
 
@@ -482,9 +483,11 @@ def run():
     contact = lambda s: dict(right_leg=((-42 if s > 0 else 55), 0, 1), left_leg=((55 if s > 0 else -42), 0, -1),
                              right_arm=((58 if s > 0 else -42), (-8 if s > 0 else 0), (6 if s > 0 else 10)),
                              left_arm=((-42 if s > 0 else 58), (0 if s > 0 else 8), (-10 if s > 0 else -6)),
-                             body=(-13, 8 * s, 0), root_pos=(0, -1.1, 0))
+                             body=(-13, 8 * s, 0), root_pos=(0, -1.1, 0),
+                             fp_pos=fp_pos(-1.0 * s, -1.1, 0.2), fp=fp_xyz(-3, 4 * s, 5 * s))
+    # first person: the weapon carried a little lower, swinging side to side with the arm and rocking on each stride
     flight = dict(right_leg=(10, 0, 1), left_leg=(8, 0, -1), right_arm=(8, 0, 8), left_arm=(8, 0, -8), body=(-12, 0, 0),
-                  root_pos=(0, 0.9, 0))
+                  root_pos=(0, 0.9, 0), fp_pos=fp_pos(0, -0.2, 0.2), fp=fp_xyz(-1, 0, 0))
     return _stride(c, [(0, contact(1)), (5, flight), (10, contact(-1)), (15, flight)])
 
 
@@ -492,17 +495,19 @@ def sneak():
     """Sneaking: short careful steps under the bent back (vanilla bends the body), the arms forward and swinging little."""
     c = Clip("sneak", 20, loop=True)
     contact = lambda s: dict(right_leg=(-17 * s, 0, 0), left_leg=(17 * s, 0, 0), right_arm=(23 + 9 * s, 0, 4), left_arm=(23 - 9 * s, 0, -4),
-                             root_pos=(0, -0.2, 0))
-    passing = dict(right_leg=(0, 0, 0), left_leg=(0, 0, 0), right_arm=(23, 0, 4), left_arm=(23, 0, -4), root_pos=(0, 0.15, 0))
+                             root_pos=(0, -0.2, 0), fp_pos=fp_pos(-0.6 - 0.3 * s, -1.2, 0.8), fp=fp_xyz(3, 0, 0.8 * s))
+    # first person: held low and close, barely moving
+    passing = dict(right_leg=(0, 0, 0), left_leg=(0, 0, 0), right_arm=(23, 0, 4), left_arm=(23, 0, -4), root_pos=(0, 0.15, 0),
+                   fp_pos=fp_pos(-0.6, -1.0, 0.8), fp=fp_xyz(3, 0, 0))
     return _stride(c, [(0, contact(1)), (5, passing), (10, contact(-1)), (15, passing)])
 
 
 def idle():
     """Standing: slow breath, the chest lifting and the shoulders rising a hair. The arms are left to vanilla's sway."""
     c = Clip("idle", 80, loop=True, step=2.0)
-    c.key(0, body=(0, 0, 0), root_pos=(0, 0, 0))
-    c.key(36, "inout", body=(1.2, 0, 0), root_pos=(0, 0.18, 0))
-    c.key(80, "inout", body=(0, 0, 0), root_pos=(0, 0, 0))
+    c.key(0, body=(0, 0, 0), root_pos=(0, 0, 0), fp_pos=fp_pos(0, 0, 0))
+    c.key(36, "inout", body=(1.2, 0, 0), root_pos=(0, 0.18, 0), fp_pos=fp_pos(0, 0.25, 0))
+    c.key(80, "inout", body=(0, 0, 0), root_pos=(0, 0, 0), fp_pos=fp_pos(0, 0, 0))
     return c
 
 
@@ -510,17 +515,22 @@ def jump():
     """Leaving the ground: a dip and push, then one knee up and the arms rising out for balance; it holds the last pose
     while in the air."""
     c = Clip("jump", 10)
-    c.key(0, root_pos=(0, -1.2, 0), body=(-6, 0, 0), right_leg=(-6, 0, 1), left_leg=(6, 0, -1), right_arm=(-8, 0, 6), left_arm=(-8, 0, -6))
-    c.key(3, "out", root_pos=(0, 0.6, 0), body=(-2, 0, 0), right_leg=(30, 0, 2), left_leg=(-14, 0, -2), right_arm=(28, 0, 16), left_arm=(18, 0, -16))
-    c.key(10, "inout", root_pos=(0, 0.2, 0), body=(-1, 0, 0), right_leg=(22, 0, 2), left_leg=(-10, 0, -3), right_arm=(24, 0, 20), left_arm=(14, 0, -20))
+    c.key(0, root_pos=(0, -1.2, 0), body=(-6, 0, 0), right_leg=(-6, 0, 1), left_leg=(6, 0, -1), right_arm=(-8, 0, 6), left_arm=(-8, 0, -6),
+          fp_pos=fp_pos(0, -1.4, 0), fp=fp_xyz(4, 0, 0))
+    c.key(3, "out", root_pos=(0, 0.6, 0), body=(-2, 0, 0), right_leg=(30, 0, 2), left_leg=(-14, 0, -2), right_arm=(28, 0, 16), left_arm=(18, 0, -16),
+          fp_pos=fp_pos(0.3, 1.3, 0), fp=fp_xyz(-6, 0, -2))
+    c.key(10, "inout", root_pos=(0, 0.2, 0), body=(-1, 0, 0), right_leg=(22, 0, 2), left_leg=(-10, 0, -3), right_arm=(24, 0, 20), left_arm=(14, 0, -20),
+          fp_pos=fp_pos(0.3, 0.8, 0), fp=fp_xyz(-3, 0, -1))
     return c
 
 
 def fall():
     """A long drop: arms out wide and working, legs apart and pedalling, leaning back from the ground coming up."""
     c = Clip("fall", 20, loop=True, step=2.0)
-    a = dict(right_arm=(40, 0, 48), left_arm=(28, 0, -40), right_leg=(18, 0, 6), left_leg=(-14, 0, -6), body=(6, 0, 0))
-    b = dict(right_arm=(30, 0, 40), left_arm=(42, 0, -50), right_leg=(-12, 0, 6), left_leg=(20, 0, -6), body=(7, 0, 0))
+    a = dict(right_arm=(40, 0, 48), left_arm=(28, 0, -40), right_leg=(18, 0, 6), left_leg=(-14, 0, -6), body=(6, 0, 0),
+             fp_pos=fp_pos(1.4, 2.0, -0.3), fp=fp_xyz(-10, 3, -5))
+    b = dict(right_arm=(30, 0, 40), left_arm=(42, 0, -50), right_leg=(-12, 0, 6), left_leg=(20, 0, -6), body=(7, 0, 0),
+             fp_pos=fp_pos(0.8, 2.6, -0.3), fp=fp_xyz(-13, -3, -2))
     return _stride(c, [(0, a), (10, b)])
 
 
@@ -528,7 +538,8 @@ def land():
     """Touching down: the knees give (the hips drop), the body folds forward over them and the arms go out in front.
     The client fades it in and out by how hard the landing was; this is the deepest moment, held."""
     c = Clip("land", 4)
-    pose = dict(root_pos=(0, -2.6, 0.6), body=(-14, 0, 0), right_leg=(16, 0, 2), left_leg=(-6, 0, -2), right_arm=(32, 0, 10), left_arm=(26, 0, -10))
+    pose = dict(root_pos=(0, -2.6, 0.6), body=(-14, 0, 0), right_leg=(16, 0, 2), left_leg=(-6, 0, -2), right_arm=(32, 0, 10), left_arm=(26, 0, -10),
+                fp_pos=fp_pos(-0.3, -2.8, 0.4), fp=fp_xyz(10, 0, 2))
     c.key(0, **pose)
     c.key(4, "inout", **pose)
     return c
@@ -556,6 +567,10 @@ def bow_release():
     c.key(0, left_arm=(-4, -14, 0), left_arm_pos=(0, 0, 2.5), right_arm=(-3, 4, 0))
     c.key(2, "out5", left_arm=(-10, -30, -6), left_arm_pos=(-1, 0.5, 4.5), right_arm=(-9, 6, 0))
     c.key(10, "inout", left_arm=(0, 0, 0), left_arm_pos=(0, 0, 0), right_arm=(0, 0, 0))
+    # first person: the bow kicks up as the string goes, and settles
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_xyz(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(2, "out5", fp_pos=fp_pos(0, 1.2, 1.0), fp=fp_xyz(-9, 0, 0), camera=cam(-0.8, 0, 0))
+    c.key(10, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_xyz(0, 0, 0), camera=cam(0, 0, 0))
     return c
 
 
@@ -565,6 +580,9 @@ def crossbow_fire():
     c.key(0, right_arm=(0, 0, 0), left_arm=(0, 0, 0), right_arm_pos=(0, 0, 0), left_arm_pos=(0, 0, 0), body=(0, 0, 0))
     c.key(1, "out5", right_arm=(-14, 0, 0), left_arm=(-14, 0, 0), right_arm_pos=(0, 0.5, 2), left_arm_pos=(0, 0.5, 2), body=(5, 0, 0))
     c.key(8, "inout", right_arm=(0, 0, 0), left_arm=(0, 0, 0), right_arm_pos=(0, 0, 0), left_arm_pos=(0, 0, 0), body=(0, 0, 0))
+    c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_xyz(0, 0, 0), camera=cam(0, 0, 0))
+    c.key(1, "out5", fp_pos=fp_pos(0, 1.0, 2.2), fp=fp_xyz(-12, 0, 0), camera=cam(-1.6, 0, 0))
+    c.key(8, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_xyz(0, 0, 0), camera=cam(0, 0, 0))
     return c
 
 
@@ -576,6 +594,11 @@ def throw():
     c.key(2, "in", right_arm=aim((0.08, 0.35, -1)), body=(-6, 6, 0), left_arm=aim((-0.4, -0.9, 0.2)), right_leg=(-14, 0, 2), left_leg=(14, 0, -2))
     c.key(5, "out", right_arm=aim((-0.15, -0.7, -0.75)), body=(-12, 16, 0), left_arm=aim((-0.3, -1, 0.3)), right_leg=(-16, 0, 2), left_leg=(18, 0, -2))
     c.key(12, "inout", right_arm=READY_R, body=(-2, 4, 0), left_arm=READY_L, right_leg=(-4, 0, 1), left_leg=(5, 0, -1))
+    # first person: the empty hand follows through low across the view; the view leans into the throw
+    c.key(0, fp_pos=fp_pos(0, 3, 2), fp=fp_xyz(-20, 0, 0), camera=cam(-1.0, 0, 0))
+    c.key(3, "in", fp_pos=fp_pos(-4, 1, -2), fp=fp_xyz(25, 0, 10), camera=cam(1.6, -0.8, 0.8))
+    c.key(6, "out", fp_pos=fp_pos(-6, -4, -1), fp=fp_xyz(35, 0, 15), camera=cam(1.0, -0.6, 0.5))
+    c.key(12, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_xyz(0, 0, 0), camera=cam(0, 0, 0))
     return c
 
 
@@ -595,6 +618,10 @@ def shield_hit():
     c.key(0, body=(-5, -8, 0), root_pos=(0, -1.1, 0))
     c.key(1, "out5", body=(7, -10, 0), root_pos=(0, -1.3, 1.6))
     c.key(8, "softback", body=(-5, -8, 0), root_pos=(0, -1.1, 0))
+    # first person: the view jolts back with the blow (the shield is usually in the other hand, which the fp bone leaves)
+    c.key(0, camera=cam(0, 0, 0))
+    c.key(1, "out5", camera=cam(-2.2, 0.6, -1.2))
+    c.key(8, "softback", camera=cam(0, 0, 0))
     return c
 
 
@@ -672,9 +699,11 @@ def diagonal(name, total, wind, hit, nxt, heft=1.0, two_handed=False):
           legs=[(0, "inout", STAND), (wind, "out", ((-10, 0, -2), (10, 0, 2))), (f, "inout", ((14 * heft, 0, -2), (-12 * heft, 0, 2))), (total, "inout", STAND)],
           root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, 0.4, 0.6)), (f, "inout", (0, -0.9 * heft, -1.2 * heft)), (total, "inout", (0, 0, 0))])
     c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.key(wind, "out", fp_pos=fp_pos(0.5, 4.5 * heft, 1.2), fp=fp_aim((0.35, 0.8, 0.5), flat=(-1, 0.3, 0.2)), camera=cam(-1.2 * heft, 1.6, -1.0))
-    c.key(hit, "in3", fp_pos=fp_pos(-6.5, 3.4, -2.8), fp=fp_cut((-0.55, 0.35, -0.75), (-0.8, -0.55, -0.2)), camera=cam(1.4 * heft, -2.0, 1.6))
-    c.key(f + 1, "out", fp_pos=fp_pos(-12.0, 2.2, -1.2), fp=fp_cut((-0.9, -0.1, -0.45), (-0.7, -0.6, 0.3)), camera=cam(1.8 * heft, -2.6, 2.2))
+    # first person: raised at the top right, swept down through the middle of the view, finishing low on the left, all of
+    # it above the hotbar (tools/art/fp_preview.py draws it)
+    c.key(wind, "out", fp_pos=fp_pos(-1.0, 7.0 + heft, 1.5), fp=fp_aim((0.25, 0.85, 0.45), flat=(-1, 0.1, 0.4)), camera=cam(-1.2 * heft, 1.6, -1.0))
+    c.key(hit, "in3", fp_pos=fp_pos(-6.0, 5.0, -3.0), fp=fp_cut((-0.55, 0.25, -0.8), (-0.75, -0.6, -0.1)), camera=cam(1.4 * heft, -2.0, 1.6))
+    c.key(f + 1, "out", fp_pos=fp_pos(-11.0, 4.0, -1.5), fp=fp_cut((-0.85, -0.2, -0.5), (-0.6, -0.7, 0.3)), camera=cam(1.8 * heft, -2.6, 2.2))
     c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     return _finish(c, wind, hit, nxt)
 
@@ -703,9 +732,12 @@ def backhand(name, total, wind, hit, nxt, heft=1.0, two_handed=False, rising=0.0
           legs=[(0, "inout", STAND), (wind, "out", ((12, 0, -2), (-10, 0, 2))), (f, "inout", ((-12 * heft, 0, -3), (12 * heft, 0, 2))), (total, "inout", STAND)],
           root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, -0.5 - 1.0 * r, 0.3)), (f, "inout", (0, -0.3 + 1.0 * r, -1.0 * heft)), (total, "inout", (0, 0, 0))])
     c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.key(wind, "out", fp_pos=fp_pos(-13.0, 2.6 - 2.5 * r, -0.5), fp=fp_aim((-0.8, 0.35 - 0.4 * r, 0.3), flat=(0.1, 1, 0.1)), camera=cam(0.8 * r, -1.8, 1.2))
-    c.key(hit, "in3", fp_pos=fp_pos(-7.5, 3.2, -3.0), fp=fp_cut((0.3, 0.3 + 0.2 * r, -0.85), (1, 0.05 + 0.6 * r, 0.1)), camera=cam(-0.6 * r, 1.8, -1.6))
-    c.key(f + 1, "out", fp_pos=fp_pos(-0.5, 3.4 + 2.5 * r, -0.4), fp=fp_cut((0.85, 0.35 + 0.3 * r, -0.1), (0.7, 0.1 + 0.6 * r, 0.6)), camera=cam(-1.4 * r, 2.6, -2.2))
+    # first person: drawn back to the left at shoulder height (the hand rising first, so the blade never drags across the
+    # hotbar on its way), swept across the middle, finishing high on the right
+    c.key(max(1, wind // 2), "out", fp_pos=fp_pos(-4.0, 7.0, 0.5))
+    c.key(wind, "out", fp_pos=fp_pos(-9.0, 6.5 - 1.0 * r, 0.0), fp=fp_aim((-0.85, 0.5 - 0.35 * r, -0.15), flat=(0.1, 1, 0.1)), camera=cam(0.8 * r, -1.8, 1.2))
+    c.key(hit, "in3", fp_pos=fp_pos(-6.0, 5.0 + r, -3.0), fp=fp_cut((0.35, 0.2 + 0.2 * r, -0.85), (1, 0.05 + 0.6 * r, 0.1)), camera=cam(-0.6 * r, 1.8, -1.6))
+    c.key(f + 1, "out", fp_pos=fp_pos(1.0, 5.5 + 2.5 * r, -0.5), fp=fp_cut((0.8, 0.45 + 0.3 * r, -0.3), (0.7, 0.1 + 0.6 * r, 0.6)), camera=cam(-1.4 * r, 2.6, -2.2))
     c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     return _finish(c, wind, hit, nxt)
 
@@ -726,9 +758,11 @@ def thrust(name, total, wind, hit, nxt):
                 (total, "inout", STAND)],
           root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, -0.4, 1.0)), (hit, "in3", (0, -1.6, -3.2)), (hit + 3, "inout", (0, -1.4, -2.8)), (total, "inout", (0, 0, 0))])
     c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.key(wind, "out", fp_pos=fp_pos(0.5, 2.4, 3.6), fp=fp_aim((-0.3, 0.25, -1), flat=(-1, 0.3, 0.2)), camera=cam(-0.5, 0.8, 0))
-    c.key(hit, "in3", fp_pos=fp_pos(-5.5, 3.6, -7.5), fp=fp_aim((-0.18, 0.16, -1), flat=(-1, 0.4, 0.1)), camera=cam(1.2, -0.6, 0))
-    c.key(hit + 3, "out", fp_pos=fp_pos(-5.1, 3.4, -6.4), fp=fp_aim((-0.19, 0.16, -1), flat=(-1, 0.4, 0.1)), camera=cam(0.6, -0.3, 0))
+    # first person: drawn back low on the right, then driven straight into the middle of the view, the blade's length
+    # still showing (driven too far it shrinks to a toy)
+    c.key(wind, "out", fp_pos=fp_pos(1.5, 2.5, 2.5), fp=fp_aim((-0.25, 0.25, -1), flat=(-1, 0.3, 0.2)), camera=cam(-0.5, 0.8, 0))
+    c.key(hit, "in3", fp_pos=fp_pos(-4.0, 4.5, -3.5), fp=fp_aim((-0.18, 0.14, -1), flat=(-1, 0.4, 0.1)), camera=cam(1.2, -0.6, 0))
+    c.key(hit + 3, "out", fp_pos=fp_pos(-3.6, 4.2, -3.0), fp=fp_aim((-0.19, 0.14, -1), flat=(-1, 0.4, 0.1)), camera=cam(0.6, -0.3, 0))
     c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     return _finish(c, wind, hit, nxt)
 
@@ -757,8 +791,9 @@ def overhead(name, total, wind, hit, nxt, heft=1.0, hop=0.0):
     c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     c.key(top, "out", fp_pos=fp_pos(-5.5, 6.0, 0.4), fp=fp_aim((-0.1, 0.82, 0.56), flat=(-1, 0, 0)), camera=cam(-2.6 * heft, 0, 0))
     c.key(wind, "inout", fp_pos=fp_pos(-5.7, 6.6, 0.7), fp=fp_aim((-0.1, 0.74, 0.66), flat=(-1, 0, 0)), camera=cam(-3.2 * heft, 0, 0))
-    c.key(hit, "in3", fp_pos=fp_pos(-6.5, 3.0, -4.2), fp=fp_aim((-0.14, -0.1, -0.98), flat=(-1, 0.05, 0.1)), camera=cam(4.2 * heft, 0, 0))
-    c.key(f, "out", fp_pos=fp_pos(-6.5, 0.5, -3.0), fp=fp_aim((-0.12, -0.5, -0.86), flat=(-1, 0.05, 0.1)), camera=cam(2.6 * heft, 0, 0))
+    # down through the middle and stopped low, the blade angled down ahead of you, still over the hotbar
+    c.key(hit, "in3", fp_pos=fp_pos(-5.5, 8.5, -2.5), fp=fp_aim((-0.1, -0.7, -0.7), flat=(-1, 0.05, 0.1)), camera=cam(4.2 * heft, 0, 0))
+    c.key(f, "out", fp_pos=fp_pos(-5.5, 6.5, -1.5), fp=fp_aim((-0.1, -0.85, -0.5), flat=(-1, 0.05, 0.1)), camera=cam(2.6 * heft, 0, 0))
     c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     return _finish(c, wind, hit, nxt)
 
@@ -793,11 +828,11 @@ def spin(name, total, wind, hit, nxt, two_handed=False, heft=1.0):
           root=[(0, "inout", (0, 0, 0)), (wind, "out", (0, -1.4 * heft, 0)), (hit, "in", (0, -0.6, 0)), (end, "out", (0, -0.9, 0)), (total, "inout", (0, 0, 0))])
     mid = (wind + hit) / 2.0
     c.key(0, fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
-    c.key(wind, "out", fp_pos=fp_pos(3.0, 2.0, 1.5), fp=fp_aim((0.8, 0.3, 0.45), flat=(0.1, 1, 0.1)), camera=cam(0.5, 3.5 * heft, -1.5))
-    c.key(mid, "in", fp_pos=fp_pos(-7.5, 3.0, -3.0), fp=fp_cut((-0.2, 0.25, -0.95), (-1, 0, 0.1)), camera=cam(0.8, -3.0, 2.0))
-    c.key(hit, "linear", fp_pos=fp_pos(-17.0, 2.6, 0.5), fp=fp_cut((-0.95, 0.15, 0.1), (-0.6, 0, 0.8)), camera=cam(0.8, -5.0 * heft, 3.0))
-    c.key(hit + 0.01 if hit + 0.01 < end else end, "hold", fp_pos=fp_pos(6.0, 2.6, 2.0))
-    c.key(end, "out", fp_pos=fp_pos(-5.0, 2.8, -2.4), fp=fp_cut((-0.35, 0.3, -0.85), (-1, -0.1, 0.1)), camera=cam(0.6, -1.5, 1.0))
+    c.key(wind, "out", fp_pos=fp_pos(1.5, 5.5, 0.5), fp=fp_aim((0.8, 0.45, 0.2), flat=(0.1, 1, 0.1)), camera=cam(0.5, 3.5 * heft, -1.5))
+    c.key(mid, "in", fp_pos=fp_pos(-7.0, 5.5, -3.0), fp=fp_cut((-0.2, 0.25, -0.95), (-1, 0, 0.1)), camera=cam(0.8, -3.0, 2.0))
+    c.key(hit, "linear", fp_pos=fp_pos(-15.0, 5.5, 0.0), fp=fp_cut((-0.95, 0.15, -0.1), (-0.6, 0, 0.8)), camera=cam(0.8, -5.0 * heft, 3.0))
+    c.key(hit + 0.01 if hit + 0.01 < end else end, "hold", fp_pos=fp_pos(6.0, 5.5, 1.5))
+    c.key(end, "out", fp_pos=fp_pos(-5.0, 5.5, -2.4), fp=fp_cut((-0.35, 0.3, -0.85), (-1, -0.1, 0.1)), camera=cam(0.6, -1.5, 1.0))
     c.key(total, "inout", fp_pos=fp_pos(0, 0, 0), fp=fp_rot(0, 0, 0), camera=cam(0, 0, 0))
     return _finish(c, wind, hit, nxt)
 

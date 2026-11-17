@@ -7,6 +7,15 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.thesmallthings.hellcraft.client.combat.anim.Bone;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
 import net.thesmallthings.hellcraft.client.combat.anim.RigPose;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.thesmallthings.hellcraft.client.combat.FirstPersonEase;
+import net.thesmallthings.hellcraft.client.combat.anim.Settings;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,7 +45,7 @@ public abstract class FirstPersonHandsMixin {
 			return;
 		}
 		float partial = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-		if (!animator.sample(partial, hellcraft$pose)) {
+		if (!animator.sampleFirstPerson(partial, mc.player, hellcraft$pose)) {
 			return;
 		}
 		float w = hellcraft$pose.weight(Bone.FP);
@@ -51,5 +60,20 @@ public abstract class FirstPersonHandsMixin {
 			turn.set(turn.x, -turn.y, -turn.z, turn.w);
 		}
 		poseStack.rotate(turn);
+	}
+
+	/** Just before a held item is drawn: vanilla's sudden first-person switches eased (combat/FirstPersonEase). */
+	@WrapOperation(method = "submitArmWithItem", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V"))
+	private void hellcraft$easeSwitch(ItemStackRenderState item, PoseStack poseStack, SubmitNodeCollector collector, int light, int overlay, int outline,
+			Operation<Void> original, @Local(argsOnly = true) InteractionHand hand, @Local(argsOnly = true) ItemStack stack,
+			@Local(argsOnly = true, ordinal = 0) float partialTicks) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player != null && Settings.smoothAnimations()) {
+			HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? mc.player.getMainArm() : mc.player.getMainArm().getOpposite();
+			boolean using = mc.player.isUsingItem() && mc.player.getUsedItemHand() == hand;
+			FirstPersonEase.apply(poseStack, hand, arm, stack, using, mc.player.tickCount + partialTicks);
+		}
+		original.call(item, poseStack, collector, light, overlay, outline);
 	}
 }

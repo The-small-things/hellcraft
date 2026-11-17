@@ -303,6 +303,22 @@ public final class PlayerAnimator {
 		return !out.empty();
 	}
 
+	/**
+	 * First person: the hand's share of getting about (when the view bobs: vanilla's View Bobbing setting), with the moves
+	 * and stances over it. For mixin/FirstPersonHandsMixin.
+	 */
+	public boolean sampleFirstPerson(float partial, Player player, RigPose out) {
+		out.clear();
+		boolean bob = net.minecraft.client.Minecraft.getInstance().options.bobView().get();
+		if (motionTicked && bob) {
+			motion.sampleFirstPerson(partial, player, out);
+		}
+		if (sample(partial, scratch3)) {
+			out.layer(scratch3, 1);
+		}
+		return !out.empty();
+	}
+
 	/** Each tick: what the player is using, and what they just let go of. */
 	private void items(Player player) {
 		ItemStack using = player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY;

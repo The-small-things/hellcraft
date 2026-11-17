@@ -168,6 +168,10 @@ public final class Combat {
 		if (!w.isEmpty()) {
 			problems.append(w).append("; ");
 		}
+		String r = RollShape.selfTest();
+		if (!r.isEmpty()) {
+			problems.append(r).append("; ");
+		}
 		String d = Dodge.selfTest();
 		if (!d.isEmpty()) {
 			problems.append(d).append("; ");

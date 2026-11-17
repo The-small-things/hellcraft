@@ -204,6 +204,34 @@ public final class Locomotion {
 		return true;
 	}
 
+	private final HumanoidRenderState firstPerson = new HumanoidRenderState();
+
+	/**
+	 * The first-person share (the "fp" bone only) for this client's own player, read from the player itself (there is no
+	 * render state in first person): the hand's sway with the stride, the sprint's pumping, a jump's lift, a fall, a landing.
+	 */
+	boolean sampleFirstPerson(float partial, Player player, RigPose out) {
+		HumanoidRenderState s = firstPerson;
+		s.ageInTicks = player.tickCount + partial;
+		s.walkAnimationPos = player.walkAnimation.position(partial);
+		s.walkAnimationSpeed = player.walkAnimation.speed(partial);
+		s.isCrouching = player.isCrouching();
+		s.mainArm = player.getMainArm();
+		s.rightArmPose = HumanoidModel.ArmPose.EMPTY;
+		s.leftArmPose = HumanoidModel.ArmPose.EMPTY;
+		s.isUsingItem = false;
+		s.currentSwing = null;
+		if (!sample(partial, s, out)) {
+			return false;
+		}
+		for (Bone bone : Bone.ALL) {
+			if (bone != Bone.FP) {
+				out.weight[bone.ordinal()] = 0;
+			}
+		}
+		return out.weight(Bone.FP) > 0.001f;
+	}
+
 	private void stride(PlayerMovesAnim move, float phase, float backwards, RigPose into) {
 		Clips.Clip clip = Clips.of(move);
 		clip.sample(phase * clip.ticks, into.clear());

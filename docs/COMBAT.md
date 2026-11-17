@@ -39,6 +39,12 @@ vanilla's aiming arms, so the aim stays. Vanilla keeps swimming, gliding, riding
 busy with an item pose or a swing. Each player can turn it off for themselves: `/hellcraft-client animations off`
 (config/hellcraft-client.json). `MotionTest` plays and films it (`motion_*`); CombatTest films the clips on mannequins.
 
+**First person and the roll (2026-11-17, after "decrease the hitbox when rolling, the animations look great in 3rd person but not
+first person"):** every swing's fp keys redone with `tools/art/fp_preview.py` (wind-ups raised where you can see them, cuts through the
+middle, follow-throughs above the hotbar; the overhead chops down, the thrust stops short of shrinking to a toy, the guard break stays in
+view, the roll tucks the weapon fully away); first-person locomotion keys (stride sway, sprint swing, jump lift, fall, landing drop);
+`FirstPersonEase` for vanilla's first-person snaps; `RollShape` (a rolling player 0.9 high).
+
 ## Context
 The owner wants combat that feels like Better Combat / Epic Fight / Immersive Combat: weapons that swing differently
 and chain into combos, a stamina bar with dodge rolls, guarding and parrying with weapons (not only shields), and
