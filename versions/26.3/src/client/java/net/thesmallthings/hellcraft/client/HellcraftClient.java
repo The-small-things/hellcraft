@@ -311,7 +311,7 @@ public class HellcraftClient implements ClientModInitializer {
 				FallenSeraphAnimations.all(), -1, FallenSeraphEntity.SCALE / 2, 0.8f, 0.5f, "root", "body", "torso", "head").minLight(15));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("emperor"), EmperorMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.EMPEROR, context -> {
-			AnimatedBossRenderer<EmperorEntity> r = new AnimatedBossRenderer<>(context, "emperor", EmperorAnimations.all(), -1, EmperorEntity.SCALE,
+			AnimatedBossRenderer<EmperorEntity> r = new AnimatedBossRenderer<>(context, "emperor", EmperorAnimations.all(), -1, EmperorEntity.SCALE / 2,
 					0.0f, 0.0f) {
 				@Override
 				protected AABB getBoundingBoxForCulling(EmperorEntity entity, float partialTicks) {
