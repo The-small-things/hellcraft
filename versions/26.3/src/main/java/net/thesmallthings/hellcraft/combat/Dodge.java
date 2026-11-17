@@ -145,6 +145,7 @@ public final class Dodge {
 		level.playSound(null, player.blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.PLAYERS, 0.7f, 1.7f);
 		level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() + 0.9, player.getZ(), 5, 0.3, 0.4, 0.3, 0.01);
 		net.thesmallthings.hellcraft.hazard.guardian.GuardianManager.dodged(player);
+		net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager.dodged(player);
 	}
 
 	static String selfTest() {

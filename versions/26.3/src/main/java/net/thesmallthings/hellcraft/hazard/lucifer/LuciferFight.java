@@ -795,6 +795,14 @@ public final class LuciferFight {
 		return amount;
 	}
 
+	/** A blow passed through this player's dodge roll: style, if they fight here. */
+	void dodged(ServerPlayer player) {
+		StyleMeter style = styles.get(player.getUUID());
+		if (style != null && LuciferArena.inside(player.getX(), player.getZ())) {
+			style.onDodge();
+		}
+	}
+
 	boolean allowDamage(LivingEntity entity) {
 		if (entity.getUUID().equals(seraphId)) {
 			return phase == Phase.DUEL || phase == Phase.ENRAGED;
@@ -813,8 +821,7 @@ public final class LuciferFight {
 		for (ServerPlayer p : fighters()) {
 			if (!p.isCreative() && !styles.containsKey(p.getUUID())) {
 				styles.put(p.getUUID(), new StyleMeter(p));
-				Dialogue.notice(p, Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
-						+ "the better your style, the better your spoils.").withStyle(ChatFormatting.AQUA));
+				Dialogue.notice(p, Component.literal(StyleMeter.openingTip()).withStyle(ChatFormatting.AQUA));
 			}
 		}
 		Entity boss = seraph();
@@ -834,7 +841,7 @@ public final class LuciferFight {
 		StyleMeter hurt = styles.get(entity.getUUID());
 		if (hurt != null && !(source.getEntity() instanceof Player) && LuciferArena.inside(entity.getX(), entity.getZ())) {
 			if (blocked && source.getEntity() != null && BossRules.fromBoss(source.getEntity())) {
-				hurt.onParry();
+				hurt.onParry(net.thesmallthings.hellcraft.combat.Guard.turnedWhole(entity) || tick <= parryUntil);
 				if (tick <= parryUntil) {
 					parryUntil = -1;
 					FallenSeraphEntity s = seraph();

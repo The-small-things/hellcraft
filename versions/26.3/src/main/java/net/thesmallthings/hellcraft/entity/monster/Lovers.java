@@ -64,6 +64,9 @@ public class Lovers extends SoulMonster {
 		targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
 	}
 
+	/** Where the current dive began. */
+	private Vec3 diveFrom = Vec3.ZERO;
+
 	@Override
 	protected void customServerAiStep(ServerLevel level) {
 		super.customServerAiStep(level);
@@ -93,7 +96,8 @@ public class Lovers extends SoulMonster {
 			if (distanceTo(target) < 1.8) {
 				diving = 0;
 				nextDive = tickCount + DIVE_EVERY;
-				if (target instanceof Player player && BossRules.shieldFacing(player, position())) {
+				// judged by where the dive came from (by contact the pair may be over the player's head or past them)
+				if (target instanceof Player player && (BossRules.shieldFacing(player, diveFrom) || BossRules.shieldFacing(player, position()))) {
 					stun(level, player);
 				} else {
 					doHurtTarget(level, target);
@@ -105,6 +109,7 @@ public class Lovers extends SoulMonster {
 		}
 		if (tickCount >= nextDive && takeTurn(target)) {
 			diving = 30;
+			diveFrom = position();
 			playSound(SoundEvents.PHANTOM_SWOOP, 1.5f, 0.8f);
 			return;
 		}

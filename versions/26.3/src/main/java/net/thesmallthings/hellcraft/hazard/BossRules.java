@@ -64,6 +64,9 @@ public final class BossRules {
 		if (!player.isUsingItem() || !player.getUseItem().has(DataComponents.BLOCKS_ATTACKS) && !net.thesmallthings.hellcraft.combat.Guard.guarding(player)) {
 			return false;
 		}
+		if (overhead(player, from)) {
+			return true;
+		}
 		Vec3 to = from.subtract(player.position());
 		to = new Vec3(to.x, 0, to.z);
 		if (to.lengthSqr() < 1.0e-4) {
@@ -71,6 +74,19 @@ public final class BossRules {
 		}
 		Vec3 view = player.getViewVector(1.0f);
 		return to.normalize().dot(new Vec3(view.x, 0, view.z).normalize()) > 0;
+	}
+
+	/**
+	 * A blow from above, close: higher than the defender's waist and within a block and a half of them on the flat. Which
+	 * way they face hardly matters then (the attacker is over their head), so a raised shield or blade counts.
+	 */
+	public static boolean overhead(LivingEntity defender, Vec3 from) {
+		return overhead(from.y - defender.getY(), defender.getBbHeight(), from.x - defender.getX(), from.z - defender.getZ());
+	}
+
+	/** The same, from the blow's height over the defender's feet, their height, and its offset on the flat. */
+	public static boolean overhead(double above, double height, double dx, double dz) {
+		return above > height * 0.5 && dx * dx + dz * dz < 1.5 * 1.5;
 	}
 
 	/** How much harder a boss hits this victim: 1 at 10 hearts, 4 at 40 (with bossHeartScaling 1). */

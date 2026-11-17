@@ -250,7 +250,7 @@ public final class Guard {
 		if (from == null) {
 			return false;
 		}
-		return facing(player.getYHeadRot(), from.x - player.getX(), from.z - player.getZ());
+		return BossRules.overhead(player, from) || facing(player.getYHeadRot(), from.x - player.getX(), from.z - player.getZ());
 	}
 
 	static boolean facing(float yaw, double dx, double dz) {
@@ -268,6 +268,10 @@ public final class Guard {
 		// looking south (yaw 0 is +z): a blow from the south is faced, one from the north is not
 		if (!facing(0, 0, 3) || facing(0, 0, -3) || !facing(90, -3, 0) || facing(90, 3, 0)) {
 			return "the guard's facing check is turned round";
+		}
+		// a lover diving from overhead, a little behind: still blocked; one at waist height behind: not
+		if (!BossRules.overhead(2.2, 1.8, 0.3, -0.8) || BossRules.overhead(0.6, 1.8, 0, -1.0) || BossRules.overhead(2.5, 1.8, 0, -3.0)) {
+			return "a blow from overhead should count as faced, and only from close overhead";
 		}
 		for (WeaponClass kind : WeaponClass.values()) {
 			if (kind.guard <= 0) {

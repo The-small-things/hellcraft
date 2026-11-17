@@ -46,7 +46,7 @@ def write(path, obj):
 
 
 def main():
-    names = {"key.hellcraft.dash": "Dodge roll / Dash"}
+    names = {"key.hellcraft.dash": "Dodge roll / Dash", "key.hellcraft.blood_art": "Blood Art"}
     for eid, name, items, max_level, slots, effects in ENCHANTS:
         write(os.path.join(DATA, eid + ".json"), {
             "description": {"translate": "enchantment.hellcraft." + eid},

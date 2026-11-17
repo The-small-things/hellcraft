@@ -17,7 +17,7 @@ import java.util.Deque;
 
 /**
  * The style panel (REVAMP section 12): during a boss fight, on the right of the screen, your style rank as a big
- * letter in its colour with its name, a meter to the next rank, and a feed of what just scored ("+ PARRY") or cost
+ * letter in its colour with its name, the flow multiplier, a meter to the next rank, and a feed of what just scored ("+ PARRY") or cost
  * ("- HIT"), newest on top, fading. The server's StyleMeter sends it (StylePayload); it slides away when the fight ends.
  */
 public final class StylePanel implements HudElement {
@@ -37,6 +37,9 @@ public final class StylePanel implements HudElement {
 	private static boolean active;
 	private static int grade;
 	private static float progress;
+	private static float flow = 1.0f;
+	private static float shownFlow = 1.0f;
+	private static int flowUpAt = -100;
 	private static float shownProgress;
 	private static int ticks;
 	/** 0 hidden to SLIDE fully on screen. */
@@ -51,6 +54,10 @@ public final class StylePanel implements HudElement {
 		if (payload.grade() > grade && payload.active()) {
 			rankedUpAt = ticks;
 		}
+		if (payload.flow() > flow + 0.01f && payload.active()) {
+			flowUpAt = ticks;
+		}
+		flow = payload.flow();
 		active = payload.active();
 		grade = Math.max(0, Math.min(Grade.values().length - 1, payload.grade()));
 		progress = payload.progress();
@@ -71,6 +78,7 @@ public final class StylePanel implements HudElement {
 		ticks++;
 		slide = Math.max(0, Math.min(SLIDE, slide + (active ? 1 : -1)));
 		shownProgress += (progress - shownProgress) * 0.3f;
+		shownFlow += (flow - shownFlow) * 0.35f;
 		FEED_LINES.removeIf(e -> ticks - e.born() > FEED_TICKS);
 		if (mc.level == null) {
 			active = false;
@@ -105,6 +113,19 @@ public final class StylePanel implements HudElement {
 		g.text(font, rank.name(), 0, 0, ARGB.color(alpha, colour));
 		g.pose().popMatrix();
 		g.text(font, rank.title, x + 8, y + 17 + (int) (9 * 3f) + 3, ARGB.color(alpha, colour));
+
+		// the flow multiplier, top right: grey at x1, warming to the rank's colour at x2, popping as it climbs
+		String mult = String.format(java.util.Locale.ROOT, "x%.1f", shownFlow);
+		float warmth = Math.max(0f, Math.min(1f, (shownFlow - 1f)));
+		int multColour = ARGB.srgbLerp(warmth, 0xFF9A9A9A, 0xFF000000 | colour);
+		float since2 = ticks - flowUpAt + delta.getGameTimeDeltaPartialTick(false);
+		float pop2 = since2 < 8 ? 1 + 0.3f * (1 - since2 / 8f) : 1;
+		float ms = 1.6f * pop2;
+		g.pose().pushMatrix();
+		g.pose().translate(x + WIDTH - 8 - font.width(mult) * ms, y + 20);
+		g.pose().scale(ms, ms);
+		g.text(font, mult, 0, 0, ARGB.color(alpha, multColour));
+		g.pose().popMatrix();
 
 		// the meter to the next rank
 		int by = y + 60;

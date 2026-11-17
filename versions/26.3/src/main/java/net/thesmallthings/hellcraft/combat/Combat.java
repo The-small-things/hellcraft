@@ -66,8 +66,9 @@ public final class Combat {
 		PayloadTypeRegistry.clientboundPlay().register(FeelPayload.TYPE, FeelPayload.CODEC);
 		PayloadTypeRegistry.serverboundPlay().register(ArtPayload.TYPE, ArtPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(ArtPayload.TYPE, (payload, context) -> {
-			if (on() && Guard.guarding(context.player())) {
-				HellWeapons.art(context.player());
+			ServerPlayer player = context.player();
+			if (player.isAlive() && !player.isSpectator() && !Dodge.rolling(player)) {
+				HellWeapons.art(player);
 			}
 		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

@@ -229,8 +229,9 @@ public final class HellWeapons {
 			if (of(held) != null) {
 				held.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 			}
-			player.sendOverlayMessage(Component.literal("Fully charged: right-click to use its Blood Art!")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+			player.sendOverlayMessage(Component.literal("Fully charged: press ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
+					.append(Component.keybind("key.hellcraft.blood_art").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD))
+					.append(Component.literal(" for its Blood Art!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)));
 			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.6f, 1.8f);
 		} else {
 			player.sendOverlayMessage(meter(now));
@@ -300,8 +301,8 @@ public final class HellWeapons {
 	}
 
 	/**
-	 * Hellcraft's combat: the attack key pressed from a hell weapon's guard looses its Blood Art, if the blood is full.
-	 * Returns whether it did.
+	 * The Blood Art key (or, with Hellcraft's combat on, attack pressed from a hell weapon's guard) looses the held
+	 * weapon's Blood Art, if the blood is full; otherwise the meter shows how far it has to go. Returns whether it did.
 	 */
 	public static boolean art(ServerPlayer player) {
 		ItemStack stack = player.getMainHandItem();
@@ -313,12 +314,35 @@ public final class HellWeapons {
 			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
 			return false;
 		}
-		player.stopUsingItem();
+		if (player.isUsingItem()) {
+			player.stopUsingItem();
+		}
 		unleash(player, weapon, stack);
 		return true;
 	}
 
+	/** True while a Blood Art strikes (the style meter scores it as one). */
+	private static boolean unleashing;
+
+	public static boolean unleashing() {
+		return unleashing;
+	}
+
+	/** Fills a player's blood charge (tests: /hellcraft charge). */
+	public static void fill(ServerPlayer player) {
+		addCharge(player, FULL);
+	}
+
 	private static void unleash(ServerPlayer player, Weapon weapon, ItemStack stack) {
+		unleashing = true;
+		try {
+			unleashArt(player, weapon, stack);
+		} finally {
+			unleashing = false;
+		}
+	}
+
+	private static void unleashArt(ServerPlayer player, Weapon weapon, ItemStack stack) {
 		spend(player);
 		if (net.thesmallthings.hellcraft.combat.Combat.on()) {
 			// the art has a body: the Bloodletter's lunge, the Reaper's turn, the Tithe Axe raised over the head

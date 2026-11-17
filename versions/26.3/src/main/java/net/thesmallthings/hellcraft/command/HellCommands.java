@@ -200,6 +200,13 @@ public final class HellCommands {
 				.then(Commands.literal("combat")
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(),
 								net.thesmallthings.hellcraft.combat.Combat.selfTest()))))
+				.then(Commands.literal("charge")
+						.then(Commands.argument("players", EntityArgument.players()).executes(ctx -> {
+							for (ServerPlayer p : EntityArgument.getPlayers(ctx, "players")) {
+								net.thesmallthings.hellcraft.blood.HellWeapons.fill(p);
+							}
+							return reply(ctx.getSource(), "Blood charge filled.");
+						})))
 				.then(Commands.literal("loadout")
 						.executes(ctx -> loadout(ctx.getSource(), List.of(ctx.getSource().getPlayerOrException()), Loadout.Kit.FULL))
 						.then(Commands.argument("players", EntityArgument.players())

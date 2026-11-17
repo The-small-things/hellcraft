@@ -153,6 +153,8 @@ public final class Guide {
 					"",
 					"Combos: click again as a swing ends and the next move follows: a sword cuts, cuts back and thrusts; an axe chops and rips upward. The last move of a chain hits hardest.",
 					"",
+					"Style in boss fights: each move goes stale if you repeat it, so play the chain through. Feats (finishers, heavy blows, timed parries, ripostes, dodges through a blow, counters) raise a multiplier up to x2; getting hit resets it.",
+					"",
 					"Heavy blow: hold the attack key instead of tapping it. It is slower, costs stamina and hits about twice as hard.",
 					"",
 					"Dodge roll: press Dash (Left Alt) to roll the way you're moving (standing still, you hop back). It costs stamina, and in the middle of the roll blows pass through you, a boss's too. Sidestep leggings make it cheaper, longer and safer.",
@@ -166,7 +168,7 @@ public final class Guide {
 		pages.add(page("HELL WEAPONS",
 				"Craft the Bloodletter with Blood Fragments. The Reaper of Minos, Tithe Axe and Blood Pickaxe also cost Blood Hearts.",
 				"",
-				combat ? "Hits and kills charge them. When full: hold right-click to guard, then press attack for the Blood Art (the Blood Pickaxe: just right-click)."
+				combat ? "Hits and kills charge them. When full, press the Blood Art key (R; Controls, Hellcraft) for its special attack."
 						: "Hits and kills charge them. When full, right-click for a special attack.",
 				"",
 				"Sneak + right-click (Blood Oath): pay 3 hearts of health for 30 s of full power.",

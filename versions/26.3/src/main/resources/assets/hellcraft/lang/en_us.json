@@ -135,5 +135,6 @@
   "entity.hellcraft.antaeus": "Antaeus",
   "entity.hellcraft.fallen_seraph": "The Fallen Seraph",
   "entity.hellcraft.emperor": "The Three-Faced Emperor",
-  "entity.hellcraft.emperor_weak_point": "The Emperor's Weak Point"
+  "entity.hellcraft.emperor_weak_point": "The Emperor's Weak Point",
+  "key.hellcraft.blood_art": "Blood Art"
 }

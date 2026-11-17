@@ -157,6 +157,9 @@ public final class Lessons {
 				&& net.thesmallthings.hellcraft.combat.Moveset.of(p.getMainHandItem()) != null && s.playSeconds >= 10, new Object[]{
 				"Your weapon swings now: a click cuts everything in its path a moment later. Click again as the swing ends to chain "
 						+ "the next move, or hold the key for a slow, heavy blow that costs stamina. (Journal: FIGHTING)"}));
+		Key art = new Key("key.hellcraft.blood_art");
+		LESSONS.add(new Lesson("blood_art", true, true, (p, s) -> HellWeapons.charge(p) >= 100, new Object[]{
+				"Your weapon's blood is full. Press ", art, " to loose its Blood Art. (Journal: HELL WEAPONS)"}));
 		LESSONS.add(new Lesson("guard", true, false, (p, s) -> net.thesmallthings.hellcraft.combat.Combat.on()
 				&& net.thesmallthings.hellcraft.combat.Guard.guards(p.getMainHandItem()) && s.playSeconds >= 20, new Object[]{
 				"That weapon can guard. Hold right-click and it turns most of a blow aside, at a cost in stamina. Raise it just before "

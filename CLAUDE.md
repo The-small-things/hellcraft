@@ -263,7 +263,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   four cuts with a `spin` and a finisher, `Move.finisher` read by `HellWeapons` for the deeper bleed through `Swing.landingMove`;
   the Reaper's `pulling` turn; the Tithe Axe's `shaking` slam, `Swing.shockwave`), client `combat/Trails` (a sweep particle as wide
   moves land; a hell weapon's blade traced in blood dust from the pose itself, `blade` and `toWorld` mirroring PlayerRig and the
-  renderer), and each Blood Art shows a move (`HellWeapons.unleash`). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
+  renderer), and each Blood Art shows a move (`HellWeapons.unleash`). **After the playtest:** the Blood Art key (`DashKey.BLOOD_ART`, R,
+  `net/ArtPayload`, `HellWeapons.art` without a guard; `/hellcraft charge <players>` fills it for tests); `BossRules.overhead` (a blow
+  from close above counts as faced, for shields and weapon guards; `Lovers` judges a dive by `diveFrom` too); `StyleMeter` scores per
+  move (`Swing.landingMove`, `Moveset.label`) and by named feats, each raising the flow multiplier (`raise`, x1 to x2, reset by a hit,
+  ebbing; sent in `StylePayload.flow`, drawn by `StylePanel`), `onParry(timed)` (`Guard.turnedWhole` or the boss's parry window),
+  `onHit(..., punish)` for broken posture, `openingTip`; dodges reach Lucifer's meters through `LuciferManager.dodged`. Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

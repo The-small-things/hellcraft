@@ -42,6 +42,7 @@ import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.BossModel;
+import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
@@ -331,8 +332,7 @@ public abstract class GuardianFight {
 			if (inArena(p) && p.isAlive() && !p.isSpectator() && !p.isCreative()) {
 				if (participants.add(p.getUUID())) {
 					styles.put(p.getUUID(), new StyleMeter(p));
-					Dialogue.notice(p, Component.literal("Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: "
-							+ "the better your style, the better your spoils.").withStyle(ChatFormatting.AQUA));
+					Dialogue.notice(p, Component.literal(StyleMeter.openingTip()).withStyle(ChatFormatting.AQUA));
 				}
 				anyone = true;
 			}
@@ -422,7 +422,8 @@ public abstract class GuardianFight {
 		StyleMeter hurt = styles.get(entity.getUUID());
 		if (hurt != null && inArena(entity) && !(source.getEntity() instanceof Player)) {
 			if (blocked && source.getEntity() != null && BossRules.fromBoss(source.getEntity())) {
-				hurt.onParry();
+				// a parry (a weapon raised just in time, or a block on the white flash) is a feat; a guard held up scores less
+				hurt.onParry(Guard.turnedWhole(entity) || tick <= parryUntil);
 				if (tick <= parryUntil && source.getEntity().getUUID().equals(bodyId) && entity instanceof ServerPlayer player && body() != null) {
 					parryUntil = -1;
 					onParried(body(), player);

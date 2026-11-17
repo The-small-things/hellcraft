@@ -63,6 +63,8 @@ public class CombatTest implements FabricClientGameTest {
 			guard(context, world);
 			swings(context, world);
 			hellWeapons(context, world);
+			bloodArt(context, world);
+			overhead(context, world);
 		}
 	}
 
@@ -388,6 +390,60 @@ public class CombatTest implements FabricClientGameTest {
 		}
 		world.getServer().runCommand("kill @e[type=minecraft:husk]");
 		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_sword");
+		context.waitTicks(5);
+	}
+
+	/** A full hell weapon's Blood Art, by its own key (R), and again from the guard with the attack key. */
+	private static void bloodArt(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with hellcraft:bloodletter");
+		world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~ 0 0");
+		context.waitTicks(10);
+		for (String how : new String[]{"key", "guard"}) {
+			world.getServer().runCommand("hellcraft charge Player0");
+			context.waitTicks(5);
+			int before = world.getServer().computeOnServer(server -> net.thesmallthings.hellcraft.blood.HellWeapons.charge(server.getPlayerList().getPlayerByName("Player0")));
+			if (before < 100) {
+				throw new AssertionError("/hellcraft charge should fill the blood charge, not " + before);
+			}
+			if (how.equals("key")) {
+				context.getInput().pressKey(DashKey.BLOOD_ART);
+				context.waitTicks(2);
+				context.takeScreenshot("combat_blood_art_key");
+			} else {
+				context.getInput().holdKey(options -> options.keyUse);
+				context.waitTicks(8);
+				context.getInput().pressKey(options -> options.keyAttack);
+				context.waitTicks(3);
+				context.getInput().releaseKey(options -> options.keyUse);
+			}
+			context.waitTicks(10);
+			int after = world.getServer().computeOnServer(server -> net.thesmallthings.hellcraft.blood.HellWeapons.charge(server.getPlayerList().getPlayerByName("Player0")));
+			if (after != 0) {
+				throw new AssertionError("the Blood Art (by " + how + ") should spend the charge; it is still " + after);
+			}
+			world.getServer().runCommand("execute as Player0 at @s run tp @s ~ ~ ~-5 0 0");
+			context.waitTicks(30);
+		}
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_sword");
+		context.waitTicks(5);
+	}
+
+	/** A blow from straight overhead (a lover's dive) is blocked by a raised guard whichever way the player faces. */
+	private static void overhead(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("execute at Player0 run summon minecraft:husk ~0.3 ~2.3 ~-0.6 {NoAI:1b,NoGravity:1b,Silent:1b,PersistenceRequired:1b}");
+		world.getServer().runCommand("effect give Player0 minecraft:instant_health 1 4 true");
+		context.waitTicks(40);
+		context.getInput().holdKey(options -> options.keyUse);
+		context.waitTicks(14);
+		double[] before = place(world);
+		strike(world, 6.0f);
+		context.waitTicks(4);
+		double[] after = place(world);
+		context.getInput().releaseKey(options -> options.keyUse);
+		if (before[3] - after[3] >= 4.5) {
+			throw new AssertionError("a guard should block a blow from overhead, behind the player's back; they lost " + (before[3] - after[3]));
+		}
+		world.getServer().runCommand("kill @e[type=minecraft:husk]");
 		context.waitTicks(5);
 	}
 

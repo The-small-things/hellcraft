@@ -43,6 +43,13 @@ public final class LuciferManager {
 	private static int ticks;
 
 	/** True while a fight is on (the Spine's whispers keep quiet). */
+	/** A blow passed through this player's dodge roll (combat/Dodge). */
+	public static void dodged(net.minecraft.server.level.ServerPlayer player) {
+		if (fight != null) {
+			fight.dodged(player);
+		}
+	}
+
 	public static boolean fighting() {
 		return fight != null;
 	}

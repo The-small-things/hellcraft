@@ -125,6 +125,26 @@ public final class Moveset {
 				light(PlayerMovesAnim.TITHE_2, 1, 1.15f, 58, 55, 0.1f, 0.5f, 0.12f)));
 	}
 
+	/** What a move is called on the style panel. */
+	public static String label(PlayerMovesAnim anim) {
+		return switch (anim) {
+			case SWORD_1, BLOOD_1 -> "CUT";
+			case SWORD_2, BLOOD_2 -> "BACKCUT";
+			case SWORD_3, BLOOD_4 -> "THRUST";
+			case BLOOD_3 -> "SPIN";
+			case AXE_1, TITHE_1 -> "CHOP";
+			case AXE_2, TITHE_2 -> "RIP";
+			case MACE_1 -> "POUND";
+			case MACE_2 -> "SWING";
+			case REAPER_1, REAPER_2 -> "REAP";
+			case REAPER_3 -> "HARVEST";
+			case SWORD_HEAVY, AXE_HEAVY, MACE_HEAVY, REAPER_HEAVY -> "CLEAVE";
+			case TITHE_HEAVY -> "SLAM";
+			case BLOOD_HEAVY -> "LUNGE";
+			default -> anim.name().replace('_', ' ');
+		};
+	}
+
 	@Nullable
 	public static Moveset of(@Nullable WeaponClass kind) {
 		return kind == null ? null : SETS.get(kind);
