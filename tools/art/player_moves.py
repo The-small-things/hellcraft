@@ -400,9 +400,10 @@ def guard():
     return c
 
 
-def guard_two():
-    """Guarding with a two-handed weapon (an axe, the Reaper): the haft held across the body in both hands, knees bent."""
-    c = Clip("guard_two", 40, loop=True, step=2.0)
+def guard_two(name="guard_two", fp_keys=None):
+    """Guarding with a two-handed weapon (an axe, the Tithe Axe): the haft held across the body in both hands, knees bent.
+    The mace and the Reaper share the body and hold their own way in first person (guard_mace, guard_reaper)."""
+    c = Clip(name, 40, loop=True, step=2.0)
     arm = aim((-0.3, -0.62, -0.72), blade=(-1, 0.42, 0.05))
     arm2 = aim((-0.3, -0.59, -0.72), blade=(-1, 0.42, 0.07))
     off = aim((0.5, -0.5, -0.78))
@@ -411,10 +412,23 @@ def guard_two():
     c.key(0, right_arm=arm, left_arm=off, body=(-8, 8, 0), root_pos=(0, -1.2, 0), **legs)
     c.key(20, "inout", right_arm=arm2, left_arm=off2, body=(-9, 8, 0), root_pos=(0, -1.4, 0), **legs)
     c.key(40, "inout", right_arm=arm, left_arm=off, body=(-8, 8, 0), root_pos=(0, -1.2, 0), **legs)
-    c.key(0, fp_pos=fp_pos(-3.2, 2.4, 2.0), fp=fp_xyz(-98, 6, 86))
-    c.key(20, "inout", fp_pos=fp_pos(-3.2, 2.55, 2.0), fp=fp_xyz(-97, 6, 86))
-    c.key(40, "inout", fp_pos=fp_pos(-3.2, 2.4, 2.0), fp=fp_xyz(-98, 6, 86))
+    (p0, r0), (p1, r1) = fp_keys or ((fp_pos(-3.2, 2.4, 2.0), fp_xyz(-98, 6, 86)), (fp_pos(-3.2, 2.55, 2.0), fp_xyz(-97, 6, 86)))
+    c.key(0, fp_pos=p0, fp=r0)
+    c.key(20, "inout", fp_pos=p1, fp=r1)
+    c.key(40, "inout", fp_pos=p0, fp=r0)
     return c
+
+
+def guard_mace():
+    """The mace's guard: the haft held level across the view in both hands, the head out to the left."""
+    return guard_two("guard_mace", ((fp_pos(-1.5, 4.0, 1.0), fp_aim((-0.95, 0.28, 0.12), flat=(0, 0.2, 1))),
+                                    (fp_pos(-1.5, 4.2, 1.0), fp_aim((-0.95, 0.3, 0.12), flat=(0, 0.2, 1)))))
+
+
+def guard_reaper():
+    """The Reaper's guard: the snath stood up in front of you, the blade hooked over the top of the view."""
+    return guard_two("guard_reaper", ((fp_pos(-4.5, 2.0, 1.5), fp_aim((-0.12, 0.97, 0.1), flat=(0, 0.1, 1))),
+                                      (fp_pos(-4.5, 2.2, 1.5), fp_aim((-0.12, 0.97, 0.12), flat=(0, 0.1, 1)))))
 
 
 def parry():
@@ -837,6 +851,228 @@ def spin(name, total, wind, hit, nxt, two_handed=False, heft=1.0):
     return _finish(c, wind, hit, nxt)
 
 
+# ----------------------------------------------------------------------------------------------- first person, weapon by weapon
+# The shapes above give every swing its body and a sword's first-person keys. Each weapon below swaps those for its own
+# (restyle): an axe is hoisted over the shoulder and bites and stops, a mace is cocked back and pounds, the Reaper's
+# scythe hooks and pulls its blade back towards you, the Bloodletter flicks. Keys are (tick, ease, fp_pos, fp turn,
+# camera); fp_preview.py draws each move with its own weapon.
+
+def restyle(c, keys):
+    """Replaces a clip's first-person and camera keys: `keys` is a list of (tick, ease, pos, turn, camera), any of the
+    last three None to leave that bone without a key there. Starts and ends at rest."""
+    for bone in ("fp", "camera"):
+        c.pos.pop(bone, None)
+        c.rot.pop(bone, None)
+    rest = (fp_pos(0, 0, 0), fp_rot(0, 0, 0), cam(0, 0, 0))
+    for tick, ease, pos, turn, view in [(0, "inout") + rest] + keys + [(c.ticks, "inout") + rest]:
+        bones = {}
+        if pos is not None:
+            bones["fp_pos"] = pos
+        if turn is not None:
+            bones["fp"] = turn
+        if view is not None:
+            bones["camera"] = view
+        c.key(tick, ease, **bones)
+    return c
+
+
+def fp_hook(haft, motion):
+    """A scythe's turn: its blade's edge is on the inside of the hook (the side towards the snath), so it leads the cut
+    the other way round from a sword's or an axe's (fp_cut leads with the sprite's upper left side: an axe's bit)."""
+    return fp_cut(haft, tuple(-v for v in motion))
+
+
+def _after(total, hit, share, least=1):
+    return min(total - 1, hit + max(least, round((total - hit) * share)))
+
+
+def fp_chop(c, wind, hit, heft=1.0):
+    """An axe's chop: hoisted high over the right shoulder with the head back behind it, a beat held there, then brought
+    down steeply through the middle of the view; the bit bites, stops dead and rocks back a little."""
+    t = c.ticks
+    lift = max(1, round(wind * 0.6))
+    bite = _after(t, hit, 0.18, 2)
+    return restyle(c, [
+        (lift, "out", fp_pos(-2.5, 6.5, 2.0), fp_cut((0.15, 0.85, 0.5), (-0.3, 0.3, -1)), cam(-1.6 * heft, 1.8, -1.0)),
+        (wind, "inout", fp_pos(-2.5, 7.2, 2.6), fp_cut((0.18, 0.8, 0.57), (-0.3, 0.3, -1)), cam(-2.2 * heft, 2.0, -1.2)),
+        (hit, "in3", fp_pos(-3.0, 6.5, -3.5), fp_cut((-0.25, 0.2, -0.95), (-0.25, -1, 0.05)), cam(2.6 * heft, -1.0, 1.0)),
+        (bite, "out5", fp_pos(-3.6, 5.6, -3.0), fp_cut((-0.3, -0.15, -0.94), (-0.2, -1, 0.1)), cam(3.6 * heft, -1.4, 1.4)),
+        (_after(t, hit, 0.4, 3), "softback", fp_pos(-3.2, 6.0, -2.4), fp_cut((-0.3, -0.05, -0.95), (-0.2, -1, 0.1)), cam(2.4 * heft, -1.0, 1.0)),
+    ])
+
+
+def fp_rip(c, wind, hit, heft=1.0):
+    """An axe's rising rip: the hand comes up first (so the head never drags over the hotbar), the head dropped low on
+    the left, then torn up across the view to high on the right, bit first."""
+    t = c.ticks
+    return restyle(c, [
+        (max(1, wind // 2), "out", fp_pos(-4.0, 7.0, 1.0), None, None),
+        (wind, "out", fp_pos(-7.0, 6.5, -0.5), fp_cut((-0.75, -0.25, -0.3), (0.6, 0.8, -0.1)), cam(1.2 * heft, -1.8, 1.2)),
+        (hit, "in3", fp_pos(-3.0, 6.5, -3.0), fp_cut((0.15, 0.5, -0.85), (0.5, 0.6, 0.6)), cam(-0.8 * heft, 1.6, -1.2)),
+        (_after(t, hit, 0.25), "out", fp_pos(1.5, 8.5, -1.0), fp_cut((0.55, 0.7, -0.45), (0.3, 0.5, 0.8)), cam(-2.4 * heft, 2.4, -1.8)),
+    ])
+
+
+def fp_cleave(c, wind, hit, heft=1.0, shake=0.0):
+    """An axe's heavy blow: lifted in both hands over your head, the head hanging behind (the charge), then driven
+    straight down the middle and buried; `shake` rocks the view as it lands (the Tithe Axe)."""
+    t = c.ticks
+    top = max(2, wind - max(2, round(wind * 0.3)))
+    bite = _after(t, hit, 0.12, 2)
+    keys = [
+        (top, "out", fp_pos(-3.5, 7.0, 2.0), fp_cut((-0.05, 0.75, 0.65), (0, 0.6, -1)), cam(-2.8 * heft, 0, 0)),
+        (wind, "inout", fp_pos(-3.6, 7.8, 2.6), fp_cut((-0.05, 0.68, 0.73), (0, 0.6, -1)), cam(-3.6 * heft, 0, 0)),
+        (hit, "in3", fp_pos(-4.0, 6.5, -3.5), fp_cut((-0.05, -0.4, -0.92), (0, -1, 0.1)), cam(5.0 * heft, 0, 0)),
+        (bite, "out5", fp_pos(-4.0, 5.0, -3.0), fp_cut((-0.05, -0.7, -0.72), (0, -1, 0.1)), cam(6.0 * heft, 0, 0)),
+    ]
+    if shake:
+        for i, k in enumerate(range(bite + 1, min(t - 3, bite + 5))):
+            keys.append((k, "inout", None, None, cam(5.5 * heft - 0.5 * i, 0, shake * (1 if i % 2 == 0 else -1) * (1 - i * 0.2))))
+    keys.append((_after(t, hit, 0.6, 4), "inout", fp_pos(-3.6, 5.6, -2.6), fp_cut((-0.05, -0.6, -0.8), (0, -1, 0.1)), cam(3.0 * heft, 0, 0)))
+    return restyle(c, keys)
+
+
+def fp_pound(c, wind, hit, heft=1.0):
+    """A mace's pound: cocked back over the right shoulder, the head close by your ear, then brought over and down onto
+    the middle of the view; it lands with a thud and a little bounce."""
+    t = c.ticks
+    lift = max(1, round(wind * 0.6))
+    land = _after(t, hit, 0.12, 2)
+    return restyle(c, [
+        (lift, "out", fp_pos(-1.5, 4.5, 1.0), fp_aim((0.15, 0.92, 0.35), flat=(0, 0, 1)), cam(-1.8 * heft, 1.2, -0.6)),
+        (wind, "inout", fp_pos(-2.0, 5.0, 1.5), fp_aim((0.2, 0.86, 0.46), flat=(0, 0, 1)), cam(-2.4 * heft, 1.4, -0.8)),
+        (hit, "in3", fp_pos(-2.5, 6.0, -3.0), fp_aim((-0.15, -0.3, -0.94), flat=(-1, 0, 0)), cam(3.8 * heft, -0.8, 0.6)),
+        (land, "out5", fp_pos(-2.8, 5.0, -2.6), fp_aim((-0.15, -0.5, -0.85), flat=(-1, 0, 0)), cam(4.6 * heft, -1.0, 0.8)),
+        (land + 2, "softback", fp_pos(-2.6, 5.8, -2.2), fp_aim((-0.15, -0.4, -0.9), flat=(-1, 0, 0)), cam(3.0 * heft, -0.6, 0.5)),
+    ])
+
+
+def fp_hook_swing(c, wind, hit, heft=1.0):
+    """A mace's two-handed swing: the head drawn far out to the left, then hauled in a wide flat arc across the view,
+    its weight carrying it on out to the right."""
+    t = c.ticks
+    return restyle(c, [
+        (max(1, wind // 2), "out", fp_pos(-6.0, 7.0, 0.5), fp_aim((-0.5, 0.8, 0.1), flat=(0, 0, 1)), None),
+        (wind, "out", fp_pos(-12.0, 5.5, 1.5), fp_aim((-0.9, 0.35, 0.25), flat=(0, 1, 0.2)), cam(0.2, -3.0 * heft, 1.6)),
+        (hit, "in3", fp_pos(-3.0, 5.5, -4.0), fp_aim((0.1, 0.22, -0.97), flat=(0, 1, 0.2)), cam(0.8, 2.6 * heft, -1.6)),
+        (_after(t, hit, 0.2, 2), "out", fp_pos(5.0, 6.0, -1.0), fp_aim((0.95, 0.22, -0.15), flat=(0, 1, 0.2)), cam(0.6, 4.0 * heft, -2.6)),
+        (_after(t, hit, 0.4, 4), "inout", fp_pos(4.0, 6.0, 0.0), fp_aim((0.85, 0.38, 0.3), flat=(0, 1, 0.2)), cam(0.3, 2.6 * heft, -1.6)),
+    ])
+
+
+def fp_slam(c, wind, hit, heft=1.0):
+    """The mace's leaping slam: hoisted up out of sight over your head as you jump, then smashed straight down the middle
+    of the view as you land; the view shakes."""
+    t = c.ticks
+    top = max(2, wind - max(2, round(wind * 0.3)))
+    land = _after(t, hit, 0.1, 2)
+    keys = [
+        (top, "out", fp_pos(-2.0, 6.5, 1.5), fp_aim((0, 0.8, 0.55), flat=(0, 0, 1)), cam(-4.0 * heft, 0, 0)),
+        (wind, "inout", fp_pos(-2.0, 7.2, 2.0), fp_aim((0, 0.75, 0.65), flat=(0, 0, 1)), cam(-5.0 * heft, 0, 0)),
+        (hit, "in3", fp_pos(-3.0, 5.5, -3.5), fp_aim((0, -0.55, -0.83)), cam(7.0 * heft, 0, 0)),
+        (land, "out5", fp_pos(-3.0, 4.0, -3.0), fp_aim((0, -0.78, -0.62)), cam(8.0 * heft, 0, 0)),
+    ]
+    for i, k in enumerate(range(land + 1, min(t - 4, land + 5))):
+        keys.append((k, "inout", None, None, cam(7.5 * heft - i, 0, 2.2 * (1 if i % 2 == 0 else -1) * (1 - i * 0.2))))
+    keys.append((_after(t, hit, 0.55, 5), "inout", fp_pos(-3.0, 4.8, -2.5), fp_aim((0, -0.7, -0.7)), cam(3.5 * heft, 0, 0)))
+    return restyle(c, keys)
+
+
+def fp_reap(c, wind, hit, heft=1.0):
+    """The Reaper's level sweep: the snath swung out to the left, then the blade hauled across the view and pulled back in
+    towards you on the right, as a scythe cuts."""
+    t = c.ticks
+    return restyle(c, [
+        (max(1, wind // 2), "out", fp_pos(-4.0, 7.0, 1.0), None, None),
+        (wind, "out", fp_pos(-8.0, 6.0, 1.0), fp_hook((-0.88, 0.38, -0.28), (1, 0, -0.2)), cam(0, -2.6 * heft, 1.6)),
+        (hit, "in3", fp_pos(-3.0, 5.0, -2.5), fp_hook((0.05, 0.3, -0.95), (1, 0, 0.3)), cam(0.5, 2.4 * heft, -1.4)),
+        (_after(t, hit, 0.3, 2), "out", fp_pos(3.0, 5.5, 1.5), fp_hook((0.85, 0.3, -0.25), (0.3, 0, 1)), cam(0.3, 3.4 * heft, -2.0)),
+    ])
+
+
+def fp_reap_down(c, wind, hit, heft=1.0):
+    """The Reaper's falling sweep: raised high on the right, hooked down across the view to the left and drawn back."""
+    t = c.ticks
+    return restyle(c, [
+        (wind, "out", fp_pos(1.0, 8.0, 1.5), fp_aim((0.45, 0.8, 0.3), flat=(0, 0.3, 1)), cam(-1.4 * heft, 1.8, -1.0)),
+        (hit, "in3", fp_pos(-4.0, 6.0, -3.0), fp_hook((-0.4, 0.15, -0.9), (-0.8, -0.5, 0.3)), cam(1.4 * heft, -2.0, 1.6)),
+        (_after(t, hit, 0.3, 2), "out", fp_pos(-8.0, 5.0, 0.0), fp_hook((-0.9, -0.05, -0.25), (-0.2, -0.3, 1)), cam(1.8 * heft, -2.8, 2.2)),
+    ])
+
+
+def fp_harvest(c, wind, hit, heft=1.0):
+    """The Reaper's reaping turn: you spin, so the blade sweeps across the view twice, once each way round, edge in."""
+    t = c.ticks
+    end = hit + max(3, round((t - hit) * 0.55))
+    mid = (wind + hit) / 2.0
+    return restyle(c, [
+        (wind, "out", fp_pos(1.5, 6.0, 0.5), fp_hook((0.85, 0.4, 0.15), (-0.3, 0, -1)), cam(0.5, 3.5 * heft, -1.5)),
+        (mid, "in", fp_pos(-6.0, 5.5, -3.0), fp_hook((-0.2, 0.3, -0.93), (-1, 0, 0.2)), cam(0.8, -3.0, 2.0)),
+        (hit, "linear", fp_pos(-14.0, 5.5, 0.0), fp_hook((-0.95, 0.2, -0.1), (-0.5, 0, 0.9)), cam(0.8, -5.0 * heft, 3.0)),
+        (hit + 0.01, "hold", fp_pos(6.0, 5.5, 1.5), fp_hook((0.9, 0.3, 0.2), (-0.3, 0, -1)), None),
+        (end, "out", fp_pos(-5.0, 5.5, -2.4), fp_hook((-0.35, 0.3, -0.88), (-1, 0, 0.2)), cam(0.6, -1.5, 1.0)),
+    ])
+
+
+def fp_reap_overhead(c, wind, hit, heft=1.0):
+    """The Reaper's heavy blow: the scythe lifted over your head, its blade hanging behind, then brought over and down so
+    the point drives in ahead of you, and dragged back."""
+    t = c.ticks
+    top = max(2, wind - max(2, round(wind * 0.3)))
+    return restyle(c, [
+        (top, "out", fp_pos(-5.0, 4.0, -1.5), fp_aim((0.05, 0.95, 0.3), flat=(1, 0, 0)), cam(-2.6 * heft, 0, 0)),
+        (wind, "inout", fp_pos(-5.0, 4.5, -1.0), fp_aim((0.05, 0.92, 0.38), flat=(1, 0, 0)), cam(-3.4 * heft, 0, 0)),
+        (hit, "in3", fp_pos(-3.0, 6.5, -3.5), fp_aim((0.1, 0.35, -0.93), flat=(1, 0, 0)), cam(4.6 * heft, 0, 0)),
+        (_after(t, hit, 0.25, 2), "out", fp_pos(-3.0, 5.5, -1.0), fp_aim((0.1, 0.1, -0.99), flat=(1, 0, 0)), cam(3.0 * heft, 0, 0)),
+    ])
+
+
+def fp_flick(c, wind, hit):
+    """The Bloodletter's first cut: quick and low, from the right straight across, and a flick of the wrist at the end
+    that snaps the blade upright (the blood shaken off)."""
+    t = c.ticks
+    return restyle(c, [
+        (wind, "out", fp_pos(2.0, 6.0, 1.0), fp_cut((0.8, 0.5, 0.2), (-1, -0.2, 0)), cam(-0.4, 1.8, -0.8)),
+        (hit, "in3", fp_pos(-5.0, 4.5, -3.0), fp_cut((-0.3, 0.1, -0.95), (-1, -0.15, 0.1)), cam(0.8, -2.0, 1.2)),
+        (hit + 2, "out", fp_pos(-10.0, 4.0, -1.0), fp_cut((-0.9, -0.1, -0.4), (-0.6, -0.1, 0.8)), cam(1.0, -2.4, 1.6)),
+        (_after(t, hit, 0.6, 3), "back", fp_pos(-7.0, 6.5, 0.0), fp_aim((-0.35, 0.92, 0.15), flat=(-1, 0.2, 0.3)), cam(0, -0.8, 0.4)),
+    ])
+
+
+def fp_rising(c, wind, hit):
+    """The Bloodletter's second cut: from low on the left up across the view to high on the right."""
+    t = c.ticks
+    return restyle(c, [
+        (max(1, wind // 2), "out", fp_pos(-4.0, 6.5, -1.0), fp_cut((-0.5, 0.6, -0.6), (0.7, 0.7, 0)), None),
+        (wind, "out", fp_pos(-8.0, 4.5, 0.5), fp_cut((-0.7, -0.45, 0.2), (0.7, 0.7, -0.1)), cam(0.8, -1.6, 1.0)),
+        (hit, "in3", fp_pos(-2.0, 6.0, -3.0), fp_aim((0.3, 0.45, -0.85), flat=(-0.6, 0.3, 0.75)), cam(-0.8, 1.6, -1.4)),
+        (_after(t, hit, 0.35, 2), "out", fp_pos(3.0, 9.0, -0.5), fp_cut((0.6, 0.8, 0.0), (0.4, 0.9, 0.2)), cam(-1.6, 2.4, -2.0)),
+    ])
+
+
+def fp_twist(c, wind, hit):
+    """The Bloodletter's thrust: drawn back with the blade laid flat, driven into the middle of the view and twisted
+    a quarter turn in the wound."""
+    t = c.ticks
+    return restyle(c, [
+        (wind, "out", fp_pos(2.0, 3.0, 3.0), fp_aim((-0.25, 0.22, -1), flat=(0, 1, 0.2)), cam(-0.5, 0.8, 0)),
+        (hit, "in3", fp_pos(-4.0, 4.5, -3.5), fp_aim((-0.18, 0.14, -1), flat=(0, 1, 0.1)), cam(1.2, -0.6, 0)),
+        (hit + 3, "out", fp_pos(-3.8, 4.3, -3.2), fp_aim((-0.19, 0.14, -1), flat=(-1, 0.3, 0.1)), cam(0.8, -0.4, 1.4)),
+    ])
+
+
+def fp_lunge(c, wind, hit):
+    """The Bloodletter's heavy blow: the point drawn right back by your cheek and held (the charge), then a long lunge
+    that drives it far into the view."""
+    t = c.ticks
+    return restyle(c, [
+        (max(2, wind - 3), "out", fp_pos(2.5, 6.0, 4.5), fp_aim((-0.12, 0.12, -1), flat=(-1, 0.3, 0.2)), cam(-1.0, 1.0, 0)),
+        (wind, "inout", fp_pos(2.8, 6.5, 5.0), fp_aim((-0.12, 0.14, -1), flat=(-1, 0.3, 0.2)), cam(-1.4, 1.2, 0)),
+        (hit, "in3", fp_pos(-3.5, 4.5, -5.0), fp_aim((-0.15, 0.1, -1), flat=(-1, 0.4, 0.1)), cam(2.2, -0.8, 0)),
+        (hit + 3, "out", fp_pos(-3.2, 4.3, -4.4), fp_aim((-0.16, 0.1, -1), flat=(-1, 0.4, 0.1)), cam(1.2, -0.4, 0)),
+    ])
+
+
 # total, wind-up ends, the blow lands, the next move may begin (ticks, at the weapon's own attack speed)
 def sword_1():
     return diagonal("sword_1", 13, 3, 5, 9)
@@ -855,37 +1091,37 @@ def sword_heavy():
 
 
 def axe_1():
-    return diagonal("axe_1", 18, 5, 8, 13, heft=1.25, two_handed=True)
+    return fp_chop(diagonal("axe_1", 18, 5, 8, 13, heft=1.25, two_handed=True), 5, 8, 1.25)
 
 
 def axe_2():
-    return backhand("axe_2", 18, 5, 8, 13, heft=1.2, two_handed=True, rising=0.85)
+    return fp_rip(backhand("axe_2", 18, 5, 8, 13, heft=1.2, two_handed=True, rising=0.85), 5, 8, 1.2)
 
 
 def axe_heavy():
-    return overhead("axe_heavy", 26, 9, 13, 23, heft=1.25)
+    return fp_cleave(overhead("axe_heavy", 26, 9, 13, 23, heft=1.25), 9, 13, 1.25)
 
 
 def mace_1():
-    return overhead("mace_1", 24, 7, 11, 18, heft=1.1)
+    return fp_pound(overhead("mace_1", 24, 7, 11, 18, heft=1.1), 7, 11, 1.1)
 
 
 def mace_2():
-    return backhand("mace_2", 24, 7, 11, 18, heft=1.35, two_handed=True)
+    return fp_hook_swing(backhand("mace_2", 24, 7, 11, 18, heft=1.35, two_handed=True), 7, 11, 1.35)
 
 
 def mace_heavy():
-    return overhead("mace_heavy", 32, 11, 16, 28, heft=1.4, hop=2.5)
+    return fp_slam(overhead("mace_heavy", 32, 11, 16, 28, heft=1.4, hop=2.5), 11, 16, 1.4)
 
 
 # the hell weapons' own: the Bloodletter is quick (four cuts, the third a spin, the last a deep thrust; its heavy blow a
 # long lunge), the Reaper of Minos wide (two great sweeps and a full reaping turn), the Tithe Axe heavy
 def blood_1():
-    return diagonal("blood_1", 12, 3, 5, 8)
+    return fp_flick(diagonal("blood_1", 12, 3, 5, 8), 3, 5)
 
 
 def blood_2():
-    return backhand("blood_2", 12, 3, 5, 8)
+    return fp_rising(backhand("blood_2", 12, 3, 5, 8), 3, 5)
 
 
 def blood_3():
@@ -893,42 +1129,42 @@ def blood_3():
 
 
 def blood_4():
-    return thrust("blood_4", 18, 4, 7, 14)
+    return fp_twist(thrust("blood_4", 18, 4, 7, 14), 4, 7)
 
 
 def blood_heavy():
-    return thrust("blood_heavy", 22, 8, 11, 19)
+    return fp_lunge(thrust("blood_heavy", 22, 8, 11, 19), 8, 11)
 
 
 def reaper_1():
-    return backhand("reaper_1", 19, 5, 9, 14, heft=1.35, two_handed=True)
+    return fp_reap(backhand("reaper_1", 19, 5, 9, 14, heft=1.35, two_handed=True), 5, 9, 1.35)
 
 
 def reaper_2():
-    return diagonal("reaper_2", 19, 5, 9, 14, heft=1.35, two_handed=True)
+    return fp_reap_down(diagonal("reaper_2", 19, 5, 9, 14, heft=1.35, two_handed=True), 5, 9, 1.35)
 
 
 def reaper_3():
-    return spin("reaper_3", 24, 6, 12, 19, two_handed=True, heft=1.3)
+    return fp_harvest(spin("reaper_3", 24, 6, 12, 19, two_handed=True, heft=1.3), 6, 12, 1.3)
 
 
 def reaper_heavy():
-    return overhead("reaper_heavy", 27, 9, 14, 24, heft=1.3)
+    return fp_reap_overhead(overhead("reaper_heavy", 27, 9, 14, 24, heft=1.3), 9, 14, 1.3)
 
 
 def tithe_1():
-    return diagonal("tithe_1", 18, 5, 8, 13, heft=1.3, two_handed=True)
+    return fp_chop(diagonal("tithe_1", 18, 5, 8, 13, heft=1.3, two_handed=True), 5, 8, 1.3)
 
 
 def tithe_2():
-    return backhand("tithe_2", 18, 5, 8, 13, heft=1.25, two_handed=True, rising=0.9)
+    return fp_rip(backhand("tithe_2", 18, 5, 8, 13, heft=1.25, two_handed=True, rising=0.9), 5, 8, 1.25)
 
 
 def tithe_heavy():
-    return overhead("tithe_heavy", 28, 10, 14, 25, heft=1.4, hop=2.0)
+    return fp_cleave(overhead("tithe_heavy", 28, 10, 14, 25, heft=1.4, hop=2.0), 10, 14, 1.4, shake=2.0)
 
 
-CLIPS = [roll, guard, guard_two, parry, guard_break, walk, run, sneak, idle, jump, fall, land, bow_draw, bow_release, crossbow_fire,
+CLIPS = [roll, guard, guard_two, guard_mace, guard_reaper, parry, guard_break, walk, run, sneak, idle, jump, fall, land, bow_draw, bow_release, crossbow_fire,
          throw, shield_brace, shield_hit, eat, drink, sword_1, sword_2, sword_3, sword_heavy, axe_1, axe_2, axe_heavy,
          mace_1, mace_2, mace_heavy, blood_1, blood_2, blood_3, blood_4, blood_heavy, reaper_1, reaper_2, reaper_3,
          reaper_heavy, tithe_1, tithe_2, tithe_heavy]

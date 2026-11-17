@@ -83,6 +83,7 @@ public class CombatTest implements FabricClientGameTest {
 		world.getServer().runCommand("item replace entity @e[type=minecraft:mannequin] weapon.mainhand with minecraft:iron_sword");
 		context.waitTicks(10);
 		String wanted = System.getenv().getOrDefault("HELLCRAFT_COMBAT_FILM", "");
+		String held = "minecraft:iron_sword";
 		for (PlayerMovesAnim move : PlayerMovesAnim.values()) {
 			String name = move.name().toLowerCase(Locale.ROOT);
 			boolean every = wanted.equals("all") || List.of(wanted.split(",")).contains(name);
@@ -105,6 +106,14 @@ public class CombatTest implements FabricClientGameTest {
 				ticks.add(move.ticks * 0.5f);
 				ticks.add(move.ticks * 0.75f);
 			}
+			// each move with its own weapon, so the first-person side shows the weapon that makes it
+			String weapon = weaponFor(name);
+			if (!weapon.equals(held)) {
+				held = weapon;
+				world.getServer().runCommand("item replace entity Player0 weapon.mainhand with " + weapon);
+				world.getServer().runCommand("item replace entity @e[type=minecraft:mannequin] weapon.mainhand with " + weapon);
+				context.waitTicks(3);
+			}
 			for (float tick : ticks) {
 				context.runOnClient(client -> {
 					client.options.setCameraType(CameraType.FIRST_PERSON);
@@ -121,8 +130,29 @@ public class CombatTest implements FabricClientGameTest {
 			}
 		}
 		context.runOnClient(client -> PlayerAnimator.clear());
+		world.getServer().runCommand("item replace entity Player0 weapon.mainhand with minecraft:iron_sword");
 		world.getServer().runCommand("kill @e[type=minecraft:mannequin]");
 		context.waitTicks(5);
+	}
+
+	/** The weapon a move (or a guard) is made with, by its name. */
+	private static String weaponFor(String move) {
+		if (move.startsWith("axe") || move.equals("guard_two")) {
+			return "minecraft:iron_axe";
+		}
+		if (move.contains("mace")) {
+			return "minecraft:mace";
+		}
+		if (move.contains("reaper")) {
+			return "hellcraft:reaper_of_minos";
+		}
+		if (move.startsWith("tithe")) {
+			return "hellcraft:tithe_axe";
+		}
+		if (move.startsWith("blood")) {
+			return "hellcraft:bloodletter";
+		}
+		return "minecraft:iron_sword";
 	}
 
 	// ------------------------------------------------------------------------------------------------- checks

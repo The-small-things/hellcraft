@@ -299,7 +299,8 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   "bows, shields, food" (before `sword_1`: CombatTest treats every move from SWORD_1 on as a swing). `MotionTest` (`motion_*`, and
   `motion_fp_*` in first person). **First person:** `python3 tools/art/fp_preview.py <move> [--times ...]` draws the first-person sword
   through a move offline exactly as the game places it (vanilla's arm place, the fp bone, the handheld display, 70 degree view): tune
-  fp keys there, keep the blade on screen and above the hotbar. The locomotion clips carry fp keys too (`Locomotion.sampleFirstPerson`,
+  fp keys there, keep the blade on screen and above the hotbar; it draws each move with its weapon's sprite. Each weapon has its own first-person
+  keys (`restyle` with `fp_chop`, `fp_pound`, `fp_reap`, `fp_flick` and kin; the sword's are the shapes' own), and the mace and the Reaper their own guards (`guard_mace`, `guard_reaper`). The locomotion clips carry fp keys too (`Locomotion.sampleFirstPerson`,
   `PlayerAnimator.sampleFirstPerson`, only with View Bobbing on). `combat/FirstPersonEase` (from `FirstPersonHandsMixin`'s wrap of
   `ItemStackRenderState.submit`) eases a hand's switch of use (bow loosed, shield raised, food) by blending its last drawn matrix, a
   shield's two display transforms folded in. **Guard cancels:** a guard cuts a swing (client `CombatClient.raiseGuard`, server `Guard`'s receiver with `Swing.cancel`), except a
