@@ -277,17 +277,17 @@ public class HellcraftClient implements ClientModInitializer {
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("cyclops"), CyclopsMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.CYCLOPS, context -> {
 			AnimatedBossRenderer<CyclopsEntity> r = new AnimatedBossRenderer<>(context, "cyclops", CyclopsAnimations.all(), CyclopsAnim.WALK.ordinal(),
-					1.3f, 1.6f, 0.5f, "hips", "torso", "head");
+					0.65f, 1.6f, 0.5f, "hips", "torso", "head");
 			// the boulder shows only while he throws it
 			r.getModel().hideable("hips", "torso", "boulder");
 			return r;
 		});
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("vulcan"), VulcanMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.VULCAN, context -> new AnimatedBossRenderer<>(context, "vulcan", VulcanAnimations.all(),
-				VulcanAnim.WALK.ordinal(), 1.6f, 2.2f, 0.5f, "hips", "torso", "head"));
+				VulcanAnim.WALK.ordinal(), 0.8f, 2.2f, 0.5f, "hips", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("seraph"), SeraphMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.SERAPH, context -> new AnimatedBossRenderer<>(context, "seraph", SeraphAnimations.all(),
-				SeraphAnim.WALK.ordinal(), 2.0f, 2.0f, 0.5f, "root", "body", "chest", "head"));
+				SeraphAnim.WALK.ordinal(), 1.0f, 2.0f, 0.5f, "root", "body", "chest", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("minotaur"), MinotaurMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.MINOTAUR, context -> new AnimatedBossRenderer<>(context, "minotaur", MinotaurAnimations.all(),
 				MinotaurAnim.WALK.ordinal(), 0.7f, 2.0f, 0.5f, "hips", "torso", "head"));

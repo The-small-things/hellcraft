@@ -23,15 +23,15 @@ public final class CyclopsAnimations {
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 12F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("torso", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 0.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 1.2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(1.3F).looping()
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.32F, KeyframeAnimations.posVec(0F, -0.8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.32F, KeyframeAnimations.posVec(0F, -1.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(0.65F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.97F, KeyframeAnimations.posVec(0F, -0.8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.97F, KeyframeAnimations.posVec(0F, -1.6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.3F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(20F, 0F, -6F), AnimationChannel.Interpolations.CATMULLROM),
@@ -76,8 +76,8 @@ public final class CyclopsAnimations {
 			.build();
 	public static final AnimationDefinition THROW = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, -40F, -10F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.55F, KeyframeAnimations.posVec(0F, -40F, -10F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, -80F, -20F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.55F, KeyframeAnimations.posVec(0F, -80F, -20F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.35F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("boulder", new AnimationChannel(AnimationChannel.Targets.SCALE,
@@ -107,8 +107,8 @@ public final class CyclopsAnimations {
 	public static final AnimationDefinition QUAKE = AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 2F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.05F, KeyframeAnimations.posVec(0F, -3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.6F, KeyframeAnimations.posVec(0F, 4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.05F, KeyframeAnimations.posVec(0F, -6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_shin", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -135,8 +135,8 @@ public final class CyclopsAnimations {
 					new Keyframe(2.2F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -7F, 2F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -7F, 2F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -14F, 4F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.8F, KeyframeAnimations.posVec(0F, -14F, 4F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.2F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("right_shin", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -195,9 +195,9 @@ public final class CyclopsAnimations {
 					new Keyframe(2.8F, KeyframeAnimations.degreeVec(85F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("hips", new AnimationChannel(AnimationChannel.Targets.POSITION,
 					new Keyframe(0F, KeyframeAnimations.posVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -14F, -8F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.8F, KeyframeAnimations.posVec(0F, -18F, -14F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0.8F, KeyframeAnimations.posVec(0F, -16F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -28F, -16F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.8F, KeyframeAnimations.posVec(0F, -36F, -28F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 					new Keyframe(0F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(-140F, 0F, -20F), AnimationChannel.Interpolations.CATMULLROM),

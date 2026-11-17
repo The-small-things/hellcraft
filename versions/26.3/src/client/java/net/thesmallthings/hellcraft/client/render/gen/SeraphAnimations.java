@@ -39,9 +39,9 @@ public final class SeraphAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 4.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.5F, KeyframeAnimations.posVec(0F, 9F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(2F).looping()
 			.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -80,9 +80,9 @@ public final class SeraphAnimations {
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 7.2F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, 4.5F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, 9F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition INTRO = AnimationDefinition.Builder.withLength(5F)
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -156,9 +156,9 @@ public final class SeraphAnimations {
 					new Keyframe(2.8F, KeyframeAnimations.degreeVec(0F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 80F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(5F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 160F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(5F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition WINGS = AnimationDefinition.Builder.withLength(1.7F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -181,8 +181,8 @@ public final class SeraphAnimations {
 					new Keyframe(1.2F, KeyframeAnimations.degreeVec(0F, -75F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.7F, KeyframeAnimations.degreeVec(0F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.7F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.7F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition FIRE = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("head", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -233,8 +233,8 @@ public final class SeraphAnimations {
 					new Keyframe(1.8F, KeyframeAnimations.degreeVec(0F, 0F, 10F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 4F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition COAL = AnimationDefinition.Builder.withLength(1.6F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -248,8 +248,8 @@ public final class SeraphAnimations {
 					new Keyframe(0.9F, KeyframeAnimations.degreeVec(-120F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition GLORIA = AnimationDefinition.Builder.withLength(3.2F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -288,10 +288,10 @@ public final class SeraphAnimations {
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, -20F, 40F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(3.2F, KeyframeAnimations.degreeVec(0F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1F, KeyframeAnimations.posVec(0F, 8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(3.2F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1F, KeyframeAnimations.posVec(0F, 16F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 16F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(3.2F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition TURNING = AnimationDefinition.Builder.withLength(2.4F)
 			.addAnimation("left_wing", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -310,10 +310,10 @@ public final class SeraphAnimations {
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, -360F, 0F), AnimationChannel.Interpolations.LINEAR),
 					new Keyframe(2.4F, KeyframeAnimations.degreeVec(0F, -360F, 0F), AnimationChannel.Interpolations.LINEAR)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.4F, KeyframeAnimations.posVec(0F, 12F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, 12F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.4F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition HOST = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -332,8 +332,8 @@ public final class SeraphAnimations {
 					new Keyframe(1.4F, KeyframeAnimations.degreeVec(0F, 0F, 60F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition STAGGER = AnimationDefinition.Builder.withLength(2F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -352,10 +352,10 @@ public final class SeraphAnimations {
 					new Keyframe(1.6F, KeyframeAnimations.degreeVec(0F, 0F, -30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2F, KeyframeAnimations.degreeVec(0F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -2F, 3F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -2F, 3F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(0.3F, KeyframeAnimations.posVec(0F, -4F, 6F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.6F, KeyframeAnimations.posVec(0F, -4F, 6F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition PHASE = AnimationDefinition.Builder.withLength(2.6F)
 			.addAnimation("halo", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -392,10 +392,10 @@ public final class SeraphAnimations {
 					new Keyframe(2.2F, KeyframeAnimations.degreeVec(0F, 0F, 55F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(2.6F, KeyframeAnimations.degreeVec(0F, 0F, 12F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 10F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.2F, KeyframeAnimations.posVec(0F, 10F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.6F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, 20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.2F, KeyframeAnimations.posVec(0F, 20F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.build();
 	public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.3F)
 			.addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -431,10 +431,10 @@ public final class SeraphAnimations {
 					new Keyframe(3.8F, KeyframeAnimations.degreeVec(0F, 0F, 30F), AnimationChannel.Interpolations.CATMULLROM),
 					new Keyframe(4.4F, KeyframeAnimations.degreeVec(0F, 0F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
-					new Keyframe(0F, KeyframeAnimations.posVec(0F, 3F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(2.6F, KeyframeAnimations.posVec(0F, -4F, 0F), AnimationChannel.Interpolations.CATMULLROM),
-					new Keyframe(4.4F, KeyframeAnimations.posVec(0F, 90F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
+					new Keyframe(0F, KeyframeAnimations.posVec(0F, 6F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(1.2F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(2.6F, KeyframeAnimations.posVec(0F, -8F, 0F), AnimationChannel.Interpolations.CATMULLROM),
+					new Keyframe(4.4F, KeyframeAnimations.posVec(0F, 180F, 0F), AnimationChannel.Interpolations.CATMULLROM)))
 			.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.SCALE,
 					new Keyframe(0F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.LINEAR),
 					new Keyframe(3.4F, KeyframeAnimations.scaleVec(1.0, 1.0, 1.0), AnimationChannel.Interpolations.LINEAR),

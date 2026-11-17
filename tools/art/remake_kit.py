@@ -329,7 +329,7 @@ class Remake(Builder):
         """Brings over the body an old script built (tools/art/legacy/<script>.py), every cube at the new detail in
         its old material, so the material's grain is finer, with the old script's hand-painted details carried over
         (`ported`). skip: names (or prefixes ending in *) to leave out, for parts this remake rebuilds; mats and
-        details: name -> a new material or detail (a detail of None keeps the old one carried over; give a function
+        details: name -> a new material or detail (also may be a function of the name; a detail of None keeps the old one carried over; give a function
         to repaint the part at the new detail); also: name -> a detail painted after the carried-over one."""
         import importlib
         import sys
@@ -347,8 +347,9 @@ class Remake(Builder):
             if skipped(c.name):
                 continue
             detail = details[c.name] if c.name in details else (ported(c, k) if c.detail else None)
-            if c.name in also:
-                first, second = detail, also[c.name]
+            extra = also(c.name) if callable(also) else also.get(c.name)
+            if extra:
+                first, second = detail, extra
                 detail = (lambda fs, first=first, second=second: ((first(fs) if first else None), second(fs)))
             turned = any(c.rotation)
             self.cube(c.bone.name, c.name, tuple(v * k for v in c.frm), tuple(s * k for s in c.size),
