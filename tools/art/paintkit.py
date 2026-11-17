@@ -193,3 +193,89 @@ def rivets(f, colour, step=6, inset=1):
     for x in range(inset, f.w - inset, step):
         f.px(x, inset, colour)
         f.px(x, f.h - 1 - inset, colour)
+
+
+def ao(bottom=0, top=0, dark=0.7, names=SIDES):
+    """A detail: the side faces shaded along their lowest rows (sinking into shadow) and highest (tucked under)."""
+    def detail(faces):
+        for n in names:
+            f = faces[n]
+            for i in range(min(bottom, f.h)):
+                hline(f, f.h - 1 - i, dark + (1 - dark) * i / bottom)
+            for i in range(min(top, f.h)):
+                hline(f, i, dark + (1 - dark) * i / top)
+    return detail
+
+
+def both(*details):
+    def detail(faces):
+        for d in details:
+            d(faces)
+    return detail
+
+
+def mail(faces):
+    """Riveted rings: staggered dark links with bright tops."""
+    for f in faces.values():
+        for y in range(f.h):
+            for x in range(f.w):
+                if (x + (y % 2)) % 2 == 0:
+                    tone(f, x, y, 0.62)
+                elif y % 2 == 0:
+                    tone(f, x, y, 1.15)
+
+
+def fingers(faces, count=4, k=0.6, names=("front", "back")):
+    """The gaps between fingers down a hand's faces (their lower two thirds), and the knuckles' line."""
+    for n in names:
+        f = faces[n]
+        y0 = f.h // 3
+        for i in range(1, count):
+            x = round(i * f.w / count)
+            for y in range(y0, f.h):
+                tone(f, x, y, k)
+        hline(f, y0, 0.85)
+    for n in ("bottom",):
+        f = faces[n]
+        for i in range(1, count):
+            x = round(i * f.w / count)
+            for y in range(f.h):
+                tone(f, x, y, k)
+
+
+def folds(faces, step=5, k=0.8, lit=1.1, names=SIDES):
+    """Hanging cloth: soft vertical folds, a little uneven."""
+    for n in names:
+        f = faces[n]
+        off = f.rng.randrange(step)
+        for x in range(f.w):
+            u = (x + off) % step
+            if u == 0:
+                vline(f, x, k)
+            elif u == 1:
+                vline(f, x, (k + 1) / 2)
+            elif u == step // 2 + 1:
+                vline(f, x, lit)
+
+
+def trim(faces, colour, rows=1, where="bottom", names=SIDES, dash=0):
+    """A band of trim along the top or bottom of the side faces (dash: every dash-th pixel darker, like stitching)."""
+    for n in names:
+        f = faces[n]
+        for i in range(rows):
+            y = f.h - 1 - i if where == "bottom" else i
+            for x in range(f.w):
+                f.px(x, y, shade(colour, 0.78 if dash and x % dash == 0 else (1.08 if i == 0 else 0.92)))
+
+
+def embers(faces, hot, hotter, rows=4, names=SIDES):
+    """Fire catching along a hem: glowing pixels thick at the bottom edge, thinning upward."""
+    for n in names:
+        f = faces[n]
+        for i in range(min(rows, f.h)):
+            y = f.h - 1 - i
+            for x in range(f.w):
+                if f.rng.random() < 0.75 - 0.2 * i:
+                    f.glow(x, y, hotter if i == 0 and f.rng.random() < 0.5 else hot)
+                elif i < 2:
+                    tone(f, x, y, 0.5)   # charred

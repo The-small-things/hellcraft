@@ -273,7 +273,7 @@ public class HellcraftClient implements ClientModInitializer {
 		});
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("farinata"), FarinataMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.FARINATA, context -> new AnimatedBossRenderer<>(context, "farinata", FarinataAnimations.all(), -1,
-				1.8f, 1.0f, 0.6f, "body", "torso", "head"));
+				0.9f, 1.0f, 0.6f, "body", "torso", "head"));
 		ModelLayerRegistry.registerModelLayer(AnimatedBossRenderer.layer("cyclops"), CyclopsMesh::createLayer);
 		EntityRendererRegistry.register(HellEntities.CYCLOPS, context -> {
 			AnimatedBossRenderer<CyclopsEntity> r = new AnimatedBossRenderer<>(context, "cyclops", CyclopsAnimations.all(), CyclopsAnim.WALK.ordinal(),
