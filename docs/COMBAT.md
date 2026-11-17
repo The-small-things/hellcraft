@@ -45,6 +45,15 @@ middle, follow-throughs above the hotbar; the overhead chops down, the thrust st
 view, the roll tucks the weapon fully away); first-person locomotion keys (stride sway, sprint swing, jump lift, fall, landing drop);
 `FirstPersonEase` for vanilla's first-person snaps; `RollShape` (a rolling player 0.9 high).
 
+**First person per weapon (2026-11-17, after "the axe has its own 3rd person animation but uses the swords first persons
+animations"):** the swing shapes in player_moves.py still lay a sword's fp keys, and each weapon's moves swap them with `restyle`
+for its own: the axe and Tithe Axe chop (hoisted over the shoulder, a beat, steep down, the bit bites and stops), rip (torn up from
+low left) and cleave (overhead, buried; the Tithe Axe's shakes the view); the mace pounds (cocked by the ear), hauls a wide flat
+swing and leaps into a slam; the Reaper sweeps, hooks down, turns and drives its point in (`fp_hook`: a scythe's edge is the inside
+of the hook); the Bloodletter flicks, rises, twists its thrust and lunges from the cheek. The mace and the Reaper have their own
+guards in first person (`GUARD_MACE`, `GUARD_REAPER`, the body as `GUARD_TWO`; `PlayerAnimator.guardOf`). fp_preview.py draws each
+move with its own weapon's sprite; CombatTest films each move holding its weapon.
+
 ## Context
 The owner wants combat that feels like Better Combat / Epic Fight / Immersive Combat: weapons that swing differently
 and chain into combos, a stamina bar with dodge rolls, guarding and parrying with weapons (not only shields), and

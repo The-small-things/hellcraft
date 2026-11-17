@@ -7,8 +7,10 @@ frame, in a second (the client test takes minutes). It follows the game exactly:
     the sword's display      handheld firstperson_righthand: translate(1.13, 3.2, 1.13)/16, rotate XYZ (0, -90, 25), scale 0.68
     the flat item            translate(-0.5), the sprite in x, y at z 0.5 (a sword: pommel bottom left, tip top right)
 
-seen from the eye (looking down -Z, Y up) with the game's 70 degree field of view, 16:9. The blade is drawn as its
-outline, lighter along the edge that leads the cut (the flat faces you when the blade looks wide).
+seen from the eye (looking down -Z, Y up) with the game's 70 degree field of view, 16:9. The weapon is drawn pixel by pixel
+from its sprite, shaded by how much its flat faces you (wide and bright: the flat; thin and dark: edge on): the hell
+weapons from their own textures, a vanilla sword, axe and mace from outlines of theirs below (SPRITES), so each weapon's
+moves are seen with the weapon that makes them.
 
     python3 tools/art/fp_preview.py sword_1 [sword_2 ...] [--times 0,3,5,9] [--step 1]
 writes versions/26.3/build/art-preview/fp_<move>.png. Keep the whole blade on screen through a swing: a blade that
@@ -43,10 +45,75 @@ DISPLAY_T = np.array([1.13, 3.2, 1.13]) / 16
 DISPLAY_S = 0.68
 ARM = np.array([0.56, -0.52, -0.72])
 
-# a sword sprite's outline in item space (pixels, x right, y up): the blade from the guard to the tip, and the grip
-BLADE = [(4.5, 6.5), (13.5, 15.5), (15.5, 15.5), (15.5, 13.5), (6.5, 4.5)]
-GUARD = [(2.5, 6.5), (6.5, 2.5), (7.5, 3.5), (3.5, 7.5)]
-GRIP = [(0.5, 1.5), (1.5, 0.5), (4.5, 3.5), (3.5, 4.5)]
+# vanilla's sprites, roughly (rows top to bottom, as in the texture: s steel, w wood, d dark metal)
+SPRITES = {
+    "sword": """
+.............sss
+............ssss
+...........ssss.
+..........ssss..
+.........ssss...
+........ssss....
+..dd...ssss.....
+..ddd.ssss......
+...ddssss.......
+...dddss........
+....wdd.........
+...ww.dd........
+..ww............
+.ww.............
+ww..............
+w...............""",
+    "axe": """
+................
+.....sss........
+....sssss.w.....
+...ssssssww.....
+...sssssww......
+...ssssww.......
+....ssww........
+.....ww.........
+....ww..........
+...ww...........
+..ww............
+.ww.............
+ww..............
+w...............
+................
+................""",
+    "mace": """
+...........d.d..
+..........ddddd.
+.........dsssssd
+..........sssss.
+.........dsssssd
+..........sssss.
+.........dsddsd.
+........dd.d.d..
+.......dd.......
+......ww........
+.....ww.........
+....ww..........
+...ww...........
+..ww............
+.dd.............
+dd..............""",
+}
+COLOURS = {"s": (196, 200, 208, 255), "w": (122, 86, 48, 255), "d": (78, 78, 86, 255)}
+TEXTURES = os.path.join(os.path.dirname(__file__), "..", "..", "versions", "26.3", "src", "main", "resources", "assets", "hellcraft",
+                        "textures", "item")
+# which sprite a move is seen with, by a word in its name (the first that matches)
+WIELDS = {"blood": "bloodletter", "reaper": "reaper_of_minos", "tithe": "tithe_axe", "axe": "axe", "mace": "mace", "guard_two": "axe"}
+
+
+def sprite(name):
+    """The weapon a move is made with: (x, y, rgba) per opaque pixel, x right and y up from the sprite's bottom left."""
+    kind = next((v for k, v in WIELDS.items() if k in name), "sword")
+    if kind in SPRITES:
+        rows = SPRITES[kind].strip().split("\n")
+        return [(x, 15 - y, COLOURS[ch]) for y, row in enumerate(rows) for x, ch in enumerate(row) if ch in COLOURS]
+    img = Image.open(os.path.join(TEXTURES, kind + ".png")).convert("RGBA")
+    return [(x, 15 - y, img.getpixel((x, y))) for y in range(16) for x in range(16) if img.getpixel((x, y))[3] > 0]
 
 
 def item_point(px, py):
@@ -78,23 +145,20 @@ def fp_at(clip, tick):
     return shift, turn
 
 
-def draw_frame(draw, ox, clip, tick):
+def draw_frame(draw, ox, clip, tick, pixels):
     shift, turn = fp_at(clip, tick)
 
     def view(px, py):
         return ARM + shift + turn @ item_point(px, py)
 
-    def poly(points, fill):
-        draw.polygon([(ox + x, y) for x, y in (project(view(px, py)) for px, py in points)], fill=fill, outline=(20, 20, 24))
-
     # the flat's normal against the view: wide (facing you) or edge on
     normal = turn @ DISPLAY_R @ np.array([0, 0, 1.0])
-    centre = view(9, 9)
+    centre = view(8, 8)
     facing = abs(float(np.dot(normal, -centre / np.linalg.norm(centre))))
-    shade = int(120 + 110 * facing)
-    poly(GRIP, (110, 72, 40))
-    poly(GUARD, (60, 60, 66))
-    poly(BLADE, (shade, shade, shade + 6))
+    light = 0.45 + 0.55 * facing
+    for x, y, (r, g, b, _) in pixels:
+        quad = [project(view(px, py)) for px, py in ((x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1))]
+        draw.polygon([(ox + qx, qy) for qx, qy in quad], fill=(int(r * light), int(g * light), int(b * light)))
     tip = project(view(15, 15))
     draw.ellipse((ox + tip[0] - 2, tip[1] - 2, ox + tip[0] + 2, tip[1] + 2), fill=(230, 60, 60))
 
@@ -113,13 +177,14 @@ def render(name, times=None, step=1.0):
     img = Image.new("RGB", (W * cols, H * rows), (40, 44, 52))
     draw = ImageDraw.Draw(img)
     events = {round(t): n for t, n in clip.events}
+    pixels = sprite(name)
     for i, t in enumerate(times):
         ox, oy = (i % cols) * W, (i // cols) * H
         sub = Image.new("RGB", (W, H), (150, 185, 225))
         sd = ImageDraw.Draw(sub)
         sd.rectangle((0, H * 0.55, W, H), fill=(120, 120, 118))
         sd.rectangle((W * 0.29, H - 22, W * 0.71, H - 6), fill=(60, 60, 60))  # the hotbar
-        draw_frame(sd, 0, clip, t)
+        draw_frame(sd, 0, clip, t, pixels)
         label = f"{name} {t:g}" + (f" [{events[round(t)]}]" if round(t) in events and abs(t - round(t)) < 1e-6 else "")
         sd.text((4, 3), label, fill=(255, 255, 0))
         img.paste(sub, (ox, oy))

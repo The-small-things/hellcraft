@@ -210,6 +210,18 @@ public final class PlayerAnimator {
 		return action != null && time < action.ticks;
 	}
 
+	/** Each weapon's guard: the body is one of two stances, but the mace and the Reaper hold their own way in first person. */
+	private static PlayerMovesAnim guardOf(WeaponClass kind) {
+		if (kind == null) {
+			return PlayerMovesAnim.GUARD;
+		}
+		return switch (kind) {
+			case MACE -> PlayerMovesAnim.GUARD_MACE;
+			case REAPER -> PlayerMovesAnim.GUARD_REAPER;
+			default -> kind.twoHanded ? PlayerMovesAnim.GUARD_TWO : PlayerMovesAnim.GUARD;
+		};
+	}
+
 	private void tick(Player player, boolean smooth) {
 		if (smooth) {
 			motion.tick(player, player == net.minecraft.client.Minecraft.getInstance().player);
@@ -224,7 +236,7 @@ public final class PlayerAnimator {
 		Clips.Clip want = null;
 		if (Guard.guarding(player)) {
 			WeaponClass kind = WeaponClass.of(player.getUseItem());
-			want = Clips.of(kind != null && kind.twoHanded ? PlayerMovesAnim.GUARD_TWO : PlayerMovesAnim.GUARD);
+			want = Clips.of(guardOf(kind));
 		}
 		lastStanceWeight = stanceWeight;
 		if (want != null && !wasGuarding && action != null && busy()

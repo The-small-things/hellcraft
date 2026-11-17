@@ -14,6 +14,8 @@ public enum PlayerMovesAnim implements BossAnim {
 	ROLL(12, false, Map.of("evade", 2, "recover", 9)),
 	GUARD(40, true, Map.of()),
 	GUARD_TWO(40, true, Map.of()),
+	GUARD_MACE(40, true, Map.of()),
+	GUARD_REAPER(40, true, Map.of()),
 	PARRY(8, false, Map.of("clash", 1)),
 	GUARD_BREAK(16, false, Map.of()),
 	WALK(20, true, Map.of()),
