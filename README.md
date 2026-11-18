@@ -329,6 +329,7 @@ Every player is animated by Hellcraft, in or out of a fight:
 - **Using things:** a **bow** is drawn back past the cheek as it charges and the string hand flies back when you loose; a **shield** is braced behind with the feet set and rocks back when a blow lands on it; **food** and **drink** go to the mouth; a **crossbow** kicks; a **trident** is whipped over in a throw.
 - **No more snapping:** crouching, raising a bow or shield, loading a crossbow and climbing into a boat ease in over a moment instead of jumping between poses.
 - **In first person** your weapon moves with you: it sways with your stride, swings side to side when sprinting, lifts as you jump and drops when you land (with View Bobbing on). Every swing stays in view: raised before the blow, sweeping through the middle of the screen, finishing above the hotbar. A bow, shield or food eases into place and back, and loosing an arrow or firing a crossbow kicks.
+- **Mob health bars:** a hurt mob, or the one you look at, shows a bar over its head (red for monsters, green for the rest; a pale stretch shows what your last blow took). Bosses keep their boss bar. `/hellcraft-client healthbars side` puts it upright beside the mob instead, `off` hides it, `above` brings it back (for you alone).
 - **Your choice:** each player can turn the animations off for themselves with `/hellcraft-client animations off` (and back on with `on`). Combat moves still play.
 
 ### Hell weapons (26.3)
@@ -828,6 +829,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/lessons [off\|on\|again]` | all | How many of Virgil's first-steps lessons you've had; turn them off or on; hear the last one again (3.2) |
 | `/judge` | all | Minos's judgement of you, read afresh from what you've done (3.1) |
 | `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
+| `/hellcraft-client healthbars [above\|side\|off]` | each player | where mobs' health bars go: over their heads, upright beside them, or hidden (kept in your own `config/hellcraft-client.json`) (3.5) |
 | `/hellcraft-client animations [on\|off]` | each player | Hellcraft's animations for walking, running, jumping, bows, shields and food, in first and third person: on or off for you alone (kept in your own `config/hellcraft-client.json`) (3.5) |
 | `/hellcraft combat test` | op | Self-test Hellcraft's combat: stamina, guards, swings, the roll (3.5) |
 | `/hellcraft charge <players>` | op | Fill their hell weapon's blood charge, to try a Blood Art (3.5) |
@@ -908,7 +910,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
-Each player also has a small settings file of their own, `config/hellcraft-client.json` in their game folder: `smoothAnimations` (Hellcraft's animations for getting about and using items; `/hellcraft-client animations on|off` changes it in game).
+Each player also has a small settings file of their own, `config/hellcraft-client.json` in their game folder: `smoothAnimations` (Hellcraft's animations for getting about and using items; `/hellcraft-client animations on|off` changes it in game) and `healthBars` (`above`, `side` or `off`; `/hellcraft-client healthbars`).
 
 ## Version history
 
