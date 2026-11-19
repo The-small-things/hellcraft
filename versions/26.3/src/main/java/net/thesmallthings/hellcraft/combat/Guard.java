@@ -6,7 +6,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -26,6 +25,7 @@ import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.net.FeelPayload;
 import net.thesmallthings.hellcraft.net.GuardPayload;
 import net.thesmallthings.hellcraft.net.GuardRefusedPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.HashMap;
@@ -174,8 +174,7 @@ public final class Guard {
 		if (spent || beaten) {
 			broken(player, level, at);
 		} else {
-			level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BLOCK.value(), SoundSource.PLAYERS, 0.9f, 1.25f + level.getRandom().nextFloat() * 0.2f);
-			level.playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.15f, 1.9f);
+			level.playSound(null, at.x, at.y, at.z, HellSounds.COMBAT_GUARD_BLOCK.value(), SoundSource.PLAYERS, 0.9f, 0.95f + level.getRandom().nextFloat() * 0.1f);
 			level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 6, 0.15, 0.15, 0.15, 0.25);
 			Combat.feel(player, FeelPayload.Kind.GUARDED, Math.min(2.0f, 0.6f + damage / 10.0f));
 		}
@@ -186,7 +185,7 @@ public final class Guard {
 		HellConfig config = HellConfig.get();
 		Vec3 at = clash(player, attacker);
 		Cue.PARRY.play(level, at.x, at.y, at.z, 1.4f, 0.95f + level.getRandom().nextFloat() * 0.1f);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BLOCK.value(), SoundSource.PLAYERS, 0.5f, 1.7f);
+		level.playSound(null, at.x, at.y, at.z, HellSounds.COMBAT_PARRY_CLASH.value(), SoundSource.PLAYERS, 0.5f, 1.18f);
 		level.sendParticles(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, 14, 0.2, 0.2, 0.2, 0.6);
 		level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 10, 0.2, 0.2, 0.2, 0.4);
 		Stamina.restore(player, 12);
@@ -228,7 +227,7 @@ public final class Guard {
 		}
 		player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 2, false, false));
 		Cue.GUARD_BREAK.play(level, at.x, at.y, at.z, 1.3f, 1.0f);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.SHIELD_BREAK.value(), SoundSource.PLAYERS, 0.5f, 0.9f);
+		level.playSound(null, at.x, at.y, at.z, HellSounds.COMBAT_GUARD_BREAK.value(), SoundSource.PLAYERS, 0.5f, 0.97f);
 		level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 16, 0.25, 0.25, 0.25, 0.5);
 		Combat.show(player, PlayerMovesAnim.GUARD_BREAK, 0, 0, 1.0f, true);
 		Combat.feel(player, FeelPayload.Kind.GUARD_BREAK, 1.5f);

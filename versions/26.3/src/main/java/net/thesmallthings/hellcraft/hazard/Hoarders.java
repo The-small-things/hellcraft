@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +16,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.monster.Hoarder;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Shrines;
@@ -113,7 +113,7 @@ public final class Hoarders {
 			h.setTarget(p);
 			level.addFreshEntity(h);
 			MapSync.unlockCodex(p, "hoarder");
-			level.playSound(null, x, y, z, SoundEvents.ARMOR_EQUIP_GOLD.value(), SoundSource.HOSTILE, 1.0f, 0.6f);
+			level.playSound(null, x, y, z, HellSounds.RULES_COINS.value(), SoundSource.HOSTILE, 1.0f, 0.9f);
 			CircleHazards.hintOnce(p, HINT, "Gold draws the hoarders: the more you carry, the more come, and they steal it. "
 					+ "Kill them to get it back, or stash your gold (an ender chest) and they lose interest.");
 			return;
@@ -142,7 +142,7 @@ public final class Hoarders {
 		if (!left.isEmpty()) {
 			hoarder.spawnAtLocation(p.level(), left);
 		}
-		p.level().playSound(null, p.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.HOSTILE, 1.0f, 0.5f);
+		p.level().playSound(null, p.blockPosition(), HellSounds.RULES_STEAL.value(), SoundSource.HOSTILE, 1.0f, 0.88f);
 		p.sendOverlayMessage(Component.literal("A hoarder stole " + taken.getCount() + " " + taken.getHoverName().getString() + "! Kill it to get it back.")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 	}

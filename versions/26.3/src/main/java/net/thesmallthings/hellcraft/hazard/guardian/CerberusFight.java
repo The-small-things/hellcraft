@@ -1,14 +1,11 @@
 package net.thesmallthings.hellcraft.hazard.guardian;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -16,8 +13,6 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.wolf.WolfSoundVariant;
-import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.cutscene.Cutscene;
@@ -28,13 +23,13 @@ import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * Cerberus (Inferno VI), the great worm of the third circle, who barks with three throats over the gluttons in the
@@ -136,10 +131,10 @@ final class CerberusFight extends GuardianFight {
 		lockedUntil = tick + CerberusAnim.INTRO.ticks;
 		BlockParticleOption mud = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState());
 		schedule(CerberusAnim.INTRO.at("rise"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 2.0f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_EMERGE.value(), SoundSource.HOSTILE, 2.0f, 0.9f);
 			BossFx.send(level, mud, body.getX(), body.getY() + 0.5, body.getZ(), 200, 2.5, 0.5, 2.5, 0.2);
 		});
-		schedule(CerberusAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f));
+		schedule(CerberusAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.88f));
 		return CerberusAnim.INTRO.ticks;
 	}
 
@@ -190,7 +185,7 @@ final class CerberusFight extends GuardianFight {
 		int bite = anim.at("bite");
 		lockedUntil = tick + anim.ticks;
 		cerberus.play(anim);
-		level.playSound(null, body.blockPosition(), wolf(WolfSoundVariant.WolfSoundSet::growlSound), SoundSource.HOSTILE, 2.0f, 0.4f);
+		level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_GROWL.value(), SoundSource.HOSTILE, 2.0f, 0.85f);
 		schedule(flash, () -> {
 			cerberus.warn(BossEntity.Warning.WHITE);
 			openParry(bite - flash + 3);
@@ -198,7 +193,7 @@ final class CerberusFight extends GuardianFight {
 		});
 		schedule(bite, () -> {
 			cerberus.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 2.0f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_BITE.value(), SoundSource.HOSTILE, 2.0f, 0.9f);
 			for (LivingEntity e : inCone(c, angle, BITE_REACH, BITE_ARC)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), BITE_DAMAGE)) {
 					fling(e, c, 0.9, 0.3);
@@ -222,7 +217,7 @@ final class CerberusFight extends GuardianFight {
 		Danger.cone(level, Danger.Colour.RED, c, angle, MAWS_REACH, MAWS_ARC, CerberusAnim.MAWS.at("maw1"));
 		for (String maw : new String[]{"maw1", "maw2", "maw3"}) {
 			schedule(CerberusAnim.MAWS.at(maw), () -> {
-				level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 2.0f, 0.8f);
+				level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_BITE.value(), SoundSource.HOSTILE, 2.0f, 0.95f);
 				for (LivingEntity e : inCone(c, angle, MAWS_REACH, MAWS_ARC)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), MAW_DAMAGE)) {
 						fling(e, c, 0.6, 0.25);
@@ -258,14 +253,14 @@ final class CerberusFight extends GuardianFight {
 			Danger.circle(level, Danger.Colour.RED, s, PUDDLE_RADIUS, land);
 		}
 		schedule(CerberusAnim.FILTH.at("spew"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.SLIME_SQUISH, SoundSource.HOSTILE, 2.5f, 0.4f);
+			level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_SPIT.value(), SoundSource.HOSTILE, 2.5f, 0.85f);
 			Vec3 mouth = body.position().add(Math.cos(Danger.facing(body)) * 4, 2.5, Math.sin(Danger.facing(body)) * 4);
 			BossFx.send(level, FILTH, mouth.x, mouth.y, mouth.z, 60, 0.6, 0.4, 0.6, 0.1);
 		});
 		schedule(land, () -> {
 			for (Vec3 s : spots) {
 				BossFx.send(level, ParticleTypes.ITEM_SLIME, s.x, s.y + 0.5, s.z, 30, 1.2, 0.3, 1.2, 0.1);
-				level.playSound(null, s.x, s.y, s.z, SoundEvents.MUD_BREAK, SoundSource.HOSTILE, 1.5f, 0.6f);
+				level.playSound(null, s.x, s.y, s.z, HellSounds.CERBERUS_MUD.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 				puddles.add(new Puddle(s, tick + PUDDLE_TICKS));
 			}
 		});
@@ -283,12 +278,12 @@ final class CerberusFight extends GuardianFight {
 		cerberus.warn(BossEntity.Warning.PURPLE);
 		tip("He's about to HOWL: get out of the purple ring, it can't be blocked!");
 		Danger.ring(level, Danger.Colour.PURPLE, c, 0, HOWL_RADIUS, howl);
-		schedule(CerberusAnim.HOWL.at("breath"), () -> level.playSound(null, body.blockPosition(), wolf(WolfSoundVariant.WolfSoundSet::growlSound), SoundSource.HOSTILE, 2.5f, 0.3f));
+		schedule(CerberusAnim.HOWL.at("breath"), () -> level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_GROWL.value(), SoundSource.HOSTILE, 2.5f, 0.82f));
 		schedule(howl, () -> {
 			cerberus.warn(BossEntity.Warning.NONE);
 			say("AROOOOOOOOO!");
-			level.playSound(null, body.blockPosition(), wolf(WolfSoundVariant.WolfSoundSet::ambientSound), SoundSource.HOSTILE, 4.0f, 0.4f);
-			level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_HOWL.value(), SoundSource.HOSTILE, 4.0f, 0.85f);
+			level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.9f);
 			ringParticles(ParticleTypes.SONIC_BOOM, c, HOWL_RADIUS * 0.6, 10);
 			for (LivingEntity e : victims(c, HOWL_RADIUS + 0.3)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), HOWL_DAMAGE)) {
@@ -316,10 +311,10 @@ final class CerberusFight extends GuardianFight {
 		say("*All three heads drop. He paws the mud.*");
 		tip("A red line: he's about to charge along it. Step aside!");
 		Danger.line(level, Danger.Colour.RED, c, angle, CHARGE_REACH, CHARGE_WIDTH, CHARGE_WARN);
-		level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_STEP, SoundSource.HOSTILE, 2.0f, 0.5f);
+		level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_STOMP.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 		schedule(CHARGE_WARN, () -> {
 			cerberus.play(CerberusAnim.CHARGE);
-			level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.5f, 0.9f);
+			level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_ROAR.value(), SoundSource.HOSTILE, 2.5f, 0.97f);
 			chargeDir = new Vec3(Math.cos(angle), 0, Math.sin(angle));
 			chargeUntil = tick + 16;
 			trampled.clear();
@@ -403,11 +398,11 @@ final class CerberusFight extends GuardianFight {
 		say("*He rears up out of the mire, and all three throats roar at once*");
 		tip("Cerberus is furious: he slams the ground, and charges along red lines from now on.");
 		schedule(roar, () -> {
-			level.playSound(null, cerberus.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f);
+			level.playSound(null, cerberus.blockPosition(), HellSounds.CERBERUS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 			Danger.ring(level, Danger.Colour.RED, c, 0, SLAM_RADIUS, slam - roar);
 		});
 		schedule(slam, () -> {
-			level.playSound(null, cerberus.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.6f);
+			level.playSound(null, cerberus.blockPosition(), HellSounds.BOSS_BOOM.value(), SoundSource.HOSTILE, 2.0f, 0.9f);
 			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()), c.x, c.y + 0.3, c.z, 200, SLAM_RADIUS * 0.5, 0.3,
 					SLAM_RADIUS * 0.5, 0.2);
 			for (LivingEntity e : victims(c, SLAM_RADIUS + 0.3)) {
@@ -429,17 +424,12 @@ final class CerberusFight extends GuardianFight {
 		lockedUntil = staggerUntil;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(CerberusAnim.STAGGER.ticks + 15);
-		level.playSound(null, body.blockPosition(), wolf(WolfSoundVariant.WolfSoundSet::hurtSound), SoundSource.HOSTILE, 2.0f, 0.4f);
+		level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_HURT.value(), SoundSource.HOSTILE, 2.0f, 0.85f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 3, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		by.sendOverlayMessage(Component.literal("Parried! Cerberus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	// ------------------------------------------------------------------ helpers
-
-	/** The big wolf's voice, from three throats. */
-	private static SoundEvent wolf(Function<WolfSoundVariant.WolfSoundSet, Holder<SoundEvent>> sound) {
-		return sound.apply(SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.BIG).adultSounds()).value();
-	}
 
 	private static void stop(Mob body) {
 		body.getNavigation().stop();

@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -23,6 +22,7 @@ import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.ParadisoGeometry.Sphere;
@@ -93,7 +93,7 @@ public final class Paradiso {
 			return;
 		}
 		setDown(player, level, Sphere.MOON);
-		level.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.4f);
+		level.playSound(null, player.blockPosition(), HellSounds.WORLD_LIGHT_COLUMN.value(), SoundSource.PLAYERS, 1.0f, 1.1f);
 		Dialogue.notice(player, Component.literal("You rose into Paradiso. Nine spheres are stacked above you: pass each one's trial, then "
 				+ "stand in its column of light to rise to the next. The Celestial Rose is at the top.").withStyle(ChatFormatting.GOLD));
 		Dialogue.notice(player, Component.literal("Falling can't hurt you here: an angel catches you. Hold sneak in a column to sink "
@@ -191,7 +191,7 @@ public final class Paradiso {
 			player.removeEffect(MobEffects.LEVITATION);
 			setDown(player, level, next);
 			player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 30, 0, true, false, false));
-			Feedback.sound(player, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 1.0f, 1.2f);
+			Feedback.sound(player, HellSounds.WORLD_SPHERE_OPEN.value(), SoundSource.PLAYERS, 1.0f, 1.05f);
 			return;
 		}
 		player.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 6, 19, true, false, false));

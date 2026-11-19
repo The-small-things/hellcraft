@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
@@ -36,19 +35,20 @@ import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Judgement;
+import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.cutscene.Cutscene;
 import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.BossModel;
-import net.thesmallthings.hellcraft.combat.Guard;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
@@ -244,7 +244,7 @@ public abstract class GuardianFight {
 			model.attach(body, kind.model(), Math.max(kind.modelHeight, body.getBbHeight()));
 			model.pose(body, BossModel.Pose.ROAR);
 		}
-		level.playSound(null, lair, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 2.0f, 1.2f);
+		level.playSound(null, lair, HellSounds.BOSS_AWAKEN.value(), SoundSource.HOSTILE, 2.0f, 1.05f);
 		BossFx.send(level, ParticleTypes.SOUL_FIRE_FLAME, body.getX(), body.getY() + 1, body.getZ(), 120, 1.5, 2, 1.5, 0.05);
 		Cutscene cutscene = animated(body) ? introCutscene() : null;
 		for (ServerPlayer p : audience()) {
@@ -456,7 +456,7 @@ public abstract class GuardianFight {
 	private void pullIn(ServerPlayer archer) {
 		archer.sendOverlayMessage(Component.literal(kind.title + " is pulling you in for shooting from too far away!")
 				.withStyle(kind.color, ChatFormatting.BOLD));
-		Feedback.sound(archer, SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 1.0f, 0.6f);
+		Feedback.sound(archer, HellSounds.BOSS_WARN.value(), SoundSource.HOSTILE, 1.0f, 0.9f);
 		for (int t = 0; t < 20; t += 4) {
 			schedule(t, () -> BossFx.send(level, ParticleTypes.REVERSE_PORTAL, archer.getX(), archer.getY() + 1, archer.getZ(), 20, 0.4, 0.8, 0.4, 0.05));
 		}
@@ -473,7 +473,7 @@ public abstract class GuardianFight {
 			double speed = Math.min(3.0, 0.4 + flat * 0.11);
 			archer.setDeltaMovement(to.x / flat * speed, 0.45, to.z / flat * speed);
 			Feedback.syncMotion(archer);
-			Feedback.sound(archer, SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.HOSTILE, 1.5f, 0.5f);
+			Feedback.sound(archer, HellSounds.BOSS_PULL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		});
 	}
 
@@ -503,7 +503,7 @@ public abstract class GuardianFight {
 				BossFx.send(level, ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1, p.getZ(), 40, 0.5, 1, 0.5, 0.1);
 				p.teleportTo(x, groundY(x, z), z);
 				p.resetFallDistance();
-				Feedback.sound(p, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 0.5f);
+				Feedback.sound(p, HellSounds.BOSS_BANISH.value(), SoundSource.HOSTILE, 1.0f, 0.88f);
 				p.sendOverlayMessage(Component.literal(kind.title + " dragged you down. Fight on the ground!").withStyle(kind.color, ChatFormatting.BOLD));
 			}
 		}

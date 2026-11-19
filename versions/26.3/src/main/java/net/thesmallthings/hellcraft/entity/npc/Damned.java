@@ -1,18 +1,14 @@
 package net.thesmallthings.hellcraft.entity.npc;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,11 +23,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.entity.boss.gen.DamnedAnim;
 import net.thesmallthings.hellcraft.hazard.LowerRules;
 import net.thesmallthings.hellcraft.hazard.Torments;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Tombs;
 import net.thesmallthings.hellcraft.world.Zone;
@@ -50,8 +46,8 @@ import java.util.Locale;
  * PENANCE_ punishments, one per terrace, brought out by world/Purgatory.penitents): they sigh rather than scream.
  */
 public class Damned extends PathfinderMob {
-	public static final SoundEvent SCREAM = sound("entity.damned.scream");
-	public static final SoundEvent SIGH = sound("entity.damned.sigh");
+	public static final SoundEvent SCREAM = HellSounds.ENTITY_DAMNED_SCREAM.value();
+	public static final SoundEvent SIGH = HellSounds.ENTITY_DAMNED_SIGH.value();
 
 	private static final EntityDataAccessor<Byte> DATA_PUNISHMENT = SynchedEntityData.defineId(Damned.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> DATA_LOOK = SynchedEntityData.defineId(Damned.class, EntityDataSerializers.BYTE);
@@ -195,16 +191,6 @@ public class Damned extends PathfinderMob {
 				.add(Attributes.MOVEMENT_SPEED, 0.28)
 				.add(Attributes.FOLLOW_RANGE, 48.0)
 				.add(Attributes.STEP_HEIGHT, 1.1);
-	}
-
-	private static SoundEvent sound(String name) {
-		Identifier id = HellcraftMod.id(name);
-		return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
-	}
-
-	/** Registers the screams (called while the mod starts, so the sound events exist before the registries freeze). */
-	public static void registerSounds() {
-		// the static fields do it
 	}
 
 	@Override
@@ -449,7 +435,7 @@ public class Damned extends PathfinderMob {
 			play(DamnedAnim.FLINCH);
 			level.sendParticles(ParticleTypes.CRIT, getX(), getY() + 1.7, getZ(), 3, 0.3, 0.2, 0.3, 0.05);
 			if (getRandom().nextInt(3) == 0) {
-				level.playSound(null, getX(), getY(), getZ(), SoundEvents.BEE_STING, SoundSource.AMBIENT, 0.4f, 1.2f);
+				level.playSound(null, getX(), getY(), getZ(), HellSounds.DAMNED_LASH.value(), SoundSource.AMBIENT, 0.4f, 1.05f);
 			}
 		}
 	}
@@ -528,7 +514,7 @@ public class Damned extends PathfinderMob {
 				0.3, 0.3, 0.3, 0.1);
 		level.sendParticles(ParticleTypes.CRIT, front.x, front.y + 0.6, front.z, 6, 0.3, 0.3, 0.3, 0.2);
 		if (side > 0) {
-			level.playSound(null, front.x, front.y, front.z, SoundEvents.ANVIL_LAND, SoundSource.AMBIENT, 0.5f, 0.5f);
+			level.playSound(null, front.x, front.y, front.z, HellSounds.DAMNED_WEIGHT.value(), SoundSource.AMBIENT, 0.5f, 0.88f);
 		}
 		cryNow();
 	}
@@ -544,7 +530,7 @@ public class Damned extends PathfinderMob {
 			level.sendParticles(ParticleTypes.SPLASH, getX(), home.y + 1.1, getZ(), 6, 0.4, 0.1, 0.4, 0.1);
 			if (partner != null && getRandom().nextInt(4) == 0) {
 				partner.play(DamnedAnim.FLINCH);
-				level.playSound(null, getX(), getY() + 1, getZ(), SoundEvents.PLAYER_SPLASH, SoundSource.AMBIENT, 0.3f, 1.3f);
+				level.playSound(null, getX(), getY() + 1, getZ(), HellSounds.DAMNED_SPLASH.value(), SoundSource.AMBIENT, 0.3f, 1.07f);
 			}
 		}
 	}

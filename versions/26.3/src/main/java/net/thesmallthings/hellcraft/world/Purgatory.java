@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,6 +24,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.util.Signs;
@@ -616,7 +616,7 @@ public final class Purgatory {
 		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("PURGATORY").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("Thence we came forth to rebehold the stars.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
-		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.4f);
+		Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.1f);
 		Dialogue.notice(player, Component.literal("You climbed out to Purgatory. The Great Stair ahead climbs straight up the mountain to the "
 				+ "garden on top, with its two streams (Lethe and Eunoë), the Gate of Return home and the Ascent to Paradiso. Each of its seven "
 				+ "landings is a terrace you can follow round the mountain.").withStyle(ChatFormatting.AQUA));
@@ -640,7 +640,7 @@ public final class Purgatory {
 		}
 		player.sendOverlayMessage(Component.literal("Terrace of " + SINS[k - 1].charAt(0) + SINS[k - 1].substring(1).toLowerCase(java.util.Locale.ROOT)
 				+ " reached (" + k + "/7)").withStyle(ChatFormatting.AQUA));
-		Feedback.sound(player, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.MASTER, 1.0f, 1.2f);
+		Feedback.sound(player, HellSounds.WORLD_CHIME.value(), SoundSource.MASTER, 1.0f, 1.05f);
 	}
 
 	private static void streams(ServerPlayer player) {
@@ -682,7 +682,7 @@ public final class Purgatory {
 		int gained = Hearts.add(player, 2);
 		player.heal(player.getMaxHealth());
 		level.sendParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.5, player.getZ(), 8, 0.5, 0.3, 0.5, 0);
-		Feedback.sound(player, SoundEvents.PLAYER_LEVELUP, SoundSource.MASTER, 1.0f, 0.8f);
+		Feedback.sound(player, HellSounds.WORLD_TERRACE.value(), SoundSource.MASTER, 1.0f, 0.95f);
 		Dialogue.notice(player, Component.literal("Eunoë: +" + gained + " ❤.")
 				.withStyle(ChatFormatting.GOLD));
 	}

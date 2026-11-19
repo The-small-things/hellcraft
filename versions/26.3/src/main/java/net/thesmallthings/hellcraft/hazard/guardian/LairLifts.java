@@ -7,13 +7,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
@@ -180,7 +180,7 @@ public final class LairLifts {
 		player.teleportTo(level, bx + 0.5, y + 1, bz + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), true);
 		player.resetFallDistance();
 		player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, true, false, false));
-		level.playSound(null, player.blockPosition(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 1.5f, 0.8f);
+		level.playSound(null, player.blockPosition(), HellSounds.WORLD_LIFT.value(), SoundSource.PLAYERS, 1.5f, 0.95f);
 		Dialogue.notice(player, Component.literal("You came down by " + g.title + "'s way into " + place(destination(g)) + ".")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}

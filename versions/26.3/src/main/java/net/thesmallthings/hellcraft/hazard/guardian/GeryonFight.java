@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -23,6 +22,7 @@ import net.thesmallthings.hellcraft.entity.boss.GeryonEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ final class GeryonFight extends GuardianFight {
 		}
 		geryon(body).play(GeryonAnim.INTRO);
 		lockedUntil = tick + GeryonAnim.INTRO.ticks;
-		schedule(GeryonAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 2.5f, 1.4f));
+		schedule(GeryonAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.GERYON_ROAR.value(), SoundSource.HOSTILE, 2.5f, 1.1f));
 		return GeryonAnim.INTRO.ticks;
 	}
 
@@ -203,7 +203,7 @@ final class GeryonFight extends GuardianFight {
 			if (at[0] == null) {
 				return;
 			}
-			level.playSound(null, body.blockPosition(), SoundEvents.BEE_STING, SoundSource.HOSTILE, 2.5f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.GERYON_STING.value(), SoundSource.HOSTILE, 2.5f, 0.88f);
 			for (LivingEntity e : victims(at[0], STING_RADIUS + 0.3)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), STING_DAMAGE)) {
 					e.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));
@@ -237,7 +237,7 @@ final class GeryonFight extends GuardianFight {
 				falses.add(copy.getUUID());
 				BossFx.send(level, ParticleTypes.WITCH, copy.getX(), copy.getY() + 1, copy.getZ(), 40, 1.5, 1, 1.5, 0.1);
 			}
-			level.playSound(null, body.blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.GERYON_ILLUSION.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 		});
 		int warn = 30;
 		schedule(split + 10, () -> {
@@ -285,7 +285,7 @@ final class GeryonFight extends GuardianFight {
 		tip("He's coiling round the lair: get to the MIDDLE, out of the red ring!");
 		Danger.ring(level, Danger.Colour.RED, c, COIL_INNER, COIL_OUTER, squeeze);
 		schedule(squeeze, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.ELDER_GUARDIAN_HURT, SoundSource.HOSTILE, 2.5f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.GERYON_HURT.value(), SoundSource.HOSTILE, 2.5f, 0.88f);
 			for (LivingEntity e : inRing(c, COIL_INNER, COIL_OUTER)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), COIL_DAMAGE)) {
 					e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 2));
@@ -312,7 +312,7 @@ final class GeryonFight extends GuardianFight {
 			diveStart = tick;
 			diveEnd = tick + 18;
 			struck.clear();
-			level.playSound(null, body.blockPosition(), SoundEvents.PHANTOM_SWOOP, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.GERYON_SWOOP.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 		});
 		return warn + 45;
 	}
@@ -416,7 +416,7 @@ final class GeryonFight extends GuardianFight {
 		lockedUntil = tick + GeryonAnim.PHASE.ticks;
 		say("Enough of courtesy! See my true colours!");
 		tip("Geryon is furious: venom will drip where you stand (red circles). Keep moving.");
-		schedule(GeryonAnim.PHASE.at("roar"), () -> level.playSound(null, geryon.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 3.0f, 0.8f));
+		schedule(GeryonAnim.PHASE.at("roar"), () -> level.playSound(null, geryon.blockPosition(), HellSounds.GERYON_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.95f));
 	}
 
 	@Override
@@ -429,7 +429,7 @@ final class GeryonFight extends GuardianFight {
 		goal = null;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(GeryonAnim.STAGGER.ticks + 15);
-		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.5f);
+		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		by.sendOverlayMessage(Component.literal("Parried! Geryon sags to the ground: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

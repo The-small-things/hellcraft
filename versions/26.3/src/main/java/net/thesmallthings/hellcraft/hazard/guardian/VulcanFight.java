@@ -6,7 +6,6 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -28,6 +27,7 @@ import net.thesmallthings.hellcraft.entity.boss.VulcanEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,11 +132,11 @@ final class VulcanFight extends GuardianFight {
 		lockedUntil = tick + VulcanAnim.INTRO.ticks;
 		for (String clang : new String[]{"clang", "clang2", "clang3"}) {
 			schedule(VulcanAnim.INTRO.at(clang), () -> {
-				level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.HOSTILE, 2.5f, 0.6f);
+				level.playSound(null, body.blockPosition(), HellSounds.VULCAN_HAMMER.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 				BossFx.send(level, ParticleTypes.LAVA, body.getX(), body.getY() + 1.5, body.getZ(), 8, 1.0, 0.3, 1.0, 0.0);
 			});
 		}
-		schedule(VulcanAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(VulcanAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.VULCAN_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 		return VulcanAnim.INTRO.ticks;
 	}
 
@@ -194,7 +194,7 @@ final class VulcanFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			vulcan.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.5f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.VULCAN_SLAM.value(), SoundSource.HOSTILE, 2.5f, 0.88f);
 			Vec3 front = c.add(Math.cos(angle) * 3.5, 0, Math.sin(angle) * 3.5);
 			BossFx.send(level, ParticleTypes.LAVA, front.x, front.y + 0.3, front.z, 16, 1.2, 0.2, 1.2, 0.0);
 			for (LivingEntity e : inWedge(c, angle, STRIKE_REACH, STRIKE_ARC)) {
@@ -220,15 +220,14 @@ final class VulcanFight extends GuardianFight {
 		tip("He'll land in the red circle: get out of it, then JUMP the shockwave as it reaches you.");
 		Danger.circle(level, Danger.Colour.RED, mark, FALL_RADIUS, land);
 		Danger.ring(level, Danger.Colour.PURPLE, mark, FALL_RADIUS, WAVE_RADIUS, land + 4);
-		schedule(leap, () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.0f, 0.7f));
+		schedule(leap, () -> level.playSound(null, body.blockPosition(), HellSounds.VULCAN_ROAR.value(), SoundSource.HOSTILE, 2.0f, 0.93f));
 		schedule(land, () -> {
 			Mob b = body();
 			if (b == null) {
 				return;
 			}
 			b.teleportTo(mark.x, mark.y, mark.z);
-			level.playSound(null, b.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3.0f, 0.4f);
-			level.playSound(null, b.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.6f);
+			level.playSound(null, b.blockPosition(), HellSounds.VULCAN_SLAM.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 			BossFx.send(level, ParticleTypes.LAVA, mark.x, mark.y + 0.5, mark.z, 30, 1.5, 0.3, 1.5, 0);
 			for (LivingEntity e : victims(mark, FALL_RADIUS + 0.3)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(b), FALL_DAMAGE)) {
@@ -249,7 +248,7 @@ final class VulcanFight extends GuardianFight {
 		vulcan.play(VulcanAnim.POUR);
 		say("Drink the iron of my crucible!");
 		tip("Molten iron pours on the red circles: get out of them!");
-		level.playSound(null, body.blockPosition(), SoundEvents.LAVA_AMBIENT, SoundSource.HOSTILE, 3.0f, 0.6f);
+		level.playSound(null, body.blockPosition(), HellSounds.VULCAN_LAVA.value(), SoundSource.HOSTILE, 3.0f, 0.9f);
 		List<Vec3> marks = new ArrayList<>();
 		for (LivingEntity t : targets()) {
 			marks.add(t.position());
@@ -292,7 +291,7 @@ final class VulcanFight extends GuardianFight {
 		tip("His chain flies along the red line: step off it, or it drags you to him.");
 		Danger.line(level, Danger.Colour.RED, c, angle, CHAIN_REACH, CHAIN_WIDTH, thrown);
 		schedule(thrown, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.VULCAN_CHAIN.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			for (int i = 0; i <= 18; i++) {
 				Vec3 p = c.add(Math.cos(angle) * i, 1.2, Math.sin(angle) * i);
 				BossFx.send(level, ParticleTypes.SMOKE, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0);
@@ -319,7 +318,7 @@ final class VulcanFight extends GuardianFight {
 		vulcan.play(VulcanAnim.SUMMON);
 		say("Up, my smiths! There is work at the anvil!");
 		schedule(ring, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.VULCAN_HAMMER.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 			tip("Vulcan called his smiths out of the fire: kill them!");
 			for (int i = 0; i < 2; i++) {
 				Mob smith = EntityTypes.WITHER_SKELETON.create(level, EntitySpawnReason.EVENT);
@@ -347,7 +346,7 @@ final class VulcanFight extends GuardianFight {
 		Vec3 c = Vec3.atBottomCenterOf(lair);
 		double turn = level.getRandom().nextBoolean() ? 0 : Math.PI / 4;
 		tip("The seams of the floor glow red: step off the lines before they burst!");
-		level.playSound(null, lair, SoundEvents.LAVA_AMBIENT, SoundSource.HOSTILE, 3.0f, 0.5f);
+		level.playSound(null, lair, HellSounds.VULCAN_LAVA.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 		List<Double> angles = new ArrayList<>();
 		for (int k = 0; k < 4; k++) {
 			double a = turn + k * Math.PI / 2;
@@ -356,7 +355,7 @@ final class VulcanFight extends GuardianFight {
 		}
 		schedule(SEAM_WARN, () -> {
 			Mob b = body();
-			level.playSound(null, lair, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.8f);
+			level.playSound(null, lair, HellSounds.BOSS_BOOM.value(), SoundSource.HOSTILE, 2.0f, 0.95f);
 			for (double a : angles) {
 				for (int i = 1; i <= SEAM_REACH; i += 2) {
 					Vec3 p = c.add(Math.cos(a) * i, 0.2, Math.sin(a) * i);
@@ -416,12 +415,12 @@ final class VulcanFight extends GuardianFight {
 		nextSeams = tick + VulcanAnim.PHASE.ticks + 60;
 		say("ENOUGH! The forge itself will burn you!");
 		schedule(VulcanAnim.PHASE.at("plunge"), () -> {
-			level.playSound(null, vulcan.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3.0f, 0.3f);
+			level.playSound(null, vulcan.blockPosition(), HellSounds.VULCAN_SLAM.value(), SoundSource.HOSTILE, 3.0f, 0.82f);
 			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MAGMA_BLOCK.defaultBlockState()), vulcan.getX(), vulcan.getY() + 0.3,
 					vulcan.getZ(), 200, 3, 0.3, 3, 0.2);
 		});
 		schedule(VulcanAnim.PHASE.at("roar"), () -> {
-			level.playSound(null, vulcan.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.3f);
+			level.playSound(null, vulcan.blockPosition(), HellSounds.VULCAN_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.82f);
 			tip("Vulcan is furious: from now on the seams of the floor burst between his blows. Watch for red lines.");
 		});
 	}

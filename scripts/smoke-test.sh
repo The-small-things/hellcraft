@@ -42,18 +42,20 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
            hellcraft.client.mixins.json; do
     grep -q "$f" <(unzip -l "$JAR") || { echo "The mod jar is missing $f"; exit 1; }
   done
-  # every cue sound (tools/gen_sounds.py) in sounds.json has its .ogg in the jar
+  # every sound in sounds.json (cues from tools/gen_sounds.py, the rest from tools/audio/build_sounds.py) has its .ogg
+  # in the jar, and none plays a vanilla file any more
   python3 - "$JAR" <<'CUES' || exit 1
 import json, sys, zipfile
 z = zipfile.ZipFile(sys.argv[1])
 names = set(z.namelist())
 sounds = json.loads(z.read("assets/hellcraft/sounds.json"))
 cues = [k for k in sounds if k.startswith("cue.")]
-missing = [k for k in cues for s in sounds[k]["sounds"]
+missing = [k for k in sounds for s in sounds[k]["sounds"]
            if "assets/hellcraft/sounds/" + s["name"].split(":", 1)[1] + ".ogg" not in names]
 if not cues or missing:
-    sys.exit("Cue sounds missing from the jar: %s (of %d)" % (missing, len(cues)))
+    sys.exit("Sounds missing from the jar: %s (of %d)" % (missing, len(sounds)))
 print("Cue sounds: %d, all in the jar" % len(cues))
+print("Hellcraft sounds: %d events, all in the jar" % len(sounds))
 CUES
   # item models (the boss models included) can only use textures stitched into the item or block atlas,
   # anything else draws as the black and magenta missing texture

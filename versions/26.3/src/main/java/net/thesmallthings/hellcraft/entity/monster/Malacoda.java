@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -20,6 +19,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.gen.MalacodaAnim;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 import org.jetbrains.annotations.Nullable;
@@ -132,7 +132,7 @@ public class Malacoda extends SoulMonster {
 				}
 				if (t == 1) {
 					playSpecial();
-					playSound(SoundEvents.WITCH_CELEBRATE, 2.0f, 0.6f);
+					playSound(HellSounds.MALACODA_LAUGH.value(), 2.0f, 0.9f);
 					if (p != null) {
 						Dialogue.say(p, "Malacoda", ChatFormatting.RED, Component.literal("Ha! There's no bridge here, and there never was. At them, my "
 								+ "Malebranche!"), true);
@@ -212,7 +212,7 @@ public class Malacoda extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.PIGLIN_BRUTE_AMBIENT;
+		return HellSounds.MALACODA_AMBIENT.value();
 	}
 
 	@Override

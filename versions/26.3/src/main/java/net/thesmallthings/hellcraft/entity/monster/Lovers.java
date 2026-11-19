@@ -5,7 +5,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.LoversAnim;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.HashMap;
@@ -110,7 +110,7 @@ public class Lovers extends SoulMonster {
 		if (tickCount >= nextDive && takeTurn(target)) {
 			diving = 30;
 			diveFrom = position();
-			playSound(SoundEvents.PHANTOM_SWOOP, 1.5f, 0.8f);
+			playSound(HellSounds.LOVERS_SWOOP.value(), 1.5f, 0.95f);
 			return;
 		}
 		// circling over the prey
@@ -137,7 +137,7 @@ public class Lovers extends SoulMonster {
 		Vec3 back = position().subtract(by.position()).multiply(1, 0, 1);
 		back = back.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : back.normalize();
 		setDeltaMovement(back.x * 0.6, 0.1, back.z * 0.6);
-		level.playSound(null, by.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
+		level.playSound(null, by.blockPosition(), HellSounds.COMBAT_GUARD_BLOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
 		level.sendParticles(ParticleTypes.CRIT, getX(), getY() + 1, getZ(), 20, 0.4, 0.4, 0.4, 0.2);
 		by.sendOverlayMessage(Component.literal("Blocked! The lovers fall stunned: hit them now.").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
@@ -156,7 +156,7 @@ public class Lovers extends SoulMonster {
 			push = push.lengthSqr() < 1.0e-4 ? new Vec3(1, 0, 0) : push.normalize();
 			target.setDeltaMovement(push.x * 1.5, 0.7, push.z * 1.5);
 			Feedback.syncMotion(target);
-			playSound(SoundEvents.BREEZE_WIND_CHARGE_BURST.value(), 1.0f, 0.8f);
+			playSound(HellSounds.LOVERS_GUST.value(), 1.0f, 0.95f);
 		}
 		return hit;
 	}
@@ -168,17 +168,17 @@ public class Lovers extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM;
+		return HellSounds.LOVERS_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.VEX_HURT;
+		return HellSounds.LOVERS_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.VEX_DEATH;
+		return HellSounds.LOVERS_DEATH.value();
 	}
 
 	@Override

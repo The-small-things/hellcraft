@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.boss.FarinataEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ final class FarinataFight extends GuardianFight {
 		farinata(body).play(FarinataAnim.INTRO);
 		lockedUntil = tick + FarinataAnim.INTRO.ticks;
 		schedule(FarinataAnim.INTRO.at("rise"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 2.5f, 0.4f);
+			level.playSound(null, body.blockPosition(), HellSounds.FARINATA_FLAME.value(), SoundSource.HOSTILE, 2.5f, 0.85f);
 			BossFx.send(level, ParticleTypes.FLAME, body.getX(), body.getY() + 1, body.getZ(), 150, 1.2, 1.5, 1.2, 0.05);
 		});
 		return FarinataAnim.INTRO.ticks;
@@ -194,7 +194,7 @@ final class FarinataFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			farinata.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.FARINATA_FLAME.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 			for (double r = 2; r <= DISDAIN_REACH; r += 1.0) {
 				BossFx.send(level, ParticleTypes.FLAME, c.x + Math.cos(angle) * r, c.y + 0.3, c.z + Math.sin(angle) * r, 6, 0.3, 0.2, 0.3, 0.02);
 			}
@@ -268,7 +268,7 @@ final class FarinataFight extends GuardianFight {
 		schedule(at, () -> {
 			for (int i : which) {
 				Vec3 c = all.get(i);
-				level.playSound(null, BlockPos.containing(c), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 1.5f, 0.5f);
+				level.playSound(null, BlockPos.containing(c), HellSounds.FARINATA_FLAME.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 				for (int k = 0; k < 30; k++) {
 					double ox = (level.getRandom().nextDouble() - 0.5) * 2;
 					double oz = (level.getRandom().nextDouble() - 0.5) * 2;
@@ -297,7 +297,7 @@ final class FarinataFight extends GuardianFight {
 		Danger.ring(level, Danger.Colour.PURPLE, c, EXILE_INNER, EXILE_OUTER, blast);
 		schedule(blast, () -> {
 			farinata.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.BOSS_BOOM.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 			BossFx.send(level, ParticleTypes.EXPLOSION, c.x, c.y + 1, c.z, 6, 3, 0.5, 3, 0);
 			for (LivingEntity e : inRing(c, EXILE_INNER, EXILE_OUTER)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), EXILE_DAMAGE)) {
@@ -341,7 +341,7 @@ final class FarinataFight extends GuardianFight {
 		lockedUntil = tick + FarinataAnim.PHASE.ticks;
 		say("Florence! Thou shalt not have me twice!");
 		tip("Farinata is furious: the tombs round him fire twice for every command now.");
-		schedule(FarinataAnim.PHASE.at("roar"), () -> level.playSound(null, farinata.blockPosition(), SoundEvents.BLAZE_AMBIENT, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(FarinataAnim.PHASE.at("roar"), () -> level.playSound(null, farinata.blockPosition(), HellSounds.FARINATA_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 	}
 
 	@Override
@@ -353,7 +353,7 @@ final class FarinataFight extends GuardianFight {
 		lockedUntil = staggerUntil;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(FarinataAnim.STAGGER.ticks + 15);
-		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.5f);
+		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.0, 1.0, 1.0, 0.4);
 		say("Hm. Thou art not without breeding.");
 		by.sendOverlayMessage(Component.literal("Parried! Farinata sinks into his tomb: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));

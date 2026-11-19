@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,6 +25,7 @@ import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -207,7 +207,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		play(CyclopsAnim.ROAR);
 		lockedUntil = clock + CyclopsAnim.ROAR.ticks;
 		nextAttack = lockedUntil + 10;
-		schedule(CyclopsAnim.ROAR.at("roar"), () -> level.playSound(null, blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.5f, 0.6f));
+		schedule(CyclopsAnim.ROAR.at("roar"), () -> level.playSound(null, blockPosition(), HellSounds.CYCLOPS_ROAR.value(), SoundSource.HOSTILE, 2.5f, 0.9f));
 		for (ServerPlayer p : near) {
 			MapSync.unlockCodex(p, "cyclops");
 			Dialogue.notice(p, Component.literal("A Cyclops! White flash: block his maul and he reels. Red circle: his boulder "
@@ -222,7 +222,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		play(CyclopsAnim.ROAR);
 		lockedUntil = clock + CyclopsAnim.ROAR.ticks;
 		nextAttack = lockedUntil + 10;
-		schedule(CyclopsAnim.ROAR.at("roar"), () -> level.playSound(null, blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(CyclopsAnim.ROAR.at("roar"), () -> level.playSound(null, blockPosition(), HellSounds.CYCLOPS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 	}
 
 	/** The Smash: a white wedge. Block it as it lands and he reels. */
@@ -242,7 +242,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		});
 		schedule(hit, () -> {
 			warn(Warning.NONE);
-			level.playSound(null, blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.0f, 0.6f);
+			level.playSound(null, blockPosition(), HellSounds.CYCLOPS_SLAM.value(), SoundSource.HOSTILE, 2.0f, 0.9f);
 			for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(SMASH_REACH), e -> e != this && e.isAlive())) {
 				Vec3 d = e.position().subtract(c);
 				double r = Math.hypot(d.x, d.z);
@@ -272,7 +272,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		for (Vec3 m : marks) {
 			Danger.circle(level, Danger.Colour.RED, m, BOULDER_RADIUS, land);
 		}
-		schedule(release, () -> level.playSound(null, blockPosition(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 2.0f, 0.5f));
+		schedule(release, () -> level.playSound(null, blockPosition(), HellSounds.CYCLOPS_THROW.value(), SoundSource.HOSTILE, 2.0f, 0.88f));
 		Vec3 from = position().add(0, 4.5, 0);
 		for (int t = 0; t < BOULDER_FLIGHT; t += 2) {
 			int step = t;
@@ -287,7 +287,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		}
 		schedule(land, () -> {
 			for (Vec3 m : marks) {
-				level.playSound(null, net.minecraft.core.BlockPos.containing(m), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.5f, 0.7f);
+				level.playSound(null, net.minecraft.core.BlockPos.containing(m), HellSounds.BOSS_BOOM.value(), SoundSource.HOSTILE, 1.5f, 0.93f);
 				BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), m.x, m.y + 0.5, m.z, 80, 1.2, 0.4,
 						1.2, 0.2);
 				for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(m, m).inflate(BOULDER_RADIUS + 0.3, 3,
@@ -310,7 +310,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		Danger.ring(level, Danger.Colour.PURPLE, c, QUAKE_INNER, QUAKE_OUTER, stamp);
 		schedule(stamp, () -> {
 			warn(Warning.NONE);
-			level.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, blockPosition(), HellSounds.BOSS_BOOM.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), c.x, c.y + 0.2, c.z, 150, 3.5, 0.2,
 					3.5, 0.2);
 			for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(QUAKE_OUTER + 0.5), e -> e != this && e.isAlive())) {

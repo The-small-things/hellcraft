@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -22,6 +21,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,8 +118,7 @@ public final class Hellforge {
 	}
 
 	private static void finish(ServerPlayer player, ServerLevel level, BlockPos at, Component name) {
-		level.playSound(null, at, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1.2f, 0.6f);
-		level.playSound(null, at, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1.0f, 0.8f);
+		level.playSound(null, at, HellSounds.BLOOD_FORGE.value(), SoundSource.BLOCKS, 1.2f, 0.9f);
 		level.sendParticles(ParticleTypes.LAVA, at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5, 20, 0.3, 0.3, 0.3, 0);
 		level.sendParticles(ParticleTypes.FLAME, at.getX() + 0.5, at.getY() + 1.2, at.getZ() + 0.5, 40, 0.4, 0.4, 0.4, 0.05);
 		player.sendSystemMessage(Component.literal("The Hellforge upgraded your ").withStyle(ChatFormatting.GOLD)

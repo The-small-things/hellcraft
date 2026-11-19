@@ -2,7 +2,6 @@ package net.thesmallthings.hellcraft.entity.npc;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +19,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.AngelAnim;
 import net.thesmallthings.hellcraft.entity.monster.SoulMonster;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * The angels of Paradiso (tools/art/angel.py). Most are the heavens' own host: they wheel round each sphere's great
@@ -129,7 +129,7 @@ public class Angel extends SoulMonster {
 		}
 		if (tickCount >= nextStoop) {
 			stooping = 30;
-			playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, 1.4f);
+			playSound(HellSounds.ANGEL_DESCEND.value(), 1.5f, 1.1f);
 			return;
 		}
 		// wheeling over the one it tests
@@ -215,7 +215,7 @@ public class Angel extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.AMETHYST_BLOCK_CHIME;
+		return HellSounds.ANGEL_AMBIENT.value();
 	}
 
 	@Override
@@ -225,12 +225,12 @@ public class Angel extends SoulMonster {
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.ALLAY_HURT;
+		return HellSounds.ANGEL_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.ALLAY_DEATH;
+		return HellSounds.ANGEL_DEATH.value();
 	}
 
 	@Override

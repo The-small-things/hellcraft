@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.Carrier;
 import net.thesmallthings.hellcraft.entity.boss.gen.AntaeusAnim;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -258,7 +258,7 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 				take(above);
 			}
 			startMove(AntaeusAnim.LOWER);
-			level.playSound(null, blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.NEUTRAL, 2.0f, 0.4f);
+			level.playSound(null, blockPosition(), HellSounds.ANTAEUS_GROAN.value(), SoundSource.NEUTRAL, 2.0f, 0.85f);
 		}
 	}
 
@@ -297,7 +297,7 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 			}
 		}
 		riders.clear();
-		level().playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_LAND, SoundSource.NEUTRAL, 0.6f, 0.4f);
+		level().playSound(null, at.x, at.y, at.z, HellSounds.ANTAEUS_SET_DOWN.value(), SoundSource.NEUTRAL, 0.6f, 0.85f);
 	}
 
 	/** Whoever sneaked out of his hand on the way falls slowly, at least. */

@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,6 +13,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.FeelPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -102,8 +102,7 @@ public final class Dodge {
 		dir = dir.normalize();
 		Combat.show(player, PlayerMovesAnim.ROLL, (float) dir.x, (float) dir.z, 1.0f, false);
 		ServerLevel level = player.level();
-		level.playSound(null, player.blockPosition(), SoundEvents.BREEZE_JUMP, SoundSource.PLAYERS, 0.5f, 1.5f);
-		level.playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.8f, 0.8f);
+		level.playSound(null, player.blockPosition(), HellSounds.COMBAT_ROLL.value(), SoundSource.PLAYERS, 0.5f, 1.12f);
 		level.sendParticles(ParticleTypes.POOF, player.getX(), player.getY() + 0.15, player.getZ(), 6, 0.25, 0.05, 0.25, 0.01);
 		return true;
 	}

@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -33,6 +32,7 @@ import net.thesmallthings.hellcraft.entity.npc.Shade;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -157,7 +157,7 @@ public final class Shades {
 			LAST_WORDS.put(player.getUUID(), now);
 			int turn = (int) Math.floorMod(now / 60 + shade.getId(), (long) who.lines().size());
 			Dialogue.say(player, who.name(), ChatFormatting.AQUA, Component.literal(who.lines().get(turn)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-			player.level().playSound(null, shade.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.NEUTRAL, 0.8f, 0.55f);
+			player.level().playSound(null, shade.blockPosition(), HellSounds.SHADE_SIGH.value(), SoundSource.NEUTRAL, 0.8f, 0.89f);
 		}
 		if (who.codex() != null) {
 			MapSync.unlockCodex(player, who.codex());

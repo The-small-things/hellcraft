@@ -230,6 +230,30 @@ def nether_sounds(kind):
 
 CAVE_MOOD = {"mood_sound": {"sound": "minecraft:ambient.cave", "tick_delay": 6000, "block_search_extent": 8, "offset": 2.0}}
 
+# 26.3: Hellcraft's own music and ambience (made with ElevenLabs, tools/audio) in place of the vanilla sounds above.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "audio"))
+from hellsounds import BIOME_MUSIC, NETHER_AMBIENCE  # noqa: E402
+
+HELL_MOOD = {"sound": "hellcraft:ambient.hell.mood", "tick_delay": 6000, "block_search_extent": 8, "offset": 2.0}
+
+
+def HELL_MUSIC(track, lo=3600, hi=9600):
+    """A region's own track every 3 to 8 minutes (the tracks are under two minutes)."""
+    return {"sound": "hellcraft:music." + track, "min_delay": lo, "max_delay": hi}
+
+
+def hell_sounds(sound):
+    """The 1.21 sound block with Hellcraft's ambience: the Nether loops by NETHER_AMBIENCE, the cave mood by Hell's."""
+    out = {}
+    if "mood_sound" in sound:
+        out["mood_sound"] = HELL_MOOD
+    loop = sound.get("ambient_sound", "")
+    for kind, ours in NETHER_AMBIENCE.items():
+        if loop == "minecraft:ambient.%s.loop" % kind:
+            out["ambient_sound"] = "hellcraft:ambient.%s.loop" % ours
+            out["additions_sound"] = {"sound": "hellcraft:ambient.%s.additions" % ours, "tick_chance": 0.0111}
+    return out
+
 BIOMES = {
     "dark_wood": dict(
         temp=0.7, rain=True, downfall=0.8,
@@ -793,9 +817,9 @@ def make_biome26(biome_id, d):
         "minecraft:visual/fog_color": color(colors["fog_color"]),
         "minecraft:visual/sky_color": color(colors["sky_color"]),
         "minecraft:visual/water_fog_color": color(colors["water_fog_color"]),
-        "minecraft:audio/background_music": {"default": {k: v for k, v in music(d["music"]).items() if k != "replace_current_music"}},
+        "minecraft:audio/background_music": {"default": HELL_MUSIC(BIOME_MUSIC[biome_id])},
     }
-    sound = d.get("sound", {})
+    sound = hell_sounds(d.get("sound", {}))
     ambient = {}
     if "mood_sound" in sound:
         ambient["mood"] = sound["mood_sound"]
@@ -946,8 +970,8 @@ NIGHTMARE_BED = {"can_set_spawn": "never", "can_sleep": "never", "destroy_on_use
 DIMENSION_TYPE26 = {
     "ambient_light": DIMENSION_TYPE["ambient_light"],
     "attributes": {
-        "minecraft:audio/ambient_sounds": {"mood": CAVE_MOOD["mood_sound"]},
-        "minecraft:audio/background_music": {"default": {"max_delay": 24000, "min_delay": 12000, "sound": "minecraft:music.game"}},
+        "minecraft:audio/ambient_sounds": {"mood": HELL_MOOD},
+        "minecraft:audio/background_music": {"default": HELL_MUSIC("dark_wood", 12000, 24000)},
         # bed_works: false -- beds explode, as in the Nether
         "minecraft:gameplay/bed_rule": NIGHTMARE_BED,
         "minecraft:gameplay/straw_bed_rule": NIGHTMARE_BED,

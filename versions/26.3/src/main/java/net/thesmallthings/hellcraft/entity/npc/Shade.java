@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
@@ -31,6 +30,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Shades;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,12 +157,12 @@ public class Shade extends AbstractVillager {
 
 	@Override
 	protected SoundEvent getTradeUpdatedSound(boolean validTrade) {
-		return validTrade ? SoundEvents.ALLAY_ITEM_GIVEN : SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM;
+		return validTrade ? HellSounds.SHADE_TRADE.value() : HellSounds.SHADE_SIGH.value();
 	}
 
 	@Override
 	public SoundEvent getNotifyTradeSound() {
-		return SoundEvents.ALLAY_ITEM_GIVEN;
+		return HellSounds.SHADE_TRADE.value();
 	}
 
 	/** Where it lingers: its spot in the castle, and how far it drifts from it. */

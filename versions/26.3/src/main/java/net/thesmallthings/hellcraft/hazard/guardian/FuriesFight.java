@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -24,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
 
@@ -154,7 +154,7 @@ final class FuriesFight extends GuardianFight {
 		for (FuryEntity f : furies(body)) {
 			f.play(FuryAnim.INTRO);
 		}
-		schedule(FuryAnim.INTRO.at("scream"), () -> level.playSound(null, body.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.HOSTILE, 3.0f, 0.6f));
+		schedule(FuryAnim.INTRO.at("scream"), () -> level.playSound(null, body.blockPosition(), HellSounds.FURIES_SCREAM.value(), SoundSource.HOSTILE, 3.0f, 0.9f));
 		return FuryAnim.INTRO.ticks;
 	}
 
@@ -218,7 +218,7 @@ final class FuriesFight extends GuardianFight {
 			if (at[0] == null) {
 				return;
 			}
-			level.playSound(null, fury.blockPosition(), SoundEvents.PHANTOM_BITE, SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, fury.blockPosition(), HellSounds.FURIES_BITE.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 			// she lands where she struck, and stays down a moment
 			diveTo = new Vec3(at[0].x, groundY(at[0].x, at[0].z) + 0.2, at[0].z);
 			strikeUntil = Math.max(strikeUntil, tick + LANDED);
@@ -244,7 +244,7 @@ final class FuriesFight extends GuardianFight {
 		Danger.circle(level, Danger.Colour.PURPLE, ground, SHRIEK_RADIUS, scream + 14);
 		schedule(scream + 14, () -> {
 			fury.warn(BossEntity.Warning.NONE);
-			level.playSound(null, fury.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.HOSTILE, 3.0f, 0.8f);
+			level.playSound(null, fury.blockPosition(), HellSounds.FURIES_SCREAM.value(), SoundSource.HOSTILE, 3.0f, 0.95f);
 			BossFx.send(level, ParticleTypes.SONIC_BOOM, ground.x, ground.y + 1, ground.z, 1, 0, 0, 0, 0);
 			for (LivingEntity e : victims(ground, SHRIEK_RADIUS + 0.3)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), SHRIEK_DAMAGE)) {
@@ -264,7 +264,7 @@ final class FuriesFight extends GuardianFight {
 		fury.play(FuryAnim.LASH);
 		Danger.line(level, Danger.Colour.RED, from, angle, LASH_REACH, LASH_WIDTH, lash + 10);
 		schedule(lash + 10, () -> {
-			level.playSound(null, fury.blockPosition(), SoundEvents.TRIDENT_RIPTIDE_1.value(), SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, fury.blockPosition(), HellSounds.FURIES_DASH.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 			for (double r = 1; r <= LASH_REACH; r += 1.5) {
 				BossFx.send(level, ParticleTypes.ITEM_SLIME, from.x + Math.cos(angle) * r, from.y + 0.5, from.z + Math.sin(angle) * r, 3, 0.2, 0.2, 0.2, 0.05);
 			}
@@ -309,7 +309,7 @@ final class FuriesFight extends GuardianFight {
 					}
 				}
 			}
-			level.playSound(null, body.blockPosition(), SoundEvents.HONEY_BLOCK_FALL, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.FURIES_LAND.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 		});
 		return land + 25;
 	}
@@ -334,7 +334,7 @@ final class FuriesFight extends GuardianFight {
 		m.play(MedusaAnim.INTRO);
 		medusa = m.getUUID();
 		nextGaze = tick + MedusaAnim.INTRO.ticks + 40;
-		level.playSound(null, m.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 3.0f, 0.5f);
+		level.playSound(null, m.blockPosition(), HellSounds.MEDUSA_GAZE.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 	}
 
 	@Nullable
@@ -351,7 +351,7 @@ final class FuriesFight extends GuardianFight {
 			for (ServerPlayer p : audience()) {
 				p.sendOverlayMessage(Component.literal("Medusa's eyes are opening: LOOK AWAY from her!").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
 			}
-			level.playSound(null, m.blockPosition(), SoundEvents.ELDER_GUARDIAN_AMBIENT, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, m.blockPosition(), HellSounds.MEDUSA_HISS.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 		});
 		schedule(open, () -> m.gaze(true));
 		schedule(close, () -> {
@@ -374,7 +374,7 @@ final class FuriesFight extends GuardianFight {
 			stone.put(p.getUUID(), s);
 			if (s > 0 && s % 8 == 0) {
 				p.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, Math.min(4, s / 8)));
-				level.playSound(null, p.blockPosition(), SoundEvents.STONE_PLACE, SoundSource.PLAYERS, 1.0f, 0.6f);
+				level.playSound(null, p.blockPosition(), HellSounds.MEDUSA_PETRIFY.value(), SoundSource.PLAYERS, 1.0f, 0.9f);
 			}
 			if (s >= STONE_AT) {
 				stone.put(p.getUUID(), 0);
@@ -459,7 +459,7 @@ final class FuriesFight extends GuardianFight {
 		strikeUntil = staggerUntil;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(FuryAnim.STAGGER.ticks + 10);
-		level.playSound(null, fury.blockPosition(), SoundEvents.PHANTOM_HURT, SoundSource.HOSTILE, 2.0f, 0.5f);
+		level.playSound(null, fury.blockPosition(), HellSounds.FURIES_HURT.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, fury.getX(), fury.getY() + 1.5, fury.getZ(), 30, 0.8, 0.8, 0.8, 0.3);
 		by.sendOverlayMessage(Component.literal("Parried! The Fury tumbles to the ground: hit her now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}

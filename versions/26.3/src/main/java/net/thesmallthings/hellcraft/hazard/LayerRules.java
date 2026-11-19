@@ -9,7 +9,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -163,7 +163,7 @@ public final class LayerRules {
 		}
 		BlockParticleOption mud = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState());
 		level.sendParticles(mud, p.getX(), p.getY() + 0.1, p.getZ(), 12, 0.3, 0.05, 0.3, 0.05);
-		level.playSound(null, p.blockPosition(), SoundEvents.MUD_STEP, SoundSource.BLOCKS, 1.0f, 0.6f);
+		level.playSound(null, p.blockPosition(), HellSounds.RULES_MUD.value(), SoundSource.BLOCKS, 1.0f, 0.9f);
 		CircleHazards.hintOnce(p, HINT_MUD, "Gluttony's mud swallows whoever stands still. Keep moving, or stand on roots, stone or planks.");
 		if (still < 2 * stage) {
 			p.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, 0, true, false, true));
@@ -209,7 +209,7 @@ public final class LayerRules {
 			return;
 		}
 		GRIPPED.put(id, HellConfig.get().sullenGripTicks);
-		level.playSound(null, p.blockPosition(), SoundEvents.DROWNED_AMBIENT_WATER, SoundSource.HOSTILE, 1.5f, 0.6f);
+		level.playSound(null, p.blockPosition(), HellSounds.RULES_SULLEN.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 		p.sendOverlayMessage(Component.literal("Hands drag you down! Swim clear of the bubbles.").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD));
 		CircleHazards.hintOnce(p, HINT_SULLEN, "The sullen lurk under the Styx where bubbles rise. Keep to the plank roads, or take a boat.");
 	}

@@ -2,7 +2,6 @@ package net.thesmallthings.hellcraft.entity.monster;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.HarpyAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * The harpies (the Wood of the Suicides' monster, tools/art/harpy.py): called by the trees' scream when someone
@@ -81,7 +81,7 @@ public class Harpy extends SoulMonster {
 		}
 		if (tickCount >= nextStoop) {
 			stooping = 30;
-			playSound(SoundEvents.PHANTOM_SWOOP, 1.5f, 1.2f);
+			playSound(HellSounds.HARPY_SWOOP.value(), 1.5f, 1.05f);
 			return;
 		}
 		// wheeling over the prey, lower than the lovers: under the dead branches
@@ -103,7 +103,7 @@ public class Harpy extends SoulMonster {
 	/** Comes out of the trees with a lament (when the trees scream). */
 	public void shriek() {
 		playSpecial();
-		playSound(SoundEvents.GHAST_SCREAM, 1.5f, 1.6f);
+		playSound(HellSounds.HARPY_SCREECH.value(), 1.5f, 1.15f);
 	}
 
 	@Override
@@ -118,17 +118,17 @@ public class Harpy extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.PHANTOM_AMBIENT;
+		return HellSounds.HARPY_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.PHANTOM_HURT;
+		return HellSounds.HARPY_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.PHANTOM_DEATH;
+		return HellSounds.HARPY_DEATH.value();
 	}
 
 	@Override

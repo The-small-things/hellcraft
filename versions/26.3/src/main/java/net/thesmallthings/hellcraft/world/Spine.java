@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Enemy;
@@ -20,6 +19,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Signs;
 import org.jetbrains.annotations.Nullable;
@@ -468,7 +468,7 @@ public final class Spine {
 			double progress = Math.max(0.0, Math.min(1.0, (START - u) / (double) (START - END)));
 			// a heartbeat that quickens as you go down
 			if (now >= NEXT_BEAT.getOrDefault(player.getUUID(), 0L)) {
-				Feedback.sound(player, SoundEvents.WARDEN_HEARTBEAT, SoundSource.AMBIENT, 0.5f + 0.7f * (float) progress, 0.7f);
+				Feedback.sound(player, HellSounds.SPINE_HEARTBEAT.value(), SoundSource.AMBIENT, 0.5f + 0.7f * (float) progress, 0.93f);
 				NEXT_BEAT.put(player.getUUID(), now + Math.round(44 - 26 * progress));
 			}
 			if (now % 10 == 0) {
@@ -493,7 +493,7 @@ public final class Spine {
 		NEXT_WHISPER.put(player.getUUID(), next + 1);
 		Dialogue.say(player, "A voice from far below", ChatFormatting.DARK_PURPLE,
 				Component.literal(WHISPERS[next]).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-		Feedback.sound(player, SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.4f);
+		Feedback.sound(player, HellSounds.SPINE_WHISPER.value(), SoundSource.HOSTILE, 0.5f, 0.85f);
 	}
 
 	/** The spine start nearest to a position. */

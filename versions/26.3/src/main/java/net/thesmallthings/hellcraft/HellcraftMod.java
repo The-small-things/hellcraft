@@ -47,10 +47,10 @@ import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.net.JoinCheck;
 import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.net.WindSync;
-import net.thesmallthings.hellcraft.world.FoundAltars;
-import net.thesmallthings.hellcraft.world.RestNames;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Ferries;
+import net.thesmallthings.hellcraft.world.FoundAltars;
 import net.thesmallthings.hellcraft.world.GreatForge;
 import net.thesmallthings.hellcraft.world.HallOfTheDamned;
 import net.thesmallthings.hellcraft.world.Heaven;
@@ -58,6 +58,7 @@ import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Landmarks;
 import net.thesmallthings.hellcraft.world.Paradiso;
 import net.thesmallthings.hellcraft.world.Purgatory;
+import net.thesmallthings.hellcraft.world.RestNames;
 import net.thesmallthings.hellcraft.world.Shades;
 import net.thesmallthings.hellcraft.world.Shrines;
 import net.thesmallthings.hellcraft.world.Spine;
@@ -85,6 +86,7 @@ public class HellcraftMod implements ModInitializer {
 	public void onInitialize() {
 		HellConfig.load();
 		JoinCheck.register();
+		HellSounds.register();
 		HellBlocks.register();
 		HellItems.register();
 		HellEntities.register();

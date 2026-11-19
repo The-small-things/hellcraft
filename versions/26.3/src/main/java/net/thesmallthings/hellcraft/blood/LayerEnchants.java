@@ -9,7 +9,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +22,7 @@ import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.DashPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.HashMap;
@@ -113,7 +113,7 @@ public final class LayerEnchants {
 		READY.put(player.getUUID(), now + Math.round(60 * (1.0 - 0.25 * (lvl - 1))));
 		DODGING.put(player.getUUID(), now + DODGE_TICKS);
 		ServerLevel level = player.level();
-		level.playSound(null, player.blockPosition(), SoundEvents.BREEZE_JUMP, SoundSource.PLAYERS, 0.8f, 1.4f);
+		level.playSound(null, player.blockPosition(), HellSounds.COMBAT_ROLL.value(), SoundSource.PLAYERS, 0.8f, 1.1f);
 		level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() + 0.3, player.getZ(), 8, 0.3, 0.1, 0.3, 0.02);
 	}
 

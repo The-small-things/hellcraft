@@ -8,7 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,6 +21,7 @@ import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
@@ -113,14 +113,14 @@ public final class HellItems {
 	// ------------------------------------------------------------------ blood gear (real items since 3.0)
 
 	/** Blood armour: diamond's protection, its own look (equipment asset hellcraft:blood). */
-	public static final ArmorMaterial BLOOD_ARMOUR = new ArmorMaterial(33, defense(3, 6, 8, 3, 11), 10, SoundEvents.ARMOR_EQUIP_DIAMOND, 2.0f, 0.0f,
+	public static final ArmorMaterial BLOOD_ARMOUR = new ArmorMaterial(33, defense(3, 6, 8, 3, 11), 10, HellSounds.ARMOUR_BLOOD, 2.0f, 0.0f,
 			ItemTags.REPAIRS_DIAMOND_ARMOR, BloodArmour.ASSET);
 	/** Infernal blood armour (the Hellforge): netherite's. */
-	public static final ArmorMaterial INFERNAL_ARMOUR = new ArmorMaterial(37, defense(3, 6, 8, 3, 19), 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0f, 0.1f,
+	public static final ArmorMaterial INFERNAL_ARMOUR = new ArmorMaterial(37, defense(3, 6, 8, 3, 19), 15, HellSounds.ARMOUR_INFERNAL, 3.0f, 0.1f,
 			ItemTags.REPAIRS_NETHERITE_ARMOR, BloodArmour.INFERNAL_ASSET);
 
 	/** The Halo: worn as a helmet, a gold circlet (equipment asset hellcraft:halo); gold's protection. */
-	public static final ArmorMaterial HALO_MATERIAL = new ArmorMaterial(7, defense(1, 3, 5, 2, 7), 25, SoundEvents.ARMOR_EQUIP_GOLD, 0.0f, 0.0f,
+	public static final ArmorMaterial HALO_MATERIAL = new ArmorMaterial(7, defense(1, 3, 5, 2, 7), 25, HellSounds.ARMOUR_HALO, 0.0f, 0.0f,
 			ItemTags.REPAIRS_GOLD_ARMOR, ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("halo")));
 
 	private static final Map<BloodArmour.Piece, Item> ARMOUR = new EnumMap<>(BloodArmour.Piece.class);
@@ -152,7 +152,7 @@ public final class HellItems {
 					.component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 			// elytra that never wear out, with their own wings (equipment asset hellcraft:seraph_wings)
 			case SERAPH_WINGS -> new Item.Properties().component(DataComponents.GLIDER, Unit.INSTANCE)
-					.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.CHEST).setEquipSound(SoundEvents.ARMOR_EQUIP_ELYTRA)
+					.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.CHEST).setEquipSound(HellSounds.ARMOUR_WINGS)
 							.setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, HellcraftMod.id("seraph_wings"))).setDamageOnHurt(false).build());
 			case BEATRICES_ROSE -> new Item.Properties();
 		};

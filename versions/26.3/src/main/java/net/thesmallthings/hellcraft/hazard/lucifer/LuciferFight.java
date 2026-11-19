@@ -8,7 +8,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -54,6 +53,7 @@ import net.thesmallthings.hellcraft.hazard.StyleMeter;
 import net.thesmallthings.hellcraft.music.BossMusic;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Purgatory;
@@ -331,7 +331,7 @@ public final class LuciferFight {
 		for (ServerPlayer p : audience()) {
 			Dialogue.notice(p, Component.literal("Lucifer's pit. The fight starts in 30 seconds, sooner once everyone near is down on the pit's "
 					+ "floor. When it starts, the pit seals: nobody gets in or out until it's over.").withStyle(ChatFormatting.GOLD));
-			Feedback.sound(p, SoundEvents.BELL_RESONATE, SoundSource.HOSTILE, 1.0f, 0.5f);
+			Feedback.sound(p, HellSounds.LUCIFER_TOLL.value(), SoundSource.HOSTILE, 1.0f, 0.88f);
 		}
 	}
 
@@ -374,7 +374,7 @@ public final class LuciferFight {
 			for (ServerPlayer p : near) {
 				Dialogue.notice(p, Component.literal("Point of no return in 10 seconds: once the pit seals, nobody gets out until Lucifer or you fall. "
 						+ "Climb back up now if you're not ready.").withStyle(ChatFormatting.RED));
-				Feedback.sound(p, SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 1.5f, 0.6f);
+				Feedback.sound(p, HellSounds.LUCIFER_TOLL.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 			}
 		}
 		if (readyLeft <= 0) {
@@ -417,7 +417,7 @@ public final class LuciferFight {
 		for (ServerPlayer p : audience()) {
 			MapSync.unlockCodex(p, "lucifer");
 			CutsceneManager.play(p, descent, landing, facing);
-			Feedback.sound(p, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 1.0f, 0.6f);
+			Feedback.sound(p, HellSounds.LUCIFER_CURSE.value(), SoundSource.HOSTILE, 1.0f, 0.9f);
 		}
 		if (!veterans.isEmpty()) {
 			sayLater(descent.ticks() - 10, LuciferDialogue.veteranLine(veterans));
@@ -619,7 +619,7 @@ public final class LuciferFight {
 		for (int i = 0; i < LuciferDialogue.ENRAGE.length; i++) {
 			sayLater(i * 18, LuciferDialogue.ENRAGE[i]);
 		}
-		level.playSound(null, seraph.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 3.0f, 1.4f);
+		level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_RISE.value(), SoundSource.HOSTILE, 3.0f, 1.1f);
 		schedule(FallenSeraphAnim.SNAP.at("snap"), () -> {
 			FallenSeraphEntity s = seraph();
 			if (s == null) {
@@ -664,7 +664,7 @@ public final class LuciferFight {
 			if (s != null) {
 				BossFx.send(level, ParticleTypes.END_ROD, s.getX(), s.getY() + 2.5, s.getZ(), 300, 1, 1.5, 1, 0.3);
 				BossFx.send(level, ParticleTypes.SNOWFLAKE, s.getX(), s.getY() + 2, s.getZ(), 300, 2, 2, 2, 0.4);
-				level.playSound(null, s.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3.0f, 0.4f);
+				level.playSound(null, s.blockPosition(), HellSounds.FALLEN_WINGS_BREAK.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 				s.discard();
 			}
 			for (UUID id : traitors) {
@@ -696,7 +696,7 @@ public final class LuciferFight {
 			EmperorEntity e = emperor();
 			if (e != null) {
 				e.awake(true);
-				level.playSound(null, e.blockPosition().above(20), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 5.0f, 0.4f);
+				level.playSound(null, e.blockPosition().above(20), HellSounds.EMPEROR_ROAR.value(), SoundSource.HOSTILE, 5.0f, 0.85f);
 			}
 		});
 		schedule(EmperorAnim.REVEAL.at("roar"), () -> {
@@ -738,7 +738,7 @@ public final class LuciferFight {
 			EmperorEntity e = emperor();
 			if (e != null) {
 				BossFx.send(level, ParticleTypes.SNOWFLAKE, e.getX(), e.getY() + 15, e.getZ(), 800, 12, 12, 12, 0.1);
-				level.playSound(null, e.blockPosition().above(15), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 4.0f, 0.3f);
+				level.playSound(null, e.blockPosition().above(15), HellSounds.EMPEROR_ICE_BREAK.value(), SoundSource.HOSTILE, 4.0f, 0.82f);
 			}
 		});
 		// the victors climb down his side and out of Hell
@@ -1242,7 +1242,7 @@ public final class LuciferFight {
 			pending++;
 			if (player != null) {
 				Journey.award(player, "journey/lucifer");
-				Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
+				Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.0f);
 				LuciferRewards.remind(player);
 				// the fight object is finished by then, so open it from the server's task queue
 				level.getServer().execute(() -> LuciferRewards.open(player));

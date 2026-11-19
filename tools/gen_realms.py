@@ -11,6 +11,10 @@ in tools/vanilla26/ (printed from the game jar by versions/26.3/tools/probe.sh) 
 import copy
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "audio"))
+from hellsounds import NETHER_AMBIENCE, SPHERE_MUSIC  # noqa: E402
 
 HERE = os.path.dirname(__file__)
 VANILLA = os.path.join(HERE, "vanilla26")
@@ -291,6 +295,14 @@ def forge():
             b["carvers"] = []
         attrs = b["attributes"]
         attrs["minecraft:visual/fog_color"] = fog
+        # Hellcraft's own sounds (tools/audio) for the vanilla Nether's
+        ours = "forge" if name == "great_forge" else NETHER_AMBIENCE[base]
+        attrs["minecraft:audio/ambient_sounds"] = {
+            "loop": "hellcraft:ambient.%s.loop" % ours,
+            "additions": {"sound": "hellcraft:ambient.%s.additions" % ours, "tick_chance": 0.0111},
+            "mood": {"sound": "hellcraft:ambient.hell.mood", "tick_delay": 6000, "block_search_extent": 8, "offset": 2.0}}
+        attrs["minecraft:audio/background_music"] = {"default": {"sound": "hellcraft:music.forge", "min_delay": 3600,
+                                                                 "max_delay": 9600}}
         attrs["minecraft:visual/ambient_particles"] = {"argument": [{"particle": {"type": particle[0]}, "probability": particle[1]}],
                                                        "modifier": "append"}
 
@@ -336,7 +348,7 @@ def purgatory():
             "minecraft:visual/sky_color": "#1c2a5c",
             "minecraft:visual/fog_color": "#33426e",
             "minecraft:visual/water_fog_color": "#0e2a40",
-            "minecraft:audio/background_music": {"default": {"sound": "minecraft:music.overworld.meadow", "min_delay": 6000,
+            "minecraft:audio/background_music": {"default": {"sound": "hellcraft:music.purgatory", "min_delay": 3600,
                                                              "max_delay": 18000}},
             "minecraft:visual/ambient_particles": {"argument": [{"particle": {"type": "minecraft:white_ash"}, "probability": 0.002}],
                                                    "modifier": "append"},
@@ -424,7 +436,8 @@ def paradiso():
             "minecraft:visual/sky_color": sky,
             "minecraft:visual/fog_color": fog,
             "minecraft:visual/water_fog_color": "#8ab4e8",
-            "minecraft:audio/background_music": {"default": {"sound": track, "min_delay": 3000, "max_delay": 12000,
+            "minecraft:audio/background_music": {"default": {"sound": "hellcraft:music." + SPHERE_MUSIC.get(sphere, "paradiso"),
+                                                             "min_delay": 3000, "max_delay": 9000,
                                                              "replace_current_music": True}},
             "minecraft:gameplay/natural_mob_spawns": {"argument": {"spawn_costs": {}, "spawns_by_category": {}}, "modifier": "overlay"},
         }

@@ -7,10 +7,10 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.List;
@@ -106,9 +106,9 @@ final class LuciferDialogue {
 		for (ServerPlayer p : audience) {
 			Dialogue.say(p, "Lucifer", ChatFormatting.DARK_RED, text, shout);
 			if (shout) {
-				Feedback.sound(p, SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 0.35f, 0.5f);
+				Feedback.sound(p, HellSounds.LUCIFER_SHOUT.value(), SoundSource.HOSTILE, 0.35f, 0.88f);
 			} else {
-				Feedback.sound(p, SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 0.5f, 0.5f);
+				Feedback.sound(p, HellSounds.LUCIFER_MURMUR.value(), SoundSource.HOSTILE, 0.5f, 0.88f);
 			}
 		}
 	}

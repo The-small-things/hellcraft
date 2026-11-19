@@ -5,8 +5,8 @@
     "minecraft:visual/water_fog_color": "#0e2a40",
     "minecraft:audio/background_music": {
       "default": {
-        "sound": "minecraft:music.overworld.meadow",
-        "min_delay": 6000,
+        "sound": "hellcraft:music.purgatory",
+        "min_delay": 3600,
         "max_delay": 18000
       }
     },

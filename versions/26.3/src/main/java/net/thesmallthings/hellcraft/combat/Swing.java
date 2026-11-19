@@ -9,7 +9,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -31,6 +30,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.boss.BossPart;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.net.SwingPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -275,11 +275,11 @@ public final class Swing {
 		}
 		if (targets.isEmpty()) {
 			// a swing at nothing: others hear it pass (the swinger's client plays its own)
-			level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_WEAK, SoundSource.PLAYERS, 0.5f,
-					move.heavy() ? 0.7f : 1.1f);
+			level.playSound(player, player.getX(), player.getY(), player.getZ(), (move.heavy() ? HellSounds.COMBAT_SWING_HEAVY : HellSounds.COMBAT_SWING_LIGHT).value(), SoundSource.PLAYERS, 0.5f,
+					move.heavy() ? 0.95f : 1.0f);
 			player.resetAttackStrengthTicker();
 		} else if (move.heavy()) {
-			level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundSource.PLAYERS, 0.9f, 0.8f);
+			level.playSound(null, player.getX(), player.getY(), player.getZ(), HellSounds.COMBAT_SWING_HEAVY.value(), SoundSource.PLAYERS, 0.9f, 0.95f);
 		}
 	}
 
@@ -312,8 +312,7 @@ public final class Swing {
 			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), at.x, player.getY() + 0.2, at.z, 30, 0.6, 0.2, 0.6, 0.2);
 		}
 		level.sendParticles(ParticleTypes.POOF, at.x, player.getY() + 0.2, at.z, 12, 1.0, 0.1, 1.0, 0.03);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5f, 1.5f);
-		level.playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.5f, 0.6f);
+		level.playSound(null, at.x, at.y, at.z, HellSounds.COMBAT_SHOCKWAVE.value(), SoundSource.PLAYERS, 0.5f, 1.12f);
 	}
 
 	/** The move landing right now, or null (blood/HellWeapons asks, for the Bloodletter's finisher). */

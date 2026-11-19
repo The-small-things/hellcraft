@@ -8,7 +8,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,6 +25,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.entity.boss.gen.MimicAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -104,7 +104,7 @@ public class Mimic extends SoulMonster {
 			// the tell: the lid lifts a crack
 			nextBreath = tickCount + 120 + random.nextInt(100);
 			playSpecial();
-			playSound(SoundEvents.CHEST_LOCKED, 0.25f, 0.5f);
+			playSound(HellSounds.MIMIC_RATTLE.value(), 0.25f, 0.88f);
 		}
 		Player near = level.getNearestPlayer(this, WAKE);
 		if (near instanceof ServerPlayer p && !p.isSpectator() && !p.isCreative()) {
@@ -118,8 +118,8 @@ public class Mimic extends SoulMonster {
 			return;
 		}
 		entityData.set(DORMANT, false);
-		playSound(SoundEvents.CHEST_OPEN, 1.0f, 0.5f);
-		playSound(SoundEvents.RAVAGER_ROAR, 0.8f, 1.6f);
+		playSound(HellSounds.MIMIC_OPEN.value(), 1.0f, 0.88f);
+		playSound(HellSounds.MIMIC_ROAR.value(), 0.8f, 1.15f);
 		if (by != null) {
 			setTarget(by);
 			by.sendOverlayMessage(Component.literal("That chest was a mimic!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
@@ -181,17 +181,17 @@ public class Mimic extends SoulMonster {
 
 	@Override
 	protected @Nullable SoundEvent getAmbientSound() {
-		return dormant() ? null : SoundEvents.RAVAGER_AMBIENT;
+		return dormant() ? null : HellSounds.MIMIC_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR;
+		return HellSounds.MIMIC_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR;
+		return HellSounds.MIMIC_DEATH.value();
 	}
 
 	@Override

@@ -5,13 +5,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -80,7 +80,7 @@ public final class Bounty {
 						+ " Blood Hearts.").withStyle(ChatFormatting.RED)), false);
 		best.sendSystemMessage(Component.literal("You have the most hearts, so everyone has been told where you are.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
-		Feedback.sound(best, SoundEvents.WITHER_AMBIENT, SoundSource.MASTER, 0.8f, 0.6f);
+		Feedback.sound(best, HellSounds.UI_BOUNTY.value(), SoundSource.MASTER, 0.8f, 0.9f);
 		HellcraftMod.LOGGER.info("Bounty on {} ({} hearts)", targetName, bestHearts);
 		return targetName;
 	}

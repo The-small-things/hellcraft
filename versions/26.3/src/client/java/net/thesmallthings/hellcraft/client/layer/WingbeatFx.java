@@ -7,10 +7,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * Lucifer's wingbeat as you feel it (hazard/Wingbeat): two great slow flaps and a far-off boom, the view shaking, and
@@ -46,10 +46,10 @@ public final class WingbeatFx implements HudElement {
 			return;
 		}
 		if (frost && (age == 0 || age == 14)) {
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ENDER_DRAGON_FLAP, 0.45f, 0.3f + 0.3f * strength));
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(HellSounds.WINGBEAT_FLAP.value(), 0.45f, 0.85f + 0.15f * strength));
 		}
 		if (age == 4) {
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.LIGHTNING_BOLT_THUNDER, 0.3f, 0.15f + 0.25f * strength));
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(HellSounds.WINGBEAT_RUMBLE.value(), 0.3f, 0.85f + 0.15f * strength));
 		}
 		if (++age > LENGTH) {
 			age = -1;

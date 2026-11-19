@@ -7,16 +7,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -118,14 +118,14 @@ public final class LowerRules {
 		Vec3 centre = new Vec3(t.centreX(), y, t.centreZ());
 		if (phase == 0) {
 			Danger.circle(level, Danger.Colour.RED, centre, Tombs.REACH, Tombs.WARN);
-			level.playSound(null, BlockPos.containing(centre), SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 1.5f, 0.6f);
+			level.playSound(null, BlockPos.containing(centre), HellSounds.RULES_TOMB_RUMBLE.value(), SoundSource.BLOCKS, 1.5f, 0.9f);
 		} else if (phase < Tombs.WARN) {
 			if (phase % 4 == 0) {
 				level.sendParticles(ParticleTypes.LARGE_SMOKE, centre.x, y, centre.z, 3, 0.6, 0.1, 0.6, 0.02);
 			}
 		} else if (phase < Tombs.WARN + Tombs.BLAST) {
 			if (phase == Tombs.WARN) {
-				level.playSound(null, BlockPos.containing(centre), SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 2.0f, 0.5f);
+				level.playSound(null, BlockPos.containing(centre), HellSounds.RULES_TOMB_BLAST.value(), SoundSource.BLOCKS, 2.0f, 0.88f);
 				ServerPlayer witness = level.getNearestPlayer(centre.x, centre.y, centre.z, 20, false) instanceof ServerPlayer sp ? sp : null;
 				if (witness != null && !exempt(witness)) {
 					LowerMonsters.heretic(level, centre, witness);
@@ -201,7 +201,7 @@ public final class LowerRules {
 		if (noise >= WOOD_SCREAM) {
 			scream(p, level, now);
 		} else if (noise >= WOOD_WARN && before < WOOD_WARN) {
-			level.playSound(null, p.blockPosition(), SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
+			level.playSound(null, p.blockPosition(), HellSounds.RULES_THORNS.value(), SoundSource.BLOCKS, 1.0f, 0.9f);
 			p.sendOverlayMessage(Component.literal("Branches crack and the trees groan... sneak, or they'll scream!").withStyle(ChatFormatting.GOLD));
 			CircleHazards.hintOnce(p, HINT_WOOD, "In the Wood of the Suicides, pushing through the branches or breaking them makes the trees scream, "
 					+ "and the harpies come. Sneak through it (hold sneak), and leave the branches be.");
@@ -223,8 +223,7 @@ public final class LowerRules {
 	private static void scream(ServerPlayer p, ServerLevel level, long now) {
 		NOISE.remove(p.getUUID());
 		CALM_UNTIL.put(p.getUUID(), now + WOOD_CALM);
-		level.playSound(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.HOSTILE, 2.0f, 0.5f);
-		level.playSound(null, p.blockPosition(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.HOSTILE, 1.0f, 0.6f);
+		level.playSound(null, p.blockPosition(), HellSounds.RULES_TREE_SCREAM.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 		BlockPos feet = p.blockPosition();
 		for (BlockPos b : BlockPos.betweenClosed(feet.offset(-5, -1, -5), feet.offset(5, 6, 5))) {
 			if (level.getBlockState(b).is(BlockTags.LOGS) && level.getRandom().nextInt(6) == 0) {
@@ -261,7 +260,7 @@ public final class LowerRules {
 		if (phase < SANDS_FIRE_AT) {
 			// the warning: the sky reddens, embers drift high above, and a countdown
 			if (phase == SANDS_WARN_AT) {
-				level.playSound(null, p.blockPosition(), SoundEvents.BLAZE_AMBIENT, SoundSource.AMBIENT, 1.5f, 0.4f);
+				level.playSound(null, p.blockPosition(), HellSounds.RULES_SAND_BREATH.value(), SoundSource.AMBIENT, 1.5f, 0.85f);
 			}
 			if (phase % 4 == 0) {
 				level.sendParticles(ParticleTypes.LAVA, true, false, p.getX(), p.getY() + 18, p.getZ(), 4, 10, 2, 10, 0.0);
@@ -279,7 +278,7 @@ public final class LowerRules {
 			level.sendParticles(ParticleTypes.FALLING_LAVA, true, false, p.getX(), p.getY() + 10, p.getZ(), 10, 9, 2, 9, 0.0);
 		}
 		if (phase == SANDS_FIRE_AT) {
-			level.playSound(null, p.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 1.5f, 0.6f);
+			level.playSound(null, p.blockPosition(), HellSounds.HAZARD_FLARE.value(), SoundSource.AMBIENT, 1.5f, 0.9f);
 		}
 		if (phase % 10 != 0 || exempt(p) || safe) {
 			return;

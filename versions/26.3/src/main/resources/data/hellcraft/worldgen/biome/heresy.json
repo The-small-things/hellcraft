@@ -5,21 +5,21 @@
     "minecraft:visual/water_fog_color": "#051010",
     "minecraft:audio/background_music": {
       "default": {
-        "sound": "minecraft:music.nether.soul_sand_valley",
-        "min_delay": 12000,
-        "max_delay": 24000
+        "sound": "hellcraft:music.heresy",
+        "min_delay": 3600,
+        "max_delay": 9600
       }
     },
     "minecraft:audio/ambient_sounds": {
       "mood": {
-        "sound": "minecraft:ambient.soul_sand_valley.mood",
+        "sound": "hellcraft:ambient.hell.mood",
         "tick_delay": 6000,
         "block_search_extent": 8,
         "offset": 2.0
       },
-      "loop": "minecraft:ambient.soul_sand_valley.loop",
+      "loop": "hellcraft:ambient.tombs.loop",
       "additions": {
-        "sound": "minecraft:ambient.soul_sand_valley.additions",
+        "sound": "hellcraft:ambient.tombs.additions",
         "tick_chance": 0.0111
       }
     },

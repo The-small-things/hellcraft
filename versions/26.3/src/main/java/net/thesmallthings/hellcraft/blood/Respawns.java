@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.ItemStack;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public final class Respawns {
 		HellState.get(level.getServer()).setDirty();
 		stack.shrink(1);
 		BlockPos p = player.blockPosition();
-		level.playSound(null, p, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0f, 0.7f);
+		level.playSound(null, p, HellSounds.BLOOD_CANDLE.value(), SoundSource.PLAYERS, 1.0f, 0.93f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, p.getX() + 0.5, p.getY() + 0.6, p.getZ() + 0.5, 20, 0.2, 0.3, 0.2, 0.01);
 		player.sendSystemMessage(Component.literal((replaced ? "Your old candle went out. " : "")
 				+ "Vigil Candle lit at " + p.getX() + ", " + p.getY() + ", " + p.getZ() + ": next time you die, you respawn here.")
@@ -152,7 +152,7 @@ public final class Respawns {
 		ServerLevel level = player.level();
 		level.sendParticles(BloodAltar.BLOOD, player.getX(), player.getY() + 1, player.getZ(), 60, 2.0, 0.6, 2.0, 0.0);
 		level.sendParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1, player.getZ(), 30, 1.5, 0.8, 1.5, 0.05);
-		level.playSound(null, player.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 0.8f, 1.3f);
+		level.playSound(null, player.blockPosition(), HellSounds.BLOOD_REVIVE.value(), SoundSource.PLAYERS, 0.8f, 1.07f);
 		for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(6.0), e -> e instanceof Enemy && e.isAlive())) {
 			Feedback.pushAway(e, player.getX(), player.getZ(), 1.6);
 		}

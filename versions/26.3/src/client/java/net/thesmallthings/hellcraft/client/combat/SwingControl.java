@@ -3,7 +3,6 @@ package net.thesmallthings.hellcraft.client.combat;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +19,7 @@ import net.thesmallthings.hellcraft.combat.Swing;
 import net.thesmallthings.hellcraft.combat.WeaponClass;
 import net.thesmallthings.hellcraft.net.CombatPayload;
 import net.thesmallthings.hellcraft.net.SwingPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -199,8 +199,8 @@ public final class SwingControl {
 		}
 		// the weapon starts forward: the swish, and the step into the blow
 		if (before < current.swingTick() && time >= current.swingTick()) {
-			player.playSound(current.heavy() ? SoundEvents.PLAYER_ATTACK_SWEEP : SoundEvents.PLAYER_ATTACK_WEAK, current.heavy() ? 0.8f : 0.55f,
-					(current.heavy() ? 0.7f : 1.25f) + player.getRandom().nextFloat() * 0.15f);
+			player.playSound(current.heavy() ? HellSounds.COMBAT_SWING_HEAVY.value() : HellSounds.COMBAT_SWING_LIGHT.value(), current.heavy() ? 0.8f : 0.55f,
+					0.95f + player.getRandom().nextFloat() * 0.1f);
 			if (current.lunge() > 0 && player.onGround() && !player.isShiftKeyDown()) {
 				float yaw = player.getYRot() * Mth.DEG_TO_RAD;
 				Vec3 v = player.getDeltaMovement();

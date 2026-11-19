@@ -23,7 +23,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.BossEvent;
@@ -62,6 +61,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.monster.Heretic;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -445,7 +445,7 @@ public final class Champions {
 		if (live.blinkAt < 0) {
 			if (t >= live.nextBlink && target != null && target.distanceTo(mob) > 3.0 && target.distanceTo(mob) < 32) {
 				live.blinkAt = t + 20;
-				level.playSound(null, mob.blockPosition(), SoundEvents.ENDERMAN_AMBIENT, SoundSource.HOSTILE, 1.5f, 0.6f);
+				level.playSound(null, mob.blockPosition(), HellSounds.CHAMPION_TAUNT.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 			}
 			return;
 		}
@@ -469,7 +469,7 @@ public final class Champions {
 		level.sendParticles(ParticleTypes.PORTAL, mob.getX(), mob.getY() + 1, mob.getZ(), 30, 0.4, 0.8, 0.4, 0.3);
 		mob.teleportTo(x, target.getY(), z);
 		mob.lookAt(target, 360, 360);
-		level.playSound(null, at, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.5f, 0.8f);
+		level.playSound(null, at, HellSounds.CHAMPION_BLINK.value(), SoundSource.HOSTILE, 1.5f, 0.95f);
 	}
 
 	private static void leaveFire(ServerLevel level, BlockPos pos, long now) {
@@ -503,7 +503,7 @@ public final class Champions {
 				hurt.damage.merge(p.getUUID(), taken, Float::sum);
 			}
 			if (hurt.has(Affix.HARDENED)) {
-				level.playSound(null, entity.blockPosition(), SoundEvents.ANVIL_PLACE, SoundSource.HOSTILE, 0.4f, 1.6f);
+				level.playSound(null, entity.blockPosition(), HellSounds.CHAMPION_CLANG.value(), SoundSource.HOSTILE, 0.4f, 1.15f);
 			}
 		}
 		Live hitter = source.getEntity() == null ? null : LIVE.get(source.getEntity().getUUID());
@@ -800,7 +800,7 @@ public final class Champions {
 		if (!announce) {
 			return mob;
 		}
-		level.playSound(null, mob.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 1.2f, 1.4f);
+		level.playSound(null, mob.blockPosition(), HellSounds.CHAMPION_ARRIVE.value(), SoundSource.HOSTILE, 1.2f, 1.1f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, mob.getX(), mob.getY() + 1, mob.getZ(), 60, 0.6, 1.0, 0.6, 0.05);
 		String affixList = String.join(", ", affixes.stream().map(a -> a.title).toList());
 		boolean book = book(circle) != null;

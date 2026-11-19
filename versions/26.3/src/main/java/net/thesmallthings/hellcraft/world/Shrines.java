@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.RandomizableContainer;
@@ -29,6 +28,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Signs;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +109,7 @@ public final class Shrines {
 				Dialogue.notice(p, Component.literal("Virgil's Rest remembered (" + site.label() + "): you can travel back here from any Blood Altar.")
 						.withStyle(ChatFormatting.GOLD));
 				MapSync.send(p);
-				level.playSound(null, p.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.6f, 1.4f);
+				level.playSound(null, p.blockPosition(), HellSounds.BLOOD_ALTAR_BIND.value(), SoundSource.PLAYERS, 0.6f, 1.1f);
 			}
 		}
 	}

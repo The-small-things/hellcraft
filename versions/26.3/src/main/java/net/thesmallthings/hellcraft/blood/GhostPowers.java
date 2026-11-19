@@ -9,13 +9,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,7 +135,7 @@ public final class GhostPowers {
 		if (killer instanceof ServerPlayer p) {
 			p.sendSystemMessage(Component.literal("You feel " + ghost.getGameProfile().name() + "'s ghost haunting you.")
 					.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
-			Feedback.sound(p, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 0.6f, 1.6f);
+			Feedback.sound(p, HellSounds.GHOST_WAIL.value(), SoundSource.HOSTILE, 0.6f, 1.15f);
 		}
 		ghost.sendOverlayMessage(Component.literal("You haunt your killer.").withStyle(ChatFormatting.DARK_AQUA));
 		return 1;

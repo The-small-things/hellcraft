@@ -3,7 +3,6 @@ package net.thesmallthings.hellcraft.hazard.lucifer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -21,6 +20,7 @@ import net.thesmallthings.hellcraft.hazard.CircleHazards;
 import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.Wingbeat;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -251,7 +251,7 @@ final class EmperorAttacks {
 				return;
 			}
 			for (Vec3 g : grounds) {
-				level.playSound(null, g.x, g.y, g.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 3.0f, 0.5f);
+				level.playSound(null, g.x, g.y, g.z, HellSounds.EMPEROR_SLAM.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 				BossFx.send(level, ParticleTypes.EXPLOSION, g.x, g.y + 1, g.z, 6, 2.5, 0.5, 2.5, 0);
 				BossFx.send(level, ParticleTypes.SNOWFLAKE, g.x, g.y + 1, g.z, 150, 4, 1, 4, 0.2);
 				for (LivingEntity v : fight.victims(g, SLAM_RADIUS)) {
@@ -301,7 +301,7 @@ final class EmperorAttacks {
 				Vec3 h = fight.onFloor(emperor.slamPoint(right).x, emperor.slamPoint(right).z);
 				if (at % 3 == 0) {
 					BossFx.send(level, ParticleTypes.SNOWFLAKE, h.x, h.y + 1, h.z, 30, 2.0, 0.6, 2.0, 0.1);
-					level.playSound(null, h.x, h.y, h.z, SoundEvents.GRINDSTONE_USE, SoundSource.HOSTILE, 1.5f, 0.4f);
+					level.playSound(null, h.x, h.y, h.z, HellSounds.EMPEROR_DRAG.value(), SoundSource.HOSTILE, 1.5f, 0.85f);
 				}
 				for (LivingEntity v : fight.victims(h, 4.5)) {
 					if (!hit.contains(v) && v.hurtServer(level, Danger.unblockable(level, emperor), DRAG_DAMAGE * fight.damageMultiplier())) {
@@ -341,7 +341,7 @@ final class EmperorAttacks {
 		int breathe = a.at("breathe");
 		int end = a.at("end");
 		Danger.cone(level, Danger.Colour.RED, centre, facing, BREATH_REACH, Math.abs(Math.toRadians(turn)) / 2 + BREATH_HALF, breathe);
-		fight.schedule(a.at("inhale"), () -> level.playSound(null, emperor.blockPosition(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.HOSTILE, 4.0f, 0.4f));
+		fight.schedule(a.at("inhale"), () -> level.playSound(null, emperor.blockPosition(), HellSounds.EMPEROR_INHALE.value(), SoundSource.HOSTILE, 4.0f, 0.85f));
 		for (int t = breathe; t < end; t++) {
 			int at = t;
 			fight.schedule(t, () -> {
@@ -357,7 +357,7 @@ final class EmperorAttacks {
 					}
 				}
 				if (at % 6 == 0) {
-					level.playSound(null, emperor.blockPosition(), SoundEvents.BREEZE_WIND_CHARGE_BURST.value(), SoundSource.HOSTILE, 3.0f, 0.4f);
+					level.playSound(null, emperor.blockPosition(), HellSounds.EMPEROR_BREATH.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 				}
 				if (at % 4 != 0) {
 					return;
@@ -406,7 +406,7 @@ final class EmperorAttacks {
 			}
 			for (Vec3 m : marks) {
 				BossFx.send(level, ParticleTypes.SNOWFLAKE, m.x, m.y + 6, m.z, 20, 0.2, 3, 0.2, 0.05);
-				level.playSound(null, m.x, m.y, m.z, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.0f, 1.4f);
+				level.playSound(null, m.x, m.y, m.z, HellSounds.EMPEROR_ICICLE.value(), SoundSource.HOSTILE, 1.0f, 1.1f);
 				for (LivingEntity v : fight.victims(m, 2.0)) {
 					v.hurtServer(level, Danger.unblockable(level, emperor), ICICLE_DAMAGE * fight.damageMultiplier());
 				}
@@ -434,7 +434,7 @@ final class EmperorAttacks {
 			if (!alive(emperor, e)) {
 				return;
 			}
-			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, ground.x, ground.y, ground.z, HellSounds.EMPEROR_SLAM.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 			BossFx.send(level, ParticleTypes.EXPLOSION, ground.x, ground.y + 1, ground.z, 6, 2.5, 0.5, 2.5, 0);
 			BossFx.send(level, ParticleTypes.SNOWFLAKE, ground.x, ground.y + 1, ground.z, 200, 4, 1, 4, 0.2);
 			for (LivingEntity v : fight.victims(ground, SLAM_RADIUS)) {
@@ -473,14 +473,14 @@ final class EmperorAttacks {
 			emperor.warn(BossEntity.Warning.WHITE);
 			fight.openParry(a.at("bite") - a.at("flash") + 5);
 			Danger.circle(level, Danger.Colour.WHITE, ground, BITE_RADIUS, a.at("bite") - a.at("flash"));
-			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, ground.x, ground.y, ground.z, HellSounds.EMPEROR_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 		});
 		fight.schedule(a.at("bite"), () -> {
 			emperor.warn(BossEntity.Warning.NONE);
 			if (!alive(emperor, e)) {
 				return;
 			}
-			level.playSound(null, ground.x, ground.y, ground.z, SoundEvents.EVOKER_FANGS_ATTACK, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, ground.x, ground.y, ground.z, HellSounds.EMPEROR_SPIKES.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 			for (LivingEntity v : fight.victims(ground, BITE_RADIUS)) {
 				v.hurtServer(level, level.damageSources().mobAttack(emperor), BITE_DAMAGE * fight.damageMultiplier());
 			}
@@ -497,7 +497,7 @@ final class EmperorAttacks {
 		posture.addShare(PARRY_SHARE, emperor);
 		if (swatting) {
 			swatting = false;
-			level.playSound(null, emperor.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 3.0f, 0.4f);
+			level.playSound(null, emperor.blockPosition(), HellSounds.EMPEROR_SWAT_PARRIED.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 			fight.tip("Parried! His hand lies stunned on the ice: hit it now, it takes twice the damage.");
 			fight.schedule(2, () -> {
 				Vec3 h = emperor.inFrame(EmperorEntity.SLAM_FORWARD * 0.85, EmperorEntity.SLAM_UP, (swatRight ? 1 : -1) * 2.0);
@@ -507,7 +507,7 @@ final class EmperorAttacks {
 			return;
 		}
 		fight.say(LuciferDialogue.pick(level.getRandom(), LuciferDialogue.PARRIED));
-		level.playSound(null, emperor.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 3.0f, 0.4f);
+		level.playSound(null, emperor.blockPosition(), HellSounds.EMPEROR_SWAT_PARRIED.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 		fight.tip("Blocked! His face stays down: hit it now, it takes twice the damage.");
 		// the face's weak point appears at the bite (a tick after this): stretch it then
 		fight.schedule(2, () -> {
@@ -537,7 +537,7 @@ final class EmperorAttacks {
 			if (!alive(emperor, e)) {
 				return;
 			}
-			level.playSound(null, emperor.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 5.0f, 0.3f);
+			level.playSound(null, emperor.blockPosition(), HellSounds.EMPEROR_WINGBEAT.value(), SoundSource.HOSTILE, 5.0f, 0.82f);
 			BossFx.send(level, ParticleTypes.SNOWFLAKE, centre.x, centre.y + 2, centre.z, 600, 20, 2, 20, 0.4);
 			Vec3 eyes = emperor.position().add(0, 20, 0);
 			for (ServerPlayer p : fight.audience()) {
@@ -594,7 +594,7 @@ final class EmperorAttacks {
 				for (Vec3 m : marks) {
 					BossFx.send(level, ParticleTypes.FALLING_DRIPSTONE_LAVA, m.x, m.y + 8, m.z, 10, 0.4, 2, 0.4, 0);
 					BossFx.send(level, ParticleTypes.SNOWFLAKE, m.x, m.y + 0.5, m.z, 30, 1.0, 0.2, 1.0, 0.05);
-					level.playSound(null, m.x, m.y, m.z, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.2f, 0.6f);
+					level.playSound(null, m.x, m.y, m.z, HellSounds.EMPEROR_ICICLE.value(), SoundSource.HOSTILE, 1.2f, 0.9f);
 					for (LivingEntity v : fight.victims(m, 2.5)) {
 						if (v.hurtServer(level, Danger.unblockable(level, emperor), TEAR_DAMAGE * fight.damageMultiplier())) {
 							v.setTicksFrozen(Math.min(v.getTicksFrozen() + 80, v.getTicksRequiredToFreeze() + 80));

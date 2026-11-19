@@ -3,7 +3,6 @@ package net.thesmallthings.hellcraft.hazard.lucifer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +18,7 @@ import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.gen.CueTimes;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 import java.util.ArrayDeque;
@@ -250,7 +250,7 @@ final class SeraphAttacks {
 			if (beforeHit != null) {
 				beforeHit.run();
 			}
-			level.playSound(null, seraph.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 2.0f, 0.7f);
+			level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_SLASH.value(), SoundSource.HOSTILE, 2.0f, 0.93f);
 			for (LivingEntity v : fight.victims(at[0], reach)) {
 				double off = Math.abs(Mth.wrapDegrees(Math.toDegrees(Math.atan2(v.getZ() - at[0].z, v.getX() - at[0].x) - angle[0])));
 				if (off <= Math.toDegrees(arc) + 8) {
@@ -312,7 +312,7 @@ final class SeraphAttacks {
 		int e = epoch;
 		Vec3 at = seraph.position();
 		Danger.circle(level, Danger.Colour.PURPLE, at, SWEEP_RADIUS, a.at("swept"));
-		fight.schedule(a.at("sweep"), () -> level.playSound(null, seraph.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 2.0f, 1.3f));
+		fight.schedule(a.at("sweep"), () -> level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_WINGS.value(), SoundSource.HOSTILE, 2.0f, 1.07f));
 		fight.schedule(a.at("swept"), () -> {
 			seraph.warn(BossEntity.Warning.NONE);
 			if (!still(seraph, e)) {
@@ -348,7 +348,7 @@ final class SeraphAttacks {
 			if (!still(seraph, e)) {
 				return;
 			}
-			level.playSound(null, seraph.blockPosition(), SoundEvents.TRIDENT_RIPTIDE_3.value(), SoundSource.HOSTILE, 2.0f, 1.2f);
+			level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_DASH.value(), SoundSource.HOSTILE, 2.0f, 1.05f);
 			List<LivingEntity> hit = new ArrayList<>();
 			for (int i = 1; i <= 6; i++) {
 				double k = i / 6.0;
@@ -414,7 +414,7 @@ final class SeraphAttacks {
 			Vec3 at = fight.onFloor(spot[0].x, spot[0].z);
 			BossFx.send(level, ParticleTypes.EXPLOSION, at.x, at.y + 0.5, at.z, 2, 0.5, 0.1, 0.5, 0);
 			BossFx.send(level, ParticleTypes.END_ROD, at.x, at.y + 0.5, at.z, 40, 1.5, 0.2, 1.5, 0.08);
-			level.playSound(null, at.x, at.y, at.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.5f, 1.4f);
+			level.playSound(null, at.x, at.y, at.z, HellSounds.FALLEN_STAR.value(), SoundSource.HOSTILE, 1.5f, 1.1f);
 			for (LivingEntity v : fight.victims(at, DIVE_RADIUS)) {
 				if (v.hurtServer(level, Danger.unblockable(level, seraph), DIVE_DAMAGE * fight.damageMultiplier())) {
 					push(v, at, 0.9, 0.45);
@@ -499,7 +499,7 @@ final class SeraphAttacks {
 			seraph.play(FallenSeraphAnim.STAGGER);
 			openUntil = fight.tick() + 36;
 			busyUntil = fight.tick() + 36;
-			level.playSound(null, seraph.blockPosition(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.HOSTILE, 2.0f, 0.7f);
+			level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_SHATTER.value(), SoundSource.HOSTILE, 2.0f, 0.93f);
 		});
 		busyUntil = fight.tick() + a.ticks;
 		return a.ticks;
@@ -521,7 +521,7 @@ final class SeraphAttacks {
 			if (!still(seraph, e)) {
 				return;
 			}
-			level.playSound(null, seraph.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_SLASH.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			for (LivingEntity v : fight.victims(at, SLASH_REACH)) {
 				double off = Math.abs(Mth.wrapDegrees(Math.toDegrees(Math.atan2(v.getZ() - at.z, v.getX() - at.x) - angle)));
 				if (off <= Math.toDegrees(1.0) + 8) {
@@ -571,7 +571,7 @@ final class SeraphAttacks {
 			if (!still(seraph, e)) {
 				return;
 			}
-			level.playSound(null, seraph.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 2.0f, 1.8f);
+			level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_BLINK.value(), SoundSource.HOSTILE, 2.0f, 1.2f);
 			List<Vec3> marks = new ArrayList<>();
 			int around = (fight.enraged() ? 2 : 1) + fight.extraMarks();
 			for (LivingEntity t : fight.targets()) {
@@ -590,7 +590,7 @@ final class SeraphAttacks {
 				for (Vec3 m : marks) {
 					BossFx.send(level, ParticleTypes.END_ROD, m.x, m.y + 4, m.z, 20, 0.2, 2.0, 0.2, 0.1);
 					BossFx.send(level, ParticleTypes.EXPLOSION, m.x, m.y + 0.5, m.z, 1, 0, 0, 0, 0);
-					level.playSound(null, m.x, m.y, m.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.0f, 1.6f);
+					level.playSound(null, m.x, m.y, m.z, HellSounds.FALLEN_STAR.value(), SoundSource.HOSTILE, 1.0f, 1.15f);
 					for (LivingEntity v : fight.victims(m, 2.5)) {
 						v.hurtServer(level, Danger.unblockable(level, seraph), STAR_DAMAGE * fight.damageMultiplier());
 					}
@@ -605,7 +605,7 @@ final class SeraphAttacks {
 
 	/** A blow blocked in his parry window: a parry. On the flurry he fights on (three parried break him); else he reels. */
 	void parried(FallenSeraphEntity seraph) {
-		level.playSound(null, seraph.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 1.5f, 0.6f);
+		level.playSound(null, seraph.blockPosition(), HellSounds.FALLEN_PARRIED.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 		BossFx.send(level, ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 20, 0.5, 0.8, 0.5, 0.2);
 		if (flurrying) {
 			flurryParries++;
