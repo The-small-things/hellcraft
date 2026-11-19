@@ -11,7 +11,6 @@ import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -22,6 +21,7 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Relics;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.ParadisoGeometry.Sphere;
 
@@ -119,7 +119,7 @@ public final class ParadisoTrials {
 			taken |= 1 << i;
 			TAKEN.get(player.getUUID()).put(s, taken);
 			int count = Integer.bitCount(taken);
-			Feedback.sound(player, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0f, 0.8f + 0.1f * count);
+			Feedback.sound(player, HellSounds.WORLD_CHIME.value(), SoundSource.PLAYERS, 1.0f, 0.9f + 0.05f * count);
 			level.sendParticles(player, ParticleTypes.END_ROD, true, true, l[0], l[1], l[2], 20, 0.3, 0.3, 0.3, 0.08);
 			if (count >= lights.size()) {
 				pass(player, s);
@@ -259,7 +259,7 @@ public final class ParadisoTrials {
 		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));
 		player.giveExperienceLevels(3);
 		BloodItems.give(player, BloodItems.fragment(1));
-		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.3f);
+		Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.07f);
 		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
 		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("Trial passed").withStyle(ChatFormatting.GOLD)));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(s.title).withStyle(ChatFormatting.WHITE)));

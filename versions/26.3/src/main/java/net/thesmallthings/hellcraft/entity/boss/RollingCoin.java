@@ -3,7 +3,6 @@ package net.thesmallthings.hellcraft.entity.boss;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +77,7 @@ public class RollingCoin extends Entity {
 		setPos(next.x, ground, next.z);
 		ServerLevel level = (ServerLevel) level();
 		if (tickCount % 10 == 0) {
-			level.playSound(null, BlockPos.containing(position()), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 0.6f, 0.4f);
+			level.playSound(null, BlockPos.containing(position()), HellSounds.PLUTUS_COIN_ROLL.value(), SoundSource.HOSTILE, 0.6f, 0.85f);
 		}
 		DamageSource source = owner == null ? level.damageSources().generic() : Danger.unblockable(level, owner);
 		Vec3 dir = direction();

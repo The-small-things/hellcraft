@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -36,6 +35,7 @@ import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -367,7 +367,7 @@ public final class Labyrinth {
 		}
 		TAKEN.put(player.getUUID(), now);
 		BloodItems.give(player, new ItemStack(HellItems.ARIADNES_THREAD));
-		player.level().playSound(null, player.blockPosition(), SoundEvents.WOOL_BREAK, SoundSource.PLAYERS, 1.0f, 0.8f);
+		player.level().playSound(null, player.blockPosition(), HellSounds.WORLD_THREAD.value(), SoundSource.PLAYERS, 1.0f, 0.95f);
 		Dialogue.notice(player, Component.literal("You took Ariadne's Thread. Follow the red thread along the floor: it leads to the Minotaur's door, "
 				+ "and up to his arena. In his fight, each of his charges ends with him stunned, and you hit him harder. It's used up when he falls.")
 				.withStyle(ChatFormatting.RED));
@@ -610,8 +610,8 @@ public final class Labyrinth {
 		player.teleportTo(level, x, y, z, java.util.Set.of(), yaw, 0f, true);
 		player.resetFallDistance();
 		player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 30, 0, true, false, false));
-		level.playSound(null, x, y, z, SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 1.2f, 0.6f);
-		level.playSound(null, x, y, z, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.6f, 0.5f);
+		level.playSound(null, x, y, z, HellSounds.WORLD_LIFT.value(), SoundSource.PLAYERS, 1.2f, 0.9f);
+		level.playSound(null, x, y, z, HellSounds.WORLD_STONE_GRIND.value(), SoundSource.BLOCKS, 0.6f, 0.88f);
 	}
 
 	/** Through the arch: down to the entrance landing, facing into the maze. */

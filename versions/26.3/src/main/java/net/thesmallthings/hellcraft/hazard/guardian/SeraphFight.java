@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -24,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.SeraphAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Heaven;
 import net.thesmallthings.hellcraft.world.ParadisoGeometry;
@@ -130,10 +130,10 @@ final class SeraphFight extends GuardianFight {
 		seraph(body).play(SeraphAnim.INTRO);
 		lockedUntil = tick + SeraphAnim.INTRO.ticks;
 		schedule(SeraphAnim.INTRO.at("land"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 3.0f, 0.8f);
+			level.playSound(null, body.blockPosition(), HellSounds.SERAPH_RADIANCE.value(), SoundSource.HOSTILE, 3.0f, 0.95f);
 			BossFx.send(level, ParticleTypes.END_ROD, body.getX(), body.getY() + 1, body.getZ(), 80, 3, 0.5, 3, 0.05);
 		});
-		schedule(SeraphAnim.INTRO.at("cry"), () -> level.playSound(null, body.blockPosition(), SoundEvents.BELL_RESONATE, SoundSource.HOSTILE, 3.0f, 0.6f));
+		schedule(SeraphAnim.INTRO.at("cry"), () -> level.playSound(null, body.blockPosition(), HellSounds.SERAPH_CRY.value(), SoundSource.HOSTILE, 3.0f, 0.9f));
 		return SeraphAnim.INTRO.ticks;
 	}
 
@@ -191,7 +191,7 @@ final class SeraphFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			seraph.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 3.0f, 0.8f);
+			level.playSound(null, body.blockPosition(), HellSounds.SERAPH_WINGS.value(), SoundSource.HOSTILE, 3.0f, 0.95f);
 			for (int i = 2; i <= 7; i++) {
 				Vec3 p = c.add(Math.cos(angle) * i, 1.0, Math.sin(angle) * i);
 				BossFx.send(level, ParticleTypes.END_ROD, p.x, p.y, p.z, 4, 1.0, 0.4, 1.0, 0.02);
@@ -227,7 +227,7 @@ final class SeraphFight extends GuardianFight {
 		for (Vec3 m : marks) {
 			Danger.circle(level, Danger.Colour.RED, m, FIRE_RADIUS, fall);
 		}
-		schedule(call, () -> level.playSound(null, body.blockPosition(), SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 3.0f, 0.5f));
+		schedule(call, () -> level.playSound(null, body.blockPosition(), HellSounds.SERAPH_CALL.value(), SoundSource.HOSTILE, 3.0f, 0.88f));
 		schedule(fall, () -> {
 			Mob b = body();
 			for (Vec3 m : marks) {
@@ -263,11 +263,11 @@ final class SeraphFight extends GuardianFight {
 				Vec3 p = from.lerp(mark, t).add(0, Math.sin(t * Math.PI) * 3, 0);
 				BossFx.send(level, ParticleTypes.FLAME, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0);
 			}
-			level.playSound(null, body.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.SERAPH_FLAME.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 		});
 		schedule(lands, () -> {
 			Mob b = body();
-			level.playSound(null, BlockPos.containing(mark), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 1.1f);
+			level.playSound(null, BlockPos.containing(mark), HellSounds.SERAPH_BURST.value(), SoundSource.HOSTILE, 2.0f, 1.02f);
 			BossFx.send(level, ParticleTypes.FLAME, mark.x, mark.y + 0.5, mark.z, 60, 1.5, 0.5, 1.5, 0.1);
 			BossFx.send(level, ParticleTypes.LAVA, mark.x, mark.y + 0.5, mark.z, 10, 1.0, 0.2, 1.0, 0);
 			for (LivingEntity e : victims(mark, COAL_RADIUS + 0.3)) {
@@ -292,10 +292,10 @@ final class SeraphFight extends GuardianFight {
 		say("Look upon me, if you can.");
 		tip("It unveils its face: everything outside the small circle round it will burn. Run IN, close to it!");
 		Danger.ring(level, Danger.Colour.RED, c, GLORIA_SAFE, GLORIA_REACH, blaze);
-		schedule(unveil, () -> level.playSound(null, body.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.HOSTILE, 3.0f, 0.5f));
+		schedule(unveil, () -> level.playSound(null, body.blockPosition(), HellSounds.SERAPH_UNVEIL.value(), SoundSource.HOSTILE, 3.0f, 0.88f));
 		schedule(blaze, () -> {
 			Mob b = body();
-			level.playSound(null, body.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.SERAPH_BLAZE.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			ringParticles(ParticleTypes.END_ROD, c, 10, 40);
 			ringParticles(ParticleTypes.FLAME, c, 18, 60);
 			for (LivingEntity e : inRing(c, GLORIA_SAFE, GLORIA_REACH)) {
@@ -315,7 +315,7 @@ final class SeraphFight extends GuardianFight {
 		seraph.play(SeraphAnim.HOST);
 		say("Come down, you who never fell.");
 		schedule(SeraphAnim.HOST.at("host"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.HOSTILE, 2.5f, 1.4f);
+			level.playSound(null, body.blockPosition(), HellSounds.SERAPH_SUMMON.value(), SoundSource.HOSTILE, 2.5f, 1.1f);
 			tip("The Seraph called down its Angelic Guard: kill them!");
 			Heaven.angels(level, lair, enraged ? 2 : 1, TAG);
 		});
@@ -395,7 +395,7 @@ final class SeraphFight extends GuardianFight {
 		nextTurn = tick + SeraphAnim.PHASE.ticks + 60;
 		say("You have climbed far. Now see the heavens turn.");
 		schedule(SeraphAnim.PHASE.at("flare"), () -> {
-			level.playSound(null, seraph.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.HOSTILE, 3.0f, 1.4f);
+			level.playSound(null, seraph.blockPosition(), HellSounds.SERAPH_UNVEIL.value(), SoundSource.HOSTILE, 3.0f, 1.1f);
 			BossFx.send(level, ParticleTypes.END_ROD, seraph.getX(), seraph.getY() + 4, seraph.getZ(), 200, 4, 3, 4, 0.1);
 			tip("From now on the heavens turn between its blows: a beam sweeps the floor. Watch for the purple ring, and jump the beam.");
 		});

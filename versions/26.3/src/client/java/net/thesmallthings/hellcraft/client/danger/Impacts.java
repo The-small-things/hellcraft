@@ -9,7 +9,6 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.DangerPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * The moment a boss's blow lands (a danger mark fills, DangerMarks): the whole mark erupts in its colour, so a blow
@@ -213,9 +213,9 @@ public final class Impacts {
 
 	private static void sound(ClientLevel level, int colour, double x, double y, double z, double size, RandomSource random) {
 		SoundEvent sound = switch (colour) {
-			case 0 -> SoundEvents.GENERIC_EXPLODE.value();
-			case 1 -> SoundEvents.MACE_SMASH_GROUND_HEAVY;
-			default -> SoundEvents.BREEZE_WIND_CHARGE_BURST.value();
+			case 0 -> HellSounds.IMPACT_BOOM.value();
+			case 1 -> HellSounds.IMPACT_SMASH.value();
+			default -> HellSounds.IMPACT_BURST.value();
 		};
 		float volume = (float) Mth.clamp(0.5 + size / 10, 0.6, 1.6);
 		level.playLocalSound(x, y, z, sound, SoundSource.HOSTILE, volume, 0.75f + random.nextFloat() * 0.2f, false);

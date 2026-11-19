@@ -5,7 +5,6 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,6 +24,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.MinosAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,8 +135,8 @@ final class MinosFight extends GuardianFight {
 			face(body, first);
 		}
 		minos(body).play(MinosAnim.INTRO);
-		schedule(MinosAnim.INTRO.at("rise"), () -> level.playSound(null, body.blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 2.0f, 0.7f));
-		schedule(MinosAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.6f));
+		schedule(MinosAnim.INTRO.at("rise"), () -> level.playSound(null, body.blockPosition(), HellSounds.MINOS_RISE.value(), SoundSource.HOSTILE, 2.0f, 0.93f));
+		schedule(MinosAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.MINOS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.9f));
 		return MinosAnim.INTRO.ticks;
 	}
 
@@ -195,7 +195,7 @@ final class MinosFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			minos.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.MINOS_SWIPE.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			for (LivingEntity e : victims(c, CLAW_REACH + 0.5)) {
 				Vec3 d = e.position().subtract(c);
 				double off = Math.abs(wrap(Math.atan2(d.z, d.x) - angle));
@@ -252,7 +252,7 @@ final class MinosFight extends GuardianFight {
 				}
 			});
 		}
-		schedule(sweep, () -> level.playSound(null, body.blockPosition(), SoundEvents.BREEZE_WHIRL, SoundSource.HOSTILE, 2.5f, 0.6f));
+		schedule(sweep, () -> level.playSound(null, body.blockPosition(), HellSounds.MINOS_TAIL_SWEEP.value(), SoundSource.HOSTILE, 2.5f, 0.9f));
 		schedule(swept + 2, () -> minos.warn(BossEntity.Warning.NONE));
 		return MinosAnim.TAIL.ticks + 25;
 	}
@@ -276,7 +276,7 @@ final class MinosFight extends GuardianFight {
 		}
 		schedule(hit, () -> {
 			for (Vec3 at : where.values()) {
-				level.playSound(null, at.x, at.y, at.z, SoundEvents.ELYTRA_FLYING, SoundSource.HOSTILE, 3.0f, 0.5f);
+				level.playSound(null, at.x, at.y, at.z, HellSounds.MINOS_TAIL_SWEEP.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 				BossFx.send(level, ParticleTypes.CLOUD, at.x, at.y + 1, at.z, 80, 1.2, 2, 1.2, 0.2);
 				for (LivingEntity e : victims(at, SENTENCE_RADIUS + 0.3)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), SENTENCE_DAMAGE)) {
@@ -301,7 +301,7 @@ final class MinosFight extends GuardianFight {
 		minos.play(MinosAnim.GRAB);
 		say("Around and around... how many circles for thee?");
 		Danger.line(level, Danger.Colour.RED, c, angle, COIL_REACH, COIL_WIDTH, caught);
-		schedule(lunge, () -> level.playSound(null, body.blockPosition(), SoundEvents.EVOKER_FANGS_ATTACK, SoundSource.HOSTILE, 2.0f, 0.5f));
+		schedule(lunge, () -> level.playSound(null, body.blockPosition(), HellSounds.MINOS_LUNGE.value(), SoundSource.HOSTILE, 2.0f, 0.88f));
 		schedule(caught, () -> {
 			LivingEntity victim = null;
 			double best = Double.MAX_VALUE;
@@ -382,7 +382,7 @@ final class MinosFight extends GuardianFight {
 			int number = k;
 			schedule((k - 1) * turn, () -> minos.play(MinosAnim.JUDGE));
 			schedule((k - 1) * turn + count, () -> {
-				level.playSound(null, minos.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 2.0f, 0.5f + 0.04f * number);
+				level.playSound(null, minos.blockPosition(), HellSounds.MINOS_JUDGEMENT.value(), SoundSource.HOSTILE, 2.0f, 0.85f + 0.03f * number);
 				BossFx.send(level, JUDGEMENT, minos.getX(), minos.getY() + 1.2, minos.getZ(), 30, 2.2, 0.4, 2.2, 0);
 				for (ServerPlayer p : audience()) {
 					p.sendOverlayMessage(Component.literal("The tail goes round: " + number).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
@@ -476,7 +476,7 @@ final class MinosFight extends GuardianFight {
 		say("ENOUGH! I have judged a thousand thousand souls. I will judge you ALL!");
 		tip("Minos is furious: he sentences everyone at once now, and strikes faster.");
 		schedule(MinosAnim.PHASE.at("roar"), () -> {
-			level.playSound(null, minos.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, minos.blockPosition(), HellSounds.MINOS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 			BossFx.send(level, JUDGEMENT, minos.getX(), minos.getY() + 4, minos.getZ(), 120, 2.5, 2.5, 2.5, 0.05);
 		});
 	}
@@ -491,7 +491,7 @@ final class MinosFight extends GuardianFight {
 		lockedUntil = staggerUntil;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(MinosAnim.STAGGER.ticks + 15);
-		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.6f);
+		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.0, 1.5, 1.0, 0.4);
 		say("Thou... DARE?!");
 		by.sendOverlayMessage(Component.literal("Parried! Minos is staggered: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));

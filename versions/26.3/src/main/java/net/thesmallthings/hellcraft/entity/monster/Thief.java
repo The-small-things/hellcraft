@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -28,6 +27,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.ThiefAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,8 +114,7 @@ public class Thief extends SoulMonster implements InventoryCarrier {
 		loot.addItem(stolen);
 		inv.setChanged();
 		playSpecial();
-		playSound(SoundEvents.ITEM_PICKUP, 1.0f, 0.6f);
-		playSound(SoundEvents.SILVERFISH_AMBIENT, 1.0f, 0.6f);
+		playSound(HellSounds.THIEF_STEAL.value(), 1.0f, 0.9f);
 		player.sendOverlayMessage(Component.literal("A thief snatched your " + stolen.getHoverName().getString() + "! Kill it to get it back.")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 	}
@@ -150,17 +149,17 @@ public class Thief extends SoulMonster implements InventoryCarrier {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.SILVERFISH_AMBIENT;
+		return HellSounds.THIEF_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.VINDICATOR_HURT;
+		return HellSounds.THIEF_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.VINDICATOR_DEATH;
+		return HellSounds.THIEF_DEATH.value();
 	}
 
 	@Override

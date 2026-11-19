@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -22,6 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.thesmallthings.hellcraft.hazard.CircleHazards;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * The Slag Sea's cooling crust (Phase 6, the Forge of Dis's rule): it floats on the molten slag and holds you while
@@ -97,7 +97,7 @@ public class SlagCrustBlock extends Block {
 			}
 			level.setBlock(pos, state.setValue(STAGE, 0), Block.UPDATE_CLIENTS);
 			level.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 4, 0.3, 0.1, 0.3, 0.01);
-			level.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.3f, 1.4f);
+			level.playSound(null, pos, HellSounds.SLAG_HISS.value(), SoundSource.BLOCKS, 0.3f, 1.1f);
 			return;
 		}
 		if (stage == 0) {
@@ -115,11 +115,11 @@ public class SlagCrustBlock extends Block {
 		double z = pos.getZ() + 0.5;
 		if (stage == MOLTEN) {
 			level.sendParticles(ParticleTypes.LAVA, x, y, z, 6, 0.3, 0.1, 0.3, 0.0);
-			level.playSound(null, pos, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 1.0f, 0.8f);
+			level.playSound(null, pos, HellSounds.SLAG_POP.value(), SoundSource.BLOCKS, 1.0f, 0.95f);
 			return;
 		}
 		level.sendParticles(ParticleTypes.SMOKE, x, y, z, 3 + 3 * stage, 0.35, 0.05, 0.35, 0.01);
 		level.sendParticles(ParticleTypes.SMALL_FLAME, x, y, z, stage * 2, 0.35, 0.05, 0.35, 0.01);
-		level.playSound(null, pos, SoundEvents.BASALT_BREAK, SoundSource.BLOCKS, 0.6f + 0.2f * stage, 0.6f + 0.25f * stage);
+		level.playSound(null, pos, HellSounds.SLAG_CRACK.value(), SoundSource.BLOCKS, 0.6f + 0.2f * stage, 0.9f + 0.06f * stage);
 	}
 }

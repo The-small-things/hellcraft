@@ -12,7 +12,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +114,7 @@ public final class BloodEvents {
 			stack.shrink(1);
 			Hearts.add(player, 1);
 			player.heal(2.0f);
-			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 0.6f);
+			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), HellSounds.BLOOD_DRINK.value(), SoundSource.PLAYERS, 1.0f, 0.9f);
 			player.sendOverlayMessage(Component.literal("+1 ❤  (" + Hearts.soul(player).hearts + ")").withStyle(ChatFormatting.DARK_RED));
 			return true;
 		}
@@ -129,7 +129,7 @@ public final class BloodEvents {
 			soul.maxBonus += config.luciferMaxHeartBonus;
 			HellState.get(player.level().getServer()).setDirty();
 			Hearts.apply(player);
-			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.0f, 0.6f);
+			player.level().playSound(null, player.blockPosition(), HellSounds.BLOOD_HEART_SURGE.value(), SoundSource.PLAYERS, 1.0f, 0.9f);
 			player.sendSystemMessage(Component.literal("Lucifer's Bane: your max hearts is now " + Hearts.cap(soul) + ".")
 					.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 			return true;
@@ -149,7 +149,7 @@ public final class BloodEvents {
 			}
 			stack.shrink(needed);
 			BloodItems.give(player, BloodItems.heart(1));
-			player.level().playSound(null, player.blockPosition(), SoundEvents.HONEY_BLOCK_PLACE, SoundSource.PLAYERS, 1.0f, 0.5f);
+			player.level().playSound(null, player.blockPosition(), HellSounds.BLOOD_SQUELCH.value(), SoundSource.PLAYERS, 1.0f, 0.88f);
 			player.sendOverlayMessage(Component.literal("Made a Blood Heart.").withStyle(ChatFormatting.DARK_RED));
 			return true;
 		}

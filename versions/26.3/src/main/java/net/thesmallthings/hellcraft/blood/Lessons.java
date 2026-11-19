@@ -13,7 +13,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
@@ -26,6 +25,7 @@ import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Gatehouses;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -258,7 +258,7 @@ public final class Lessons {
 		soul.lessons.add(l.id());
 		HellState.get(p.level().getServer()).setDirty();
 		Dialogue.say(p, "Virgil", ChatFormatting.GOLD, text(l.text()), false);
-		p.level().playSound(null, p.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 0.8f, 0.9f);
+		p.level().playSound(null, p.blockPosition(), HellSounds.UI_LESSON.value(), SoundSource.PLAYERS, 0.8f, 0.97f);
 	}
 
 	private static MutableComponent text(Object[] parts) {

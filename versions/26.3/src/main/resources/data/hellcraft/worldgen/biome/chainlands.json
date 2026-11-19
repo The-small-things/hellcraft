@@ -1,23 +1,23 @@
 {
   "attributes": {
     "minecraft:audio/ambient_sounds": {
+      "loop": "hellcraft:ambient.ember.loop",
       "additions": {
-        "sound": "minecraft:ambient.nether_wastes.additions",
+        "sound": "hellcraft:ambient.ember.additions",
         "tick_chance": 0.0111
       },
-      "loop": "minecraft:ambient.nether_wastes.loop",
       "mood": {
+        "sound": "hellcraft:ambient.hell.mood",
+        "tick_delay": 6000,
         "block_search_extent": 8,
-        "offset": 2.0,
-        "sound": "minecraft:ambient.nether_wastes.mood",
-        "tick_delay": 6000
+        "offset": 2.0
       }
     },
     "minecraft:audio/background_music": {
       "default": {
-        "max_delay": 24000,
-        "min_delay": 12000,
-        "sound": "minecraft:music.nether.nether_wastes"
+        "sound": "hellcraft:music.forge",
+        "min_delay": 3600,
+        "max_delay": 9600
       }
     },
     "minecraft:gameplay/natural_mob_spawns": {

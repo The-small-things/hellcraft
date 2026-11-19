@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -30,6 +29,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.thesmallthings.hellcraft.entity.boss.gen.GluttonAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
 /**
@@ -103,7 +103,7 @@ public class Glutton extends SoulMonster {
 		entityData.set(SUNK, false);
 		risingUntil = tickCount + GluttonAnim.EMERGE.ticks;
 		playSpecial();
-		playSound(SoundEvents.MUD_BREAK, 1.5f, 0.5f);
+		playSound(HellSounds.GLUTTON_EMERGE.value(), 1.5f, 0.88f);
 		level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()), getX(), getY() + 0.5, getZ(), 60, 0.8, 0.4, 0.8, 0.1);
 	}
 
@@ -140,7 +140,7 @@ public class Glutton extends SoulMonster {
 			cloud.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1));
 			cloud.setCustomParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()));
 			level.addFreshEntity(cloud);
-			playSound(SoundEvents.SLIME_SQUISH, 1.5f, 0.4f);
+			playSound(HellSounds.GLUTTON_SQUELCH.value(), 1.5f, 0.85f);
 		}
 	}
 
@@ -151,17 +151,17 @@ public class Glutton extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return sunk() ? null : SoundEvents.HOGLIN_AMBIENT;
+		return sunk() ? null : HellSounds.GLUTTON_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.HOGLIN_HURT;
+		return HellSounds.GLUTTON_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.HOGLIN_DEATH;
+		return HellSounds.GLUTTON_DEATH.value();
 	}
 
 	@Override

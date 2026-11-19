@@ -12,15 +12,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
-import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Hearts;
+import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Pilgrimage;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.FoundAltarsPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -150,7 +150,7 @@ public final class FoundAltars {
 		HellState.get(level.getServer()).setDirty();
 		Dialogue.notice(player, Component.literal("Blood Altar remembered (" + defaultName(level.dimension(), pos)
 				+ "): you can travel back here from any Blood Altar. Type /rest name and a name beside it to name it.").withStyle(ChatFormatting.GOLD));
-		level.playSound(null, player.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.6f, 1.4f);
+		level.playSound(null, player.blockPosition(), HellSounds.BLOOD_ALTAR_BIND.value(), SoundSource.PLAYERS, 0.6f, 1.1f);
 		send(player);
 	}
 

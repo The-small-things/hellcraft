@@ -94,6 +94,19 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   clean. Server cues: `hazard/Cue` (`play`, `playTo`); the danger marks' cues are timed on the client (`client/sound/DangerCues`,
   from `DangerMarks.receive`; a mark too quick for the full build-up gets the `*_short` cue; `Danger.quietly` marks get none).
   `ImpactTest` checks every mark plays its cue and every cue's file loads; the smoke test checks the jar.
+- `tools/audio/build_sounds.py`: every other sound and all the music, made with ElevenLabs (sound effects v3, music v2.5) through
+  the ElevenLabs MCP (2026-11-19). `tools/audio/hellsounds.py` is the list (each event's prompt, length, takes, subtitle; `MUSIC`;
+  which biome or sphere plays which track; `NETHER_AMBIENCE`), `tools/audio/manifest.txt` the ElevenLabs generation id of every
+  take (flow B2dJN3tnbwtCG33QkRpn). The script reads the takes from `tools/audio/cache/` (not in git: `<event>/<n>.flac`,
+  `music/<name>.mp3`), trims, normalises and crossfades loops, and writes `assets/hellcraft/sounds/sfx/...` (mono) and
+  `sounds/music/...` (stereo, `stream`), their sounds.json entries (all but `cue.*`), subtitles and
+  `sound/HellSounds` (a registered `Holder<SoundEvent>` per event, `HellSounds.register()` first thing in `onInitialize`;
+  registered because the biomes name `hellcraft:music.*` and `hellcraft:ambient.*` by id). Call sites use
+  `HellSounds.X.value()` (holders for armour materials, `Equippable` and `Ambience` moods); none of the mod's code plays a vanilla
+  sound event any more. Lucifer's three tracks are `music/duel|enraged|true_form.ogg` (`music/BossMusic`). The worldgen
+  generators take the music and ambience from hellsounds.py. To add a sound: an entry in hellsounds.py, generate it with the MCP
+  (sfx node, `eleven_text_to_sound_v3`), save the take as `cache/<event>/<n>.flac`, add its id to manifest.txt, re-run. Pitches at
+  call sites stay near 1.0: the clips are made for their use, unlike the pitched vanilla sounds they replaced.
 - `HELLCRAFT_SHOWCASE=all HELLCRAFT_TESTS=ShowcaseTest bash tools/dev/clienttest.sh` takes the showcase pictures (or name groups:
   `hell,court,bosses,realms`; `HELLCRAFT_TESTS` runs only the listed test classes, without touching the manifest in git): no HUD,
   view distance 16, 1920x1080 (`showcase_*`: the regions, the damned, the guardians fighting in their lairs, the realms). Without
@@ -342,7 +355,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `InfernoGeometry` is the one source of the map's shape (bands, roads, ramps, rivers, walls); `Navigation` (the
   next way down) and `MapPainter` (the Map of Hell's colours, shared with `tools/RenderMap.java`) work from it
   alone, so the client draws the compass and the map without asking the server.
-- `music/BossMusic`: Lucifer's tracks, shipped in the mod (none yet: vanilla discs until the owner sends some).
+- `music/BossMusic`: Lucifer's tracks, shipped in the mod (made with ElevenLabs since 2026-11-19, see tools/audio).
 - `net/`: `Dialogue` (what characters say and Hellcraft's notices go to a box above the hotbar, `client/dialogue/DialogueHud`,
   not the chat; chat keeps server-wide news), `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
   prestige rank), `MapSync` (whether the world is the Inferno, the Rests found, the bosses beaten, and the Guide's

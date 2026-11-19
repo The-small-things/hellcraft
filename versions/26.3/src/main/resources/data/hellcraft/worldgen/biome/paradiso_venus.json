@@ -5,9 +5,9 @@
     "minecraft:visual/water_fog_color": "#8ab4e8",
     "minecraft:audio/background_music": {
       "default": {
-        "sound": "minecraft:music.overworld.cherry_grove",
+        "sound": "hellcraft:music.paradiso",
         "min_delay": 3000,
-        "max_delay": 12000,
+        "max_delay": 9000,
         "replace_current_music": true
       }
     },

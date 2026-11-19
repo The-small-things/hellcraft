@@ -20,7 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,6 +32,7 @@ import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.SecretsPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.feature.SecretWayFeature;
 import org.jetbrains.annotations.Nullable;
@@ -183,8 +183,7 @@ public final class SecretWayLift {
 		CARRIED.put(player.getUUID(), new Transit(site, level.getGameTime() + FLOAT));
 		player.addEffect(new MobEffectInstance(MobEffects.LEVITATION, FLOAT, 0, true, false, false));
 		player.resetFallDistance();
-		level.playSound(null, player.blockPosition(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 1.6f, 0.6f);
-		level.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.7f, 0.5f);
+		level.playSound(null, player.blockPosition(), HellSounds.WORLD_LIFT.value(), SoundSource.PLAYERS, 1.6f, 0.9f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 0.5, player.getZ(), 30, 0.6, 0.3, 0.6, 0.04);
 		player.sendOverlayMessage(Component.literal("The way takes you down...").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
 	}
@@ -204,7 +203,7 @@ public final class SecretWayLift {
 		player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, true, false, false));
 		SAFE.put(player.getUUID(), level.getGameTime() + SAFE_AFTER);
 		level.sendParticles(ParticleTypes.SOUL, x + 0.5, y + 1.5, z + 0.5, 30, 0.5, 0.8, 0.5, 0.04);
-		level.playSound(null, player.blockPosition(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 1.4f, 1.3f);
+		level.playSound(null, player.blockPosition(), HellSounds.WORLD_LIFT_LAND.value(), SoundSource.PLAYERS, 1.4f, 1.07f);
 		HellState state = HellState.get(level.getServer());
 		HellState.Soul soul = Hearts.soul(player);
 		if (soul.secrets.add(site.id())) {

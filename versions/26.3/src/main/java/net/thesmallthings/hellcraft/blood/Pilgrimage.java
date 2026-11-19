@@ -17,7 +17,6 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,6 +24,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.PilgrimPayload;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -139,7 +139,7 @@ public final class Pilgrimage {
 				+ " sets out on a pilgrimage from the Gate of Hell to Purgatory.").withStyle(ChatFormatting.GOLD), false);
 		Dialogue.notice(player, Component.literal("Your pilgrimage has begun: reach Purgatory without dying. Your time and deepest circle show at the "
 				+ "top left of your screen. /pilgrimage abandon gives it up.").withStyle(ChatFormatting.GOLD));
-		Feedback.sound(player, SoundEvents.BELL_BLOCK, SoundSource.MASTER, 1.0f, 0.7f);
+		Feedback.sound(player, HellSounds.UI_PILGRIMAGE.value(), SoundSource.MASTER, 1.0f, 0.93f);
 		HellcraftMod.LOGGER.info("Pilgrimage begun by {}", name);
 		send(player);
 	}

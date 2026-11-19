@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -23,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.FoundAltars;
 import net.thesmallthings.hellcraft.world.RestNames;
 import net.thesmallthings.hellcraft.world.ShrineSites;
@@ -203,7 +203,7 @@ public final class TravelMenu {
 		}
 		ServerLevel from = player.level();
 		from.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
-		from.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8f, 0.6f);
+		from.playSound(null, player.blockPosition(), HellSounds.TRAVEL_DEPART.value(), SoundSource.PLAYERS, 0.8f, 0.9f);
 		BlockPos altar = to.altar().pos();
 		BlockPos arrive = altar.offset(0, 0, 2);
 		if (to.id().startsWith("altar:")) {
@@ -220,7 +220,7 @@ public final class TravelMenu {
 		player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 60, 1));
 		ServerLevel at = player.level();
 		at.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
-		at.playSound(null, player.blockPosition(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 0.8f, 1.2f);
+		at.playSound(null, player.blockPosition(), HellSounds.TRAVEL_ARRIVE.value(), SoundSource.PLAYERS, 0.8f, 1.05f);
 		READY.put(player.getUUID(), player.level().getServer().overworld().getGameTime() + HellConfig.get().travelCooldownSeconds * 20L);
 		player.sendSystemMessage(Component.literal("Teleported to " + to.title() + ".").withStyle(ChatFormatting.GOLD));
 		return "Sent " + player.getGameProfile().name() + " to " + to.title() + ".";

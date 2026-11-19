@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -21,6 +20,7 @@ import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Fen;
 import net.thesmallthings.hellcraft.world.Ferries;
@@ -113,10 +113,10 @@ final class PhlegyasFight extends GuardianFight {
 		phlegyas(body).play(PhlegyasAnim.INTRO);
 		lockedUntil = tick + PhlegyasAnim.INTRO.ticks;
 		schedule(PhlegyasAnim.INTRO.at("rise"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.PHLEGYAS_INTRO.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			BossFx.send(level, ParticleTypes.SPLASH, body.getX(), body.getY() + 3, body.getZ(), 300, 2.5, 1, 2.5, 0.3);
 		});
-		schedule(PhlegyasAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(PhlegyasAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.PHLEGYAS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 		return PhlegyasAnim.INTRO.ticks;
 	}
 
@@ -164,7 +164,7 @@ final class PhlegyasFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			phlegyas.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.HOSTILE, 2.5f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.PHLEGYAS_OAR_STRIKE.value(), SoundSource.HOSTILE, 2.5f, 0.88f);
 			for (LivingEntity e : inLine(c, angle, OAR_REACH, OAR_WIDTH)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), OAR_DAMAGE)) {
 					fling(e, c, 0.8, 0.4);
@@ -215,7 +215,7 @@ final class PhlegyasFight extends GuardianFight {
 				}
 			});
 		}
-		schedule(sweep, () -> level.playSound(null, body.blockPosition(), SoundEvents.PLAYER_SPLASH_HIGH_SPEED, SoundSource.HOSTILE, 2.5f, 0.5f));
+		schedule(sweep, () -> level.playSound(null, body.blockPosition(), HellSounds.PHLEGYAS_OAR_SWEEP.value(), SoundSource.HOSTILE, 2.5f, 0.88f));
 		schedule(swept + 2, () -> phlegyas.warn(BossEntity.Warning.NONE));
 		return PhlegyasAnim.SWEEP.ticks + 25;
 	}
@@ -230,9 +230,9 @@ final class PhlegyasFight extends GuardianFight {
 		say("Drown in thy wrath!");
 		tip("A wave will wash over the red ring: get in CLOSE to him!");
 		Danger.ring(level, Danger.Colour.RED, c, WAVE_INNER, Fen.LANDING + 1, slam + 6);
-		schedule(slam, () -> level.playSound(null, body.blockPosition(), SoundEvents.GENERIC_SPLASH, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(slam, () -> level.playSound(null, body.blockPosition(), HellSounds.PHLEGYAS_SPLASH.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 		schedule(slam + 6, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.PLAYER_SPLASH_HIGH_SPEED, SoundSource.HOSTILE, 3.0f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.PHLEGYAS_OAR_SWEEP.value(), SoundSource.HOSTILE, 3.0f, 0.9f);
 			for (int i = 0; i < 24; i++) {
 				double a = i * Math.PI / 12;
 				double r = (WAVE_INNER + Fen.LANDING) / 2;
@@ -284,7 +284,7 @@ final class PhlegyasFight extends GuardianFight {
 				}
 				e.setDeltaMovement(Math.cos(a) * 2.2, 0.9, Math.sin(a) * 2.2);
 				Feedback.syncMotion(e);
-				level.playSound(null, e.blockPosition(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundSource.HOSTILE, 2.0f, 0.6f);
+				level.playSound(null, e.blockPosition(), HellSounds.PHLEGYAS_SHOVE.value(), SoundSource.HOSTILE, 2.0f, 0.9f);
 				if (e instanceof ServerPlayer p) {
 					p.sendOverlayMessage(Component.literal("Thrown into the Styx! Swim clear of the bubbles and get back on the planks.")
 							.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD));
@@ -318,7 +318,7 @@ final class PhlegyasFight extends GuardianFight {
 		}
 		schedule(erupt, () -> {
 			for (Vec3 s : spots) {
-				level.playSound(null, s.x, s.y, s.z, SoundEvents.DROWNED_AMBIENT_WATER, SoundSource.HOSTILE, 1.5f, 0.5f);
+				level.playSound(null, s.x, s.y, s.z, HellSounds.RULES_SULLEN.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 				BossFx.send(level, ParticleTypes.BUBBLE_COLUMN_UP, s.x, s.y + 0.5, s.z, 30, 0.6, 0.6, 0.6, 0.1);
 				for (LivingEntity e : victims(s, HANDS_RADIUS + 0.3)) {
 					if (e.hurtServer(level, Danger.unblockable(level, body), HANDS_DAMAGE)) {
@@ -363,9 +363,9 @@ final class PhlegyasFight extends GuardianFight {
 		lockedUntil = tick + PhlegyasAnim.PHASE.ticks;
 		say("Dis! DIS! Thy gates shall never open for these!");
 		tip("Phlegyas is furious: the sullen's hands will burst up through the deck in red circles.");
-		schedule(PhlegyasAnim.PHASE.at("roar"), () -> level.playSound(null, phlegyas.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(PhlegyasAnim.PHASE.at("roar"), () -> level.playSound(null, phlegyas.blockPosition(), HellSounds.PHLEGYAS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 		schedule(PhlegyasAnim.PHASE.at("slam"), () -> {
-			level.playSound(null, phlegyas.blockPosition(), SoundEvents.GENERIC_SPLASH, SoundSource.HOSTILE, 3.0f, 0.4f);
+			level.playSound(null, phlegyas.blockPosition(), HellSounds.PHLEGYAS_SPLASH.value(), SoundSource.HOSTILE, 3.0f, 0.85f);
 			BossFx.send(level, ParticleTypes.SPLASH, phlegyas.getX(), lair.getY() + 1, phlegyas.getZ(), 300, 6, 1, 6, 0.4);
 		});
 	}
@@ -380,7 +380,7 @@ final class PhlegyasFight extends GuardianFight {
 		lockedUntil = staggerUntil;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(PhlegyasAnim.STAGGER.ticks + 15);
-		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.5f);
+		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 6, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
 		say("Ngh... a pilgrim, then?");
 		by.sendOverlayMessage(Component.literal("Parried! Phlegyas reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));

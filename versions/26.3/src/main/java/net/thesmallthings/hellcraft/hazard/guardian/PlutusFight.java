@@ -5,7 +5,6 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -24,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.Hoarders;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -113,8 +113,8 @@ final class PlutusFight extends GuardianFight {
 		}
 		plutus(body).play(PlutusAnim.INTRO);
 		lockedUntil = tick + PlutusAnim.INTRO.ticks;
-		schedule(PlutusAnim.INTRO.at("rise"), () -> level.playSound(null, body.blockPosition(), SoundEvents.ARMOR_EQUIP_GOLD.value(), SoundSource.HOSTILE, 3.0f, 0.4f));
-		schedule(PlutusAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.PIGLIN_BRUTE_ANGRY, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(PlutusAnim.INTRO.at("rise"), () -> level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_COINS.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
+		schedule(PlutusAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 		return PlutusAnim.INTRO.ticks;
 	}
 
@@ -166,7 +166,7 @@ final class PlutusFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			plutus.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_SLAM.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			for (LivingEntity e : victims(c, FIST_REACH + 0.5)) {
 				Vec3 d = e.position().subtract(c);
 				if ((d.x * d.x + d.z * d.z < 2.0 || Math.abs(wrap(Math.atan2(d.z, d.x) - angle)) <= FIST_ARC + 0.15)
@@ -200,7 +200,7 @@ final class PlutusFight extends GuardianFight {
 			Danger.circle(level, Danger.Colour.RED, m, RAIN_RADIUS, rain);
 		}
 		schedule(PlutusAnim.GOLD.at("throw"), () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.ARMOR_EQUIP_GOLD.value(), SoundSource.HOSTILE, 2.5f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_COINS.value(), SoundSource.HOSTILE, 2.5f, 0.88f);
 			BossFx.send(level, GOLD, body.getX(), body.getY() + 8, body.getZ(), 80, 2, 2, 2, 0.1);
 		});
 		for (int t = rain - 10; t < rain; t += 3) {
@@ -211,7 +211,7 @@ final class PlutusFight extends GuardianFight {
 			});
 		}
 		schedule(rain, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 1.4f);
+			level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_SLAM.value(), SoundSource.HOSTILE, 1.5f, 1.1f);
 			for (Vec3 m : marks) {
 				BossFx.send(level, ParticleTypes.CRIT, m.x, m.y + 0.5, m.z, 20, 1, 0.3, 1, 0.2);
 				for (LivingEntity e : victims(m, RAIN_RADIUS + 0.3)) {
@@ -262,7 +262,7 @@ final class PlutusFight extends GuardianFight {
 				}
 			});
 		}
-		schedule(land, () -> level.playSound(null, body.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.5f, 0.7f));
+		schedule(land, () -> level.playSound(null, body.blockPosition(), HellSounds.BOSS_BOOM.value(), SoundSource.HOSTILE, 1.5f, 0.93f));
 		return PlutusAnim.LUNGE.ticks + 25;
 	}
 
@@ -280,8 +280,7 @@ final class PlutusFight extends GuardianFight {
 		schedule(shriek, () -> {
 			plutus.warn(BossEntity.Warning.NONE);
 			say("PAPE SATÀN, PAPE SATÀN ALEPPE!");
-			level.playSound(null, body.blockPosition(), SoundEvents.PIGLIN_BRUTE_ANGRY, SoundSource.HOSTILE, 4.0f, 0.4f);
-			level.playSound(null, body.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.HOSTILE, 3.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_ROAR.value(), SoundSource.HOSTILE, 4.0f, 0.85f);
 			ringParticles(ParticleTypes.SONIC_BOOM, c, PAPE_RADIUS * 0.6, 10);
 			for (LivingEntity e : victims(c, PAPE_RADIUS + 0.3)) {
 				if (e.hurtServer(level, Danger.unblockable(level, body), PAPE_DAMAGE)) {
@@ -324,7 +323,7 @@ final class PlutusFight extends GuardianFight {
 				level.addFreshEntity(coin);
 			});
 		}
-		level.playSound(null, body.blockPosition(), SoundEvents.ARMOR_EQUIP_GOLD.value(), SoundSource.HOSTILE, 3.0f, 0.3f);
+		level.playSound(null, body.blockPosition(), HellSounds.PLUTUS_COINS.value(), SoundSource.HOSTILE, 3.0f, 0.82f);
 		return COIN_WARN + 30;
 	}
 
@@ -364,9 +363,9 @@ final class PlutusFight extends GuardianFight {
 		lockedUntil = tick + PlutusAnim.PHASE.ticks;
 		say("THIEVES! You'd take what is MINE? Then take ALL of it!");
 		tip("Plutus is furious: great coins will roll across the lair along red lines. Get off the lines!");
-		schedule(PlutusAnim.PHASE.at("roar"), () -> level.playSound(null, plutus.blockPosition(), SoundEvents.PIGLIN_BRUTE_ANGRY, SoundSource.HOSTILE, 4.0f, 0.3f));
+		schedule(PlutusAnim.PHASE.at("roar"), () -> level.playSound(null, plutus.blockPosition(), HellSounds.PLUTUS_ROAR.value(), SoundSource.HOSTILE, 4.0f, 0.82f));
 		schedule(PlutusAnim.PHASE.at("mint"), () -> {
-			level.playSound(null, plutus.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3.0f, 0.3f);
+			level.playSound(null, plutus.blockPosition(), HellSounds.PLUTUS_SLAM.value(), SoundSource.HOSTILE, 3.0f, 0.82f);
 			BossFx.send(level, GOLD, plutus.getX(), plutus.getY() + 3, plutus.getZ(), 200, 4, 3, 4, 0.2);
 		});
 	}
@@ -382,7 +381,7 @@ final class PlutusFight extends GuardianFight {
 		lockedUntil = staggerUntil;
 		setBase(body, Attributes.ARMOR, 0.0);
 		delayNextAttack(PlutusAnim.STAGGER.ticks + 15);
-		level.playSound(null, body.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.5f, 0.6f);
+		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
 		say("My... my GOLD!");
 		by.sendOverlayMessage(Component.literal("Parried! Plutus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));

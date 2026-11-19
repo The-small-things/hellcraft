@@ -13,7 +13,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -23,6 +22,7 @@ import net.minecraft.world.food.FoodData;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.net.HudSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
 
 import java.util.HashMap;
@@ -141,8 +141,7 @@ public final class Prestige {
 				.withStyle(s -> s.withColor(terrace.colour))));
 		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(
 				"Bonus: " + terrace.perk).withStyle(ChatFormatting.GRAY)));
-		level.playSound(null, altar, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.2f, 1.3f);
-		level.playSound(null, altar, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 2.0f, 0.8f);
+		level.playSound(null, altar, HellSounds.BLOOD_PRESTIGE.value(), SoundSource.PLAYERS, 1.2f, 1.07f);
 		for (int i = 0; i < 48; i++) {
 			// a rising spiral, like the angel's wing sweeping the brow
 			double a = i * 0.45;

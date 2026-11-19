@@ -5,7 +5,6 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -15,15 +14,16 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.cutscene.Cutscene;
 import net.thesmallthings.hellcraft.cutscene.Cutscenes;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.BossEntity;
 import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
-import net.thesmallthings.hellcraft.blood.HellItems;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.HashSet;
 import java.util.List;
@@ -113,7 +113,7 @@ final class MinotaurFight extends GuardianFight {
 		}
 		minotaur(body).play(MinotaurAnim.INTRO);
 		lockedUntil = tick + MinotaurAnim.INTRO.ticks;
-		schedule(MinotaurAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.5f));
+		schedule(MinotaurAnim.INTRO.at("roar"), () -> level.playSound(null, body.blockPosition(), HellSounds.MINOTAUR_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.88f));
 		return MinotaurAnim.INTRO.ticks;
 	}
 
@@ -168,7 +168,7 @@ final class MinotaurFight extends GuardianFight {
 		});
 		schedule(hit, () -> {
 			minotaur.warn(BossEntity.Warning.NONE);
-			level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 2.5f, 0.6f);
+			level.playSound(null, body.blockPosition(), HellSounds.MINOTAUR_GORE.value(), SoundSource.HOSTILE, 2.5f, 0.9f);
 			for (LivingEntity e : inWedge(c, angle, GORE_REACH, GORE_ARC)) {
 				if (e.hurtServer(level, level.damageSources().mobAttack(body), GORE_DAMAGE)) {
 					fling(e, c, 0.6, 0.9);
@@ -192,7 +192,7 @@ final class MinotaurFight extends GuardianFight {
 		tip("He paws the ground: a red line. Step aside before he charges!");
 		Danger.line(level, Danger.Colour.RED, c, angle, CHARGE_REACH, CHARGE_WIDTH, go);
 		schedule(go, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.5f, 0.9f);
+			level.playSound(null, body.blockPosition(), HellSounds.MINOTAUR_SNORT.value(), SoundSource.HOSTILE, 2.5f, 0.97f);
 			chargeDir = new Vec3(Math.cos(angle), 0, Math.sin(angle));
 			chargeUntil = tick + 20;
 			trampled.clear();
@@ -220,7 +220,7 @@ final class MinotaurFight extends GuardianFight {
 		tip("He rears onto one hoof: get out of the red circle!");
 		Danger.circle(level, Danger.Colour.RED, c, STOMP_RADIUS, slam);
 		schedule(slam, () -> {
-			level.playSound(null, body.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0f, 0.5f);
+			level.playSound(null, body.blockPosition(), HellSounds.MINOTAUR_CRASH.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 			BossFx.send(level, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLACKSTONE.defaultBlockState()), c.x, c.y + 0.3, c.z, 200,
 					STOMP_RADIUS * 0.5, 0.3, STOMP_RADIUS * 0.5, 0.2);
 			for (LivingEntity e : victims(c, STOMP_RADIUS + 0.3)) {
@@ -249,7 +249,7 @@ final class MinotaurFight extends GuardianFight {
 				fling(e, c, 1.2, 0.4);
 			}
 		});
-		schedule(spin, () -> level.playSound(null, body.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 2.5f, 0.5f));
+		schedule(spin, () -> level.playSound(null, body.blockPosition(), HellSounds.MINOTAUR_SPIN.value(), SoundSource.HOSTILE, 2.5f, 0.88f));
 		schedule(spun + 2, () -> minotaur.warn(BossEntity.Warning.NONE));
 		return MinotaurAnim.FRENZY.ticks + 20;
 	}
@@ -287,7 +287,7 @@ final class MinotaurFight extends GuardianFight {
 			minotaur.setDeltaMovement(Vec3.ZERO);
 			if (threaded()) {
 				// Ariadne's Thread: he loses his way and runs himself dizzy, as if he'd hit the wall
-				level.playSound(null, minotaur.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.0f, 0.4f);
+				level.playSound(null, minotaur.blockPosition(), HellSounds.MINOTAUR_STOMP.value(), SoundSource.HOSTILE, 2.0f, 0.85f);
 				stagger(minotaur, null);
 			}
 			return;
@@ -306,7 +306,7 @@ final class MinotaurFight extends GuardianFight {
 		if (minotaur.horizontalCollision && tick > chargeUntil - 18) {
 			chargeUntil = -1;
 			minotaur.setDeltaMovement(Vec3.ZERO);
-			level.playSound(null, minotaur.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 2.0f, 0.4f);
+			level.playSound(null, minotaur.blockPosition(), HellSounds.MINOTAUR_STOMP.value(), SoundSource.HOSTILE, 2.0f, 0.85f);
 			stagger(minotaur, null);
 		}
 	}
@@ -345,7 +345,7 @@ final class MinotaurFight extends GuardianFight {
 		lockedUntil = tick + MinotaurAnim.PHASE.ticks;
 		say("*He bit himself, like one whom anger inwardly consumes*");
 		tip("The Minotaur is furious: from now on he charges twice in a row.");
-		schedule(MinotaurAnim.PHASE.at("roar"), () -> level.playSound(null, minotaur.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 3.0f, 0.4f));
+		schedule(MinotaurAnim.PHASE.at("roar"), () -> level.playSound(null, minotaur.blockPosition(), HellSounds.MINOTAUR_ROAR.value(), SoundSource.HOSTILE, 3.0f, 0.85f));
 	}
 
 	@Override

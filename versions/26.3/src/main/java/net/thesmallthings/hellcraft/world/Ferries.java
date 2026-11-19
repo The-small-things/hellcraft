@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.phys.Vec3;
@@ -15,6 +14,7 @@ import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
 import net.thesmallthings.hellcraft.hazard.guardian.GuardianManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -72,7 +72,7 @@ public final class Ferries {
 							.withStyle(ChatFormatting.DARK_AQUA));
 				}
 			}
-			level.playSound(null, dock.x, dock.y, dock.z, SoundEvents.BELL_BLOCK, SoundSource.NEUTRAL, 2.0f, 0.5f);
+			level.playSound(null, dock.x, dock.y, dock.z, HellSounds.WORLD_FERRY_BELL.value(), SoundSource.NEUTRAL, 2.0f, 0.88f);
 		}
 		return ferry;
 	}

@@ -1,536 +1,4 @@
 {
-  "entity.damned.scream": {
-    "subtitle": "subtitles.hellcraft.entity.damned.scream",
-    "sounds": [
-      {
-        "name": "minecraft:mob/ghast/scream1",
-        "pitch": 1.3,
-        "volume": 0.55
-      },
-      {
-        "name": "minecraft:mob/ghast/scream2",
-        "pitch": 1.25,
-        "volume": 0.55
-      },
-      {
-        "name": "minecraft:mob/ghast/scream3",
-        "pitch": 1.4,
-        "volume": 0.5
-      },
-      {
-        "name": "minecraft:mob/ghast/scream4",
-        "pitch": 1.2,
-        "volume": 0.55
-      },
-      {
-        "name": "minecraft:mob/ghast/scream5",
-        "pitch": 1.35,
-        "volume": 0.5
-      },
-      {
-        "name": "minecraft:mob/ghast/moan3",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "minecraft:mob/ghast/moan6",
-        "pitch": 1.45,
-        "volume": 0.6
-      },
-      {
-        "name": "minecraft:mob/endermen/scream1",
-        "pitch": 0.75,
-        "volume": 0.45
-      },
-      {
-        "name": "minecraft:mob/endermen/scream3",
-        "pitch": 0.8,
-        "volume": 0.45
-      },
-      {
-        "name": "minecraft:mob/zombie_villager/hurt1",
-        "pitch": 0.7,
-        "volume": 0.6
-      },
-      {
-        "name": "minecraft:mob/zombie_villager/hurt2",
-        "pitch": 0.65,
-        "volume": 0.6
-      }
-    ]
-  },
-  "entity.damned.sigh": {
-    "subtitle": "subtitles.hellcraft.entity.damned.sigh",
-    "sounds": [
-      {
-        "name": "minecraft:mob/ghast/moan1",
-        "pitch": 1.8,
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:mob/ghast/moan2",
-        "pitch": 1.75,
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:mob/ghast/moan4",
-        "pitch": 1.85,
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:mob/ghast/moan5",
-        "pitch": 1.8,
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:mob/ghast/moan7",
-        "pitch": 1.7,
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:mob/allay/idle_without_item1",
-        "pitch": 0.6,
-        "volume": 0.35
-      },
-      {
-        "name": "minecraft:mob/allay/idle_without_item3",
-        "pitch": 0.55,
-        "volume": 0.35
-      }
-    ]
-  },
-  "ambient.vestibule.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:ambient.soul_sand_valley.loop",
-        "type": "event",
-        "volume": 0.5,
-        "pitch": 0.9
-      }
-    ]
-  },
-  "ambient.limbo.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:ambient.warped_forest.loop",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 0.75
-      }
-    ]
-  },
-  "ambient.lust.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:item.elytra.flying",
-        "type": "event",
-        "volume": 0.35,
-        "pitch": 0.6
-      }
-    ]
-  },
-  "ambient.gluttony.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:weather.rain",
-        "type": "event",
-        "volume": 0.45,
-        "pitch": 0.8
-      }
-    ]
-  },
-  "ambient.styx.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:ambient.underwater.loop",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "ambient.cocytus.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:item.elytra.flying",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.45
-      }
-    ]
-  },
-  "ambient.judecca.bed": {
-    "sounds": [
-      {
-        "name": "minecraft:item.elytra.flying",
-        "type": "event",
-        "volume": 0.35,
-        "pitch": 0.4
-      }
-    ]
-  },
-  "ambient.vestibule.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.vestibule",
-    "sounds": [
-      {
-        "name": "minecraft:entity.bee.loop_aggressive",
-        "type": "event",
-        "volume": 0.25,
-        "pitch": 0.8,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.beehive.work",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 0.7
-      },
-      {
-        "name": "minecraft:entity.allay.ambient_without_item",
-        "type": "event",
-        "volume": 0.25,
-        "pitch": 0.5
-      }
-    ]
-  },
-  "ambient.limbo.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.limbo",
-    "sounds": [
-      {
-        "name": "minecraft:ambient.soul_sand_valley.additions",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.9,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.allay.ambient_without_item",
-        "type": "event",
-        "volume": 0.2,
-        "pitch": 0.55
-      },
-      {
-        "name": "minecraft:block.amethyst_block.chime",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.5
-      }
-    ]
-  },
-  "ambient.lust.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.lust",
-    "sounds": [
-      {
-        "name": "minecraft:entity.phantom.flap",
-        "type": "event",
-        "volume": 0.5,
-        "pitch": 0.7,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.breeze.wind_burst",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 0.6,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.lightning_bolt.thunder",
-        "type": "event",
-        "volume": 0.12,
-        "pitch": 0.6
-      }
-    ]
-  },
-  "ambient.gluttony.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.gluttony",
-    "sounds": [
-      {
-        "name": "minecraft:block.mud.step",
-        "type": "event",
-        "volume": 0.8,
-        "pitch": 0.6,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.slime.squish",
-        "type": "event",
-        "volume": 0.5,
-        "pitch": 0.5,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:weather.rain.above",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "ambient.greed.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.greed",
-    "sounds": [
-      {
-        "name": "minecraft:block.chain.step",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.8,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.anvil.land",
-        "type": "event",
-        "volume": 0.12,
-        "pitch": 0.5
-      },
-      {
-        "name": "minecraft:block.amethyst_block.chime",
-        "type": "event",
-        "volume": 0.35,
-        "pitch": 1.6,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.chain.fall",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "ambient.styx.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.styx",
-    "sounds": [
-      {
-        "name": "minecraft:block.bubble_column.upwards_ambient",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.7,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.frog.ambient",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 0.6
-      },
-      {
-        "name": "minecraft:block.pointed_dripstone.drip_water",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.8
-      }
-    ]
-  },
-  "ambient.heresy.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.heresy",
-    "sounds": [
-      {
-        "name": "minecraft:block.fire.ambient",
-        "type": "event",
-        "volume": 0.8,
-        "pitch": 0.8,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:ambient.soul_sand_valley.additions",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.8
-      }
-    ]
-  },
-  "ambient.phlegethon.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.phlegethon",
-    "sounds": [
-      {
-        "name": "minecraft:block.lava.pop",
-        "type": "event",
-        "volume": 0.8,
-        "pitch": 0.7,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.lava.ambient",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.6
-      }
-    ]
-  },
-  "ambient.suicides.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.suicides",
-    "sounds": [
-      {
-        "name": "minecraft:block.creaking_heart.idle",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.7,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.creaking.ambient",
-        "type": "event",
-        "volume": 0.5,
-        "pitch": 0.6
-      }
-    ]
-  },
-  "ambient.sands.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.sands",
-    "sounds": [
-      {
-        "name": "minecraft:block.fire.ambient",
-        "type": "event",
-        "volume": 0.7,
-        "pitch": 0.7,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:item.bucket.empty_lava",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.6
-      },
-      {
-        "name": "minecraft:block.dry_grass.ambient",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "ambient.malebolge.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.malebolge",
-    "sounds": [
-      {
-        "name": "minecraft:block.chain.step",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.6,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:entity.zombified_piglin.ambient",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.7
-      },
-      {
-        "name": "minecraft:ambient.cave",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.8
-      }
-    ]
-  },
-  "ambient.pitch.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.pitch",
-    "sounds": [
-      {
-        "name": "minecraft:block.lava.pop",
-        "type": "event",
-        "volume": 0.5,
-        "pitch": 0.5,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.honey_block.slide",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.5
-      }
-    ]
-  },
-  "ambient.giants.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.giants",
-    "sounds": [
-      {
-        "name": "minecraft:entity.warden.heartbeat",
-        "type": "event",
-        "volume": 0.7,
-        "pitch": 0.5
-      }
-    ]
-  },
-  "ambient.cocytus.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.cocytus",
-    "sounds": [
-      {
-        "name": "minecraft:block.glass.hit",
-        "type": "event",
-        "volume": 0.35,
-        "pitch": 0.5,
-        "weight": 3
-      },
-      {
-        "name": "minecraft:block.glass.break",
-        "type": "event",
-        "volume": 0.15,
-        "pitch": 0.4
-      },
-      {
-        "name": "minecraft:block.powder_snow.step",
-        "type": "event",
-        "volume": 0.6,
-        "pitch": 0.6
-      }
-    ]
-  },
-  "ambient.judecca.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.judecca",
-    "sounds": [
-      {
-        "name": "minecraft:entity.warden.heartbeat",
-        "type": "event",
-        "volume": 0.9,
-        "pitch": 0.35,
-        "weight": 3
-      },
-      {
-        "name": "minecraft:block.glass.hit",
-        "type": "event",
-        "volume": 0.3,
-        "pitch": 0.45
-      }
-    ]
-  },
-  "ambient.forge.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.forge",
-    "sounds": [
-      {
-        "name": "minecraft:block.anvil.land",
-        "type": "event",
-        "volume": 0.12,
-        "pitch": 0.8,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.anvil.use",
-        "type": "event",
-        "volume": 0.2,
-        "pitch": 0.7
-      }
-    ]
-  },
-  "ambient.paradiso.detail": {
-    "subtitle": "subtitles.hellcraft.ambient.paradiso",
-    "sounds": [
-      {
-        "name": "minecraft:block.amethyst_block.chime",
-        "type": "event",
-        "volume": 0.5,
-        "pitch": 1.2,
-        "weight": 2
-      },
-      {
-        "name": "minecraft:block.amethyst_block.resonate",
-        "type": "event",
-        "volume": 0.4,
-        "pitch": 1.1
-      }
-    ]
-  },
   "cue.red": {
     "subtitle": "subtitles.hellcraft.cue.red",
     "sounds": [
@@ -696,6 +164,2532 @@
     "sounds": [
       {
         "name": "hellcraft:cue/purple_short"
+      }
+    ]
+  },
+  "combat.guard_block": {
+    "subtitle": "subtitles.hellcraft.combat.guard_block",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/guard_block_1"
+      },
+      {
+        "name": "hellcraft:sfx/combat/guard_block_2"
+      }
+    ]
+  },
+  "combat.parry_clash": {
+    "subtitle": "subtitles.hellcraft.combat.parry_clash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/parry_clash_1"
+      }
+    ]
+  },
+  "combat.guard_break": {
+    "subtitle": "subtitles.hellcraft.combat.guard_break",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/guard_break_1"
+      }
+    ]
+  },
+  "combat.swing_light": {
+    "subtitle": "subtitles.hellcraft.combat.swing_light",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/swing_light_1"
+      },
+      {
+        "name": "hellcraft:sfx/combat/swing_light_2"
+      },
+      {
+        "name": "hellcraft:sfx/combat/swing_light_3"
+      }
+    ]
+  },
+  "combat.swing_heavy": {
+    "subtitle": "subtitles.hellcraft.combat.swing_heavy",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/swing_heavy_1"
+      },
+      {
+        "name": "hellcraft:sfx/combat/swing_heavy_2"
+      }
+    ]
+  },
+  "combat.shockwave": {
+    "subtitle": "subtitles.hellcraft.combat.shockwave",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/shockwave_1"
+      }
+    ]
+  },
+  "combat.roll": {
+    "subtitle": "subtitles.hellcraft.combat.roll",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/combat/roll_1"
+      },
+      {
+        "name": "hellcraft:sfx/combat/roll_2"
+      }
+    ]
+  },
+  "blood.altar_charge": {
+    "subtitle": "subtitles.hellcraft.blood.altar_charge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/altar_charge_1"
+      }
+    ]
+  },
+  "blood.altar_bind": {
+    "subtitle": "subtitles.hellcraft.blood.altar_bind",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/altar_bind_1"
+      }
+    ]
+  },
+  "blood.altar_offer": {
+    "subtitle": "subtitles.hellcraft.blood.altar_offer",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/altar_offer_1"
+      }
+    ]
+  },
+  "blood.drink": {
+    "subtitle": "subtitles.hellcraft.blood.drink",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/drink_1"
+      }
+    ]
+  },
+  "blood.heart_surge": {
+    "subtitle": "subtitles.hellcraft.blood.heart_surge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/heart_surge_1"
+      }
+    ]
+  },
+  "blood.squelch": {
+    "subtitle": "subtitles.hellcraft.blood.squelch",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/squelch_1"
+      }
+    ]
+  },
+  "blood.candle": {
+    "subtitle": "subtitles.hellcraft.blood.candle",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/candle_1"
+      }
+    ]
+  },
+  "blood.revive": {
+    "subtitle": "subtitles.hellcraft.blood.revive",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/revive_1"
+      }
+    ]
+  },
+  "blood.prestige": {
+    "subtitle": "subtitles.hellcraft.blood.prestige",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/prestige_1"
+      }
+    ]
+  },
+  "blood.forge": {
+    "subtitle": "subtitles.hellcraft.blood.forge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/blood/forge_1"
+      }
+    ]
+  },
+  "weapon.art_ready": {
+    "subtitle": "subtitles.hellcraft.weapon.art_ready",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/weapon/art_ready_1"
+      }
+    ]
+  },
+  "weapon.art_unleash": {
+    "subtitle": "subtitles.hellcraft.weapon.art_unleash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/weapon/art_unleash_1"
+      }
+    ]
+  },
+  "weapon.reap": {
+    "subtitle": "subtitles.hellcraft.weapon.reap",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/weapon/reap_1"
+      }
+    ]
+  },
+  "weapon.howl": {
+    "subtitle": "subtitles.hellcraft.weapon.howl",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/weapon/howl_1"
+      }
+    ]
+  },
+  "weapon.shatter": {
+    "subtitle": "subtitles.hellcraft.weapon.shatter",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/weapon/shatter_1"
+      }
+    ]
+  },
+  "weapon.cleave": {
+    "subtitle": "subtitles.hellcraft.weapon.cleave",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/weapon/cleave_1"
+      }
+    ]
+  },
+  "armour.blood": {
+    "subtitle": "subtitles.hellcraft.armour.blood",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/armour/blood_1"
+      }
+    ]
+  },
+  "armour.infernal": {
+    "subtitle": "subtitles.hellcraft.armour.infernal",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/armour/infernal_1"
+      }
+    ]
+  },
+  "armour.halo": {
+    "subtitle": "subtitles.hellcraft.armour.halo",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/armour/halo_1"
+      }
+    ]
+  },
+  "armour.wings": {
+    "subtitle": "subtitles.hellcraft.armour.wings",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/armour/wings_1"
+      }
+    ]
+  },
+  "travel.depart": {
+    "subtitle": "subtitles.hellcraft.travel.depart",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/travel/depart_1"
+      }
+    ]
+  },
+  "travel.arrive": {
+    "subtitle": "subtitles.hellcraft.travel.arrive",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/travel/arrive_1"
+      }
+    ]
+  },
+  "relic.halo": {
+    "subtitle": "subtitles.hellcraft.relic.halo",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/relic/halo_1"
+      }
+    ]
+  },
+  "relic.wings": {
+    "subtitle": "subtitles.hellcraft.relic.wings",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/relic/wings_1"
+      }
+    ]
+  },
+  "ghost.wail": {
+    "subtitle": "subtitles.hellcraft.ghost.wail",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ghost/wail_1"
+      }
+    ]
+  },
+  "ui.triumph": {
+    "subtitle": "subtitles.hellcraft.ui.triumph",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ui/triumph_1"
+      }
+    ]
+  },
+  "ui.lesson": {
+    "subtitle": "subtitles.hellcraft.ui.lesson",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ui/lesson_1"
+      }
+    ]
+  },
+  "ui.pilgrimage": {
+    "subtitle": "subtitles.hellcraft.ui.pilgrimage",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ui/pilgrimage_1"
+      }
+    ]
+  },
+  "ui.bounty": {
+    "subtitle": "subtitles.hellcraft.ui.bounty",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ui/bounty_1"
+      }
+    ]
+  },
+  "world.lift": {
+    "subtitle": "subtitles.hellcraft.world.lift",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/lift_1"
+      }
+    ]
+  },
+  "world.lift_land": {
+    "subtitle": "subtitles.hellcraft.world.lift_land",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/lift_land_1"
+      }
+    ]
+  },
+  "world.thread": {
+    "subtitle": "subtitles.hellcraft.world.thread",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/thread_1"
+      }
+    ]
+  },
+  "world.stone_grind": {
+    "subtitle": "subtitles.hellcraft.world.stone_grind",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/stone_grind_1"
+      }
+    ]
+  },
+  "world.ferry_bell": {
+    "subtitle": "subtitles.hellcraft.world.ferry_bell",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/ferry_bell_1"
+      }
+    ]
+  },
+  "world.light_column": {
+    "subtitle": "subtitles.hellcraft.world.light_column",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/light_column_1"
+      }
+    ]
+  },
+  "world.sphere_open": {
+    "subtitle": "subtitles.hellcraft.world.sphere_open",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/sphere_open_1"
+      }
+    ]
+  },
+  "world.chime": {
+    "subtitle": "subtitles.hellcraft.world.chime",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/chime_1"
+      }
+    ]
+  },
+  "world.terrace": {
+    "subtitle": "subtitles.hellcraft.world.terrace",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/world/terrace_1"
+      }
+    ]
+  },
+  "spine.heartbeat": {
+    "subtitle": "subtitles.hellcraft.spine.heartbeat",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/spine/heartbeat_1"
+      }
+    ]
+  },
+  "spine.whisper": {
+    "subtitle": "subtitles.hellcraft.spine.whisper",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/spine/whisper_1"
+      },
+      {
+        "name": "hellcraft:sfx/spine/whisper_2"
+      }
+    ]
+  },
+  "shade.sigh": {
+    "subtitle": "subtitles.hellcraft.shade.sigh",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/shade/sigh_1"
+      },
+      {
+        "name": "hellcraft:sfx/shade/sigh_2"
+      }
+    ]
+  },
+  "shade.trade": {
+    "subtitle": "subtitles.hellcraft.shade.trade",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/shade/trade_1"
+      }
+    ]
+  },
+  "ferry.creak": {
+    "subtitle": "subtitles.hellcraft.ferry.creak",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ferry/creak_1"
+      }
+    ]
+  },
+  "ferry.dock": {
+    "subtitle": "subtitles.hellcraft.ferry.dock",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ferry/dock_1"
+      }
+    ]
+  },
+  "ferry.paddle": {
+    "subtitle": "subtitles.hellcraft.ferry.paddle",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ferry/paddle_1"
+      }
+    ]
+  },
+  "slag.hiss": {
+    "subtitle": "subtitles.hellcraft.slag.hiss",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/slag/hiss_1"
+      }
+    ]
+  },
+  "slag.pop": {
+    "subtitle": "subtitles.hellcraft.slag.pop",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/slag/pop_1"
+      }
+    ]
+  },
+  "slag.crack": {
+    "subtitle": "subtitles.hellcraft.slag.crack",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/slag/crack_1"
+      }
+    ]
+  },
+  "hazard.flare": {
+    "subtitle": "subtitles.hellcraft.hazard.flare",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/hazard/flare_1"
+      }
+    ]
+  },
+  "rules.tomb_rumble": {
+    "subtitle": "subtitles.hellcraft.rules.tomb_rumble",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/tomb_rumble_1"
+      }
+    ]
+  },
+  "rules.tomb_blast": {
+    "subtitle": "subtitles.hellcraft.rules.tomb_blast",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/tomb_blast_1"
+      }
+    ]
+  },
+  "rules.thorns": {
+    "subtitle": "subtitles.hellcraft.rules.thorns",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/thorns_1"
+      }
+    ]
+  },
+  "rules.tree_scream": {
+    "subtitle": "subtitles.hellcraft.rules.tree_scream",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/tree_scream_1"
+      }
+    ]
+  },
+  "rules.sand_breath": {
+    "subtitle": "subtitles.hellcraft.rules.sand_breath",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/sand_breath_1"
+      }
+    ]
+  },
+  "rules.illusion": {
+    "subtitle": "subtitles.hellcraft.rules.illusion",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/illusion_1"
+      }
+    ]
+  },
+  "rules.coins": {
+    "subtitle": "subtitles.hellcraft.rules.coins",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/coins_1"
+      }
+    ]
+  },
+  "rules.steal": {
+    "subtitle": "subtitles.hellcraft.rules.steal",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/steal_1"
+      }
+    ]
+  },
+  "rules.mud": {
+    "subtitle": "subtitles.hellcraft.rules.mud",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/mud_1"
+      }
+    ]
+  },
+  "rules.sullen": {
+    "subtitle": "subtitles.hellcraft.rules.sullen",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/rules/sullen_1"
+      }
+    ]
+  },
+  "champion.taunt": {
+    "subtitle": "subtitles.hellcraft.champion.taunt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/champion/taunt_1"
+      }
+    ]
+  },
+  "champion.blink": {
+    "subtitle": "subtitles.hellcraft.champion.blink",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/champion/blink_1"
+      }
+    ]
+  },
+  "champion.clang": {
+    "subtitle": "subtitles.hellcraft.champion.clang",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/champion/clang_1"
+      }
+    ]
+  },
+  "champion.arrive": {
+    "subtitle": "subtitles.hellcraft.champion.arrive",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/champion/arrive_1"
+      }
+    ]
+  },
+  "mood.vestibule": {
+    "subtitle": "subtitles.hellcraft.mood.vestibule",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/vestibule_1"
+      }
+    ]
+  },
+  "mood.acheron": {
+    "subtitle": "subtitles.hellcraft.mood.acheron",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/acheron_1"
+      }
+    ]
+  },
+  "mood.limbo": {
+    "subtitle": "subtitles.hellcraft.mood.limbo",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/limbo_1"
+      }
+    ]
+  },
+  "mood.lust": {
+    "subtitle": "subtitles.hellcraft.mood.lust",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/lust_1"
+      }
+    ]
+  },
+  "mood.gluttony": {
+    "subtitle": "subtitles.hellcraft.mood.gluttony",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/gluttony_1"
+      }
+    ]
+  },
+  "mood.greed": {
+    "subtitle": "subtitles.hellcraft.mood.greed",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/greed_1"
+      }
+    ]
+  },
+  "mood.styx": {
+    "subtitle": "subtitles.hellcraft.mood.styx",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/styx_1"
+      }
+    ]
+  },
+  "mood.heresy": {
+    "subtitle": "subtitles.hellcraft.mood.heresy",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/heresy_1"
+      }
+    ]
+  },
+  "mood.phlegethon": {
+    "subtitle": "subtitles.hellcraft.mood.phlegethon",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/phlegethon_1"
+      }
+    ]
+  },
+  "mood.malebolge": {
+    "subtitle": "subtitles.hellcraft.mood.malebolge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/malebolge_1"
+      }
+    ]
+  },
+  "mood.cocytus": {
+    "subtitle": "subtitles.hellcraft.mood.cocytus",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mood/cocytus_1"
+      }
+    ]
+  },
+  "ambient.vestibule.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/vestibule/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.limbo.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/limbo/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.lust.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/lust/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.gluttony.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/gluttony/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.styx.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/styx/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.cocytus.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/cocytus/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.judecca.bed": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/judecca/bed_1",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ambient.vestibule.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.vestibule",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/vestibule/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/vestibule/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.limbo.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.limbo",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/limbo/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/limbo/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.lust.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.lust",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/lust/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/lust/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.gluttony.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.gluttony",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/gluttony/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/gluttony/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.greed.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.greed",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/greed/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/greed/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.styx.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.styx",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/styx/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/styx/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.heresy.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.heresy",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/heresy/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/heresy/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.phlegethon.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.phlegethon",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/phlegethon/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/phlegethon/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.suicides.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.suicides",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/suicides/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/suicides/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.sands.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.sands",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/sands/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/sands/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.malebolge.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.malebolge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/malebolge/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/malebolge/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.pitch.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.pitch",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/pitch/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/pitch/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.giants.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.giants",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/giants/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/giants/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.cocytus.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.cocytus",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/cocytus/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/cocytus/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.judecca.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.judecca",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/judecca/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/judecca/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.forge.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.forge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/forge/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/forge/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.paradiso.detail": {
+    "subtitle": "subtitles.hellcraft.ambient.paradiso",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/paradiso/detail_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/ambient/paradiso/detail_2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "ambient.hell.mood": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/hell/mood_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/hell/mood_2"
+      }
+    ]
+  },
+  "ambient.ember.loop": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/ember/loop_1"
+      }
+    ]
+  },
+  "ambient.ember.additions": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/ember/additions_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/ember/additions_2"
+      }
+    ]
+  },
+  "ambient.tombs.loop": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/tombs/loop_1"
+      }
+    ]
+  },
+  "ambient.tombs.additions": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/tombs/additions_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/tombs/additions_2"
+      }
+    ]
+  },
+  "ambient.blood.loop": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/blood/loop_1"
+      }
+    ]
+  },
+  "ambient.blood.additions": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/blood/additions_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/blood/additions_2"
+      }
+    ]
+  },
+  "ambient.thicket.loop": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/thicket/loop_1"
+      }
+    ]
+  },
+  "ambient.thicket.additions": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/thicket/additions_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/thicket/additions_2"
+      }
+    ]
+  },
+  "ambient.ash.loop": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/ash/loop_1"
+      }
+    ]
+  },
+  "ambient.ash.additions": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/ash/additions_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/ash/additions_2"
+      }
+    ]
+  },
+  "ambient.forge.loop": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/forge/loop_1"
+      }
+    ]
+  },
+  "ambient.forge.additions": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/ambient/forge/additions_1"
+      },
+      {
+        "name": "hellcraft:sfx/ambient/forge/additions_2"
+      }
+    ]
+  },
+  "entity.damned.scream": {
+    "subtitle": "subtitles.hellcraft.entity.damned.scream",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/entity/damned/scream_1",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/entity/damned/scream_2",
+        "volume": 0.6
+      },
+      {
+        "name": "hellcraft:sfx/entity/damned/scream_3",
+        "volume": 0.6
+      }
+    ]
+  },
+  "entity.damned.sigh": {
+    "subtitle": "subtitles.hellcraft.entity.damned.sigh",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/entity/damned/sigh_1",
+        "volume": 0.4
+      },
+      {
+        "name": "hellcraft:sfx/entity/damned/sigh_2",
+        "volume": 0.4
+      },
+      {
+        "name": "hellcraft:sfx/entity/damned/sigh_3",
+        "volume": 0.4
+      }
+    ]
+  },
+  "damned.lash": {
+    "subtitle": "subtitles.hellcraft.damned.lash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/damned/lash_1"
+      }
+    ]
+  },
+  "damned.weight": {
+    "subtitle": "subtitles.hellcraft.damned.weight",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/damned/weight_1"
+      }
+    ]
+  },
+  "damned.splash": {
+    "subtitle": "subtitles.hellcraft.damned.splash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/damned/splash_1"
+      }
+    ]
+  },
+  "boss.awaken": {
+    "subtitle": "subtitles.hellcraft.boss.awaken",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/boss/awaken_1"
+      }
+    ]
+  },
+  "boss.warn": {
+    "subtitle": "subtitles.hellcraft.boss.warn",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/boss/warn_1"
+      }
+    ]
+  },
+  "boss.pull": {
+    "subtitle": "subtitles.hellcraft.boss.pull",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/boss/pull_1"
+      }
+    ]
+  },
+  "boss.banish": {
+    "subtitle": "subtitles.hellcraft.boss.banish",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/boss/banish_1"
+      }
+    ]
+  },
+  "boss.boom": {
+    "subtitle": "subtitles.hellcraft.boss.boom",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/boss/boom_1"
+      },
+      {
+        "name": "hellcraft:sfx/boss/boom_2"
+      }
+    ]
+  },
+  "boss.fall": {
+    "subtitle": "subtitles.hellcraft.boss.fall",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/boss/fall_1"
+      }
+    ]
+  },
+  "minos.rise": {
+    "subtitle": "subtitles.hellcraft.minos.rise",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minos/rise_1"
+      }
+    ]
+  },
+  "minos.roar": {
+    "subtitle": "subtitles.hellcraft.minos.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minos/roar_1"
+      },
+      {
+        "name": "hellcraft:sfx/minos/roar_2"
+      }
+    ]
+  },
+  "minos.swipe": {
+    "subtitle": "subtitles.hellcraft.minos.swipe",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minos/swipe_1"
+      }
+    ]
+  },
+  "minos.tail_sweep": {
+    "subtitle": "subtitles.hellcraft.minos.tail_sweep",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minos/tail_sweep_1"
+      }
+    ]
+  },
+  "minos.lunge": {
+    "subtitle": "subtitles.hellcraft.minos.lunge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minos/lunge_1"
+      }
+    ]
+  },
+  "minos.judgement": {
+    "subtitle": "subtitles.hellcraft.minos.judgement",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minos/judgement_1"
+      }
+    ]
+  },
+  "cerberus.emerge": {
+    "subtitle": "subtitles.hellcraft.cerberus.emerge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/emerge_1"
+      }
+    ]
+  },
+  "cerberus.roar": {
+    "subtitle": "subtitles.hellcraft.cerberus.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/roar_1"
+      },
+      {
+        "name": "hellcraft:sfx/cerberus/roar_2"
+      }
+    ]
+  },
+  "cerberus.growl": {
+    "subtitle": "subtitles.hellcraft.cerberus.growl",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/growl_1"
+      }
+    ]
+  },
+  "cerberus.howl": {
+    "subtitle": "subtitles.hellcraft.cerberus.howl",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/howl_1"
+      }
+    ]
+  },
+  "cerberus.hurt": {
+    "subtitle": "subtitles.hellcraft.cerberus.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/hurt_1"
+      }
+    ]
+  },
+  "cerberus.bite": {
+    "subtitle": "subtitles.hellcraft.cerberus.bite",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/bite_1"
+      },
+      {
+        "name": "hellcraft:sfx/cerberus/bite_2"
+      }
+    ]
+  },
+  "cerberus.spit": {
+    "subtitle": "subtitles.hellcraft.cerberus.spit",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/spit_1"
+      }
+    ]
+  },
+  "cerberus.mud": {
+    "subtitle": "subtitles.hellcraft.cerberus.mud",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/mud_1"
+      }
+    ]
+  },
+  "cerberus.stomp": {
+    "subtitle": "subtitles.hellcraft.cerberus.stomp",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cerberus/stomp_1"
+      }
+    ]
+  },
+  "plutus.coins": {
+    "subtitle": "subtitles.hellcraft.plutus.coins",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/plutus/coins_1"
+      }
+    ]
+  },
+  "plutus.roar": {
+    "subtitle": "subtitles.hellcraft.plutus.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/plutus/roar_1"
+      }
+    ]
+  },
+  "plutus.slam": {
+    "subtitle": "subtitles.hellcraft.plutus.slam",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/plutus/slam_1"
+      },
+      {
+        "name": "hellcraft:sfx/plutus/slam_2"
+      }
+    ]
+  },
+  "plutus.coin_roll": {
+    "subtitle": "subtitles.hellcraft.plutus.coin_roll",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/plutus/coin_roll_1"
+      }
+    ]
+  },
+  "phlegyas.intro": {
+    "subtitle": "subtitles.hellcraft.phlegyas.intro",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/phlegyas/intro_1"
+      }
+    ]
+  },
+  "phlegyas.roar": {
+    "subtitle": "subtitles.hellcraft.phlegyas.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/phlegyas/roar_1"
+      }
+    ]
+  },
+  "phlegyas.oar_strike": {
+    "subtitle": "subtitles.hellcraft.phlegyas.oar_strike",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/phlegyas/oar_strike_1"
+      }
+    ]
+  },
+  "phlegyas.oar_sweep": {
+    "subtitle": "subtitles.hellcraft.phlegyas.oar_sweep",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/phlegyas/oar_sweep_1"
+      }
+    ]
+  },
+  "phlegyas.splash": {
+    "subtitle": "subtitles.hellcraft.phlegyas.splash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/phlegyas/splash_1"
+      }
+    ]
+  },
+  "phlegyas.shove": {
+    "subtitle": "subtitles.hellcraft.phlegyas.shove",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/phlegyas/shove_1"
+      }
+    ]
+  },
+  "furies.scream": {
+    "subtitle": "subtitles.hellcraft.furies.scream",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/furies/scream_1"
+      },
+      {
+        "name": "hellcraft:sfx/furies/scream_2"
+      }
+    ]
+  },
+  "furies.bite": {
+    "subtitle": "subtitles.hellcraft.furies.bite",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/furies/bite_1"
+      }
+    ]
+  },
+  "furies.dash": {
+    "subtitle": "subtitles.hellcraft.furies.dash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/furies/dash_1"
+      }
+    ]
+  },
+  "furies.land": {
+    "subtitle": "subtitles.hellcraft.furies.land",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/furies/land_1"
+      }
+    ]
+  },
+  "furies.hurt": {
+    "subtitle": "subtitles.hellcraft.furies.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/furies/hurt_1"
+      }
+    ]
+  },
+  "medusa.gaze": {
+    "subtitle": "subtitles.hellcraft.medusa.gaze",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/medusa/gaze_1"
+      }
+    ]
+  },
+  "medusa.hiss": {
+    "subtitle": "subtitles.hellcraft.medusa.hiss",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/medusa/hiss_1"
+      }
+    ]
+  },
+  "medusa.petrify": {
+    "subtitle": "subtitles.hellcraft.medusa.petrify",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/medusa/petrify_1"
+      }
+    ]
+  },
+  "farinata.flame": {
+    "subtitle": "subtitles.hellcraft.farinata.flame",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/farinata/flame_1"
+      },
+      {
+        "name": "hellcraft:sfx/farinata/flame_2"
+      }
+    ]
+  },
+  "farinata.roar": {
+    "subtitle": "subtitles.hellcraft.farinata.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/farinata/roar_1"
+      }
+    ]
+  },
+  "minotaur.roar": {
+    "subtitle": "subtitles.hellcraft.minotaur.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minotaur/roar_1"
+      },
+      {
+        "name": "hellcraft:sfx/minotaur/roar_2"
+      }
+    ]
+  },
+  "minotaur.snort": {
+    "subtitle": "subtitles.hellcraft.minotaur.snort",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minotaur/snort_1"
+      }
+    ]
+  },
+  "minotaur.gore": {
+    "subtitle": "subtitles.hellcraft.minotaur.gore",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minotaur/gore_1"
+      }
+    ]
+  },
+  "minotaur.crash": {
+    "subtitle": "subtitles.hellcraft.minotaur.crash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minotaur/crash_1"
+      }
+    ]
+  },
+  "minotaur.spin": {
+    "subtitle": "subtitles.hellcraft.minotaur.spin",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minotaur/spin_1"
+      }
+    ]
+  },
+  "minotaur.stomp": {
+    "subtitle": "subtitles.hellcraft.minotaur.stomp",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/minotaur/stomp_1"
+      }
+    ]
+  },
+  "geryon.roar": {
+    "subtitle": "subtitles.hellcraft.geryon.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/roar_1"
+      }
+    ]
+  },
+  "geryon.sting": {
+    "subtitle": "subtitles.hellcraft.geryon.sting",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/sting_1"
+      }
+    ]
+  },
+  "geryon.illusion": {
+    "subtitle": "subtitles.hellcraft.geryon.illusion",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/illusion_1"
+      }
+    ]
+  },
+  "geryon.hurt": {
+    "subtitle": "subtitles.hellcraft.geryon.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/hurt_1"
+      }
+    ]
+  },
+  "geryon.swoop": {
+    "subtitle": "subtitles.hellcraft.geryon.swoop",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/swoop_1"
+      }
+    ]
+  },
+  "geryon.flap": {
+    "subtitle": "subtitles.hellcraft.geryon.flap",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/flap_1"
+      }
+    ]
+  },
+  "geryon.mount": {
+    "subtitle": "subtitles.hellcraft.geryon.mount",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/geryon/mount_1"
+      }
+    ]
+  },
+  "vulcan.hammer": {
+    "subtitle": "subtitles.hellcraft.vulcan.hammer",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/vulcan/hammer_1"
+      }
+    ]
+  },
+  "vulcan.roar": {
+    "subtitle": "subtitles.hellcraft.vulcan.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/vulcan/roar_1"
+      }
+    ]
+  },
+  "vulcan.slam": {
+    "subtitle": "subtitles.hellcraft.vulcan.slam",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/vulcan/slam_1"
+      }
+    ]
+  },
+  "vulcan.lava": {
+    "subtitle": "subtitles.hellcraft.vulcan.lava",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/vulcan/lava_1"
+      }
+    ]
+  },
+  "vulcan.chain": {
+    "subtitle": "subtitles.hellcraft.vulcan.chain",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/vulcan/chain_1"
+      }
+    ]
+  },
+  "cyclops.roar": {
+    "subtitle": "subtitles.hellcraft.cyclops.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cyclops/roar_1"
+      }
+    ]
+  },
+  "cyclops.slam": {
+    "subtitle": "subtitles.hellcraft.cyclops.slam",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cyclops/slam_1"
+      }
+    ]
+  },
+  "cyclops.throw": {
+    "subtitle": "subtitles.hellcraft.cyclops.throw",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/cyclops/throw_1"
+      }
+    ]
+  },
+  "antaeus.groan": {
+    "subtitle": "subtitles.hellcraft.antaeus.groan",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/antaeus/groan_1"
+      }
+    ]
+  },
+  "antaeus.set_down": {
+    "subtitle": "subtitles.hellcraft.antaeus.set_down",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/antaeus/set_down_1"
+      }
+    ]
+  },
+  "seraph.radiance": {
+    "subtitle": "subtitles.hellcraft.seraph.radiance",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/radiance_1"
+      }
+    ]
+  },
+  "seraph.cry": {
+    "subtitle": "subtitles.hellcraft.seraph.cry",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/cry_1"
+      }
+    ]
+  },
+  "seraph.wings": {
+    "subtitle": "subtitles.hellcraft.seraph.wings",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/wings_1"
+      }
+    ]
+  },
+  "seraph.call": {
+    "subtitle": "subtitles.hellcraft.seraph.call",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/call_1"
+      }
+    ]
+  },
+  "seraph.flame": {
+    "subtitle": "subtitles.hellcraft.seraph.flame",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/flame_1"
+      }
+    ]
+  },
+  "seraph.burst": {
+    "subtitle": "subtitles.hellcraft.seraph.burst",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/burst_1"
+      }
+    ]
+  },
+  "seraph.unveil": {
+    "subtitle": "subtitles.hellcraft.seraph.unveil",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/unveil_1"
+      }
+    ]
+  },
+  "seraph.blaze": {
+    "subtitle": "subtitles.hellcraft.seraph.blaze",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/blaze_1"
+      }
+    ]
+  },
+  "seraph.summon": {
+    "subtitle": "subtitles.hellcraft.seraph.summon",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/seraph/summon_1"
+      }
+    ]
+  },
+  "angel.descend": {
+    "subtitle": "subtitles.hellcraft.angel.descend",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/angel/descend_1"
+      }
+    ]
+  },
+  "angel.ambient": {
+    "subtitle": "subtitles.hellcraft.angel.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/angel/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/angel/ambient_2"
+      }
+    ]
+  },
+  "angel.hurt": {
+    "subtitle": "subtitles.hellcraft.angel.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/angel/hurt_1"
+      }
+    ]
+  },
+  "angel.death": {
+    "subtitle": "subtitles.hellcraft.angel.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/angel/death_1"
+      }
+    ]
+  },
+  "lucifer.shout": {
+    "subtitle": "subtitles.hellcraft.lucifer.shout",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lucifer/shout_1"
+      }
+    ]
+  },
+  "lucifer.murmur": {
+    "subtitle": "subtitles.hellcraft.lucifer.murmur",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lucifer/murmur_1"
+      }
+    ]
+  },
+  "lucifer.toll": {
+    "subtitle": "subtitles.hellcraft.lucifer.toll",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lucifer/toll_1"
+      }
+    ]
+  },
+  "lucifer.curse": {
+    "subtitle": "subtitles.hellcraft.lucifer.curse",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lucifer/curse_1"
+      }
+    ]
+  },
+  "fallen.rise": {
+    "subtitle": "subtitles.hellcraft.fallen.rise",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/rise_1"
+      }
+    ]
+  },
+  "fallen.slash": {
+    "subtitle": "subtitles.hellcraft.fallen.slash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/slash_1"
+      },
+      {
+        "name": "hellcraft:sfx/fallen/slash_2"
+      }
+    ]
+  },
+  "fallen.wings": {
+    "subtitle": "subtitles.hellcraft.fallen.wings",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/wings_1"
+      }
+    ]
+  },
+  "fallen.dash": {
+    "subtitle": "subtitles.hellcraft.fallen.dash",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/dash_1"
+      }
+    ]
+  },
+  "fallen.star": {
+    "subtitle": "subtitles.hellcraft.fallen.star",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/star_1"
+      },
+      {
+        "name": "hellcraft:sfx/fallen/star_2"
+      }
+    ]
+  },
+  "fallen.shatter": {
+    "subtitle": "subtitles.hellcraft.fallen.shatter",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/shatter_1"
+      }
+    ]
+  },
+  "fallen.blink": {
+    "subtitle": "subtitles.hellcraft.fallen.blink",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/blink_1"
+      }
+    ]
+  },
+  "fallen.parried": {
+    "subtitle": "subtitles.hellcraft.fallen.parried",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/parried_1"
+      }
+    ]
+  },
+  "fallen.wings_break": {
+    "subtitle": "subtitles.hellcraft.fallen.wings_break",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/fallen/wings_break_1"
+      }
+    ]
+  },
+  "emperor.roar": {
+    "subtitle": "subtitles.hellcraft.emperor.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/roar_1"
+      }
+    ]
+  },
+  "emperor.ice_break": {
+    "subtitle": "subtitles.hellcraft.emperor.ice_break",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/ice_break_1"
+      }
+    ]
+  },
+  "emperor.slam": {
+    "subtitle": "subtitles.hellcraft.emperor.slam",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/slam_1"
+      },
+      {
+        "name": "hellcraft:sfx/emperor/slam_2"
+      }
+    ]
+  },
+  "emperor.drag": {
+    "subtitle": "subtitles.hellcraft.emperor.drag",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/drag_1"
+      }
+    ]
+  },
+  "emperor.inhale": {
+    "subtitle": "subtitles.hellcraft.emperor.inhale",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/inhale_1"
+      }
+    ]
+  },
+  "emperor.breath": {
+    "subtitle": "subtitles.hellcraft.emperor.breath",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/breath_1"
+      }
+    ]
+  },
+  "emperor.icicle": {
+    "subtitle": "subtitles.hellcraft.emperor.icicle",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/icicle_1"
+      },
+      {
+        "name": "hellcraft:sfx/emperor/icicle_2"
+      }
+    ]
+  },
+  "emperor.spikes": {
+    "subtitle": "subtitles.hellcraft.emperor.spikes",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/spikes_1"
+      }
+    ]
+  },
+  "emperor.swat_parried": {
+    "subtitle": "subtitles.hellcraft.emperor.swat_parried",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/swat_parried_1"
+      }
+    ]
+  },
+  "emperor.wingbeat": {
+    "subtitle": "subtitles.hellcraft.emperor.wingbeat",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/emperor/wingbeat_1"
+      }
+    ]
+  },
+  "wingbeat.flap": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/wingbeat/flap_1"
+      }
+    ]
+  },
+  "wingbeat.rumble": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/wingbeat/rumble_1"
+      }
+    ]
+  },
+  "impact.boom": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/impact/boom_1"
+      }
+    ]
+  },
+  "impact.smash": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/impact/smash_1"
+      }
+    ]
+  },
+  "impact.burst": {
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/impact/burst_1"
+      }
+    ]
+  },
+  "glutton.emerge": {
+    "subtitle": "subtitles.hellcraft.glutton.emerge",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/glutton/emerge_1"
+      }
+    ]
+  },
+  "glutton.squelch": {
+    "subtitle": "subtitles.hellcraft.glutton.squelch",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/glutton/squelch_1"
+      }
+    ]
+  },
+  "glutton.ambient": {
+    "subtitle": "subtitles.hellcraft.glutton.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/glutton/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/glutton/ambient_2"
+      }
+    ]
+  },
+  "glutton.hurt": {
+    "subtitle": "subtitles.hellcraft.glutton.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/glutton/hurt_1"
+      }
+    ]
+  },
+  "glutton.death": {
+    "subtitle": "subtitles.hellcraft.glutton.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/glutton/death_1"
+      }
+    ]
+  },
+  "mimic.rattle": {
+    "subtitle": "subtitles.hellcraft.mimic.rattle",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mimic/rattle_1"
+      }
+    ]
+  },
+  "mimic.open": {
+    "subtitle": "subtitles.hellcraft.mimic.open",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mimic/open_1"
+      }
+    ]
+  },
+  "mimic.roar": {
+    "subtitle": "subtitles.hellcraft.mimic.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mimic/roar_1"
+      }
+    ]
+  },
+  "mimic.ambient": {
+    "subtitle": "subtitles.hellcraft.mimic.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mimic/ambient_1"
+      }
+    ]
+  },
+  "mimic.hurt": {
+    "subtitle": "subtitles.hellcraft.mimic.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mimic/hurt_1"
+      }
+    ]
+  },
+  "mimic.death": {
+    "subtitle": "subtitles.hellcraft.mimic.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/mimic/death_1"
+      }
+    ]
+  },
+  "heretic.flame": {
+    "subtitle": "subtitles.hellcraft.heretic.flame",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/heretic/flame_1"
+      }
+    ]
+  },
+  "heretic.ambient": {
+    "subtitle": "subtitles.hellcraft.heretic.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/heretic/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/heretic/ambient_2"
+      }
+    ]
+  },
+  "heretic.hurt": {
+    "subtitle": "subtitles.hellcraft.heretic.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/heretic/hurt_1"
+      }
+    ]
+  },
+  "heretic.death": {
+    "subtitle": "subtitles.hellcraft.heretic.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/heretic/death_1"
+      }
+    ]
+  },
+  "malebranche.chain": {
+    "subtitle": "subtitles.hellcraft.malebranche.chain",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malebranche/chain_1"
+      }
+    ]
+  },
+  "malebranche.hook": {
+    "subtitle": "subtitles.hellcraft.malebranche.hook",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malebranche/hook_1"
+      }
+    ]
+  },
+  "malebranche.angry": {
+    "subtitle": "subtitles.hellcraft.malebranche.angry",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malebranche/angry_1"
+      }
+    ]
+  },
+  "malebranche.ambient": {
+    "subtitle": "subtitles.hellcraft.malebranche.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malebranche/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/malebranche/ambient_2"
+      }
+    ]
+  },
+  "malebranche.hurt": {
+    "subtitle": "subtitles.hellcraft.malebranche.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malebranche/hurt_1"
+      }
+    ]
+  },
+  "malebranche.death": {
+    "subtitle": "subtitles.hellcraft.malebranche.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malebranche/death_1"
+      }
+    ]
+  },
+  "malacoda.laugh": {
+    "subtitle": "subtitles.hellcraft.malacoda.laugh",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malacoda/laugh_1"
+      }
+    ]
+  },
+  "malacoda.ambient": {
+    "subtitle": "subtitles.hellcraft.malacoda.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/malacoda/ambient_1"
+      }
+    ]
+  },
+  "centaur.angry": {
+    "subtitle": "subtitles.hellcraft.centaur.angry",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/centaur/angry_1"
+      }
+    ]
+  },
+  "centaur.shoot": {
+    "subtitle": "subtitles.hellcraft.centaur.shoot",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/centaur/shoot_1"
+      }
+    ]
+  },
+  "centaur.ambient": {
+    "subtitle": "subtitles.hellcraft.centaur.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/centaur/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/centaur/ambient_2"
+      }
+    ]
+  },
+  "centaur.hurt": {
+    "subtitle": "subtitles.hellcraft.centaur.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/centaur/hurt_1"
+      }
+    ]
+  },
+  "centaur.death": {
+    "subtitle": "subtitles.hellcraft.centaur.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/centaur/death_1"
+      }
+    ]
+  },
+  "wrathful.roar": {
+    "subtitle": "subtitles.hellcraft.wrathful.roar",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/wrathful/roar_1"
+      }
+    ]
+  },
+  "wrathful.ambient": {
+    "subtitle": "subtitles.hellcraft.wrathful.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/wrathful/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/wrathful/ambient_2"
+      }
+    ]
+  },
+  "wrathful.hurt": {
+    "subtitle": "subtitles.hellcraft.wrathful.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/wrathful/hurt_1"
+      }
+    ]
+  },
+  "wrathful.death": {
+    "subtitle": "subtitles.hellcraft.wrathful.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/wrathful/death_1"
+      }
+    ]
+  },
+  "harpy.swoop": {
+    "subtitle": "subtitles.hellcraft.harpy.swoop",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/harpy/swoop_1"
+      }
+    ]
+  },
+  "harpy.screech": {
+    "subtitle": "subtitles.hellcraft.harpy.screech",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/harpy/screech_1"
+      }
+    ]
+  },
+  "harpy.ambient": {
+    "subtitle": "subtitles.hellcraft.harpy.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/harpy/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/harpy/ambient_2"
+      }
+    ]
+  },
+  "harpy.hurt": {
+    "subtitle": "subtitles.hellcraft.harpy.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/harpy/hurt_1"
+      }
+    ]
+  },
+  "harpy.death": {
+    "subtitle": "subtitles.hellcraft.harpy.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/harpy/death_1"
+      }
+    ]
+  },
+  "lovers.swoop": {
+    "subtitle": "subtitles.hellcraft.lovers.swoop",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lovers/swoop_1"
+      }
+    ]
+  },
+  "lovers.gust": {
+    "subtitle": "subtitles.hellcraft.lovers.gust",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lovers/gust_1"
+      }
+    ]
+  },
+  "lovers.ambient": {
+    "subtitle": "subtitles.hellcraft.lovers.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lovers/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/lovers/ambient_2"
+      }
+    ]
+  },
+  "lovers.hurt": {
+    "subtitle": "subtitles.hellcraft.lovers.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lovers/hurt_1"
+      }
+    ]
+  },
+  "lovers.death": {
+    "subtitle": "subtitles.hellcraft.lovers.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/lovers/death_1"
+      }
+    ]
+  },
+  "thief.steal": {
+    "subtitle": "subtitles.hellcraft.thief.steal",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/thief/steal_1"
+      }
+    ]
+  },
+  "thief.ambient": {
+    "subtitle": "subtitles.hellcraft.thief.ambient",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/thief/ambient_1"
+      },
+      {
+        "name": "hellcraft:sfx/thief/ambient_2"
+      }
+    ]
+  },
+  "thief.hurt": {
+    "subtitle": "subtitles.hellcraft.thief.hurt",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/thief/hurt_1"
+      }
+    ]
+  },
+  "thief.death": {
+    "subtitle": "subtitles.hellcraft.thief.death",
+    "sounds": [
+      {
+        "name": "hellcraft:sfx/thief/death_1"
+      }
+    ]
+  },
+  "music.dark_wood": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/dark_wood",
+        "stream": true
+      }
+    ]
+  },
+  "music.vestibule": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/vestibule",
+        "stream": true
+      }
+    ]
+  },
+  "music.limbo": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/limbo",
+        "stream": true
+      }
+    ]
+  },
+  "music.lust": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/lust",
+        "stream": true
+      }
+    ]
+  },
+  "music.gluttony": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/gluttony",
+        "stream": true
+      }
+    ]
+  },
+  "music.greed": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/greed",
+        "stream": true
+      }
+    ]
+  },
+  "music.dis": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/dis",
+        "stream": true
+      }
+    ]
+  },
+  "music.heresy": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/heresy",
+        "stream": true
+      }
+    ]
+  },
+  "music.violence": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/violence",
+        "stream": true
+      }
+    ]
+  },
+  "music.malebolge": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/malebolge",
+        "stream": true
+      }
+    ]
+  },
+  "music.cocytus": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/cocytus",
+        "stream": true
+      }
+    ]
+  },
+  "music.forge": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/forge",
+        "stream": true
+      }
+    ]
+  },
+  "music.purgatory": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/purgatory",
+        "stream": true
+      }
+    ]
+  },
+  "music.paradiso": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/paradiso",
+        "stream": true
+      }
+    ]
+  },
+  "music.empyrean": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/empyrean",
+        "stream": true
+      }
+    ]
+  },
+  "lucifer.duel": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/duel",
+        "stream": true
+      }
+    ]
+  },
+  "lucifer.enraged": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/enraged",
+        "stream": true
+      }
+    ]
+  },
+  "lucifer.true_form": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/true_form",
+        "stream": true
       }
     ]
   }

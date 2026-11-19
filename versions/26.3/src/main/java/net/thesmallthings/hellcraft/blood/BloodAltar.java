@@ -8,7 +8,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,7 +120,7 @@ public final class BloodAltar {
 		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 1));
 		player.sendSystemMessage(Component.literal("Blood Ward: circle hazards can't hurt you for "
 				+ config.wardMinutes + " minutes.").withStyle(ChatFormatting.DARK_RED));
-		level.playSound(null, pos, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 1.0f, 0.6f);
+		level.playSound(null, pos, HellSounds.BLOOD_ALTAR_CHARGE.value(), SoundSource.BLOCKS, 1.0f, 0.9f);
 		ritual(level, pos, 30);
 		return true;
 	}
@@ -139,7 +139,7 @@ public final class BloodAltar {
 		HellState.get(level.getServer()).setDirty();
 		player.sendSystemMessage(Component.literal("Respawn set: you'll respawn at this altar when you die.")
 				.withStyle(ChatFormatting.DARK_RED));
-		level.playSound(null, pos, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.BLOCKS, 1.0f, 0.8f);
+		level.playSound(null, pos, HellSounds.BLOOD_ALTAR_BIND.value(), SoundSource.BLOCKS, 1.0f, 0.95f);
 		ritual(level, pos, 30);
 		return true;
 	}
@@ -164,7 +164,7 @@ public final class BloodAltar {
 		BloodItems.takeHearts(player, cost);
 		Ghosts.revive(level.getServer(), ghost, new HellState.GlobalSpot(level.dimension(), pos.above()));
 		ritual(level, pos, 60);
-		level.playSound(null, pos, SoundEvents.TOTEM_USE, SoundSource.BLOCKS, 1.0f, 0.7f);
+		level.playSound(null, pos, HellSounds.BLOOD_ALTAR_OFFER.value(), SoundSource.BLOCKS, 1.0f, 0.93f);
 		Journey.award(player, "journey/harrowing");
 		return true;
 	}

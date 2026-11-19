@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -30,6 +29,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.Carrier;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.FraudSites;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
@@ -196,7 +196,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 			case DOWN -> {
 				flyTo((double) t / FLIGHT, true);
 				if (t % 25 == 0) {
-					level.playSound(null, blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.NEUTRAL, 1.5f, 0.5f);
+					level.playSound(null, blockPosition(), HellSounds.GERYON_FLAP.value(), SoundSource.NEUTRAL, 1.5f, 0.88f);
 				}
 				if (t >= FLIGHT) {
 					setDown(landing, "Geryon sets you down on the fourth ridge of Malebolge. He waits a little, if you want to go back up.");
@@ -206,7 +206,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 			case UP -> {
 				flyTo(1.0 - (double) t / FLIGHT, false);
 				if (t % 25 == 0) {
-					level.playSound(null, blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.NEUTRAL, 1.5f, 0.5f);
+					level.playSound(null, blockPosition(), HellSounds.GERYON_FLAP.value(), SoundSource.NEUTRAL, 1.5f, 0.88f);
 				}
 				if (t >= FLIGHT) {
 					setDown(home, "Geryon sets you down at the brink of the great cliff.");
@@ -241,7 +241,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 				sp.sendOverlayMessage(Component.literal("Geryon takes off in a few seconds. Sneak now to get off; once he flies, don't.")
 						.withStyle(ChatFormatting.AQUA));
 			}
-			level().playSound(null, blockPosition(), SoundEvents.HORSE_SADDLE.value(), SoundSource.NEUTRAL, 1.0f, 0.6f);
+			level().playSound(null, blockPosition(), HellSounds.GERYON_MOUNT.value(), SoundSource.NEUTRAL, 1.0f, 0.9f);
 			return InteractionResult.SUCCESS_SERVER;
 		}
 		return InteractionResult.PASS;

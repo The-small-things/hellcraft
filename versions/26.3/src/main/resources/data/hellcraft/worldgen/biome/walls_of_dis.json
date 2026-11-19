@@ -5,21 +5,21 @@
     "minecraft:visual/water_fog_color": "#100505",
     "minecraft:audio/background_music": {
       "default": {
-        "sound": "minecraft:music.nether.nether_wastes",
-        "min_delay": 12000,
-        "max_delay": 24000
+        "sound": "hellcraft:music.dis",
+        "min_delay": 3600,
+        "max_delay": 9600
       }
     },
     "minecraft:audio/ambient_sounds": {
       "mood": {
-        "sound": "minecraft:ambient.nether_wastes.mood",
+        "sound": "hellcraft:ambient.hell.mood",
         "tick_delay": 6000,
         "block_search_extent": 8,
         "offset": 2.0
       },
-      "loop": "minecraft:ambient.nether_wastes.loop",
+      "loop": "hellcraft:ambient.ember.loop",
       "additions": {
-        "sound": "minecraft:ambient.nether_wastes.additions",
+        "sound": "hellcraft:ambient.ember.additions",
         "tick_chance": 0.0111
       }
     },

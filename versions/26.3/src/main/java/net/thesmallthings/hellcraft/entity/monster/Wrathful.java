@@ -2,7 +2,6 @@ package net.thesmallthings.hellcraft.entity.monster;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -20,6 +19,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.WrathfulAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * The wrathful (Wrath's monster, tools/art/wrathful.py): muddy brawlers of the Fen who fight anything near them, each
@@ -62,24 +62,24 @@ public class Wrathful extends SoulMonster {
 			playSpecial();
 			addEffect(new MobEffectInstance(MobEffects.SPEED, 100, 1));
 			addEffect(new MobEffectInstance(MobEffects.STRENGTH, 100, 0));
-			playSound(SoundEvents.RAVAGER_ROAR, 0.6f, 1.6f);
+			playSound(HellSounds.WRATHFUL_ROAR.value(), 0.6f, 1.15f);
 		}
 		return hurt;
 	}
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.VINDICATOR_AMBIENT;
+		return HellSounds.WRATHFUL_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.VINDICATOR_HURT;
+		return HellSounds.WRATHFUL_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.VINDICATOR_DEATH;
+		return HellSounds.WRATHFUL_DEATH.value();
 	}
 
 	@Override

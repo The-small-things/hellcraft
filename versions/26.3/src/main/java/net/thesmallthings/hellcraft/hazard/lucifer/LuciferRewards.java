@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -30,6 +29,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.thesmallthings.hellcraft.blood.BloodItems;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Scoreboards;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 
@@ -152,7 +152,7 @@ public final class LuciferRewards {
 		state.setDirty();
 		player.closeContainer();
 		BloodItems.give(player, reward);
-		Feedback.sound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1.0f, 1.0f);
+		Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.0f);
 		player.level().getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name()
 				+ " claimed " + option.label() + " as their reward for beating Lucifer.").withStyle(ChatFormatting.GOLD), false);
 	}

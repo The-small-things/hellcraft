@@ -3,7 +3,6 @@ package net.thesmallthings.hellcraft.entity.monster;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -19,6 +18,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.entity.boss.gen.HereticAnim;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 
 /**
  * The heretics (Heresy's monster, tools/art/heretic.py): souls burnt black in their open tombs. When a tomb blasts
@@ -54,7 +54,7 @@ public class Heretic extends SoulMonster {
 	public void rise() {
 		risingUntil = tickCount + HereticAnim.RISE.ticks;
 		playSpecial();
-		playSound(SoundEvents.BLAZE_AMBIENT, 1.2f, 0.5f);
+		playSound(HellSounds.HERETIC_FLAME.value(), 1.2f, 0.88f);
 	}
 
 	@Override
@@ -93,17 +93,17 @@ public class Heretic extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.HUSK_AMBIENT;
+		return HellSounds.HERETIC_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.HUSK_HURT;
+		return HellSounds.HERETIC_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.BLAZE_DEATH;
+		return HellSounds.HERETIC_DEATH.value();
 	}
 
 	@Override

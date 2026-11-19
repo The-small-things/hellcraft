@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
@@ -24,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.MalebrancheAnim;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +94,7 @@ public class Malebranche extends SoulMonster {
 		yBodyRot = getYRot();
 		yHeadRot = getYRot();
 		Danger.line(level, Danger.Colour.RED, aimFrom, aimAngle, HOOK_REACH, HOOK_WIDTH, AIM);
-		playSound(SoundEvents.CHAIN_PLACE, 1.0f, 0.6f);
+		playSound(HellSounds.MALEBRANCHE_CHAIN.value(), 1.0f, 0.9f);
 	}
 
 	/** The hook flies along the line: whoever is still on it is dragged in. */
@@ -102,7 +102,7 @@ public class Malebranche extends SoulMonster {
 		throwAt = -1;
 		nextHook = tickCount + HOOK_COOLDOWN + random.nextInt(60);
 		level.broadcastEntityEvent(this, EntityEvent.START_ATTACKING);
-		playSound(SoundEvents.FISHING_BOBBER_THROW, 1.2f, 0.5f);
+		playSound(HellSounds.MALEBRANCHE_HOOK.value(), 1.2f, 0.88f);
 		if (aimFrom == null) {
 			return;
 		}
@@ -128,7 +128,7 @@ public class Malebranche extends SoulMonster {
 			p.sendOverlayMessage(Component.literal("A Malebranche hooked you! When its red line is under you, step off it.")
 					.withStyle(ChatFormatting.RED));
 			playSpecial();
-			playSound(SoundEvents.PIGLIN_BRUTE_ANGRY, 1.0f, 1.4f);
+			playSound(HellSounds.MALEBRANCHE_ANGRY.value(), 1.0f, 1.1f);
 		}
 	}
 
@@ -144,17 +144,17 @@ public class Malebranche extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.PIGLIN_BRUTE_AMBIENT;
+		return HellSounds.MALEBRANCHE_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.PIGLIN_BRUTE_HURT;
+		return HellSounds.MALEBRANCHE_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.PIGLIN_BRUTE_DEATH;
+		return HellSounds.MALEBRANCHE_DEATH.value();
 	}
 
 	@Override

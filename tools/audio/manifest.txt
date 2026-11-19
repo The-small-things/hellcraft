@@ -1,0 +1,293 @@
+# event generation_id... (ElevenLabs flow B2dJN3tnbwtCG33QkRpn, "Hellcraft audio")
+combat.parry_clash 7N3i8pp2UPhhFWJVCQxR
+combat.guard_break 4SJdUXoNDOZZsDFocHbw
+combat.shockwave 7Jwf5NMVsvA0lc1MKuT8
+blood.altar_charge 5hggU81AFqGjhXEmX8iL
+blood.altar_bind N7nGZhOJWuJVD7tbcWfA
+blood.altar_offer mdDjWg8Y5A0tKFRrBuUU
+blood.drink OujgDgDg0ejkYOLU3Xuz
+blood.heart_surge GbtXdFAA3iUgwJ4j16rs
+blood.squelch zs2MzomWkbApurDq91xs
+blood.candle vnWAD3BXp7JnqAjNSpY3
+blood.revive tjxI7lPm6HMz6Vjs9fzK
+blood.prestige n7BiTMXyCwFWrJBaNqj2
+blood.forge Z32Xcs88EJOm7QCk7jft
+weapon.art_ready mjLSrHQIdfqpmkrs5J9U
+weapon.art_unleash RREZTEOX5NJ8iixCTf8V
+weapon.reap c63YaMVRtSpBAH0zrhHR
+weapon.howl P76tMNV0Qjwl6QGNVWNO
+weapon.shatter gFnwH5WZ35vuo4ns1zLC
+weapon.cleave qrdreXll6V9I1PTWmtuw
+combat.guard_block nNdzf4F3reRLnLer78xK XtVHscsdcInnxt662oZI
+combat.swing_heavy qbM8WeOtGXVddKIHxojf VJ0HljviCFd1dGdahmTu
+combat.roll uMk4yaO61VT5IR5eMoL3 U8w8EBjCFFHWeI1Z4xGQ
+combat.swing_light l5OVKDXdtnCw9IWusEuU Q8FPGKmKJR0DaRa2La9H MzQY6kDRBDpzOYhR0t39
+armour.blood sjhPcTVGrmIo1Yf1y4N4
+armour.infernal X2Zk8OFUy9JXZr32LUG6
+armour.halo VRqU6EOwLyaeLUsWaIa2
+armour.wings C0iIZCf1YJ3Zj8n70vOm
+travel.depart IutBVqBYIKFHrwecMGHV
+travel.arrive WoFwvRJeZ8HqtH3XxnbN
+relic.halo t5xLYpAlB54O9s17pG7t
+relic.wings Tq9d1JZVfUOZuUY7ZGff
+ghost.wail xt7rhaDrJJNuOdvNIciP
+ui.triumph wjlumyvo8KsmqWbFWQYO
+ui.lesson beKdZZhtFOqkFoTkhdxj
+ui.pilgrimage EV17LE0XZGhOqvx6kjTJ
+ui.bounty hp1rIGUsCUp1zoxQLrKI
+world.lift hFzOQSYn1RExpJS4ykYj
+world.lift_land TXYIdLkzuCSNIXtBJPMl
+world.thread 8ogRfwRINBhsqj0nbaHg
+world.stone_grind kwkENzs6J5g3KWsW1w4l
+world.ferry_bell XvAUoOOIQzi4D1UAiTlG
+world.light_column qtbNtW5fg7MllbOsq1Xb
+world.sphere_open FB3kiznzDnyrUlIGeLIq
+world.chime OVJhCByJ9DkQdNTVbMaN
+world.terrace FkYtbIigdTQiNUd1GTyr
+spine.heartbeat LvEhTRrbGxxy3dMEnSJF
+shade.trade YPveEUrHV9oRw2tEbQfD
+ferry.creak cZt0IDLaBxWnY6Haa8Wg
+ferry.dock IUkjeDwMmSYuFLbvQYJn
+ferry.paddle JJ5gqnHmByHMdpLWfGS6
+slag.hiss PRzYsvrk1LUeuGPitVGM
+slag.pop oeOfNNS1HT03V0qTToux
+slag.crack rQIbOalTMWpJY3ufNqCd
+hazard.flare vKxEX0v4pBng0dG3mx0k
+rules.tomb_rumble KPXDk6p9BmcFSxZhsMjr
+rules.tomb_blast ODS5FInfzQkqrKLYAxDi
+rules.thorns iUoLAVHkcwCJtdLIkv1A
+rules.tree_scream ij8zP5uP7umylS4ljMtR
+rules.sand_breath gYeDMsrLW8aMr1bs2vlv
+rules.illusion yN3b5GseVCN6b4owdFZp
+rules.coins ScHMsQX9Wo9X1HWMIV2p
+rules.steal 2bRVbxabtYRC7wQnw30q
+rules.mud kBdatkvy1PsfZD9ImLLZ
+rules.sullen DeaUwdnnG4Nlp6qhWrKk
+champion.taunt U92BOmPlRnvW7po4eVKZ
+champion.blink SsJubG8cgtwqCl1RproF
+champion.clang hZkDCC4rzXUiKBsCgwEY
+champion.arrive V5fZ9W1HBuJQ2ZIsD2uL
+mood.vestibule 6fVVtw530SgFfUpRZtCF
+mood.acheron fE2fJjZvY4ovy5QHliKm
+mood.limbo uY7GCt2lFLdIO8UuaxDI
+mood.lust ucUJcx5p10G5XwjdDiOX
+mood.gluttony QKA3rGruVzfDcY9dQvCW
+mood.greed Qr3BncWdmgL4vr8iXmBW
+mood.styx uTfqYYjliDl33klybwuY
+mood.heresy O23FzOr2gj3C7HwCDpYS
+mood.phlegethon km3yLVlVOz2Uci3pCud9
+mood.malebolge NjVG4WDchOfcXz4hsB8z
+mood.cocytus 8PjU3uyDFOsdj8V6x5Oi
+damned.lash 0VS9iubyBYPi0xvhCPnB
+damned.weight S269pwz8zaGIaEE92Drp
+damned.splash vFmnh0zNo1nMGf75sspI
+boss.awaken ucCEn4cr5ZE8PYsAfQFZ
+ambient.vestibule.bed uBhRoxPoc2mjvd4SrGlY
+ambient.limbo.bed yrD5b4M2D99qZdp9H91A
+ambient.lust.bed KJfHpXvJfeahSCh24dI9
+ambient.gluttony.bed SCEoB8Ta96oTV2ZCJjgD
+ambient.styx.bed GN8suOC4V20mubyUDTDx
+ambient.cocytus.bed UKRX2Vm6vAMGsxSR8tG8
+ambient.judecca.bed nhjIOLXYlPAuB88DuPi0
+ambient.ember.loop qhaq8imfoCI8SJCzKIna
+ambient.tombs.loop NU10UgHlMhrB1ytY2JIh
+ambient.blood.loop ZWMloGXcbkEBNUULIk3x
+ambient.thicket.loop AvUi67MdFxo6kcToj0Dq
+ambient.ash.loop XjFK4xmERCvURqA0SOKJ
+ambient.forge.loop hLFyhxRIyaghFzdddn0Q
+boss.warn xEZ7TJLlKNpVUeBPcl4S
+boss.pull Q9m6LV9zGYIMjuvB27l1
+boss.banish 6JtFZGLuD2sTi9drOdz5
+boss.fall lBdUpQBcR1BFRlAyz835
+minos.rise 0AK6DrxFpUkFQP3gFWsJ
+minos.swipe C23vW9olkAjI7VcXjSQa
+minos.tail_sweep 9mOSkcHDkMA3Vy8uqeyf
+minos.lunge sQPGcfMDARvxSNhiEdIM
+minos.judgement TlHt1GraS6xHBz5jytkW
+cerberus.emerge S8GxVVOtXto2Pc5i4wlm
+cerberus.growl m03iQlxV0f7UGzJe4r5Q
+cerberus.howl PPhykIhjoiKC1yO1ZzKW
+cerberus.hurt uiihcS4MKyUYwkPu5oLy
+cerberus.spit F6r1NxAC8oNWknl539FF
+cerberus.mud 2fvWDFqi9eP6Qpf7sWL8
+cerberus.stomp juw95pVFSkDnmOEfCg14
+plutus.coins hiU8oNgX3LcFsFaCrhqV
+plutus.roar LwSkw4WRYd2FsaRo7cix
+plutus.coin_roll aWYwBQmMPKzxpftucFY6
+phlegyas.intro bKHwrpVHgg0deyliDSub
+phlegyas.roar et6Sz1Ay2W9nnBYqeTD3
+phlegyas.oar_strike tfRWUwvV7hwHw7ZaziKn
+phlegyas.oar_sweep EtR5xLYWVM2U47qcNSnW
+phlegyas.splash tNTW5OuI3GCTKXFVkdjb
+phlegyas.shove kuxYqG58ixy2YzguGAS1
+furies.bite VvkPOS2IP2o1U5FCkjCu
+furies.dash Vj55dOm9NdMh370vqUNm
+furies.land YEtX0dzWIWgUVtOXxehw
+furies.hurt RFm81TDmHY9wtTxdREgr
+medusa.gaze cyTKLTlRfmwNT0enlzNv
+medusa.hiss ybfIxUVMRU2hMWXKkYn7
+medusa.petrify ULolINYTdQyZs1n6PxtG
+farinata.roar HLpqiA38dcZeWwWec5U9
+minotaur.snort 94etFOmMC6e9nzZ6Mj5l
+minotaur.gore 86FgJr4Nncn5oQoN1Nzl
+minotaur.crash Hi3Uf1xm4bteo2niIzS3
+minotaur.spin n6HxoKILVMfStitDSPxu
+minotaur.stomp OGLlWnxqNxIqad1RoT7F
+geryon.roar gmOW5L2VrMvmBMCcXAX4
+geryon.sting 9VGVmZOfmlYmyqxsQxph
+geryon.illusion mbelRjaq63dtSIG5PGzU
+geryon.hurt 1cYmfLzqE61Bu5kUUtsr
+geryon.swoop UET1TfAv1w98mX2rlhqh
+geryon.flap im4yNU91iFfQWpw2LVpG
+geryon.mount sJPywSB9KU6UJ0zSIwAV
+vulcan.hammer 2BrZyH4SZO2gnfgzAIig
+vulcan.roar UxzW4XTIlJyiCfJz4LYd
+vulcan.slam 3ctQczfYh6n4Wga6PG1o
+vulcan.lava zdnYE75k1tprtyJEe5PL
+vulcan.chain CyU0LkSpWaF5Ulfrp5Yc
+cyclops.roar 9u7PvFLTDu9M1fAwhb2C
+cyclops.slam jDQV2lrPuLgJ6Wac6leY
+cyclops.throw vUK1UQGxw6JAmofgogdX
+antaeus.groan Q44BJTcD7S3Qs3eiMF7T
+antaeus.set_down UiKbOMkSmZ37w1TqaQLU
+seraph.radiance dLNuR64wevqBd9zAuhsg
+seraph.cry p6TjjuPBprKZj55ozfDO
+seraph.wings nopHtFnG8EIHtiuAgf3V
+seraph.call V6BtPXApPWBgSuWEGim2
+seraph.flame AbfnDt5WdRMeJSnD7sCF
+seraph.burst rMQaF4C4zHQlB3Kawxga
+seraph.unveil J8XZAMz1UJjffz8SRdHm
+seraph.blaze x70ejopwXiuRWhpRIvZh
+seraph.summon KBMMRdlOW8cmqJxDMrmK
+angel.descend 6wsl0nUO0WXqqTIKkFOo
+angel.hurt oZ6ZgJyAqC3UEuq5drdq
+angel.death coUb7oDl78pb2f0JRGrT
+lucifer.shout rHK7ZodP5chVCWGCte28
+lucifer.murmur DOPPN0kKLyGYucHh5F8N
+lucifer.toll VISbFB19Obj9jtTLsFT5
+lucifer.curse fA9jT8LuzRE5RYdkRWAI
+fallen.rise YjgJ6dRosjr0kRvCXpRz
+fallen.wings qhLVycBzpOUkHgvQV2uL
+fallen.dash YR8aflIFhjQ31rDPjTZ9
+fallen.shatter W48SFhO7hr151sjsjc8C
+fallen.blink GZjC2DsB6qBsLsO3LjqF
+fallen.parried BBWfA9rKnHnZf6FP6klm
+fallen.wings_break uV2IsEdb8teJmy8ieqzy
+emperor.roar FUNY2qQzJZQF6bVs7j2C
+emperor.ice_break JRvRUBJrv9wx5f5L4VLp
+emperor.drag 8ap4KVr9lalHKzdJyX8j
+emperor.inhale hu9jngLQedrZMoKTNGRO
+emperor.breath T8uvIHP46lWwnB0aQcYK
+emperor.spikes KYPZhA548Z1Snbm2ooWm
+emperor.swat_parried 2Z2lAaVmJIAuOUr1tqMK
+emperor.wingbeat n1L9o08WvpdWMpDMOEFF
+wingbeat.flap XKL9FhbkEb4JyAjBqvNg
+wingbeat.rumble lvwvTmKAOzThoS5d6t8Q
+impact.boom q0KKlojAyylUE5nzUxbu
+impact.smash lmGpgZfz4BUZ3D2D83xb
+impact.burst l6oglH1ZQRWG1V3diOSQ
+glutton.emerge KQajJ3swFyU1QfLJ3Okl
+glutton.squelch Ow8W6JzcABZFyujQazBS
+glutton.hurt RsXceKnNOCkKcNRQ8fcY
+glutton.death DvtTigjR8VHnf2V4NK2n
+mimic.rattle 87moxpUhE4TA37AIPNTU
+mimic.open oKZVZpeMyKHT1h86JkG3
+mimic.roar 9rx9bWqwWkVRlqCpe4fs
+mimic.ambient YMoGIStjo3nItWrs0z26
+mimic.hurt ohAlvMO1dbNzJhk8Sz5h
+mimic.death IaHPfDpDWZogem6Zq9BB
+heretic.flame oshanJBai6SWV93Gz69B
+heretic.hurt aRzFhggqxbiNtvPB2tt7
+heretic.death lPUUabALx6xVXCUilIyT
+malebranche.chain lgnDXykARcKN5ZBoeBSi
+malebranche.hook RsyhlAdC0wMm4FdCjUcX
+malebranche.angry 2Hc9ryQw47UatZNRE2PY
+malebranche.hurt lSQm9YZBC52RBSKDDvHE
+malebranche.death k5DAnRmRp4ZypLQNNXQG
+malacoda.laugh ur2BBmtLSRZjM1125CLP
+malacoda.ambient nCpLDlGlUatUaKgLIvMZ
+centaur.angry LLwaHFo2SMUsVYZLM3PZ
+centaur.shoot H7g6qqmgaDI6hqpcjM9c
+centaur.hurt mCzK5fGqScKM010ukiUH
+centaur.death RCgx2HoYfuw5OdHI5s8r
+wrathful.roar aA7wPbJCbhZzv2yviC8q
+wrathful.hurt LgAC82IO2cZrSWrhR727
+wrathful.death IqX843RzfWV17AkfrWPZ
+harpy.swoop bcp4NFZvp1b5MwTofqpV
+harpy.screech A3PP6K15Gexgas5WWWbV
+harpy.hurt 5Jp542wgYhBlXidoDSAE
+harpy.death 9T0oGVqLhVb9cDrGvo2z
+lovers.swoop kp8bn3WEdtpPpMo00isa
+lovers.gust kLfqcCPpQt6zKXonB6Fv
+lovers.hurt MM3FUIBBULJp5KwB1JD6
+lovers.death JrSf3YUxOUSgIJZX9ckp
+thief.steal 5x7WW7Qkm1rIGgMNaRsT
+thief.hurt y1d8mON87f5nQPDUTEE6
+thief.death o6VH0vIA6hfdR08qKSj5
+spine.whisper kI7z2J4QlGEif9kTtpzm 9DoEJqjlF33fxyqtHNzJ
+shade.sigh gP5N0I2qO9idftNP1MpV t6G01WC6vA6kQm59MuAM
+ambient.vestibule.detail x0LRxs3LIb6Tpbmykbfk K4KZdFkLO5stTiDVu49g
+ambient.limbo.detail tFrQK4CFGavoL6tZRYuK ksVkUNKhhi8zHgPfhmCV
+ambient.lust.detail eFh9xePwFaQLkKWX0PVD PPmddN27EsMf4GDvtfut
+ambient.gluttony.detail bxemEh0NM4l1Qq8kiQ8c uecT9xZOviAIeFy0rfVv
+ambient.greed.detail 054tBiNjicLFDD4Zgrar vKCGNd5CsNF3o8l04NBd
+ambient.styx.detail CuOP0KhfglqI4c7wteas Aq72izCq0sYC0NHROwgV
+ambient.heresy.detail lgdEhLYkuUeF0X31JIQK AKH0bVCPlWqLqQJtZSDV
+ambient.phlegethon.detail sqhsp3UmAD9XhnIC3QBG twIuZw4JN4ZlRN8zPFeT
+ambient.suicides.detail HxG3KPasEDZLI9Zjaly8 KDldnWC6g4wvPZ1aMMcj
+ambient.sands.detail l93UOuosOrmQKak38nPZ V7xt9xLMXUSht3Bgbuny
+ambient.malebolge.detail Lz5X2IxKk8LoxSFOqyIg AYqdSbN20UzpeCJPF62p
+ambient.pitch.detail 3St1Pw3We4acjAEgBXE7 XzexXzHfevQPiqOBMvRF
+ambient.giants.detail RdyMjm8gD4QG4NgGBrSy U58CKZIcIRpRQ4eZTgoK
+ambient.cocytus.detail iSLs5NDff5HUvD3Dst1z Rjctm5K0oM32sTSTlsgv
+ambient.judecca.detail gRNSshU8OAz7MT07Em9i 4T9ohgjZiO0zStRHwqZ0
+ambient.forge.detail WPrQNtJzR3IQlHHSmtmx plOGYjDeKDVjqmcl3px9
+ambient.paradiso.detail dD7sFWKG2hzUQtfyTLGm miKXzBHAnhmzmBrrnNFM
+ambient.hell.mood LFVTuKAQnfPH3nxpQF1b yPSzxT1pDoSuLzhPajY6
+ambient.ember.additions Eak4hTtN1Lnk9f48kNR2 iExRDxCFjqhvF4gfkL2b
+ambient.tombs.additions sydDba3hXxWUTKmbyPrS t1w7vz7tRr3xgXE9La1K
+ambient.blood.additions TXt8N4elRhUVPTAPhCXi sEKysPzO2BLCdR5dn2eD
+ambient.thicket.additions cDuwDRYowKLrFESsEI2G RuXPNye3CmaqZvlxs2hp
+ambient.ash.additions qnhtIAcyXUXnEoYScHsh ogkdpxHzByRFBQNV8wnn
+ambient.forge.additions r3l9rptshNUme8Q9QJcH xuP8A4rRzVjd0KyBBWsK
+boss.boom mpNP8H56pGahCQ9IOYTO aXMq1mM5uGmZVoOubxc3
+minos.roar ZxFmpKvIvS9ORclLsmK9 oKoJf0M8UQIzW2CJzL2y
+cerberus.roar cu3okCnFmVUMsO7JwgK3 KkuDv5gcojRVyr0R2p6R
+cerberus.bite 8n2Mqxeqtu69xADjAbKn rrdrXRQp7JrCyZ6OLIwQ
+plutus.slam fRVbobGUNlOXg84JZ2rV MdoGldTKlDoy2vQlc9dZ
+furies.scream UqZ9X6cUxE9n8FUpIZFF QTifhgwHjJeyB7qntV9p
+farinata.flame ayVjNUAamOxMc32Car0I mUqBLCzoaX98G4kBBCZd
+minotaur.roar dayXlG2uEWGBJU0R4MK0 gexyaLH8vvN3rEhJH73A
+angel.ambient PvNdo7FRM6m4hYCP2WRK zRqRautX1V9Fqdcpg1EX
+fallen.slash DbSy0EZAqc9nJsuFqrxY bw6KxorWYuh2DsMTU80b
+fallen.star n9Ikjnx3ZKz5qfLcrMvu gWzfyFDUvJRlX91nr2WV
+emperor.slam heRP8PtSx6pLySEmzWnN tye5sGFeNcItJihCDALE
+emperor.icicle wnXQCsDmHHdRCmS3Mp6x SqObf3XSIOBELiS4NREK
+glutton.ambient PVoFUZ9trXjymAeXkJrr VKncvnSJulWQbWan0sON
+heretic.ambient 8PrSQ8oXhBSSQJBCwMPE ixIbUgWJDrJeOkxD4DLK
+malebranche.ambient MuuvHQhyrGmVcdRibw6a pSjOtrOpHBCyOQbXI6r5
+centaur.ambient qET3Eloz4VTcNuP565XI v7WHOpAKDR968tK84VEb
+wrathful.ambient ZggcSXtXmwd55GndYFnu DXefqwhVKGP6e9CdYP1h
+harpy.ambient jk6QmqPLmmnngZdX2QIh KdsMDeB4X1U0j5uaV6tq
+lovers.ambient xyna4HbfiBesnxEcZbyE bjf5SfrlRpARvusUjCkA
+thief.ambient dDfVUf5EGrJIbNhMDTqh eMH1CdSQmFHYWSxemMfC
+entity.damned.scream kz2GQt9kMiR0QCVBzl3c XpKsF8E5OGWVJ8CMtPhY EyUb0CX0tRO43Ejk1Umn
+entity.damned.sigh 9wOkLF5PO6Y32Wzq3QRv MqUY0BwdW8FaG1fGz9cV lwOlx93Q92EQSg4Em9RU
+music.dark_wood egQ4fKm991CUFufjMaKq
+music.vestibule v5UgEQkhUlKWPXL0gjCN
+music.limbo EvHlEDIaKTqgExXWPSXh
+music.lust 5ZB0enVdOWLqO5f5ZYs9
+music.gluttony 2a6UaIWKwmGw2LJYTSY4
+music.greed uqF8tw5jWU8Gd6bmf3qP
+music.dis lJSXDZZZaFrXPg0Yv1qO
+music.heresy udZK4zsLk6y8SW4B6wm7
+music.violence 9K3LnVPKkv3mlCzRNtZF
+music.malebolge OeRcGMruf2Rwd3eSktDw
+music.cocytus 0rU1UbbOuD6PH5DePhh3
+music.forge hKv72kghOUlaNlDe7tyj
+music.purgatory cn91lXIREnsPOl8gZWph
+music.paradiso A6gK5E1uT0z9VbVRB7Gc
+music.empyrean ZTLkaTMG9EbtGdEvy2JD
+music.lucifer.duel m4jcbGdMHyHUnwLff90y
+music.lucifer.enraged zmC7EezKmej3xWOIJpuM
+music.lucifer.true_form FJazgsXxLwomalbQgBhc

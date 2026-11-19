@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -27,6 +26,7 @@ import net.thesmallthings.hellcraft.entity.monster.Mimic;
 import net.thesmallthings.hellcraft.entity.monster.Thief;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Signs;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.FraudSites;
@@ -299,7 +299,7 @@ public final class Frauds {
 				Component.literal("are not on your"),
 				Component.literal("compass.")));
 		level.sendParticles(ParticleTypes.SOUL, x + 0.5, y + 1, z + 0.5, 40, 3, 1, 3, 0.05);
-		level.playSound(null, new BlockPos(x, y, z), SoundEvents.EVOKER_PREPARE_WOLOLO, SoundSource.HOSTILE, 2.0f, 0.5f);
+		level.playSound(null, new BlockPos(x, y, z), HellSounds.RULES_ILLUSION.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 		AABB around = new AABB(new BlockPos(x, y, z)).inflate(12, 8, 12);
 		for (Mimic m : level.getEntitiesOfClass(Mimic.class, around)) {
 			m.wake(victim);

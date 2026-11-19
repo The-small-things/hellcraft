@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -232,7 +232,7 @@ public final class HellWeapons {
 			player.sendOverlayMessage(Component.literal("Fully charged: press ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 					.append(Component.keybind("key.hellcraft.blood_art").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD))
 					.append(Component.literal(" for its Blood Art!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)));
-			player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.6f, 1.8f);
+			player.level().playSound(null, player.blockPosition(), HellSounds.WEAPON_ART_READY.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
 		} else {
 			player.sendOverlayMessage(meter(now));
 		}
@@ -403,7 +403,7 @@ public final class HellWeapons {
 			player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, OATH_TICKS, 0));
 		}
 		bleed(level, player, 40);
-		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 0.6f, 1.6f);
+		level.playSound(null, player.getX(), player.getY(), player.getZ(), HellSounds.WEAPON_ART_UNLEASH.value(), SoundSource.PLAYERS, 0.6f, 1.15f);
 	}
 
 	/** Bloodletter: a lunge that cuts through everything in its path. */
@@ -438,7 +438,7 @@ public final class HellWeapons {
 			Vec3 p = from.add(look.scale(i));
 			level.sendParticles(ParticleTypes.SWEEP_ATTACK, p.x, p.y + 1.0, p.z, 1, 0, 0, 0, 0);
 		}
-		level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.2f, 0.5f);
+		level.playSound(null, player.blockPosition(), HellSounds.WEAPON_REAP.value(), SoundSource.PLAYERS, 1.2f, 0.88f);
 		player.sendOverlayMessage(Component.literal("Exsanguinate!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 	}
 
@@ -462,7 +462,7 @@ public final class HellWeapons {
 		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
 		player.sendOverlayMessage(Component.literal("Blood Frenzy!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		bleed(level, player, 30);
-		level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.PLAYERS, 0.8f, 1.2f);
+		level.playSound(null, player.getX(), player.getY(), player.getZ(), HellSounds.WEAPON_HOWL.value(), SoundSource.PLAYERS, 0.8f, 1.05f);
 	}
 
 	// ------------------------------------------------------------------ hits
@@ -529,7 +529,7 @@ public final class HellWeapons {
 		EXCAVATE.put(player.getUUID(), player.level().getGameTime() + ticks);
 		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
 		player.sendOverlayMessage(Component.literal("Excavate: your pickaxe mines 3x3.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
-		player.level().playSound(null, player.blockPosition(), SoundEvents.DEEPSLATE_BREAK, SoundSource.PLAYERS, 1.2f, 0.6f);
+		player.level().playSound(null, player.blockPosition(), HellSounds.WEAPON_SHATTER.value(), SoundSource.PLAYERS, 1.2f, 0.9f);
 		bleed(player.level(), player, 30);
 	}
 
@@ -659,7 +659,7 @@ public final class HellWeapons {
 		}
 		level.sendParticles(ParticleTypes.SWEEP_ATTACK, center.getX(), center.getY() + 1.0, center.getZ(), (int) (radius * 3), radius / 2, 0.2, radius / 2, 0.0);
 		level.sendParticles(BloodAltar.BLOOD, center.getX(), center.getY() + 0.8, center.getZ(), 30, radius / 2, 0.4, radius / 2, 0.0);
-		level.playSound(null, center.getX(), center.getY(), center.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 1.0f, 0.6f);
+		level.playSound(null, center.getX(), center.getY(), center.getZ(), HellSounds.WEAPON_CLEAVE.value(), SoundSource.PLAYERS, 1.0f, 0.9f);
 	}
 
 	/** A burst of blood. */

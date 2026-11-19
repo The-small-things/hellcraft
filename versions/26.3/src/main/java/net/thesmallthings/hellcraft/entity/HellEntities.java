@@ -227,7 +227,6 @@ public final class HellEntities {
 		FabricDefaultAttributeRegistry.register(FALLEN_SERAPH, FallenSeraphEntity.attributes());
 		FabricDefaultAttributeRegistry.register(EMPEROR, EmperorEntity.attributes());
 		FabricDefaultAttributeRegistry.register(DAMNED, Damned.attributes());
-		Damned.registerSounds();
 		Carrier.register();
 		BossPart.register();
 	}

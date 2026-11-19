@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
 
@@ -146,7 +146,7 @@ public final class Relics {
 		player.setHealth(player.getMaxHealth());
 		player.getFoodData().eat(20, 1.0f);
 		player.level().sendParticles(ParticleTypes.CHERRY_LEAVES, player.getX(), player.getY() + 1.5, player.getZ(), 40, 0.6, 0.6, 0.6, 0.02);
-		player.level().playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.5f, 1.2f);
+		player.level().playSound(null, player.blockPosition(), HellSounds.RELIC_HALO.value(), SoundSource.PLAYERS, 1.5f, 1.05f);
 		player.sendSystemMessage(Component.literal("Beatrice's Rose: full health and food, and all effects removed.")
 				.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC));
 	}
@@ -170,7 +170,7 @@ public final class Relics {
 					player.push(look.x * 1.6, look.y * 1.6 + 0.2, look.z * 1.6);
 					Feedback.syncMotion(player);
 					player.level().sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY(), player.getZ(), 20, 0.4, 0.4, 0.4, 0.05);
-					player.level().playSound(null, player.blockPosition(), SoundEvents.ELYTRA_FLYING, SoundSource.PLAYERS, 0.8f, 1.6f);
+					player.level().playSound(null, player.blockPosition(), HellSounds.RELIC_WINGS.value(), SoundSource.PLAYERS, 0.8f, 1.15f);
 				}
 			}
 		}

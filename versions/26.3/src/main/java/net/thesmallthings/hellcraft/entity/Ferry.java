@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -96,7 +96,7 @@ public class Ferry extends Entity implements Carrier {
 			if (player instanceof ServerPlayer sp) {
 				sp.sendOverlayMessage(Component.literal("The ferry casts off in a few seconds. Sneak to get off before it does.").withStyle(ChatFormatting.DARK_AQUA));
 			}
-			level().playSound(null, blockPosition(), SoundEvents.WOOD_STEP, SoundSource.NEUTRAL, 1.0f, 0.6f);
+			level().playSound(null, blockPosition(), HellSounds.FERRY_CREAK.value(), SoundSource.NEUTRAL, 1.0f, 0.9f);
 			return InteractionResult.SUCCESS_SERVER;
 		}
 		return InteractionResult.PASS;
@@ -122,7 +122,7 @@ public class Ferry extends Entity implements Carrier {
 			case ARRIVING -> {
 				if (glide(dock)) {
 					phase = Phase.WAITING;
-					level().playSound(null, blockPosition(), SoundEvents.WOOD_PLACE, SoundSource.NEUTRAL, 1.5f, 0.5f);
+					level().playSound(null, blockPosition(), HellSounds.FERRY_DOCK.value(), SoundSource.NEUTRAL, 1.5f, 0.88f);
 				}
 			}
 			case WAITING -> {
@@ -143,7 +143,7 @@ public class Ferry extends Entity implements Carrier {
 			}
 			case SAILING -> {
 				if (tickCount % 30 == 0) {
-					level().playSound(null, blockPosition(), SoundEvents.BOAT_PADDLE_WATER, SoundSource.NEUTRAL, 1.5f, 0.6f);
+					level().playSound(null, blockPosition(), HellSounds.FERRY_PADDLE.value(), SoundSource.NEUTRAL, 1.5f, 0.9f);
 				}
 				if (glide(across)) {
 					setDown();
@@ -209,7 +209,7 @@ public class Ferry extends Entity implements Carrier {
 				p.sendOverlayMessage(Component.literal("Inside the Walls of Dis: Heresy lies ahead.").withStyle(ChatFormatting.RED));
 			}
 		}
-		level().playSound(null, blockPosition(), SoundEvents.WOOD_PLACE, SoundSource.NEUTRAL, 1.5f, 0.5f);
+		level().playSound(null, blockPosition(), HellSounds.FERRY_DOCK.value(), SoundSource.NEUTRAL, 1.5f, 0.88f);
 	}
 
 	private static float yawToward(Vec3 from, Vec3 to) {

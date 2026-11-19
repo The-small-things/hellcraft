@@ -5,21 +5,21 @@
     "minecraft:visual/water_fog_color": "#3a0000",
     "minecraft:audio/background_music": {
       "default": {
-        "sound": "minecraft:music.nether.crimson_forest",
-        "min_delay": 12000,
-        "max_delay": 24000
+        "sound": "hellcraft:music.violence",
+        "min_delay": 3600,
+        "max_delay": 9600
       }
     },
     "minecraft:audio/ambient_sounds": {
       "mood": {
-        "sound": "minecraft:ambient.crimson_forest.mood",
+        "sound": "hellcraft:ambient.hell.mood",
         "tick_delay": 6000,
         "block_search_extent": 8,
         "offset": 2.0
       },
-      "loop": "minecraft:ambient.crimson_forest.loop",
+      "loop": "hellcraft:ambient.blood.loop",
       "additions": {
-        "sound": "minecraft:ambient.crimson_forest.additions",
+        "sound": "hellcraft:ambient.blood.additions",
         "tick_chance": 0.0111
       }
     },

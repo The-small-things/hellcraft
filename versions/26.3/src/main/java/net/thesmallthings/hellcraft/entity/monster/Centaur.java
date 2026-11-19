@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
@@ -26,6 +25,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.CentaurAnim;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
 
@@ -179,7 +179,7 @@ public class Centaur extends SoulMonster {
 		setTarget(p);
 		alertUntil = tickCount + ALERT;
 		nextShot = tickCount + 6;
-		playSound(SoundEvents.HORSE_ANGRY, 1.5f, 0.8f);
+		playSound(HellSounds.CENTAUR_ANGRY.value(), 1.5f, 0.95f);
 		p.sendOverlayMessage(Component.literal("A centaur has seen you! Get out of its sight.").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 	}
 
@@ -192,7 +192,7 @@ public class Centaur extends SoulMonster {
 		double dz = target.getZ() - getZ();
 		double dist = Math.sqrt(dx * dx + dz * dz);
 		Projectile.spawnProjectileUsingShoot(arrow, level, arrowStack, dx, dy + dist * 0.18, dz, 2.0f, 3.0f);
-		playSound(SoundEvents.SKELETON_SHOOT, 1.2f, 0.7f);
+		playSound(HellSounds.CENTAUR_SHOOT.value(), 1.2f, 0.93f);
 	}
 
 	@Override
@@ -226,17 +226,17 @@ public class Centaur extends SoulMonster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.HORSE_AMBIENT;
+		return HellSounds.CENTAUR_AMBIENT.value();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return SoundEvents.HORSE_HURT;
+		return HellSounds.CENTAUR_HURT.value();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.HORSE_DEATH;
+		return HellSounds.CENTAUR_DEATH.value();
 	}
 
 	@Override

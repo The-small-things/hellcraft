@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
@@ -28,6 +27,7 @@ import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -73,7 +73,7 @@ public final class CircleHazards {
 			}
 			if (torch) {
 				level.setBlock(pos, state.setValue(CampfireBlock.LIT, true), 11);
-				level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0f, 1.2f);
+				level.playSound(null, pos, HellSounds.HAZARD_FLARE.value(), SoundSource.BLOCKS, 1.0f, 1.05f);
 			}
 			Dialogue.notice(sp, Component.literal("The brazier burns, and will burn for everyone who crosses the ice after you. Stand by it to warm up.")
 					.withStyle(ChatFormatting.GOLD));
