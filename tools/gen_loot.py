@@ -9,7 +9,7 @@ Run from the repo root:  python3 tools/gen_loot.py
 - chests/heretic_tomb: the "forbidden books" in some of Heresy's burning tombs
 - chests/feast_table: the barrels at the heads of Gluttony's sunken feast tables
 - chests/vault: the vaults in Greed's Counting House
-- chests/fen_cache: the Fen of Styx's watchtowers (four by the roads, eight outposts between them)
+- chests/fen_cache: the Fen of Styx's watchtowers (four by the roads, outposts scattered by chance)
 - chests/malebolge_cache: the caches on the ridges of Malebolge (one in three is a mimic instead)
 - entities/mimic: what a mimic gives up when killed (better than the caches it pretends to be)
 - entities/<monster>: the circles' own monsters; those of a circle with its own enchantment drop its book now and then

@@ -27,8 +27,8 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
 /**
  * The Fen's watchtowers (L-V): a dark tower on the Styx's outer shore beside each road, a ladder up its inside to a
  * platform with two unlit beacons. "Two little flames we saw set there" (Inferno VIII): light them, and the ferryman
- * Phlegyas comes for you. A cache of supplies waits at the foot of the ladder (chests/fen_cache). The outposts
- * between the roads (Fen.Outposts) are the same towers without the beacons: a lantern burns on top instead.
+ * Phlegyas comes for you. A cache of supplies waits at the foot of the ladder (chests/fen_cache). The outposts that
+ * stand by chance across the Fen (Fen.Outposts) are the same towers without the beacons: a lantern burns on top instead.
  */
 public record WatchtowerFeature() implements Feature {
 	public static final WatchtowerFeature INSTANCE = new WatchtowerFeature();
@@ -45,23 +45,29 @@ public record WatchtowerFeature() implements Feature {
 		int x0 = origin.getX() & ~15;
 		int z0 = origin.getZ() & ~15;
 		boolean placed = false;
-		for (int k = 0; k < Fen.allTowers(); k++) {
+		for (int k = 0; k < Fen.towers(); k++) {
 			int[] t = Fen.tower(k);
 			if (t[0] + Fen.HALF + 1 < x0 || t[0] - Fen.HALF - 1 > x0 + 15 || t[1] + Fen.HALF + 1 < z0 || t[1] - Fen.HALF - 1 > z0 + 15) {
 				continue;
 			}
-			build(level, random, k, t, x0, z0);
+			build(level, random, k, t, door(k), x0, z0);
+			placed = true;
+		}
+		int reach = Fen.HALF + 1;
+		for (int[] t : Fen.Outposts.in(level.getSeed(), x0 - reach, z0 - reach, x0 + 15 + reach, z0 + 15 + reach)) {
+			build(level, random, -1, t, outpostDoor(t), x0, z0);
 			placed = true;
 		}
 		return placed;
 	}
 
-	/** The door faces the road (an outpost's, the pit); the ladder climbs the opposite wall. */
+	/** An outpost's door faces the pit. */
+	public static Direction outpostDoor(int[] t) {
+		return Direction.getApproximateNearest(-(t[0] + 0.5), 0, -(t[1] + 0.5));
+	}
+
+	/** The door faces the road; the ladder climbs the opposite wall. */
 	public static Direction door(int k) {
-		if (!Fen.hasBeacons(k)) {
-			double a = Fen.angle(k);
-			return Direction.getApproximateNearest(-Math.cos(a), 0, -Math.sin(a));
-		}
 		double a = InfernoGeometry.ROAD_ANGLES[k];
 		// the tower stands to the road's right (walking in), so the road lies to its left
 		return Direction.getApproximateNearest(Math.sin(a), 0, -Math.cos(a));
@@ -71,10 +77,10 @@ public record WatchtowerFeature() implements Feature {
 		return Fen.base(t);
 	}
 
-	private static void build(WorldGenLevel level, RandomSource random, int k, int[] t, int x0, int z0) {
+	/** Beacon tower k, or an outpost (k -1: no beacons). */
+	private static void build(WorldGenLevel level, RandomSource random, int k, int[] t, Direction door, int x0, int z0) {
 		int y0 = base(t);
 		int top = y0 + Fen.HEIGHT;
-		Direction door = door(k);
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		for (int dx = -Fen.HALF - 1; dx <= Fen.HALF + 1; dx++) {
 			for (int dz = -Fen.HALF - 1; dz <= Fen.HALF + 1; dz++) {
@@ -134,7 +140,7 @@ public record WatchtowerFeature() implements Feature {
 			RandomizableContainer.setBlockEntityLootTable(level, random, cache, LOOT);
 		}
 		// the twin beacons, unlit (an outpost has a lantern instead, on the platform's middle)
-		if (!Fen.hasBeacons(k)) {
+		if (k < 0) {
 			setIfInChunk(level, x0, z0, new BlockPos(t[0], top + 1, t[1]), Blocks.LANTERN.defaultBlockState());
 			return;
 		}

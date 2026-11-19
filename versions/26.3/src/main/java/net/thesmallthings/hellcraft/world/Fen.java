@@ -5,13 +5,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wrath's Fen of Styx (L-V): where its watchtowers stand and where its plank roads wind, shared by the worldgen
  * (WatchtowerFeature, BoardwalkFeature) and the ferry. A watchtower stands on the Fen's outer shore beside each of the
- * four roads, its two beacons on top; light them and the ferryman comes. Between the roads stand eight more (outposts,
- * since 3.5.1), the same towers with the same cache at the foot of the ladder but no beacons: so a pilgrim can find
- * more than one of the Fen's caches (and its Sidestep books) without walking every road.
+ * four roads, its two beacons on top; light them and the ferryman comes. Others stand here and there across the Fen by
+ * chance (outposts, Outposts: a rare-ish structure, about two dozen in a world, placed by the world seed), the same
+ * towers with the same cache at the foot of the ladder but no beacons: so a pilgrim exploring the Fen finds more than
+ * one of its caches (and its Sidestep books).
  */
 public final class Fen {
 	private Fen() {
@@ -24,18 +29,8 @@ public final class Fen {
 	public static final int HALF = 3;
 	public static final int HEIGHT = 20;
 
-	/**
-	 * Tower k's centre column (x, z): k below towers() by road (east, south, west, north), the beacon towers; from
-	 * towers() to allTowers() the outposts between the roads.
-	 */
+	/** Beacon tower k's centre column (x, z), k by road (east, south, west, north). */
 	public static int[] tower(int k) {
-		if (k >= towers()) {
-			return Outposts.SITES[k - towers()].clone();
-		}
-		return roadTower(k);
-	}
-
-	private static int[] roadTower(int k) {
 		double a = InfernoGeometry.ROAD_ANGLES[k];
 		return standIn(a, -Math.sin(a) * TOWER_SIDE, Math.cos(a) * TOWER_SIDE);
 	}
@@ -66,53 +61,57 @@ public final class Fen {
 		return InfernoGeometry.ROAD_ANGLES.length;
 	}
 
-	/** Every watchtower: the beacon towers, then the outposts. */
-	public static int allTowers() {
-		return towers() + Outposts.SITES.length;
-	}
-
-	/** True for the beacon towers by the roads; the outposts have none. */
-	public static boolean hasBeacons(int k) {
-		return k < towers();
-	}
-
-	/** The angle round Hell that tower k stands at (radians). */
-	public static double angle(int k) {
-		int[] t = tower(k);
-		return Math.atan2(t[1] + 0.5, t[0] + 0.5);
-	}
-
 	/**
-	 * The outposts: two between each pair of roads, a quarter and three quarters of the way round, each nudged along the
-	 * shore until it is clear of the roads, the ways down from Greed, the lairs (and Phlegyas's jetties), the Rests and
-	 * the secret ways. Worked out once, from geometry alone.
+	 * The outposts: watchtowers without beacons, scattered across the Fen by chance. The Fen is cut into cells CELL
+	 * across; the world seed gives each cell one chance in ONE_IN of an outpost, at a spot inside it at least MARGIN from
+	 * its edges (so two never crowd each other), and the spot is kept only where the whole tower stands in the Fen, clear
+	 * of the roads, the ways down from Greed, the lairs (and Phlegyas's jetties), the Rests, the secret ways and the
+	 * beacon towers. Worked out from the seed and the geometry alone, so every chunk agrees on where they are.
 	 */
-	static final class Outposts {
+	public static final class Outposts {
 		private Outposts() {
 		}
 
-		static final double[] BASE_DEGREES = {22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5};
-		/** How far either way an outpost may be nudged (degrees), in steps of one. */
-		private static final int NUDGE = 10;
-		static final int[][] SITES = sites();
+		static final int CELL = 128;
+		static final int ONE_IN = 12;
+		static final int MARGIN = 20;
 
-		private static int[][] sites() {
-			int[][] out = new int[BASE_DEGREES.length][];
-			for (int i = 0; i < BASE_DEGREES.length; i++) {
-				int[] best = null;
-				for (int n = 0; n <= NUDGE && best == null; n++) {
-					for (int sign : n == 0 ? new int[]{1} : new int[]{1, -1}) {
-						double a = Math.toRadians(BASE_DEGREES[i] + sign * n);
-						int[] t = standIn(a, 0, 0);
-						if (clear(t)) {
-							best = t;
-							break;
-						}
+		/** The outpost in cell (cx, cz) of a world with this seed, as its centre column {x, z}, or null. */
+		@Nullable
+		public static int[] inCell(long seed, int cx, int cz) {
+			long h = hash(seed, cx, cz);
+			if (Math.floorMod(h, ONE_IN) != 0) {
+				return null;
+			}
+			int span = CELL - 2 * MARGIN;
+			int[] t = {cx * CELL + MARGIN + (int) Math.floorMod(h >>> 12, span), cz * CELL + MARGIN + (int) Math.floorMod(h >>> 32, span)};
+			if (InfernoGeometry.zoneAt(t[0] + 0.5, t[1] + 0.5) != Zone.STYX || !clear(t)) {
+				return null;
+			}
+			return t;
+		}
+
+		/** Every outpost whose centre lies in the box from (x0, z0) to (x1, z1), for a world with this seed. */
+		public static List<int[]> in(long seed, int x0, int z0, int x1, int z1) {
+			List<int[]> out = new ArrayList<>();
+			for (int cx = Math.floorDiv(x0, CELL); cx <= Math.floorDiv(x1, CELL); cx++) {
+				for (int cz = Math.floorDiv(z0, CELL); cz <= Math.floorDiv(z1, CELL); cz++) {
+					int[] t = inCell(seed, cx, cz);
+					if (t != null && t[0] >= x0 && t[0] <= x1 && t[1] >= z0 && t[1] <= z1) {
+						out.add(t);
 					}
 				}
-				out[i] = best != null ? best : standIn(Math.toRadians(BASE_DEGREES[i]), 0, 0);
 			}
 			return out;
+		}
+
+		private static long hash(long seed, int cx, int cz) {
+			long h = seed ^ cx * 0x9E3779B97F4A7C15L ^ cz * 0xC2B2AE3D27D4EB4FL ^ 0x7A11E5L;
+			h ^= h >>> 31;
+			h *= 0xBF58476D1CE4E5B9L;
+			h ^= h >>> 29;
+			h *= 0x94D049BB133111EBL;
+			return h ^ (h >>> 32);
 		}
 
 		static boolean clear(int[] t) {
@@ -139,6 +138,12 @@ public final class Fen {
 			if (SecretWays.near(x, z, 16)) {
 				return false;
 			}
+			for (int k = 0; k < towers(); k++) {
+				int[] t2 = tower(k);
+				if (Math.hypot(t2[0] - x, t2[1] - z) < 64) {
+					return false;
+				}
+			}
 			for (ShrineSites.Site s : ShrineSites.all()) {
 				if (Math.hypot(s.x() - x, s.z() - z) < 32) {
 					return false;
@@ -148,9 +153,9 @@ public final class Fen {
 		}
 	}
 
-	/** The tower whose footprint (with its platform's overhang) holds this column, or -1. */
+	/** The beacon tower whose footprint (with its platform's overhang) holds this column, or -1. */
 	public static int towerAt(int x, int z) {
-		for (int k = 0; k < allTowers(); k++) {
+		for (int k = 0; k < towers(); k++) {
 			int[] t = tower(k);
 			if (Math.abs(x - t[0]) <= HALF + 1 && Math.abs(z - t[1]) <= HALF + 1) {
 				return k;

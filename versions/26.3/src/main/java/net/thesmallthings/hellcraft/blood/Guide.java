@@ -193,9 +193,9 @@ public final class Guide {
 						+ "level for the next one.",
 				"Windstep (boots, faster walking): the lovers of Lust drop it.",
 				"Quickening (weapons, faster blows): Greed's vaults, and the hoarders drop it.",
-				combat ? "Sidestep (leggings): the caches in Wrath's watchtowers (one by each road, two more between), and the wrathful drop it. "
+				combat ? "Sidestep (leggings): the caches in Wrath's watchtowers (one by each road, more scattered across the Fen), and the wrathful drop it. "
 						+ "Your dodge roll costs less, goes further and is safe for longer."
-						: "Sidestep (leggings): the caches in Wrath's watchtowers (one by each road, two more between), and the wrathful drop it. "
+						: "Sidestep (leggings): the caches in Wrath's watchtowers (one by each road, more scattered across the Fen), and the wrathful drop it. "
 						+ "Press Dash (Left Alt) to dash, and dodge a boss's blow.",
 				"Steadfast (chestplate, less boss damage): Heresy's tombs, and the heretics drop it.",
 				"Judgement (weapons, more damage to bosses): the centaurs of Violence drop it.",
