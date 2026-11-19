@@ -286,10 +286,11 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   and guard break. **Swings (part 2):** `combat/Moveset` (per `WeaponClass`: a chain of light moves and a heavy one; each a rig
   animation whose events `swing`, `hit` and `next` time the wind-up's end, the blow and the combo window, plus damage share, arc,
   reach, shove and lunge; `pace` scales by attack speed), `combat/Swing` (the client's `net/SwingPayload` is checked against the
-  chain, the blow lands at the `hit` tick on everything in the arc: what is aimed at first, then only what `fightsBack`, with line of
+  chain, the blow lands at the `hit` tick (counted from when the client began it: half the ping, `catchUp`, at most `MAX_CATCH_UP`) on everything in the arc: what is aimed at first, then only what `fightsBack`, with line of
   sight; each through vanilla's `player.attack` under a transient damage modifier, `mixin/PlayerMixin` giving full strength and no
-  vanilla sweep while `landing`), client `combat/SwingControl` (from `mixin/MinecraftMixin` at the head of `startAttack`: a click
-  swings or queues the next move, the key held `CHARGE_AT` ticks into a light wind-up turns it into the heavy, a block under the
+  vanilla sweep while `landing`), client `combat/SwingControl` (from `mixin/MinecraftMixin` at the head of `startAttack`: a press
+  waits until the key comes up (the next light move) or has been held `CHARGE_AT` ticks (the heavy, begun up to `HEAVY_SKIP` ticks into
+  its wind-up), so no light move starts first; mid-move it queues; at the `hit` tick `HitFeel.predict` gives the hit-stop at once, a block under the
   crosshair with nothing to fight is left to vanilla; `continueAttack` is cancelled mid-swing) and `mixin/ItemInHandLayerMixin` (the
   rig's `item` bone turns the weapon in the hand). In player_moves.py the swings are shapes (`diagonal`, `backhand`, `thrust`,
   `overhead`) given timing and heft per weapon; `hold(point, blade)` gives an arm and its weapon's turn for an exact blade direction;

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
@@ -27,11 +28,12 @@ import org.jetbrains.annotations.Nullable;
  * has moves in hand, the attack key no longer pokes at whatever is under the crosshair: it swings.
  *
  * <ul>
- *     <li><b>A click</b> starts the next light move of the chain at once (the wind-up plays here and now; the server is
- *     told and lands the blow when the animation does).</li>
+ *     <li><b>A click</b> starts the next light move of the chain the moment the key comes up (the wind-up plays here and
+ *     now; the server is told and lands the blow when the animation does).</li>
  *     <li><b>Clicking again</b> during a move queues the next, which begins the moment this one frees it: a combo.</li>
- *     <li><b>Holding</b> the key through the first ticks of a light move's wind-up turns it into the heavy move (if there
- *     is stamina for it): no wait on a tap, no second key. With no stamina, holding just keeps the chain going.</li>
+ *     <li><b>Holding</b> the key {@link Swing#CHARGE_AT} ticks is the heavy move (if there is stamina for it), begun
+ *     straight away and a little way into its wind-up to make up the wait: no light move starts first. With no stamina,
+ *     holding just keeps the chain going.</li>
  *     <li>Looking at a block with nothing to fight in front of you, the key mines as it always did.</li>
  * </ul>
  */
@@ -47,19 +49,26 @@ public final class SwingControl {
 	/** Ticks into the move, on the move's own clock (a faster weapon's pass sooner). */
 	private static float time;
 	private static float pace = 1;
-	/** The key has been down since the move began (so it may become the heavy one). */
-	private static boolean held;
-	/** A click came mid-move: the next begins when this one frees it. Counts the ticks it has waited. */
-	private static int queued = -1;
+	/**
+	 * A press not yet turned into a move: it is a light one once the key comes up, the heavy once it has been down
+	 * {@link Swing#CHARGE_AT} ticks. Mid-move it waits for the move to free the next.
+	 */
+	private static boolean pressed;
+	/** Ticks the key has stayed down since the press. */
+	private static int pressHeld;
+	/** The key came up since the press. */
+	private static boolean pressUp;
+	/** Ticks the press has waited with nothing playing (made up by starting a heavy that far in). */
+	private static int idleWait;
 	/** After a heavy move the key must come up before holding it does anything again. */
 	private static boolean spent;
 	@Nullable
 	private static Moveset.Move last;
 	private static int sinceLast = 1000;
 
-	/** A move is playing: the attack key isn't vanilla's for now (no mining what's behind the target). */
+	/** A move is playing or a press is being decided: the attack key isn't vanilla's for now (no mining what's behind the target). */
 	public static boolean busy() {
-		return current != null;
+		return current != null || pressed;
 	}
 
 	/** Winding up: before the blow has gone forward. */
@@ -90,7 +99,7 @@ public final class SwingControl {
 	public static void reset() {
 		current = null;
 		last = null;
-		queued = -1;
+		pressed = false;
 		sinceLast = 1000;
 		spent = false;
 		fresh = 0;
@@ -99,13 +108,13 @@ public final class SwingControl {
 
 	/** A roll or a raised guard takes over. */
 	public static void cancel() {
+		pressed = false;
 		if (current != null) {
 			// past its blow, the server keeps the move until its combo window (cut in the wind-up, it lets it go at once)
 			fresh = time >= current.hitTick() ? Math.max(0, Mth.ceil((current.nextTick() - 2 - time) / pace)) : 0;
 			freshQueued = false;
 			last = null;
 			current = null;
-			queued = -1;
 			sinceLast = 1000;
 		}
 	}
@@ -124,36 +133,69 @@ public final class SwingControl {
 		if (moves == null) {
 			return false;
 		}
-		if (current != null) {
-			// mid-move: a click queues the next
-			queued = 0;
-			held = false;
-			return true;
+		if (current == null) {
+			if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK && !somethingToFight(player, moves.light.get(0))) {
+				// a block in front and nothing to fight: mine it, as ever
+				return false;
+			}
+			if (fresh > 0) {
+				freshQueued = true;
+				return true;
+			}
 		}
-		if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK && !somethingToFight(player, moves.light.get(0))) {
-			// a block in front and nothing to fight: mine it, as ever
-			return false;
+		// a light move or the heavy: that depends on how long the key stays down (mid-move, a click queues the next)
+		pressed = true;
+		pressHeld = 0;
+		pressUp = !mc.options.keyAttack.isDown();
+		idleWait = 0;
+		if (current == null) {
+			resolve(mc, moves);
 		}
-		if (fresh > 0) {
-			freshQueued = true;
-			return true;
-		}
-		Moveset.Move next = last != null && sinceLast <= Swing.CHAIN_GRACE ? moves.after(last) : moves.light.get(0);
-		begin(mc, moves, next, 2.0f);
 		return true;
 	}
 
-	private static void begin(Minecraft mc, Moveset moves, Moveset.Move move, float blendIn) {
+	/**
+	 * Turns the press into a move if it can be told yet: the next light move once the key is up, the heavy once it has been
+	 * held long enough (with no stamina for a heavy, a light move at once). Returns true if a move began.
+	 */
+	private static boolean resolve(Minecraft mc, Moveset moves) {
+		LocalPlayer player = mc.player;
+		Moveset.Move next = current != null ? moves.after(current) : last != null && sinceLast <= Swing.CHAIN_GRACE ? moves.after(last) : moves.light.get(0);
+		float blend = current != null ? 3.0f : 2.0f;
+		CombatPayload rules = Combat.rules(true);
+		boolean canHeavy = player.hasInfiniteMaterials() || StaminaHud.stamina() >= rules.heavyCost();
+		if (pressUp || !canHeavy) {
+			// a tap: the next light move. With no stamina for a heavy there's nothing to wait for: the chain goes on (and goes
+			// on while the key stays down)
+			pressed = false;
+			begin(mc, moves, next, blend, 0);
+			return true;
+		}
+		if (pressHeld < Swing.CHARGE_AT) {
+			return false;
+		}
+		if (current != null && current.heavy()) {
+			// one heavy after another: the second once the first is over
+			return false;
+		}
+		if (!player.hasInfiniteMaterials()) {
+			StaminaHud.predict(rules.heavyCost());
+		}
+		pressed = false;
+		spent = true;
+		begin(mc, moves, moves.heavy, 3.0f, Math.min(idleWait, Swing.HEAVY_SKIP));
+		return true;
+	}
+
+	private static void begin(Minecraft mc, Moveset moves, Moveset.Move move, float blendIn, int skip) {
 		LocalPlayer player = mc.player;
 		set = moves;
 		current = move;
 		weapon = player.getMainHandItem();
-		time = 0;
+		time = skip;
 		pace = moves.pace(player);
-		held = mc.options.keyAttack.isDown() && !spent;
-		queued = -1;
-		PlayerAnimator.of(player).play(move.anim(), pace, Float.NaN, blendIn, 4.0f);
-		ClientPlayNetworking.send(new SwingPayload(move.anim().ordinal()));
+		PlayerAnimator.of(player).play(move.anim(), pace, Float.NaN, blendIn, 4.0f, skip);
+		ClientPlayNetworking.send(new SwingPayload(move.anim().ordinal(), skip));
 		player.resetAttackStrengthTicker();
 		if (mc.gameMode != null) {
 			mc.gameMode.stopDestroyBlock();
@@ -162,8 +204,16 @@ public final class SwingControl {
 
 	public static void tick(Minecraft mc) {
 		LocalPlayer player = mc.player;
-		if (!mc.options.keyAttack.isDown()) {
+		boolean down = mc.options.keyAttack.isDown();
+		if (!down) {
 			spent = false;
+		}
+		if (pressed) {
+			if (down && !pressUp) {
+				pressHeld++;
+			} else {
+				pressUp = true;
+			}
 		}
 		if (current == null) {
 			if (sinceLast < 1000) {
@@ -173,30 +223,23 @@ public final class SwingControl {
 				freshQueued = false;
 				click(mc);
 			}
+			if (pressed) {
+				Moveset moves = player == null ? null : Moveset.of(player.getMainHandItem());
+				if (moves == null || !player.isAlive() || player.isUsingItem() || RollControl.busy() || !Combat.rules(true).on()) {
+					pressed = false;
+					return;
+				}
+				idleWait++;
+				resolve(mc, moves);
+			}
 			return;
 		}
 		if (player == null || !player.isAlive() || !ItemStack.isSameItem(player.getMainHandItem(), weapon) || player.isUsingItem() || RollControl.busy()) {
 			cancel();
 			return;
 		}
-		CombatPayload rules = Combat.rules(true);
 		float before = time;
 		time += pace;
-		if (!mc.options.keyAttack.isDown()) {
-			held = false;
-		}
-		// the key still down a few ticks into a light move: it becomes the heavy one
-		if (held && !current.heavy() && time >= Swing.CHARGE_AT && before < current.hitTick() - 1) {
-			held = false;
-			if (player.hasInfiniteMaterials() || StaminaHud.stamina() >= rules.heavyCost()) {
-				if (!player.hasInfiniteMaterials()) {
-					StaminaHud.predict(rules.heavyCost());
-				}
-				spent = true;
-				begin(mc, set, set.heavy, 3.0f);
-				return;
-			}
-		}
 		// the weapon starts forward: the swish, and the step into the blow
 		if (before < current.swingTick() && time >= current.swingTick()) {
 			player.playSound(current.heavy() ? HellSounds.COMBAT_SWING_HEAVY.value() : HellSounds.COMBAT_SWING_LIGHT.value(), current.heavy() ? 0.8f : 0.55f,
@@ -207,21 +250,33 @@ public final class SwingControl {
 				player.setDeltaMovement(v.x - Mth.sin(yaw) * current.lunge(), v.y, v.z + Mth.cos(yaw) * current.lunge());
 			}
 		}
-		if (queued >= 0) {
-			queued++;
+		// the blow lands: feel it now, as the animation shows it, not a round trip later when the server says so
+		if (before < current.hitTick() && time >= current.hitTick() && (aimedAtSomething(mc) || somethingToFight(player, current))) {
+			HitFeel.predict(current.heavy());
 		}
-		boolean keep = queued >= 0 || mc.options.keyAttack.isDown() && !spent && !current.heavy();
-		if (keep && time >= current.nextTick()) {
-			// the chain goes on: a queued click, or the key held with no stamina for a heavy
-			begin(mc, set, set.after(current), 3.0f);
-			return;
+		if (time >= current.nextTick()) {
+			if (pressed) {
+				// a click queued mid-move: the next light move, or the heavy if the key is still held
+				if (resolve(mc, set)) {
+					return;
+				}
+				idleWait++;
+			} else if (down && !spent && !current.heavy()) {
+				// the key held with no stamina for a heavy: the chain goes on
+				begin(mc, set, set.after(current), 3.0f, 0);
+				return;
+			}
 		}
 		if (time >= current.ticks()) {
 			last = current.heavy() ? null : current;
 			sinceLast = 0;
 			current = null;
-			queued = -1;
 		}
+	}
+
+	/** The crosshair is on something that can be struck (an animal too: a swing strikes what it is aimed at). */
+	private static boolean aimedAtSomething(Minecraft mc) {
+		return mc.hitResult instanceof EntityHitResult hit && hit.getEntity().isAttackable() && hit.getEntity().isAlive();
 	}
 
 	/** Whether anything that fights back stands in the move's arc, within reach: then a click swings even with a block under the crosshair. */

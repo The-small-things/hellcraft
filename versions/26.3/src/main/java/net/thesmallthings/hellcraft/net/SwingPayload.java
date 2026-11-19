@@ -9,11 +9,13 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 /**
  * The client begins a swing (combat/Swing): which move (a PlayerMovesAnim ordinal). It has already started playing it;
  * the server checks it is a move the held weapon has and that it may follow the last one, and lands its blow when the
- * animation does.
+ * animation does. skip: ticks of the move the client left out at its start (a heavy begun after the key was held a moment
+ * with nothing playing starts a little way into its wind-up; combat/Swing.HEAVY_SKIP at most).
  */
-public record SwingPayload(int move) implements CustomPacketPayload {
+public record SwingPayload(int move, int skip) implements CustomPacketPayload {
 	public static final Type<SwingPayload> TYPE = new Type<>(HellcraftMod.id("swing"));
-	public static final StreamCodec<ByteBuf, SwingPayload> CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, SwingPayload::move, SwingPayload::new);
+	public static final StreamCodec<ByteBuf, SwingPayload> CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, SwingPayload::move, ByteBufCodecs.VAR_INT, SwingPayload::skip,
+			SwingPayload::new);
 
 	@Override
 	public Type<SwingPayload> type() {
