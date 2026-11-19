@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +27,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -36,6 +39,7 @@ import net.thesmallthings.hellcraft.blood.BossSpoils;
 import net.thesmallthings.hellcraft.blood.Hearts;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.blood.Judgement;
+import net.thesmallthings.hellcraft.blood.LayerEnchants;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.cutscene.Cutscene;
 import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
@@ -614,7 +618,33 @@ public abstract class GuardianFight {
 			Judgement.treasure(player);
 			got.add(1, "a treasure roll");
 		}
+		ResourceKey<Enchantment> book = circleBook(kind);
+		if (book != null && config.guardianCircleBooks && grade.atLeast(Judgement.Grade.B)) {
+			ItemStack stack = LayerEnchants.book(level, book);
+			if (!stack.isEmpty()) {
+				BloodItems.give(player, stack);
+				got.add("an enchanted book (" + stack.getHoverName().getString() + ")");
+			}
+		} else if (book != null && config.guardianCircleBooks) {
+			note = (note.isEmpty() ? "" : note + " ") + "Win with a B or better and " + kind.title + " also gives you its circle's enchanted book.";
+		}
 		Judgement.report(player, kind.title, grade, style.summary(), got, style.advice(), note);
+	}
+
+	/**
+	 * The enchantment of this guardian's circle (tools/gen_enchants.py), whose book every victory ranked B or better
+	 * gives, so the books can be farmed; null for a guardian whose circle has none.
+	 */
+	@Nullable
+	static ResourceKey<Enchantment> circleBook(Guardian g) {
+		return switch (g) {
+			case MINOS -> LayerEnchants.WINDSTEP;
+			case PLUTUS -> LayerEnchants.QUICKENING;
+			case PHLEGYAS -> LayerEnchants.SIDESTEP;
+			case FARINATA -> LayerEnchants.STEADFAST;
+			case MINOTAUR -> LayerEnchants.JUDGEMENT;
+			default -> null;
+		};
 	}
 
 	/** Ends the fight; a victory puts the guardian to sleep for a while. */

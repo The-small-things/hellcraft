@@ -129,6 +129,11 @@ public class HellConfig {
 	public int guardianRepeatHearts = 1;
 	/** Minutes before a guardian you have slain gives you spoils again (in between it only bleeds a few fragments). */
 	public int guardianSpoilsCooldownMinutes = 180;
+	/**
+	 * A guardian of a circle with its own enchantment (Minos, Plutus, Phlegyas, Farinata, the Minotaur) gives each
+	 * fighter ranked B or better that circle's enchanted book, every victory.
+	 */
+	public boolean guardianCircleBooks = true;
 	/** Minutes before the Wither, the Warden or the Ender Dragon gives the same player Blood Hearts again. */
 	public int bossSpoilsCooldownMinutes = 180;
 	/** Minutes before a victory over Lucifer earns the same player spoils again (the first victory always does). */

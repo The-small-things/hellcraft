@@ -9,9 +9,13 @@ Run from the repo root:  python3 tools/gen_loot.py
 - chests/heretic_tomb: the "forbidden books" in some of Heresy's burning tombs
 - chests/feast_table: the barrels at the heads of Gluttony's sunken feast tables
 - chests/vault: the vaults in Greed's Counting House
-- chests/fen_cache: the watchtowers and the drowned boats of the Fen of Styx
+- chests/fen_cache: the Fen of Styx's watchtowers (four by the roads, eight outposts between them)
 - chests/malebolge_cache: the caches on the ridges of Malebolge (one in three is a mimic instead)
 - entities/mimic: what a mimic gives up when killed (better than the caches it pretends to be)
+- entities/<monster>: the circles' own monsters; those of a circle with its own enchantment drop its book now and then
+  (lovers Windstep, hoarder Quickening, wrathful Sidestep, heretic Steadfast, centaur Judgement), so every circle book
+  can be farmed. The caches only hold the first ones; a guardian beaten with a B or better gives its circle's book too
+  (GuardianFight.circleBook) and a circle's champion often does (Champions).
 - gameplay/guardian_spoils: what a slain circle guardian leaves besides its blood
 
 Blood Fragments, Vigil Candles and Soul Anchors are Hellcraft's own items (HellItems.java).
@@ -253,6 +257,12 @@ TABLES = {
         pool(1, 1, [book(4, 25, 30), item("golden_apple", 3), item("enchanted_golden_apple", 1), anchor(2)])]},
     # Lust: the lovers now and then carry Windstep away from the wind
     "entities/lovers": {"type": "minecraft:entity", "pools": [rare_drop([circle_book("windstep", 1, 1, 3)], 0.06)]},
+    # Greed: the hoarders now and then carry Quickening out of the vaults (besides whatever they stole from you)
+    "entities/hoarder": {"type": "minecraft:entity", "pools": [rare_drop([circle_book("quickening", 1, 1, 2)], 0.06)]},
+    # Wrath: the wrathful, Sidestep
+    "entities/wrathful": {"type": "minecraft:entity", "pools": [rare_drop([circle_book("sidestep", 1, 1, 3)], 0.06)]},
+    # Heresy: the heretics climb out of their tombs with Steadfast now and then
+    "entities/heretic": {"type": "minecraft:entity", "pools": [rare_drop([circle_book("steadfast", 1, 1, 3)], 0.05)]},
     # Violence: the centaurs, Judgement
     "entities/centaur": {"type": "minecraft:entity", "pools": [
         pool(1, 1, [item("arrow", 1, 2, 8)]),

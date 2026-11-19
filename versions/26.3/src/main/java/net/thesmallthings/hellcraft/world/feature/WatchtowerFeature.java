@@ -27,7 +27,8 @@ import net.thesmallthings.hellcraft.world.InfernoGeometry;
 /**
  * The Fen's watchtowers (L-V): a dark tower on the Styx's outer shore beside each road, a ladder up its inside to a
  * platform with two unlit beacons. "Two little flames we saw set there" (Inferno VIII): light them, and the ferryman
- * Phlegyas comes for you. A cache of supplies waits at the foot of the ladder (chests/fen_cache).
+ * Phlegyas comes for you. A cache of supplies waits at the foot of the ladder (chests/fen_cache). The outposts
+ * between the roads (Fen.Outposts) are the same towers without the beacons: a lantern burns on top instead.
  */
 public record WatchtowerFeature() implements Feature {
 	public static final WatchtowerFeature INSTANCE = new WatchtowerFeature();
@@ -44,7 +45,7 @@ public record WatchtowerFeature() implements Feature {
 		int x0 = origin.getX() & ~15;
 		int z0 = origin.getZ() & ~15;
 		boolean placed = false;
-		for (int k = 0; k < Fen.towers(); k++) {
+		for (int k = 0; k < Fen.allTowers(); k++) {
 			int[] t = Fen.tower(k);
 			if (t[0] + Fen.HALF + 1 < x0 || t[0] - Fen.HALF - 1 > x0 + 15 || t[1] + Fen.HALF + 1 < z0 || t[1] - Fen.HALF - 1 > z0 + 15) {
 				continue;
@@ -55,8 +56,12 @@ public record WatchtowerFeature() implements Feature {
 		return placed;
 	}
 
-	/** The door faces the road; the ladder climbs the opposite wall. */
+	/** The door faces the road (an outpost's, the pit); the ladder climbs the opposite wall. */
 	public static Direction door(int k) {
+		if (!Fen.hasBeacons(k)) {
+			double a = Fen.angle(k);
+			return Direction.getApproximateNearest(-Math.cos(a), 0, -Math.sin(a));
+		}
 		double a = InfernoGeometry.ROAD_ANGLES[k];
 		// the tower stands to the road's right (walking in), so the road lies to its left
 		return Direction.getApproximateNearest(Math.sin(a), 0, -Math.cos(a));
@@ -128,7 +133,11 @@ public record WatchtowerFeature() implements Feature {
 			level.setBlock(cache, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, door), 2);
 			RandomizableContainer.setBlockEntityLootTable(level, random, cache, LOOT);
 		}
-		// the twin beacons, unlit, each on a block of blackstone
+		// the twin beacons, unlit (an outpost has a lantern instead, on the platform's middle)
+		if (!Fen.hasBeacons(k)) {
+			setIfInChunk(level, x0, z0, new BlockPos(t[0], top + 1, t[1]), Blocks.LANTERN.defaultBlockState());
+			return;
+		}
 		for (BlockPos b : Fen.beacons(k, top)) {
 			setIfInChunk(level, x0, z0, b, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, false));
 		}

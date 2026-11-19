@@ -189,13 +189,18 @@ public final class Guide {
 						+ "(Minos, Cerberus, Plutus, Farinata and the Minotaur).",
 				"Each guardian says something about Lucifer as it falls: the Codex's page on the Emperor fills in."));
 		pages.add(page("THE CIRCLES' ENCHANTMENTS",
-				"Five enchantments only Hell gives, each found as a book in one circle. Put them on at an anvil.",
+				"Five enchantments only Hell gives, each found as a book in one circle. Put them on at an anvil, or join two books of the same "
+						+ "level for the next one.",
 				"Windstep (boots, faster walking): the lovers of Lust drop it.",
-				"Quickening (weapons, faster blows): Greed's vaults.",
-				combat ? "Sidestep (leggings): Wrath's watchtower caches. Your dodge roll costs less, goes further and is safe for longer."
-						: "Sidestep (leggings): Wrath's watchtower caches. Press Dash (Left Alt) to dash, and dodge a boss's blow.",
-				"Steadfast (chestplate, less boss damage): Heresy's tombs.",
-				"Judgement (weapons, more damage to bosses): the centaurs of Violence drop it."));
+				"Quickening (weapons, faster blows): Greed's vaults, and the hoarders drop it.",
+				combat ? "Sidestep (leggings): the caches in Wrath's watchtowers (one by each road, two more between), and the wrathful drop it. "
+						+ "Your dodge roll costs less, goes further and is safe for longer."
+						: "Sidestep (leggings): the caches in Wrath's watchtowers (one by each road, two more between), and the wrathful drop it. "
+						+ "Press Dash (Left Alt) to dash, and dodge a boss's blow.",
+				"Steadfast (chestplate, less boss damage): Heresy's tombs, and the heretics drop it.",
+				"Judgement (weapons, more damage to bosses): the centaurs of Violence drop it.",
+				"Want more? Each comes back: the monsters keep dropping them, a circle's champion often carries its book, and its guardian "
+						+ "(Minos, Plutus, Phlegyas, Farinata, the Minotaur) gives you one every time you beat it with a B or better."));
 		pages.add(page("RIDES DOWN",
 				"Geryon: beat him, then right-click him at the brink of the great cliff. He flies you down to Malebolge, and back up.",
 				"",

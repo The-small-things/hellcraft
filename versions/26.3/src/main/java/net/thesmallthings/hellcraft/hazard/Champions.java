@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -49,8 +48,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
@@ -591,12 +588,7 @@ public final class Champions {
 					LayerEnchants.STEADFAST, LayerEnchants.JUDGEMENT);
 			key = all.get(level.getRandom().nextInt(all.size()));
 		}
-		Holder<Enchantment> holder = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).orElse(null);
-		if (holder == null) {
-			return ItemStack.EMPTY;
-		}
-		int max = holder.value().getMaxLevel();
-		return EnchantmentHelper.createBook(new EnchantmentInstance(holder, 1 + level.getRandom().nextInt(Math.max(1, max))));
+		return LayerEnchants.book(level, key);
 	}
 
 	/** Splitting: two weaker copies where it fell (they split no further, and carry no spoils). */

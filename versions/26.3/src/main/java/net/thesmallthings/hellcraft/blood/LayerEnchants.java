@@ -16,7 +16,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.hazard.BossRules;
@@ -71,6 +73,16 @@ public final class LayerEnchants {
 			READY.remove(entity.getUUID());
 			DODGING.remove(entity.getUUID());
 		});
+	}
+
+	/** An enchanted book of one of these enchantments at a random level (1 to its most), or empty if it isn't registered. */
+	public static ItemStack book(ServerLevel level, ResourceKey<Enchantment> key) {
+		Holder<Enchantment> holder = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).orElse(null);
+		if (holder == null) {
+			return ItemStack.EMPTY;
+		}
+		int max = holder.value().getMaxLevel();
+		return EnchantmentHelper.createBook(new EnchantmentInstance(holder, 1 + level.getRandom().nextInt(Math.max(1, max))));
 	}
 
 	/** The level of one of these enchantments the entity has on (its best piece). */
