@@ -506,6 +506,9 @@ if [ "$MC_VERSION" != "1.21.1" ]; then
     echo "$out"
     echo "$out" | grep -q "awakens" || { echo "Guardian $g could not be summoned"; exit 1; }
     sleep 3
+    # its fight music (music/BossTheme): the first phase's track, read from the jar with its length
+    docker logs "$NAME" > "$LOG" 2>&1 || true
+    grep -qE "Boss music: ${g}_1 \([1-9][0-9]* s\)" "$LOG" || { echo "Guardian $g has no fight music"; exit 1; }
     rcon "execute at @e[tag=hellcraft_guardian_body,limit=1] run summon minecraft:villager ~4 ~ ~ {NoAI:1b,Invulnerable:1b,PersistenceRequired:1b,Tags:[\"smoke_dummy\"]}"
     # every guardian has a real body (animated on the client)
     if [ "$g" = furies ]; then

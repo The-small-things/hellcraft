@@ -334,6 +334,7 @@ final class FarinataFight extends GuardianFight {
 
 	private void rage(FarinataEntity farinata) {
 		enraged = true;
+		phaseTwo();
 		farinata.warn(BossEntity.Warning.NONE);
 		farinata.play(FarinataAnim.PHASE);
 		shield(farinata, FarinataAnim.PHASE.ticks);

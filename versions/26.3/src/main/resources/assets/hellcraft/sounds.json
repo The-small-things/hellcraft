@@ -2692,5 +2692,165 @@
         "stream": true
       }
     ]
+  },
+  "music.minos_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/minos_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.minos_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/minos_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.cerberus_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/cerberus_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.cerberus_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/cerberus_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.plutus_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/plutus_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.plutus_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/plutus_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.phlegyas_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/phlegyas_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.phlegyas_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/phlegyas_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.furies_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/furies_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.furies_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/furies_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.farinata_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/farinata_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.farinata_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/farinata_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.minotaur_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/minotaur_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.minotaur_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/minotaur_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.geryon_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/geryon_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.geryon_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/geryon_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.vulcan_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/vulcan_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.vulcan_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/vulcan_2",
+        "stream": true
+      }
+    ]
+  },
+  "music.seraph_1": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/seraph_1",
+        "stream": true
+      }
+    ]
+  },
+  "music.seraph_2": {
+    "sounds": [
+      {
+        "name": "hellcraft:music/seraph_2",
+        "stream": true
+      }
+    ]
   }
 }

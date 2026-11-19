@@ -103,7 +103,7 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   `sound/HellSounds` (a registered `Holder<SoundEvent>` per event, `HellSounds.register()` first thing in `onInitialize`;
   registered because the biomes name `hellcraft:music.*` and `hellcraft:ambient.*` by id). Call sites use
   `HellSounds.X.value()` (holders for armour materials, `Equippable` and `Ambience` moods); none of the mod's code plays a vanilla
-  sound event any more. Lucifer's three tracks are `music/duel|enraged|true_form.ogg` (`music/BossMusic`). The worldgen
+  sound event any more. Lucifer's three tracks are `music/duel|enraged|true_form.ogg` (`music/BossMusic`). Each guardian has two, `music/<id>_1` and `<id>_2`, played by `music/BossTheme` (to `audience()`, looping, the biome's music stopped): `_1` when it wakes, `_2` from `GuardianFight.phaseTwo()`, which every fight calls where it turns `enraged` at half health; the smoke test checks the `Boss music: <id>_1 (<n> s)` log line. The worldgen
   generators take the music and ambience from hellsounds.py. To add a sound: an entry in hellsounds.py, generate it with the MCP
   (sfx node, `eleven_text_to_sound_v3`), save the take as `cache/<event>/<n>.flac`, add its id to manifest.txt, re-run. Pitches at
   call sites stay near 1.0: the clips are made for their use, unlike the pitched vanilla sounds they replaced.

@@ -336,6 +336,7 @@ final class MinotaurFight extends GuardianFight {
 	/** At half his health: he bites his own arm in his rage, then bellows. */
 	private void rage(MinotaurEntity minotaur) {
 		enraged = true;
+		phaseTwo();
 		stop(minotaur);
 		chargeUntil = -1;
 		minotaur.warn(BossEntity.Warning.NONE);

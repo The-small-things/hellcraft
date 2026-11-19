@@ -465,6 +465,7 @@ final class MinosFight extends GuardianFight {
 	/** At half his health: he rises in fury. */
 	private void rage(MinosEntity minos) {
 		enraged = true;
+		phaseTwo();
 		if (coiled != null && level.getEntity(coiled) instanceof LivingEntity victim) {
 			letGo(minos, victim, true);
 		}

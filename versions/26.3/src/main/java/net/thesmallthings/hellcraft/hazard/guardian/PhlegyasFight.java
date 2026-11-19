@@ -356,6 +356,7 @@ final class PhlegyasFight extends GuardianFight {
 	/** At half his health: he roars at the burning city and beats the water. */
 	private void rage(PhlegyasEntity phlegyas) {
 		enraged = true;
+		phaseTwo();
 		phlegyas.warn(BossEntity.Warning.NONE);
 		phlegyas.play(PhlegyasAnim.PHASE);
 		shield(phlegyas, PhlegyasAnim.PHASE.ticks);

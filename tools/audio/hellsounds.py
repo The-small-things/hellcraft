@@ -360,6 +360,47 @@ MUSIC = {
                         "frantic strings, massive choir, chaotic and enraged", 150),
     "lucifer.true_form": ("Apocalyptic epic orchestral and choir boss finale, slow heavy tempo, colossal drums, deep pipe "
                           "organ, enormous brass, frozen and monumental, the devil himself, overwhelming dread", 180),
+    # the guardians' fights: a track for each phase (_1 until half health, _2 enraged after), played by music/BossTheme
+    "minos_1": ("Dark orchestral boss battle, steady mid tempo, a grim tribunal: pipe organ and low brass in a stern march, "
+                "booming timpani, male choir intoning, a serpent-like low strings motif, solemn and menacing", 90),
+    "minos_2": ("Furious dark orchestral boss battle, fast tempo, the judge in a rage: frantic strings ostinato, pounding "
+                "timpani and war drums, roaring brass and a shouting choir, organ blasts, relentless", 90),
+    "cerberus_1": ("Savage dark orchestral boss battle, mid tempo, a monstrous beast in mud and freezing rain: tribal drums, "
+                   "growling low brass, snarling distorted cellos, heavy and primal", 90),
+    "cerberus_2": ("Feral epic boss battle, fast tempo, three-headed beast unleashed: thunderous tribal drums, howling brass, "
+                   "shrieking strings, chaotic and bestial, ferocious", 90),
+    "plutus_1": ("Dark orchestral boss battle, mid tempo, a greedy demon of gold: heavy grinding march, low brass, clinking "
+                 "metallic percussion and coins, a cold obsessive ostinato, menacing", 90),
+    "plutus_2": ("Frantic dark orchestral boss battle, fast tempo, avarice gone mad: hammering metallic percussion, blaring "
+                 "brass, racing strings, a mad repeating ostinato, greedy frenzy", 90),
+    "phlegyas_1": ("Dark orchestral boss battle, mid tempo, a ferryman on a murky swamp river: heavy rowing rhythm in the "
+                   "drums, deep surging strings, low horns through fog, brooding and wrathful", 90),
+    "phlegyas_2": ("Stormy epic boss battle, fast tempo, wrath on a raging marsh: crashing drums like waves, furious "
+                   "strings, roaring brass, thunder-like hits, turbulent and violent", 90),
+    "furies_1": ("Dark orchestral boss battle, fast tempo, three shrieking winged furies: screeching high strings, "
+                 "stabbing brass, rapid percussion, female voices wailing, wild and vicious", 90),
+    "furies_2": ("Terrifying epic boss battle, fast tempo, a gorgon rises: petrifying low choir, hissing strings, "
+                 "relentless drums, dissonant brass clusters, dread and panic", 90),
+    "farinata_1": ("Dark sacred boss battle, mid tempo, a proud heretic in a burning tomb: dark pipe organ, low chanting "
+                   "choir, crackling fire textures, heavy drums, defiant and haughty", 90),
+    "farinata_2": ("Blazing epic boss battle, fast tempo, the tombs erupt in fire: thundering organ, roaring choir, "
+                   "pounding drums, searing brass, an inferno of rage", 90),
+    "minotaur_1": ("Brutal dark orchestral boss battle, mid tempo, a bull-headed beast in a stone labyrinth: pounding "
+                   "drums like hooves, bellowing low brass, tense ostinato strings, heavy and stalking", 90),
+    "minotaur_2": ("Rampaging epic boss battle, fast tempo, the beast charges: stampeding drums, bellowing horns, "
+                   "furious strings, crashing cymbals, unstoppable rage", 90),
+    "geryon_1": ("Eerie dark orchestral boss battle, mid tempo, a winged serpent of fraud with an honest face: deceptive "
+                 "twisting melody, sly woodwinds over menacing strings, gliding swells, unsettling", 90),
+    "geryon_2": ("Dizzying epic boss battle, fast tempo, a lying monster unmasked: whirling strings, lurching drums, "
+                 "distorted brass, disorienting shifts, chaotic and treacherous", 90),
+    "vulcan_1": ("Industrial epic boss battle, mid tempo, the smith of the gods in a vast forge: rhythmic anvil hammer "
+                 "percussion, deep brass, roaring furnace drones, powerful and driving", 90),
+    "vulcan_2": ("Molten epic boss battle, fast tempo, the forge erupts: thunderous hammering percussion, blazing brass, "
+                 "roaring choir, lava-like low drones, overwhelming fury", 90),
+    "seraph_1": ("Majestic heavenly boss battle, mid tempo, a six-winged burning angel: radiant choir, soaring strings, "
+                 "bright brass fanfares, pounding timpani, awe and severity", 90),
+    "seraph_2": ("Blazing celestial epic boss battle, fast tempo, holy fire unleashed: full choir in full voice, racing "
+                 "strings, triumphant brass, thundering drums, overwhelming radiance", 90),
 }
 
 # Music for each biome (worldgen) and each sphere of Paradiso.

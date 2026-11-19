@@ -385,6 +385,7 @@ final class CerberusFight extends GuardianFight {
 	/** At half his health: he rears up, roars with all three throats and slams down (a red ring). */
 	private void rage(CerberusEntity cerberus) {
 		enraged = true;
+		phaseTwo();
 		stop(cerberus);
 		chargeUntil = -1;
 		cerberus.warn(BossEntity.Warning.NONE);

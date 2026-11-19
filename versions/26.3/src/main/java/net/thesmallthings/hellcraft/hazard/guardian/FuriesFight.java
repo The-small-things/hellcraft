@@ -439,6 +439,7 @@ final class FuriesFight extends GuardianFight {
 	/** At half their life: "Venga Medusa!" */
 	private void rage(Mob body) {
 		enraged = true;
+		phaseTwo();
 		for (FuryEntity f : furies(body)) {
 			f.warn(BossEntity.Warning.NONE);
 			f.play(FuryAnim.PHASE);

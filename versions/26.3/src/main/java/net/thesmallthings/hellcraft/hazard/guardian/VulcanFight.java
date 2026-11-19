@@ -406,6 +406,7 @@ final class VulcanFight extends GuardianFight {
 	/** At half his health: he drives his hammer into the floor and roars; the seams of the floor wake. */
 	private void rage(VulcanEntity vulcan) {
 		enraged = true;
+		phaseTwo();
 		stop(vulcan);
 		vulcan.warn(BossEntity.Warning.NONE);
 		vulcan.play(VulcanAnim.PHASE);

@@ -46,6 +46,7 @@ import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Cue;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.StyleMeter;
+import net.thesmallthings.hellcraft.music.BossTheme;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
 import net.thesmallthings.hellcraft.sound.HellSounds;
@@ -93,6 +94,8 @@ public abstract class GuardianFight {
 	private final boolean debug;
 	private final ServerBossEvent bar;
 	protected final BossModel model;
+	/** The fight's music: {@code <id>_1}, then {@code <id>_2} from phaseTwo(). */
+	private final BossTheme theme;
 	private final List<Scheduled> scheduled = new ArrayList<>();
 	private final Set<UUID> participants = new LinkedHashSet<>();
 	/** Each fighter's style: its average over the fight decides their spoils (Judgement). */
@@ -129,6 +132,7 @@ public abstract class GuardianFight {
 		this.bar = new ServerBossEvent(UUID.randomUUID(), Component.literal(kind.title.toUpperCase(java.util.Locale.ROOT) + " — " + kind.subtitle)
 				.withStyle(kind.color, ChatFormatting.BOLD), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 		this.model = new BossModel(level, TAG + "_model", TAG, Vec3.atBottomCenterOf(lair));
+		this.theme = new BossTheme(level);
 	}
 
 	// ------------------------------------------------------------------ what each guardian provides
@@ -156,6 +160,11 @@ public abstract class GuardianFight {
 	/** A guardian that flies (Geryon) is fair game for arrows: full projectile damage, no pull, no perch rule. */
 	protected boolean flies() {
 		return false;
+	}
+
+	/** The fight's second phase (each guardian's rage at half health): its second track. */
+	protected void phaseTwo() {
+		theme.play(kind.id() + "_2", audience());
 	}
 
 	/** Called whenever the body is hurt. */
@@ -245,6 +254,7 @@ public abstract class GuardianFight {
 			model.pose(body, BossModel.Pose.ROAR);
 		}
 		level.playSound(null, lair, HellSounds.BOSS_AWAKEN.value(), SoundSource.HOSTILE, 2.0f, 1.05f);
+		theme.play(kind.id() + "_1", audience());
 		BossFx.send(level, ParticleTypes.SOUL_FIRE_FLAME, body.getX(), body.getY() + 1, body.getZ(), 120, 1.5, 2, 1.5, 0.05);
 		Cutscene cutscene = animated(body) ? introCutscene() : null;
 		for (ServerPlayer p : audience()) {
@@ -301,6 +311,9 @@ public abstract class GuardianFight {
 		}
 		if (tick % 100 == 0) {
 			forceLoad(true);
+		}
+		if (tick % 10 == 0) {
+			theme.tick(audience());
 		}
 		if (tick % 10 == 1) {
 			// its body and whatever else it brought (sisters, Medusa, false copies) blow at the fight's pace
@@ -624,6 +637,7 @@ public abstract class GuardianFight {
 		}
 		done = true;
 		scheduled.clear();
+		theme.stopAll();
 		bar.removeAllPlayers();
 		styles.values().forEach(StyleMeter::finish);
 		model.clear();

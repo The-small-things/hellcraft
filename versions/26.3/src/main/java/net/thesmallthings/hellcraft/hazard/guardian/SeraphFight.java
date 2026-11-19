@@ -386,6 +386,7 @@ final class SeraphFight extends GuardianFight {
 	/** At half its strength: all six wings flare and the ring of fire spins; the heavens begin to turn. */
 	private void flare(SeraphEntity seraph) {
 		enraged = true;
+		phaseTwo();
 		stop(seraph);
 		seraph.warn(BossEntity.Warning.NONE);
 		seraph.play(SeraphAnim.PHASE);

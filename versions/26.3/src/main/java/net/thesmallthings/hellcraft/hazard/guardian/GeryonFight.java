@@ -409,6 +409,7 @@ final class GeryonFight extends GuardianFight {
 
 	private void rage(GeryonEntity geryon) {
 		enraged = true;
+		phaseTwo();
 		geryon.warn(BossEntity.Warning.NONE);
 		geryon.play(GeryonAnim.PHASE);
 		shield(geryon, GeryonAnim.PHASE.ticks);

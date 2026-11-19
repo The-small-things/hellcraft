@@ -355,6 +355,7 @@ final class PlutusFight extends GuardianFight {
 	/** At half his health: he beats his belly, roars, and the Mint opens. */
 	private void rage(PlutusEntity plutus) {
 		enraged = true;
+		phaseTwo();
 		stop(plutus);
 		plutus.warn(BossEntity.Warning.NONE);
 		plutus.play(PlutusAnim.PHASE);
