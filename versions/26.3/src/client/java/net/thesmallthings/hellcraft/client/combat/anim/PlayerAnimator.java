@@ -38,6 +38,8 @@ public final class PlayerAnimator {
 	private Clips.Clip action;
 	private float time;
 	private float lastTime;
+	/** Where the move began on its own clock (the fade in counts from here). */
+	private float startedAt;
 	private float speed = 1;
 	private float blendIn = 2;
 	private float blendOut = 4;
@@ -134,10 +136,16 @@ public final class PlayerAnimator {
 	}
 
 	public void play(PlayerMovesAnim move, float speed, float heading, float blendIn, float blendOut) {
+		play(move, speed, heading, blendIn, blendOut, 0);
+	}
+
+	/** Starts a move `startAt` ticks in (its own clock), fading in from whatever shows now over `blendIn` ticks from there. */
+	public void play(PlayerMovesAnim move, float speed, float heading, float blendIn, float blendOut, float startAt) {
 		sample(1.0f, from);
 		this.action = Clips.of(move);
-		this.time = 0;
-		this.lastTime = 0;
+		this.time = startAt;
+		this.lastTime = startAt;
+		this.startedAt = startAt;
 		this.speed = Math.max(0.05f, speed);
 		this.heading = heading;
 		this.blendIn = Math.max(0.01f, blendIn);
@@ -178,6 +186,7 @@ public final class PlayerAnimator {
 		this.action = Clips.of(move);
 		this.time = tick;
 		this.lastTime = tick;
+		this.startedAt = 0;
 		this.speed = 0;
 		this.heading = heading;
 		this.blendIn = 0.0001f;
@@ -321,8 +330,8 @@ public final class PlayerAnimator {
 				fade *= smooth(Math.min(1, (cutLeft - partial) / cutTotal));
 			}
 			out.layer(scratch, fade);
-			if (!held && t < blendIn) {
-				scratch2.set(from).crossfade(out, smooth(t / blendIn));
+			if (!held && t - startedAt < blendIn) {
+				scratch2.set(from).crossfade(out, smooth(Math.max(0, t - startedAt) / blendIn));
 				out.set(scratch2);
 			}
 		}

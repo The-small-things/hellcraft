@@ -59,8 +59,18 @@ public final class Swing {
 	private Swing() {
 	}
 
-	/** Ticks into a light move at which a still-held attack key turns it into the heavy one (client and server agree). */
+	/**
+	 * Ticks the attack key must stay down for a press to be the heavy move (client/combat/SwingControl waits that long, with
+	 * nothing playing, before choosing; let go sooner and it is the next light move).
+	 */
 	public static final int CHARGE_AT = 3;
+	/** At most this many ticks of a heavy's wind-up are left out when it begins (the ticks spent waiting to see it was held). */
+	public static final int HEAVY_SKIP = 2;
+	/**
+	 * At most this many ticks of the network's one-way delay are made up: the blow lands when the swinger's own animation
+	 * shows it, not that much later.
+	 */
+	private static final int MAX_CATCH_UP = 5;
 	/** Ticks after a move ends in which the chain still carries on. */
 	public static final int CHAIN_GRACE = 6;
 	/** Others in the arc take this share of the first target's blow (all of it with Sweeping Edge III). */
@@ -89,7 +99,7 @@ public final class Swing {
 
 	static void register() {
 		PayloadTypeRegistry.serverboundPlay().register(SwingPayload.TYPE, SwingPayload.CODEC);
-		ServerPlayNetworking.registerGlobalReceiver(SwingPayload.TYPE, (payload, context) -> request(context.player(), payload.move()));
+		ServerPlayNetworking.registerGlobalReceiver(SwingPayload.TYPE, (payload, context) -> request(context.player(), payload.move(), payload.skip()));
 	}
 
 	static void forget(ServerPlayer player) {
@@ -146,7 +156,7 @@ public final class Swing {
 		}
 	}
 
-	private static void request(ServerPlayer player, int ordinal) {
+	private static void request(ServerPlayer player, int ordinal, int skip) {
 		if (!Combat.on() || !player.isAlive() || player.isSpectator() || player.isUsingItem() || Dodge.rolling(player)) {
 			return;
 		}
@@ -166,12 +176,21 @@ public final class Swing {
 		}
 		s.move = move;
 		s.weapon = weapon;
-		s.start = now;
 		s.pace = set.pace(player);
-		s.hitAt = now + Math.max(1, Math.round(move.hitTick() / s.pace));
-		s.end = now + Mth.ceil(move.ticks() / s.pace);
+		// the client began this move half a round trip ago (and maybe a little way in): count from then, so the blow lands
+		// when the swinger sees it land, not a ping later
+		float head = move.heavy() ? Mth.clamp(skip, 0, HEAVY_SKIP) : 0;
+		int behind = catchUp(player);
+		s.start = now - behind - Math.round(head / s.pace);
+		s.hitAt = Math.max(now, s.start + Math.max(1, Math.round(move.hitTick() / s.pace)));
+		s.end = Math.max(now + 1, s.start + Mth.ceil(move.ticks() / s.pace));
 		s.landed = false;
 		Combat.show(player, move.anim(), 0, 0, s.pace, false);
+	}
+
+	/** How many ticks behind the player's client the server hears of a swing: half the measured round trip, capped. */
+	private static int catchUp(ServerPlayer player) {
+		return Mth.clamp(Math.round(player.connection.latency() / 100.0f), 0, MAX_CATCH_UP);
 	}
 
 	/** Whether `move` may begin now, given what the player last did. A little slack for the network's sake. */

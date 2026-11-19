@@ -209,10 +209,6 @@ public final class Moveset {
 		if (!(move.swingTick() < move.hitTick() && move.hitTick() < move.nextTick() && move.nextTick() <= move.ticks())) {
 			return kind + ": " + move.anim + " must wind up, land, then free the next move, in that order";
 		}
-		// a held key turns a light move's wind-up into the heavy: there must be time before its blow lands
-		if (!move.heavy && move.hitTick() < Swing.CHARGE_AT + 2) {
-			return kind + ": " + move.anim + " lands too soon for a heavy to take over";
-		}
 		if (move.damage <= 0 || move.halfAngle <= 0 || move.halfAngle > 180) {
 			return kind + ": " + move.anim + " has no blow";
 		}

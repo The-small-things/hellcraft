@@ -7,6 +7,7 @@ import net.thesmallthings.hellcraft.client.combat.anim.Bone;
 import net.thesmallthings.hellcraft.client.combat.anim.PlayerAnimator;
 import net.thesmallthings.hellcraft.client.combat.anim.RigPose;
 import net.thesmallthings.hellcraft.net.FeelPayload;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 /**
@@ -25,15 +26,38 @@ public final class HitFeel {
 	private static final float[] velocity = new float[3];
 	private static final RigPose scratch = new RigPose();
 
+	/** Ticks left in which the server's word of a landed blow is already felt (the swing felt it as it landed). */
+	private static int predicted;
+
+	/**
+	 * This player's own swing reaches something as its animation lands the blow (client/combat/SwingControl): the held frame
+	 * and the kick come now, not a round trip later when the server confirms it; the server's HIT that follows is passed over.
+	 */
+	public static void predict(boolean heavy) {
+		Minecraft mc = Minecraft.getInstance();
+		LocalPlayer player = mc.player;
+		if (player == null) {
+			return;
+		}
+		predicted = 10;
+		PlayerAnimator animator = PlayerAnimator.get(player.getId());
+		feel(player, animator, heavy ? FeelPayload.Kind.HEAVY_HIT : FeelPayload.Kind.HIT, heavy ? 1.3f : 1.0f);
+	}
+
 	public static void receive(FeelPayload payload) {
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
 		if (player == null) {
 			return;
 		}
-		float s = payload.strength();
-		PlayerAnimator animator = PlayerAnimator.get(player.getId());
-		switch (payload.what()) {
+		if (predicted > 0 && (payload.what() == FeelPayload.Kind.HIT || payload.what() == FeelPayload.Kind.HEAVY_HIT)) {
+			return;
+		}
+		feel(player, PlayerAnimator.get(player.getId()), payload.what(), payload.strength());
+	}
+
+	private static void feel(LocalPlayer player, @Nullable PlayerAnimator animator, FeelPayload.Kind what, float s) {
+		switch (what) {
 			case HIT -> {
 				if (animator != null) {
 					animator.freeze(1);
@@ -69,6 +93,9 @@ public final class HitFeel {
 		if (client.isPaused()) {
 			return;
 		}
+		if (predicted > 0) {
+			predicted--;
+		}
 		for (int i = 0; i < 3; i++) {
 			lastKick[i] = kick[i];
 			// a damped spring back to rest
@@ -83,6 +110,7 @@ public final class HitFeel {
 	}
 
 	public static void reset() {
+		predicted = 0;
 		for (int i = 0; i < 3; i++) {
 			kick[i] = lastKick[i] = velocity[i] = 0;
 		}
