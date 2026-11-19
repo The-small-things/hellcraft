@@ -5,11 +5,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.thesmallthings.hellcraft.hazard.guardian.Guardian;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wrath's Fen of Styx (L-V): where its watchtowers stand and where its plank roads wind, shared by the worldgen
  * (WatchtowerFeature, BoardwalkFeature) and the ferry. A watchtower stands on the Fen's outer shore beside each of the
- * four roads, its two beacons on top; light them and the ferryman comes.
+ * four roads, its two beacons on top; light them and the ferryman comes. Others stand here and there across the Fen by
+ * chance (outposts, Outposts: a rare-ish structure, about two dozen in a world, placed by the world seed), the same
+ * towers with the same cache at the foot of the ladder but no beacons: so a pilgrim exploring the Fen finds more than
+ * one of its caches (and its Sidestep books).
  */
 public final class Fen {
 	private Fen() {
@@ -22,11 +29,14 @@ public final class Fen {
 	public static final int HALF = 3;
 	public static final int HEIGHT = 20;
 
-	/** Tower k's centre column (x, z), k by road (east, south, west, north). */
+	/** Beacon tower k's centre column (x, z), k by road (east, south, west, north). */
 	public static int[] tower(int k) {
 		double a = InfernoGeometry.ROAD_ANGLES[k];
-		double sideX = -Math.sin(a) * TOWER_SIDE;
-		double sideZ = Math.cos(a) * TOWER_SIDE;
+		return standIn(a, -Math.sin(a) * TOWER_SIDE, Math.cos(a) * TOWER_SIDE);
+	}
+
+	/** The tower's column at angle a (offset sideways by side), stepped in from the Fen's outer edge until it all stands in the Fen. */
+	private static int[] standIn(double a, double sideX, double sideZ) {
 		// the circles' edges wobble: step in until the whole tower stands in the Fen
 		double r = InfernoGeometry.outerRadius(Zone.STYX) - TOWER_INSET;
 		while (r > InfernoGeometry.outerRadius(Zone.STYX) - 120 && !inFen(Math.cos(a) * r + sideX, Math.sin(a) * r + sideZ)) {
@@ -46,11 +56,104 @@ public final class Fen {
 		return true;
 	}
 
+	/** The beacon towers, one by each road (their index is the road's, and the ferry's). */
 	public static int towers() {
 		return InfernoGeometry.ROAD_ANGLES.length;
 	}
 
-	/** The tower whose footprint (with its platform's overhang) holds this column, or -1. */
+	/**
+	 * The outposts: watchtowers without beacons, scattered across the Fen by chance. The Fen is cut into cells CELL
+	 * across; the world seed gives each cell one chance in ONE_IN of an outpost, at a spot inside it at least MARGIN from
+	 * its edges (so two never crowd each other), and the spot is kept only where the whole tower stands in the Fen, clear
+	 * of the roads, the ways down from Greed, the lairs (and Phlegyas's jetties), the Rests, the secret ways and the
+	 * beacon towers. Worked out from the seed and the geometry alone, so every chunk agrees on where they are.
+	 */
+	public static final class Outposts {
+		private Outposts() {
+		}
+
+		static final int CELL = 128;
+		static final int ONE_IN = 12;
+		static final int MARGIN = 20;
+
+		/** The outpost in cell (cx, cz) of a world with this seed, as its centre column {x, z}, or null. */
+		@Nullable
+		public static int[] inCell(long seed, int cx, int cz) {
+			long h = hash(seed, cx, cz);
+			if (Math.floorMod(h, ONE_IN) != 0) {
+				return null;
+			}
+			int span = CELL - 2 * MARGIN;
+			int[] t = {cx * CELL + MARGIN + (int) Math.floorMod(h >>> 12, span), cz * CELL + MARGIN + (int) Math.floorMod(h >>> 32, span)};
+			if (InfernoGeometry.zoneAt(t[0] + 0.5, t[1] + 0.5) != Zone.STYX || !clear(t)) {
+				return null;
+			}
+			return t;
+		}
+
+		/** Every outpost whose centre lies in the box from (x0, z0) to (x1, z1), for a world with this seed. */
+		public static List<int[]> in(long seed, int x0, int z0, int x1, int z1) {
+			List<int[]> out = new ArrayList<>();
+			for (int cx = Math.floorDiv(x0, CELL); cx <= Math.floorDiv(x1, CELL); cx++) {
+				for (int cz = Math.floorDiv(z0, CELL); cz <= Math.floorDiv(z1, CELL); cz++) {
+					int[] t = inCell(seed, cx, cz);
+					if (t != null && t[0] >= x0 && t[0] <= x1 && t[1] >= z0 && t[1] <= z1) {
+						out.add(t);
+					}
+				}
+			}
+			return out;
+		}
+
+		private static long hash(long seed, int cx, int cz) {
+			long h = seed ^ cx * 0x9E3779B97F4A7C15L ^ cz * 0xC2B2AE3D27D4EB4FL ^ 0x7A11E5L;
+			h ^= h >>> 31;
+			h *= 0xBF58476D1CE4E5B9L;
+			h ^= h >>> 29;
+			h *= 0x94D049BB133111EBL;
+			return h ^ (h >>> 32);
+		}
+
+		static boolean clear(int[] t) {
+			double x = t[0] + 0.5;
+			double z = t[1] + 0.5;
+			for (int dx = -HALF - 2; dx <= HALF + 2; dx++) {
+				for (int dz = -HALF - 2; dz <= HALF + 2; dz++) {
+					if (InfernoGeometry.roadLevel(x + dx, z + dz) > 0 || InfernoGeometry.zoneAt(x + dx, z + dz) != Zone.STYX) {
+						return false;
+					}
+				}
+			}
+			// Phlegyas's landings (with their jetties out to the shore) and every other lair
+			if (InfernoGeometry.nearLair(x, z, LANDING + JETTY + 12)) {
+				return false;
+			}
+			double r = Math.hypot(x, z);
+			double a = Math.atan2(z, x);
+			for (int k = 0; k < 12; k++) {
+				if (InfernoGeometry.angularDistance(a, InfernoGeometry.wayDownAngle(k)) * r < 80) {
+					return false;
+				}
+			}
+			if (SecretWays.near(x, z, 16)) {
+				return false;
+			}
+			for (int k = 0; k < towers(); k++) {
+				int[] t2 = tower(k);
+				if (Math.hypot(t2[0] - x, t2[1] - z) < 64) {
+					return false;
+				}
+			}
+			for (ShrineSites.Site s : ShrineSites.all()) {
+				if (Math.hypot(s.x() - x, s.z() - z) < 32) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	/** The beacon tower whose footprint (with its platform's overhang) holds this column, or -1. */
 	public static int towerAt(int x, int z) {
 		for (int k = 0; k < towers(); k++) {
 			int[] t = tower(k);

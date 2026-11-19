@@ -140,7 +140,7 @@ The rooms are built as players come near (within about a hundred blocks), so an 
 | **Lust** | II | The Storm Canyons: jagged tuff and deepslate spires with amethyst and crying obsidian. Breezes. Overhead, the souls whirl in vast flocks like starlings (3.0). | The wind is a road: white streams carry you down the circle |
 | **Gluttony** | III | The Mire: mud, filthy pools and endless rain. Rotting giant trees (some fallen), bloated fungus, and sunken feast tables with a barrel of leftovers at the head (3.0). Hoglins and slimes. | The mud swallows whoever stands still |
 | **Greed** | IV | The Counting House: blackstone, gilded blackstone and raw gold, heaped into hills of coin. Vaults with their round doors ajar (chests of gold, emeralds and diamonds) and giant scales tipped toward the gold; now and then a great coin as tall as a house comes rolling across, down a red line (get off it) (3.0). Piglins, buried bastions. | Gold draws the hoarders |
-| **Wrath** | V | The Fen of Styx: a grey-green marsh in a light fog, walled with reeds, crossed by plank roads; the city of Dis glows red through the fog toward the centre. A watchtower with twin beacons stands on the shore beside each road (3.0). Drowned, and vindicators with Strength. | The sullen lurk under the water |
+| **Wrath** | V | The Fen of Styx: a grey-green marsh in a light fog, walled with reeds, crossed by plank roads; the city of Dis glows red through the fog toward the centre. A watchtower with twin beacons stands on the shore beside each road (3.0), and more without beacons stand here and there across the Fen by chance (3.5.1, about two dozen in a world, in newly made ground), each with a cache at the foot of its ladder. Drowned, and vindicators with Strength. | The sullen lurk under the water |
 | Walls of Dis | – | A ring wall of blackstone brick with burning towers and 4 gates, each between two gatehouse towers you can climb. Lived in all the way round: rooms in the wall, watch towers along it, a walk on top. | – |
 | **Heresy** | VI | Soul sand and basalt, with fields of burning open tombs. Blazes, wither skeletons. | Pulses of Darkness |
 | **Violence** | VII | Phlegethon, a river of lava with crimson banks, where skeleton "centaurs" ride skeleton horses. The Wood of the Suicides (a thicket of gnarled trees, black thorns, webs). The Burning Sands. | Breaking the trees hurts you. Fire rains on the sands. |
@@ -366,12 +366,14 @@ They protect like diamond and work as a set:
 
 Five enchantments that no enchanting table, librarian or ordinary chest gives: each is found as a book in one circle only. Put them on at an anvil.
 
+All five can be farmed (3.5.1): the circle's monsters keep dropping its book (the lovers, hoarders and wrathful about one kill in 17, heretics one in 20, centaurs one in 12), its champion carries it 35% of the time, and its guardian (Minos for Windstep, Plutus for Quickening, Phlegyas for Sidestep, Farinata for Steadfast, the Minotaur for Judgement) gives every fighter ranked **B or better** the book each time it is beaten (config `guardianCircleBooks`). Two books of the same level make the next level at an anvil.
+
 | Enchantment | On | What it does | Found |
 |---|---|---|---|
 | **Windstep** I–III | boots | +8% walking speed per level | Lust: the lovers sometimes drop it |
-| **Quickening** I–II | swords, axes (and the Reaper) | +10% attack speed per level | Greed: the vaults of the Counting House |
-| **Sidestep** I–III | leggings | your **dodge roll** (the Dash key; see Fighting) costs a fifth less stamina per level, goes half a block further and is safe for 2 ticks longer. With Hellcraft's combat off it is the dash it used to be: a few blocks the way you're moving, a boss's blow passing through you, once every 3 / 2.25 / 1.5 s | Wrath: the caches at the foot of the Fen's watchtowers |
-| **Steadfast** I–IV | chestplate | bosses (the guardians, Lucifer and what they bring) hurt you 7% less per level | Heresy: the tombs |
+| **Quickening** I–II | swords, axes (and the Reaper) | +10% attack speed per level | Greed: the vaults of the Counting House; the hoarders sometimes drop it |
+| **Sidestep** I–III | leggings | your **dodge roll** (the Dash key; see Fighting) costs a fifth less stamina per level, goes half a block further and is safe for 2 ticks longer. With Hellcraft's combat off it is the dash it used to be: a few blocks the way you're moving, a boss's blow passing through you, once every 3 / 2.25 / 1.5 s | Wrath: the caches at the foot of the Fen's watchtowers; the wrathful sometimes drop it |
+| **Steadfast** I–IV | chestplate | bosses (the guardians, Lucifer and what they bring) hurt you 7% less per level | Heresy: the tombs; the heretics sometimes drop it |
 | **Judgement** I–V | swords, axes (and the Reaper) | your blows hurt bosses 1.5 more per level | Violence: the centaurs sometimes drop it |
 
 ## The circle guardians (26.3)
