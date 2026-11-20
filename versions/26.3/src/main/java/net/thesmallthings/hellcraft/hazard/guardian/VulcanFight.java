@@ -27,6 +27,7 @@ import net.thesmallthings.hellcraft.entity.boss.VulcanEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.VulcanAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
@@ -302,7 +303,7 @@ final class VulcanFight extends GuardianFight {
 				fling(e, e.position().subtract(to), 0.18 * to.length(), 0.3);
 				e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, 2));
 				if (e instanceof ServerPlayer p) {
-					p.sendOverlayMessage(Component.literal("Vulcan's chain drags you in!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+					Dialogue.status(p, Component.literal("Vulcan's chain drags you in!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 				}
 			}
 		});
@@ -438,7 +439,7 @@ final class VulcanFight extends GuardianFight {
 		delayNextAttack(VulcanAnim.STAGGER.ticks + 15);
 		vulcan.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, VulcanAnim.STAGGER.ticks, 9, false, false));
 		BossFx.send(level, ParticleTypes.CRIT, vulcan.getX(), vulcan.getY() + 3, vulcan.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
-		by.sendOverlayMessage(Component.literal("Parried! Vulcan reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Vulcan reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	private static void stop(Mob body) {

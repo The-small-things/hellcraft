@@ -41,7 +41,7 @@ public final class Fairness {
 				return true;
 			}
 			if (HellConfig.get().sanctuaryNoPvp && (inSanctuary(victim) || inSanctuary(attacker))) {
-				attacker.sendOverlayMessage(Component.literal("No fighting other players in the Dark Wood, on the Shore or in Limbo.")
+				Dialogue.status(attacker, Component.literal("No fighting other players in the Dark Wood, on the Shore or in Limbo.")
 						.withStyle(ChatFormatting.AQUA));
 				return false;
 			}

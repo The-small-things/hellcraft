@@ -22,6 +22,7 @@ import net.thesmallthings.hellcraft.entity.boss.GeryonEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
@@ -432,7 +433,7 @@ final class GeryonFight extends GuardianFight {
 		delayNextAttack(GeryonAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
-		by.sendOverlayMessage(Component.literal("Parried! Geryon sags to the ground: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Geryon sags to the ground: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	/** Beaten, he bows his head and stays at the cliff to carry souls down (GeryonCarrier). */
@@ -446,7 +447,7 @@ final class GeryonFight extends GuardianFight {
 		Vec3 at = body != null ? body.position() : centre().add(0, 2, 0);
 		GeryonCarrier.perch(level, lair, at);
 		for (ServerPlayer p : audience()) {
-			p.sendOverlayMessage(Component.literal("Geryon is tamed: right-click him to fly down the cliff to Malebolge.").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+			Dialogue.status(p, Component.literal("Geryon is tamed: right-click him to fly down the cliff to Malebolge.").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
 		}
 	}
 }

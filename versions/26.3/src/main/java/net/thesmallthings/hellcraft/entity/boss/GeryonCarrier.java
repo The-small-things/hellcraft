@@ -29,6 +29,7 @@ import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.entity.Carrier;
 import net.thesmallthings.hellcraft.entity.HellEntities;
 import net.thesmallthings.hellcraft.entity.boss.gen.GeryonAnim;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.FraudSites;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
@@ -187,7 +188,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 					start(phase == Phase.PERCHED ? Phase.DOWN : Phase.UP);
 					for (Entity e : getPassengers()) {
 						if (e instanceof ServerPlayer p) {
-							p.sendOverlayMessage(Component.literal(phase == Phase.DOWN ? "Geryon wheels slowly down into Malebolge. Hold on!"
+							Dialogue.status(p, Component.literal(phase == Phase.DOWN ? "Geryon wheels slowly down into Malebolge. Hold on!"
 									: "Geryon carries you back up to the brink.").withStyle(ChatFormatting.AQUA));
 						}
 					}
@@ -238,7 +239,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 				departAt = tickCount + BOARDING;
 			}
 			if (player instanceof ServerPlayer sp) {
-				sp.sendOverlayMessage(Component.literal("Geryon takes off in a few seconds. Sneak now to get off; once he flies, don't.")
+				Dialogue.status(sp, Component.literal("Geryon takes off in a few seconds. Sneak now to get off; once he flies, don't.")
 						.withStyle(ChatFormatting.AQUA));
 			}
 			level().playSound(null, blockPosition(), HellSounds.GERYON_MOUNT.value(), SoundSource.NEUTRAL, 1.0f, 0.9f);
@@ -266,7 +267,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 			e.teleportTo(at.x, y, at.z);
 			e.resetFallDistance();
 			if (e instanceof ServerPlayer p) {
-				p.sendOverlayMessage(Component.literal(text).withStyle(ChatFormatting.AQUA));
+				Dialogue.status(p, Component.literal(text).withStyle(ChatFormatting.AQUA));
 			}
 		}
 		riders.clear();
@@ -283,7 +284,7 @@ public class GeryonCarrier extends AnimatedBoss implements Carrier {
 			}
 			if (phase == Phase.DOWN || phase == Phase.UP) {
 				p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 300, 0));
-				p.sendOverlayMessage(Component.literal("You let go of Geryon!").withStyle(ChatFormatting.RED));
+				Dialogue.status(p, Component.literal("You let go of Geryon!").withStyle(ChatFormatting.RED));
 			}
 			return true;
 		});

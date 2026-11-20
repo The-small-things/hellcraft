@@ -25,6 +25,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.entity.boss.gen.MimicAnim;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,7 +123,7 @@ public class Mimic extends SoulMonster {
 		playSound(HellSounds.MIMIC_ROAR.value(), 0.8f, 1.15f);
 		if (by != null) {
 			setTarget(by);
-			by.sendOverlayMessage(Component.literal("That chest was a mimic!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+			Dialogue.status(by, Component.literal("That chest was a mimic!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 		}
 	}
 

@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.LoversAnim;
 import net.thesmallthings.hellcraft.hazard.BossRules;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 
@@ -139,7 +140,7 @@ public class Lovers extends SoulMonster {
 		setDeltaMovement(back.x * 0.6, 0.1, back.z * 0.6);
 		level.playSound(null, by.blockPosition(), HellSounds.COMBAT_GUARD_BLOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
 		level.sendParticles(ParticleTypes.CRIT, getX(), getY() + 1, getZ(), 20, 0.4, 0.4, 0.4, 0.2);
-		by.sendOverlayMessage(Component.literal("Blocked! The lovers fall stunned: hit them now.").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Blocked! The lovers fall stunned: hit them now.").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	/** True while a blocked dive has left the pair dazed on the ground. */

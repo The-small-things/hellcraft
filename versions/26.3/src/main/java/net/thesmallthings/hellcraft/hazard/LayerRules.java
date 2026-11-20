@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -109,7 +110,7 @@ public final class LayerRules {
 				if (gravity != null && !gravity.hasModifier(WIND)) {
 					gravity.addTransientModifier(new AttributeModifier(WIND, -1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 				}
-				CircleHazards.hintOnce(p, HINT_WIND, "The wind is a road: it carries you down the circle to the next way down. Sneak to let go, and you'll glide.");
+				// no hint from Virgil: the circle's card says the same as you come in
 			}
 			p.resetFallDistance();
 		} else if (RIDING.contains(p.getUUID())) {
@@ -164,17 +165,17 @@ public final class LayerRules {
 		BlockParticleOption mud = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState());
 		level.sendParticles(mud, p.getX(), p.getY() + 0.1, p.getZ(), 12, 0.3, 0.05, 0.3, 0.05);
 		level.playSound(null, p.blockPosition(), HellSounds.RULES_MUD.value(), SoundSource.BLOCKS, 1.0f, 0.9f);
-		CircleHazards.hintOnce(p, HINT_MUD, "Gluttony's mud swallows whoever stands still. Keep moving, or stand on roots, stone or planks.");
+		// no hint from Virgil: the circle's card says the same as you come in
 		if (still < 2 * stage) {
 			p.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, 0, true, false, true));
-			p.sendOverlayMessage(Component.literal("The mud is pulling you down: keep moving!").withStyle(ChatFormatting.GOLD));
+			Dialogue.status(p, Component.literal("The mud is pulling you down: keep moving!").withStyle(ChatFormatting.GOLD));
 		} else if (still < 3 * stage) {
 			p.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, 2, true, false, true));
-			p.sendOverlayMessage(Component.literal("The mud has you: move, or get onto roots, stone or planks!").withStyle(ChatFormatting.RED));
+			Dialogue.status(p, Component.literal("The mud has you: move, or get onto roots, stone or planks!").withStyle(ChatFormatting.RED));
 		} else {
 			p.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 30, 3, true, false, true));
 			p.hurtServer(level, level.damageSources().drown(), 1.0f);
-			p.sendOverlayMessage(Component.literal("The mud is swallowing you!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+			Dialogue.status(p, Component.literal("The mud is swallowing you!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		}
 	}
 
@@ -210,8 +211,8 @@ public final class LayerRules {
 		}
 		GRIPPED.put(id, HellConfig.get().sullenGripTicks);
 		level.playSound(null, p.blockPosition(), HellSounds.RULES_SULLEN.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
-		p.sendOverlayMessage(Component.literal("Hands drag you down! Swim clear of the bubbles.").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD));
-		CircleHazards.hintOnce(p, HINT_SULLEN, "The sullen lurk under the Styx where bubbles rise. Keep to the plank roads, or take a boat.");
+		Dialogue.status(p, Component.literal("Hands drag you down! Swim clear of the bubbles.").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD));
+		// no hint from Virgil: the circle's card says the same as you come in
 	}
 
 	/** For the smoke test: what counts as soft ground, and that the wind and the sullen are where they should be. */

@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.WaymarkEditPayload;
 import net.thesmallthings.hellcraft.net.WaymarksPayload;
 
@@ -42,7 +43,7 @@ public final class Waymarks {
 			ServerPlayer player = context.player();
 			String result = edit(player.level().getServer(), player.getUUID(), player.getGameProfile().name(), payload);
 			if (result != null) {
-				player.sendOverlayMessage(Component.literal(result));
+				Dialogue.status(player, Component.literal(result));
 			}
 		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> send(handler.getPlayer()));

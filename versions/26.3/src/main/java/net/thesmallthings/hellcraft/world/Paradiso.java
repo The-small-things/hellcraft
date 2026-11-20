@@ -6,9 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -94,10 +91,8 @@ public final class Paradiso {
 		}
 		setDown(player, level, Sphere.MOON);
 		level.playSound(null, player.blockPosition(), HellSounds.WORLD_LIGHT_COLUMN.value(), SoundSource.PLAYERS, 1.0f, 1.1f);
-		Dialogue.notice(player, Component.literal("You rose into Paradiso. Nine spheres are stacked above you: pass each one's trial, then "
-				+ "stand in its column of light to rise to the next. The Celestial Rose is at the top.").withStyle(ChatFormatting.GOLD));
-		Dialogue.notice(player, Component.literal("Falling can't hurt you here: an angel catches you. Hold sneak in a column to sink "
-				+ "back down. The gate under this canopy goes back to Purgatory.").withStyle(ChatFormatting.WHITE));
+		Dialogue.headline(player, "Paradiso", ChatFormatting.GOLD, "Pass each sphere's trial, then its column of light lifts you to the "
+				+ "next. Falling can't hurt you here.");
 	}
 
 	/** Puts a player on a sphere's arrival isle, beside the column, facing the sphere's great island. */
@@ -159,9 +154,7 @@ public final class Paradiso {
 			gates(level, player);
 		}
 		if (ticks % 20 == 0 && TITLED.put(player.getUUID(), band) != band) {
-			player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 25));
-			player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(band.title).withStyle(ChatFormatting.GOLD)));
-			player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(band.tagline).withStyle(ChatFormatting.WHITE)));
+			Dialogue.headline(player, band.title, ChatFormatting.GOLD, band.tagline);
 			CircleHazards.hintOnce(player, HINT + band.ordinal(), "Beatrice", ChatFormatting.LIGHT_PURPLE, band.title + ": " + band.trial
 					+ (band.last() ? "" : " Then its column of light lifts you to the next sphere."));
 			if (band.last()) {
@@ -182,7 +175,7 @@ public final class Paradiso {
 			long now = level.getGameTime();
 			if (now >= TOLD.getOrDefault(player.getUUID(), 0L)) {
 				TOLD.put(player.getUUID(), now + 80);
-				player.sendOverlayMessage(Component.literal("This column opens when you pass " + column.title + "'s trial: " + column.trial)
+				Dialogue.status(player, Component.literal("This column opens when you pass " + column.title + "'s trial: " + column.trial)
 						.withStyle(ChatFormatting.GOLD));
 			}
 			return;

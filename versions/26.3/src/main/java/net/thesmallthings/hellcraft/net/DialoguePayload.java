@@ -9,12 +9,13 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.thesmallthings.hellcraft.HellcraftMod;
 
 /**
- * One line for the dialogue box (Dialogue): who says it (empty for a plain notice), the colour of their name and
- * the box's edge, the line itself, and whether it is shouted (the box shakes).
+ * One line for the message box (Dialogue): its kind (Dialogue.Kind's ordinal), who says it (empty for a plain notice; a
+ * headline's title), the colour of their name and the box's edge, the line itself, and whether it is shouted (the box shakes).
  */
-public record DialoguePayload(String speaker, int colour, Component line, boolean shout) implements CustomPacketPayload {
+public record DialoguePayload(int kind, String speaker, int colour, Component line, boolean shout) implements CustomPacketPayload {
 	public static final Type<DialoguePayload> TYPE = new Type<>(HellcraftMod.id("dialogue"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, DialoguePayload> CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT, DialoguePayload::kind,
 			ByteBufCodecs.STRING_UTF8, DialoguePayload::speaker,
 			ByteBufCodecs.INT, DialoguePayload::colour,
 			ComponentSerialization.TRUSTED_STREAM_CODEC, DialoguePayload::line,

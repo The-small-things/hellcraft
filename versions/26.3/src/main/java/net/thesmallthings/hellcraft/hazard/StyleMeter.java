@@ -1,5 +1,6 @@
 package net.thesmallthings.hellcraft.hazard;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -9,7 +10,6 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.thesmallthings.hellcraft.blood.HellWeapons;
 import net.thesmallthings.hellcraft.blood.Judgement.Grade;
 import net.thesmallthings.hellcraft.combat.Combat;
@@ -431,15 +431,6 @@ public final class StyleMeter {
 			return "spear";
 		}
 		return item.equals("trident") ? "trident" : "fists";
-	}
-
-	/** What a fighter is told as their first boss fight's style meter starts. */
-	public static String openingTip() {
-		return Combat.on()
-				? "Your style is ranked in this fight (the STYLE panel). Chain your combos, parry, roll through blows and don't get hit: "
-				+ "every feat raises your multiplier, a hit resets it. The better your style, the better your spoils."
-				: "Your style is ranked in this fight (the STYLE bar). Hit hard, swap weapons and don't get hit: the better your style, "
-				+ "the better your spoils.";
 	}
 
 	/** Headless self-test for the smoke test: the rank for a few amounts of style. */

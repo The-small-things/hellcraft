@@ -2,6 +2,7 @@ package net.thesmallthings.hellcraft.hazard;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -27,6 +28,7 @@ import net.thesmallthings.hellcraft.blood.Prestige;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
 import net.thesmallthings.hellcraft.net.Dialogue;
+import net.thesmallthings.hellcraft.net.DialoguePayload;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -85,7 +87,7 @@ public final class CircleHazards {
 					&& InfernoGeometry.zoneAt(pos.getX(), pos.getZ()) == Zone.WOOD_OF_SUICIDES && !warded(sp)) {
 				// "Why dost thou rend me?" -- the trees of the suicides bleed when broken, and the noise carries (LowerRules)
 				serverLevel.sendParticles(BloodAltar.BLOOD, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 25, 0.4, 0.4, 0.4, 0.0);
-				sp.sendOverlayMessage(Component.literal("\"Why dost thou rend me?\"").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+				Dialogue.status(sp, Component.literal("\"Why dost thou rend me?\"").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 				LowerRules.branchBroken(sp);
 			}
 		});
@@ -134,16 +136,22 @@ public final class CircleHazards {
 		UUID id = player.getUUID();
 		if (LAST_CIRCLE.get(id) != circle) {
 			LAST_CIRCLE.put(id, circle);
-			// the circle's card (name, what it does, what to bring) is drawn by the client (LayerCard)
-			Dialogue.say(player, "Dante", ChatFormatting.GRAY, Component.literal(circle.quote()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-			Component rest = circle.depth() > 0 ? Shrines.nearestLine(player) : null;
-			if (rest != null) {
-				Dialogue.notice(player, rest);
+			// the circle's card (name, what it does, what to bring) is drawn by the client (LayerCard) in the message box, and its
+			// compass points to the nearest Rest; a player without Hellcraft on their side gets the circle's name and the Rest here
+			if (!ServerPlayNetworking.canSend(player, DialoguePayload.TYPE)) {
+				Dialogue.notice(player, Component.literal(circle.cardTitle()).withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+				Component rest = circle.depth() > 0 ? Shrines.nearestLine(player) : null;
+				if (rest != null) {
+					Dialogue.notice(player, rest);
+				}
 			}
+			LAST_REGION.put(id, InfernoGeometry.regionName(player.getX(), player.getZ()));
+			return;
 		}
 		String region = InfernoGeometry.regionName(player.getX(), player.getZ());
 		if (!region.equals(LAST_REGION.put(id, region)) && !region.equals(circle.title())) {
-			player.sendOverlayMessage(Component.literal(region).withStyle(ChatFormatting.RED));
+			// the compass names the region too; this is the quick word as you cross into it
+			Dialogue.status(player, Component.literal(region).withStyle(ChatFormatting.RED));
 		}
 	}
 
@@ -167,8 +175,7 @@ public final class CircleHazards {
 					int add = 43 + (int) Math.round(depth * 4);
 					int cap = player.getTicksRequiredToFreeze() + 40;
 					player.setTicksFrozen(Math.min(cap, player.getTicksFrozen() + add));
-					hint(player, circle, "The cold of Cocytus builds while you're away from fire (the frost at the screen's edges). Stand by a "
-							+ "lit campfire to warm up: light the braziers on the ice, they stay lit for everyone. Leather armour keeps the cold out.");
+					hint(player, circle, "Stay near fire to keep the cold off: light the braziers on the ice (they stay lit for everyone), or wear leather.");
 				}
 			}
 			default -> {
@@ -230,19 +237,33 @@ public final class CircleHazards {
 	}
 
 	public static void hintOnce(ServerPlayer player, int index, String text) {
-		hintOnce(player, index, "Virgil", ChatFormatting.GOLD, text);
+		hintOnce(player, index, "Virgil", ChatFormatting.GOLD, text, false);
+	}
+
+	/** A one-time hint from Virgil that a fight can't do without: it comes mid-fight too. */
+	public static void hintNow(ServerPlayer player, int index, String text) {
+		hintOnce(player, index, "Virgil", ChatFormatting.GOLD, text, true);
 	}
 
 	/** A one-time hint from another guide (Beatrice, in Paradiso). */
 	public static void hintOnce(ServerPlayer player, int index, String speaker, ChatFormatting colour, String text) {
+		hintOnce(player, index, speaker, colour, text, false);
+	}
+
+	/**
+	 * A one-time hint, paced like every tip (Dialogue.mayTip): mid-fight, in a cutscene or too soon after the last tip it
+	 * isn't spent, so it comes the next time the same thing happens. {@code now} is for the few hints a fight can't do
+	 * without (the Emperor's only weak point): those come mid-fight all the same.
+	 */
+	public static void hintOnce(ServerPlayer player, int index, String speaker, ChatFormatting colour, String text, boolean now) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		long bit = 1L << index;
-		if (soul == null || (soul.hints & bit) != 0) {
+		if (soul == null || (soul.hints & bit) != 0 || (!now && !Dialogue.mayTip(player))) {
 			return;
 		}
 		soul.hints |= bit;
 		HellState.get(player.level().getServer()).setDirty();
-		Dialogue.say(player, speaker, colour, Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+		Dialogue.tip(player, speaker, colour, Component.literal(text).withStyle(ChatFormatting.GRAY));
 	}
 
 	public static void forget(ServerPlayer player) {

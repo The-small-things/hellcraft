@@ -21,6 +21,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public final class Hellforge {
 
 	private static void forge(ServerPlayer player, ServerLevel level, BlockPos at, ItemStack held) {
 		if (HellWeapons.infernal(held)) {
-			player.sendOverlayMessage(Component.literal("Already infernal: it can't be upgraded further.").withStyle(ChatFormatting.GOLD));
+			Dialogue.status(player, Component.literal("Already infernal: it can't be upgraded further.").withStyle(ChatFormatting.GOLD));
 			return;
 		}
 		// a real piece of gear becomes its infernal form; one made before 3.0 is forged onto netherite as it was
@@ -81,7 +82,7 @@ public final class Hellforge {
 		int fragments = HellConfig.get().hellforgeCostFragments;
 		int ingots = player.getInventory().countItem(Items.NETHERITE_INGOT);
 		if (ingots < 1 || BloodItems.countFragments(player) < fragments) {
-			player.sendSystemMessage(Component.literal("The Hellforge needs a netherite ingot and " + fragments + " Blood Fragments (you have "
+			Dialogue.notice(player, Component.literal("The Hellforge needs a netherite ingot and " + fragments + " Blood Fragments (you have "
 					+ ingots + " and " + BloodItems.countFragments(player) + ").").withStyle(ChatFormatting.RED));
 			return;
 		}
@@ -121,7 +122,7 @@ public final class Hellforge {
 		level.playSound(null, at, HellSounds.BLOOD_FORGE.value(), SoundSource.BLOCKS, 1.2f, 0.9f);
 		level.sendParticles(ParticleTypes.LAVA, at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5, 20, 0.3, 0.3, 0.3, 0);
 		level.sendParticles(ParticleTypes.FLAME, at.getX() + 0.5, at.getY() + 1.2, at.getZ() + 0.5, 40, 0.4, 0.4, 0.4, 0.05);
-		player.sendSystemMessage(Component.literal("The Hellforge upgraded your ").withStyle(ChatFormatting.GOLD)
+		Dialogue.notice(player, Component.literal("The Hellforge upgraded your ").withStyle(ChatFormatting.GOLD)
 				.append(name).append(Component.literal(" to infernal.").withStyle(ChatFormatting.GOLD)));
 	}
 

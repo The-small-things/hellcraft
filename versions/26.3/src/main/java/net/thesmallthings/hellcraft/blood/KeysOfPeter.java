@@ -24,6 +24,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.Glow;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,8 +125,8 @@ public final class KeysOfPeter {
 		unheldSince = -1;
 		BloodItems.give(player, create(state.keysSerial));
 		server.getPlayerList().broadcastSystemMessage(Component.literal(news).withStyle(ChatFormatting.GOLD), false);
-		net.thesmallthings.hellcraft.net.Dialogue.notice(player, Component.literal("You carry the Keys of Peter: two more hearts, and a Blood "
-				+ "Altar takes you to any Virgil's Rest. They can't be put away, everyone knows you have them, and if you die they fall.")
+		net.thesmallthings.hellcraft.net.Dialogue.notice(player, Component.literal("You carry the Keys of Peter: +2 hearts, and altars take you to any Rest. "
+				+ "They can't be stored, and they fall if you die.")
 				.withStyle(ChatFormatting.GOLD));
 	}
 
@@ -160,7 +161,7 @@ public final class KeysOfPeter {
 				if (!current(server, stack) || has) {
 					// an old copy (or a second one) crumbles
 					p.getInventory().setItem(i, ItemStack.EMPTY);
-					p.sendOverlayMessage(Component.literal("Those keys were only a copy: they crumble to dust.").withStyle(ChatFormatting.GRAY));
+					Dialogue.status(p, Component.literal("Those keys were only a copy: they crumble to dust.").withStyle(ChatFormatting.GRAY));
 					continue;
 				}
 				has = true;

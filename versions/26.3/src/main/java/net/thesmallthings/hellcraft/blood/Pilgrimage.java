@@ -12,9 +12,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -181,7 +178,7 @@ public final class Pilgrimage {
 					if (circle.depth() >= ANNOUNCE_FROM) {
 						server.getPlayerList().broadcastSystemMessage(Component.literal("✦ " + line).withStyle(ChatFormatting.GOLD), false);
 					} else {
-						player.sendOverlayMessage(Component.literal("Pilgrimage: " + circle.title() + " reached (" + time(soul.pilgrimTicks) + ").")
+						Dialogue.status(player, Component.literal("Pilgrimage: " + circle.title() + " reached (" + time(soul.pilgrimTicks) + ").")
 								.withStyle(ChatFormatting.GOLD));
 					}
 				}
@@ -216,12 +213,8 @@ public final class Pilgrimage {
 				+ "without dying, in " + time(ticks) + ".").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
 		BloodItems.give(player, new ItemStack(HellItems.PILGRIM_SHELL));
 		Journey.award(player, "journey/pilgrim");
-		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 30));
-		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("PILGRIM").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
-		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(time(ticks) + ", without dying")
-				.withStyle(ChatFormatting.YELLOW)));
-		Dialogue.notice(player, Component.literal("Pilgrimage complete, in " + time(ticks) + ". You were given a Pilgrim's Shell, and your name is on "
-				+ "the Pilgrims' Stone by the Gate of Hell.").withStyle(ChatFormatting.GOLD));
+		Dialogue.headline(player, "Pilgrimage complete", ChatFormatting.GOLD, time(ticks) + " without dying. You got a Pilgrim's Shell, "
+				+ "and your name is on the Pilgrims' Stone.");
 		HellcraftMod.LOGGER.info("Pilgrimage finished by {} in {}", name, time(ticks));
 		send(player);
 	}
@@ -247,7 +240,7 @@ public final class Pilgrimage {
 					.append(Component.literal(name + " died on a hardcore pilgrimage and is now a ghost. Revive them at a Blood Altar.")
 							.withStyle(ChatFormatting.RED)), false);
 		}
-		player.sendSystemMessage(Component.literal("Your pilgrimage is over: you died. Start a new one at the Pilgrims' Stone by the Gate of Hell "
+		Dialogue.notice(player, Component.literal("Your pilgrimage is over: you died. Start a new one at the Pilgrims' Stone by the Gate of Hell "
 				+ "whenever you like.").withStyle(ChatFormatting.GRAY));
 		state.setDirty();
 		send(player);

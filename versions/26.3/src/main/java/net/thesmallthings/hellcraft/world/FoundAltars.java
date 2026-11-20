@@ -140,7 +140,7 @@ public final class FoundAltars {
 				}
 			}
 			if (oldest == null) {
-				player.sendSystemMessage(Component.literal("You remember " + MAX + " named altars already: this one can't be added to your travel menu.")
+				Dialogue.notice(player, Component.literal("You remember " + MAX + " named altars already: this one can't be added to your travel menu.")
 						.withStyle(ChatFormatting.GRAY));
 				return;
 			}

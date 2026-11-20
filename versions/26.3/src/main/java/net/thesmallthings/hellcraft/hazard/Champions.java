@@ -622,7 +622,7 @@ public final class Champions {
 		}
 		for (ServerPlayer p : level.players()) {
 			if (p.distanceTo(dead) < 32) {
-				p.sendOverlayMessage(Component.literal(live.name + " split in two! Finish the shards.").withStyle(colour(live.circle), ChatFormatting.BOLD));
+				Dialogue.status(p, Component.literal(live.name + " split in two! Finish the shards.").withStyle(colour(live.circle), ChatFormatting.BOLD));
 			}
 		}
 	}

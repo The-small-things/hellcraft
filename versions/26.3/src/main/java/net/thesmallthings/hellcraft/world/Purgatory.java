@@ -5,9 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -612,14 +609,9 @@ public final class Purgatory {
 		teleport(player, level, shore());
 		Journey.award(player, "journey/purgatory");
 		player.resetFallDistance();
-		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 80, 30));
-		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("PURGATORY").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)));
-		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("Thence we came forth to rebehold the stars.")
-				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
 		Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.1f);
-		Dialogue.notice(player, Component.literal("You climbed out to Purgatory. The Great Stair ahead climbs straight up the mountain to the "
-				+ "garden on top, with its two streams (Lethe and Eunoë), the Gate of Return home and the Ascent to Paradiso. Each of its seven "
-				+ "landings is a terrace you can follow round the mountain.").withStyle(ChatFormatting.AQUA));
+		Dialogue.headline(player, "Purgatory", ChatFormatting.AQUA, "Climb the Great Stair to the garden on top: its streams, "
+				+ "the way home and the Ascent to Paradiso.");
 		TERRACE_REACHED.put(player.getUUID(), 0);
 	}
 
@@ -638,7 +630,7 @@ public final class Purgatory {
 			// the angel at the gate keeps the Keys of Peter for whoever comes this far, if no-one has them
 			net.thesmallthings.hellcraft.blood.KeysOfPeter.offer(player);
 		}
-		player.sendOverlayMessage(Component.literal("Terrace of " + SINS[k - 1].charAt(0) + SINS[k - 1].substring(1).toLowerCase(java.util.Locale.ROOT)
+		Dialogue.status(player, Component.literal("Terrace of " + SINS[k - 1].charAt(0) + SINS[k - 1].substring(1).toLowerCase(java.util.Locale.ROOT)
 				+ " reached (" + k + "/7)").withStyle(ChatFormatting.AQUA));
 		Feedback.sound(player, HellSounds.WORLD_CHIME.value(), SoundSource.MASTER, 1.0f, 1.05f);
 	}
@@ -667,14 +659,14 @@ public final class Purgatory {
 			player.setTicksFrozen(0);
 			player.clearFire();
 			level.sendParticles(ParticleTypes.SPLASH, player.getX(), player.getY() + 1, player.getZ(), 30, 0.5, 0.5, 0.5, 0.1);
-			player.sendOverlayMessage(Component.literal("Lethe: all your effects are removed.").withStyle(ChatFormatting.AQUA));
+			Dialogue.status(player, Component.literal("Lethe: all your effects are removed.").withStyle(ChatFormatting.AQUA));
 			return;
 		}
 		// Eunoë: strength restored, once for every victory over Lucifer
 		HellState state = HellState.get(level.getServer());
 		HellState.Soul soul = Hearts.soul(player);
 		if (soul.pendingEunoe <= 0) {
-			player.sendOverlayMessage(Component.literal("Eunoë only works for players who have beaten Lucifer.").withStyle(ChatFormatting.GRAY));
+			Dialogue.status(player, Component.literal("Eunoë only works for players who have beaten Lucifer.").withStyle(ChatFormatting.GRAY));
 			return;
 		}
 		soul.pendingEunoe--;

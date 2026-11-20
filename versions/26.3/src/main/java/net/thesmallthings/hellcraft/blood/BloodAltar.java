@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +76,7 @@ public final class BloodAltar {
 			String name = held.getHoverName().getString();
 			Map.Entry<UUID, HellState.Soul> target = state.findByName(name);
 			if (target == null || !target.getValue().ghost) {
-				player.sendSystemMessage(Component.literal("There is no ghost named \"" + name + "\".").withStyle(ChatFormatting.GRAY));
+				Dialogue.notice(player, Component.literal("There is no ghost named \"" + name + "\".").withStyle(ChatFormatting.GRAY));
 				return InteractionResult.SUCCESS;
 			}
 			if (revive(player, level, pos, target.getKey())) {
@@ -108,7 +109,7 @@ public final class BloodAltar {
 	public static boolean ward(ServerPlayer player, ServerLevel level, BlockPos pos) {
 		HellConfig config = HellConfig.get();
 		if (BloodItems.takeHearts(player, 1) < 1) {
-			player.sendSystemMessage(Component.literal("A Ward costs 1 Blood Heart.").withStyle(ChatFormatting.RED));
+			Dialogue.notice(player, Component.literal("A Ward costs 1 Blood Heart.").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		HellState state = HellState.get(level.getServer());
@@ -118,7 +119,7 @@ public final class BloodAltar {
 		state.setDirty();
 		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 400, 1));
 		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 1));
-		player.sendSystemMessage(Component.literal("Blood Ward: circle hazards can't hurt you for "
+		Dialogue.notice(player, Component.literal("Blood Ward: circle hazards can't hurt you for "
 				+ config.wardMinutes + " minutes.").withStyle(ChatFormatting.DARK_RED));
 		level.playSound(null, pos, HellSounds.BLOOD_ALTAR_CHARGE.value(), SoundSource.BLOCKS, 1.0f, 0.9f);
 		ritual(level, pos, 30);
@@ -129,7 +130,7 @@ public final class BloodAltar {
 	public static boolean bind(ServerPlayer player, ServerLevel level, BlockPos pos) {
 		int cost = HellConfig.get().bindCostHearts;
 		if (BloodItems.countHearts(player) < cost) {
-			player.sendSystemMessage(Component.literal("Setting your respawn here costs " + cost + " Blood Heart" + (cost == 1 ? "" : "s") + ".")
+			Dialogue.notice(player, Component.literal("Setting your respawn here costs " + cost + " Blood Heart" + (cost == 1 ? "" : "s") + ".")
 					.withStyle(ChatFormatting.RED));
 			return false;
 		}
@@ -137,7 +138,7 @@ public final class BloodAltar {
 		HellState.Soul soul = Hearts.soul(player);
 		soul.altar = new HellState.GlobalSpot(level.dimension(), pos.immutable());
 		HellState.get(level.getServer()).setDirty();
-		player.sendSystemMessage(Component.literal("Respawn set: you'll respawn at this altar when you die.")
+		Dialogue.notice(player, Component.literal("Respawn set: you'll respawn at this altar when you die.")
 				.withStyle(ChatFormatting.DARK_RED));
 		level.playSound(null, pos, HellSounds.BLOOD_ALTAR_BIND.value(), SoundSource.BLOCKS, 1.0f, 0.95f);
 		ritual(level, pos, 30);
@@ -148,15 +149,15 @@ public final class BloodAltar {
 	public static boolean revive(ServerPlayer player, ServerLevel level, BlockPos pos, UUID ghost) {
 		HellState.Soul target = HellState.get(level.getServer()).existing(ghost);
 		if (target == null || !target.ghost) {
-			player.sendSystemMessage(Component.literal("That player is no longer a ghost.").withStyle(ChatFormatting.GRAY));
+			Dialogue.notice(player, Component.literal("That player is no longer a ghost.").withStyle(ChatFormatting.GRAY));
 			return false;
 		}
 		int cost = HellConfig.get().reviveCostHearts;
 		int have = BloodItems.countHearts(player);
 		if (have < cost) {
-			player.sendSystemMessage(Component.literal("Reviving " + target.name + " costs " + cost + " Blood Hearts"
+			Dialogue.notice(player, Component.literal("Reviving " + target.name + " costs " + cost + " Blood Hearts"
 					+ ". You have " + have + ".").withStyle(ChatFormatting.RED));
-			player.sendSystemMessage(Component.literal("Get Blood Hearts with /withdraw, by combining "
+			Dialogue.notice(player, Component.literal("Get Blood Hearts with /withdraw, by combining "
 					+ HellConfig.get().fragmentsPerHeart + " Blood Fragments, or from kills.")
 					.withStyle(ChatFormatting.GRAY));
 			return false;

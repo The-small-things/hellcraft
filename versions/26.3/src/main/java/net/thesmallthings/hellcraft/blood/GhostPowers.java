@@ -15,6 +15,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +72,7 @@ public final class GhostPowers {
 	private static boolean isGhost(ServerPlayer player) {
 		HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 		if (soul == null || !soul.ghost) {
-			player.sendSystemMessage(Component.literal("Only ghosts can use these.").withStyle(ChatFormatting.GRAY));
+			Dialogue.notice(player, Component.literal("Only ghosts can use these.").withStyle(ChatFormatting.GRAY));
 			return false;
 		}
 		return true;
@@ -83,7 +84,7 @@ public final class GhostPowers {
 		long now = player.level().getGameTime();
 		long at = READY.getOrDefault(key, 0L);
 		if (now < at) {
-			player.sendOverlayMessage(Component.literal("On cooldown: " + power + " again in " + (at - now + 19) / 20 + " s.")
+			Dialogue.status(player, Component.literal("On cooldown: " + power + " again in " + (at - now + 19) / 20 + " s.")
 					.withStyle(ChatFormatting.GRAY));
 			return false;
 		}
@@ -97,7 +98,7 @@ public final class GhostPowers {
 		}
 		LivingEntity target = lookedAt(ghost, 32.0);
 		if (target == null) {
-			ghost.sendOverlayMessage(Component.literal("Look at a creature to mark it.").withStyle(ChatFormatting.GRAY));
+			Dialogue.status(ghost, Component.literal("Look at a creature to mark it.").withStyle(ChatFormatting.GRAY));
 			return 0;
 		}
 		if (!ready(ghost, "mark", MARK_COOLDOWN)) {
@@ -123,7 +124,7 @@ public final class GhostPowers {
 		UUID killerId = KILLERS.get(ghost.getUUID());
 		Entity found = killerId == null ? null : ghost.level().getEntity(killerId);
 		if (!(found instanceof LivingEntity killer) || !killer.isAlive() || killer.distanceToSqr(ghost) > 48 * 48) {
-			ghost.sendOverlayMessage(Component.literal("Your killer isn't close enough.").withStyle(ChatFormatting.GRAY));
+			Dialogue.status(ghost, Component.literal("Your killer isn't close enough.").withStyle(ChatFormatting.GRAY));
 			return 0;
 		}
 		if (!ready(ghost, "haunt", HAUNT_COOLDOWN)) {
@@ -133,11 +134,11 @@ public final class GhostPowers {
 		killer.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 120, 1));
 		ghost.level().sendParticles(ParticleTypes.SCULK_SOUL, killer.getX(), killer.getY() + 1, killer.getZ(), 30, 0.5, 0.8, 0.5, 0.02);
 		if (killer instanceof ServerPlayer p) {
-			p.sendSystemMessage(Component.literal("You feel " + ghost.getGameProfile().name() + "'s ghost haunting you.")
+			Dialogue.notice(p, Component.literal("You feel " + ghost.getGameProfile().name() + "'s ghost haunting you.")
 					.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
 			Feedback.sound(p, HellSounds.GHOST_WAIL.value(), SoundSource.HOSTILE, 0.6f, 1.15f);
 		}
-		ghost.sendOverlayMessage(Component.literal("You haunt your killer.").withStyle(ChatFormatting.DARK_AQUA));
+		Dialogue.status(ghost, Component.literal("You haunt your killer.").withStyle(ChatFormatting.DARK_AQUA));
 		return 1;
 	}
 

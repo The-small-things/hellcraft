@@ -124,7 +124,7 @@ public final class Labyrinth {
 				return true;
 			}
 			if (player instanceof ServerPlayer sp) {
-				sp.sendOverlayMessage(Component.literal("The Labyrinth's stones don't give: find the way through.").withStyle(ChatFormatting.GRAY));
+				Dialogue.status(sp, Component.literal("The Labyrinth's stones don't give: find the way through.").withStyle(ChatFormatting.GRAY));
 			}
 			return false;
 		});
@@ -156,8 +156,7 @@ public final class Labyrinth {
 				BlockPos a = arch(level, k);
 				for (ServerPlayer p : level.players()) {
 					if (!p.isSpectator() && p.distanceToSqr(a.getX(), a.getY(), a.getZ()) < 16 * 16) {
-						net.thesmallthings.hellcraft.hazard.CircleHazards.hintOnce(p, HINT, "The Labyrinth of Crete lies beneath this arch: step through. "
-								+ "Ariadne's Thread waits at its heart and shows you the way out to the Minotaur. Take it into his fight, and his charges will end with him stunned.");
+						net.thesmallthings.hellcraft.hazard.CircleHazards.hintOnce(p, HINT, "Step through this arch into the Labyrinth. Take Ariadne's Thread from its heart: carried into the Minotaur's fight, it leaves him stunned after each charge.");
 					}
 				}
 				continue;
@@ -361,15 +360,15 @@ public final class Labyrinth {
 		long now = player.level().getGameTime();
 		Long last = TAKEN.get(player.getUUID());
 		if (last != null && now - last < THREAD_GAP) {
-			player.sendOverlayMessage(Component.literal("The spool is bare for now: come back in " + (THREAD_GAP - (now - last)) / 1200 + " min.")
+			Dialogue.status(player, Component.literal("The spool is bare for now: come back in " + (THREAD_GAP - (now - last)) / 1200 + " min.")
 					.withStyle(ChatFormatting.GRAY));
 			return;
 		}
 		TAKEN.put(player.getUUID(), now);
 		BloodItems.give(player, new ItemStack(HellItems.ARIADNES_THREAD));
 		player.level().playSound(null, player.blockPosition(), HellSounds.WORLD_THREAD.value(), SoundSource.PLAYERS, 1.0f, 0.95f);
-		Dialogue.notice(player, Component.literal("You took Ariadne's Thread. Follow the red thread along the floor: it leads to the Minotaur's door, "
-				+ "and up to his arena. In his fight, each of his charges ends with him stunned, and you hit him harder. It's used up when he falls.")
+		Dialogue.notice(player, Component.literal("You took Ariadne's Thread. Follow the red thread to the Minotaur: in his fight, his charges "
+				+ "end with him stunned.")
 				.withStyle(ChatFormatting.RED));
 	}
 
@@ -620,7 +619,7 @@ public final class Labyrinth {
 		int[] a = world(centre, k, DOOR_A, SIZE + 1);
 		int[] b = world(centre, k, DOOR_B, SIZE + 1);
 		move(level, player, (a[0] + b[0]) / 2.0 + 0.5, centre.getY(), (a[1] + b[1]) / 2.0 + 0.5, yaw(side(k).getOpposite()));
-		player.sendOverlayMessage(Component.literal("The Labyrinth of Crete. The pad behind you leads back up.").withStyle(ChatFormatting.GRAY));
+		Dialogue.status(player, Component.literal("The Labyrinth of Crete. The pad behind you leads back up.").withStyle(ChatFormatting.GRAY));
 	}
 
 	/** Up from a pad: to the edge of the Minotaur's arena, facing it, or back out in front of the arch. */
@@ -634,7 +633,7 @@ public final class Labyrinth {
 		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
 		move(level, player, x + 0.5, y, z + 0.5, yaw(out.getOpposite()));
 		if (toArena) {
-			player.sendOverlayMessage(Component.literal("Out of the Labyrinth: the Minotaur's arena lies ahead.").withStyle(ChatFormatting.RED));
+			Dialogue.status(player, Component.literal("Out of the Labyrinth: the Minotaur's arena lies ahead.").withStyle(ChatFormatting.RED));
 		}
 	}
 

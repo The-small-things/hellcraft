@@ -154,7 +154,7 @@ public final class LairLifts {
 			}
 			int stood = STANDING.merge(p.getUUID(), 1, Integer::sum);
 			if (stood == 1) {
-				p.sendOverlayMessage(Component.literal("Stay in the soul fire to go down to " + place(destination(g)) + "...")
+				Dialogue.status(p, Component.literal("Stay in the soul fire to go down to " + place(destination(g)) + "...")
 						.withStyle(ChatFormatting.AQUA));
 			}
 			if (stood >= STAND * 2) {

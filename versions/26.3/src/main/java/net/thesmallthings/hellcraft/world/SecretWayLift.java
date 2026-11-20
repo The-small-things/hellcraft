@@ -168,7 +168,7 @@ public final class SecretWayLift {
 			if (d < site.kind().radius + 3 && !site.id().equals(HINTED.get(p.getUUID()))) {
 				HINTED.put(p.getUUID(), site.id());
 				boolean found = Hearts.soul(p).secrets.contains(site.id());
-				p.sendOverlayMessage(Component.literal(found ? "A secret way down to " + site.place() + ". " + site.kind().how
+				Dialogue.status(p, Component.literal(found ? "A secret way down to " + site.place() + ". " + site.kind().how
 						: site.kind().title + ". Something here leads down: " + site.kind().how.substring(0, 1).toLowerCase(Locale.ROOT)
 						+ site.kind().how.substring(1)).withStyle(ChatFormatting.DARK_AQUA));
 			} else if (d > site.kind().radius + 12 && site.id().equals(HINTED.get(p.getUUID()))) {
@@ -185,7 +185,7 @@ public final class SecretWayLift {
 		player.resetFallDistance();
 		level.playSound(null, player.blockPosition(), HellSounds.WORLD_LIFT.value(), SoundSource.PLAYERS, 1.6f, 0.9f);
 		level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 0.5, player.getZ(), 30, 0.6, 0.3, 0.6, 0.04);
-		player.sendOverlayMessage(Component.literal("The way takes you down...").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
+		Dialogue.status(player, Component.literal("The way takes you down...").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
 	}
 
 	private static void land(ServerLevel level, ServerPlayer player, SecretWays.Site site) {
@@ -218,7 +218,7 @@ public final class SecretWayLift {
 			send(player);
 			HellcraftMod.LOGGER.info("Secret way found: {} by {}", site.id(), player.getGameProfile().name());
 		} else {
-			player.sendOverlayMessage(Component.literal("You came down a secret way into " + site.place() + ".")
+			Dialogue.status(player, Component.literal("You came down a secret way into " + site.place() + ".")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
 	}

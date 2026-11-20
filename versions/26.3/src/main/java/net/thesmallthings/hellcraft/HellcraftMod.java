@@ -178,6 +178,7 @@ public class HellcraftMod implements ModInitializer {
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			CircleHazards.forget(handler.getPlayer());
 			net.thesmallthings.hellcraft.blood.Lessons.forget(handler.getPlayer());
+			Dialogue.forget(handler.getPlayer());
 			Spine.forget(handler.getPlayer());
 			Ambience.forget(handler.getPlayer());
 			Purgatory.forget(handler.getPlayer());

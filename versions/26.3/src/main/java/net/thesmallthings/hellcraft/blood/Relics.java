@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -134,7 +135,7 @@ public final class Relics {
 		long now = player.level().getGameTime();
 		long ready = ROSE_READY.getOrDefault(player.getUUID(), 0L);
 		if (now < ready) {
-			player.sendOverlayMessage(Component.literal("The rose is on cooldown (" + (ready - now) / 1200 + " min).").withStyle(ChatFormatting.LIGHT_PURPLE));
+			Dialogue.status(player, Component.literal("The rose is on cooldown (" + (ready - now) / 1200 + " min).").withStyle(ChatFormatting.LIGHT_PURPLE));
 			return;
 		}
 		ROSE_READY.put(player.getUUID(), now + 72000L);
@@ -147,7 +148,7 @@ public final class Relics {
 		player.getFoodData().eat(20, 1.0f);
 		player.level().sendParticles(ParticleTypes.CHERRY_LEAVES, player.getX(), player.getY() + 1.5, player.getZ(), 40, 0.6, 0.6, 0.6, 0.02);
 		player.level().playSound(null, player.blockPosition(), HellSounds.RELIC_HALO.value(), SoundSource.PLAYERS, 1.5f, 1.05f);
-		player.sendSystemMessage(Component.literal("Beatrice's Rose: full health and food, and all effects removed.")
+		Dialogue.notice(player, Component.literal("Beatrice's Rose: full health and food, and all effects removed.")
 				.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC));
 	}
 
@@ -179,7 +180,7 @@ public final class Relics {
 	/** Hands a relic to a player (to their inventory, or at their feet if it's full). */
 	public static void give(ServerPlayer player, Relic relic) {
 		BloodItems.give(player, create(relic));
-		player.sendSystemMessage(Component.literal("You receive " + relic.title + ".").withStyle(relic.color));
+		Dialogue.notice(player, Component.literal("You receive " + relic.title + ".").withStyle(relic.color));
 	}
 
 	public static void forget(ServerPlayer player) {

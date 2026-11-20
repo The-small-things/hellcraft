@@ -18,6 +18,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +95,7 @@ public class Ferry extends Entity implements Carrier {
 				departAt = tickCount + BOARDING;
 			}
 			if (player instanceof ServerPlayer sp) {
-				sp.sendOverlayMessage(Component.literal("The ferry casts off in a few seconds. Sneak to get off before it does.").withStyle(ChatFormatting.DARK_AQUA));
+				Dialogue.status(sp, Component.literal("The ferry casts off in a few seconds. Sneak to get off before it does.").withStyle(ChatFormatting.DARK_AQUA));
 			}
 			level().playSound(null, blockPosition(), HellSounds.FERRY_CREAK.value(), SoundSource.NEUTRAL, 1.0f, 0.9f);
 			return InteractionResult.SUCCESS_SERVER;
@@ -135,7 +136,7 @@ public class Ferry extends Entity implements Carrier {
 					phase = Phase.SAILING;
 					for (Entity e : getPassengers()) {
 						if (e instanceof ServerPlayer p) {
-							p.sendOverlayMessage(Component.literal("The ferry carries you across the Styx and through the gate of Dis. Nothing can hurt you aboard.")
+							Dialogue.status(p, Component.literal("The ferry carries you across the Styx and through the gate of Dis. Nothing can hurt you aboard.")
 									.withStyle(ChatFormatting.DARK_AQUA));
 						}
 					}
@@ -206,7 +207,7 @@ public class Ferry extends Entity implements Carrier {
 			e.teleportTo(land.x, y, land.z);
 			e.resetFallDistance();
 			if (e instanceof ServerPlayer p) {
-				p.sendOverlayMessage(Component.literal("Inside the Walls of Dis: Heresy lies ahead.").withStyle(ChatFormatting.RED));
+				Dialogue.status(p, Component.literal("Inside the Walls of Dis: Heresy lies ahead.").withStyle(ChatFormatting.RED));
 			}
 		}
 		level().playSound(null, blockPosition(), HellSounds.FERRY_DOCK.value(), SoundSource.NEUTRAL, 1.5f, 0.88f);

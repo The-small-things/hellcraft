@@ -317,8 +317,7 @@ public final class Frauds {
 		}
 		Dialogue.notice(victim, Component.literal("It's a trap: this Rest is a fake! Malebolge lies. The real Rests are on your compass (the gold diamond).")
 				.withStyle(ChatFormatting.RED));
-		CircleHazards.hintOnce(victim, HINT_FRAUD, "In Malebolge nothing is what it seems: some chests are mimics (watch for a lid that breathes), "
-				+ "thieves snatch from your pack (kill them to get it back), and a Rest that isn't on your compass is a trap.");
+		CircleHazards.hintOnce(victim, HINT_FRAUD, "In Malebolge some chests are mimics, thieves snatch from your pack, and a Rest that isn't on your compass is a trap.");
 		MapSync.unlockCodex(victim, "mimic");
 		MapSync.unlockCodex(victim, "thief");
 		HellcraftMod.LOGGER.info("Fake Rest {} sprung by {}", f.id(), victim.getGameProfile().name());

@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.block.HellBlocks;
 import net.thesmallthings.hellcraft.blood.BloodAltar;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -159,7 +160,7 @@ public final class LowerRules {
 			}
 			p.igniteForSeconds(4.0f);
 			p.hurtServer(level, level.damageSources().inFire(), 3.0f);
-			CircleHazards.hintOnce(p, HINT_TOMBS, "The tombs blast fire in turn: a red circle warns which goes next. Watch the rhythm and cross between blasts.");
+			// no hint from Virgil: the circle's card says the same as you come in
 		}
 	}
 
@@ -202,9 +203,8 @@ public final class LowerRules {
 			scream(p, level, now);
 		} else if (noise >= WOOD_WARN && before < WOOD_WARN) {
 			level.playSound(null, p.blockPosition(), HellSounds.RULES_THORNS.value(), SoundSource.BLOCKS, 1.0f, 0.9f);
-			p.sendOverlayMessage(Component.literal("Branches crack and the trees groan... sneak, or they'll scream!").withStyle(ChatFormatting.GOLD));
-			CircleHazards.hintOnce(p, HINT_WOOD, "In the Wood of the Suicides, pushing through the branches or breaking them makes the trees scream, "
-					+ "and the harpies come. Sneak through it (hold sneak), and leave the branches be.");
+			Dialogue.status(p, Component.literal("Branches crack and the trees groan... sneak, or they'll scream!").withStyle(ChatFormatting.GOLD));
+			CircleHazards.hintOnce(p, HINT_WOOD, "Sneak through the Wood of the Suicides and leave the branches be, or the trees scream and the harpies come.");
 		}
 	}
 
@@ -230,7 +230,7 @@ public final class LowerRules {
 				level.sendParticles(BloodAltar.BLOOD, b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0.0);
 			}
 		}
-		p.sendOverlayMessage(Component.literal("The trees scream! The harpies are coming.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		Dialogue.status(p, Component.literal("The trees scream! The harpies are coming.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		LowerMonsters.harpies(level, p, 2 + level.getRandom().nextInt(2));
 	}
 
@@ -267,7 +267,7 @@ public final class LowerRules {
 			}
 			if (phase % 20 == 0 && !exempt(p)) {
 				int seconds = (SANDS_FIRE_AT - phase + 19) / 20;
-				p.sendOverlayMessage(Component.literal(safe ? "Fire will fall in " + seconds + "... you're under cover. Stay there."
+				Dialogue.status(p, Component.literal(safe ? "Fire will fall in " + seconds + "... you're under cover. Stay there."
 						: "Fire will fall in " + seconds + "... get under a rock!").withStyle(safe ? ChatFormatting.GOLD : ChatFormatting.RED, ChatFormatting.BOLD));
 			}
 			return;
@@ -285,7 +285,7 @@ public final class LowerRules {
 		}
 		p.igniteForSeconds(4.0f);
 		p.hurtServer(level, level.damageSources().inFire(), 1.5f);
-		p.sendOverlayMessage(Component.literal("Fire is falling: get under a rock!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+		Dialogue.status(p, Component.literal("Fire is falling: get under a rock!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 		CircleHazards.hintOnce(p, HINT_SANDS, "On the Burning Sands fire falls in waves. When the countdown starts, get under a rock arch (or into water) until it passes.");
 	}
 

@@ -16,7 +16,7 @@ public class HellConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static HellConfig instance = new HellConfig();
 	/** Bumped when default balance values change; see {@link #migrate()}. */
-	private static final int CURRENT_VERSION = 5;
+	private static final int CURRENT_VERSION = 6;
 
 	/** Which defaults this file was written with (0: before versioning). Don't edit. */
 	public int configVersion;
@@ -79,7 +79,9 @@ public class HellConfig {
 	/** First steps: Virgil teaches new souls the mod a little at a time as they play (Lessons). */
 	public boolean lessons = true;
 	/** The least time between two of Virgil's lessons, in seconds. */
-	public int lessonSeconds = 60;
+	public int lessonSeconds = 120;
+	/** The least time between any two tips (Virgil's lessons and the one-time hints), in seconds. Tips never come mid-fight. */
+	public int tipSeconds = 30;
 	/** Wrath: how long the sullen drag a swimmer down, in ticks. */
 	public int sullenGripTicks = 40;
 	/** Extra max health per circle of depth for hostile mobs (0.03 = +3% per circle). */
@@ -420,6 +422,10 @@ public class HellConfig {
 		if (configVersion < 5) {
 			// combat playtest: his fight was slow; he fights at full speed now, in strings of blows
 			luciferTempo = moved(luciferTempo, 0.85, 1.0);
+		}
+		if (configVersion < 6) {
+			// playtest: Virgil talked too much; his lessons come half as often
+			lessonSeconds = (int) moved(lessonSeconds, 60, 120);
 		}
 		if (configVersion < CURRENT_VERSION) {
 			HellcraftMod.LOGGER.info("Hellcraft config updated from version {} to {}", configVersion, CURRENT_VERSION);

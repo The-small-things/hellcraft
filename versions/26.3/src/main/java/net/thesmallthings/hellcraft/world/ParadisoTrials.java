@@ -5,9 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -126,7 +123,7 @@ public final class ParadisoTrials {
 				return;
 			}
 			String more = inOrder && count < EAGLE.length ? " Next: " + EAGLE[count] + "." : "";
-			player.sendOverlayMessage(Component.literal("Light " + count + " of " + lights.size() + "." + more).withStyle(ChatFormatting.GOLD));
+			Dialogue.status(player, Component.literal("Light " + count + " of " + lights.size() + "." + more).withStyle(ChatFormatting.GOLD));
 		}
 	}
 
@@ -149,7 +146,7 @@ public final class ParadisoTrials {
 		}
 		if (start != null && after != 0 && ticks % 20 == 0) {
 			long left = (MERCURY_TICKS - (now - start)) / 20;
-			player.sendOverlayMessage(Component.literal(Integer.bitCount(after) + " of 6 lights, " + left + " s left").withStyle(ChatFormatting.AQUA));
+			Dialogue.status(player, Component.literal(Integer.bitCount(after) + " of 6 lights, " + left + " s left").withStyle(ChatFormatting.AQUA));
 		}
 	}
 
@@ -211,7 +208,7 @@ public final class ParadisoTrials {
 			Heaven.angels(level, heart, 3, MARS_TAG);
 			for (UUID id : MARS_FIGHTERS) {
 				if (level.getServer().getPlayerList().getPlayer(id) instanceof ServerPlayer p) {
-					p.sendOverlayMessage(Component.literal("Wave " + marsWave + " of " + MARS_WAVES).withStyle(ChatFormatting.GOLD));
+					Dialogue.status(p, Component.literal("Wave " + marsWave + " of " + MARS_WAVES).withStyle(ChatFormatting.GOLD));
 				}
 			}
 			return;
@@ -260,13 +257,9 @@ public final class ParadisoTrials {
 		player.giveExperienceLevels(3);
 		BloodItems.give(player, BloodItems.fragment(1));
 		Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.07f);
-		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
-		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("Trial passed").withStyle(ChatFormatting.GOLD)));
-		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(s.title).withStyle(ChatFormatting.WHITE)));
 		Sphere next = s.last() ? null : ParadisoGeometry.SPHERES[s.ordinal() + 1];
-		Dialogue.notice(player, Component.literal("You passed " + s.title + "'s trial: healed, 3 levels and a Blood Fragment."
-				+ (next == null ? "" : " Its column of light on the departure isle now lifts you to " + next.title + "."))
-				.withStyle(ChatFormatting.GOLD));
+		Dialogue.headline(player, "Trial passed: " + s.title, ChatFormatting.GOLD, "Healed, 3 levels and a Blood Fragment."
+				+ (next == null ? "" : " The column of light now lifts you to " + next.title + "."));
 		if (s == Sphere.SATURN) {
 			Relics.give(player, Relics.Relic.SERAPH_WINGS);
 			Dialogue.notice(player, Component.literal("At the top of the ladder you were given Seraph Wings (an elytra that never "

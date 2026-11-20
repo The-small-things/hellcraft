@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.MinotaurEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.MinotaurAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.HashSet;
@@ -327,7 +328,7 @@ final class MinotaurFight extends GuardianFight {
 		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
 			if (player.getInventory().getItem(i).is(HellItems.ARIADNES_THREAD)) {
 				player.getInventory().removeItem(i, 1);
-				player.sendOverlayMessage(Component.literal("Ariadne's Thread is spent.").withStyle(ChatFormatting.RED));
+				Dialogue.status(player, Component.literal("Ariadne's Thread is spent.").withStyle(ChatFormatting.RED));
 				return;
 			}
 		}
@@ -366,7 +367,7 @@ final class MinotaurFight extends GuardianFight {
 		minotaur.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, MinotaurAnim.STAGGER.ticks, 9, false, false));
 		BossFx.send(level, ParticleTypes.CRIT, minotaur.getX(), minotaur.getY() + 3, minotaur.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
 		if (by != null) {
-			by.sendOverlayMessage(Component.literal("Parried! The Minotaur reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+			Dialogue.status(by, Component.literal("Parried! The Minotaur reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 		} else {
 			tip("He ran into the rock and stunned himself: hit him now!");
 		}

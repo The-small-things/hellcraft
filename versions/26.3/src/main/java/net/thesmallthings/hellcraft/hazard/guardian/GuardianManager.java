@@ -19,12 +19,13 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Signs;
 import net.thesmallthings.hellcraft.world.Fen;
 import net.thesmallthings.hellcraft.world.GreatForge;
+import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.Paradiso;
 import net.thesmallthings.hellcraft.world.ParadisoGeometry;
-import net.thesmallthings.hellcraft.world.HellWorldgen;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -71,7 +72,7 @@ public final class GuardianManager {
 			for (GuardianFight f : FIGHTS.values()) {
 				if (f.level() == world && !f.done() && (f.inArena(player) || f.inArena(hit.getBlockPos()))) {
 					if (player instanceof ServerPlayer sp) {
-						sp.sendOverlayMessage(Component.literal("You can't build in a guardian's lair while it's awake.").withStyle(ChatFormatting.AQUA));
+						Dialogue.status(sp, Component.literal("You can't build in a guardian's lair while it's awake.").withStyle(ChatFormatting.AQUA));
 						sp.containerMenu.sendAllDataToRemote();
 					}
 					return InteractionResult.FAIL;
@@ -243,6 +244,16 @@ public final class GuardianManager {
 	/** True while this guardian is awake. */
 	public static boolean awake(Guardian g) {
 		return FIGHTS.containsKey(g);
+	}
+
+	/** True while this player stands in the arena of a guardian that is awake (any realm: Vulcan's, the Seraph's too). */
+	public static boolean fighting(ServerPlayer player) {
+		for (GuardianFight f : FIGHTS.values()) {
+			if (f.level == player.level() && !f.done() && f.inArena(player)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** The lair this guardian is awake in, or -1. */

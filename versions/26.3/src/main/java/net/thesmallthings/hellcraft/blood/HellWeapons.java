@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -229,12 +230,12 @@ public final class HellWeapons {
 			if (of(held) != null) {
 				held.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 			}
-			player.sendOverlayMessage(Component.literal("Fully charged: press ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
+			Dialogue.status(player, Component.literal("Fully charged: press ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 					.append(Component.keybind("key.hellcraft.blood_art").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD))
 					.append(Component.literal(" for its Blood Art!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)));
 			player.level().playSound(null, player.blockPosition(), HellSounds.WEAPON_ART_READY.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
 		} else {
-			player.sendOverlayMessage(meter(now));
+			Dialogue.status(player, meter(now));
 		}
 	}
 
@@ -292,7 +293,7 @@ public final class HellWeapons {
 			return InteractionResult.PASS;
 		}
 		if (charge(player) < FULL) {
-			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
+			Dialogue.status(player, meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
 			// a sword or axe still blocks/strips as usual when there's no art to use
 			return InteractionResult.PASS;
 		}
@@ -311,7 +312,7 @@ public final class HellWeapons {
 			return false;
 		}
 		if (charge(player) < FULL) {
-			player.sendOverlayMessage(meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
+			Dialogue.status(player, meter(charge(player)).copy().append(Component.literal("  (hits and kills charge it)").withStyle(ChatFormatting.DARK_GRAY)));
 			return false;
 		}
 		if (player.isUsingItem()) {
@@ -369,17 +370,17 @@ public final class HellWeapons {
 		long now = level.getGameTime();
 		if (underOath(player)) {
 			long left = (OATHS.get(player.getUUID()) - now) / 20;
-			player.sendOverlayMessage(Component.literal("Your Blood Oath is still active (" + left + " s).").withStyle(ChatFormatting.RED));
+			Dialogue.status(player, Component.literal("Your Blood Oath is still active (" + left + " s).").withStyle(ChatFormatting.RED));
 			return;
 		}
 		long ready = OATH_READY.getOrDefault(player.getUUID(), 0L);
 		if (now < ready) {
-			player.sendOverlayMessage(Component.literal("Blood Oath is on cooldown (" + (ready - now + 19) / 20 + " s).")
+			Dialogue.status(player, Component.literal("Blood Oath is on cooldown (" + (ready - now + 19) / 20 + " s).")
 					.withStyle(ChatFormatting.GRAY));
 			return;
 		}
 		if (player.getHealth() <= OATH_MIN_HEALTH) {
-			player.sendOverlayMessage(Component.literal("Not enough health for a Blood Oath (you need more than 4❤).")
+			Dialogue.status(player, Component.literal("Not enough health for a Blood Oath (you need more than 4❤).")
 					.withStyle(ChatFormatting.RED));
 			return;
 		}
@@ -387,7 +388,7 @@ public final class HellWeapons {
 		OATHS.put(player.getUUID(), now + OATH_TICKS);
 		OATH_READY.put(player.getUUID(), now + OATH_COOLDOWN);
 		addCharge(player, FULL);
-		player.sendSystemMessage(Component.literal("Blood Oath: your " + weapon.title + " has full power for 30 s.")
+		Dialogue.notice(player, Component.literal("Blood Oath: your " + weapon.title + " has full power for 30 s.")
 				.withStyle(ChatFormatting.DARK_RED));
 		if (BloodArmour.worn(player) >= 4) {
 			// a full set of blood armour hardens under an oath
@@ -439,7 +440,7 @@ public final class HellWeapons {
 			level.sendParticles(ParticleTypes.SWEEP_ATTACK, p.x, p.y + 1.0, p.z, 1, 0, 0, 0, 0);
 		}
 		level.playSound(null, player.blockPosition(), HellSounds.WEAPON_REAP.value(), SoundSource.PLAYERS, 1.2f, 0.88f);
-		player.sendOverlayMessage(Component.literal("Exsanguinate!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		Dialogue.status(player, Component.literal("Exsanguinate!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 	}
 
 	private static double distanceToSegment(Vec3 p, Vec3 a, Vec3 b) {
@@ -451,7 +452,7 @@ public final class HellWeapons {
 	/** Reaper: everything around you. */
 	private static void harvest(ServerPlayer player, double radius, float damage) {
 		cleave(player.level(), player, player, radius, damage, true);
-		player.sendOverlayMessage(Component.literal("Harvest!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		Dialogue.status(player, Component.literal("Harvest!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 	}
 
 	/** Tithe Axe. */
@@ -460,7 +461,7 @@ public final class HellWeapons {
 		player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, ticks, 1));
 		player.addEffect(new MobEffectInstance(MobEffects.SPEED, ticks, 1));
 		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
-		player.sendOverlayMessage(Component.literal("Blood Frenzy!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		Dialogue.status(player, Component.literal("Blood Frenzy!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		bleed(level, player, 30);
 		level.playSound(null, player.getX(), player.getY(), player.getZ(), HellSounds.WEAPON_HOWL.value(), SoundSource.PLAYERS, 0.8f, 1.05f);
 	}
@@ -528,7 +529,7 @@ public final class HellWeapons {
 	private static void excavate(ServerPlayer player, int ticks) {
 		EXCAVATE.put(player.getUUID(), player.level().getGameTime() + ticks);
 		player.addEffect(new MobEffectInstance(MobEffects.HASTE, ticks, 1));
-		player.sendOverlayMessage(Component.literal("Excavate: your pickaxe mines 3x3.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		Dialogue.status(player, Component.literal("Excavate: your pickaxe mines 3x3.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		player.level().playSound(null, player.blockPosition(), HellSounds.WEAPON_SHATTER.value(), SoundSource.PLAYERS, 1.2f, 0.9f);
 		bleed(player.level(), player, 30);
 	}

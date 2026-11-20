@@ -77,8 +77,7 @@ public final class Wingbeat {
 			// the wind that froze Cocytus: a sudden chill
 			player.setTicksFrozen(Math.min(player.getTicksRequiredToFreeze() + 40, player.getTicksFrozen() + Math.round(60 * strength)));
 		}
-		CircleHazards.hintOnce(player, HINT, "That was Lucifer's wings beating at the bottom of Hell. The deeper you go, the stronger you'll feel "
-				+ "them.");
+		CircleHazards.hintOnce(player, HINT, "That was Lucifer's wings. The deeper you go, the harder they push.");
 	}
 
 	/** Only the shake and the boom (a slammed hand, nearby): no frost, no tip. */

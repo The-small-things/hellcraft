@@ -21,6 +21,7 @@ import net.minecraft.world.phys.AABB;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.mixin.ItemFrameAccess;
+import net.thesmallthings.hellcraft.net.Dialogue;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -192,7 +193,7 @@ public final class WhiteRoom {
 			}
 		}
 		player.setGameMode(mode);
-		player.sendSystemMessage(Component.literal("You've been let out of the white room.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		Dialogue.notice(player, Component.literal("You've been let out of the white room.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		return player.getGameProfile().name() + " is let out of the white room.";
 	}
 

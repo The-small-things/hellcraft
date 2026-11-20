@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.FoundAltars;
 import net.thesmallthings.hellcraft.world.RestNames;
@@ -160,7 +161,7 @@ public final class TravelMenu {
 		player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new Menu(id, inventory, container, level, altar.immutable(), slots, shown),
 				Component.literal(pages > 1 ? "Travel: places you have found (" + (page + 1) + "/" + pages + ")" : "Travel: places you have found")));
 		if (places.size() <= 1) {
-			player.sendSystemMessage(Component.literal("Find a Virgil's Rest (the safe camp where the ramp comes down into each circle) to unlock teleporting there from any Blood Altar.")
+			Dialogue.notice(player, Component.literal("Find a Virgil's Rest (the safe camp where the ramp comes down into each circle) to unlock teleporting there from any Blood Altar.")
 					.withStyle(ChatFormatting.GRAY));
 		}
 	}
@@ -222,7 +223,7 @@ public final class TravelMenu {
 		at.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1, player.getZ(), 40, 0.4, 0.8, 0.4, 0.03);
 		at.playSound(null, player.blockPosition(), HellSounds.TRAVEL_ARRIVE.value(), SoundSource.PLAYERS, 0.8f, 1.05f);
 		READY.put(player.getUUID(), player.level().getServer().overworld().getGameTime() + HellConfig.get().travelCooldownSeconds * 20L);
-		player.sendSystemMessage(Component.literal("Teleported to " + to.title() + ".").withStyle(ChatFormatting.GOLD));
+		Dialogue.notice(player, Component.literal("Teleported to " + to.title() + ".").withStyle(ChatFormatting.GOLD));
 		return "Sent " + player.getGameProfile().name() + " to " + to.title() + ".";
 	}
 
@@ -257,7 +258,7 @@ public final class TravelMenu {
 			sp.closeContainer();
 			String result = travel(sp, to, false);
 			if (!result.startsWith("Sent ")) {
-				sp.sendSystemMessage(Component.literal(result).withStyle(ChatFormatting.RED));
+				Dialogue.notice(sp, Component.literal(result).withStyle(ChatFormatting.RED));
 			}
 		}
 

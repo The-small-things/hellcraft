@@ -191,7 +191,6 @@ public class HellcraftClient implements ClientModInitializer {
 		PilgrimHud.register();
 		// your style rank in a boss fight, on the right of the screen
 		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, StylePanel.ID, new StylePanel());
-		HudElementRegistry.attachElementBefore(VanillaHudElements.TITLE_AND_SUBTITLE, LayerCard.ID, new LayerCard());
 		// what the souls of Hell say, in a box above the hotbar instead of the chat
 		HudElementRegistry.attachElementAfter(VanillaHudElements.OVERLAY_MESSAGE, DialogueHud.ID, new DialogueHud());
 		// Medusa's gaze greys the screen of whoever looks at her

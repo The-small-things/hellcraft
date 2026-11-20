@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.blood.HellState;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Spine;
@@ -99,7 +100,7 @@ public final class LuciferManager {
 				return true;
 			}
 			if (player instanceof ServerPlayer sp) {
-				sp.sendOverlayMessage(Component.literal(refusal).withStyle(ChatFormatting.AQUA));
+				Dialogue.status(sp, Component.literal(refusal).withStyle(ChatFormatting.AQUA));
 			}
 			return false;
 		});

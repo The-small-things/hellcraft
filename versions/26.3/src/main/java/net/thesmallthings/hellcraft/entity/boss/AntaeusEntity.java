@@ -230,8 +230,7 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 		watchRiders(level);
 		if (tickCount % 20 == 0) {
 			for (ServerPlayer p : level.getPlayers(p -> p.distanceToSqr(this) < 48 * 48 && !p.isSpectator())) {
-				CircleHazards.hintOnce(p, 37, "That is Antaeus, who was never chained. He will carry you down the Well: wait on the crying "
-						+ "obsidian at the brink by his hand. To come back up, wait on the one beside his hand on the ice.");
+				CircleHazards.hintOnce(p, 37, "Antaeus carries you down the Well: wait on the crying obsidian by his hand. To come back up, wait on the one on the ice.");
 			}
 		}
 	}
@@ -249,7 +248,7 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 		}
 		if (++waiting == 1) {
 			for (ServerPlayer p : above.isEmpty() ? below : above) {
-				p.sendOverlayMessage(Component.literal(above.isEmpty() ? "Antaeus reaches down for you. Stay where you are."
+				Dialogue.status(p, Component.literal(above.isEmpty() ? "Antaeus reaches down for you. Stay where you are."
 						: "Antaeus will lift you. Stay where you are.").withStyle(ChatFormatting.AQUA));
 			}
 		}
@@ -293,7 +292,7 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 			e.teleportTo(at.x, at.y, at.z);
 			e.resetFallDistance();
 			if (e instanceof ServerPlayer p) {
-				p.sendOverlayMessage(Component.literal(text).withStyle(ChatFormatting.AQUA));
+				Dialogue.status(p, Component.literal(text).withStyle(ChatFormatting.AQUA));
 			}
 		}
 		riders.clear();
@@ -310,7 +309,7 @@ public class AntaeusEntity extends AnimatedBoss implements Carrier {
 				return false;
 			}
 			p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 200, 0));
-			p.sendOverlayMessage(Component.literal("You slipped out of Antaeus's hand!").withStyle(ChatFormatting.RED));
+			Dialogue.status(p, Component.literal("You slipped out of Antaeus's hand!").withStyle(ChatFormatting.RED));
 			return true;
 		});
 	}

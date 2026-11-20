@@ -73,8 +73,7 @@ public class SlagCrustBlock extends Block {
 				&& entity.getType() != EntityTypes.STRIDER) {
 			crack(server, pos, state);
 			if (entity instanceof ServerPlayer player) {
-				CircleHazards.hintOnce(player, 44, "The slag's crust cracks under you and melts after a second. Keep moving and it "
-						+ "holds; stand still and you drop into the molten slag. A melted patch hardens again after half a minute.");
+				CircleHazards.hintOnce(player, 44, "Keep moving on the slag's crust: stand still and it melts under you. It hardens again after half a minute.");
 			}
 		}
 	}

@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.CerberusEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.CerberusAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
@@ -427,7 +428,7 @@ final class CerberusFight extends GuardianFight {
 		delayNextAttack(CerberusAnim.STAGGER.ticks + 15);
 		level.playSound(null, body.blockPosition(), HellSounds.CERBERUS_HURT.value(), SoundSource.HOSTILE, 2.0f, 0.85f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 3, body.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
-		by.sendOverlayMessage(Component.literal("Parried! Cerberus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Cerberus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	// ------------------------------------------------------------------ helpers

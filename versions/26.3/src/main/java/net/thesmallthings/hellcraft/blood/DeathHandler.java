@@ -27,6 +27,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.hazard.lucifer.LuciferManager;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.util.Journey;
 import net.thesmallthings.hellcraft.world.Circle;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -109,9 +110,9 @@ public final class DeathHandler {
 		}
 		if (!atStake) {
 			if (killer == null && soul.graceTicks > 0 && config.pveDeathsCostHearts) {
-				player.sendSystemMessage(Component.literal("You're new here, so you kept your hearts.").withStyle(ChatFormatting.GOLD));
+				Dialogue.notice(player, Component.literal("You're new here, so you kept your hearts.").withStyle(ChatFormatting.GOLD));
 			} else if (killer == null) {
-				player.sendSystemMessage(Component.literal("You died, but kept your hearts: only players can take them.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				Dialogue.notice(player, Component.literal("You died, but kept your hearts: only players can take them.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 			}
 			return;
 		}
@@ -121,10 +122,10 @@ public final class DeathHandler {
 		LivingEntity credit = player.getKillCredit();
 		if (killer != null) {
 			if (Hearts.add(killer, 1) > 0) {
-				killer.sendSystemMessage(Component.literal("You took a heart from " + name + ". +1 ❤").withStyle(ChatFormatting.DARK_RED));
+				Dialogue.notice(killer, Component.literal("You took a heart from " + name + ". +1 ❤").withStyle(ChatFormatting.DARK_RED));
 			} else {
 				BloodItems.give(killer, BloodItems.heart(1));
-				killer.sendSystemMessage(Component.literal("You're at max hearts, so " + name + "'s heart was given to you as a Blood Heart item.").withStyle(ChatFormatting.DARK_RED));
+				Dialogue.notice(killer, Component.literal("You're at max hearts, so " + name + "'s heart was given to you as a Blood Heart item.").withStyle(ChatFormatting.DARK_RED));
 			}
 		} else if (config.naturalDeathDropsHeart) {
 			ItemEntity drop = new ItemEntity(player.level(), player.getX(), player.getY() + 0.5, player.getZ(), BloodItems.heart(1));

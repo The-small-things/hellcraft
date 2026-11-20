@@ -336,7 +336,7 @@ public class CyclopsEntity extends AnimatedBoss {
 		if (level() instanceof ServerLevel level) {
 			BossFx.send(level, ParticleTypes.CRIT, getX(), getY() + 3, getZ(), 30, 1.2, 0.8, 1.2, 0.4);
 		}
-		by.sendOverlayMessage(Component.literal("Parried! The Cyclops reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! The Cyclops reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	private void lookAtNow(LivingEntity target) {

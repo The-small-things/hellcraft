@@ -6,9 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +18,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodData;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.HudSync;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Journey;
@@ -120,10 +118,10 @@ public final class Prestige {
 		HellState.Soul soul = Hearts.soul(player);
 		Result result = ascend(soul);
 		switch (result) {
-			case DISABLED -> player.sendSystemMessage(Component.literal("Prestige is turned off on this server.").withStyle(ChatFormatting.GRAY));
-			case PURIFIED -> player.sendSystemMessage(Component.literal("You already have max prestige (7 of 7).")
+			case DISABLED -> Dialogue.notice(player, Component.literal("Prestige is turned off on this server.").withStyle(ChatFormatting.GRAY));
+			case PURIFIED -> Dialogue.notice(player, Component.literal("You already have max prestige (7 of 7).")
 					.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC));
-			case NOT_FULL -> player.sendSystemMessage(Component.literal("You need max hearts to prestige ("
+			case NOT_FULL -> Dialogue.notice(player, Component.literal("You need max hearts to prestige ("
 					+ soul.hearts + " / " + Hearts.cap(soul) + " hearts).").withStyle(ChatFormatting.RED));
 			case ASCENDED -> {
 				HellState.get(level.getServer()).setDirty();
@@ -136,11 +134,8 @@ public final class Prestige {
 
 	private static void celebrate(ServerPlayer player, ServerLevel level, BlockPos altar, HellState.Soul soul) {
 		Terrace terrace = Terrace.values()[soul.prestige - 1];
-		player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 80, 30));
-		player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("Prestige " + soul.prestige + " of " + MAX)
-				.withStyle(s -> s.withColor(terrace.colour))));
-		player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(
-				"Bonus: " + terrace.perk).withStyle(ChatFormatting.GRAY)));
+		Dialogue.headline(player, "Prestige " + soul.prestige + " of " + MAX, terrace.colour, "Bonus: " + terrace.perk
+				+ ". Max hearts now " + Hearts.cap(soul) + ".");
 		level.playSound(null, altar, HellSounds.BLOOD_PRESTIGE.value(), SoundSource.PLAYERS, 1.2f, 1.07f);
 		for (int i = 0; i < 48; i++) {
 			// a rising spiral, like the angel's wing sweeping the brow
@@ -150,10 +145,6 @@ public final class Prestige {
 					1, 0, 0, 0, 0);
 		}
 		level.sendParticles(ParticleTypes.WAX_OFF, player.getX(), player.getY() + 1.9, player.getZ(), 30, 0.3, 0.2, 0.3, 0.1);
-		player.sendSystemMessage(Component.literal("Prestige " + soul.prestige + " of " + MAX + ". Your new bonus: " + terrace.perk + ".")
-				.withStyle(s -> s.withColor(terrace.colour)));
-		player.sendSystemMessage(Component.literal("Your max hearts is now " + Hearts.cap(soul) + ". Reach it again to prestige again.")
-				.withStyle(ChatFormatting.GRAY));
 		level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(player.getGameProfile().name() + " reached prestige "
 				+ soul.prestige + " (" + numeral(soul.prestige) + ")").withStyle(s -> s.withColor(terrace.colour)), false);
 		HellcraftMod.LOGGER.info("{} ascended: P {} ({})", player.getGameProfile().name(), soul.prestige, terrace.virtue);

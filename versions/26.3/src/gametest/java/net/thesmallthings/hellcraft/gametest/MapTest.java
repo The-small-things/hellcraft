@@ -1062,21 +1062,39 @@ public class MapTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * The dialogue box (screenshots dialogue_*): what characters say is drawn above the hotbar instead of in the
-	 * chat. /hellcraft dialogue test sends a line, a shout and a notice.
+	 * The message box (screenshots dialogue_*): every kind of message in one box above the hotbar. /hellcraft dialogue test
+	 * sends one of each at once; the box shows them one at a time, most important first (the headline, then the shout,
+	 * then the tip and the notice), with the status word under the first.
 	 */
 	private static void dialogueBox(ClientGameTestContext context, TestDedicatedServerContext server) {
 		context.waitFor(client -> DialogueHud.idle(), 1200);
 		int before = context.computeOnClient(client -> DialogueHud.shown());
 		server.runCommand("execute as Player0 run hellcraft dialogue test");
 		context.waitFor(client -> DialogueHud.shown() > before, 100);
-		context.waitTicks(60);
-		context.takeScreenshot("dialogue_line");
+		context.waitTicks(30);
+		if (!context.computeOnClient(client -> DialogueHud.showing().contains("one line under it"))) {
+			throw new AssertionError("the headline wasn't shown first; the box got: " + context.computeOnClient(client -> DialogueHud.recent()));
+		}
+		if (!context.computeOnClient(client -> DialogueHud.showingStatus().contains("status word"))) {
+			throw new AssertionError("the status word isn't under the box");
+		}
+		context.takeScreenshot("dialogue_headline");
 		context.waitFor(client -> DialogueHud.shown() > before + 1, 300);
 		context.waitTicks(4);
 		context.takeScreenshot("dialogue_shout");
 		context.waitFor(client -> DialogueHud.shown() > before + 2, 300);
 		context.waitTicks(30);
+		context.takeScreenshot("dialogue_line");
+		context.waitFor(client -> DialogueHud.shown() > before + 3, 300);
+		context.waitTicks(20);
 		context.takeScreenshot("dialogue_notice");
+		// the same notice again straight away is a repeat, and dropped
+		context.waitFor(client -> DialogueHud.idle(), 400);
+		int after = context.computeOnClient(client -> DialogueHud.shown());
+		server.runCommand("execute as Player0 run hellcraft dialogue test");
+		context.waitTicks(40);
+		if (context.computeOnClient(client -> DialogueHud.shown()) != after) {
+			throw new AssertionError("lines shown a moment ago were shown again: " + context.computeOnClient(client -> DialogueHud.recent()));
+		}
 	}
 }

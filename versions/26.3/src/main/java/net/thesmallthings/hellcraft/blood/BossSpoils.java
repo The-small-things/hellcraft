@@ -3,6 +3,7 @@ package net.thesmallthings.hellcraft.blood;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.MapSync;
 
 import java.util.Map;
@@ -67,7 +68,7 @@ public final class BossSpoils {
 	public static void tooSoon(ServerPlayer player, String title, String boss, int cooldownMinutes) {
 		long now = player.level().getServer().overworld().getGameTime();
 		long minutes = Math.max(1, minutesLeft(Hearts.soul(player), boss, cooldownMinutes, now));
-		player.sendSystemMessage(Component.literal(title + "'s spoils are on cooldown for you: " + minutes + " min left.")
+		Dialogue.notice(player, Component.literal(title + "'s spoils are on cooldown for you: " + minutes + " min left.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 

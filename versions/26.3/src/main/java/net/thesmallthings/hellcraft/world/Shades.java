@@ -184,8 +184,7 @@ public final class Shades {
 				near = true;
 			}
 			if (d < NobleCastle.radius(NobleCastle.WALLS - 1) && !p.isSpectator()) {
-				CircleHazards.hintOnce(p, HINT, "The Noble Castle: the shades of the great poets and thinkers live on here. "
-						+ "Right-click one to talk: they give tips, pages for your Codex, and trade for emeralds.");
+				CircleHazards.hintOnce(p, HINT, "Right-click a shade to talk: they give tips, Codex pages and trades for emeralds.");
 			}
 		}
 		if (near && level.isLoaded(heart)) {

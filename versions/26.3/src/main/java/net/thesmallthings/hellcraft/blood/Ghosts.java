@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.GameType;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 
 import java.util.List;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public final class Ghosts {
 			player.setCamera(player);
 		}
 		if (player.level().getGameTime() / 20 % 10 == 0) {
-			player.sendOverlayMessage(Component.literal("☠ You are a ghost. The living can revive you at a Blood Altar for "
+			Dialogue.status(player, Component.literal("☠ You are a ghost. The living can revive you at a Blood Altar for "
 					+ HellConfig.get().reviveCostHearts + " Blood Hearts (/revive). Your powers: /ghost").withStyle(ChatFormatting.GRAY));
 		}
 		double r = HellConfig.get().ghostTetherRadius;

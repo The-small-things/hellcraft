@@ -329,8 +329,8 @@ public final class LuciferFight {
 	void ready() {
 		setPhase(Phase.READY);
 		for (ServerPlayer p : audience()) {
-			Dialogue.notice(p, Component.literal("Lucifer's pit. The fight starts in 30 seconds, sooner once everyone near is down on the pit's "
-					+ "floor. When it starts, the pit seals: nobody gets in or out until it's over.").withStyle(ChatFormatting.GOLD));
+			Dialogue.notice(p, Component.literal("The fight starts in 30 seconds, sooner once everyone is on the pit's floor. "
+					+ "Then the pit seals until it's over.").withStyle(ChatFormatting.GOLD));
 			Feedback.sound(p, HellSounds.LUCIFER_TOLL.value(), SoundSource.HOSTILE, 1.0f, 0.88f);
 		}
 	}
@@ -366,7 +366,7 @@ public final class LuciferFight {
 			Component text = Component.literal("The pit seals in " + (readyLeft / 20) + " s. Everyone fighting: down on the pit's floor.")
 					.withStyle(readyLeft <= 200 ? ChatFormatting.RED : ChatFormatting.GOLD);
 			for (ServerPlayer p : near) {
-				p.sendOverlayMessage(text);
+				Dialogue.status(p, text);
 			}
 		}
 		if (!warnedNoReturn && readyLeft <= 200) {
@@ -839,7 +839,6 @@ public final class LuciferFight {
 		for (ServerPlayer p : fighters()) {
 			if (!p.isCreative() && !styles.containsKey(p.getUUID())) {
 				styles.put(p.getUUID(), new StyleMeter(p));
-				Dialogue.notice(p, Component.literal(StyleMeter.openingTip()).withStyle(ChatFormatting.AQUA));
 			}
 		}
 		Entity boss = seraph();
@@ -1196,7 +1195,7 @@ public final class LuciferFight {
 					&& present.getX() * present.getX() + present.getZ() * present.getZ() < (LuciferArena.RADIUS + 4) * (LuciferArena.RADIUS + 4);
 			if (!standing) {
 				if (present != null) {
-					present.sendSystemMessage(Component.literal("You died before Lucifer did, so you get no reward.")
+					Dialogue.notice(present, Component.literal("You died before Lucifer did, so you get no reward.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 				}
 				continue;

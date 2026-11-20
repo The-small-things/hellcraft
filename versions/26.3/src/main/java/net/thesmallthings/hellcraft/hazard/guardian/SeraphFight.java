@@ -414,7 +414,7 @@ final class SeraphFight extends GuardianFight {
 		delayNextAttack(SeraphAnim.STAGGER.ticks + 15);
 		seraph.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, SeraphAnim.STAGGER.ticks, 9, false, false));
 		BossFx.send(level, ParticleTypes.CRIT, seraph.getX(), seraph.getY() + 3, seraph.getZ(), 40, 1.5, 1.0, 1.5, 0.4);
-		by.sendOverlayMessage(Component.literal("Parried! The Seraph reels: hit it now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! The Seraph reels: hit it now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	/** Each victor passes the Primum Mobile's trial and is given a Halo. */

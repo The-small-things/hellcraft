@@ -21,6 +21,7 @@ import net.thesmallthings.hellcraft.entity.boss.FarinataEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.FarinataAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
@@ -357,6 +358,6 @@ final class FarinataFight extends GuardianFight {
 		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 2, body.getZ(), 40, 1.0, 1.0, 1.0, 0.4);
 		say("Hm. Thou art not without breeding.");
-		by.sendOverlayMessage(Component.literal("Parried! Farinata sinks into his tomb: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Farinata sinks into his tomb: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 }

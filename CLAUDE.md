@@ -356,8 +356,14 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   next way down) and `MapPainter` (the Map of Hell's colours, shared with `tools/RenderMap.java`) work from it
   alone, so the client draws the compass and the map without asking the server.
 - `music/BossMusic`: Lucifer's tracks, shipped in the mod (made with ElevenLabs since 2026-11-19, see tools/audio).
-- `net/`: `Dialogue` (what characters say and Hellcraft's notices go to a box above the hotbar, `client/dialogue/DialogueHud`,
-  not the chat; chat keeps server-wide news), `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
+- `net/`: `Dialogue` (every line of text on a player's screen: one message box above the hotbar, `client/dialogue/DialogueHud`,
+  one style for all; kinds `SPEECH` (`say`), `TIP` (`tip`, paced by `mayTip`: never mid-fight (`Lessons.inFight`, any realm via
+  `GuardianManager.fighting`) or in a cutscene, `tipSeconds` apart), `NOTICE`, `HEADLINE` (`headline`, in place of vanilla titles) and
+  `STATUS` (`status`, in place of `sendOverlayMessage`: a slim line under the box, replaced at once). The client queues by kind (headline,
+  speech, then tips and notices), drops repeats (`REPEAT_AFTER`) and stale lines, keeps at most `MAX_WAITING`; circle cards are
+  `LayerCard` headlines. `CircleHazards.hintOnce` isn't spent while a tip may not come (`hintNow` for the few a fight needs). Don't call
+  `sendOverlayMessage` or title packets directly; chat keeps server-wide news and longer records (spoils, a ghost's how-to). `MapTest.dialogueBox`
+  films every kind, `dialogue_*`), `JoinCheck` (version handshake while joining), `HudSync` (tells the client the Blood Heart HUD state and
   prestige rank), `MapSync` (whether the world is the Inferno, the Rests found, the bosses beaten, and the Guide's
   pages for the Journal). No resource pack is sent any more: all art ships in the jar.
 - `entity/`: Hellcraft's own mobs (`HellEntities`); `TestRig` is the animated test dummy. `entity/boss/`: bosses with

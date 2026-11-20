@@ -7,74 +7,193 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.client.cutscene.CutscenePlayer;
+import net.thesmallthings.hellcraft.net.Dialogue.Kind;
 import net.thesmallthings.hellcraft.net.DialoguePayload;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
- * The dialogue box (Dialogue on the server): one line at a time in a dark box above the hotbar, the speaker's name
- * on top in their colour, the words typed out. A line holds long enough to read, shorter when more are waiting;
- * a shout shakes the box. Lines wait while a cutscene plays.
+ * The message box (Dialogue on the server): every line of text Hellcraft shows goes here, in one small box above the
+ * hotbar, one style for all of it. A speaker's name leads their line in their colour, a headline's title sits over its
+ * line, and a thin bar down the left takes the line's colour; that is the only difference between kinds.
+ *
+ * One message at a time, with a quick status word (what the action bar was for) just under it. Messages queue: a
+ * headline first, then what characters say, then tips and notices; a line already shown or waiting is dropped, so is
+ * a notice left waiting too long, and the queue never holds more than {@link #MAX_WAITING}. Each line stays long
+ * enough to read at an easy pace, a little less when others are waiting, and a "+n" beside the box says how many
+ * are. Lines wait while a cutscene plays.
  */
 public final class DialogueHud implements HudElement {
 	public static final Identifier ID = HellcraftMod.id("dialogue");
 
 	/** The widest the box's text runs, in GUI pixels. */
-	private static final int MAX_WIDTH = 260;
-	/** Lines waiting beyond this many drop the oldest. */
-	private static final int MAX_WAITING = 10;
-	private static final float LETTERS_PER_TICK = 1.8f;
-	private static final int FADE_IN = 4;
-	private static final int FADE_OUT = 8;
-	/** How long a line stays once typed: a base, a little per letter, and less when others are waiting. */
-	private static final int HOLD = 50;
-	private static final int HOLD_MAX = 170;
-	private static final int HOLD_HURRIED = 30;
-	/** How far above the bottom of the screen the box sits: clear of the hotbar, the hearts and the action bar. */
+	private static final int MAX_WIDTH = 220;
+	/** Most lines waiting; past it the least important, oldest goes. */
+	private static final int MAX_WAITING = 6;
+	private static final float LETTERS_PER_TICK = 3f;
+	private static final int FADE_IN = 3;
+	private static final int FADE_OUT = 6;
+	/** How long a line stays once typed: a base and a little per letter (an easy reading pace), at most HOLD_MAX. */
+	private static final int HOLD = 40;
+	private static final float HOLD_PER_LETTER = 1.1f;
+	private static final int HOLD_MAX = 220;
+	/** With others waiting, a line still stays this long at least (about 22 letters a second, plus a moment). */
+	private static final int HURRIED_MIN = 50;
+	private static final float HURRIED_PER_LETTER = 0.9f;
+	/** The same line isn't shown again within this many ticks. */
+	private static final int REPEAT_AFTER = 600;
+	/** How far above the bottom of the screen the boxes sit: clear of the hotbar, the hearts and the action bar. */
 	private static final int ABOVE_BOTTOM = 74;
+	private static final int ROW = 10;
+	private static final int PAD_X = 6;
+	private static final int PAD_Y = 4;
+	private static final int GAP = 2;
 
-	private record Line(String speaker, int colour, Component text, boolean shout, int letters) {
+	private static final class Line {
+		final Kind kind;
+		final String speaker;
+		final int colour;
+		final Component text;
+		final boolean shout;
+		final String tag;
+		final int letters;
+		int waited;
+
+		Line(Kind kind, String speaker, int colour, Component text, boolean shout, String tag) {
+			this.kind = kind;
+			this.speaker = speaker;
+			this.colour = colour;
+			this.text = text;
+			this.shout = shout;
+			this.tag = tag;
+			this.letters = text.getString().length() + (kind == Kind.HEADLINE ? speaker.length() : 0);
+		}
+
+		String key() {
+			return speaker + "|" + text.getString();
+		}
+
+		int priority() {
+			return switch (kind) {
+				case HEADLINE -> 3;
+				case SPEECH -> 2;
+				default -> 1;
+			};
+		}
+
+		/** Ticks it may wait before it's no longer worth showing. */
+		int patience() {
+			return switch (kind) {
+				case HEADLINE -> 200;
+				case SPEECH -> 400;
+				case TIP -> 1200;
+				default -> 300;
+			};
+		}
+
 		int typed() {
 			return (int) Math.ceil(letters / LETTERS_PER_TICK);
 		}
+
+		int hold() {
+			return Math.min(HOLD_MAX, HOLD + (int) (letters * HOLD_PER_LETTER));
+		}
 	}
 
-	private static final Deque<Line> WAITING = new ArrayDeque<>();
+	private static final List<Line> WAITING = new ArrayList<>();
+	/** When each line was last put on screen (clock ticks), so a repeat is dropped. */
+	private static final Map<String, Integer> SEEN = new HashMap<>();
 	private static Line current;
 	private static int age;
 	private static int endAt;
 	private static int shown;
+	private static int clock;
+
+	private static Line status;
+	private static int statusAge;
+	private static int statusEnd;
 
 	public static void receive(DialoguePayload payload) {
-		String text = payload.line().getString();
-		remember((payload.speaker().isEmpty() ? "" : payload.speaker() + ": ") + text);
-		// a line already waiting (a notice sent again) is shown once
-		for (Line waiting : WAITING) {
-			if (waiting.speaker().equals(payload.speaker()) && waiting.text().getString().equals(text)) {
+		Kind kind = Kind.of(payload.kind());
+		if (kind == Kind.STATUS) {
+			status(payload.colour(), payload.line());
+			return;
+		}
+		post(new Line(kind, payload.speaker(), payload.colour(), payload.line(), payload.shout(), ""), false);
+	}
+
+	/** A headline made on this side (a circle's card): a title, a line under it, a colour, and a tag to find it by. */
+	public static void headline(String title, int colour, Component line, String tag, boolean again) {
+		post(new Line(Kind.HEADLINE, title, colour, line, false, tag), again);
+	}
+
+	/** The tag of the line on screen ("" for none or untagged). */
+	public static String showingTag() {
+		Line line = current;
+		return line == null ? "" : line.tag;
+	}
+
+	private static void post(Line line, boolean again) {
+		String key = line.key();
+		remember((line.speaker.isEmpty() ? "" : line.speaker + ": ") + line.text.getString());
+		if (again && current != null && current.key().equals(key)) {
+			// shown again on purpose (the client test): start it over
+			age = 0;
+			endAt = current.typed() + current.hold() + FADE_OUT;
+			return;
+		}
+		if (again) {
+			WAITING.removeIf(waiting -> waiting.key().equals(key));
+		} else {
+			if (current != null && current.key().equals(key)) {
 				return;
 			}
-		}
-		if (WAITING.size() >= MAX_WAITING) {
-			// full (lines pile up while a cutscene plays): a notice gives way before anything a character says
-			Line drop = null;
+			Integer seen = SEEN.get(key);
+			if (seen != null && clock - seen < REPEAT_AFTER) {
+				return;
+			}
 			for (Line waiting : WAITING) {
-				if (waiting.speaker().isEmpty()) {
-					drop = waiting;
-					break;
+				if (waiting.key().equals(key)) {
+					return;
 				}
 			}
-			Line dropped = drop != null ? drop : WAITING.peekFirst();
-			WAITING.remove(dropped);
-			remember("(dropped) " + dropped.text().getString());
 		}
-		WAITING.addLast(new Line(payload.speaker(), payload.colour(), payload.line(), payload.shout(), text.length()));
+		WAITING.add(line);
+		while (WAITING.size() > MAX_WAITING) {
+			// the least important goes first, the oldest of those
+			Line drop = WAITING.get(0);
+			for (Line waiting : WAITING) {
+				if (waiting.priority() < drop.priority()) {
+					drop = waiting;
+				}
+			}
+			WAITING.remove(drop);
+			remember("(dropped) " + drop.text.getString());
+		}
+	}
+
+	private static void status(int colour, Component text) {
+		Line line = new Line(Kind.STATUS, "", colour, text, false, "");
+		boolean same = status != null && status.key().equals(line.key()) && statusAge < statusEnd - FADE_OUT;
+		if (!same) {
+			statusAge = 0;
+		}
+		status = line;
+		// a meter sent again and again stays up while it keeps coming, without fading in each time
+		statusEnd = statusAge + Math.min(120, 30 + (int) (line.letters * 0.9f)) + FADE_OUT;
 	}
 
 	/** The last lines received (and any dropped), newest last: for the client test's failure messages. */
@@ -100,7 +219,13 @@ public final class DialogueHud implements HudElement {
 	/** The line on screen now ("" for none), for the client test. */
 	public static String showing() {
 		Line line = current;
-		return line == null ? "" : line.text().getString();
+		return line == null ? "" : line.text.getString();
+	}
+
+	/** The status word on screen now ("" for none), for the client test. */
+	public static String showingStatus() {
+		Line line = status;
+		return line == null ? "" : line.text.getString();
 	}
 
 	/** True when nothing is on screen or waiting. */
@@ -110,80 +235,157 @@ public final class DialogueHud implements HudElement {
 
 	public static void reset() {
 		WAITING.clear();
+		SEEN.clear();
 		current = null;
+		status = null;
 	}
 
-	/** Every client tick: ages the line on screen and brings on the next. */
+	/** Every client tick: ages the lines on screen, lets go of stale ones and brings on the next. */
 	public static void tick(Minecraft mc) {
 		if (mc.isPaused() || CutscenePlayer.active()) {
 			return;
 		}
+		clock++;
+		if (status != null && ++statusAge >= statusEnd) {
+			status = null;
+		}
+		for (Iterator<Line> it = WAITING.iterator(); it.hasNext(); ) {
+			Line waiting = it.next();
+			if (++waiting.waited > waiting.patience()) {
+				it.remove();
+				remember("(too late) " + waiting.text.getString());
+			}
+		}
 		if (current == null) {
-			current = WAITING.pollFirst();
+			current = next();
 			if (current != null) {
 				age = 0;
-				endAt = current.typed() + Math.min(HOLD_MAX, HOLD + current.letters()) + FADE_OUT;
+				endAt = current.typed() + current.hold() + FADE_OUT;
+				SEEN.put(current.key(), clock);
 				shown++;
 			}
 			return;
 		}
 		age++;
 		if (!WAITING.isEmpty()) {
-			// others are waiting: once this one is typed and has been up a moment, let it go
-			endAt = Math.min(endAt, Math.max(age + FADE_OUT, current.typed() + HOLD_HURRIED + FADE_OUT));
+			// others are waiting: once this one has been up long enough to read, let it go
+			int enough = current.typed() + Math.max(HURRIED_MIN, (int) (current.letters * HURRIED_PER_LETTER)) + FADE_OUT;
+			endAt = Math.min(endAt, Math.max(age + FADE_OUT, enough));
 		}
 		if (age >= endAt) {
 			current = null;
 		}
 	}
 
+	/** The most important line waiting, the first of those. */
+	private static Line next() {
+		Line best = null;
+		for (Line waiting : WAITING) {
+			if (best == null || waiting.priority() > best.priority()) {
+				best = waiting;
+			}
+		}
+		if (best != null) {
+			WAITING.remove(best);
+		}
+		return best;
+	}
+
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
-		Line line = current;
-		if (line == null || CutscenePlayer.active()) {
+		if (CutscenePlayer.active()) {
 			return;
 		}
-		float t = age + delta.getGameTimeDeltaPartialTick(false);
+		Font font = Minecraft.getInstance().font;
+		float partial = delta.getGameTimeDeltaPartialTick(false);
+		int maxWidth = Math.min(MAX_WIDTH, g.guiWidth() - 40);
+		int bottom = g.guiHeight() - ABOVE_BOTTOM;
+
+		Line word = status;
+		if (word != null) {
+			float t = statusAge + partial;
+			float alpha = Math.clamp(Math.min(t / FADE_IN, (statusEnd - t) / FADE_OUT), 0f, 1f);
+			if (alpha >= 0.03f) {
+				List<FormattedCharSequence> rows = font.split(word.text, maxWidth);
+				int h = box(g, font, rows, null, word.colour, alpha, bottom, 0, 0, Integer.MAX_VALUE);
+				bottom -= h + GAP;
+			}
+		}
+
+		Line line = current;
+		if (line == null) {
+			return;
+		}
+		float t = age + partial;
 		float alpha = Math.clamp(Math.min(t / FADE_IN, (endAt - t) / FADE_OUT), 0f, 1f);
 		if (alpha < 0.03f) {
 			return;
 		}
-		Font font = Minecraft.getInstance().font;
-		int maxWidth = Math.min(MAX_WIDTH, g.guiWidth() - 40);
-		List<FormattedCharSequence> rows = font.split(line.text(), maxWidth);
-		boolean named = !line.speaker().isEmpty();
-		Component name = Component.literal(line.speaker()).withStyle(ChatFormatting.BOLD);
-		int textWidth = named ? font.width(name) : 0;
+		int shakeX = 0;
+		int shakeY = 0;
+		if (line.shout && t < 12) {
+			shakeX = (int) Math.round(Math.sin(t * 2.9) * 2 * (1 - t / 12));
+			shakeY = (int) Math.round(Math.cos(t * 3.7) * (1 - t / 12));
+		}
+		Style named = Style.EMPTY.withColor(line.colour).withBold(true);
+		List<FormattedCharSequence> rows;
+		FormattedCharSequence title = null;
+		int instant = 0;
+		if (line.kind == Kind.HEADLINE) {
+			title = Component.literal(line.speaker).withStyle(named).getVisualOrderText();
+			rows = font.split(line.text, maxWidth);
+		} else if (!line.speaker.isEmpty()) {
+			// the speaker's name leads the line, on the same row
+			MutableComponent full = Component.empty().append(Component.literal(line.speaker).withStyle(named)).append(" ").append(line.text);
+			rows = font.split(full, maxWidth);
+			instant = line.speaker.length() + 1;
+		} else {
+			rows = font.split(line.text, maxWidth);
+		}
+		int letters = instant + (int) (t * LETTERS_PER_TICK);
+		box(g, font, rows, title, line.colour, alpha, bottom, shakeX, shakeY, letters);
+		if (!WAITING.isEmpty()) {
+			Component more = Component.literal("+" + WAITING.size()).withStyle(ChatFormatting.GRAY);
+			int w = boxWidth(font, rows, title);
+			int x = (g.guiWidth() + w) / 2 + 3;
+			int h = rows.size() * ROW + (title == null ? 0 : ROW) + PAD_Y * 2 - 2;
+			g.text(font, more, x, bottom - h, ARGB.white(alpha * 0.8f));
+		}
+	}
+
+	private static int boxWidth(Font font, List<FormattedCharSequence> rows, FormattedCharSequence title) {
+		int textWidth = title == null ? 0 : font.width(title);
 		for (FormattedCharSequence row : rows) {
 			textWidth = Math.max(textWidth, font.width(row));
 		}
-		int w = textWidth + 14;
-		int h = rows.size() * 10 + 8 + (named ? 12 : 0);
-		int x = (g.guiWidth() - w) / 2;
-		int y = g.guiHeight() - ABOVE_BOTTOM - h;
-		if (line.shout() && t < 12) {
-			x += (int) Math.round(Math.sin(t * 2.9) * 2 * (1 - t / 12));
-			y += (int) Math.round(Math.cos(t * 3.7) * (1 - t / 12));
-		}
+		return textWidth + PAD_X + 2 + PAD_X - 2;
+	}
 
-		g.fill(x, y, x + w, y + h, ARGB.color(alpha * 0.75f, 0x0C0808));
-		g.outline(x, y, w, h, ARGB.color(alpha * 0.55f, line.colour()));
-		g.fill(x, y, x + 2, y + h, ARGB.color(alpha, line.colour()));
-		int ty = y + 5;
-		if (named) {
-			g.text(font, name, x + 8, ty, ARGB.color(alpha, line.colour()));
-			ty += 12;
+	/** Draws one box whose bottom edge is at {@code bottom}, centred; the letters past {@code letters} not yet typed. Returns its height. */
+	private static int box(GuiGraphicsExtractor g, Font font, List<FormattedCharSequence> rows, FormattedCharSequence title, int colour,
+			float alpha, int bottom, int shakeX, int shakeY, int letters) {
+		int w = boxWidth(font, rows, title);
+		int h = rows.size() * ROW + (title == null ? 0 : ROW) + PAD_Y * 2 - 2;
+		int x = (g.guiWidth() - w) / 2 + shakeX;
+		int y = bottom - h + shakeY;
+		g.fill(x, y, x + w, y + h, ARGB.color(alpha * 0.72f, 0x0C0808));
+		g.fill(x, y, x + 2, y + h, ARGB.color(alpha, colour));
+		int tx = x + PAD_X;
+		int ty = y + PAD_Y;
+		if (title != null) {
+			g.text(font, title, tx, ty, ARGB.white(alpha));
+			ty += ROW;
 		}
-		// typed out a letter at a time, across the wrapped rows
-		int left = (int) (t * LETTERS_PER_TICK);
+		int left = letters;
 		for (FormattedCharSequence row : rows) {
 			if (left <= 0) {
 				break;
 			}
-			g.text(font, clip(row, left), x + 8, ty, ARGB.white(alpha));
+			g.text(font, clip(row, left), tx, ty, ARGB.white(alpha));
 			left -= length(row);
-			ty += 10;
+			ty += ROW;
 		}
+		return h;
 	}
 
 	private static FormattedCharSequence clip(FormattedCharSequence row, int letters) {

@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,7 @@ public final class Admin {
 		soul.hearts = HellConfig.get().startHearts;
 		HellState.get(player.level().getServer()).setDirty();
 		Hearts.apply(player);
-		player.sendSystemMessage(Component.literal("An operator reset your hearts and prestige.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		Dialogue.notice(player, Component.literal("An operator reset your hearts and prestige.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 		return player.getGameProfile().name() + " is reset to " + soul.hearts + " hearts (max " + Hearts.cap(soul) + ", prestige 0).";
 	}
 
@@ -90,7 +91,7 @@ public final class Admin {
 	public static String strip(ServerPlayer player) {
 		int removed = strip(player.getInventory()) + strip(player.getEnderChestInventory());
 		player.containerMenu.broadcastChanges();
-		player.sendSystemMessage(Component.literal("An operator removed your Hellcraft gear.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+		Dialogue.notice(player, Component.literal("An operator removed your Hellcraft gear.").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 		return "Took " + removed + " blood item" + (removed == 1 ? "" : "s") + " from " + player.getGameProfile().name() + ".";
 	}
 

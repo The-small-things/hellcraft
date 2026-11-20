@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.PlutusAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
 import net.thesmallthings.hellcraft.hazard.Hoarders;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
@@ -219,7 +220,7 @@ final class PlutusFight extends GuardianFight {
 					if (e.hurtServer(level, Danger.unblockable(level, body), RAIN_DAMAGE + Math.min(8, weight / 12))) {
 						e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, Math.min(4, 1 + weight / 32)));
 						if (weight >= 12 && e instanceof ServerPlayer p) {
-							p.sendOverlayMessage(Component.literal("The gold you carry made that hurt more!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+							Dialogue.status(p, Component.literal("The gold you carry made that hurt more!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 						}
 					}
 				}
@@ -287,7 +288,7 @@ final class PlutusFight extends GuardianFight {
 					e.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 120, 0));
 					fling(e, c, 1.6, 0.4);
 					if (e instanceof ServerPlayer p) {
-						p.sendOverlayMessage(Component.literal("His babbling makes you dizzy...").withStyle(ChatFormatting.GOLD));
+						Dialogue.status(p, Component.literal("His babbling makes you dizzy...").withStyle(ChatFormatting.GOLD));
 					}
 				}
 			}
@@ -385,7 +386,7 @@ final class PlutusFight extends GuardianFight {
 		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
 		say("My... my GOLD!");
-		by.sendOverlayMessage(Component.literal("Parried! Plutus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Plutus reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	private static void stop(Mob body) {

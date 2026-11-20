@@ -20,6 +20,7 @@ import net.thesmallthings.hellcraft.entity.boss.PhlegyasEntity;
 import net.thesmallthings.hellcraft.entity.boss.gen.PhlegyasAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.Fen;
@@ -260,7 +261,7 @@ final class PhlegyasFight extends GuardianFight {
 		say("Thou! Thou art one of them!");
 		Danger.follow(level, Danger.Colour.RED, target, GRAB_RADIUS, grab - 6, grab);
 		if (target instanceof ServerPlayer p) {
-			p.sendOverlayMessage(Component.literal("Phlegyas is reaching for you: get out of the red circle!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+			Dialogue.status(p, Component.literal("Phlegyas is reaching for you: get out of the red circle!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 		}
 		Vec3[] at = new Vec3[1];
 		schedule(grab - 6, () -> at[0] = target.position());
@@ -286,7 +287,7 @@ final class PhlegyasFight extends GuardianFight {
 				Feedback.syncMotion(e);
 				level.playSound(null, e.blockPosition(), HellSounds.PHLEGYAS_SHOVE.value(), SoundSource.HOSTILE, 2.0f, 0.9f);
 				if (e instanceof ServerPlayer p) {
-					p.sendOverlayMessage(Component.literal("Thrown into the Styx! Swim clear of the bubbles and get back on the planks.")
+					Dialogue.status(p, Component.literal("Thrown into the Styx! Swim clear of the bubbles and get back on the planks.")
 							.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD));
 				}
 			}
@@ -384,7 +385,7 @@ final class PhlegyasFight extends GuardianFight {
 		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 6, body.getZ(), 40, 1.5, 1.5, 1.5, 0.4);
 		say("Ngh... a pilgrim, then?");
-		by.sendOverlayMessage(Component.literal("Parried! Phlegyas reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Phlegyas reels: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	/** The beacons go out; beaten, his ferry is left at the landing, free to carry pilgrims to Dis. */

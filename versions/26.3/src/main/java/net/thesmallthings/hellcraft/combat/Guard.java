@@ -22,6 +22,7 @@ import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.entity.boss.gen.PlayerMovesAnim;
 import net.thesmallthings.hellcraft.hazard.BossRules;
 import net.thesmallthings.hellcraft.hazard.Cue;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.net.FeelPayload;
 import net.thesmallthings.hellcraft.net.GuardPayload;
 import net.thesmallthings.hellcraft.net.GuardRefusedPayload;
@@ -231,7 +232,7 @@ public final class Guard {
 		level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 16, 0.25, 0.25, 0.25, 0.5);
 		Combat.show(player, PlayerMovesAnim.GUARD_BREAK, 0, 0, 1.0f, true);
 		Combat.feel(player, FeelPayload.Kind.GUARD_BREAK, 1.5f);
-		player.sendOverlayMessage(net.minecraft.network.chat.Component.literal("Guard broken! Out of stamina.")
+		Dialogue.status(player, net.minecraft.network.chat.Component.literal("Guard broken! Out of stamina.")
 				.withStyle(net.minecraft.ChatFormatting.RED));
 	}
 

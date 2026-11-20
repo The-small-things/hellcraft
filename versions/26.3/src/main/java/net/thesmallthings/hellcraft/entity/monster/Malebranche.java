@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.MalebrancheAnim;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,7 @@ public class Malebranche extends SoulMonster {
 			p.push(yank.x, 0.45, yank.z);
 			Feedback.syncMotion(p);
 			p.hurtServer(level, damageSources().mobAttack(this), 3.0f);
-			p.sendOverlayMessage(Component.literal("A Malebranche hooked you! When its red line is under you, step off it.")
+			Dialogue.status(p, Component.literal("A Malebranche hooked you! When its red line is under you, step off it.")
 					.withStyle(ChatFormatting.RED));
 			playSpecial();
 			playSound(HellSounds.MALEBRANCHE_ANGRY.value(), 1.0f, 1.1f);

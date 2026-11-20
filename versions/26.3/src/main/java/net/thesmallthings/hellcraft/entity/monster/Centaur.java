@@ -25,6 +25,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.CentaurAnim;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import net.thesmallthings.hellcraft.world.Zone;
@@ -180,7 +181,7 @@ public class Centaur extends SoulMonster {
 		alertUntil = tickCount + ALERT;
 		nextShot = tickCount + 6;
 		playSound(HellSounds.CENTAUR_ANGRY.value(), 1.5f, 0.95f);
-		p.sendOverlayMessage(Component.literal("A centaur has seen you! Get out of its sight.").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+		Dialogue.status(p, Component.literal("A centaur has seen you! Get out of its sight.").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 	}
 
 	private void loose(ServerLevel level, LivingEntity target) {

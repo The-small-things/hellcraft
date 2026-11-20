@@ -379,7 +379,7 @@ final class EmperorAttacks {
 			}
 		});
 		for (ServerPlayer p : fight.fighters()) {
-			CircleHazards.hintOnce(p, HINT_BREATH, "His frozen breath sweeps the red wedge: get out of it, or behind an ice pillar.");
+			CircleHazards.hintNow(p, HINT_BREATH, "His frozen breath sweeps the red wedge: get out of it, or behind an ice pillar.");
 		}
 		return a.ticks;
 	}
@@ -450,7 +450,7 @@ final class EmperorAttacks {
 			open(emperor, ground.add(0, -1.0, 0), 1.0f, open);
 			shockwave(emperor, e, ground);
 			for (ServerPlayer p : fight.fighters()) {
-				CircleHazards.hintOnce(p, HINT_HAND, "His hand lies on the ice: hit it now, while it glows! That is the only way to hurt him.");
+				CircleHazards.hintNow(p, HINT_HAND, "His hand lies on the ice: hit it now, while it glows! That is the only way to hurt him.");
 			}
 		});
 		return a.ticks;
@@ -530,7 +530,7 @@ final class EmperorAttacks {
 		Vec3 centre = fight.onFloor(emperor.getX(), emperor.getZ());
 		Danger.ring(level, Danger.Colour.PURPLE, centre, EmperorEntity.BODY_RADIUS, LuciferArena.RADIUS, a.at("beat"));
 		for (ServerPlayer p : fight.fighters()) {
-			CircleHazards.hintOnce(p, HINT_WINGS, "His wings glow purple: get behind an ice pillar before they beat, or be thrown back and frozen.");
+			CircleHazards.hintNow(p, HINT_WINGS, "His wings glow purple: get behind an ice pillar before they beat, or be thrown back and frozen.");
 		}
 		fight.schedule(a.at("beat"), () -> {
 			emperor.warn(BossEntity.Warning.NONE);

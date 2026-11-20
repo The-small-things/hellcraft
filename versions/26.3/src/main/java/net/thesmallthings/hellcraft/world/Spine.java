@@ -519,9 +519,8 @@ public final class Spine {
 		}
 		Way way = nearest(player.getX(), player.getZ());
 		BlockPos s = start(way);
-		player.sendSystemMessage(Component.literal("The nearest spine starts on the " + way.id + " edge of the Well (" + s.getX() + ", " + s.getY() + ", " + s.getZ()
-				+ "). It's a safe path down to Lucifer's pit: no monsters spawn on it. "
-				+ "There are four: north, east, south and west.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		Dialogue.notice(player, Component.literal("The nearest spine, a safe path down to Lucifer's pit, starts on the " + way.id + " edge of the Well ("
+				+ s.getX() + ", " + s.getY() + ", " + s.getZ() + ").").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 
 	public static void forget(ServerPlayer player) {

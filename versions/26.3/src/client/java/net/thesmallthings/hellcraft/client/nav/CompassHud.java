@@ -113,10 +113,7 @@ public final class CompassHud implements HudElement {
 		g.fill(left, TOP + HEIGHT, right, TOP + HEIGHT + 2, ARGB.black(120));
 		g.fill(left, TOP + HEIGHT, left + (int) Math.round((right - left) * depth), TOP + HEIGHT + 2, ARGB.opaque(LayerCard.accent(circle)));
 
-		// where you are, then how far to each marker (not while a circle's card is up: it says the same, bigger)
-		if (LayerCard.showing() != null) {
-			return;
-		}
+		// where you are, then how far to each marker
 		int y = TOP + HEIGHT + 5;
 		g.centeredText(font, InfernoGeometry.regionName(pos.x, pos.z), cx, y, ARGB.opaque(LayerCard.accent(circle)));
 		String downText = down.label() + " " + distance(pos, down.x(), down.z());

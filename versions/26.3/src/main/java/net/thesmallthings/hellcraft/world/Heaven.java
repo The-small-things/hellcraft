@@ -52,7 +52,7 @@ public final class Heaven {
 			}
 			HellState.Soul soul = Hearts.soul(sp);
 			if (soul.rose) {
-				sp.sendOverlayMessage(Component.literal("Beatrice has already given you her rose.").withStyle(ChatFormatting.LIGHT_PURPLE));
+				Dialogue.status(sp, Component.literal("Beatrice has already given you her rose.").withStyle(ChatFormatting.LIGHT_PURPLE));
 			} else {
 				soul.rose = true;
 				HellState.get(sp.level().getServer()).setDirty();
@@ -195,7 +195,7 @@ public final class Heaven {
 	public static void ascend(ServerPlayer player) {
 		HellState.Soul soul = Hearts.soul(player);
 		if (!soul.slewLucifer) {
-			player.sendOverlayMessage(Component.literal("Only players who have beaten Lucifer can go up.").withStyle(ChatFormatting.GOLD));
+			Dialogue.status(player, Component.literal("Only players who have beaten Lucifer can go up.").withStyle(ChatFormatting.GOLD));
 			player.push(0, 0.4, -0.8);
 			net.thesmallthings.hellcraft.util.Feedback.syncMotion(player);
 			return;

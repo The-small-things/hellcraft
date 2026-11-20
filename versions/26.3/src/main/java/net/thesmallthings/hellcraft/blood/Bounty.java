@@ -11,6 +11,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.thesmallthings.hellcraft.HellcraftMod;
 import net.thesmallthings.hellcraft.config.HellConfig;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.world.HellWorldgen;
@@ -78,7 +79,7 @@ public final class Bounty {
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 				.append(Component.literal("last seen " + where(best) + ". Kill them to get " + config.bountyRewardHearts
 						+ " Blood Hearts.").withStyle(ChatFormatting.RED)), false);
-		best.sendSystemMessage(Component.literal("You have the most hearts, so everyone has been told where you are.")
+		Dialogue.notice(best, Component.literal("You have the most hearts, so everyone has been told where you are.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 		Feedback.sound(best, HellSounds.UI_BOUNTY.value(), SoundSource.MASTER, 0.8f, 0.9f);
 		HellcraftMod.LOGGER.info("Bounty on {} ({} hearts)", targetName, bestHearts);

@@ -6,9 +6,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -264,17 +261,14 @@ public abstract class GuardianFight {
 				CutsceneManager.play(p, cutscene, body.position(), body.getYRot());
 				continue;
 			}
-			p.connection.send(new ClientboundSetTitlesAnimationPacket(5, 50, 15));
-			p.connection.send(new ClientboundSetTitleTextPacket(Component.literal(kind.title).withStyle(kind.color, ChatFormatting.BOLD)));
-			p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(kind.subtitle).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+			Dialogue.headline(p, kind.title, kind.color, kind.subtitle);
 		}
 		say(introLine());
 		if (unbound) {
 			BossFx.send(level, ParticleTypes.CRIMSON_SPORE, body.getX(), body.getY() + 1, body.getZ(), 200, 2, 2, 2, 0.02);
 			bar.setName(Component.literal(kind.title.toUpperCase(java.util.Locale.ROOT) + " UNBOUND — " + kind.subtitle).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 			for (ServerPlayer p : audience()) {
-				Dialogue.notice(p, Component.literal(kind.title + " wakes Unbound, for a soul who has beaten Lucifer: more health, faster and harder blows, "
-						+ "and better spoils (a Blood Heart the first time, and always a treasure roll).").withStyle(ChatFormatting.DARK_RED));
+				Dialogue.notice(p, Component.literal(kind.title + " wakes Unbound: tougher, faster and harder-hitting, with better spoils.").withStyle(ChatFormatting.DARK_RED));
 			}
 		}
 		HellcraftMod.LOGGER.info("Guardian awakens: {}{}", kind.id(), unbound ? " (unbound)" : "");
@@ -345,8 +339,8 @@ public abstract class GuardianFight {
 		for (ServerPlayer p : level.players()) {
 			if (inArena(p) && p.isAlive() && !p.isSpectator() && !p.isCreative()) {
 				if (participants.add(p.getUUID())) {
+					// no tip here: the style ranks are taught before a first fight (Lessons "boss") and after it ("spoils")
 					styles.put(p.getUUID(), new StyleMeter(p));
-					Dialogue.notice(p, Component.literal(StyleMeter.openingTip()).withStyle(ChatFormatting.AQUA));
 				}
 				anyone = true;
 			}
@@ -419,7 +413,7 @@ public abstract class GuardianFight {
 		}
 		if (tick >= warned.getOrDefault(player.getUUID(), 0)) {
 			warned.put(player.getUUID(), tick + 60);
-			player.sendOverlayMessage(Component.literal(kind.title + " can only be hurt from inside the lair.").withStyle(ChatFormatting.AQUA));
+			Dialogue.status(player, Component.literal(kind.title + " can only be hurt from inside the lair.").withStyle(ChatFormatting.AQUA));
 		}
 		return false;
 	}
@@ -467,7 +461,7 @@ public abstract class GuardianFight {
 
 	/** An archer keeping their distance is dragged in, a second after a warning. */
 	private void pullIn(ServerPlayer archer) {
-		archer.sendOverlayMessage(Component.literal(kind.title + " is pulling you in for shooting from too far away!")
+		Dialogue.status(archer, Component.literal(kind.title + " is pulling you in for shooting from too far away!")
 				.withStyle(kind.color, ChatFormatting.BOLD));
 		Feedback.sound(archer, HellSounds.BOSS_WARN.value(), SoundSource.HOSTILE, 1.0f, 0.9f);
 		for (int t = 0; t < 20; t += 4) {
@@ -505,7 +499,7 @@ public abstract class GuardianFight {
 			}
 			int ticks = perched.merge(p.getUUID(), 10, Integer::sum);
 			if (ticks == 10) {
-				p.sendOverlayMessage(Component.literal("You're too high up: come down, or " + kind.title + " will drag you down.")
+				Dialogue.status(p, Component.literal("You're too high up: come down, or " + kind.title + " will drag you down.")
 						.withStyle(kind.color, ChatFormatting.BOLD));
 			} else if (ticks >= 60) {
 				perched.remove(p.getUUID());
@@ -517,7 +511,7 @@ public abstract class GuardianFight {
 				p.teleportTo(x, groundY(x, z), z);
 				p.resetFallDistance();
 				Feedback.sound(p, HellSounds.BOSS_BANISH.value(), SoundSource.HOSTILE, 1.0f, 0.88f);
-				p.sendOverlayMessage(Component.literal(kind.title + " dragged you down. Fight on the ground!").withStyle(kind.color, ChatFormatting.BOLD));
+				Dialogue.status(p, Component.literal(kind.title + " dragged you down. Fight on the ground!").withStyle(kind.color, ChatFormatting.BOLD));
 			}
 		}
 	}
@@ -837,10 +831,10 @@ public abstract class GuardianFight {
 		}
 	}
 
-	/** A hint in the action bar of everyone in the lair. */
+	/** A quick word (the message box's status line) to everyone in the lair. */
 	protected void tip(String text) {
 		for (ServerPlayer p : audience()) {
-			p.sendOverlayMessage(Component.literal(text).withStyle(ChatFormatting.AQUA));
+			Dialogue.status(p, Component.literal(text).withStyle(ChatFormatting.AQUA));
 		}
 	}
 

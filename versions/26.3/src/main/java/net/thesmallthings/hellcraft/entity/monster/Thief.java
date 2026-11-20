@@ -27,6 +27,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.entity.boss.gen.ThiefAnim;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class Thief extends SoulMonster implements InventoryCarrier {
 		inv.setChanged();
 		playSpecial();
 		playSound(HellSounds.THIEF_STEAL.value(), 1.0f, 0.9f);
-		player.sendOverlayMessage(Component.literal("A thief snatched your " + stolen.getHoverName().getString() + "! Kill it to get it back.")
+		Dialogue.status(player, Component.literal("A thief snatched your " + stolen.getHoverName().getString() + "! Kill it to get it back.")
 				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 	}
 

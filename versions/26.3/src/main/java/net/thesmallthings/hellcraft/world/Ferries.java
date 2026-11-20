@@ -67,8 +67,7 @@ public final class Ferries {
 			int[] t = Fen.tower(k);
 			for (ServerPlayer p : level.players()) {
 				if (p.distanceToSqr(t[0], p.getY(), t[1]) < 64 * 64) {
-					Dialogue.notice(p, Component.literal("Out of the fog a ferry comes gliding toward the tower. Board it (right-click): it carries you "
-							+ "across the Styx and sets you down inside the Walls of Dis, and nothing can hurt you aboard.")
+					Dialogue.notice(p, Component.literal("A ferry is coming. Right-click to board: it carries you safely across the Styx to Dis.")
 							.withStyle(ChatFormatting.DARK_AQUA));
 				}
 			}

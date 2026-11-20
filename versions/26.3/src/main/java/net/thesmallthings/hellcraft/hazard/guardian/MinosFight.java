@@ -270,7 +270,7 @@ final class MinosFight extends GuardianFight {
 		for (LivingEntity e : condemned) {
 			Danger.follow(level, Danger.Colour.RED, e, SENTENCE_RADIUS, lock, hit);
 			if (e instanceof ServerPlayer p) {
-				p.sendOverlayMessage(Component.literal("Minos sentenced you: get out of the red circle!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+				Dialogue.status(p, Component.literal("Minos sentenced you: get out of the red circle!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
 			}
 			schedule(lock, () -> where.put(e.getUUID(), e.position()));
 		}
@@ -385,7 +385,7 @@ final class MinosFight extends GuardianFight {
 				level.playSound(null, minos.blockPosition(), HellSounds.MINOS_JUDGEMENT.value(), SoundSource.HOSTILE, 2.0f, 0.85f + 0.03f * number);
 				BossFx.send(level, JUDGEMENT, minos.getX(), minos.getY() + 1.2, minos.getZ(), 30, 2.2, 0.4, 2.2, 0);
 				for (ServerPlayer p : audience()) {
-					p.sendOverlayMessage(Component.literal("The tail goes round: " + number).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+					Dialogue.status(p, Component.literal("The tail goes round: " + number).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 				}
 				for (ServerPlayer p : souls) {
 					Sins.Judged j = verdicts.get(p.getUUID());
@@ -495,7 +495,7 @@ final class MinosFight extends GuardianFight {
 		level.playSound(null, body.blockPosition(), HellSounds.BOSS_FALL.value(), SoundSource.HOSTILE, 1.5f, 0.9f);
 		BossFx.send(level, ParticleTypes.CRIT, body.getX(), body.getY() + 4, body.getZ(), 40, 1.0, 1.5, 1.0, 0.4);
 		say("Thou... DARE?!");
-		by.sendOverlayMessage(Component.literal("Parried! Minos is staggered: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! Minos is staggered: hit him now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	@Override

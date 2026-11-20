@@ -2,9 +2,6 @@ package net.thesmallthings.hellcraft.hazard.lucifer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -116,9 +113,7 @@ final class LuciferDialogue {
 	/** The big boss name card. Keep both lines short: titles are drawn huge and clip on small windows. */
 	static void nameCard(List<ServerPlayer> audience, String title, String subtitle, ChatFormatting color) {
 		for (ServerPlayer p : audience) {
-			p.connection.send(new ClientboundSetTitlesAnimationPacket(5, 60, 20));
-			p.connection.send(new ClientboundSetTitleTextPacket(Component.literal(title).withStyle(color, ChatFormatting.BOLD)));
-			p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(subtitle).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)));
+			Dialogue.headline(p, title, color, subtitle);
 		}
 	}
 

@@ -22,6 +22,7 @@ import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -152,7 +153,7 @@ public final class BloodArmour {
 				wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 1));
 				wearer.level().sendParticles(BloodAltar.BLOOD, wearer.getX(), wearer.getY() + 1, wearer.getZ(), 40, 0.4, 0.8, 0.4, 0.0);
 				wearer.level().sendParticles(ParticleTypes.HEART, wearer.getX(), wearer.getY() + 2, wearer.getZ(), 4, 0.4, 0.2, 0.4, 0.0);
-				wearer.sendOverlayMessage(Component.literal("Blood Rush: Regeneration II!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+				Dialogue.status(wearer, Component.literal("Blood Rush: Regeneration II!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 			}
 		}
 	}

@@ -23,6 +23,7 @@ import net.thesmallthings.hellcraft.entity.boss.gen.FuryAnim;
 import net.thesmallthings.hellcraft.entity.boss.gen.MedusaAnim;
 import net.thesmallthings.hellcraft.hazard.BossFx;
 import net.thesmallthings.hellcraft.hazard.Danger;
+import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.world.InfernoGeometry;
 import org.jetbrains.annotations.Nullable;
@@ -349,7 +350,7 @@ final class FuriesFight extends GuardianFight {
 		nextGaze = tick + GAZE_EVERY;
 		schedule(open - 10, () -> {
 			for (ServerPlayer p : audience()) {
-				p.sendOverlayMessage(Component.literal("Medusa's eyes are opening: LOOK AWAY from her!").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+				Dialogue.status(p, Component.literal("Medusa's eyes are opening: LOOK AWAY from her!").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
 			}
 			level.playSound(null, m.blockPosition(), HellSounds.MEDUSA_HISS.value(), SoundSource.HOSTILE, 3.0f, 0.88f);
 		});
@@ -382,7 +383,7 @@ final class FuriesFight extends GuardianFight {
 				p.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 9));
 				p.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 60, 3));
 				p.hurtServer(level, Danger.unblockable(level, m), 10.0f);
-				p.sendOverlayMessage(Component.literal("You looked at Medusa and turned to stone! Look away while her eyes are open.")
+				Dialogue.status(p, Component.literal("You looked at Medusa and turned to stone! Look away while her eyes are open.")
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.BOLD));
 				BossFx.send(level, ParticleTypes.CLOUD, p.getX(), p.getY() + 1, p.getZ(), 30, 0.4, 0.8, 0.4, 0.02);
 			}
@@ -462,7 +463,7 @@ final class FuriesFight extends GuardianFight {
 		delayNextAttack(FuryAnim.STAGGER.ticks + 10);
 		level.playSound(null, fury.blockPosition(), HellSounds.FURIES_HURT.value(), SoundSource.HOSTILE, 2.0f, 0.88f);
 		BossFx.send(level, ParticleTypes.CRIT, fury.getX(), fury.getY() + 1.5, fury.getZ(), 30, 0.8, 0.8, 0.8, 0.3);
-		by.sendOverlayMessage(Component.literal("Parried! The Fury tumbles to the ground: hit her now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
+		Dialogue.status(by, Component.literal("Parried! The Fury tumbles to the ground: hit her now!").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD));
 	}
 
 	/** The sisters and Medusa go with the fight. */
