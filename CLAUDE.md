@@ -354,7 +354,12 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   hell weapon (no glint any more; `HellWeapons.refresh` strips old glints); `OathMeter`. The minimap: `hud/Minimap` (keys Z, X, B,
   Y; CPU-composited texture, circle or square, rotating or north up, dots, places), `MinimapScan` (per-chunk column colours, surface
   or cave view), `MinimapScreen` (settings), prefs in `anim/Settings.MapPrefs` (`minimap` in hellcraft-client.json). HudTest films
-  `hud_blood_aura`, `hud_oath_meter`, `hud_style_*`, `hud_minimap_*`, `hud_chaos`.
+  `hud_blood_aura`, `hud_oath_meter`, `hud_style_*`, `hud_minimap_*`, `hud_chaos`. 3.6.2: texel-perfect (the texture is one texel per
+  screen pixel, `ZOOMS` in blocks per screen pixel, north up snapped to the texel; `MinimapScan.fill` copies chunks into a grid, with 2x2
+  and 4x4 averaged copies for zoomed out; `Minimap.texelCheck` for the test), block colours from each state's top-face texture averaged
+  and tinted (`MinimapColours`: the quad's sprite and tint index found by reflection on `BakedQuad.materialInfo()`, the PNG read from
+  the resource manager), relief from the north and west neighbours, and heads while the player list key is held (`MobHeads`: the
+  model's `head` part at rest, its front faces placed and drawn from the renderer's texture; `hud_minimap_heads`, `hud_minimap_close`).
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

@@ -11,7 +11,11 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 - **Combat of its own (3.5).** Weapons swing in arcs and chain into combos; a stamina bar, a dodge roll, a guard and a parry with any weapon; every player animated smoothly in first and third person.
 - **Beyond Hell.** Climb out to Purgatory's mountain, then up through the nine spheres of Paradiso to the Celestial Rose.
 
-**Versions.** The latest release is **3.6.1**; a beta, when there is one, is newer and still changing (see [Install it](#install-it)). Every player installs Hellcraft too, at the same version as the server. What came in each version: [Version history](#version-history).
+**Versions.** The latest release is **3.6.2**; a beta, when there is one, is newer and still changing (see [Install it](#install-it)). Every player installs Hellcraft too, at the same version as the server. What came in each version: [Version history](#version-history).
+
+### New in 3.6.2
+- **A sharper, more detailed minimap:** every block is drawn with its own texture's colour, tinted by the biome like the game does (grass, leaves and water take each place's colours), lit from the north-west, and always a whole number of screen pixels (8, 6, 4, 3, 2 or 1 a block, or 2 and 4 blocks a pixel), so it stays crisp and nothing shimmers as you walk.
+- **Hold Tab to see heads:** players, monsters and animals show their own faces on the minimap instead of dots, as in Xaero's.
 
 ### New in 3.6.1
 - **A HELLISH rank above SSS**, a restyled STYLE panel (slanted, the rank letter popping up on a rank gained and shaking on one lost, the HELLISH letter burning), and **ranks that make you better**: from S up, each rank gives a little more speed, attack speed and reach while you hold it. See [Style in boss fights](#the-circle-guardians-263).
@@ -208,7 +212,9 @@ The keys can be changed under Options → Controls → Hellcraft.
 
 A small map of the ground around you, in a corner of the screen (top left at first), drawn as you explore, in every dimension: Hell, the Forge of Dis, Purgatory, Paradiso and the vanilla worlds alike. Its rim takes the colour of where you are (the circle's colour in Hell).
 
-- **Z** and **X** zoom in and out (from four pixels a block to four blocks a pixel), **Y** opens its settings, and **B** puts a waymark where you stand (in Hell, where waymarks live).
+- **Z** and **X** zoom in and out (from eight screen pixels a block to four blocks a pixel; a block is always a whole number of pixels, so the map stays sharp), **Y** opens its settings, and **B** puts a waymark where you stand (in Hell, where waymarks live).
+- **The ground in detail (3.6.2):** each block in its own texture's colour, tinted by the biome as the game tints it, shaded by the slope as if lit from the north-west, water darker the deeper it is.
+- **Hold Tab** (the player list key) to see faces instead of dots: every player, monster and animal on the map shows its own head, drawn from its model and skin (3.6.2).
 - **What it shows:** you as an arrow in the middle, other players as white dots, monsters red, animals yellow, a boss as a big pulsing red dot (dimmer when far above or below you); Virgil's Rests as diamonds, the way down as a red arrow, your waymarks as pins and where you last died as a cross. Things past the edge sit on the rim, pointing the way.
 - **Cave view:** underground, in the Forge of Dis or with no sky over you, it shows the floor around your feet instead of the surface (walls dark, open floor lit), and follows you as you climb or drop. Set it to always, never or automatic.
 - **Settings (Y):** shown or hidden, round or square, its size, which corner, north up or turning with you, zoom, cave view, coordinates under it, and which dots to show. Kept in your own `config/hellcraft-client.json`; `/hellcraft-client minimap on|off|settings` does the same.
@@ -934,6 +940,8 @@ When you lose your last heart you are not banned. *There is no more room in hell
 Each player also has a small settings file of their own, `config/hellcraft-client.json` in their game folder: `smoothAnimations` (Hellcraft's animations for getting about and using items; `/hellcraft-client animations on|off` changes it in game) `healthBars` (`above`, `side` or `off`; `/hellcraft-client healthbars`) and `minimap` (the minimap's settings, changed with Y in game) (3.6.1).
 
 ## Version history
+
+**3.6.2** (2026-11-20): a sharper, more detailed minimap (block textures, biome tints, whole pixels per block) and heads on it while you hold Tab.
 
 **3.6.1** (2026-11-20): a HELLISH rank and a restyled STYLE panel, ranks that make you faster, quicker and longer in reach, a blood aura on a ready hell weapon, the Blood Oath meter, a minimap, and a HUD that keeps out of its own way (see [New in 3.6.1](#new-in-361)).
 

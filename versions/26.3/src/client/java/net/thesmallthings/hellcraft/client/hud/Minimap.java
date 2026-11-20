@@ -76,7 +76,8 @@ public final class Minimap implements HudElement {
 	/** Under the map: one line of coordinates. */
 	private static final int TEXT = 11;
 	private static final int FRAME = 2;
-	private static final int MAX_TEXTURE = 256;
+	/** The texture is one texel per screen pixel, up to this (a 160 wide map at GUI scale 8). */
+	private static final int MAX_TEXTURE = 1280;
 
 	private static DynamicTexture texture;
 	private static int textureSize;
@@ -84,8 +85,14 @@ public final class Minimap implements HudElement {
 	private static double drawnX = Double.NaN;
 	private static double drawnZ;
 	private static float drawnYaw;
-	private static int drawnChanges = -1;
 	private static String drawnFor = "";
+	/** The ground around the player, one int per cell (a cell is 1, 2 or 4 blocks), copied from MinimapScan when it changes. */
+	private static int[] grid = new int[0];
+	private static int gridX = Integer.MIN_VALUE;
+	private static int gridZ;
+	private static int gridW;
+	private static int gridCell;
+	private static int gridChanges = -1;
 	private static int ticks;
 	private static int zoomShownAt = -100;
 	/** Where this player last died, and in which dimension (kept for the session). */
@@ -115,10 +122,20 @@ public final class Minimap implements HudElement {
 		};
 	}
 
-	/** The map's half width in blocks, its corners included (so a turning map has ground in its corners). */
+	/** The GUI scale (screen pixels per GUI pixel). */
+	private static int guiScale() {
+		return Math.max(1, Minecraft.getInstance().getWindow().getGuiScale());
+	}
+
+	/**
+	 * The map's half width in blocks, its corners included (so a turning map has ground in its corners), but no further than
+	 * the chunks the game can have loaded.
+	 */
 	private static int reach() {
 		Settings.MapPrefs p = prefs();
-		return (int) Math.ceil(p.size / 2.0 * p.blocksPerPixel() * 1.42) + 2;
+		int wanted = (int) Math.ceil(p.size / 2.0 * p.blocksPerPixel(guiScale()) * 1.42) + 2;
+		int loaded = (Minecraft.getInstance().options.renderDistance().get() + 2) * 16;
+		return Math.min(wanted, loaded);
 	}
 
 	public static void tick(Minecraft mc) {
@@ -149,6 +166,23 @@ public final class Minimap implements HudElement {
 		if (showing(mc) && !mc.isPaused()) {
 			MinimapScan.tick(mc.level, player, reach(), caves(mc));
 		}
+		if (ticks % 100 == 0) {
+			MobHeads.tidy(ticks);
+		}
+	}
+
+	/** Holding the player list key (Tab) shows heads on the map instead of dots, as in Xaero's. */
+	public static boolean heads(Minecraft mc) {
+		return forceHeads || mc.options.keyPlayerList.isDown();
+	}
+
+	/** For the client test: show the heads without holding Tab. */
+	public static boolean forceHeads;
+	private static int headsDrawn;
+
+	/** For the client test: how many heads the last frame drew. */
+	public static int headsDrawn() {
+		return headsDrawn;
 	}
 
 	/** Zooms one step in (-1) or out (+1). */
@@ -181,9 +215,12 @@ public final class Minimap implements HudElement {
 
 	public static void reset() {
 		MinimapScan.clear();
+		MinimapColours.clear();
+		MobHeads.clear();
 		death = null;
 		deathLevel = null;
 		drawnX = Double.NaN;
+		gridX = Integer.MIN_VALUE;
 	}
 
 	/** For the HUD layout: the map, its frame and the line of coordinates under it. */
@@ -227,13 +264,13 @@ public final class Minimap implements HudElement {
 		float cx = x0 + half;
 		float cy = y0 + half;
 		boolean circle = p.shape == Settings.Shape.CIRCLE;
-		float bpp = p.blocksPerPixel();
+		int scale = guiScale();
+		float bpp = p.blocksPerPixel(scale);
 		int rim = rimColour(mc, pos);
 
-		// the ground, drawn into a texture at the screen's own resolution and only when something changed
-		int scale = Math.max(1, mc.getWindow().getGuiScale());
+		// the ground, drawn into a texture with one texel for each of the screen's pixels, only when something changed
 		int res = Math.min(MAX_TEXTURE, size * scale);
-		draw(res, size, pos, yaw, bpp, circle);
+		draw(res, pos, yaw, p.blocksPerScreenPixel(), circle, p.rotate);
 		g.fill(x0, y0, x0 + size, y0 + size, circle ? 0 : 0xC0080606);
 		g.blit(TEXTURE, x0, y0, x0 + size, y0 + size, 0, 1, 0, 1);
 
@@ -295,12 +332,44 @@ public final class Minimap implements HudElement {
 		return 0xFF9A9A9A;
 	}
 
-	/** Draws the ground into the texture, if anything changed since it was last drawn. */
-	private static void draw(int res, int size, Vec3 pos, float yaw, float bpp, boolean circle) {
-		String key = res + ":" + size + ":" + bpp + ":" + circle;
-		boolean moved = Double.isNaN(drawnX) || Math.abs(pos.x - drawnX) * res / (size * bpp) > 0.4
-				|| Math.abs(pos.z - drawnZ) * res / (size * bpp) > 0.4 || Math.abs(Mth.wrapDegrees(yaw - drawnYaw)) > 0.3f;
-		if (texture != null && textureSize == res && !moved && drawnChanges == MinimapScan.changes() && key.equals(drawnFor)) {
+	/**
+	 * Draws the ground into the texture, if anything changed since it was last drawn. One texel is one screen pixel and
+	 * {@code bpt} blocks (1/8 to 4), so a block is always a whole number of pixels: with north up, the map is moved in whole
+	 * texels (where the player stands is rounded to the texel), so every block keeps its exact size and edges as you walk;
+	 * turning with you, each pixel takes the one block under it (no blur). Zoomed out, a texel is the average of 2x2 or 4x4
+	 * columns, worked out once per chunk, so the map doesn't shimmer.
+	 */
+	private static void draw(int res, Vec3 pos, float yaw, float bpt, boolean circle, boolean turning) {
+		int cell = bpt >= 4 ? 4 : bpt >= 2 ? 2 : 1;
+		double step = bpt / cell;
+		int half = res / 2;
+		// where the map's middle is, in cells; with north up, rounded to the texel so blocks stay put on the pixel grid
+		double mx = pos.x / cell;
+		double mz = pos.z / cell;
+		if (!turning) {
+			mx = Math.round(mx / step) * step;
+			mz = Math.round(mz / step) * step;
+		}
+		int radius = (int) Math.min(Math.ceil(half * 1.42 * step) + 2, reach() / (double) cell + 2);
+		int gx0 = Mth.floor(mx) - radius;
+		int gz0 = Mth.floor(mz) - radius;
+		int w = radius * 2 + 1;
+		boolean newGrid = gx0 != gridX || gz0 != gridZ || w != gridW || cell != gridCell || gridChanges != MinimapScan.changes();
+		if (newGrid) {
+			if (grid.length < w * w) {
+				grid = new int[w * w];
+			}
+			MinimapScan.fill(grid, gx0, gz0, w, w, cell);
+			gridX = gx0;
+			gridZ = gz0;
+			gridW = w;
+			gridCell = cell;
+			gridChanges = MinimapScan.changes();
+		}
+		String key = res + ":" + bpt + ":" + circle + ":" + turning;
+		boolean moved = Double.isNaN(drawnX) || (turning ? Math.abs(mx - drawnX) > step * 0.4 || Math.abs(mz - drawnZ) > step * 0.4
+				|| Math.abs(Mth.wrapDegrees(yaw - drawnYaw)) > 0.25f : mx != drawnX || mz != drawnZ);
+		if (texture != null && textureSize == res && !moved && !newGrid && key.equals(drawnFor)) {
 			return;
 		}
 		if (texture == null || textureSize != res) {
@@ -311,35 +380,40 @@ public final class Minimap implements HudElement {
 			Minecraft.getInstance().getTextureManager().register(TEXTURE, texture);
 			textureSize = res;
 		}
-		drawnX = pos.x;
-		drawnZ = pos.z;
+		drawnX = mx;
+		drawnZ = mz;
 		drawnYaw = yaw;
-		drawnChanges = MinimapScan.changes();
 		drawnFor = key;
 		NativeImage image = texture.getPixels();
-		Rot r = new Rot(yaw);
-		float perTexel = size / (float) res;
-		float half = res / 2f;
-		float edge = half;
+		Rot r = new Rot(turning ? yaw : 180f);
+		// a texel's step across the world, in cells, along the texture's rows and down its columns
+		double ax = r.rx * step;
+		double az = r.rz * step;
+		double bx = -r.fx * step;
+		double bz = -r.fz * step;
+		double edge = res / 2.0;
+		int unknown = 0xFF100C0C;
 		for (int ty = 0; ty < res; ty++) {
-			for (int tx = 0; tx < res; tx++) {
-				// this texel in GUI pixels from the middle, then in blocks across the world
-				float gx = (tx + 0.5f - half) * perTexel;
-				float gy = (ty + 0.5f - half) * perTexel;
+			double oy = ty + 0.5 - half;
+			double wx = mx + (0.5 - half) * ax + oy * bx - gx0;
+			double wz = mz + (0.5 - half) * az + oy * bz - gz0;
+			double dy = ty + 0.5 - edge;
+			for (int tx = 0; tx < res; tx++, wx += ax, wz += az) {
 				float alpha = 1f;
 				if (circle) {
-					float d = (float) Math.sqrt((tx + 0.5f - half) * (tx + 0.5f - half) + (ty + 0.5f - half) * (ty + 0.5f - half));
+					double dx = tx + 0.5 - edge;
+					double d = Math.sqrt(dx * dx + dy * dy);
 					if (d > edge) {
 						image.setPixel(tx, ty, 0);
 						continue;
 					}
-					alpha = Math.min(1f, edge - d);
+					alpha = (float) Math.min(1, edge - d);
 				}
-				double wx = pos.x + (gx * r.rx - gy * r.fx) * bpp;
-				double wz = pos.z + (gx * r.rz - gy * r.fz) * bpp;
-				int c = MinimapScan.colour(Mth.floor(wx), Mth.floor(wz));
+				int ix = (int) Math.floor(wx);
+				int iz = (int) Math.floor(wz);
+				int c = ix < 0 || iz < 0 || ix >= w || iz >= w ? MinimapScan.UNKNOWN : grid[iz * w + ix];
 				if (c == MinimapScan.UNKNOWN) {
-					c = 0xFF100C0C;
+					c = unknown;
 				}
 				if (alpha < 1f) {
 					c = ARGB.color(Math.round(alpha * 255), c & 0xFFFFFF);
@@ -475,6 +549,8 @@ public final class Minimap implements HudElement {
 		Settings.MapPrefs p = prefs();
 		double reach = half * bpp * (circle ? 1 : 1.42);
 		int drawn = 0;
+		boolean heads = heads(mc);
+		headsDrawn = 0;
 		net.minecraft.world.phys.AABB around = self.getBoundingBox().inflate(reach, 96, reach);
 		for (LivingEntity e : mc.level.getEntitiesOfClass(LivingEntity.class, around)) {
 			if (e == self || e.isRemoved() || e.isInvisible() || !(e instanceof Mob || e instanceof Player)
@@ -509,7 +585,10 @@ public final class Minimap implements HudElement {
 			float a = dy < 8 ? 1f : Math.max(0.35f, 1f - (dy - 8) / 24f);
 			int x = Math.round(cx + sx);
 			int y = Math.round(cy + sy);
-			if (boss) {
+			if (heads && MobHeads.draw(g, e, x, y, boss ? 12 : 8, partial, ticks,
+					boss ? ARGB.color(a, 0xB01010) : player ? ARGB.color(a, 0xE8E8E8) : ARGB.color(a * 0.8f, 0x000000))) {
+				headsDrawn++;
+			} else if (boss) {
 				float beat = 0.7f + 0.3f * Mth.sin((ticks + partial) * 0.4f);
 				g.fill(x - 3, y - 3, x + 3, y + 3, ARGB.color(a, 0x100000));
 				g.fill(x - 2, y - 2, x + 2, y + 2, ARGB.color(a * beat, 0xFF2020));
@@ -622,6 +701,45 @@ public final class Minimap implements HudElement {
 		}
 		NativeImage image = texture.getPixels();
 		return image == null ? 0 : image.getPixel(textureSize / 2, textureSize / 2);
+	}
+
+	/**
+	 * For the client test, with north up and a zoom of several pixels a block: are all blocks the same whole number of texels?
+	 * Along the middle row and column, every change of colour must fall on the same step of that grid. Null if so.
+	 */
+	@Nullable
+	public static String texelCheck() {
+		Settings.MapPrefs p = prefs();
+		float bpt = p.blocksPerScreenPixel();
+		if (texture == null || p.rotate || bpt >= 1) {
+			return "not north up and zoomed in (" + p.rotate + ", " + bpt + ")";
+		}
+		int k = Math.round(1 / bpt);
+		NativeImage image = texture.getPixels();
+		int n = textureSize;
+		int lo = n / 4;
+		int hi = n * 3 / 4;
+		for (int axis = 0; axis < 2; axis++) {
+			int residue = -1;
+			int changes = 0;
+			for (int i = lo + 1; i < hi; i++) {
+				int a = axis == 0 ? image.getPixel(i - 1, n / 2) : image.getPixel(n / 2, i - 1);
+				int b = axis == 0 ? image.getPixel(i, n / 2) : image.getPixel(n / 2, i);
+				if (a == b) {
+					continue;
+				}
+				changes++;
+				if (residue < 0) {
+					residue = i % k;
+				} else if (i % k != residue) {
+					return (axis == 0 ? "row" : "column") + " changes at " + i + ", off the " + k + "-texel grid (" + residue + ")";
+				}
+			}
+			if (changes == 0) {
+				return "nothing to see along the " + (axis == 0 ? "row" : "column") + " (all one colour)";
+			}
+		}
+		return null;
 	}
 
 	@Nullable

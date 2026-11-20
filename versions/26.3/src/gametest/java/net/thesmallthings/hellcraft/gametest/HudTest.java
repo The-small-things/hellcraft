@@ -136,6 +136,35 @@ public class HudTest implements FabricClientGameTest {
 		});
 		context.waitTicks(10);
 		context.takeScreenshot("hud_minimap_square");
+		// texel-perfect: zoomed right in with north up, every block is the same whole number of screen pixels
+		for (String block : new String[] {"~3 ~-1 ~ minecraft:gold_block", "~-2 ~-1 ~ minecraft:lapis_block", "~ ~-1 ~4 minecraft:redstone_block",
+				"~ ~-1 ~-3 minecraft:diamond_block"}) {
+			world.getServer().runCommand("execute at Player0 positioned over world_surface run setblock " + block);
+		}
+		context.runOnClient(client -> Settings.minimap().zoom = 0);
+		context.waitTicks(45);
+		String texels = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.Minimap.texelCheck());
+		if (texels != null) {
+			throw new AssertionError("the minimap's blocks are uneven: " + texels);
+		}
+		context.takeScreenshot("hud_minimap_close");
+		// heads (Tab): a few creatures around the player, drawn with their own faces
+		world.getServer().runCommand("execute at Player0 run summon minecraft:zombie ~6 ~ ~3 {NoAI:1b,PersistenceRequired:1b,Tags:[\"hud_test\"]}");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:pig ~-5 ~ ~4 {NoAI:1b,Tags:[\"hud_test\"]}");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:creeper ~3 ~ ~-6 {NoAI:1b,PersistenceRequired:1b,Tags:[\"hud_test\"]}");
+		world.getServer().runCommand("execute at Player0 run summon minecraft:sheep ~-4 ~ ~-5 {NoAI:1b,Tags:[\"hud_test\"]}");
+		context.runOnClient(client -> {
+			Settings.minimap().zoom = 2;
+			net.thesmallthings.hellcraft.client.hud.Minimap.forceHeads = true;
+		});
+		context.waitTicks(20);
+		int heads = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.Minimap.headsDrawn());
+		if (heads < 3) {
+			throw new AssertionError("the minimap drew " + heads + " heads for four creatures");
+		}
+		context.takeScreenshot("hud_minimap_heads");
+		context.runOnClient(client -> net.thesmallthings.hellcraft.client.hud.Minimap.forceHeads = false);
+		world.getServer().runCommand("kill @e[tag=hud_test]");
 		context.runOnClient(client -> Settings.minimap().caves = Settings.Caves.ON);
 		context.waitTicks(40);
 		context.takeScreenshot("hud_minimap_caves");
@@ -145,6 +174,7 @@ public class HudTest implements FabricClientGameTest {
 			p.rotate = true;
 			p.corner = Settings.Corner.TOP_LEFT;
 			p.caves = Settings.Caves.AUTO;
+			p.zoom = 3;
 		});
 
 		// everything at once: boss bars, effects of both kinds, messages, the style panel, stamina, the oath, the minimap

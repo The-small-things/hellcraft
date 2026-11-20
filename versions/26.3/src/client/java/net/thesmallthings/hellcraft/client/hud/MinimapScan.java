@@ -41,7 +41,8 @@ public final class MinimapScan {
 	/** A column not known yet. */
 	public static final int UNKNOWN = 0;
 
-	private record Scanned(int cx, int cz, int[] colours, int at, boolean cave, int band) {
+	/** A chunk's columns as last seen, with two smaller copies for zoomed-out maps (each cell the average of 2x2 and 4x4 columns). */
+	private record Scanned(int cx, int cz, int[] colours, int[] half, int[] quarter, int at, boolean cave, int band) {
 	}
 
 	private static final Map<Long, Scanned> CHUNKS = new HashMap<>();
@@ -55,6 +56,36 @@ public final class MinimapScan {
 	public static int colour(int x, int z) {
 		Scanned s = CHUNKS.get(ChunkPos.pack(x >> 4, z >> 4));
 		return s == null ? UNKNOWN : s.colours[(z & 15) * 16 + (x & 15)];
+	}
+
+	/**
+	 * Copies what is known into {@code grid} (row-major, {@code w} by {@code h} cells), its first cell at cell (gx0, gz0); a
+	 * cell is {@code cell} columns square (1, 2 or 4: 2 and 4 are the averaged copies). Unknown cells are {@link #UNKNOWN}.
+	 * Chunk by chunk, so it is cheap however large the grid.
+	 */
+	public static void fill(int[] grid, int gx0, int gz0, int w, int h, int cell) {
+		java.util.Arrays.fill(grid, 0, w * h, UNKNOWN);
+		int per = 16 / cell;
+		int c0x = Math.floorDiv(gx0, per);
+		int c0z = Math.floorDiv(gz0, per);
+		int c1x = Math.floorDiv(gx0 + w - 1, per);
+		int c1z = Math.floorDiv(gz0 + h - 1, per);
+		for (int cz = c0z; cz <= c1z; cz++) {
+			for (int cx = c0x; cx <= c1x; cx++) {
+				Scanned s = CHUNKS.get(ChunkPos.pack(cx, cz));
+				if (s == null) {
+					continue;
+				}
+				int[] src = cell == 1 ? s.colours : cell == 2 ? s.half : s.quarter;
+				int bx = cx * per - gx0;
+				int bz = cz * per - gz0;
+				int ix0 = Math.max(0, -bx);
+				int ix1 = Math.min(per, w - bx);
+				for (int iz = Math.max(0, -bz); iz < Math.min(per, h - bz); iz++) {
+					System.arraycopy(src, iz * per + ix0, grid, (bz + iz) * w + bx + ix0, ix1 - ix0);
+				}
+			}
+		}
 	}
 
 	/** Goes up each time any chunk's colours change, so the minimap knows to draw again. */
@@ -79,6 +110,7 @@ public final class MinimapScan {
 	 */
 	public static void tick(ClientLevel now, LocalPlayer player, int radius, boolean caveView) {
 		clock++;
+		MinimapColours.tick();
 		if (now != level) {
 			CHUNKS.clear();
 			level = now;
@@ -162,21 +194,30 @@ public final class MinimapScan {
 				}
 			}
 		} else {
+			// the heights along the chunk's north and west edges, for the relief of its first row and column
 			int[] north = new int[16];
+			int[] west = new int[16];
 			LevelChunk northChunk = level.getChunkSource().getChunk(chunk.getPos().x(), chunk.getPos().z() - 1, false);
+			LevelChunk westChunk = level.getChunkSource().getChunk(chunk.getPos().x() - 1, chunk.getPos().z(), false);
 			boolean northless = northChunk == null || northChunk.isEmpty();
-			for (int dx = 0; dx < 16; dx++) {
-				north[dx] = northless ? Integer.MIN_VALUE : top(level, northChunk, pos, x0 + dx, z0 - 1);
+			boolean westless = westChunk == null || westChunk.isEmpty();
+			for (int i = 0; i < 16; i++) {
+				north[i] = northless ? Integer.MIN_VALUE : top(level, northChunk, pos, x0 + i, z0 - 1);
+				west[i] = westless ? Integer.MIN_VALUE : top(level, westChunk, pos, x0 - 1, z0 + i);
 			}
 			for (int dz = 0; dz < 16; dz++) {
+				int westY = west[dz];
 				for (int dx = 0; dx < 16; dx++) {
-					colours[dz * 16 + dx] = surfaceColumn(level, chunk, pos, x0 + dx, z0 + dz, north, dx);
+					int[] out = new int[1];
+					colours[dz * 16 + dx] = surfaceColumn(level, chunk, pos, x0 + dx, z0 + dz, north, dx, westY, out);
+					westY = out[0];
 				}
 			}
 		}
 		long key = chunk.getPos().pack();
 		Scanned before = CHUNKS.get(key);
-		CHUNKS.put(key, new Scanned(chunk.getPos().x(), chunk.getPos().z(), colours, clock, cave, band));
+		CHUNKS.put(key, new Scanned(chunk.getPos().x(), chunk.getPos().z(), colours, shrink(colours, 16), shrink(shrink(colours, 16), 8), clock,
+				cave, band));
 		if (before == null || !java.util.Arrays.equals(before.colours, colours)) {
 			changes++;
 		}
@@ -198,16 +239,45 @@ public final class MinimapScan {
 		return y;
 	}
 
-	private static int surfaceColumn(ClientLevel level, LevelChunk chunk, BlockPos.MutableBlockPos pos, int x, int z, int[] north, int dx) {
+	/** Halves a square of colours (side {@code n}): each new cell the average of four, unknown cells left out. */
+	private static int[] shrink(int[] c, int n) {
+		int m = n / 2;
+		int[] out = new int[m * m];
+		for (int z = 0; z < m; z++) {
+			for (int x = 0; x < m; x++) {
+				int r = 0;
+				int g = 0;
+				int b = 0;
+				int k = 0;
+				for (int i = 0; i < 4; i++) {
+					int v = c[(z * 2 + i / 2) * n + x * 2 + i % 2];
+					if (v != UNKNOWN) {
+						r += (v >> 16) & 255;
+						g += (v >> 8) & 255;
+						b += v & 255;
+						k++;
+					}
+				}
+				out[z * m + x] = k == 0 ? UNKNOWN : 0xFF000000 | (r / k) << 16 | (g / k) << 8 | b / k;
+			}
+		}
+		return out;
+	}
+
+	private static int surfaceColumn(ClientLevel level, LevelChunk chunk, BlockPos.MutableBlockPos pos, int x, int z, int[] north, int dx,
+			int westHeight, int[] height) {
 		int minY = level.getMinY();
 		int y = top(level, chunk, pos, x, z);
 		int northY = north[dx] == Integer.MIN_VALUE ? y : north[dx];
+		int westY = westHeight == Integer.MIN_VALUE ? y : westHeight;
 		north[dx] = y;
+		height[0] = y;
 		if (y <= minY) {
 			return 0xFF000000;
 		}
 		BlockState state = chunk.getBlockState(pos);
 		MapColor colour = state.getMapColor(level, pos);
+		BlockState shown = state;
 		float light;
 		if (!state.getFluidState().isEmpty()) {
 			// how deep the water (or lava) is, for its shading
@@ -221,17 +291,25 @@ public final class MinimapScan {
 				depth++;
 			} while (sy > minY && !under.getFluidState().isEmpty() && depth < 16);
 			if (!state.isFaceSturdy(level, pos, Direction.UP)) {
-				colour = state.getFluidState().createLegacyBlock().getMapColor(level, pos);
+				shown = state.getFluidState().createLegacyBlock();
+				colour = shown.getMapColor(level, pos);
 			}
 			light = 1.05f - Math.min(depth, 12) * 0.035f;
 		} else {
-			// lit from the north-west like a map: a rise toward the south is bright, a drop dark
-			light = 1.0f + Math.max(-0.32f, Math.min(0.28f, (y - northY) * 0.11f));
+			// lit from the north-west: a slope facing the light is bright, one turned away dark, a cliff's foot in shadow
+			float rise = (y - northY) + (y - westY) * 0.6f;
+			light = 1.0f + Math.max(-0.36f, Math.min(0.3f, rise * 0.08f));
 		}
 		if (colour == MapColor.NONE) {
 			colour = MapColor.STONE;
 		}
-		return shade(colour.col, light);
+		return shade(rgb(level, shown, pos, colour), light);
+	}
+
+	/** The colour a block shows on the map: its own top texture, tinted (MinimapColours), else its map colour. */
+	private static int rgb(ClientLevel level, BlockState state, BlockPos pos, MapColor fallback) {
+		int c = MinimapColours.top(level, state, pos);
+		return c != 0 ? c : fallback.col;
 	}
 
 	private static int caveColumn(ClientLevel level, LevelChunk chunk, BlockPos.MutableBlockPos pos, int x, int z, int playerY) {
@@ -245,7 +323,7 @@ public final class MinimapScan {
 			// rock at the player's height: a wall, dark
 			pos.setY(start);
 			MapColor c = head.getMapColor(level, pos);
-			return shade((c == MapColor.NONE ? MapColor.STONE : c).col, 0.38f);
+			return shade(rgb(level, head, pos, c == MapColor.NONE ? MapColor.STONE : c), 0.38f);
 		}
 		boolean open = false;
 		for (int y = start; y > Math.max(minY, start - CAVE_DEPTH); y--) {
@@ -264,7 +342,7 @@ public final class MinimapScan {
 			if (!state.getFluidState().isEmpty()) {
 				light *= 0.9f;
 			}
-			return shade(c.col, light);
+			return shade(rgb(level, state, pos, c), light);
 		}
 		return 0xFF0A0606;
 	}

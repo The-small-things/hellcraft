@@ -39,7 +39,7 @@ public final class MinimapScreen extends Screen {
 		choices.add(new Choice(() -> "Size: " + p.size, () -> p.size = nextSize(p.size)));
 		choices.add(new Choice(() -> "Corner: " + word(p.corner), () -> p.corner = Settings.Corner.values()[(p.corner.ordinal() + 1) % 4]));
 		choices.add(new Choice(() -> p.rotate ? "Turns with you" : "North up", () -> p.rotate = !p.rotate));
-		choices.add(new Choice(() -> "Zoom: " + zoomLabel(p.blocksPerPixel()), () -> p.zoom = (p.zoom + 1) % Settings.MapPrefs.ZOOMS.length));
+		choices.add(new Choice(() -> "Zoom: " + zoomLabel(p.blocksPerScreenPixel()), () -> p.zoom = (p.zoom + 1) % Settings.MapPrefs.ZOOMS.length));
 		choices.add(new Choice(() -> "Cave view: " + word(p.caves), () -> p.caves = Settings.Caves.values()[(p.caves.ordinal() + 1) % 3]));
 		choices.add(new Choice(() -> "Coordinates: " + onOff(p.coordinates), () -> p.coordinates = !p.coordinates));
 		choices.add(new Choice(() -> "Players: " + onOff(p.players), () -> p.players = !p.players));
@@ -85,15 +85,14 @@ public final class MinimapScreen extends Screen {
 	}
 
 	private static String zoomLabel(float bpp) {
-		return bpp >= 1 ? (bpp == Math.round(bpp) ? Integer.toString(Math.round(bpp)) : Float.toString(bpp)) + " blocks a pixel"
-				: Math.round(1 / bpp) + " pixels a block";
+		return bpp > 1 ? Math.round(bpp) + " blocks a pixel" : bpp == 1 ? "1 pixel a block" : Math.round(1 / bpp) + " pixels a block";
 	}
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
 		super.extractRenderState(g, mouseX, mouseY, a);
 		g.centeredText(font, title.getString(), width / 2, Math.max(12, height / 2 - 100), 0xFFFFFFFF);
-		g.centeredText(font, "Z and X zoom, B marks where you stand (in Hell), Y opens this screen.",
+		g.centeredText(font, "Z and X zoom, hold Tab for heads, B marks a spot (in Hell), Y opens this.",
 				width / 2, height - 20, 0xFFA0A0A0);
 	}
 

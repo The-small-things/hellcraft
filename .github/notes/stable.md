@@ -6,6 +6,10 @@
 
 **Every player installs Hellcraft** (single player too), the same version as the server. **3.5 doesn't need a new world:** a 3.3 or 3.4 world carries on (only Lust's newer wind needs a world made in 3.4 or later; older worlds keep their first 36 streams). Coming from before 3.3, make a new world: the guardians' lairs, the Pilgrim Roads and Purgatory were rebuilt in 3.3.
 
+- **New in 3.6.2 (26.3): a sharper minimap.**
+  - **More detail:** every block is drawn in its own texture's colour, tinted by the biome as the game tints it (grass, leaves and water take each place's colours, so Hell's circles look like themselves), and lit from the north-west so slopes and cliffs stand out.
+  - **Texel-perfect:** a block is always a whole number of screen pixels (8, 6, 4, 3, 2 or 1 a block, or 2 and 4 blocks a pixel), so the map is crisp and doesn't shimmer as you walk.
+  - **Hold Tab to see heads:** players, monsters and animals show their own faces on the minimap instead of dots, as in Xaero's.
 - **New in 3.6.1 (26.3): style, blood and a minimap.**
   - **A HELLISH rank above SSS** (410 style, 12 Blood Fragments for the win) and a restyled STYLE panel: a slanted plate, the rank letter popping up when you climb and shaking when you drop, a segmented meter, and a burning letter at HELLISH.
   - **Ranks make you better:** from S up, each rank gives a little more speed, attack speed and reach while you hold it (HELLISH: +12% speed, +16% attack speed, +0.6 blocks of reach). The panel shows what you have. Server owners can tune or turn it off (`styleRankBonuses` and the `style...PerRank` settings).

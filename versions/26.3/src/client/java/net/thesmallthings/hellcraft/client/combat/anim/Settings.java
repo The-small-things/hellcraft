@@ -37,8 +37,8 @@ public final class Settings {
 		public Shape shape = Shape.CIRCLE;
 		/** Its width on screen, in GUI pixels. */
 		public int size = 84;
-		/** Which of {@link #ZOOMS} (blocks per GUI pixel). */
-		public int zoom = 2;
+		/** Which of {@link #ZOOMS} (blocks per screen pixel). */
+		public int zoom = 3;
 		public Caves caves = Caves.AUTO;
 		public Corner corner = Corner.TOP_LEFT;
 		public boolean coordinates = true;
@@ -47,12 +47,22 @@ public final class Settings {
 		public boolean animals = true;
 		public boolean waymarks = true;
 
-		public static final float[] ZOOMS = {0.25f, 0.5f, 1f, 2f, 3f, 4f};
+		/**
+		 * Blocks per screen pixel (not GUI pixel), so a block is always a whole number of the screen's pixels, every block the
+		 * same size: 8, 6, 4, 3, 2 and 1 pixels a block, then 2 and 4 blocks a pixel (averaged, so nothing flickers).
+		 */
+		public static final float[] ZOOMS = {1 / 8f, 1 / 6f, 1 / 4f, 1 / 3f, 1 / 2f, 1f, 2f, 4f};
 		public static final int MIN_SIZE = 48;
 		public static final int MAX_SIZE = 160;
 
-		public float blocksPerPixel() {
+		/** Blocks per screen pixel. */
+		public float blocksPerScreenPixel() {
 			return ZOOMS[Math.max(0, Math.min(ZOOMS.length - 1, zoom))];
+		}
+
+		/** Blocks per GUI pixel, at the given GUI scale. */
+		public float blocksPerPixel(int guiScale) {
+			return blocksPerScreenPixel() * Math.max(1, guiScale);
 		}
 	}
 
