@@ -342,6 +342,19 @@ is a client mod too: every player installs it (the .mrpack), at exactly the serv
   the server's combo window; `PlayerAnimator.cut` freezes the move and fades it into the guard on the tick the guard goes up, for every
   viewer; `CombatTest.guardCutsIn`. **The roll's hitbox:** `combat/RollShape` (0.9 high, eyes 0.75, for `TICKS`; started by
   `Dodge.roll`, `RollControl`, and `CombatClient.move` for others; `mixin/AvatarMixin` on `getDefaultDimensions`; CombatTest checks both sides). Preview a move offline first: `python3 tools/art/render.py player_moves --anim roll --times 0,0.1,... --views side`. **Mob health bars:** client `layer/MobHealthBars` (over hurt mobs or the one under the crosshair within 24 blocks, drawn in COLLECT_SUBMITS like the danger marks; not bosses, players, armour stands, the damned, Shades, angels or a hiding mimic; `anim/Settings.healthBars` above/side/off, `/hellcraft-client healthbars`); `HudTest.healthBars` films `health_bars_above`/`_side`.
+- 3.6.1, the HUD (client `client/hud/`): `HudLayout` places every Hellcraft HUD element each frame (an `Anchor` each, `HudSlots` the one list
+  of who goes where and in what order; vanilla's boss bars, effects, sidebar, hotbar, hearts and food reserved; an element that would
+  overlap slides along its anchor, then inward, else hides; `box(id)` eased, `clear()` the overlap check `HudTest.newHud` asserts in
+  its `hud_chaos` shot). Each element gives a `measure` (size or null) and draws at its box: `StaminaHud` and `OathMeter` (ABOVE_FOOD),
+  `DialogueHud` (BOTTOM_CENTER), `StylePanel` (TOP_RIGHT), `CompassHud` (TOP_CENTER), `PilgrimHud` (TOP_LEFT), `Minimap` (its corner).
+  Style: `Judgement.Grade.HELLISH` (410) above SSS (`top()`, `stepsFromS()`), `StylePanel` restyled (`preview` for tests);
+  `hazard/RankBonus` gives transient speed, attack speed and reach modifiers per rank from S (`styleRankBonuses`,
+  `style*PerRank` in HellConfig; `describe` goes to the panel through `StylePayload.perks`). Blood Arts: `net/BloodPayload`
+  (`HellWeapons.sync`: charge, oath, cooldown) to client `hud/BloodClient`; `BloodAura` draws the aura on hotbar slots of a ready
+  hell weapon (no glint any more; `HellWeapons.refresh` strips old glints); `OathMeter`. The minimap: `hud/Minimap` (keys Z, X, B,
+  Y; CPU-composited texture, circle or square, rotating or north up, dots, places), `MinimapScan` (per-chunk column colours, surface
+  or cave view), `MinimapScreen` (settings), prefs in `anim/Settings.MapPrefs` (`minimap` in hellcraft-client.json). HudTest films
+  `hud_blood_aura`, `hud_oath_meter`, `hud_style_*`, `hud_minimap_*`, `hud_chaos`.
 - 3.1: the Journal as an open book (client `nav/JournalScreen`: contents on the left page in sections with a ribbon on the
   open page, the page on the right, Back/Next and arrow keys; every page has item pictures, `nav/JournalIcons`, by Guide title
   or Codex id: an icon in the contents and a plate of them under the title) and the Map of Hell on parchment (`MapPainter`

@@ -88,6 +88,15 @@ public final class StaminaHud implements HudElement {
 		alpha = Mth.clamp(alpha + (show ? 0.25f : -0.1f), 0, 1);
 	}
 
+	/** For the HUD layout (client hud/HudLayout, over the food bar): its size while it shows. */
+	public static net.thesmallthings.hellcraft.client.hud.HudLayout.Size measure(Minecraft mc, int width, int height) {
+		LocalPlayer player = mc.player;
+		if (player == null || player.isSpectator() || player.hasInfiniteMaterials() || (alpha <= 0.01f && lastAlpha <= 0.01f)) {
+			return null;
+		}
+		return new net.thesmallthings.hellcraft.client.hud.HudLayout.Size(WIDTH + 2, 6);
+	}
+
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		Minecraft mc = Minecraft.getInstance();
@@ -98,14 +107,14 @@ public final class StaminaHud implements HudElement {
 			return;
 		}
 		float max = Math.max(1, Combat.rules(true).staminaMax());
-		int right = g.guiWidth() / 2 + 91;
-		int left = right - WIDTH;
-		// the row over the hunger bar; the air bubbles take it under water, so sit above them then
-		boolean bubbles = player.getAirSupply() < player.getMaxAirSupply() || player.isUnderWater();
-		int y = g.guiHeight() - 49 + 3 - (bubbles ? 10 : 0);
-		if (player.getVehicle() instanceof net.minecraft.world.entity.LivingEntity) {
-			y -= 10;
+		// the row over the hunger bar (and over the air bubbles under water, a mount's hearts when riding): HudLayout says where
+		net.thesmallthings.hellcraft.client.hud.HudLayout.Box box = net.thesmallthings.hellcraft.client.hud.HudLayout.box(ID);
+		if (box == null) {
+			return;
 		}
+		int left = box.x() + 1;
+		int right = left + WIDTH;
+		int y = box.y() + 1;
 		int h = 4;
 		g.fill(left - 1, y - 1, right + 1, y + h + 1, ARGB.color(a * 0.75f, 0x100A0A));
 		g.fill(left, y, right, y + h, ARGB.color(a * 0.85f, 0x2A2020));

@@ -146,6 +146,15 @@ public class HellConfig {
 	 * match. Their walking speed doesn't change.
 	 */
 	public double bossTempo = 0.6;
+	// --- Style ranks (hazard/StyleMeter, hazard/RankBonus): what a high rank is worth while you hold it in a boss fight
+	/** From S up, every style rank makes the fighter a little faster, quicker to swing and longer in reach. Off: ranks only score. */
+	public boolean styleRankBonuses = true;
+	/** Walking speed added per rank from S (S is one rank, SS two, SSS three, HELLISH four): 0.03 = +3% each. */
+	public double styleSpeedPerRank = 0.03;
+	/** Attack speed added per rank from S (Hellcraft's swings play this much faster): 0.04 = +4% each. */
+	public double styleAttackSpeedPerRank = 0.04;
+	/** Reach added per rank from S, in blocks. */
+	public double styleReachPerRank = 0.15;
 	// --- Combat (docs/COMBAT.md)
 	/**
 	 * Hellcraft's combat: a stamina bar, a dodge roll for everyone (the Dash key), guarding and parrying with weapons
@@ -369,6 +378,9 @@ public class HellConfig {
 		hoarderGoldPerExtra = Math.max(1, hoarderGoldPerExtra);
 		hoardersMax = Math.max(0, hoardersMax);
 		sullenGripTicks = Math.max(0, sullenGripTicks);
+		styleSpeedPerRank = Math.max(0.0, Math.min(0.25, styleSpeedPerRank));
+		styleAttackSpeedPerRank = Math.max(0.0, Math.min(0.25, styleAttackSpeedPerRank));
+		styleReachPerRank = Math.max(0.0, Math.min(1.0, styleReachPerRank));
 		staminaMax = Math.max(10, staminaMax);
 		staminaRegen = Math.max(0.0, staminaRegen);
 		staminaRegenDelay = Math.max(0, staminaRegenDelay);

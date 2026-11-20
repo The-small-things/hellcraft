@@ -95,6 +95,7 @@ public class HellcraftMod implements ModInitializer {
 		BloodEvents.register();
 		Fairness.register();
 		HellWeapons.register();
+		net.thesmallthings.hellcraft.hazard.RankBonus.register();
 		Hellforge.register();
 		Relics.register();
 		Heaven.register();

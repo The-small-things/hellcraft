@@ -196,6 +196,9 @@ public class HellcraftClient implements ClientModInitializer {
 		// Medusa's gaze greys the screen of whoever looks at her
 		HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, GazeOverlay.ID, new GazeOverlay());
 		HudElementRegistry.attachElementBefore(VanillaHudElements.CROSSHAIR, WingbeatFx.ID, WingbeatFx.INSTANCE);
+		// where every piece of the HUD goes, so none is drawn over another (hud/HudSlots, hud/HudLayout); the blood aura on the
+		// hotbar, the Blood Oath meter and the minimap
+		net.thesmallthings.hellcraft.client.hud.HudSlots.register();
 
 		// the danger language's marks on the ground
 		LevelRenderEvents.COLLECT_SUBMITS.register(DangerMarks::render);

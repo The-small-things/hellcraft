@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.thesmallthings.hellcraft.net.BloodPayload;
 import net.thesmallthings.hellcraft.net.Dialogue;
 import net.thesmallthings.hellcraft.sound.HellSounds;
 import net.thesmallthings.hellcraft.util.Feedback;
@@ -132,6 +133,9 @@ public final class HellWeapons {
 	private static boolean mining;
 
 	public static void register() {
+		net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry.clientboundPlay().register(BloodPayload.TYPE, BloodPayload.CODEC);
+		net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sync(handler.getPlayer()));
+		net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> sync(newPlayer));
 		ServerLivingEntityEvents.AFTER_DAMAGE.register(HellWeapons::afterDamage);
 		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
 			if (player instanceof ServerPlayer sp && level instanceof ServerLevel server) {
@@ -167,10 +171,13 @@ public final class HellWeapons {
 		return new ItemLore(lore);
 	}
 
-	/** Brings a weapon made by an older version up to date (its lore), keeping everything else. */
+	/** Brings a weapon made by an older version up to date (its lore, and no charged glint), keeping everything else. */
 	static void refresh(ItemStack stack) {
 		Weapon weapon = of(stack);
 		if (weapon != null) {
+			if (stack.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE)) {
+				stack.remove(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+			}
 			ItemLore lore = lore(weapon, infernal(stack));
 			if (!lore.equals(stack.get(DataComponents.LORE))) {
 				stack.set(DataComponents.LORE, lore);
@@ -225,11 +232,9 @@ public final class HellWeapons {
 		}
 		int now = Math.min(FULL, before + amount);
 		CHARGE.put(player.getUUID(), now);
+		sync(player);
 		if (now >= FULL) {
-			ItemStack held = player.getMainHandItem();
-			if (of(held) != null) {
-				held.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-			}
+			// the hotbar shows it: a blood aura round every hell weapon's slot (client hud/BloodAura), not a glint
 			Dialogue.status(player, Component.literal("Fully charged: press ").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)
 					.append(Component.keybind("key.hellcraft.blood_art").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD))
 					.append(Component.literal(" for its Blood Art!").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD)));
@@ -247,9 +252,10 @@ public final class HellWeapons {
 				.append(Component.literal(" " + charge + "%").withStyle(ChatFormatting.GRAY));
 	}
 
-	/** Spends a full charge; the glow leaves every blood weapon the player carries. */
+	/** Spends a full charge (the aura leaves the hotbar; the glint older versions put on the weapons goes too). */
 	private static void spend(ServerPlayer player) {
 		CHARGE.put(player.getUUID(), 0);
+		sync(player);
 		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
 			ItemStack s = player.getInventory().getItem(i);
 			if (of(s) != null && s.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE)) {
@@ -272,6 +278,19 @@ public final class HellWeapons {
 	}
 
 	// ------------------------------------------------------------------ oaths and arts
+
+	/** Tells the player's HUD their blood charge and Blood Oath (net/BloodPayload). */
+	public static void sync(ServerPlayer player) {
+		if (player.connection == null || !net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.canSend(player, BloodPayload.TYPE)) {
+			return;
+		}
+		long now = player.level().getGameTime();
+		Long until = OATHS.get(player.getUUID());
+		int oathLeft = until == null ? 0 : (int) Math.max(0, until - now);
+		int cooldownLeft = (int) Math.max(0, OATH_READY.getOrDefault(player.getUUID(), 0L) - now);
+		net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player,
+				new BloodPayload(charge(player), oathLeft, OATH_TICKS, cooldownLeft, OATH_COOLDOWN));
+	}
 
 	public static boolean underOath(ServerPlayer player) {
 		Long until = OATHS.get(player.getUUID());
@@ -388,6 +407,7 @@ public final class HellWeapons {
 		OATHS.put(player.getUUID(), now + OATH_TICKS);
 		OATH_READY.put(player.getUUID(), now + OATH_COOLDOWN);
 		addCharge(player, FULL);
+		sync(player);
 		Dialogue.notice(player, Component.literal("Blood Oath: your " + weapon.title + " has full power for 30 s.")
 				.withStyle(ChatFormatting.DARK_RED));
 		if (BloodArmour.worn(player) >= 4) {

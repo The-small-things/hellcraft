@@ -25,7 +25,9 @@ public final class Judgement {
 		A("ANARCHIC", 120, ChatFormatting.AQUA, BossEvent.BossBarColor.BLUE, 4),
 		S("SAVAGE", 180, ChatFormatting.LIGHT_PURPLE, BossEvent.BossBarColor.PURPLE, 6),
 		SS("SINFUL", 250, ChatFormatting.YELLOW, BossEvent.BossBarColor.YELLOW, 8),
-		SSS("SATANIC", 330, ChatFormatting.RED, BossEvent.BossBarColor.RED, 10);
+		SSS("SATANIC", 330, ChatFormatting.RED, BossEvent.BossBarColor.RED, 10),
+		/** Above SSS: the meter's last stretch, held only by fighting flawlessly (it drains fastest here). */
+		HELLISH("HELLISH", 410, ChatFormatting.DARK_RED, BossEvent.BossBarColor.RED, 12);
 
 		public final String title;
 		/** Style points needed for this rank. */
@@ -59,7 +61,17 @@ public final class Judgement {
 
 		/** The rank above, or this one at the top. */
 		public Grade next() {
-			return this == SSS ? SSS : values()[ordinal() + 1];
+			return this == top() ? this : values()[ordinal() + 1];
+		}
+
+		/** The highest rank (HELLISH). */
+		public static Grade top() {
+			return values()[values().length - 1];
+		}
+
+		/** How many ranks this is from S up (S 1, SS 2, SSS 3, HELLISH 4; 0 below S): the rank bonuses' steps. */
+		public int stepsFromS() {
+			return Math.max(0, ordinal() - S.ordinal() + 1);
 		}
 
 		/** "an S", "a B" */
@@ -78,7 +90,7 @@ public final class Judgement {
 		if (grade.atLeast(Grade.S) && best < Grade.S.ordinal()) {
 			hearts++;
 		}
-		if (grade == Grade.SSS && best < Grade.SSS.ordinal()) {
+		if (grade.atLeast(Grade.SSS) && best < Grade.SSS.ordinal()) {
 			hearts++;
 		}
 		if (grade.ordinal() > best) {
@@ -89,7 +101,7 @@ public final class Judgement {
 
 	/** Why the marks were earned, for the spoils line. */
 	public static String marksReason(Grade grade, int marks) {
-		return marks >= 2 ? "your first S and first SSS" : grade == Grade.SSS ? "your first SSS" : "your first S";
+		return marks >= 2 ? "your first S and first SSS" : grade.atLeast(Grade.SSS) ? "your first SSS" : "your first S";
 	}
 
 	/** The boss's treasure (enchanted books and more), straight into the player's inventory. */

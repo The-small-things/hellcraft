@@ -16,8 +16,9 @@ import net.thesmallthings.hellcraft.blood.Pilgrimage;
 import net.thesmallthings.hellcraft.net.PilgrimPayload;
 
 /**
- * The pilgrim's mark (Pilgrimage): while on a pilgrimage, a scallop shell at the top left with the run's time, ticking on
- * between the server's updates, and the deepest circle reached (red when the server makes it hardcore).
+ * The pilgrim's mark (Pilgrimage): while on a pilgrimage, a scallop shell at the top left (under the minimap there; HudLayout)
+ * with the run's time, ticking on between the server's updates, and the deepest circle reached (red when the server makes it
+ * hardcore).
  */
 public final class PilgrimHud implements HudElement {
 	public static final Identifier ID = HellcraftMod.id("pilgrim");
@@ -56,21 +57,30 @@ public final class PilgrimHud implements HudElement {
 		}
 	}
 
+	/** For the HUD layout (client hud/HudLayout, top left, under the minimap): its size while on a pilgrimage. */
+	public static net.thesmallthings.hellcraft.client.hud.HudLayout.Size measure(Minecraft mc, int width, int height) {
+		if (!on) {
+			return null;
+		}
+		int textWidth = Math.max(mc.font.width("Pilgrimage " + Pilgrimage.time(ticks + since)), mc.font.width("Deepest: " + Pilgrimage.depthName(deepest)));
+		return new net.thesmallthings.hellcraft.client.hud.HudLayout.Size(textWidth + 26, 22);
+	}
+
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		if (!on) {
 			return;
 		}
+		net.thesmallthings.hellcraft.client.hud.HudLayout.Box box = net.thesmallthings.hellcraft.client.hud.HudLayout.box(ID);
+		if (box == null) {
+			return;
+		}
 		Minecraft mc = Minecraft.getInstance();
-		int x = 4;
-		int y = 4;
+		int x = box.x() + 2;
+		int y = box.y() + 2;
 		String time = "Pilgrimage " + Pilgrimage.time(ticks + since);
 		String depth = "Deepest: " + Pilgrimage.depthName(deepest);
 		int width = Math.max(mc.font.width(time), mc.font.width(depth));
-		if (x + 24 + width > g.guiWidth() / 2 - 102) {
-			// a narrow screen: below the compass instead of beside it
-			y = 44;
-		}
 		g.fill(x - 2, y - 2, x + 22 + width, y + 20, ARGB.black(110));
 		g.blit(RenderPipelines.GUI_TEXTURED, SHELL, x, y + 1, 0.0F, 0.0F, 16, 16, 16, 16, ARGB.white(1.0f));
 		g.text(mc.font, time, x + 20, y, hardcore ? 0xFFFF6050 : 0xFFF0D090);

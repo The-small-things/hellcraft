@@ -54,7 +54,124 @@ public class HudTest implements FabricClientGameTest {
 			armourWorn(context, world);
 			doubleUse(context, world);
 			healthBars(context, world);
+			newHud(context, world);
 		}
+	}
+
+	/**
+	 * The HUD of 3.6.1: the blood aura on hotbar slots with a Blood Art ready (hud_blood_aura), the Blood Oath meter over the
+	 * stamina bar (hud_oath_meter), the style panel at S, SSS and HELLISH (hud_style_*), the rank bonus on the server, the
+	 * minimap in its shapes and views (hud_minimap_*), and everything at once with boss bars, effects and messages, checking
+	 * that HudLayout put nothing over anything else (hud_chaos).
+	 */
+	private static void newHud(ClientGameTestContext context, TestSingleplayerContext world) {
+		context.setScreen(() -> null);
+		world.getServer().runCommand("time set noon");
+		world.getServer().runCommand("item replace entity Player0 hotbar.0 with hellcraft:bloodletter");
+		world.getServer().runCommand("item replace entity Player0 hotbar.1 with hellcraft:reaper_of_minos");
+		world.getServer().runCommand("item replace entity Player0 hotbar.4 with hellcraft:tithe_axe");
+		context.runOnClient(client -> client.player.getInventory().setSelectedSlot(0));
+		world.getServer().runCommand("hellcraft charge Player0");
+		context.waitTicks(20);
+		boolean aura = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.BloodAura.shows(client.player, 0)
+				&& net.thesmallthings.hellcraft.client.hud.BloodAura.shows(client.player, 4)
+				&& !net.thesmallthings.hellcraft.client.hud.BloodAura.shows(client.player, 2));
+		if (!aura) {
+			throw new AssertionError("a full charge should put the blood aura on the hell weapons' slots (and only theirs)");
+		}
+		boolean glint = world.getServer().computeOnServer(server -> server.getPlayerList().getPlayerByName("Player0")
+				.getInventory().getItem(0).has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE));
+		if (glint) {
+			throw new AssertionError("a charged hell weapon still gets the enchantment glint");
+		}
+		context.takeScreenshot("hud_blood_aura");
+		// an oath being sworn: the meter on the stamina bar, as the server would send it
+		context.runOnClient(client -> {
+			net.thesmallthings.hellcraft.client.hud.BloodClient.set(100, 420, 3600);
+			net.thesmallthings.hellcraft.client.combat.StaminaHud.predict(40);
+		});
+		context.waitTicks(10);
+		context.takeScreenshot("hud_oath_meter");
+		if (context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.HudLayout.target(
+				net.thesmallthings.hellcraft.client.hud.OathMeter.ID)) == null) {
+			throw new AssertionError("the oath meter has no place on the HUD");
+		}
+
+		// the style panel at S, SSS and HELLISH
+		String[] ranks = {"s", "sss", "hellish"};
+		int[] ordinals = {4, 6, 7};
+		for (int i = 0; i < ranks.length; i++) {
+			int ordinal = ordinals[i];
+			context.runOnClient(client -> net.thesmallthings.hellcraft.client.StylePanel.preview(ordinal, 0.65f, "+ SWORD FINISHER x1.6"));
+			context.waitTicks(12);
+			context.takeScreenshot("hud_style_" + ranks[i]);
+		}
+		// the rank bonus on the server: HELLISH makes Player0 faster, quicker and longer-reaching; it comes off again
+		String bonus = world.getServer().computeOnServer(server -> {
+			var player = server.getPlayerList().getPlayerByName("Player0");
+			double speed = player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+			double reach = player.entityInteractionRange();
+			net.thesmallthings.hellcraft.hazard.RankBonus.apply(player, net.thesmallthings.hellcraft.blood.Judgement.Grade.HELLISH);
+			double fast = player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+			double far = player.entityInteractionRange();
+			net.thesmallthings.hellcraft.hazard.RankBonus.clear(player);
+			double after = player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+			return fast > speed * 1.1 && far > reach + 0.5 && Math.abs(after - speed) < 1.0e-6 ? "ok" : speed + " " + fast + " " + after + " " + reach + " " + far;
+		});
+		if (!bonus.equals("ok")) {
+			throw new AssertionError("the HELLISH rank bonus is wrong: " + bonus);
+		}
+
+		// the minimap: a circle turning with the player (the default), a square with north up in the top right, the cave view
+		context.waitTicks(40);
+		if (context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.Minimap.middleColour()) == 0) {
+			throw new AssertionError("the minimap drew nothing");
+		}
+		context.takeScreenshot("hud_minimap_circle");
+		context.runOnClient(client -> {
+			Settings.MapPrefs p = Settings.minimap();
+			p.shape = Settings.Shape.SQUARE;
+			p.rotate = false;
+			p.corner = Settings.Corner.TOP_RIGHT;
+		});
+		context.waitTicks(10);
+		context.takeScreenshot("hud_minimap_square");
+		context.runOnClient(client -> Settings.minimap().caves = Settings.Caves.ON);
+		context.waitTicks(40);
+		context.takeScreenshot("hud_minimap_caves");
+		context.runOnClient(client -> {
+			Settings.MapPrefs p = Settings.minimap();
+			p.shape = Settings.Shape.CIRCLE;
+			p.rotate = true;
+			p.corner = Settings.Corner.TOP_LEFT;
+			p.caves = Settings.Caves.AUTO;
+		});
+
+		// everything at once: boss bars, effects of both kinds, messages, the style panel, stamina, the oath, the minimap
+		world.getServer().runCommand("bossbar add hellcraft:hud_test \"A Guardian\"");
+		world.getServer().runCommand("bossbar set hellcraft:hud_test players Player0");
+		world.getServer().runCommand("effect give Player0 speed 60 0 true");
+		world.getServer().runCommand("effect give Player0 strength 60 0 true");
+		world.getServer().runCommand("effect give Player0 weakness 60 0 true");
+		world.getServer().runCommand("effect give Player0 slowness 60 0 true");
+		world.getServer().runCommand("execute as Player0 run hellcraft dialogue test");
+		context.runOnClient(client -> {
+			net.thesmallthings.hellcraft.client.StylePanel.preview(7, 0.4f, "- HIT");
+			net.thesmallthings.hellcraft.client.combat.StaminaHud.predict(30);
+		});
+		context.waitTicks(20);
+		boolean clear = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.HudLayout.clear());
+		String placed = context.computeOnClient(client -> net.thesmallthings.hellcraft.client.hud.HudLayout.everything().toString());
+		context.takeScreenshot("hud_chaos");
+		if (!clear) {
+			throw new AssertionError("HUD elements overlap: " + placed);
+		}
+		world.getServer().runCommand("bossbar remove hellcraft:hud_test");
+		world.getServer().runCommand("effect clear Player0");
+		context.runOnClient(client -> {
+			net.thesmallthings.hellcraft.client.StylePanel.receive(new net.thesmallthings.hellcraft.net.StylePayload(false, 0, 0, "", 1, ""));
+			net.thesmallthings.hellcraft.client.hud.BloodClient.reset();
+		});
 	}
 
 	/** The blood armour and the infernal (reinforced) armour as worn, front and back (armour_blood_*, armour_infernal_*). */

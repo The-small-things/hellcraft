@@ -55,8 +55,6 @@ public final class DialogueHud implements HudElement {
 	private static final float HURRIED_PER_LETTER = 0.9f;
 	/** The same line isn't shown again within this many ticks. */
 	private static final int REPEAT_AFTER = 600;
-	/** How far above the bottom of the screen the boxes sit: clear of the hotbar, the hearts and the action bar. */
-	private static final int ABOVE_BOTTOM = 74;
 	private static final int ROW = 10;
 	private static final int PAD_X = 6;
 	private static final int PAD_Y = 4;
@@ -291,15 +289,77 @@ public final class DialogueHud implements HudElement {
 		return best;
 	}
 
+	/** A line's rows as the box shows them, and its title (a headline's) or null. */
+	private record Content(List<FormattedCharSequence> rows, FormattedCharSequence title, int instant) {
+	}
+
+	private static Content content(Line line, Font font, int maxWidth) {
+		Style named = Style.EMPTY.withColor(line.colour).withBold(true);
+		if (line.kind == Kind.HEADLINE) {
+			return new Content(font.split(line.text, maxWidth), Component.literal(line.speaker).withStyle(named).getVisualOrderText(), 0);
+		}
+		if (!line.speaker.isEmpty()) {
+			// the speaker's name leads the line, on the same row
+			MutableComponent full = Component.empty().append(Component.literal(line.speaker).withStyle(named)).append(" ").append(line.text);
+			return new Content(font.split(full, maxWidth), null, line.speaker.length() + 1);
+		}
+		return new Content(font.split(line.text, maxWidth), null, 0);
+	}
+
+	private static int boxHeight(List<FormattedCharSequence> rows, FormattedCharSequence title) {
+		return rows.size() * ROW + (title == null ? 0 : ROW) + PAD_Y * 2 - 2;
+	}
+
+	private static boolean showing(int lineAge, int lineEnd) {
+		float t = lineAge + 1;
+		return Math.min(t / FADE_IN, (lineEnd - t) / FADE_OUT) >= 0.03f;
+	}
+
+	/**
+	 * For the HUD layout (client hud/HudLayout, bottom middle): the size of what the box shows now, the status line and the
+	 * message over it, with room for the "+n" beside it and a shout's shake; null when nothing shows.
+	 */
+	public static net.thesmallthings.hellcraft.client.hud.HudLayout.Size measure(Minecraft mc, int width, int height) {
+		if (CutscenePlayer.active()) {
+			return null;
+		}
+		Font font = mc.font;
+		int maxWidth = Math.min(MAX_WIDTH, width - 40);
+		int w = 0;
+		int h = 0;
+		Line word = status;
+		if (word != null && showing(statusAge, statusEnd)) {
+			List<FormattedCharSequence> rows = font.split(word.text, maxWidth);
+			w = boxWidth(font, rows, null);
+			h = boxHeight(rows, null);
+		}
+		Line line = current;
+		if (line != null && showing(age, endAt)) {
+			Content c = content(line, font, maxWidth);
+			int bw = boxWidth(font, c.rows(), c.title());
+			if (!WAITING.isEmpty()) {
+				bw += 2 * (font.width("+" + WAITING.size()) + 4);
+			}
+			w = Math.max(w, bw);
+			h += (h > 0 ? GAP : 0) + boxHeight(c.rows(), c.title());
+		}
+		return h <= 0 ? null : new net.thesmallthings.hellcraft.client.hud.HudLayout.Size(w + 6, h + 2);
+	}
+
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
 		if (CutscenePlayer.active()) {
 			return;
 		}
+		net.thesmallthings.hellcraft.client.hud.HudLayout.Box place = net.thesmallthings.hellcraft.client.hud.HudLayout.box(ID);
+		if (place == null) {
+			return;
+		}
 		Font font = Minecraft.getInstance().font;
 		float partial = delta.getGameTimeDeltaPartialTick(false);
 		int maxWidth = Math.min(MAX_WIDTH, g.guiWidth() - 40);
-		int bottom = g.guiHeight() - ABOVE_BOTTOM;
+		// above the hotbar, hearts and action bar, and above anything else at the bottom: HudLayout says how high
+		int bottom = place.bottom() - 1;
 
 		Line word = status;
 		if (word != null) {
@@ -327,21 +387,10 @@ public final class DialogueHud implements HudElement {
 			shakeX = (int) Math.round(Math.sin(t * 2.9) * 2 * (1 - t / 12));
 			shakeY = (int) Math.round(Math.cos(t * 3.7) * (1 - t / 12));
 		}
-		Style named = Style.EMPTY.withColor(line.colour).withBold(true);
-		List<FormattedCharSequence> rows;
-		FormattedCharSequence title = null;
-		int instant = 0;
-		if (line.kind == Kind.HEADLINE) {
-			title = Component.literal(line.speaker).withStyle(named).getVisualOrderText();
-			rows = font.split(line.text, maxWidth);
-		} else if (!line.speaker.isEmpty()) {
-			// the speaker's name leads the line, on the same row
-			MutableComponent full = Component.empty().append(Component.literal(line.speaker).withStyle(named)).append(" ").append(line.text);
-			rows = font.split(full, maxWidth);
-			instant = line.speaker.length() + 1;
-		} else {
-			rows = font.split(line.text, maxWidth);
-		}
+		Content content = content(line, font, maxWidth);
+		List<FormattedCharSequence> rows = content.rows();
+		FormattedCharSequence title = content.title();
+		int instant = content.instant();
 		int letters = instant + (int) (t * LETTERS_PER_TICK);
 		box(g, font, rows, title, line.colour, alpha, bottom, shakeX, shakeY, letters);
 		if (!WAITING.isEmpty()) {

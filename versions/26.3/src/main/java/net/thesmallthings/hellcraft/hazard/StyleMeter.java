@@ -42,10 +42,11 @@ import java.util.UUID;
  *     <li><b>Flow</b>: every feat raises a multiplier on all points, from x1 up to x2, faster for a feat unlike the last;
  *     being hit drops it back to x1, and it ebbs if no feat comes for a while. This is where skill shows.</li>
  *     <li>Getting hit takes a big bite out of the meter, and it drains faster the higher the rank.</li>
+ *     <li>From S up, each rank makes the fighter a little faster, quicker and longer-reaching while they hold it (RankBonus).</li>
  * </ul>
  */
 public final class StyleMeter {
-	private static final float MAX = 400.0f;
+	private static final float MAX = 480.0f;
 	private static final float FRESH_DROP = 0.15f;
 	private static final float FRESH_GAIN = 0.08f;
 	private static final float FRESH_MIN = 0.2f;
@@ -222,6 +223,7 @@ public final class StyleMeter {
 		}
 		died = true;
 		style = 0.0f;
+		RankBonus.clear(player);
 		show("- DEATH");
 	}
 
@@ -246,6 +248,7 @@ public final class StyleMeter {
 					send("");
 				}
 			}
+			RankBonus.apply(player, Grade.of(style));
 			if (ticks % 20 == 0) {
 				sum += style;
 				samples++;
@@ -264,8 +267,9 @@ public final class StyleMeter {
 	public void finish() {
 		finished = true;
 		bar.removeAllPlayers();
+		RankBonus.clear(player);
 		if (panel && player.connection != null) {
-			ServerPlayNetworking.send(player, new StylePayload(false, Grade.of(style).ordinal(), 0, "", 1.0f));
+			ServerPlayNetworking.send(player, new StylePayload(false, Grade.of(style).ordinal(), 0, "", 1.0f, ""));
 		}
 	}
 
@@ -315,7 +319,7 @@ public final class StyleMeter {
 		if (hitsTaken >= 3) {
 			return "You were hit " + hitsTaken + " times, and every hit drains your style. Dodge the telegraphed attacks.";
 		}
-		if (grade == Grade.SSS) {
+		if (grade == Grade.top()) {
 			return "";
 		}
 		if (Combat.on()) {
@@ -370,7 +374,7 @@ public final class StyleMeter {
 
 	private float progress(Grade grade) {
 		Grade next = grade.next();
-		float top = grade == Grade.SSS ? MAX : next.threshold;
+		float top = grade == Grade.top() ? MAX : next.threshold;
 		return Math.max(0.0f, Math.min(1.0f, (style - grade.threshold) / Math.max(1.0f, top - grade.threshold)));
 	}
 
@@ -387,7 +391,7 @@ public final class StyleMeter {
 		sentGrade = grade.ordinal();
 		sentProgress = progress;
 		sentFlow = flow;
-		ServerPlayNetworking.send(player, new StylePayload(true, grade.ordinal(), progress, event, flow));
+		ServerPlayNetworking.send(player, new StylePayload(true, grade.ordinal(), progress, event, flow, RankBonus.describe(grade)));
 	}
 
 	private void updateBar() {
@@ -455,6 +459,7 @@ public final class StyleMeter {
 		if (chained < 0.75f || mashed > 0.5f) {
 			return "Style test FAILED: freshness (" + chained + " chained, " + mashed + " mashed)";
 		}
-		return "Style test: " + Grade.of(0) + " " + Grade.of(75) + " " + Grade.of(200) + " " + Grade.of(400);
+		return "Style test: " + Grade.of(0) + " " + Grade.of(75) + " " + Grade.of(200) + " " + Grade.of(400) + " " + Grade.of(MAX)
+				+ "; " + RankBonus.selfTest();
 	}
 }

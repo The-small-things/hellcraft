@@ -6,6 +6,14 @@
 
 **Every player installs Hellcraft** (single player too), the same version as the server. **3.5 doesn't need a new world:** a 3.3 or 3.4 world carries on (only Lust's newer wind needs a world made in 3.4 or later; older worlds keep their first 36 streams). Coming from before 3.3, make a new world: the guardians' lairs, the Pilgrim Roads and Purgatory were rebuilt in 3.3.
 
+- **New in 3.6.1 (26.3): style, blood and a minimap.**
+  - **A HELLISH rank above SSS** (410 style, 12 Blood Fragments for the win) and a restyled STYLE panel: a slanted plate, the rank letter popping up when you climb and shaking when you drop, a segmented meter, and a burning letter at HELLISH.
+  - **Ranks make you better:** from S up, each rank gives a little more speed, attack speed and reach while you hold it (HELLISH: +12% speed, +16% attack speed, +0.6 blocks of reach). The panel shows what you have. Server owners can tune or turn it off (`styleRankBonuses` and the `style...PerRank` settings).
+  - **A blood aura on a ready hell weapon:** when a hell weapon's Blood Art is charged, its hotbar slot burns with a blood aura instead of the enchantment glint.
+  - **The Blood Oath meter:** a thin red line resting on the stamina bar that drains over the oath's 30 seconds and fills back up while it cools down.
+  - **A minimap** (top left at first): round or square, north up or turning with you, Z and X to zoom, a cave view underground and in the Forge of Dis, players, monsters, animals and bosses as dots, Rests, waymarks, the way down and where you died. Y opens its settings, B puts a waymark where you stand. Works in every dimension.
+  - **The HUD keeps out of its own way:** the style panel, compass, message box, stamina and oath meters, pilgrim timer and minimap each have a place and slide aside rather than draw over each other, boss bars, effects or the hotbar.
+  - No new world needed.
 - **New in 3.6.0 (26.3):**
   - **One message box for everything on screen:** every message Hellcraft shows now appears in one small box above the hotbar, in one style: what characters say, Virgil's tips, notices, headlines (circle cards, Paradiso's spheres, trials, prestige, a guardian's name) and quick words like "Parried!" in a slim line under it. Messages queue with the important ones first, repeats are dropped, a "+n" shows how many wait, and each stays long enough to read.
   - **Virgil talks less:** no tips mid-fight or during cutscenes, at least 30 seconds between tips, and lessons come at most every two minutes. The lessons that described what you can already see are gone, and the guardian lesson comes as you approach a lair, not in the fight. Entering a circle shows just its card. (`/hellcraft config tipSeconds` and `lessonSeconds` change the gaps.)

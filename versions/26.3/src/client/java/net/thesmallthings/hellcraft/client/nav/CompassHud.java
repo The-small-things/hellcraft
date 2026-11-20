@@ -11,6 +11,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.thesmallthings.hellcraft.HellcraftMod;
+import net.thesmallthings.hellcraft.client.hud.HudLayout;
 import net.thesmallthings.hellcraft.client.mixin.BossOverlayAccessor;
 import net.thesmallthings.hellcraft.net.WaymarksPayload;
 import net.thesmallthings.hellcraft.world.Circle;
@@ -31,13 +32,43 @@ public final class CompassHud implements HudElement {
 
 	/** Half the strip's width: 90 degrees each side of where you face. */
 	private static final int HALF = 96;
-	/** The strip's top: the markers hang just above it. */
-	private static final int TOP = 8;
 	private static final int HEIGHT = 11;
 
 	static final int WAY_DOWN = 0xFFE03030;
 	static final int REST_FOUND = 0xFFF0C040;
 	static final int REST_NEW = 0xFF9AA8B8;
+
+	/**
+	 * For the HUD layout (client hud/HudLayout, top middle): the strip, the markers over it and the lines under it; null where
+	 * it doesn't show (outside the Inferno's realms, or while boss bars take the top of the screen).
+	 */
+	public static HudLayout.Size measure(Minecraft mc, int width, int height) {
+		boolean forge = ClientNav.inForge(mc);
+		boolean paradiso = ClientNav.inParadiso(mc);
+		if (mc.player == null || !ClientNav.inHell(mc) && !forge && !paradiso
+				|| !((BossOverlayAccessor) mc.gui.hud.getBossOverlay()).hellcraft$events().isEmpty()) {
+			return null;
+		}
+		Font font = mc.font;
+		int w = HALF * 2 + 6;
+		// the strip with its markers, then the realm's name and one line of where to go
+		int h = 5 + HEIGHT + 5 + 11 + 9;
+		if (!forge && !paradiso) {
+			Vec3 pos = mc.player.position();
+			ShrineSites.Site rest = ShrineSites.nearest(pos.x, pos.z);
+			Navigation.Target down = Navigation.wayDown(pos.x, pos.z);
+			String downText = down.label() + " " + distance(pos, down.x(), down.z());
+			String restText = rest == null ? "" : (ClientNav.found(rest.id()) ? "Rest " : "Rest (not found) ") + distance(pos, rest.x() + 0.5, rest.z() + 0.5);
+			w = Math.max(w, 9 + font.width(downText) + (rest == null ? 0 : 14 + 9 + font.width(restText)) + 2);
+			w = Math.max(w, font.width(InfernoGeometry.regionName(pos.x, pos.z)) + 2);
+			WaymarksPayload.Entry mark = ClientWaymarks.followed();
+			if (mark != null) {
+				h += 11;
+				w = Math.max(w, 9 + font.width(font.plainSubstrByWidth(mark.name(), 120) + " 9999 m") + 2);
+			}
+		}
+		return new HudLayout.Size(Math.min(width, w), h);
+	}
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
@@ -47,17 +78,23 @@ public final class CompassHud implements HudElement {
 		if (!ClientNav.inHell(mc) && !forge && !paradiso || !((BossOverlayAccessor) mc.gui.hud.getBossOverlay()).hellcraft$events().isEmpty()) {
 			return;
 		}
+		HudLayout.Box box = HudLayout.box(ID);
+		if (box == null) {
+			return;
+		}
 		LocalPlayer player = mc.player;
 		float partial = delta.getGameTimeDeltaPartialTick(true);
 		Vec3 pos = player.getPosition(partial);
 		float yaw = player.getViewYRot(partial);
 		Font font = mc.font;
-		int cx = g.guiWidth() / 2;
+		// HudLayout keeps it clear of everything else at the top: the markers hang 5 above the strip, at the box's top
+		int cx = box.x() + box.w() / 2;
+		int top = box.y() + 5;
 		int left = cx - HALF - 3;
 		int right = cx + HALF + 3;
 
-		g.fill(left, TOP, right, TOP + HEIGHT, ARGB.black(120));
-		g.enableScissor(cx - HALF, TOP, cx + HALF + 1, TOP + HEIGHT);
+		g.fill(left, top, right, top + HEIGHT, ARGB.black(120));
+		g.enableScissor(cx - HALF, top, cx + HALF + 1, top + HEIGHT);
 		for (int bearing = 0; bearing < 360; bearing += 15) {
 			float rel = Mth.wrapDegrees(bearing - yaw);
 			if (Math.abs(rel) > 95) {
@@ -72,22 +109,22 @@ public final class CompassHud implements HudElement {
 					case 180 -> "N";
 					default -> "E";
 				};
-				g.centeredText(font, letter, sx + 1, TOP + 2, bearing == 180 ? 0xFFFF6060 : 0xFFFFFFFF);
+				g.centeredText(font, letter, sx + 1, top + 2, bearing == 180 ? 0xFFFF6060 : 0xFFFFFFFF);
 			} else if (bearing % 45 == 0) {
-				g.fill(sx, TOP + 3, sx + 1, TOP + HEIGHT - 3, 0xFFB8B8B8);
+				g.fill(sx, top + 3, sx + 1, top + HEIGHT - 3, 0xFFB8B8B8);
 			} else {
-				g.fill(sx, TOP + 4, sx + 1, TOP + HEIGHT - 4, 0xFF686868);
+				g.fill(sx, top + 4, sx + 1, top + HEIGHT - 4, 0xFF686868);
 			}
 		}
 		g.disableScissor();
-		g.fill(cx, TOP + HEIGHT - 2, cx + 1, TOP + HEIGHT, 0xFFFFFFFF);
+		g.fill(cx, top + HEIGHT - 2, cx + 1, top + HEIGHT, 0xFFFFFFFF);
 
 		if (forge) {
-			forge(g, font, cx, pos, yaw);
+			forge(g, font, cx, top, pos, yaw);
 			return;
 		}
 		if (paradiso) {
-			paradiso(g, font, cx, pos, yaw);
+			paradiso(g, font, cx, top, pos, yaw);
 			return;
 		}
 		// the nearest Rest and the way down, above the strip; pinned faintly to its ends when they're behind you
@@ -95,26 +132,26 @@ public final class CompassHud implements HudElement {
 		boolean found = rest != null && ClientNav.found(rest.id());
 		if (rest != null) {
 			float rel = relative(pos, rest.x() + 0.5, rest.z() + 0.5, yaw);
-			diamond(g, stripX(cx, rel), TOP - 3, ARGB.multiplyAlpha(found ? REST_FOUND : REST_NEW, Math.abs(rel) > 90 ? 0.5f : 1));
+			diamond(g, stripX(cx, rel), top - 3, ARGB.multiplyAlpha(found ? REST_FOUND : REST_NEW, Math.abs(rel) > 90 ? 0.5f : 1));
 		}
 		Navigation.Target down = Navigation.wayDown(pos.x, pos.z);
 		float downRel = relative(pos, down.x(), down.z(), yaw);
-		arrow(g, stripX(cx, downRel), TOP - 5, ARGB.multiplyAlpha(WAY_DOWN, Math.abs(downRel) > 90 ? 0.5f : 1));
+		arrow(g, stripX(cx, downRel), top - 5, ARGB.multiplyAlpha(WAY_DOWN, Math.abs(downRel) > 90 ? 0.5f : 1));
 		// the waymark you follow (Map of Hell: click one, then Follow)
 		WaymarksPayload.Entry mark = ClientWaymarks.followed();
 		if (mark != null) {
 			float rel = relative(pos, mark.x() + 0.5, mark.z() + 0.5, yaw);
-			MapOfHellScreen.pin(g, stripX(cx, rel), TOP - 1, ARGB.multiplyAlpha(ClientWaymarks.colour(mark), Math.abs(rel) > 90 ? 0.5f : 1), mark.shared());
+			MapOfHellScreen.pin(g, stripX(cx, rel), top - 1, ARGB.multiplyAlpha(ClientWaymarks.colour(mark), Math.abs(rel) > 90 ? 0.5f : 1), mark.shared());
 		}
 
 		// the depth bar: the border on the left, the pit on the right
 		Circle circle = InfernoGeometry.circleAt(pos.x, pos.z);
 		double depth = 1 - Math.min(1, Math.sqrt(pos.x * pos.x + pos.z * pos.z) / InfernoGeometry.BORDER_RADIUS);
-		g.fill(left, TOP + HEIGHT, right, TOP + HEIGHT + 2, ARGB.black(120));
-		g.fill(left, TOP + HEIGHT, left + (int) Math.round((right - left) * depth), TOP + HEIGHT + 2, ARGB.opaque(LayerCard.accent(circle)));
+		g.fill(left, top + HEIGHT, right, top + HEIGHT + 2, ARGB.black(120));
+		g.fill(left, top + HEIGHT, left + (int) Math.round((right - left) * depth), top + HEIGHT + 2, ARGB.opaque(LayerCard.accent(circle)));
 
 		// where you are, then how far to each marker
-		int y = TOP + HEIGHT + 5;
+		int y = top + HEIGHT + 5;
 		g.centeredText(font, InfernoGeometry.regionName(pos.x, pos.z), cx, y, ARGB.opaque(LayerCard.accent(circle)));
 		String downText = down.label() + " " + distance(pos, down.x(), down.z());
 		String restText = rest == null ? "" : (found ? "Rest " : "Rest (not found) ") + distance(pos, rest.x() + 0.5, rest.z() + 0.5);
@@ -140,10 +177,10 @@ public final class CompassHud implements HudElement {
 	}
 
 	/** In the Forge of Dis: a flame over the strip for the Great Forge, the region's name and how far the Forge is. */
-	private static void forge(GuiGraphicsExtractor g, Font font, int cx, Vec3 pos, float yaw) {
+	private static void forge(GuiGraphicsExtractor g, Font font, int cx, int top, Vec3 pos, float yaw) {
 		float rel = relative(pos, 0.5, 0.5, yaw);
-		flame(g, stripX(cx, rel), TOP - 4, ARGB.multiplyAlpha(FORGE, Math.abs(rel) > 90 ? 0.5f : 1));
-		int y = TOP + HEIGHT + 5;
+		flame(g, stripX(cx, rel), top - 4, ARGB.multiplyAlpha(FORGE, Math.abs(rel) > 90 ? 0.5f : 1));
+		int y = top + HEIGHT + 5;
 		g.centeredText(font, ForgeGeometry.regionAt(pos.x, pos.z).title(), cx, y, FORGE);
 		String text = "The Great Forge " + distance(pos, 0.5, 0.5);
 		int x = cx - (9 + font.width(text)) / 2;
@@ -158,10 +195,10 @@ public final class CompassHud implements HudElement {
 	 * Paradiso (Phase 7): the sphere you're in, and the way on: its great island while its trial is still to do, then the
 	 * column of light up to the next sphere.
 	 */
-	private static void paradiso(GuiGraphicsExtractor g, Font font, int cx, Vec3 pos, float yaw) {
+	private static void paradiso(GuiGraphicsExtractor g, Font font, int cx, int top, Vec3 pos, float yaw) {
 		ParadisoGeometry.Sphere s = ParadisoGeometry.sphereAtY(pos.y);
 		int colour = ARGB.opaque(s.colour);
-		int y = TOP + HEIGHT + 5;
+		int y = top + HEIGHT + 5;
 		g.centeredText(font, s.title, cx, y, colour);
 		double[] to;
 		String text;
@@ -176,7 +213,7 @@ public final class CompassHud implements HudElement {
 			text = "The trial ";
 		}
 		float rel = relative(pos, to[0], to[1], yaw);
-		arrow(g, stripX(cx, rel), TOP - 5, ARGB.multiplyAlpha(colour, Math.abs(rel) > 90 ? 0.5f : 1));
+		arrow(g, stripX(cx, rel), top - 5, ARGB.multiplyAlpha(colour, Math.abs(rel) > 90 ? 0.5f : 1));
 		text += distance(pos, to[0], to[1]);
 		int x = cx - (9 + font.width(text)) / 2;
 		y += 11;

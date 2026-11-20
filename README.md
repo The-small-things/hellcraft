@@ -11,9 +11,16 @@ A Fabric mod for Minecraft **26.3** that reshapes the overworld into Dante's *In
 - **Combat of its own (3.5).** Weapons swing in arcs and chain into combos; a stamina bar, a dodge roll, a guard and a parry with any weapon; every player animated smoothly in first and third person.
 - **Beyond Hell.** Climb out to Purgatory's mountain, then up through the nine spheres of Paradiso to the Celestial Rose.
 
-**Versions.** The latest release is **3.4.0**; **3.5 is in beta** (newer, still changing; see [Install it](#install-it)). Every player installs Hellcraft too, at the same version as the server. What came in each version: [Version history](#version-history).
+**Versions.** The latest release is **3.6.1**; a beta, when there is one, is newer and still changing (see [Install it](#install-it)). Every player installs Hellcraft too, at the same version as the server. What came in each version: [Version history](#version-history).
 
-### New in 3.5 (beta)
+### New in 3.6.1
+- **A HELLISH rank above SSS**, a restyled STYLE panel (slanted, the rank letter popping up on a rank gained and shaking on one lost, the HELLISH letter burning), and **ranks that make you better**: from S up, each rank gives a little more speed, attack speed and reach while you hold it. See [Style in boss fights](#the-circle-guardians-263).
+- **A blood aura on a hell weapon whose Blood Art is ready**, on its hotbar slot, instead of the enchantment glint.
+- **A thin Blood Oath meter** resting on the stamina bar: it drains over the oath and fills back up while it cools down.
+- **A minimap** in a corner of the screen (Y for its settings): round or square, north up or turning with you, zoom, a cave view, players, monsters and animals as dots, Rests, waymarks and the way down. See [The minimap](#the-minimap-361).
+- **The HUD keeps out of its own way:** the style panel, compass, message box, stamina and oath meters, the pilgrim timer and the minimap each have a place, and slide aside rather than draw over each other or over boss bars, effects and the hotbar.
+
+### New in 3.5
 - **Hellcraft's own combat.** Swords, axes, maces and the hell weapons swing in arcs that hit everything in their path, chain into combos and have a held heavy blow. A **stamina** bar, a **dodge roll** (Left Alt) that blows pass through and that shrinks you under a block high, a **guard** with any weapon (right-click) and a timed **parry**. Your guard cuts a swing or a roll short, so you rarely wait for an animation (heavy weapons commit once their blow lands). All in [Fighting](#fighting-35-beta).
 - **Every player moves smoothly.** Walking, sprinting, sneaking, jumping, falling and landing are animated in step with your feet; bows draw back, shields brace, food goes to the mouth. In first person your weapon sways with your stride and every swing stays in view. See [How players move](#how-players-move-35-beta).
 - **Lucifer rebuilt.** The Fallen Seraph duels like a swordsman (flurries, feints, dives, a counter stance, blinks behind you) and the Three-Faced Emperor swats, claps and sends shockwaves; both have a **posture bar** to break. See [The fight](#the-fight-30).
@@ -196,6 +203,15 @@ Every message Hellcraft shows you appears in **one small box above the hotbar**,
 - **The Pilgrim's Journal (J)** (3.1: an open book): the left page is the contents (Here and now, the Codex entries you've opened, the Pilgrim's Guide), a red ribbon marking the open page; the right page shows it, with pictures of what it's about (hover one for its tooltip: the hell weapons, the blood armour, the relics); every page has an icon in the contents. The book fills most of the screen. Click a page, or turn them with the arrow keys or Back/Next; the wheel or up/down scrolls. "Where you are" tells you where you are, your goal, the next step (which way and how far), the nearest Rest and the guardians you've beaten; the Guide's pages carry this server's numbers.
 
 The keys can be changed under Options → Controls → Hellcraft.
+
+### The minimap (3.6.1)
+
+A small map of the ground around you, in a corner of the screen (top left at first), drawn as you explore, in every dimension: Hell, the Forge of Dis, Purgatory, Paradiso and the vanilla worlds alike. Its rim takes the colour of where you are (the circle's colour in Hell).
+
+- **Z** and **X** zoom in and out (from four pixels a block to four blocks a pixel), **Y** opens its settings, and **B** puts a waymark where you stand (in Hell, where waymarks live).
+- **What it shows:** you as an arrow in the middle, other players as white dots, monsters red, animals yellow, a boss as a big pulsing red dot (dimmer when far above or below you); Virgil's Rests as diamonds, the way down as a red arrow, your waymarks as pins and where you last died as a cross. Things past the edge sit on the rim, pointing the way.
+- **Cave view:** underground, in the Forge of Dis or with no sky over you, it shows the floor around your feet instead of the surface (walls dark, open floor lit), and follows you as you climb or drop. Set it to always, never or automatic.
+- **Settings (Y):** shown or hidden, round or square, its size, which corner, north up or turning with you, zoom, cave view, coordinates under it, and which dots to show. Kept in your own `config/hellcraft-client.json`; `/hellcraft-client minimap on|off|settings` does the same.
 
 ## Blood is fuel
 
@@ -436,11 +452,14 @@ Marks are drawn block by block on the ground, fill from the middle out, and the 
 | **S** | Savage | 180 | 6 |
 | **SS** | Sinful | 250 | 8 |
 | **SSS** | Satanic | 330 | 10 |
+| **HELLISH** | Hellish | 410 | 12 |
 
 - **Hitting the boss fills the meter**, more for a full-strength blow than for spam-clicking.
 - **Play the whole chain:** with Hellcraft's combat on, each move of your weapon's combo (and its heavy blow) goes stale on its own if you repeat it, and scores less ("REPEATED"); the others stay fresh. One weapon is enough. (With the combat off, a weapon used again and again goes stale instead.)
 - **Feats** score by name and raise your **flow multiplier** (x1 to x2, shown on the panel): a combo's finisher, a heavy blow, a timed parry, a riposte, a dodge through a blow, a counter, a Blood Art, a critical hit, a mace smash, killing the boss's summons, and every 10 s close to the boss without getting hit. Getting hit resets the multiplier.
 - **It drains** whenever you hold back (faster the higher you are), and **getting hit takes a big bite**. Dying resets it, and your rank for that fight can't go above B.
+
+**Ranks make you better (3.6.1):** from **S** up, each rank you hold gives you a little more: S +3% speed, +4% attack speed and +0.15 blocks of reach; SS twice that, SSS three times, HELLISH four times (+12% speed, +16% attack speed, +0.6 reach). The panel shows what you have; it goes as your rank drops and when the fight ends. The server can change or turn it off (`styleRankBonuses`, `styleSpeedPerRank`, `styleAttackSpeedPerRank`, `styleReachPerRank`).
 
 When the boss dies, your **rank is the average of your style over the fight**. Chat tells you your rank, what it paid, and what to do better.
 
@@ -830,6 +849,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 | `/judge` | all | Minos's judgement of you, read afresh from what you've done (3.1) |
 | `/ghost mark\|haunt\|beacon` | ghosts | Ghost powers (26.3) |
 | `/hellcraft-client healthbars [above\|side\|off]` | each player | where mobs' health bars go: over their heads, upright beside them, or hidden (kept in your own `config/hellcraft-client.json`) (3.5) |
+| `/hellcraft-client minimap [on\|off\|settings]` | each player | shows or hides the minimap, or opens its settings (also the Y key) (3.6.1) |
 | `/hellcraft-client animations [on\|off]` | each player | Hellcraft's animations for walking, running, jumping, bows, shields and food, in first and third person: on or off for you alone (kept in your own `config/hellcraft-client.json`) (3.5) |
 | `/hellcraft combat test` | op | Self-test Hellcraft's combat: stamina, guards, swings, the roll (3.5) |
 | `/hellcraft charge <players>` | op | Fill their hell weapon's blood charge, to try a Blood Art (3.5) |
@@ -900,6 +920,7 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - Lucifer's health (both forms), cooldowns and the heart-cap bonus
 - Hellcraft's combat (3.5): `combatOverhaul` (on), `staminaMax` (100), `staminaRegen` (1.6 a tick), `staminaRegenDelay` (16 ticks), `dodgeCost` (26), `dodgeCooldownTicks` (16), `dodgeDistance` (3.4 blocks), `dodgeInvulnerableTicks` (8), `guardBlock` (0.6), `guardStaminaPerDamage` (4), `parryTicks` (6), `parryStaggerTicks` (30), `guardBreakTicks` (30), `heavyCost` (22)
 - how fast the bosses fight and how hard they hit (3.0): `bossTempo` (0.6), `bossHeartScaling` (0.5), `luciferDamage` (0.9), `luciferTempo` (1.0)
+- what style ranks give from S up (3.6.1): `styleRankBonuses` (on), and per rank `styleSpeedPerRank` (0.03), `styleAttackSpeedPerRank` (0.04), `styleReachPerRank` (0.15 blocks)
 - tab-list hearts, the Hall of the Damned and circle ambience (26.3): `tabListHearts`, `sidebarHall`, `circleAmbience`
 - the damned suffering in every circle (3.1): `damnedSouls`
 - onlookers, the shades that stare from afar (3.2): `onlookers`, `onlookerMinutes` (about how many minutes between one and the next, for each player)
@@ -910,11 +931,15 @@ When you lose your last heart you are not banned. *There is no more room in hell
 - the champions of the circles (3.1): `champions`, `championMinMinutes`, `championMaxMinutes`, `championHealth`, `championDamage`, `championFragments`, `championBookChance`
 - Lucifer's models (26.3): `luciferModels` (false gives him his vanilla look back) and `luciferModelYawOffset` (degrees, if a model faces the wrong way)
 
-Each player also has a small settings file of their own, `config/hellcraft-client.json` in their game folder: `smoothAnimations` (Hellcraft's animations for getting about and using items; `/hellcraft-client animations on|off` changes it in game) and `healthBars` (`above`, `side` or `off`; `/hellcraft-client healthbars`).
+Each player also has a small settings file of their own, `config/hellcraft-client.json` in their game folder: `smoothAnimations` (Hellcraft's animations for getting about and using items; `/hellcraft-client animations on|off` changes it in game) `healthBars` (`above`, `side` or `off`; `/hellcraft-client healthbars`) and `minimap` (the minimap's settings, changed with Y in game) (3.6.1).
 
 ## Version history
 
-**3.5** (beta): Hellcraft's own combat, smooth animations for every player, Lucifer rebuilt, fights you can hear, style that rewards skill (see [New in 3.5](#new-in-35-beta)).
+**3.6.1** (2026-11-20): a HELLISH rank and a restyled STYLE panel, ranks that make you faster, quicker and longer in reach, a blood aura on a ready hell weapon, the Blood Oath meter, a minimap, and a HUD that keeps out of its own way (see [New in 3.6.1](#new-in-361)).
+
+**3.6.0** (2026-11-20): one message box for everything, a quieter Virgil, Hellcraft's own sounds and music.
+
+**3.5.0** (2026-11-18): Hellcraft's own combat, smooth animations for every player, Lucifer rebuilt, fights you can hear, style that rewards skill (see [New in 3.5](#new-in-35)).
 
 **3.4.0** (2026-11-12):
 - **Penitents on Purgatory:** each terrace has souls working off their sin, as scenery.

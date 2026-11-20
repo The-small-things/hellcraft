@@ -212,9 +212,11 @@ public final class Guide {
 				"",
 				"Found ones are marked on the Map of Hell (M). They're shortcuts only: the roads and ramps always go down too."));
 		pages.add(page("STYLE",
-				"Bosses rank your STYLE: D C B A S SS SSS, shown on the right of the screen during the fight.",
+				"Bosses rank your STYLE: D C B A S SS SSS and HELLISH, shown on the right of the screen during the fight.",
 				"Hits fill the bar. Swap weapons: one used again and again goes stale. Crits, smashes, parries score extra.",
 				"Getting hit or holding back drains it.",
+				"",
+				"From S up, each rank makes you a little faster, quicker to swing and longer in reach, for as long as you hold it.",
 				"Spoils follow your average rank. First S and first SSS on a boss: a Blood Heart each."));
 		pages.add(page("SUPPLIES",
 				"Villages and traders: in the Dark Wood and Limbo. Sugar cane grows by water.",
