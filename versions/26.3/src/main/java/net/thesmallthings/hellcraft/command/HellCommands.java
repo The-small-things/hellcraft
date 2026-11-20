@@ -539,7 +539,16 @@ public final class HellCommands {
 					}
 					Purgatory.teleport(p, level, Purgatory.shore());
 					return reply(ctx.getSource(), "\u2192 the shore of Purgatory");
-				}))
+				})
+						// puts back the Great Stair, the side stairways, the garden and the Ascent where they are missing
+						.then(Commands.literal("repair").executes(ctx -> {
+							ServerLevel level = Purgatory.level(ctx.getSource().getServer());
+							if (level == null) {
+								ctx.getSource().sendFailure(Component.literal("No Purgatory in this world"));
+								return 0;
+							}
+							return reply(ctx.getSource(), Purgatory.repair(ctx.getSource().getServer(), level));
+						})))
 				.then(Commands.literal("spine")
 						.executes(ctx -> toSpine(ctx.getSource(), Spine.Way.EAST))
 						.then(Commands.literal("test").executes(ctx -> reply(ctx.getSource(), Spine.selfTest(ctx.getSource().getServer().overworld()))))

@@ -639,6 +639,20 @@ sleep 2
 stair=$(rcon "execute in hellcraft:purgatory if block 0 67 97 minecraft:stone_brick_stairs" || true)
 echo "Great Stair's first step: $stair"
 echo "$stair" | grep -q "Test passed" || { echo "Purgatory has no Great Stair"; exit 1; }
+# a world that lost its stairs and garden gets them back: take away the first flight and the Gate of Return, then repair
+rcon "execute in hellcraft:purgatory run forceload add -2 90 2 98" > /dev/null
+rcon "execute in hellcraft:purgatory run fill -2 67 90 2 74 97 minecraft:air" > /dev/null
+rcon "execute in hellcraft:purgatory run fill -1 130 -1 1 131 1 minecraft:air" > /dev/null
+repaired=$(rcon "hellcraft purgatory repair" || true)
+echo "Purgatory repair: $repaired"
+echo "$repaired" | grep -q "flight 1" || { echo "/hellcraft purgatory repair did not put back the Great Stair"; exit 1; }
+echo "$repaired" | grep -q "the garden" || { echo "/hellcraft purgatory repair did not put back the garden"; exit 1; }
+stair=$(rcon "execute in hellcraft:purgatory if block 0 67 97 minecraft:stone_brick_stairs" || true)
+echo "$stair" | grep -q "Test passed" || { echo "The Great Stair's first step was not put back"; exit 1; }
+summit=$(rcon "execute in hellcraft:purgatory if block 0 131 0 minecraft:end_gateway" || true)
+echo "$summit" | grep -q "Test passed" || { echo "The Gate of Return was not put back"; exit 1; }
+again=$(rcon "hellcraft purgatory repair" || true)
+echo "$again" | grep -q "all stand" || { echo "Purgatory repair found something missing right after repairing: $again"; exit 1; }
 purgatory=$(rcon "hellcraft purgatory" || true)
 echo "$purgatory"
 echo "$purgatory" | grep -qi "unknown or incomplete command" && { echo "/hellcraft purgatory is not registered"; exit 1; }

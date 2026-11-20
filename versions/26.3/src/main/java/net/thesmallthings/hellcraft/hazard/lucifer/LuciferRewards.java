@@ -1,6 +1,7 @@
 package net.thesmallthings.hellcraft.hazard.lucifer;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -34,7 +35,11 @@ import net.thesmallthings.hellcraft.util.Feedback;
 import net.thesmallthings.hellcraft.util.Journey;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 /**
@@ -69,7 +74,28 @@ public final class LuciferRewards {
 			new Option("an Enchanted Golden Apple", e -> new ItemStack(Items.ENCHANTED_GOLDEN_APPLE)),
 			new Option("2 Blood Hearts", e -> BloodItems.heart(2)));
 
+	/** How long after the climb out the chooser opens: by then the player is in Purgatory and the world has loaded. */
+	private static final int OPEN_DELAY = 60;
+	private static final Map<UUID, Integer> OPEN_IN = new HashMap<>();
+
 	public static void register() {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (OPEN_IN.isEmpty()) {
+				return;
+			}
+			for (Iterator<Map.Entry<UUID, Integer>> it = OPEN_IN.entrySet().iterator(); it.hasNext(); ) {
+				Map.Entry<UUID, Integer> e = it.next();
+				if (e.getValue() > 1) {
+					e.setValue(e.getValue() - 1);
+					continue;
+				}
+				it.remove();
+				ServerPlayer player = server.getPlayerList().getPlayer(e.getKey());
+				if (player != null) {
+					open(player);
+				}
+			}
+		});
 		ServerPlayerEvents.JOIN.register(player -> {
 			HellState.Soul soul = HellState.get(player.level().getServer()).existing(player.getUUID());
 			if (soul != null && soul.pendingReward != NONE) {
@@ -110,6 +136,14 @@ public final class LuciferRewards {
 				.append(Component.literal("[Choose your reward]").withStyle(s -> s.withColor(ChatFormatting.YELLOW).withBold(true).withUnderlined(true)
 						.withClickEvent(new ClickEvent.RunCommand("/lucifer reward"))
 						.withHoverEvent(new HoverEvent.ShowText(Component.literal("Open the reward chooser"))))));
+	}
+
+	/**
+	 * Opens the chooser a few seconds from now. Opened at once, it was shut again straight away: the victors climb out to
+	 * Purgatory on the same tick, and changing dimension closes whatever screen the client has open.
+	 */
+	static void openSoon(ServerPlayer player) {
+		OPEN_IN.put(player.getUUID(), OPEN_DELAY);
 	}
 
 	/** Opens the chooser for a player with a pending reward. Returns false if there is nothing to claim. */
@@ -181,6 +215,18 @@ public final class LuciferRewards {
 			// undo whatever the client predicted
 			setCarried(ItemStack.EMPTY);
 			sendAllDataToRemote();
+		}
+
+		@Override
+		public void removed(Player player) {
+			super.removed(player);
+			// closed without a pick (Escape, or a teleport): say how to open it again
+			if (player instanceof ServerPlayer serverPlayer) {
+				HellState.Soul soul = HellState.get(serverPlayer.level().getServer()).existing(serverPlayer.getUUID());
+				if (soul != null && soul.pendingReward != NONE) {
+					remind(serverPlayer);
+				}
+			}
 		}
 
 		@Override

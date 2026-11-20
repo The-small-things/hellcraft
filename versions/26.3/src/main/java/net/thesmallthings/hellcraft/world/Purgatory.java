@@ -123,37 +123,92 @@ public final class Purgatory {
 	}
 
 	public static void buildOnce(MinecraftServer server) {
-		HellState state = HellState.get(server);
 		if (!HellWorldgen.isInferno(server.overworld())) {
 			return;
 		}
 		closeLeftoverBurrow(server.overworld());
 		ServerLevel level = level(server);
-		if (level == null || state.purgatoryIsland) {
-			return;
+		if (level != null) {
+			repair(server, level);
 		}
-		HellcraftMod.LOGGER.info("Raising the Mountain of Purgatory...");
+	}
+
+	/** The server whose mountain was last looked over with someone standing on it (once per run: see {@link #tick}). */
+	@Nullable
+	private static MinecraftServer lookedOver;
+
+	/**
+	 * Builds the stairs, signs and garden on a new world, and on an old one puts back any that are missing: each flight
+	 * of the Great Stair (and the side stairway beside it) whose first and last steps are both gone, and the garden if
+	 * its Gate of Return and the crying obsidian under it are gone. The island's rock comes with the dimension's chunks
+	 * (world/feature/PurgatoryIslandFeature), but these were only ever set once, by a flag, so a world that lost them
+	 * (or never got them) kept a bare mountain. Returns what was put back.
+	 */
+	public static String repair(MinecraftServer server, ServerLevel level) {
+		HellState state = HellState.get(server);
+		boolean fresh = !state.purgatoryIsland;
+		if (fresh) {
+			HellcraftMod.LOGGER.info("Raising the Mountain of Purgatory...");
+		}
 		// (the beach and the mountain themselves are generated with the dimension's chunks, lit as they are made:
 		// world/feature/PurgatoryIslandFeature; only the stairs, the signs and the garden are added here)
-		RandomSource random = RandomSource.create(1300L);
-		// the side ways up: narrow steps cut into the cliffs round the mountain, for those who explore the terraces
-		// (none on the southern face, where the Great Stair runs, and none into the garden: the Great Stair reaches it)
-		for (int k = 0; k < TERRACES; k++) {
-			stairway(level, k);
-		}
-		// the straight way up: the Great Stair, one flight to each terrace and the last to the garden
+		List<String> done = new ArrayList<>();
 		for (int k = 0; k <= TERRACES; k++) {
+			if (!fresh && flightStands(level, k)) {
+				continue;
+			}
+			// the side ways up: narrow steps cut into the cliffs round the mountain, for those who explore the terraces
+			// (none on the southern face, where the Great Stair runs, and none into the garden: the Great Stair reaches it)
+			if (k < TERRACES) {
+				stairway(level, k);
+			}
+			// the straight way up: the Great Stair, one flight to each terrace and the last to the garden
 			greatStair(level, k);
+			if (k == 0) {
+				Signs.place(level, new BlockPos(STAIR_HALF + 2, SHORE_Y + 1, FIRST_TERRACE + TERRACE_RISE + 2), 0, List.of(
+						Component.literal("PURGATORY").withStyle(ChatFormatting.BOLD),
+						Component.literal("The Great Stair"),
+						Component.literal("climbs to the"),
+						Component.literal("garden on top")));
+			}
+			done.add("flight " + (k + 1));
 		}
-		paradise(level, random);
-		Signs.place(level, new BlockPos(STAIR_HALF + 2, SHORE_Y + 1, FIRST_TERRACE + TERRACE_RISE + 2), 0, List.of(
-				Component.literal("PURGATORY").withStyle(ChatFormatting.BOLD),
-				Component.literal("The Great Stair"),
-				Component.literal("climbs to the"),
-				Component.literal("garden on top")));
+		if (fresh || !gardenStands(level)) {
+			paradise(level, RandomSource.create(1300L));
+			done.add("the garden");
+			// the Ascent stands in the garden: build it again with it
+			state.ascentBuilt = false;
+		} else if (state.ascentBuilt && !level.getBlockState(Heaven.ascent()).is(Blocks.END_GATEWAY)
+				&& !level.getBlockState(Heaven.ascent().below()).is(Blocks.QUARTZ_BLOCK)) {
+			state.ascentBuilt = false;
+		}
 		state.purgatoryIsland = true;
 		state.setDirty();
-		HellcraftMod.LOGGER.info("The Mountain of Purgatory rises from the sea, summit at y {}", SUMMIT_Y);
+		boolean ascent = !state.ascentBuilt;
+		Heaven.buildAscent(server);
+		if (ascent && state.ascentBuilt) {
+			done.add("the Ascent");
+		}
+		if (fresh) {
+			HellcraftMod.LOGGER.info("The Mountain of Purgatory rises from the sea, summit at y {}", SUMMIT_Y);
+		} else if (!done.isEmpty()) {
+			HellcraftMod.LOGGER.info("Purgatory: put back {}", String.join(", ", done));
+		}
+		return done.isEmpty() ? "Purgatory's stairs and garden all stand" : "Put back: " + String.join(", ", done);
+	}
+
+	/** True if flight k of the Great Stair is there: its first or its last step (a player may break one, not both). */
+	private static boolean flightStands(ServerLevel level, int k) {
+		int base = SHORE_Y + TERRACE_RISE * k;
+		int cliff = FIRST_TERRACE - (int) Math.round(k * TERRACE_WIDTH);
+		return level.getBlockState(new BlockPos(0, base + 1, cliff + TERRACE_RISE)).is(Blocks.STONE_BRICK_STAIRS)
+				|| level.getBlockState(new BlockPos(0, base + TERRACE_RISE, cliff + 1)).is(Blocks.STONE_BRICK_STAIRS);
+	}
+
+	/** True if the garden is there: the Gate of Return, or the crying obsidian it stands in. */
+	private static boolean gardenStands(ServerLevel level) {
+		return level.getBlockState(new BlockPos(0, SUMMIT_Y + 1, 0)).is(Blocks.END_GATEWAY)
+				|| level.getBlockState(new BlockPos(0, SUMMIT_Y, 0)).is(Blocks.CRYING_OBSIDIAN);
 	}
 
 	public static BlockState material(int k, int y, int top, RandomSource random) {
@@ -473,6 +528,12 @@ public final class Purgatory {
 					}
 				}
 			}
+		}
+		if (lookedOver != server && !level.players().isEmpty()) {
+			// once a run, with someone standing on it, the stairs and garden are looked over again (in case the
+			// chunks they were set in at startup were lost)
+			lookedOver = server;
+			repair(server, level);
 		}
 		if (now % 40 == 20) {
 			penitents(level);

@@ -1243,8 +1243,9 @@ public final class LuciferFight {
 				Journey.award(player, "journey/lucifer");
 				Feedback.sound(player, HellSounds.UI_TRIUMPH.value(), SoundSource.MASTER, 1.0f, 1.0f);
 				LuciferRewards.remind(player);
-				// the fight object is finished by then, so open it from the server's task queue
-				level.getServer().execute(() -> LuciferRewards.open(player));
+				// once they have climbed out to Purgatory (the climb out comes straight after, and its change of
+				// dimension would shut a chooser opened now)
+				LuciferRewards.openSoon(player);
 			}
 		}
 		HellcraftMod.LOGGER.info("Lucifer rewards: {} pending", pending);
