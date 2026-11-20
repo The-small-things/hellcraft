@@ -1,24 +1,12 @@
-# minimap detail: entity heads (render state texture + model head UVs), block colours from textures, biome tints
-ModelPart
-ModelPart$Cube
-ModelPart$Polygon
-ModelPart$Vertex
-Model (root|public)
-EntityRenderDispatcher (getRenderer|public)
-EntityRenderer (createRenderState|getTextureLocation|public|protected)
-LivingEntityRenderer (getModel|getTextureLocation|createRenderState|public)
-find PlayerFace
-find renderer\.BiomeColors
-BiomeColors
-find SpriteContents$|TextureAtlasSprite$|BlockStateModel$|BlockModelShaper$|ModelManager$|BlockStateModelSet
-SpriteContents (public|NativeImage|byMipLevel|originalImage)
-TextureAtlasSprite (public)
-BlockModelShaper (public)
-BlockStateModel (particle|public)
-ModelManager (public)
-Minecraft (getBlockRenderer|getModelManager|getBlockColors|getEntityRenderDispatcher|getTextureManager)
-BlockColors (getColor|public)
-BlockRenderDispatcher (public)
-GuiGraphicsExtractor (blit|public void)
-find PlayerSkin|client.ClientAsset
-PlayerSkin
+# minimap detail, round 2: model cubes for head UVs, block top textures and tints
+net.minecraft.client.model.geom.ModelPart$Cube
+net.minecraft.client.model.geom.ModelPart$Polygon
+net.minecraft.client.model.geom.ModelPart$Vertex
+net.minecraft.client.model.geom.ModelPart$Visitor
+find BlockStateModelPart$|block.dispatch.*Quad|model.*BakedQuad$|sprite.Material|BlockTintSource$
+net.minecraft.client.renderer.block.dispatch.BlockStateModelPart
+net.minecraft.client.resources.model.sprite.Material$Baked
+net.minecraft.client.color.block.BlockTintSource
+BakedQuad
+BlockStateModelSet (public)
+NativeImage (public static .*read|getPixel|public int)
