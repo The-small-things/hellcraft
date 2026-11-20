@@ -94,13 +94,13 @@ public final class DialogueHud implements HudElement {
 			};
 		}
 
-		/** Ticks it may wait before it's no longer worth showing. */
+		/** Ticks it may wait before it's no longer worth showing (a queue of a character's lines can take a minute to clear). */
 		int patience() {
 			return switch (kind) {
-				case HEADLINE -> 200;
-				case SPEECH -> 400;
-				case TIP -> 1200;
-				default -> 300;
+				case HEADLINE -> 400;
+				case SPEECH -> 1200;
+				case TIP -> 1800;
+				default -> 1800;
 			};
 		}
 
