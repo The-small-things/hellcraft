@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.thesmallthings.hellcraft.blood.Lessons;
 import net.thesmallthings.hellcraft.config.HellConfig;
 import net.thesmallthings.hellcraft.cutscene.CutsceneManager;
@@ -112,6 +113,15 @@ public final class Dialogue {
 		if (ServerPlayNetworking.canSend(player, DialoguePayload.TYPE)) {
 			TextColor colour = line.getStyle().getColor();
 			ServerPlayNetworking.send(player, new DialoguePayload(Kind.STATUS.ordinal(), "", colour == null ? NOTICE : colour.getValue(), line, false));
+		} else {
+			player.sendOverlayMessage(line);
+		}
+	}
+
+	/** A status word for any player (one on this side of the game is always a ServerPlayer; anything else gets the action bar). */
+	public static void status(Player player, Component line) {
+		if (player instanceof ServerPlayer sp) {
+			status(sp, line);
 		} else {
 			player.sendOverlayMessage(line);
 		}
