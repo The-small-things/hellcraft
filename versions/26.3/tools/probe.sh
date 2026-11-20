@@ -11,8 +11,12 @@ for j in $(find ~/.gradle/caches -name '*.jar' -size +10M 2>/dev/null | grep -i 
 done
 echo "Minecraft jar: $JAR"
 [ -n "$JAR" ] || { find ~/.gradle/caches -name '*.jar' | grep -i -E 'minecraft|loom' | head -40; exit 1; }
+CLIENT=$(find ~/.gradle/caches/fabric-loom/26.3 -maxdepth 1 -name 'minecraft-client*.jar' | head -1)
+echo "Client jar: $CLIENT"
 LIBS=$(find ~/.gradle/caches/modules-2 -name '*.jar' | tr '\n' ':')
-unzip -Z1 "$JAR" | grep '\.class$' | sed 's/\.class$//; s|/|.|g' > /tmp/classes.txt
+# the client's classes too (they live in their own jar since the split)
+{ unzip -Z1 "$JAR"; [ -n "$CLIENT" ] && unzip -Z1 "$CLIENT"; } | grep '\.class$' | sed 's/\.class$//; s|/|.|g' | sort -u > /tmp/classes.txt
+CP="$JAR:$CLIENT"
 echo "$(wc -l < /tmp/classes.txt) classes"
 while IFS= read -r line; do
   [ -z "$line" ] && continue
@@ -36,7 +40,7 @@ while IFS= read -r line; do
     rest=${line#code }; cls=${rest%% *}; pat=""; [[ "$rest" == *" "* ]] && pat=${rest#* }
     for m in $(grep -E "(^|\.)${cls}$" /tmp/classes.txt); do
       echo "== $m"
-      javap -cp "$JAR:$LIBS" -c -p "$m" 2>&1 | awk -v pat="$pat" '
+      javap -cp "$CP:$LIBS" -c -p "$m" 2>&1 | awk -v pat="$pat" '
         /^  [^ ].*\(.*\).*;$/ || /^  [^ ].*\{\};$/ { show = (pat == "" || $0 ~ pat) }
         show' | head -600
     done
@@ -50,7 +54,7 @@ while IFS= read -r line; do
   fi
   for m in $matches; do
     echo "== $m"
-    if [ -n "$pat" ]; then javap -cp "$JAR:$LIBS" -p "$m" 2>&1 | grep -E "$pat|class |interface |record |enum "
-    else javap -cp "$JAR:$LIBS" -p "$m" 2>&1 | head -150; fi
+    if [ -n "$pat" ]; then javap -cp "$CP:$LIBS" -p "$m" 2>&1 | grep -E "$pat|class |interface |record |enum "
+    else javap -cp "$CP:$LIBS" -p "$m" 2>&1 | head -150; fi
   done
 done < tools/probe.txt
